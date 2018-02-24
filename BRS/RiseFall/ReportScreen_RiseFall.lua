@@ -8,6 +8,17 @@ print("Loading ReportScreen_RiseFall.lua from Better Report Screen");
 include("ReportScreen");
 
 
+-- ===========================================================================
+-- Overwrite unit maintenance function to use UnitManager
+-- No need to store the old one (won't be used)
+function GetUnitMaintenance(pUnit:table)
+	local iUnitInfoHash:number = GameInfo.Units[ pUnit:GetUnitType() ].Hash;
+	local unitMilitaryFormation = pUnit:GetMilitaryFormation();
+	if unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION then return UnitManager.GetUnitCorpsMaintenance(iUnitInfoHash); end
+	if unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION  then return UnitManager.GetUnitArmyMaintenance(iUnitInfoHash); end
+	                                                                        return UnitManager.GetUnitMaintenance(iUnitInfoHash);
+end
+
 function city_fields( kCityData, pCityInstance )
 
 	local function ColorRed(text) return("[COLOR_Red]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
@@ -96,7 +107,7 @@ function ViewCityStatusPage()
 	instance.Top:DestroyAllChildren()
 	
 	instance.Children = {}
-	instance.Descend = false
+	instance.Descend = true
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityStatusHeaderInstance", pHeaderInstance, instance.Top )
@@ -115,7 +126,7 @@ function ViewCityStatusPage()
 	pHeaderInstance.CityDamageButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "dam", instance ) end )
 
 	-- 
-	for cityName,kCityData in pairs( m_kCityData ) do
+	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
 
 		local pCityInstance:table = {}
 

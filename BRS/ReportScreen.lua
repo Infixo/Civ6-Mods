@@ -321,56 +321,31 @@ function GetData()
 
 	-- Units (TODO: Group units by promotion class and determine total maintenance cost)
 	local MaintenanceDiscountPerUnit:number = pTreasury:GetMaintDiscountPerUnit();
-	local pUnits :table = player:GetUnits(); 	
+	local pUnits :table = player:GetUnits();
 	for i, pUnit in pUnits:Members() do
 		local pUnitInfo:table = GameInfo.Units[pUnit:GetUnitType()];
-		local unitTypeKey = pUnitInfo.UnitType;
-		local TotalMaintenanceAfterDiscount:number = 0;
-		local unitMaintenance = 0;
+		-- get localized unit name with appropriate suffix
 		local unitName :string = Locale.Lookup(pUnitInfo.Name);
 		local unitMilitaryFormation = pUnit:GetMilitaryFormation();
-		--BRS Civilian units can be NO_FORMATION (-1) or STANDARD (0)
-		if unitMilitaryFormation ~= MilitaryFormationTypes.CORPS_FORMATION and unitMilitaryFormation ~= MilitaryFormationTypes.ARMY_FORMATION then
+		if (unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION) then
+			--unitName = unitName.." "..Locale.Lookup( (pUnitInfo.Domain == "DOMAIN_SEA" and "LOC_HUD_UNIT_PANEL_FLEET_SUFFIX") or "LOC_HUD_UNIT_PANEL_CORPS_SUFFIX");
+			--unitName = unitName.." [ICON_Corps]";
+		elseif (unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION) then
+			--unitName = unitName.." "..Locale.Lookup( (pUnitInfo.Domain == "DOMAIN_SEA" and "LOC_HUD_UNIT_PANEL_ARMADA_SUFFIX") or "LOC_HUD_UNIT_PANEL_ARMY_SUFFIX");
+			--unitName = unitName.." [ICON_Army]";
+		else
+			--BRS Civilian units can be NO_FORMATION (-1) or STANDARD (0)
 			unitMilitaryFormation = MilitaryFormationTypes.STANDARD_FORMATION; -- 0
 		end
-		unitTypeKey = unitTypeKey .. unitMilitaryFormation; 
-		if (pUnitInfo.Domain == "DOMAIN_SEA") then
-			if (unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION) then
-				unitName = unitName .. " " .. Locale.Lookup("LOC_HUD_UNIT_PANEL_FLEET_SUFFIX");
-				unitMaintenance = UnitManager.GetUnitCorpsMaintenance(pUnitInfo.Hash);
-			elseif (unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION) then
-				unitName = unitName .. " " .. Locale.Lookup("LOC_HUD_UNIT_PANEL_ARMADA_SUFFIX");
-				unitMaintenance = UnitManager.GetUnitArmyMaintenance(pUnitInfo.Hash);
-			else
-				unitMaintenance = UnitManager.GetUnitMaintenance(pUnitInfo.Hash);
-			end
+		-- calculate unit maintenance with discount if active
+		local TotalMaintenanceAfterDiscount:number = math.max(GetUnitMaintenance(pUnit) - MaintenanceDiscountPerUnit, 0); -- cannot go below 0
+		local unitTypeKey = pUnitInfo.UnitType..unitMilitaryFormation;
+		if kUnitData[unitTypeKey] == nil then
+			kUnitData[unitTypeKey] = { Name = Locale.Lookup(pUnitInfo.Name), Formation = unitMilitaryFormation, Count = 1, Maintenance = TotalMaintenanceAfterDiscount };
 		else
-			if (unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION) then
-				unitName = unitName .. " " .. Locale.Lookup("LOC_HUD_UNIT_PANEL_CORPS_SUFFIX");
-				unitMaintenance = UnitManager.GetUnitCorpsMaintenance(pUnitInfo.Hash);
-			elseif (unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION) then
-				unitName = unitName .. " " .. Locale.Lookup("LOC_HUD_UNIT_PANEL_ARMY_SUFFIX");
-				unitMaintenance = UnitManager.GetUnitArmyMaintenance(pUnitInfo.Hash);
-			else
-				unitMaintenance = UnitManager.GetUnitMaintenance(pUnitInfo.Hash);
-			end
+			kUnitData[unitTypeKey].Count = kUnitData[unitTypeKey].Count + 1;
+			kUnitData[unitTypeKey].Maintenance = kUnitData[unitTypeKey].Maintenance + TotalMaintenanceAfterDiscount;
 		end
-
-		--if (unitMaintenance > 0) then -- Infixo show all
-			TotalMaintenanceAfterDiscount = unitMaintenance - MaintenanceDiscountPerUnit; 
-		--end
-		--if TotalMaintenanceAfterDiscount > 0 then -- Infixo show all
-			if kUnitData[unitTypeKey] == nil then
-				local UnitEntry:table = {};
-				UnitEntry.Name = unitName;
-				UnitEntry.Count = 1;
-				UnitEntry.Maintenance = TotalMaintenanceAfterDiscount;
-				kUnitData[unitTypeKey]= UnitEntry;
-			else
-				kUnitData[unitTypeKey].Count = kUnitData[unitTypeKey].Count + 1;
-				kUnitData[unitTypeKey].Maintenance = kUnitData[unitTypeKey].Maintenance + TotalMaintenanceAfterDiscount;
-			end
-		--end
 	end
 
 	-- =================================================================
@@ -722,6 +697,16 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 	return kYields, iNumWorkedPlots; --BRS added num of worked plots
 end
 
+-- ===========================================================================
+-- Obtain unit maintenance
+-- This function will use GameInfo for vanilla game and UnitManager for Rise&Fall
+function GetUnitMaintenance(pUnit:table)
+	local iUnitMaintenance:number = GameInfo.Units[ pUnit:GetUnitType() ].Maintenance;
+	local unitMilitaryFormation = pUnit:GetMilitaryFormation();
+	if unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION then return math.ceil(iUnitMaintenance * 1.5); end -- it is 150% rounded UP
+	if unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION  then return iUnitMaintenance * 2; end -- it is 200%
+	                                                                        return iUnitMaintenance;
+end
 
 
 -- ===========================================================================
@@ -1227,36 +1212,14 @@ function ViewYieldsPage()
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_BUILDING_EXPENSES") );
 	instance.RowHeaderLabel:SetHide( true ); --BRS
 
+	-- Header
 	local pHeader:table = {};
 	ContextPtr:BuildInstanceForControl( "BuildingExpensesHeaderInstance", pHeader, instance.ContentStack ) ;
 
+	-- Buildings
 	local iTotalBuildingMaintenance :number = 0;
-	--[[ BRS show grouped buildings
-	for cityName,kCityData in pairs(m_kCityData) do
-		for _,kBuilding in ipairs(kCityData.Buildings) do
-			--if kBuilding.Maintenance > 0 then -- Infixo show all
-				local pBuildingInstance:table = {};		
-				ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack ) ;		
-				TruncateStringWithTooltip(pBuildingInstance.CityName, 224, Locale.Lookup(cityName)); 
-				pBuildingInstance.BuildingName:SetText( Locale.Lookup(kBuilding.Name) );
-				pBuildingInstance.Gold:SetText( kBuilding.Maintenance == 0 and "0" or "-"..tostring(kBuilding.Maintenance));
-				iTotalBuildingMaintenance = iTotalBuildingMaintenance - kBuilding.Maintenance;
-			--end
-		end
-		for _,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do
-			--if kDistrict.Maintenance > 0 then -- Infixo show all
-				local pDistrictInstance:table = {};		
-				ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pDistrictInstance, instance.ContentStack ) ;		
-				TruncateStringWithTooltip(pDistrictInstance.CityName, 224, Locale.Lookup(cityName)); 
-				pDistrictInstance.BuildingName:SetText( Locale.Lookup(kDistrict.Name) );
-				pDistrictInstance.Gold:SetText( kDistrict.Maintenance == 0 and "0" or "-"..tostring(kDistrict.Maintenance));
-				iTotalBuildingMaintenance = iTotalBuildingMaintenance - kDistrict.Maintenance;
-			--end
-		end
-	end
-	--]]
 	local bHideFreeBuildings:boolean = Controls.HideFreeBuildingsCheckbox:IsSelected(); --BRS
-	for sName, data in pairs(kBuildingExpenses) do
+	for sName, data in spairs( kBuildingExpenses, function( t, a, b ) return Locale.Lookup(a) < Locale.Lookup(b) end ) do -- sorting by name (key)
 		if data.Maintenance ~= 0 or not bHideFreeBuildings then
 			local pBuildingInstance:table = {};
 			ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack );
@@ -1266,6 +1229,8 @@ function ViewYieldsPage()
 			iTotalBuildingMaintenance = iTotalBuildingMaintenance - data.Maintenance;
 		end
 	end
+
+	-- Footer
 	local pBuildingFooterInstance:table = {};		
 	ContextPtr:BuildInstanceForControl( "GoldFooterInstance", pBuildingFooterInstance, instance.ContentStack ) ;		
 	pBuildingFooterInstance.Gold:SetText("[ICON_Gold]"..tostring(iTotalBuildingMaintenance) );
@@ -1287,11 +1252,14 @@ function ViewYieldsPage()
 		-- Units
 		local iTotalUnitMaintenance:number = 0;
 		local bHideFreeUnits:boolean = Controls.HideFreeUnitsCheckbox:IsSelected(); --BRS
-		for UnitType,kUnitData in pairs(m_kUnitData) do
+		-- sort units by name field, which already contains a localized name, and by military formation
+		for _,kUnitData in spairs( m_kUnitData, function(t,a,b) if t[a].Name == t[b].Name then return t[a].Formation < t[b].Formation else return t[a].Name < t[b].Name end end ) do
 			if kUnitData.Maintenance ~= 0 or not bHideFreeUnits then
 				local pUnitInstance:table = {};
 				ContextPtr:BuildInstanceForControl( "UnitExpensesEntryInstance", pUnitInstance, instance.ContentStack );
-				pUnitInstance.UnitName:SetText(Locale.Lookup( kUnitData.Name ));
+				if     kUnitData.Formation == MilitaryFormationTypes.CORPS_FORMATION then pUnitInstance.UnitName:SetText(kUnitData.Name.." [ICON_Corps]");
+				elseif kUnitData.Formation == MilitaryFormationTypes.ARMY_FORMATION  then pUnitInstance.UnitName:SetText(kUnitData.Name.." [ICON_Army]");
+				else                                                                      pUnitInstance.UnitName:SetText(kUnitData.Name); end
 				pUnitInstance.UnitCount:SetText(kUnitData.Count);
 				pUnitInstance.Gold:SetText( kUnitData.Maintenance == 0 and "0" or "-"..tostring(kUnitData.Maintenance) );
 				iTotalUnitMaintenance = iTotalUnitMaintenance - kUnitData.Maintenance;
@@ -1607,7 +1575,7 @@ function ViewCityStatusPage()
 	instance.Top:DestroyAllChildren();
 	
 	instance.Children = {}
-	instance.Descend = false
+	instance.Descend = true
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityStatusHeaderInstance", pHeaderInstance, instance.Top ) ;	
@@ -1625,7 +1593,7 @@ function ViewCityStatusPage()
 	pHeaderInstance.CityDamageButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "dam", instance ) end )
 
 	-- 
-	for cityName,kCityData in pairs(m_kCityData) do
+	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
 
 		local pCityInstance:table = {}
 
