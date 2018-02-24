@@ -11,7 +11,7 @@
 		<Text>All standard buildings can be upgraded. Level 2 buildings receive also new yields and Level 3 buildings additional unique features.</Text>
 	</Row>
 	<Row Tag="LOC_RBU_MOD_DESCRIPTION">
-		<Text>All standard buildings can be upgraded. Level 2 buildings receive also new yields and Level 3 buildings additional unique features.</Text>
+		<Text>All standard buildings can be upgraded. Level 2 buildings receive also new yields and Level 3 buildings additional unique features.[NEWLINE][NEWLINE]Summer 2017 Update compatible.</Text>
 	</Row>
 
 </BaseGameText>

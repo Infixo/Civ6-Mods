@@ -2,6 +2,7 @@
 -- Real Building Upgrades
 -- Author: Infixo
 -- Mar 20th, 2017 - Version 1 created
+-- Aug 2nd, 2017 - Version 1.3, fix for summer patch
 --------------------------------------------------------------
 
 -- first, some balance fixes
@@ -39,7 +40,7 @@ VALUES  -- generated from Excel
 ('BANK','SCIENTIFIC_THEORY',NULL,195,'COMMERCIAL_HUB',0,'GENERIC'),
 ('BARRACKS','ENGINEERING',NULL,40,'ENCAMPMENT',1,'CONQUEST'),
 ('BROADCAST_CENTER','COMPUTERS',NULL,655,'THEATER',3,'CULTURE'),
-('CASTLE','PRINTING',NULL,165,'CITY_CENTER',2,'GENERIC'),
+('CASTLE','PRINTING',NULL,165,'CITY_CENTER',1,'GENERIC'),
 ('CATHEDRAL',NULL,'REFORMED_CHURCH',130,'HOLY_SITE',0,NULL),
 ('ELECTRONICS_FACTORY','STEAM_POWER',NULL,265,'INDUSTRIAL_ZONE',3,'GENERIC'),
 ('FACTORY','STEAM_POWER',NULL,265,'INDUSTRIAL_ZONE',3,'GENERIC'),
@@ -67,7 +68,7 @@ VALUES  -- generated from Excel
 ('SHRINE','CELESTIAL_NAVIGATION',NULL,50,'HOLY_SITE',1,'RELIGIOUS'),
 ('STABLE','CONSTRUCTION',NULL,40,'ENCAMPMENT',1,'CONQUEST'),
 ('STADIUM',NULL,'SOCIAL_MEDIA',750,'ENTERTAINMENT_COMPLEX',3,'GENERIC'),
-('STAR_FORT','BALLISTICS',NULL,380,'CITY_CENTER',3,'GENERIC'),
+('STAR_FORT','BALLISTICS',NULL,380,'CITY_CENTER',1,'GENERIC'),
 ('STAVE_CHURCH',NULL,'DIVINE_RIGHT',80,'HOLY_SITE',2,'RELIGIOUS'),
 ('STOCK_EXCHANGE','COMPUTERS',NULL,445,'COMMERCIAL_HUB',0,'GENERIC'),
 ('SUKIENNICE','MATHEMATICS',NULL,50,'COMMERCIAL_HUB',0,NULL),
@@ -110,7 +111,8 @@ SELECT
 	UMain, 0, NULL, 0, NULL,  -- Maintenance, IsWonder, TraitType, OuterDefenseStrength, CitizenSlots
 	0, 0, 0, 0, 'NO_ERA', 0,  -- MustBeLake, MustNotBeLake, RegionalRange, AdjacentToMountain, ObsoleteEra, RequiresReligion
 	0, 0, 0, 0, NULL, NULL, 0,  -- GrantFortification, DefenseModifier, InternalOnly, RequiresAdjacentRiver, Quote, QuoteAudio, MustBeAdjacentLand
-	CASE WHEN Advis IS NULL THEN NULL ELSE 'ADVISOR_'||Advis END, 0, NULL  -- AdvisorType, AdjacentCapital, AdjacentImprovement
+	CASE WHEN Advis IS NULL THEN NULL ELSE 'ADVISOR_'||Advis END, 0, NULL,  -- AdvisorType, AdjacentCapital, AdjacentImprovement
+	NULL  -- CityAdjacentTerrrain [Version 1.1, fix for summer patch]
 FROM RBUConfig;
 
 -- Palace Upgrade
