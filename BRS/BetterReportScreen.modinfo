@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="4becac48-4a0c-379a-5dd1-33d0c65a471d" version="1.7.3">
+	<Properties>
+		<Name>Unit Report Screen</Name>
+		<Teaser>Adds Units to Report Screen</Teaser>
+		<Description>Units/Current Deals and Better Yields in Report Screen</Description>
+		<Authors>Greg Miller</Authors>
+	</Properties>
+	<Components>
+        <ImportFiles id="UNITREPORT_REPORT">
+            <Items>
+                <File>ReportScreen.lua</File>
+				<File>ReportScreen.xml</File>
+				<File>UnitPromotionPopup.lua</File>
+            </Items>
+        </ImportFiles>
+    </Components>
+    <Files>
+        <File>ReportScreen.lua</File>
+		<File>ReportScreen.xml</File>
+		<File>UnitPromotionPopup.lua</File>
+    </Files>
+</Mod>
