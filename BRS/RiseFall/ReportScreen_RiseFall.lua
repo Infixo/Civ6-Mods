@@ -176,9 +176,17 @@ function city_sortFunction( descend, type, t, a, b )
 	elseif type == "amen" then
 		aCity = t[a].AmenitiesNum
 		bCity = t[b].AmenitiesNum
+		if aCity == bCity then -- same amenities, sort by required
+			aCity = t[a].AmenitiesRequiredNum
+			bCity = t[b].AmenitiesRequiredNum
+		end
 	elseif type == "happy" then
 		aCity = t[a].Happiness
 		bCity = t[b].Happiness
+		if aCity == bCity then -- same happiness, sort by difference in amenities
+			aCity = t[a].AmenitiesNum - t[a].AmenitiesRequiredNum
+			bCity = t[b].AmenitiesNum - t[b].AmenitiesRequiredNum
+		end
 	elseif type == "growth" then
 		aCity = t[a].HousingMultiplier
 		bCity = t[b].HousingMultiplier

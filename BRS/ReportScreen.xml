@@ -382,11 +382,11 @@
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																			Offset="1,0"	Size="232,parent">
-					<Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
+					<Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_BUILDINGNAME" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="237,parent">
-					<Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_BUILDING" />
+					<Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_BUILDINGCOUNT" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="100,parent">
@@ -414,15 +414,15 @@
 			<Stack	StackGrowth="Right" >
 				<Box															Anchor="C,C"								Size="2,22"	Color="46,70,95,128" />				
 				<Container																			Offset="1,0"	Size="232,parent">
-					<Label			ID="CityName"				Style="ReportValueLeftName"	String="LOC_HUD_REPORTS_HEADER_CITY" />
+					<Label			ID="BuildingName"				Style="ReportValueLeftName"	String="$BuildingName$" />
 				</Container>
 				<Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,255" />
 				<Container																										Size="237,parent">
-					<Label			ID="BuildingName"		Style="ReportValueLeftName"	String="LOC_HUD_REPORTS_HEADER_BUILDING" />
+					<Label			ID="BuildingCount"		Style="ReportValueLeftName"	String="$BuildingCount$" />
 				</Container>
 				<Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,255" />
 				<Container																										Size="100,parent">
-					<Label			ID="Gold"						Style="ReportValueText"	String="LOC_HUD_REPORTS_HEADER_GOLD"  Color="Gold" />
+					<Label			ID="Gold"						Style="ReportValueText"	String="$BuildingMaintenance$"  Color="Gold" />
 				</Container>
 				<Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,55" />
 				<Container																										Size="100,parent" />
@@ -680,7 +680,7 @@
 				<Container																										Size="100,parent">
 					<GridButton		ID="CityPopulationButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_POPULATION" />
-					</GridButton
+					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="80,parent">
@@ -736,7 +736,7 @@
 	</Instance>
 
 	<Instance					Name="CityStatusEntryInstance">
-		<Container			ID="Top"														Offset="8,0" Size="1003,22">
+		<Container			ID="Top"														Offset="8,0" Size="1003,26">
 			<Image																						Offset="4,0"	Size="parent-15,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -1108,7 +1108,7 @@
 	</Instance>
 	
 	<Instance Name="UnitsMilitaryEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1003,44">
+		<Container ID="Top" Offset="8,0" Size="1003,30">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1161,7 +1161,7 @@
 	</Instance>
 	
 	<Instance Name="UnitsCivilianEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1003,44">
+		<Container ID="Top" Offset="8,0" Size="1003,30">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1197,7 +1197,7 @@
 	</Instance>
 
 	<Instance Name="UnitsTraderEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1003,44">
+		<Container ID="Top" Offset="8,0" Size="1003,30">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1232,7 +1232,7 @@
 	</Instance>
 
 	<Instance Name="UnitsGreatPeopleEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1003,44">
+		<Container ID="Top" Offset="8,0" Size="1003,30">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1268,7 +1268,7 @@
 	</Instance>
 
 	<Instance Name="UnitsReligiousEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1003,44">
+		<Container ID="Top" Offset="8,0" Size="1003,30">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1308,7 +1308,7 @@
 	</Instance>
 
 	<Instance Name="UnitsSpyEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1003,44">
+		<Container ID="Top" Offset="8,0" Size="1003,30">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>

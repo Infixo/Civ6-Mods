@@ -245,7 +245,7 @@ function GetData()
 		-- Big calls, obtain city data and add report specific fields to it.
 		local data		:table	= GetCityData( pCity );
 		data.Resources			= GetCityResourceData( pCity );					-- Add more data (not in CitySupport)			
-		data.WorkedTileYields	= GetWorkedTileYieldData( pCity, pCulture );	-- Add more data (not in CitySupport)
+		data.WorkedTileYields, data.NumWorkedTiles = GetWorkedTileYieldData( pCity, pCulture );	-- Add more data (not in CitySupport)
 
 		-- Add to totals.
 		kCityTotalData.Income[YieldTypes.CULTURE]	= kCityTotalData.Income[YieldTypes.CULTURE] + data.CulturePerTurn;
@@ -324,7 +324,11 @@ function GetData()
 		local unitMaintenance = 0;
 		local unitName :string = Locale.Lookup(pUnitInfo.Name);
 		local unitMilitaryFormation = pUnit:GetMilitaryFormation();
-		unitTypeKey = unitTypeKey .. unitMilitaryFormation;
+		--BRS Civilian units can be NO_FORMATION (-1) or STANDARD (0)
+		if unitMilitaryFormation ~= MilitaryFormationTypes.CORPS_FORMATION and unitMilitaryFormation ~= MilitaryFormationTypes.ARMY_FORMATION then
+			unitMilitaryFormation = MilitaryFormationTypes.STANDARD_FORMATION; -- 0
+		end
+		unitTypeKey = unitTypeKey .. unitMilitaryFormation; 
 		if (pUnitInfo.Domain == "DOMAIN_SEA") then
 			if (unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION) then
 				unitName = unitName .. " " .. Locale.Lookup("LOC_HUD_UNIT_PANEL_FLEET_SUFFIX");
@@ -691,6 +695,7 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 	};
 	local cityPlots : table = Map.GetCityPlots():GetPurchasedPlots(pCity);
 	local pCitizens	: table = pCity:GetCitizens();	
+	local iNumWorkedPlots:number = 0;
 	for _, plotID in ipairs(cityPlots) do		
 		local plot	: table = Map.GetPlotByIndex(plotID);
 		local x		: number = plot:GetX();
@@ -700,6 +705,7 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 			for row in GameInfo.Yields() do			
 				kYields[row.YieldType] = kYields[row.YieldType] + plot:GetYield(row.Index);				
 			end
+			iNumWorkedPlots = iNumWorkedPlots + 1; --BRS
 		end
 
 		-- Support tourism.
@@ -708,7 +714,7 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 		-- show how individual buildings contribute... yet.
 		kYields["TOURISM"] = kYields["TOURISM"] + pCulture:GetTourismAt( plotID );
 	end
-	return kYields;
+	return kYields, iNumWorkedPlots; --BRS added num of worked plots
 end
 
 
@@ -977,6 +983,7 @@ function ViewYieldsPage()
 	local instance:table = nil;
 	instance = NewCollapsibleGroupInstance();
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_CITY_INCOME") );
+	instance.RowHeaderLabel:SetHide( true ); --BRS
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityIncomeHeaderInstance", pHeaderInstance, instance.ContentStack ) ;	
@@ -998,16 +1005,9 @@ function ViewYieldsPage()
 	local tourismCityTotal	:number = 0;
 	
 	-- Infixo needed to properly calculate yields from amenities
-	--local prodAmenBase    :number = 0;
-	--local foodAmenBase    :number = 0; -- not affected, but added for consistency
-	--local goldAmenBase    :number = 0;
-	--local faithAmenBase   :number = 0;
-	--local scienceAmenBase :number = 0;
-	--local cultureAmenBase :number = 0;
-	--local tourismAmenBase :number = 0;
 	local kBaseYields : table = {
 		YIELD_PRODUCTION = 0,
-		YIELD_FOOD		 = 0,
+		YIELD_FOOD		 = 0, -- not affected, but added for consistency
 		YIELD_GOLD		 = 0,
 		YIELD_FAITH		 = 0,
 		YIELD_SCIENCE	 = 0,
@@ -1092,14 +1092,16 @@ function ViewYieldsPage()
 
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			--District line item
+			--BRS The only yields are from Adjacency, so this will duplicate them
+			--BRS show this line only for an icon and a name
 			local districtInstance = CreatLineItemInstance(	pCityInstance, 
 															kDistrict.Name,
-															kDistrict.Production,
-															kDistrict.Gold,
-															kDistrict.Food,
-															kDistrict.Science,
-															kDistrict.Culture,
-															kDistrict.Faith);
+															0,--kDistrict.Production,
+															0,--kDistrict.Gold,
+															0,--kDistrict.Food,
+															0,--kDistrict.Science,
+															0,--kDistrict.Culture,
+															0);--kDistrict.Faith);
 			districtInstance.DistrictIcon:SetHide(false);
 			districtInstance.DistrictIcon:SetIcon(kDistrict.Icon);
 
@@ -1253,7 +1255,7 @@ function ViewYieldsPage()
 
 		--Worked Tiles
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES"),
+								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format(" (%d)", kCityData.NumWorkedTiles),
 								kCityData.WorkedTileYields["YIELD_PRODUCTION"],
 								kCityData.WorkedTileYields["YIELD_GOLD"],
 								kCityData.WorkedTileYields["YIELD_FOOD"],
@@ -1265,7 +1267,7 @@ function ViewYieldsPage()
 		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
 		local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_CITY_POPULATION"),
+								Locale.Lookup("LOC_HUD_CITY_POPULATION")..string.format(" (%d)", kCityData.Population),
 								0,
 								0,
 								0,
@@ -1287,7 +1289,7 @@ function ViewYieldsPage()
 								kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent);
 		--]]
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES"),
+								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES")..string.format(" (%d%%)", kCityData.HappinessNonFoodYieldModifier),
 								kBaseYields.YIELD_PRODUCTION * iYieldPercent,
 								kBaseYields.YIELD_GOLD * iYieldPercent,
 								0,
@@ -1315,13 +1317,34 @@ function ViewYieldsPage()
 
 	-- ========== Building Expenses ==========
 
+	--BRS It displays a long list with multiple same entries - no fun at all
+	-- Collapse it in the same way as Units, i.e. show Name / Count / Gold
+	local kBuildingExpenses:table = {};
+	for cityName,kCityData in pairs(m_kCityData) do
+		for _,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do
+			local key = kDistrict.Name;
+			if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
+			kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
+			kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kDistrict.Maintenance;
+		end
+		for _,kBuilding in ipairs(kCityData.Buildings) do
+			local key = kBuilding.Name;
+			if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
+			kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
+			kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kBuilding.Maintenance;
+		end
+	end
+	--BRS sort by name here somehow?
+	
 	instance = NewCollapsibleGroupInstance();
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_BUILDING_EXPENSES") );
+	instance.RowHeaderLabel:SetHide( true ); --BRS
 
 	local pHeader:table = {};
 	ContextPtr:BuildInstanceForControl( "BuildingExpensesHeaderInstance", pHeader, instance.ContentStack ) ;
 
 	local iTotalBuildingMaintenance :number = 0;
+	--[[ BRS show grouped buildings
 	for cityName,kCityData in pairs(m_kCityData) do
 		for _,kBuilding in ipairs(kCityData.Buildings) do
 			--if kBuilding.Maintenance > 0 then -- Infixo show all
@@ -1344,6 +1367,15 @@ function ViewYieldsPage()
 			--end
 		end
 	end
+	--]]
+	for sName, data in pairs(kBuildingExpenses) do
+		local pBuildingInstance:table = {};
+		ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack );
+		TruncateStringWithTooltip(pBuildingInstance.BuildingName, 224, Locale.Lookup(sName)); 
+		pBuildingInstance.BuildingCount:SetText( Locale.Lookup(data.Count) );
+		pBuildingInstance.Gold:SetText( data.Maintenance == 0 and "0" or "-"..tostring(data.Maintenance));
+		iTotalBuildingMaintenance = iTotalBuildingMaintenance - data.Maintenance;
+	end
 	local pBuildingFooterInstance:table = {};		
 	ContextPtr:BuildInstanceForControl( "GoldFooterInstance", pBuildingFooterInstance, instance.ContentStack ) ;		
 	pBuildingFooterInstance.Gold:SetText("[ICON_Gold]"..tostring(iTotalBuildingMaintenance) );
@@ -1356,6 +1388,7 @@ function ViewYieldsPage()
 	if GameCapabilities.HasCapability("CAPABILITY_REPORTS_UNIT_EXPENSES") then 
 		instance = NewCollapsibleGroupInstance();
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_UNIT_EXPENSES") );
+		instance.RowHeaderLabel:SetHide( true ); --BRS
 
 		-- Header
 		local pHeader:table = {};
@@ -1386,6 +1419,7 @@ function ViewYieldsPage()
 	if GameCapabilities.HasCapability("CAPABILITY_REPORTS_DIPLOMATIC_DEALS") then 
 		instance = NewCollapsibleGroupInstance();	
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") );
+		instance.RowHeaderLabel:SetHide( true ); --BRS
 
 		local pHeader:table = {};
 		ContextPtr:BuildInstanceForControl( "DealHeaderInstance", pHeader, instance.ContentStack ) ;
@@ -1480,6 +1514,7 @@ function ViewResourcesPage()
 
 		local kResource :table = GameInfo.Resources[eResourceType];
 		instance.RowHeaderButton:SetText(  kSingleResourceData.Icon..Locale.Lookup( kResource.Name ) );
+		instance.RowHeaderLabel:SetHide( true ); --BRS
 
 		local pHeaderInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "ResourcesHeaderInstance", pHeaderInstance, instance.ContentStack ) ;
@@ -1994,24 +2029,27 @@ function ViewUnitsPage()
 	for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
 		local instance : table = NewCollapsibleGroupInstance()
 		
-		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) )
+		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) );
+		instance.RowHeaderLabel:SetHide( true ); --BRS
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
 
-		if pHeaderInstance.UnitTypeButton then pHeaderInstance.UnitTypeButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitNameButton then pHeaderInstance.UnitNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitStatusButton then pHeaderInstance.UnitStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitLevelButton then pHeaderInstance.UnitLevelButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "level", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitExpButton then pHeaderInstance.UnitExpButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "exp", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitHealthButton then pHeaderInstance.UnitHealthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "health", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitMoveButton then pHeaderInstance.UnitMoveButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "move", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitChargeButton then pHeaderInstance.UnitChargeButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "charge", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitYieldButton then pHeaderInstance.UnitYieldButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "yield", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitRouteButton then pHeaderInstance.UnitRouteButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "route", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitClassButton then pHeaderInstance.UnitClassButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "class", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitStrengthButton then pHeaderInstance.UnitStrengthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "strength", iUnitGroup, instance ) end ) end
-		if pHeaderInstance.UnitSpreadButton then pHeaderInstance.UnitSpreadButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "spread", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitLevelButton then    pHeaderInstance.UnitLevelButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "level", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitExpButton then      pHeaderInstance.UnitExpButton:RegisterCallback(     Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "exp", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitHealthButton then   pHeaderInstance.UnitHealthButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "health", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitMoveButton then     pHeaderInstance.UnitMoveButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "move", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitChargeButton then   pHeaderInstance.UnitChargeButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "charge", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitYieldButton then    pHeaderInstance.UnitYieldButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "yield", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitRouteButton then    pHeaderInstance.UnitRouteButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "route", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitClassButton then    pHeaderInstance.UnitClassButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "class", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitStrengthButton then pHeaderInstance.UnitStrengthButton:RegisterCallback(Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "strength", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitSpreadButton then   pHeaderInstance.UnitSpreadButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "spread", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitMissionButton then  pHeaderInstance.UnitMissionButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "mission", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitTurnsButton then    pHeaderInstance.UnitTurnsButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "turns", iUnitGroup, instance ) end ) end
 
 		for _,unit in ipairs( kUnitGroup.units ) do			
 			local unitInstance:table = {}

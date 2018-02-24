@@ -12,6 +12,12 @@
 	<Row Tag="LOC_HUD_REPORTS_TAB_UNITS">
 		<Text>Units</Text>
 	</Row>
+	<Row Tag="LOC_HUD_REPORTS_HEADER_BUILDINGNAME">
+		<Text>Building/District Name</Text>
+	</Row>
+	<Row Tag="LOC_HUD_REPORTS_HEADER_BUILDINGCOUNT">
+		<Text>Number of Buildings/Districts</Text>
+	</Row>
 	<Row Tag="LOC_BRS_UNITS_GROUP_AIR">
 		<Text>Military - Air</Text>
 	</Row>
