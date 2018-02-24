@@ -17,13 +17,18 @@
         <ImportFiles id="BRS_ImportFiles">
             <Items>
                 <File>ReportScreen.lua</File>
-				<!--<File>ReportScreen_Expansion1</File>-->
 				<File>ReportScreen.xml</File>
 				<File>UnitPromotionPopup.lua</File>
             </Items>
         </ImportFiles>
+		<UpdateText id="BRS_UpdateText">
+			<File>BetterReportScreen_Text.xml</File>
+		</UpdateText>
 		<!-- Rise&Fall actions - replace lua and import xml (there's no 'replace' for xml) -->
         <ImportFiles id="BRS_ImportFiles_RiseFall" criteria="Expansion1">
+			<Properties>
+                <LoadOrder>2</LoadOrder>
+            </Properties>		
             <Items>
 				<File>RiseFall/ReportScreen.xml</File>
             </Items>
@@ -40,6 +45,7 @@
         <File>ReportScreen.lua</File>
 		<File>ReportScreen.xml</File>
 		<File>UnitPromotionPopup.lua</File>
+		<File>BetterReportScreen_Text.xml</File>
 		<!-- Rise & Fall files -->
 		<File>RiseFall/ReportScreen_RiseFall.lua</File>
 		<File>RiseFall/ReportScreen.xml</File>

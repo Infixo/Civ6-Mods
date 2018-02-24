@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-02-23: Created -->
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_HUD_REPORTS_TAB_DEALS">
+		<Text>Current Deals</Text>
+	</Row>
+	<Row Tag="LOC_HUD_REPORTS_TAB_UNITS">
+		<Text>Units</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_AIR">
+		<Text>Military - Air</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_NAVAL">
+		<Text>Military - Naval</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT">
+		<Text>Military - Land</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_CIVILIAN">
+		<Text>Civilian</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_SUPPORT">
+		<Text>Support</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_SPY">
+		<Text>Spies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_TRADER">
+		<Text>Traders</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON">
+		<Text>Great People</Text>
+	</Row>
+	<Row Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS">
+		<Text>Religious</Text>
+	</Row>
+	
+</BaseGameText>
+
+</GameData>

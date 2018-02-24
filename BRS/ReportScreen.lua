@@ -31,14 +31,15 @@ local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll ar
 local INDENT_STRING								:string = "        ";
 
 -- Mapping of unit type to cost.
+--[[ Infixo not used
 local UnitCostMap:table = {};
 do
 	for row in GameInfo.Units() do
 		UnitCostMap[row.UnitType] = row.Maintenance;
 	end
 end
-
--- BRS !! Added function to sort out tables for units
+--]]
+--BRS !! Added function to sort out tables for units
 local bUnits = { group = {}, parent = {}, type = "" }
 
 function spairs( t, order )
@@ -83,10 +84,11 @@ local m_kDealData			:table = nil;
 local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all action.
 
 local m_isCollapsing		:boolean = true;
--- BRS !! new variables
-local m_kCultureData	:table = nil;
+--BRS !! new variables
 local m_kCurrentDeals	:table = nil;
+local m_kUnitDataReport	:table = nil;
 -- !!
+
 
 -- ===========================================================================
 --	Single exit point for display
@@ -118,7 +120,7 @@ function Open()
 
 	-- BRS !! new line to add new variables 
 	-- m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData = GetData();
-	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCultureData, m_kCurrentDeals = GetData();
+	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
 	
 	m_tabs.SelectTab( 1 );
 end
@@ -197,54 +199,40 @@ function GetData()
 	local pResources:table	= player:GetResources();		
 
 	-- ==========================
-	-- BRS !! this will use the m_kUnitData to fill out player's unit info
+	-- BRS !! this will use the m_kUnitDataReport to fill out player's unit info
 	-- ==========================
-	local group_name : string = "default"
-
-	kUnitData["Unit_Expenses"] = {}
-	kUnitData["Unit_Report"] = {}
+	local kUnitDataReport:table = {};
+	local group_name:string;
 
 	for _, unit in player:GetUnits():Members() do
-		local unitInfo : table = GameInfo.Units[unit:GetUnitType()]
-		local unitGreatPerson = unit:GetGreatPerson()
-
-		if GameInfo.GreatPersonClasses[unitGreatPerson:GetClass()] then group_name = "GREAT_PERSON"
-		elseif unitInfo.MakeTradeRoute == true then group_name = "TRADER"
-		elseif GameInfo.Units[unitInfo.UnitType].Spy == true then group_name = "SPY"
-		elseif unit:GetReligiousStrength() > 0 then group_name = "RELIGIOUS"
-		elseif unit:GetCombat() == 0 and unit:GetRangedCombat() == 0 then group_name = "CIVILIAN"
-		elseif unitInfo.Domain == "DOMAIN_LAND" then group_name = "MILITARY_LAND"
-		elseif unitInfo.Domain == "DOMAIN_AIR" then group_name = "MILITARY_AIR"
-		elseif unitInfo.Domain == "DOMAIN_SEA" then group_name = "MILITARY_SEA"
-		end
-
-		if kUnitData["Unit_Report"][group_name] == nil then
-			if group_name == "GREAT_PERSON" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Great People", ID = 6, func = group_great, Header = "UnitsGreatPeopleHeaderInstance", Entry = "UnitsGreatPeopleEntryInstance", units = {} }
-			elseif group_name == "SPY" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Spy", ID = 8, func = group_spy, Header = "UnitsSpyHeaderInstance", Entry = "UnitsSpyEntryInstance", units = {} }
-			elseif group_name == "RELIGIOUS" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Religious", ID = 5, func = group_religious, Header = "UnitsReligiousHeaderInstance", Entry = "UnitsReligiousEntryInstance", units = {} }
-			elseif group_name == "TRADER" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Trader", ID = 7, func = group_trader, Header = "UnitsTraderHeaderInstance", Entry = "UnitsTraderEntryInstance", units = {} }
-			elseif group_name == "MILITARY_LAND" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Military (Land)", ID = 1, func = group_military,  Header = "UnitsMilitaryHeaderInstance", Entry = "UnitsMilitaryEntryInstance", units = {} }
-			elseif group_name == "MILITARY_AIR" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Military (Air)", ID = 3, func = group_military, Header = "UnitsMilitaryHeaderInstance", Entry = "UnitsMilitaryEntryInstance", units = {} }
-			elseif group_name == "MILITARY_SEA" then
-				kUnitData["Unit_Report"][group_name] = { Name = "Military (Sea)", ID = 2, func = group_military, Header = "UnitsMilitaryHeaderInstance", Entry = "UnitsMilitaryEntryInstance", units = {} }
-			else
-				kUnitData["Unit_Report"][group_name] = { Name = "Civilian and Support", ID = 4, func = group_civilian, Header = "UnitsCivilianHeaderInstance", Entry = "UnitsCivilianEntryInstance", units = {} }
+		local unitInfo : table = GameInfo.Units[unit:GetUnitType()];
+		local formationClass:string = unitInfo.FormationClass; -- FORMATION_CLASS_CIVILIAN, FORMATION_CLASS_LAND_COMBAT, FORMATION_CLASS_NAVAL, FORMATION_CLASS_SUPPORT, FORMATION_CLASS_AIR
+		-- categorize
+		group_name = string.gsub(formationClass, "FORMATION_CLASS_", "");
+		if formationClass == "FORMATION_CLASS_CIVILIAN" then
+			-- need to split into sub-classes
+			if unit:GetGreatPerson():IsGreatPerson() then group_name = "GREAT_PERSON";
+			elseif unitInfo.MakeTradeRoute then           group_name = "TRADER";
+			elseif unitInfo.Spy then                      group_name = "SPY";
+			elseif unit:GetReligiousStrength() > 0 then group_name = "RELIGIOUS";
 			end
 		end
-
-		table.insert( kUnitData["Unit_Report"][group_name].units, unit )
-
-		if kUnitData["Unit_Expenses"][unitInfo.UnitType] == nil then
-			kUnitData["Unit_Expenses"][unitInfo.UnitType] = { Name = Locale.Lookup( unitInfo.Name ), Amount = 0, Cost = unitInfo.Maintenance }
+		-- store for Units tab report
+		if kUnitDataReport[group_name] == nil then
+			if     group_name == "LAND_COMBAT" then  kUnitDataReport[group_name] = { ID= 1, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
+			elseif group_name == "NAVAL" then        kUnitDataReport[group_name] = { ID= 2, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
+			elseif group_name == "AIR" then          kUnitDataReport[group_name] = { ID= 3, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
+			elseif group_name == "SUPPORT" then      kUnitDataReport[group_name] = { ID= 4, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
+			elseif group_name == "CIVILIAN" then     kUnitDataReport[group_name] = { ID= 5, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
+			elseif group_name == "RELIGIOUS" then    kUnitDataReport[group_name] = { ID= 6, func= group_religious,Header= "UnitsReligiousHeaderInstance",  Entry= "UnitsReligiousEntryInstance" };
+			elseif group_name == "GREAT_PERSON" then kUnitDataReport[group_name] = { ID= 7, func= group_great,    Header= "UnitsGreatPeopleHeaderInstance",Entry= "UnitsGreatPeopleEntryInstance" };
+			elseif group_name == "SPY" then          kUnitDataReport[group_name] = { ID= 8, func= group_spy,      Header= "UnitsSpyHeaderInstance",        Entry= "UnitsSpyEntryInstance" };
+			elseif group_name == "TRADER" then       kUnitDataReport[group_name] = { ID= 9, func= group_trader,   Header= "UnitsTraderHeaderInstance",     Entry= "UnitsTraderEntryInstance" };
+			end
+			kUnitDataReport[group_name].Name = "LOC_BRS_UNITS_GROUP_"..group_name;
+			kUnitDataReport[group_name].units = {};
 		end
-
-		kUnitData["Unit_Expenses"][unitInfo.UnitType].Amount = kUnitData["Unit_Expenses"][unitInfo.UnitType].Amount + 1
+		table.insert( kUnitDataReport[group_name].units, unit );
 	end
 	-- ==========================
 	-- !! end of edit
@@ -359,13 +347,13 @@ function GetData()
 			end
 		end
 
-		if (unitMaintenance > 0) then
+		--if (unitMaintenance > 0) then -- Infixo show all
 			TotalMaintenanceAfterDiscount = unitMaintenance - MaintenanceDiscountPerUnit; 
-		end
-		if TotalMaintenanceAfterDiscount > 0 then
+		--end
+		--if TotalMaintenanceAfterDiscount > 0 then -- Infixo show all
 			if kUnitData[unitTypeKey] == nil then
 				local UnitEntry:table = {};
-				UnitEntry.Name = pUnitInfo.Name; -- INFIXO CHECK NAME HERE TODO !!!!!!!!!!!
+				UnitEntry.Name = unitName;
 				UnitEntry.Count = 1;
 				UnitEntry.Maintenance = TotalMaintenanceAfterDiscount;
 				kUnitData[unitTypeKey]= UnitEntry;
@@ -373,7 +361,7 @@ function GetData()
 				kUnitData[unitTypeKey].Count = kUnitData[unitTypeKey].Count + 1;
 				kUnitData[unitTypeKey].Maintenance = kUnitData[unitTypeKey].Maintenance + TotalMaintenanceAfterDiscount;
 			end
-		end
+		--end
 	end
 
 	-- =================================================================
@@ -626,7 +614,7 @@ function GetData()
 
 	--BRS !! changed
 	--return kCityData, kCityTotalData, kResources, kUnitData, kDealData;
-	return kCityData, kCityTotalData, kResources, kUnitData, kDealData, pCulture, kCurrentDeals
+	return kCityData, kCityTotalData, kResources, kUnitData, kDealData, kCurrentDeals, kUnitDataReport
 end
 
 -- ===========================================================================
@@ -769,7 +757,7 @@ function OnAnimGroupCollapse( instance:table)
 	local progress		:number = instance.CollapseAnim:GetProgress();
 	local sizeY			:number = lerp(startY,endY,progress);
 		
-	--instance.CollapseAnim:SetSizeY( groupHeight );		-- BRS added, INFIXO CHECK
+	instance.CollapseAnim:SetSizeY( groupHeight );		-- BRS added, INFIXO CHECK
 	instance.CollapseScroll:SetSizeY( sizeY );	
 	instance.ContentStack:ReprocessAnchoring();	
 	instance.Top:ReprocessAnchoring()
@@ -936,15 +924,6 @@ function cityincome_fields( kCityData, pCityInstance )
 	pCityInstance.Tourism:SetText( toPlusMinusString(kCityData.WorkedTileYields["TOURISM"]) );
 	
 	if not Controls.CityBuildingsCheckbox:IsSelected() then
-		--[[ Infixo not used
-		-- Compute tiles worked by setting to total and subtracting all the things...
-		local productionTilesWorked :number = kCityData.ProductionPerTurn;
-		local foodTilesWorked		:number = kCityData.FoodPerTurn;
-		local goldTilesWorked		:number = kCityData.GoldPerTurn;
-		local faithTilesWorked		:number = kCityData.FaithPerTurn;
-		local scienceTilesWorked	:number = kCityData.SciencePerTurn;
-		local cultureTilesWorked	:number = kCityData.CulturePerTurn;
-		--]]
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			for i,kBuilding in ipairs(kDistrict.Buildings) do
 				local pLineItemInstance:table = {};
@@ -957,14 +936,6 @@ function cityincome_fields( kCityData, pCityInstance )
 				pLineItemInstance.Faith:SetText( toPlusMinusNoneString(kBuilding.FaithPerTurn) );
 				pLineItemInstance.Science:SetText( toPlusMinusNoneString(kBuilding.SciencePerTurn) );
 				pLineItemInstance.Culture:SetText( toPlusMinusNoneString(kBuilding.CulturePerTurn) );
-				--[[ Infixo not used
-				productionTilesWorked	= productionTilesWorked - kBuilding.ProductionPerTurn;
-				foodTilesWorked			= foodTilesWorked		- kBuilding.FoodPerTurn;
-				goldTilesWorked			= goldTilesWorked		- kBuilding.GoldPerTurn;
-				faithTilesWorked		= faithTilesWorked		- kBuilding.FaithPerTurn;
-				scienceTilesWorked		= scienceTilesWorked	- kBuilding.SciencePerTurn;
-				cultureTilesWorked		= cultureTilesWorked	- kBuilding.CulturePerTurn;
-				--]]
 			end
 		end
 
@@ -1001,7 +972,6 @@ function ViewYieldsPage()
 
 	ResetTabForNewPageContent();
 
-	Controls.CityBuildingsCheckbox:SetHide( false ) --BRS
 	local pPlayer:table = Players[Game.GetLocalPlayer()]; --BRS
 
 	local instance:table = nil;
@@ -1027,6 +997,24 @@ function ViewYieldsPage()
 	local cultureCityTotal	:number = 0;
 	local tourismCityTotal	:number = 0;
 	
+	-- Infixo needed to properly calculate yields from amenities
+	--local prodAmenBase    :number = 0;
+	--local foodAmenBase    :number = 0; -- not affected, but added for consistency
+	--local goldAmenBase    :number = 0;
+	--local faithAmenBase   :number = 0;
+	--local scienceAmenBase :number = 0;
+	--local cultureAmenBase :number = 0;
+	--local tourismAmenBase :number = 0;
+	local kBaseYields : table = {
+		YIELD_PRODUCTION = 0,
+		YIELD_FOOD		 = 0,
+		YIELD_GOLD		 = 0,
+		YIELD_FAITH		 = 0,
+		YIELD_SCIENCE	 = 0,
+		YIELD_CULTURE	 = 0,
+		TOURISM			 = 0,
+	};
+	local function StoreInBaseYields(sYield:string, fValue:number) kBaseYields[ sYield ] = kBaseYields[ sYield ] + fValue; end
 
 	-- ========== City Income ==========
 
@@ -1040,7 +1028,15 @@ function ViewYieldsPage()
 		lineInstance.Faith:SetText( toPlusMinusNoneString(faith));
 		lineInstance.Science:SetText( toPlusMinusNoneString(science));
 		lineInstance.Culture:SetText( toPlusMinusNoneString(culture));
-
+		--BRS Infixo needed to properly calculate yields from amenities
+		StoreInBaseYields("YIELD_PRODUCTION", production);
+		StoreInBaseYields("YIELD_FOOD", food);
+		StoreInBaseYields("YIELD_GOLD", gold);
+		StoreInBaseYields("YIELD_FAITH", faith);
+		StoreInBaseYields("YIELD_SCIENCE", science);
+		StoreInBaseYields("YIELD_CULTURE", culture);
+		StoreInBaseYields("TOURISM", 0); -- not passed here
+		--BRS end
 		return lineInstance;
 	end
 
@@ -1052,6 +1048,9 @@ function ViewYieldsPage()
 
 		--Great works
 		local greatWorks:table = GetGreatWorksForCity(kCityData.City);
+		
+		-- Infixo reset base for amenities
+		for yield,_ in pairs(kBaseYields) do kBaseYields[ yield ] = 0; end
 
 		-- Current Production
 		local kCurrentProduction:table = kCityData.ProductionQueue[1];
@@ -1090,15 +1089,6 @@ function ViewYieldsPage()
 		tourismCityTotal= tourismCityTotal + kCityData.WorkedTileYields["TOURISM"];
 		
 		if not Controls.CityBuildingsCheckbox:IsSelected() then --BRS
-		--[[ Infixo not used
-		-- Compute tiles worked by setting to total and subtracting all the things...
-		local productionTilesWorked :number = kCityData.ProductionPerTurn;
-		local foodTilesWorked		:number = kCityData.FoodPerTurn;
-		local goldTilesWorked		:number = kCityData.GoldPerTurn;
-		local faithTilesWorked		:number = kCityData.FaithPerTurn;
-		local scienceTilesWorked	:number = kCityData.SciencePerTurn;
-		local cultureTilesWorked	:number = kCityData.CulturePerTurn;
-		--]]
 
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			--District line item
@@ -1164,17 +1154,11 @@ function ViewYieldsPage()
 							elseif (yield.YieldType == "YIELD_FAITH") then
 								pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
 							end
+							-- Infixo How come Great Works don't provide Tourism???
+							StoreInBaseYields(yield.YieldType, yield.YieldChange); --BRS
 						end
 					end
 				end
-				--[[ Infixo not used
-				productionTilesWorked	= productionTilesWorked - kBuilding.ProductionPerTurn;
-				foodTilesWorked			= foodTilesWorked		- kBuilding.FoodPerTurn;
-				goldTilesWorked			= goldTilesWorked		- kBuilding.GoldPerTurn;
-				faithTilesWorked		= faithTilesWorked		- kBuilding.FaithPerTurn;
-				scienceTilesWorked		= scienceTilesWorked	- kBuilding.SciencePerTurn;
-				cultureTilesWorked		= cultureTilesWorked	- kBuilding.CulturePerTurn;
-				--]]
 			end
 		end
 
@@ -1199,6 +1183,8 @@ function ViewYieldsPage()
 						elseif (yield.YieldType == "YIELD_FAITH") then
 							pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
 						end
+						-- Infixo How come Wonders don't provide Tourism???
+						StoreInBaseYields(yield.YieldType, yield.YieldChange); --BRS
 					end
 				end
 
@@ -1221,6 +1207,8 @@ function ViewYieldsPage()
 							elseif (yield.YieldType == "YIELD_FAITH") then
 								pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
 							end
+							-- Infixo How come Great Works don't provide Tourism???
+							StoreInBaseYields(yield.YieldType, yield.YieldChange); --BRS
 						end
 					end
 				end
@@ -1255,6 +1243,7 @@ function ViewYieldsPage()
 								elseif (yieldInfo.YieldType == "YIELD_FAITH") then
 									pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.Amount) );
 								end
+								StoreInBaseYields(yieldInfo.YieldType, yield.Amount); --BRS
 							end
 						end
 					end
@@ -1272,8 +1261,22 @@ function ViewYieldsPage()
 								kCityData.WorkedTileYields["YIELD_CULTURE"],
 								kCityData.WorkedTileYields["YIELD_FAITH"]);
 
-		local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1);
-		--BRS Yields from Amenities
+		-- Additional Yields from Population
+		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
+		local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
+		CreatLineItemInstance(	pCityInstance,
+								Locale.Lookup("LOC_HUD_CITY_POPULATION"),
+								0,
+								0,
+								0,
+								kCityData.Population * populationToScienceScale,
+								kCityData.Population * populationToCultureScale, 
+								0);
+
+		-- Yields from Amenities -- Infixo TOTALLY WRONG amenities are applied to all yields, not only Worked Tiles; also must be the LAST calculated entry
+		--local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1); -- Infixo Buggy formula
+		local iYieldPercent:number = kCityData.HappinessNonFoodYieldModifier/100;
+		--[[
 		CreatLineItemInstance(	pCityInstance,
 								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES"),
 								kCityData.WorkedTileYields["YIELD_PRODUCTION"] * iYieldPercent,
@@ -1282,17 +1285,15 @@ function ViewYieldsPage()
 								kCityData.WorkedTileYields["YIELD_SCIENCE"] * iYieldPercent,
 								kCityData.WorkedTileYields["YIELD_CULTURE"] * iYieldPercent,
 								kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent);
-
-		--BRS Additional Yields from Population (currently only Culture) Infixo why not Science? SCIENCE_PERCENTAGE_YIELD_PER_POP
-		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
+		--]]
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_CITY_POPULATION"),
+								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES"),
+								kBaseYields.YIELD_PRODUCTION * iYieldPercent,
+								kBaseYields.YIELD_GOLD * iYieldPercent,
 								0,
-								0,
-								0,
-								0,
-								kCityData["Population"] * populationToCultureScale, 
-								0);
+								kBaseYields.YIELD_SCIENCE * iYieldPercent,
+								kBaseYields.YIELD_CULTURE * iYieldPercent,
+								kBaseYields.YIELD_FAITH * iYieldPercent);
 
 		pCityInstance.LineItemStack:CalculateSize();
 		pCityInstance.Darken:SetSizeY( pCityInstance.LineItemStack:GetSizeY() + DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y );
@@ -1322,57 +1323,25 @@ function ViewYieldsPage()
 
 	local iTotalBuildingMaintenance :number = 0;
 	for cityName,kCityData in pairs(m_kCityData) do
-		--[[ BRS Infixo not needed any more, Firaxis added District support
-		-- Adds district costs to expenses !!
-		-- don't count city center
-		-- District maintenance isn't factored into the expense screen ( but is factored into maintenance )
-		-- This helps rectify that by adding up all the districts in a city, -1 for city center
-		-- Tooltip shows districts have a -1 gpt cost, not sure if this goes up or if its different for other districts or
-		-- later eras
-
-		local iNumDistricts : number = 0
-
-		-- Can't find/figure out how to find district type, so i'll do it myself
-		-- this goes through the districts and adds the maintenance if not pillaged/being built
-		for _,kBuilding in ipairs(kCityData.BuildingsAndDistricts) do
-			if kBuilding.isBuilt then
-				for i = 1, #GameInfo.Districts do
-					if kBuilding.Name == Locale.Lookup( GameInfo.Districts[i].Name ) then
-						iNumDistricts = iNumDistricts + GameInfo.Districts[i].Maintenance
-						break
-					end
-				end
-			end
-		end
-
-		if ( iNumDistricts > 0 ) then
-			local pBuildingInstance:table = {}
-			ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack )
-			pBuildingInstance.CityName:SetText( Locale.Lookup(cityName) )
-			pBuildingInstance.BuildingName:SetText( "Districts" )
-			pBuildingInstance.Gold:SetText( "-" .. tostring( iNumDistricts ) )
-			iTotalBuildingMaintenance = iTotalBuildingMaintenance - iNumDistricts
-		end
-		--]]
 		for _,kBuilding in ipairs(kCityData.Buildings) do
-			if kBuilding.Maintenance > 0 then
+			--if kBuilding.Maintenance > 0 then -- Infixo show all
 				local pBuildingInstance:table = {};		
 				ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack ) ;		
 				TruncateStringWithTooltip(pBuildingInstance.CityName, 224, Locale.Lookup(cityName)); 
 				pBuildingInstance.BuildingName:SetText( Locale.Lookup(kBuilding.Name) );
-				pBuildingInstance.Gold:SetText( "-"..tostring(kBuilding.Maintenance));
+				pBuildingInstance.Gold:SetText( kBuilding.Maintenance == 0 and "0" or "-"..tostring(kBuilding.Maintenance));
 				iTotalBuildingMaintenance = iTotalBuildingMaintenance - kBuilding.Maintenance;
-			end
+			--end
 		end
 		for _,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do
-			if kDistrict.Maintenance > 0 then
+			--if kDistrict.Maintenance > 0 then -- Infixo show all
 				local pDistrictInstance:table = {};		
 				ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pDistrictInstance, instance.ContentStack ) ;		
 				TruncateStringWithTooltip(pDistrictInstance.CityName, 224, Locale.Lookup(cityName)); 
 				pDistrictInstance.BuildingName:SetText( Locale.Lookup(kDistrict.Name) );
-				pDistrictInstance.Gold:SetText( "-"..tostring(kDistrict.Maintenance));
+				pDistrictInstance.Gold:SetText( kDistrict.Maintenance == 0 and "0" or "-"..tostring(kDistrict.Maintenance));
 				iTotalBuildingMaintenance = iTotalBuildingMaintenance - kDistrict.Maintenance;
-			end
+			--end
 		end
 	end
 	local pBuildingFooterInstance:table = {};		
@@ -1399,60 +1368,18 @@ function ViewYieldsPage()
 			ContextPtr:BuildInstanceForControl( "UnitExpensesEntryInstance", pUnitInstance, instance.ContentStack );
 			pUnitInstance.UnitName:SetText(Locale.Lookup( kUnitData.Name ));
 			pUnitInstance.UnitCount:SetText(kUnitData.Count);
-			pUnitInstance.Gold:SetText("-" .. kUnitData.Maintenance);
+			pUnitInstance.Gold:SetText( kUnitData.Maintenance == 0 and "0" or tostring(kUnitData.Maintenance) );
 			iTotalUnitMaintenance = iTotalUnitMaintenance + kUnitData.Maintenance;
 		end
 
 		-- Footer
 		local pUnitFooterInstance:table = {};		
 		ContextPtr:BuildInstanceForControl( "GoldFooterInstance", pUnitFooterInstance, instance.ContentStack ) ;		
-		pUnitFooterInstance.Gold:SetText("[ICON_Gold]-"..tostring(iTotalUnitMaintenance) );
+		pUnitFooterInstance.Gold:SetText("[ICON_Gold]"..tostring(iTotalUnitMaintenance) );
 
 		SetGroupCollapsePadding(instance, pUnitFooterInstance.Top:GetSizeY() );
 		RealizeGroup( instance );
 	end
-	--[[ BRS Infixo Firaxis added support for unit expenses - is it buggy?
-	instance = NewCollapsibleGroupInstance();
-	instance.RowHeaderButton:SetText( Locale.Lookup( "Unit Expenses" ) );
-
-	local pHeader:table = {};
-	ContextPtr:BuildInstanceForControl( "UnitExpensesHeaderInstance", pHeader, instance.ContentStack ) ;
-
-	local iTotalUnitMaintenance : number = 0	
-	local conscript_levee : number = 0
-
-	iTotalUnitMaintenance = 0
-
-	local numSlots : number = m_kCultureData:GetNumPolicySlots()
-
-	for i = 0, numSlots - 1, 1 do
-		local iPolicyId	:number = m_kCultureData:GetSlotPolicy(i);
-		if iPolicyId ~= -1 then
-			if GameInfo.Policies[iPolicyId].PolicyType == "POLICY_CONSCRIPTION" then
-				conscript_levee = 1
-			elseif GameInfo.Policies[iPolicyId].PolicyType == "POLICY_LEVEE_EN_MASSE" then
-				conscript_levee = 2
-			end
-		end
-	end
-
-	for _, kUnitGroup in pairs( m_kUnitData["Unit_Expenses"] ) do
-		if kUnitGroup.Cost - conscript_levee > 0 then
-			local pUnitInstance:table = {}
-			ContextPtr:BuildInstanceForControl( "UnitExpensesEntryInstance", pUnitInstance, instance.ContentStack )
-			pUnitInstance.UnitName:SetText( kUnitGroup.Name )
-			pUnitInstance.Gold:SetText( "-"..tostring( kUnitGroup.Amount * ( kUnitGroup.Cost - conscript_levee ) ) )
-			iTotalUnitMaintenance = iTotalUnitMaintenance - kUnitGroup.Amount * ( kUnitGroup.Cost - conscript_levee )
-		end
-	end
-
-	local pBuildingFooterInstance : table = {};
-	ContextPtr:BuildInstanceForControl( "GoldFooterInstance", pBuildingFooterInstance, instance.ContentStack ) ;		
-	pBuildingFooterInstance.Gold:SetText( "[ICON_Gold]" .. tostring( iTotalUnitMaintenance ) );
-
-	SetGroupCollapsePadding(instance, pBuildingFooterInstance.Top:GetSizeY() );
-	RealizeGroup( instance );
-	--]]
 
 	-- ========== Diplomatic Deals Expenses ==========
 	
@@ -1524,7 +1451,8 @@ function ViewYieldsPage()
 	Controls.TourismIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income["TOURISM"] ));	
 	Controls.TourismBalance:SetText( m_kCityTotalData.Treasury["TOURISM"] );
 	
-	Controls.CollapseAll:SetHide(false);
+	Controls.CityBuildingsCheckbox:SetHide( false ) --BRS
+	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( false );
 	Controls.BottomYieldTotals:SetSizeY( SIZE_HEIGHT_BOTTOM_YIELDS );
 	Controls.BottomResourceTotals:SetHide( true );
@@ -1634,7 +1562,8 @@ function ViewResourcesPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	Controls.CollapseAll:SetHide(false);
+	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
+	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( false );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomResourceTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
@@ -1770,6 +1699,8 @@ function ViewCityStatusPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
+	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
+	Controls.CollapseAll:SetHide( true );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
@@ -1847,7 +1778,8 @@ end
 function sort_units( type, group, parent )
 
 	local i = 0
-	local unit_group = m_kUnitData["Unit_Report"][group]
+	--local unit_group = m_kUnitData["Unit_Report"][group]
+	local unit_group = m_kUnitDataReport[group]
 	
 	for _, unit in spairs( unit_group.units, function( t, a, b ) return unit_sortFunction( parent.Descend, type, t, a, b ) end ) do
 		i = i + 1
@@ -2058,10 +1990,11 @@ function ViewUnitsPage()
 
 	ResetTabForNewPageContent();
 	
-	for iUnitGroup, kUnitGroup in spairs( m_kUnitData["Unit_Report"], function( t, a, b ) return t[b].ID > t[a].ID end ) do
+	--for iUnitGroup, kUnitGroup in spairs( m_kUnitData["Unit_Report"], function( t, a, b ) return t[b].ID > t[a].ID end ) do
+	for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
 		local instance : table = NewCollapsibleGroupInstance()
 		
-		instance.RowHeaderButton:SetText( kUnitGroup.Name )
+		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) )
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
@@ -2080,7 +2013,7 @@ function ViewUnitsPage()
 		if pHeaderInstance.UnitStrengthButton then pHeaderInstance.UnitStrengthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "strength", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitSpreadButton then pHeaderInstance.UnitSpreadButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "spread", iUnitGroup, instance ) end ) end
 
-		for i, unit in ipairs( kUnitGroup.units ) do			
+		for _,unit in ipairs( kUnitGroup.units ) do			
 			local unitInstance:table = {}
 			table.insert( instance.Children, unitInstance )
 			
@@ -2106,11 +2039,11 @@ function ViewUnitsPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 	
+	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
+	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true )
 	Controls.BottomResourceTotals:SetHide( true )
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88 )
-	
-
 end
 
 -- ===========================================================================
@@ -2176,7 +2109,8 @@ function ViewDealsPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	Controls.CollapseAll:SetHide(true);
+	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
+	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
@@ -2267,8 +2201,8 @@ function Initialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );	
-	AddTabSection( "Current Deals",						ViewDealsPage );
-	AddTabSection( "Units",								ViewUnitsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
 
 	m_tabs.SameSizedTabs(50);
 	m_tabs.CenterAlignTabs(-10);		
@@ -2276,7 +2210,7 @@ function Initialize()
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );
 	ContextPtr:SetInputHandler( OnInputHandler, true );
-	ContextPtr:SetRefreshHandler( function() if bUnits.group then m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCultureData, m_kCurrentDeals = GetData(); sort_units( bUnits.type, bUnits.group, bUnits.parent ); end; end )
+	ContextPtr:SetRefreshHandler( function() if bUnits.group then m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData(); sort_units( bUnits.type, bUnits.group, bUnits.parent ); end; end )
 	
 	Events.UnitPromoted.Add( function() LuaEvents.UnitPanel_HideUnitPromotion(); ContextPtr:RequestRefresh() end )
 	Events.UnitUpgraded.Add( function() ContextPtr:RequestRefresh() end )

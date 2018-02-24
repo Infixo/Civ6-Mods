@@ -129,6 +129,8 @@ function ViewCityStatusPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
+	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
+	Controls.CollapseAll:SetHide( true );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
@@ -274,8 +276,8 @@ function Initialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );	
-	AddTabSection( "Current Deals",						ViewDealsPage );
-	AddTabSection( "Units",								ViewUnitsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
 
 	m_tabs.SameSizedTabs(50);
 	m_tabs.CenterAlignTabs(-10);	

@@ -296,6 +296,7 @@
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																			Offset="1,0"	Size="232,parent">
 					<Label		ID="LineItemName"			Style="ReportRowStart"			String="District" Offset="36,0" />
+					<Image		ID="DistrictIcon" Size="16,16" Anchor="L,C" Offset="1,-1" Texture="Controls_GradientSmall" Hidden="1" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="33,parent" />
@@ -405,8 +406,11 @@
 	</Instance>
 
 	<Instance						Name="BuildingExpensesEntryInstance">
-		<Container				ID="Top"													Offset="8,0" Size="1003,32">
+		<Container				ID="Top"													Offset="8,0" Size="1003,22">
+			<!-- Infixo save some space
 			<Grid																							Offset="-8,-1"	Size="590,parent"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
+			-->
+			<Image																						Offset="4,0"	Size="parent-432,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box															Anchor="C,C"								Size="2,22"	Color="46,70,95,128" />				
 				<Container																			Offset="1,0"	Size="232,parent">
@@ -433,6 +437,69 @@
 		</Container>
 	</Instance>
 
+  <!-- UNIT EXPENSE -->
+  
+  <Instance					Name="UnitExpensesHeaderInstance">
+    <Container			ID="Top"														Offset="8,0" Size="1003,22">
+      <Image																						Offset="4,0"	Size="parent-432,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+      <Stack	StackGrowth="Right" >
+        <Box																													Size="2,parent"	Color="46,70,95,128" />
+        <Container																			Offset="1,0"	Size="232,parent">
+          <Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_UNITNAME" />
+        </Container>
+        <Box																													Size="2,parent"	Color="46,70,95,255" />
+        <Container																										Size="237,parent">
+          <Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_UNITCOUNT" />
+        </Container>
+        <Box																													Size="2,parent"	Color="46,70,95,255" />
+        <Container																										Size="100,parent">
+          <Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_GOLD" />
+        </Container>
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />
+      </Stack>
+    </Container>
+  </Instance>
+
+  <Instance						Name="UnitExpensesEntryInstance">
+    <Container				ID="Top"													Offset="8,0" Size="1003,22"> <!-- default Y is 32, we want to save space (lots of units!) -->
+      <!-- Infixo save some space
+	  <Grid																							Offset="-8,-1"	Size="590,parent"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
+	  -->
+	  <Image																						Offset="4,0"	Size="parent-432,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+      <Stack	StackGrowth="Right" >
+        <Box															Anchor="C,C"								Size="2,22"	Color="46,70,95,128" />
+        <Container																			Offset="1,0"	Size="232,parent">
+          <Label			ID="UnitName"				Style="ReportValueLeftName" />
+        </Container>
+        <Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,255" />
+        <Container																										Size="237,parent">
+          <Label			ID="UnitCount"		Style="ReportValueLeftName" />
+        </Container>
+        <Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,255" />
+        <Container																										Size="100,parent">
+          <Label			ID="Gold"						Style="ReportValueText" Color="Gold" />
+        </Container>
+        <Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																													Size="2,parent"	Color="46,70,95,55" />
+        <Container																										Size="100,parent" />
+        <Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />
+      </Stack>
+    </Container>
+  </Instance>
+
 	<Instance					Name="GoldFooterInstance">
 		<Container			ID="Top"														Offset="8,0" Size="1003,30">
 			<Image																						Offset="4,0"	Size="parent-24,22" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
@@ -458,60 +525,6 @@
 				<Box																						Offset="1,0"	Size="2,22"	Color="46,70,95,128" />
 			</Stack>
 			<Grid					Style="DividerGrid" Offset="-10,22" Size="parent,8" Color="47,63,76,255" />
-		</Container>
-	</Instance>
-
-	<!-- UNIT EXPENSE -->
-
-	<Instance					Name="UnitExpensesHeaderInstance">
-		<Container			ID="Top"														Offset="8,0" Size="1003,22">
-			<Image																						Offset="4,0"	Size="parent-432,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
-			<Stack	StackGrowth="Right" >
-				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																			Offset="2,0"	Size="470,parent">
-					<Label													Style="ReportHeaderText"		String="Unit" />
-				</Container>
-				<Box																													Size="2,parent"	Color="46,70,95,255" />
-				
-				<Container																										Size="100,parent">
-					<Label													Style="ReportHeaderText"		String="LOC_HUD_REPORTS_HEADER_GOLD" />
-				</Container>
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />
-			</Stack>
-		</Container>
-	</Instance>
-
-	<Instance						Name="UnitExpensesEntryInstance">
-		<Container				ID="Top"													Offset="8,0" Size="1003,32">
-			<Grid																							Offset="-8,-1"	Size="590,parent"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
-			<Stack	StackGrowth="Right" >
-				<Box															Anchor="C,C"								Size="2,22"	Color="46,70,95,128" />				
-				<Container																			Offset="2,0"	Size="470,parent">
-					<Label			ID="UnitName"				Style="ReportValueText"	String="UnitName" />
-				</Container>
-				<Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,255" />
-				
-				<Container																										Size="100,parent">
-					<Label			ID="Gold"						Style="ReportValueText"	String="0"  Color="Gold" />
-				</Container>
-				<Box															Anchor="C,C"								Size="2,19"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																													Size="2,parent"	Color="46,70,95,55" />
-				<Container																										Size="100,parent" />
-				<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />
-			</Stack>
 		</Container>
 	</Instance>
 
