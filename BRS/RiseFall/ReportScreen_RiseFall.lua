@@ -1,4 +1,4 @@
-print("Loading ReportScreen_BRS.lua from Better Report Screen");
+print("Loading ReportScreen_RiseFall.lua from Better Report Screen");
 --[[
 -- Copyright (c) 2017 Firaxis Games
 --]]
@@ -282,4 +282,4 @@ function Initialize()
 end
 Initialize();
 
-print("OK loaded ReportScreen_BRS.lua from Better Report Screen");
+print("OK loaded ReportScreen_RiseFall.lua from Better Report Screen");
