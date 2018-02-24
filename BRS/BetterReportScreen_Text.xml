@@ -6,18 +6,31 @@
 
 <BaseGameText>
 
+	<!-- Tab names -->
 	<Row Tag="LOC_HUD_REPORTS_TAB_DEALS">
 		<Text>Current Deals</Text>
 	</Row>
 	<Row Tag="LOC_HUD_REPORTS_TAB_UNITS">
 		<Text>Units</Text>
 	</Row>
+	<!-- Building expenses -->
 	<Row Tag="LOC_HUD_REPORTS_HEADER_BUILDINGNAME">
 		<Text>Building/District Name</Text>
 	</Row>
 	<Row Tag="LOC_HUD_REPORTS_HEADER_BUILDINGCOUNT">
 		<Text>Number of Buildings/Districts</Text>
 	</Row>
+	<!-- Resource checkboxes -->
+	<Row Tag="LOC_BRS_RESOURCE_CHECKBOX_STRATEGIC">
+		<Text>Strategic</Text>
+	</Row>
+	<Row Tag="LOC_BRS_RESOURCE_CHECKBOX_LUXURY">
+		<Text>Luxury</Text>
+	</Row>
+	<Row Tag="LOC_BRS_RESOURCE_CHECKBOX_BONUS">
+		<Text>Bonus</Text>
+	</Row>
+	<!-- Unit groups -->
 	<Row Tag="LOC_BRS_UNITS_GROUP_AIR">
 		<Text>Military - Air</Text>
 	</Row>

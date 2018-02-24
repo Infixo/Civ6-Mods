@@ -88,6 +88,9 @@ local m_isCollapsing		:boolean = true;
 local m_kCurrentDeals	:table = nil;
 local m_kUnitDataReport	:table = nil;
 -- !!
+-- Remember last tab variable: ARISTOS
+local m_kCurrentTab = 1;
+-- !!
 
 
 -- ===========================================================================
@@ -122,7 +125,9 @@ function Open()
 	-- m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData = GetData();
 	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
 	
-	m_tabs.SelectTab( 1 );
+	-- To remember the last opened tab when the report is re-opened: ARISTOS
+	--m_tabs.SelectTab( 1 );
+	m_tabs.SelectTab( m_kCurrentTab );
 end
 
 -- ===========================================================================
@@ -1491,6 +1496,8 @@ function ViewYieldsPage()
 	Controls.BottomYieldTotals:SetSizeY( SIZE_HEIGHT_BOTTOM_YIELDS );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomYieldTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 1;
 end
 
 
@@ -1510,6 +1517,11 @@ function ViewResourcesPage()
 
 	for eResourceType,kSingleResourceData in pairs(m_kResourceData) do
 		
+		--!!ARISTOS: Only display list of selected resource types, according to checkboxes
+		if (kSingleResourceData.IsStrategic and Controls.StrategicCheckbox:IsSelected()) or
+			(kSingleResourceData.IsLuxury and Controls.LuxuryCheckbox:IsSelected()) or
+			(kSingleResourceData.IsBonus and Controls.BonusCheckbox:IsSelected()) then
+
 		local instance:table = NewCollapsibleGroupInstance();	
 
 		local kResource :table = GameInfo.Resources[eResourceType];
@@ -1554,6 +1566,11 @@ function ViewResourcesPage()
 			pFooterInstance.AmenitiesContainer:SetHide(true);
 		end
 
+		SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
+		RealizeGroup( instance ); --BRS moved into if
+
+		end -- ARISTOS checkboxes
+
 		if kSingleResourceData.IsStrategic then
 			--strategicResources = strategicResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );
 			table.insert(kStrategics, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
@@ -1564,8 +1581,8 @@ function ViewResourcesPage()
 			table.insert(kBonuses, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
 		end
 
-		SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() );
-		RealizeGroup( instance );
+		--SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
+		--RealizeGroup( instance ); --BRS moved into if
 	end
 	
 	m_strategicResourcesIM:ResetInstances();
@@ -1602,6 +1619,8 @@ function ViewResourcesPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( false );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomResourceTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 2;
 end
 
 -- ===========================================================================
@@ -1739,6 +1758,8 @@ function ViewCityStatusPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 3;
 end
 
 -- ===========================================================================
@@ -2082,6 +2103,8 @@ function ViewUnitsPage()
 	Controls.BottomYieldTotals:SetHide( true )
 	Controls.BottomResourceTotals:SetHide( true )
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88 )
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 5;
 end
 
 -- ===========================================================================
@@ -2152,6 +2175,8 @@ function ViewDealsPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 4;
 end
 
 -- ===========================================================================
@@ -2229,6 +2254,27 @@ function OnToggleCityBuildings() --BRS
 	ViewYieldsPage()
 end
 
+-- ===========================================================================
+--ARISTOS: Toggles for different resources in Resources tab
+function OnToggleStrategic()
+	local isChecked = Controls.StrategicCheckbox:IsSelected();
+	Controls.StrategicCheckbox:SetSelected( not isChecked );
+	ViewResourcesPage();
+end
+
+function OnToggleLuxury()
+	local isChecked = Controls.LuxuryCheckbox:IsSelected();
+	Controls.LuxuryCheckbox:SetSelected( not isChecked );
+	ViewResourcesPage();
+end
+
+function OnToggleBonus()
+	local isChecked = Controls.BonusCheckbox:IsSelected();
+	Controls.BonusCheckbox:SetSelected( not isChecked );
+	ViewResourcesPage();
+end
+--ARISTOS: End resources toggle
+
 function Initialize()
 
 	Resize();	
@@ -2261,6 +2307,19 @@ function Initialize()
 	Controls.CityBuildingsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleCityBuildings )
 	Controls.CityBuildingsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
 	
+	--ARISTOS: Resources toggle
+	Controls.LuxuryCheckbox:RegisterCallback( Mouse.eLClick, OnToggleLuxury );
+	Controls.LuxuryCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.LuxuryCheckbox:SetSelected( true );
+
+	Controls.StrategicCheckbox:RegisterCallback( Mouse.eLClick, OnToggleStrategic );
+	Controls.StrategicCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.StrategicCheckbox:SetSelected( true );
+
+	Controls.BonusCheckbox:RegisterCallback( Mouse.eLClick, OnToggleBonus );
+	Controls.BonusCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.BonusCheckbox:SetSelected( true );
+
 	-- Events
 	LuaEvents.TopPanel_OpenReportsScreen.Add( OnTopOpenReportsScreen );
 	LuaEvents.TopPanel_CloseReportsScreen.Add( OnTopCloseReportsScreen );
