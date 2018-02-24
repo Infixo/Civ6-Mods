@@ -1,0 +1,16 @@
+﻿<!-- Created 2018-02-24 by Infixo -->
+<!-- Modinfo specific LOC: add manually to .modinfo -->
+  <LocalizedText>
+    <Text id="LOC_RBU_MOD_NAME">
+      <en_US>Real Building Upgrades</en_US>
+      <fr_FR>De vraies Améliorations des Bâtiments</fr_FR>
+	</Text>
+    <Text id="LOC_RBU_MOD_DESCRIPTION">
+      <en_US>All standard buildings can be upgraded. Level 2 buildings receive also new yields and Level 3 buildings additional unique features.[NEWLINE][NEWLINE]Summer 2017 Update compatible. Version 1.5.</en_US>
+      <fr_FR>Tout les bâtiments standards peuvent être améliorés. les bâtiments de niveau 2 et 3 ont de meilleurs rendements et des capacitées supplémentaires.</fr_FR>
+	</Text>
+    <Text id="LOC_RBU_MOD_TEASER">
+      <en_US>All standard buildings can be upgraded. Level 2 buildings receive also new yields and Level 3 buildings additional unique features.</en_US>
+      <fr_FR>Tout les bâtiments standards peuvent être améliorés. les bâtiments de niveau 2 et 3 ont de meilleurs rendements et des capacitées supplémentaires.</fr_FR>
+	</Text>
+  </LocalizedText>

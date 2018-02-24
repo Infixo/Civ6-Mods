@@ -18,7 +18,7 @@
     <RootNamespace>Real Building Upgrades</RootNamespace>
     <InGameActionData><![CDATA[<InGameActions><UpdateIcons id="RealBuildingUpgrades_Icons"><File>Icons/RealBuildingUpgrades_Icons.xml</File></UpdateIcons><UpdateDatabase id="RealBuildingUpgrades_Database"><File>RealBuildingUpgrades.sql</File></UpdateDatabase><UpdateText id="RealBuildingUpgrades_Text"><File>Text/RealBuildingUpgrades_Text.xml</File><File>Text/RealBuildingUpgrades_Text_fr_FR.xml</File></UpdateText><ImportFiles id="RealBuildingUpgrades_Imports"><File>Icons/RBU_Buildings32.dds</File><File>Icons/RBU_Buildings38.dds</File><File>Icons/RBU_Buildings50.dds</File><File>Icons/RBU_Buildings80.dds</File><File>Icons/RBU_Buildings128.dds</File><File>Icons/RBU_Buildings256.dds</File></ImportFiles></InGameActions>]]></InGameActionData>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
-    <FrontEndActionData><![CDATA[<FrontEndActions><UpdateText id="RealBuildingUpgrades_FrontEnd"><File>Text/RealBuildingUpgrades_FrontEnd.xml</File></UpdateText></FrontEndActions>]]></FrontEndActionData>
+    <FrontEndActionData><![CDATA[<FrontEndActions />]]></FrontEndActionData>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
     <OutputPath>.</OutputPath>
@@ -55,9 +55,12 @@
     <Content Include="RealBuildingUpgrades.sql">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Text\RealBuildingUpgrades_FrontEnd.xml">
+    <None Include="Text\modinfo.xml">
       <SubType>Content</SubType>
-    </Content>
+    </None>
+    <None Include="Text\RealBuildingUpgrades_FrontEnd.xml">
+      <SubType>Content</SubType>
+    </None>
     <Content Include="Text\RealBuildingUpgrades_Text.xml">
       <SubType>Content</SubType>
     </Content>
