@@ -134,7 +134,11 @@ function ViewCityStatusPage()
 		table.insert( instance.Children, pCityInstance )
 		
 		city_fields( kCityData, pCityInstance )
-			
+
+		-- go to the city after clicking
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
+
 	end
 
 	Controls.Stack:CalculateSize();
@@ -144,6 +148,8 @@ function ViewCityStatusPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 3;
 end
 
 function sort_cities( type, instance )
@@ -155,6 +161,10 @@ function sort_cities( type, instance )
 		local cityInstance = instance.Children[i]
 		
 		city_fields( kCityData, cityInstance )
+
+		-- go to the city after clicking
+		cityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		cityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 	end
 	
 end

@@ -68,6 +68,13 @@
 	<Row Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS">
 		<Text>Religious</Text>
 	</Row>
+	<!-- Tooltips -->
+	<Row Tag="LOC_BRS_TOOLTIP_GOTOCITY">
+		<Text>Go to this City</Text>
+	</Row>
+	<Row Tag="LOC_BRS_TOOLTIP_LOOKATUNIT">
+		<Text>View this unit on the map</Text>
+	</Row>
 	
 </BaseGameText>
 

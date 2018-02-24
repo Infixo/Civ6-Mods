@@ -248,7 +248,11 @@
 		<Grid						ID="Top"														Offset="0,-1"	Size="1003,100"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" AutoSize="V" >
 			<Stack																						Offset="8,6"	StackGrowth="Right">
 				<Box																													Size="2,40"	Color="46,70,95,128" />
-				<Container																			Offset="1,0"	Size="232,40" />
+				<Container																			Offset="1,0"	Size="232,40" >
+					<GridButton ID="GoToCityButton" Anchor="C,T" Size="parent-2,32" Style="ButtonLightWeightSquareGrid" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY">
+						<Label ID="CityName" Anchor="L,C" Offset="10,0" Style="ReportCityName" Color="Science" String="$CityName$" />
+					</GridButton>
+				</Container>
 				<Box																													Size="2,40"	Color="46,70,95,255" />
 				<Container																										Size="33,40" />
 				<Box																													Size="2,40"	Color="46,70,95,255" />
@@ -281,7 +285,6 @@
 				</Container>
 				<Box																											Offset="1,0"	Size="2,40"	Color="46,70,95,128" />
 			</Stack>
-			<Label					ID="CityName"																Offset="11,15"	Style="ReportCityName"	String="$CityName$" />
 			<Stack					ID="LineItemStack"													Offset="8,39"		StackGrowth="Bottom" />
 			<Box						ID="Darken"										Anchor="C,T"	Offset="0,39"		Size="parent-8,10"			Color="0,15,30,60"  />
 			<Grid						ID="CityBannerBackground"			Anchor="L,T"  Offset="245,4"	Size="40,34"						Color="255,255,255,150" SliceStart="10,0" SliceTextureSize="40,34" SliceCorner="25,17" Texture="Banner_BannerBacking">
@@ -767,7 +770,9 @@
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																			Offset="1,0"	Size="150,parent">
-					<Label				ID="CityName"	Color="Science"														Style="ReportValueText"	String="$CityName$" />
+					<GridButton ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
+						<Label ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
+					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="65,parent">
@@ -1184,7 +1189,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="73,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1220,7 +1225,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="401,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1255,7 +1260,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="26,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>				
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1291,7 +1296,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="251,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1331,7 +1336,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="300,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1371,7 +1376,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>

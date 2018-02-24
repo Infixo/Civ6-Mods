@@ -135,12 +135,12 @@
 					<GridButton ID="StrategicCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_STRATEGIC" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="StrategicResources"		Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>				
-				<Grid			ID="BonusGrid"													Offset="510,10"	Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">-->
+				<Grid			ID="BonusGrid"													Offset="510,10"	Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_BONUSES" />-->
 					<GridButton ID="BonusCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_BONUS" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="BonusResources"				Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>
-				<Grid			ID="LuxuryGrid"													Offset="5,55"		Size="parent-10,40"					Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">-->
+				<Grid			ID="LuxuryGrid"													Offset="5,55"		Size="parent-10,40"					Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_LUXURIES" />-->
 					<GridButton ID="LuxuryCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_LUXURY" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="LuxuryResources"			Anchor="L,C"	Offset="150,-9"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
@@ -248,7 +248,11 @@
 		<Grid						ID="Top"														Offset="0,-1"	Size="1003,100"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" AutoSize="V" >
 			<Stack																						Offset="8,6"	StackGrowth="Right">
 				<Box																													Size="2,40"	Color="46,70,95,128" />
-				<Container																			Offset="1,0"	Size="232,40" />
+				<Container																			Offset="1,0"	Size="232,40" >
+					<GridButton ID="GoToCityButton" Anchor="C,T" Size="parent-2,32" Style="ButtonLightWeightSquareGrid" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY">
+						<Label ID="CityName" Anchor="L,C" Offset="10,0" Style="ReportCityName" Color="Science" String="$CityName$" />
+					</GridButton>
+				</Container>
 				<Box																													Size="2,40"	Color="46,70,95,255" />
 				<Container																										Size="33,40" />
 				<Box																													Size="2,40"	Color="46,70,95,255" />
@@ -281,7 +285,6 @@
 				</Container>
 				<Box																											Offset="1,0"	Size="2,40"	Color="46,70,95,128" />
 			</Stack>
-			<Label					ID="CityName"																Offset="11,15"	Style="ReportCityName"	String="$CityName$" />
 			<Stack					ID="LineItemStack"													Offset="8,39"		StackGrowth="Bottom" />
 			<Box						ID="Darken"										Anchor="C,T"	Offset="0,39"		Size="parent-8,10"			Color="0,15,30,60"  />
 			<Grid						ID="CityBannerBackground"			Anchor="L,T"  Offset="245,4"	Size="40,34"						Color="255,255,255,150" SliceStart="10,0" SliceTextureSize="40,34" SliceCorner="25,17" Texture="Banner_BannerBacking">
@@ -746,7 +749,9 @@
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																			Offset="1,0"	Size="136,parent">
-					<Label				ID="CityName"																	Style="ReportValueText"	String="$CityName$" />
+					<GridButton ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
+						<Label ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
+					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="100,parent">
@@ -1157,7 +1162,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="73,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1193,7 +1198,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="401,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1228,7 +1233,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="26,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>				
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1264,7 +1269,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="251,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1304,7 +1309,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="300,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1344,7 +1349,7 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="View this unit on the map."/>
+					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>

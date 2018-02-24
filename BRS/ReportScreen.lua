@@ -89,7 +89,7 @@ local m_kCurrentDeals	:table = nil;
 local m_kUnitDataReport	:table = nil;
 -- !!
 -- Remember last tab variable: ARISTOS
-local m_kCurrentTab = 1;
+m_kCurrentTab = 1;
 -- !!
 
 
@@ -102,6 +102,7 @@ function Close()
 	end
 
 	UIManager:DequeuePopup(ContextPtr);
+	--print("Closing... current tab is:", m_kCurrentTab);
 end
 
 
@@ -974,6 +975,9 @@ function ViewYieldsPage()
 		
 		-- Infixo reset base for amenities
 		for yield,_ in pairs(kBaseYields) do kBaseYields[ yield ] = 0; end
+		-- go to the city after clicking
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 
 		-- Current Production
 		local kCurrentProduction:table = kCityData.ProductionQueue[1];
@@ -1522,6 +1526,10 @@ function sort_cities( type, instance ) --BRS helper
 		local cityInstance = instance.Children[i]
 		
 		city_fields( kCityData, cityInstance )
+		
+		-- go to the city after clicking
+		cityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		cityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 	end
 	
 end
@@ -1601,7 +1609,11 @@ function ViewCityStatusPage()
 		table.insert( instance.Children, pCityInstance )
 
 		city_fields( kCityData, pCityInstance )
-			
+
+		-- go to the city after clicking
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
+
 	end
 
 	Controls.Stack:CalculateSize();
