@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Name>LOC_RBU_MOD_NAME</Name>
+    <Guid>a768ead1-32b9-4da5-9b05-eb966364670b</Guid>
+    <ProjectGuid>1a3ca0a0-a62f-4f96-a7ad-dd9625927847</ProjectGuid>
+    <ModVersion>1</ModVersion>
+    <Teaser>LOC_RBU_MOD_TEASER</Teaser>
+    <Description>LOC_RBU_MOD_DESCRIPTION</Description>
+    <Authors>Infixo</Authors>
+    <SpecialThanks>Godzicraft (French tr.)</SpecialThanks>
+    <AffectsSavedGames>true</AffectsSavedGames>
+    <SupportsSinglePlayer>true</SupportsSinglePlayer>
+    <SupportsMultiplayer>true</SupportsMultiplayer>
+    <SupportsHotSeat>true</SupportsHotSeat>
+    <AssemblyName>Real Building Upgrades</AssemblyName>
+    <RootNamespace>Real Building Upgrades</RootNamespace>
+    <InGameActionData><![CDATA[<InGameActions><UpdateIcons id="RealBuildingUpgrades_Icons"><File>Icons/RealBuildingUpgrades_Icons.xml</File></UpdateIcons><UpdateDatabase id="RealBuildingUpgrades_Database"><File>RealBuildingUpgrades.sql</File></UpdateDatabase><UpdateText id="RealBuildingUpgrades_Text"><File>Text/RealBuildingUpgrades_Text.xml</File><File>Text/RealBuildingUpgrades_Text_fr_FR.xml</File></UpdateText><ImportFiles id="RealBuildingUpgrades_Imports"><File>Icons/RBU_Buildings32.dds</File><File>Icons/RBU_Buildings38.dds</File><File>Icons/RBU_Buildings50.dds</File><File>Icons/RBU_Buildings80.dds</File><File>Icons/RBU_Buildings128.dds</File><File>Icons/RBU_Buildings256.dds</File></ImportFiles></InGameActions>]]></InGameActionData>
+    <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
+    <FrontEndActionData><![CDATA[<FrontEndActions><UpdateText id="RealBuildingUpgrades_FrontEnd"><File>Text/RealBuildingUpgrades_FrontEnd.xml</File></UpdateText></FrontEndActions>]]></FrontEndActionData>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Mod.Art.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Icons" />
+    <Folder Include="Text" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icons\RealBuildingUpgrades_Icons.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RBU_Buildings128.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RBU_Buildings256.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RBU_Buildings32.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RBU_Buildings38.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RBU_Buildings50.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RBU_Buildings80.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="RealBuildingUpgrades.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Text\RealBuildingUpgrades_FrontEnd.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Text\RealBuildingUpgrades_Text.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Text\RealBuildingUpgrades_Text_fr_FR.xml">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)Civ6.targets" />
+</Project>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+	<BaseGameText>
+	
+		<!-- NAMES -->
+
+		<Row Tag="LOC_BUILDING_AIRPORT_UPGRADE_NAME">
+			<Text>Airport Upgrade</Text>
+			<Gender>Masculine:an</Gender>
+		</Row>
+		<Row Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_NAME">
+			<Text>Amphitheater Upgrade</Text>
+			<Gender>Masculine:an</Gender>
+		</Row>
+		<Row Tag="LOC_BUILDING_ARENA_UPGRADE_NAME">
+			<Text>Arena Upgrade</Text>
+			<Gender>Masculine:an</Gender>
+		</Row>
+		<Row Tag="LOC_BUILDING_ARMORY_UPGRADE_NAME">
+			<Text>Armory Upgrade</Text>
+			<Gender>Masculine:an</Gender>
+		</Row>
+		<Row Tag="LOC_BUILDING_BANK_UPGRADE_NAME">
+			<Text>Bank Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_BARRACKS_UPGRADE_NAME">
+			<Text>Barracks Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_BROADCAST_CENTER_UPGRADE_NAME">
+			<Text>Broadcast Center Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_CASTLE_UPGRADE_NAME">
+			<Text>Medieval Walls Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_CATHEDRAL_UPGRADE_NAME">
+			<Text>Cathedral Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ELECTRONICS_FACTORY_UPGRADE_NAME">
+			<Text>Electronics Factory Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FACTORY_UPGRADE_NAME">
+			<Text>Factory Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FILM_STUDIO_UPGRADE_NAME">
+			<Text>Film Studio Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GRANARY_UPGRADE_NAME">
+			<Text>Granary Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GURDWARA_UPGRADE_NAME">
+			<Text>Gurdwara Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_HANGAR_UPGRADE_NAME">
+			<Text>Hangar Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_LIBRARY_UPGRADE_NAME">
+			<Text>Library Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_NAME">
+			<Text>Lighthouse Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MADRASA_UPGRADE_NAME">
+			<Text>Madrasa Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MARKET_UPGRADE_NAME">
+			<Text>Market Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MEETING_HOUSE_UPGRADE_NAME">
+			<Text>Meeting House Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MILITARY_ACADEMY_UPGRADE_NAME">
+			<Text>Military Academy Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MONUMENT_UPGRADE_NAME">
+			<Text>Monument Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MOSQUE_UPGRADE_NAME">
+			<Text>Mosque Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_NAME">
+			<Text>Art Museum Upgrade</Text>
+			<Gender>Masculine:an</Gender>
+		</Row>
+		<Row Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_NAME">
+			<Text>Archaeological Museum Upgrade</Text>
+			<Gender>Masculine:an</Gender>
+		</Row>
+		<Row Tag="LOC_BUILDING_PAGODA_UPGRADE_NAME">
+			<Text>Pagoda Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_PALACE_UPGRADE_NAME">
+			<Text>Palace Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_NAME">
+			<Text>Power Plant Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_RESEARCH_LAB_UPGRADE_NAME">
+			<Text>Research Lab Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SEAPORT_UPGRADE_NAME">
+			<Text>Seaport Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SEWER_UPGRADE_NAME">
+			<Text>Sewer Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SHIPYARD_UPGRADE_NAME">
+			<Text>Shipyard Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SHRINE_UPGRADE_NAME">
+			<Text>Shrine Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STABLE_UPGRADE_NAME">
+			<Text>Stable Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STADIUM_UPGRADE_NAME">
+			<Text>Stadium Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STAR_FORT_UPGRADE_NAME">
+			<Text>Renaissance Walls Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STAVE_CHURCH_UPGRADE_NAME">
+			<Text>Stave Church Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_NAME">
+			<Text>Stock Exchange Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SYNAGOGUE_UPGRADE_NAME">
+			<Text>Synagogue Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_TEMPLE_UPGRADE_NAME">
+			<Text>Temple Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_TLACHTLI_UPGRADE_NAME">
+			<Text>Tlachtli Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_NAME">
+			<Text>University Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WALLS_UPGRADE_NAME">
+			<Text>Ancient Walls Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WAT_UPGRADE_NAME">
+			<Text>Wat Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WATER_MILL_UPGRADE_NAME">
+			<Text>Water Mill Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WORKSHOP_UPGRADE_NAME">
+			<Text>Workshop Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ZOO_UPGRADE_NAME">
+			<Text>Zoo Upgrade</Text>
+		</Row>
+
+		<!-- DESCRIPTIONS -->
+		
+		<Row Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Amphitheater is able to accommodate more spectators.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_AIRPORT_UPGRADE_DESCRIPTION">
+			<Text>Additional +1 air unit slot in Aerodrome district.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ARENA_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Arena allows to host gladiator fights.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ARMORY_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Armory allows for social activities other than wine drinking.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_BANK_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Bank allows for funding scientific research.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_BARRACKS_UPGRADE_DESCRIPTION">
+			<Text>+1 [ICON_Production] Production from Camps.[NEWLINE][NEWLINE]May not be built in an Encampment district that already has a Stable.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_BROADCAST_CENTER_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Broadcast Center allows for 24/7 transmissions.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_CASTLE_UPGRADE_DESCRIPTION">
+			<Text>Further increases the strength of your outer defenses.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_CATHEDRAL_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ELECTRONICS_FACTORY_UPGRADE_DESCRIPTION">
+			<Text>An upgrade building unique to Japan. +2 [ICON_Production] Production to all cities within 6 tiles. After researching the Electricity technology this upgrade provides an additional +2 [ICON_Culture] Culture to its city.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FACTORY_UPGRADE_DESCRIPTION">
+			<Text>Bonus is extended to all cities within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FILM_STUDIO_UPGRADE_DESCRIPTION"> 
+			<Text>An upgrade building unique to America. +2 [ICON_Culture] Culture and + 2 [ICON_Gold] to all cities within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GRANARY_UPGRADE_DESCRIPTION">
+			<Text>An upgrade for Granary increases storage space.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GURDWARA_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_HANGAR_UPGRADE_DESCRIPTION">
+			<Text>Additional +1 air unit slot in Aerodrome district.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION">
+			<Text>An upgrade to Library allows to store more clay plates, parchment scrolls, and books.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_DESCRIPTION">
+			<Text>The increased range of out Lighthouse allows Fishing Boats to sail further.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION">
+			<Text>An upgrade building unique to Arabia. Recent renovation allows for the education of (horrors) women.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Market hosts more traders and shopkeepers.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MEETING_HOUSE_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MILITARY_ACADEMY_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Military Academy includes campus for more students.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MONUMENT_UPGRADE_DESCRIPTION">
+			<Text>We can finally write down on the Monument the name of our magnificent leader - you!</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MOSQUE_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_DESCRIPTION">
+			<Text>+1 [ICON_Gold] Gold for each [ICON_GreatWork_Landscape] non-religious Great Work of Art.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_DESCRIPTION">
+			<Text>+1 [ICON_Gold] Gold for each [ICON_GreatWork_Artifact] non-religious Artifact.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_PAGODA_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_PALACE_UPGRADE_DESCRIPTION">
+			<Text>The improved Palace is finally worthy of its main resident - you!</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_DESCRIPTION">
+			<Text>Bonus extends to each city center within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_RESEARCH_LAB_UPGRADE_DESCRIPTION">
+			<Text>Bonus extends to each city center within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SEAPORT_UPGRADE_DESCRIPTION">
+			<Text>Recent upgrades in Seaport infrastructure increased its capacity.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SEWER_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Sewer serves more citizens.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SHRINE_UPGRADE_DESCRIPTION">
+			<Text>A renovated Shrine has attracted additional followers.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STABLE_UPGRADE_DESCRIPTION">
+			<Text>+1 [ICON_Production] Production from Pastures.[NEWLINE][NEWLINE]May not be built in an Encampment district that already has a Barracks.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SHIPYARD_UPGRADE_DESCRIPTION">
+			<Text>An ungraded Shipyard services also Fishing Boats allowing for additional [ICON_Food] Food surplus.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STADIUM_UPGRADE_DESCRIPTION">
+			<Text>All [ICON_Tourism] Tourism yields are increased +10%.[NEWLINE][NEWLINE]Bonus extends to each city center within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STAR_FORT_UPGRADE_DESCRIPTION">
+			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STAVE_CHURCH_UPGRADE_DESCRIPTION">
+			<Text>An upgrade building unique to Norway. +1 [ICON_Faith] Faith from Lumber Mills.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_DESCRIPTION">
+			<Text>Bonus extends to each city center within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SYNAGOGUE_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_TEMPLE_UPGRADE_DESCRIPTION">
+			<Text>A renovation of the Temple is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_TLACHTLI_UPGRADE_DESCRIPTION">
+			<Text>An upgrade building unique to the Aztecs. Provides +1 [ICON_Faith] Faith and +1 [ICON_Culture] Culture.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION">
+			<Text>An upgraded University allows for researching non-technical sciences.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WALLS_UPGRADE_DESCRIPTION">
+			<Text>Increases the strength of your Walls by half.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WATER_MILL_UPGRADE_DESCRIPTION">
+			<Text>+1 [ICON_Food] Food from Plantations.[NEWLINE][NEWLINE]City must be adjacent to a River.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WAT_UPGRADE_DESCRIPTION">
+			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_WORKSHOP_UPGRADE_DESCRIPTION">
+			<Text>+1 [ICON_Production] Production from Quarries.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ZOO_UPGRADE_DESCRIPTION">
+			<Text>An upgraded Zoo exhibits new animal species.[NEWLINE][NEWLINE]Bonus extends to each city center within 6 tiles.</Text>
+		</Row>
+	</BaseGameText>
+</GameData>
