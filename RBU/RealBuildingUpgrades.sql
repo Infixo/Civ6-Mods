@@ -5,7 +5,11 @@
 -- Aug 2nd, 2017 - Version 1.3, fix for summer patch
 -- Sep 10th, 2017 - Version 1.3.1, tech fix for column names
 -- Sep 18th, 2017 - Version 1.4, fix for Aztecs DLC
+-- Nov 13th, 2017 - Version 1.5, fix for Apadana crash
 --------------------------------------------------------------
+
+-- Version 1.5 Fix for Apadana crash
+UPDATE Buildings SET AdjacentCapital = 0 WHERE BuildingType = 'BUILDING_APADANA';
 
 -- first, some balance fixes
 -- Research Lab 5->6, so later Upgrade can get 3; cost increased proportionally by 15%
