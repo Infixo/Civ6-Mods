@@ -1,3 +1,4 @@
+print("Loading UnitPromotionPopup.lua from Better Report Screen");
 -- ===========================================================================
 --	Popups when a Tech or Civic are completed
 -- ===========================================================================
@@ -33,7 +34,9 @@ local SIZE_BORDER_Y				:number = 60;
 --	Closes the immediate popup, will raise more if queued.
 -- ===========================================================================
 function Close()
-	UIManager:DequeuePopup( ContextPtr );
+	if UIManager:IsInPopupQueue(ContextPtr) then
+		UIManager:DequeuePopup( ContextPtr );
+	end
 end
 
 -- ===========================================================================
@@ -59,13 +62,28 @@ function OnLocalPlayerTurnEnd()
 	end
 end
 
-function OnPromoteUnit(ePromotion)
+function OnPromoteUnit(ePromotion, unitID)
+	if Game.GetLocalPlayer() == -1 then
+		return;
+	end
+
+	local pLocalPlayer:table = Players[Game.GetLocalPlayer()];
+	if pLocalPlayer then
+		local pUnit:table = pLocalPlayer:GetUnits():FindID(unitID);
+		if (pUnit ~= nil) then
+			local tParameters = {};
+			tParameters[UnitCommandTypes.PARAM_PROMOTION_TYPE] = ePromotion;
+			UnitManager.RequestCommand( pUnit, UnitCommandTypes.PROMOTE, tParameters );
+		end
+	end
+	--[[ Infixo old function
 	local pSelectedUnit = UI.GetHeadSelectedUnit();
 	if (pSelectedUnit ~= nil) then
 		local tParameters = {};
 		tParameters[UnitCommandTypes.PARAM_PROMOTION_TYPE] = ePromotion;
 		UnitManager.RequestCommand( pSelectedUnit, UnitCommandTypes.PROMOTE, tParameters );
 	end
+	--]]
 end
 
 function OnPromoteUnitPopup()
@@ -281,6 +299,7 @@ function OnPromoteUnitPopup()
 					local ePromotion = item;
 					promotionInstance.PromotionSlot:RegisterCallback( Mouse.eLClick, OnPromoteUnit );
 					promotionInstance.PromotionSlot:SetVoid1( ePromotion );
+					promotionInstance.PromotionSlot:SetVoid2( pUnit:GetID() );
 				end
 			end
 
@@ -526,13 +545,36 @@ end
 
 
 -- ===========================================================================
-function Initialize()	
+
+function OnInputHandler( pInputStruct:table )
+	local uiMsg = pInputStruct:GetMessageType();
+	if uiMsg == KeyEvents.KeyUp then
+		if pInputStruct:GetKey() == Keys.VK_ESCAPE then
+			OnClose();
+			return true;
+		end
+	end
+	return false;
+end
+
+-- ===========================================================================
+function OnCitySelectionChanged( ownerPlayerID:number, cityID:number, i:number, j:number, k:number, isSelected:boolean, isEditable:boolean)
+	OnClose();
+end
+
+-- ===========================================================================
+function Initialize()
+	ContextPtr:SetInputHandler( OnInputHandler, true );
 	-- Controls Events
 	Controls.CloseButton:RegisterCallback( eLClick, OnClose );
 	ContextPtr:SetInitHandler( OnInit );
+
+	Events.CitySelectionChanged.Add( OnCitySelectionChanged );
 
 	LuaEvents.UnitPanel_PromoteUnit.Add(OnPromoteUnitPopup);
 	LuaEvents.UnitPanel_HideUnitPromotion.Add(OnClose);
 	LuaEvents.Report_PromoteUnit.Add(function( unit ) OnPromoteUnitPopupReport( unit ) end);
 end
 Initialize();
+
+print("OK loaded UnitPromotionPopup.lua from Better Report Screen");

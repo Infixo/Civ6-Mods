@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod id="4becac48-4a0c-379a-5dd1-33d0c65a471d" version="1.7.3">
 	<Properties>
-		<Name>Unit Report Screen</Name>
-		<Teaser>Adds Units to Report Screen</Teaser>
-		<Description>Units/Current Deals and Better Yields in Report Screen</Description>
+		<Name>Better Report Screen</Name>
+		<Teaser>Better Report Screen</Teaser>
+		<Description>Adds Units, Current Deals and Better Yields in Report Screen.[NEWLINE][NEWLINE]Rise and Fall compatible by Infixo.</Description>
 		<Authors>Greg Miller</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
-	<Components>
-        <ImportFiles id="UNITREPORT_REPORT">
+	<InGameActions>
+        <ImportFiles id="BRS_ImportFiles">
             <Items>
                 <File>ReportScreen.lua</File>
+				<!--<File>ReportScreen_Expansion1</File>-->
 				<File>ReportScreen.xml</File>
 				<File>UnitPromotionPopup.lua</File>
             </Items>
         </ImportFiles>
-    </Components>
+		<ReplaceUIScript id="BRS_Expansion1ReportScreen">
+			<Properties>
+				<LuaContext>ReportScreen</LuaContext>
+				<LuaReplace>ReportScreen_BRS.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+    </InGameActions>
     <Files>
         <File>ReportScreen.lua</File>
+		<File>ReportScreen_BRS.lua</File>
 		<File>ReportScreen.xml</File>
 		<File>UnitPromotionPopup.lua</File>
     </Files>

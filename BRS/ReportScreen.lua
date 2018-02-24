@@ -1,3 +1,4 @@
+print("Loading ReportScreen.lua from Better Report Screen");
 -- ===========================================================================
 --	ReportScreen
 --	All the data
@@ -65,14 +66,14 @@ function spairs( t, order )
 -- ===========================================================================
 
 local m_groupIM				:table = InstanceManager:new("GroupInstance",			"Top",		Controls.Stack);				-- Collapsable
-local m_simpleIM			:table = InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
-local m_tabIM				:table = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
+m_simpleIM = InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
+m_tabIM = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
 local m_bonusResourcesIM	:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.BonusResources);
 local m_luxuryResourcesIM	:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.LuxuryResources);
 local m_strategicResourcesIM:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.StrategicResources);
 
-local m_tabs				:table;
-local m_kCityData			:table = nil;
+m_tabs = nil;
+m_kCityData = nil;
 local m_kCityTotalData		:table = nil;
 local m_kUnitData			:table = nil;	-- TODO: Show units by promotion class
 local m_kResourceData		:table = nil;
@@ -2069,3 +2070,5 @@ function Initialize()
 	LuaEvents.TopPanel_CloseReportsScreen.Add( OnTopCloseReportsScreen );
 end
 Initialize();
+
+print("OK loaded ReportScreen.lua from Better Report Screen");
