@@ -28,7 +28,7 @@ local DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y		:number = 6;
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
-local INDENT_STRING								:string = "        ";
+local INDENT_STRING								:string = "      ";
 
 -- Mapping of unit type to cost.
 --[[ Infixo not used
@@ -865,19 +865,17 @@ end
 
 --BRS !! sort features for income
 
-local sort : table = { by = "CityName", descend = true }
+local sort : table = { by = "CityName", descend = false }
 
 local function sortBy( name )
-
 	if name == sort.by then
 		sort.descend = not sort.descend
 	else
 		sort.by = name
 		sort.descend = true
+		if name == "CityName" then sort.descend = false; end -- exception
 	end
-
 	ViewYieldsPage()
-
 end
 
 local function sortFunction( t, a, b )
@@ -898,83 +896,6 @@ local function sortFunction( t, a, b )
 
 end
 
-function cityincome_fields( kCityData, pCityInstance )
-
-	pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
-
-	-- Current Production
-	local kCurrentProduction:table = kCityData.ProductionQueue[1];
-	pCityInstance.CurrentProduction:SetHide( kCurrentProduction == nil );
-	
-	if kCurrentProduction ~= nil then
-		local tooltip:string = Locale.Lookup(kCurrentProduction.Name);
-		
-		if kCurrentProduction.Description ~= nil then
-			tooltip = tooltip .. "[NEWLINE]" .. Locale.Lookup(kCurrentProduction.Description);
-		end
-	
-		pCityInstance.CurrentProduction:SetToolTipString( tooltip )
-
-		if kCurrentProduction.Icon then
-			pCityInstance.CityBannerBackground:SetHide( false );
-			pCityInstance.CurrentProduction:SetIcon( kCurrentProduction.Icon );
-			pCityInstance.CityProductionMeter:SetPercent( kCurrentProduction.PercentComplete );
-			pCityInstance.CityProductionNextTurn:SetPercent( kCurrentProduction.PercentCompleteNextTurn );			
-			pCityInstance.ProductionBorder:SetHide( kCurrentProduction.Type == ProductionType.DISTRICT );
-		else
-			pCityInstance.CityBannerBackground:SetHide( true );
-		end
-	end
-
-	pCityInstance.Production:SetText( toPlusMinusString(kCityData.ProductionPerTurn) );
-	pCityInstance.Food:SetText( toPlusMinusString(kCityData.FoodPerTurn) );
-	pCityInstance.Gold:SetText( toPlusMinusString(kCityData.GoldPerTurn) );
-	pCityInstance.Faith:SetText( toPlusMinusString(kCityData.FaithPerTurn) );
-	pCityInstance.Science:SetText( toPlusMinusString(kCityData.SciencePerTurn) );
-	pCityInstance.Culture:SetText( toPlusMinusString(kCityData.CulturePerTurn) );
-	pCityInstance.Tourism:SetText( toPlusMinusString(kCityData.WorkedTileYields["TOURISM"]) );
-	
-	if not Controls.CityBuildingsCheckbox:IsSelected() then
-		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
-			for i,kBuilding in ipairs(kDistrict.Buildings) do
-				local pLineItemInstance:table = {};
-				ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-				pLineItemInstance.LineItemName:SetText( kBuilding.Name );
-
-				pLineItemInstance.Production:SetText( toPlusMinusNoneString(kBuilding.ProductionPerTurn) );
-				pLineItemInstance.Food:SetText( toPlusMinusNoneString(kBuilding.FoodPerTurn) );
-				pLineItemInstance.Gold:SetText( toPlusMinusNoneString(kBuilding.GoldPerTurn) );
-				pLineItemInstance.Faith:SetText( toPlusMinusNoneString(kBuilding.FaithPerTurn) );
-				pLineItemInstance.Science:SetText( toPlusMinusNoneString(kBuilding.SciencePerTurn) );
-				pLineItemInstance.Culture:SetText( toPlusMinusNoneString(kBuilding.CulturePerTurn) );
-			end
-		end
-
-		local pLineItemInstance:table = {};
-		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-		pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES") );
-		pLineItemInstance.Production:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_PRODUCTION"]) );
-		pLineItemInstance.Food:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_FOOD"]) );
-		pLineItemInstance.Gold:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_GOLD"]) );
-		pLineItemInstance.Faith:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_FAITH"]) );
-		pLineItemInstance.Science:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_SCIENCE"]) );
-		pLineItemInstance.Culture:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_CULTURE"]) );
-
-		local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1);
-		pLineItemInstance = {};
-		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-		pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES") );
-		pLineItemInstance.Production:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_PRODUCTION"] * iYieldPercent) ) );
-		pLineItemInstance.Food:SetText( "" );
-		pLineItemInstance.Gold:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_GOLD"] * iYieldPercent)) );
-		pLineItemInstance.Faith:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent)) );
-		pLineItemInstance.Science:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_SCIENCE"] * iYieldPercent)) );
-		pLineItemInstance.Culture:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_CULTURE"] * iYieldPercent)) );
-	end
-		
-end
-
---BRS end !! yeh
 
 -- ===========================================================================
 --	Tab Callback
@@ -1026,7 +947,7 @@ function ViewYieldsPage()
 	function CreatLineItemInstance(cityInstance:table, name:string, production:number, gold:number, food:number, science:number, culture:number, faith:number)
 		local lineInstance:table = {};
 		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", lineInstance, cityInstance.LineItemStack );
-		TruncateStringWithTooltipClean(lineInstance.LineItemName, 160, name);
+		TruncateStringWithTooltipClean(lineInstance.LineItemName, 200, name);
 		lineInstance.Production:SetText( toPlusMinusNoneString(production));
 		lineInstance.Food:SetText( toPlusMinusNoneString(food));
 		lineInstance.Gold:SetText( toPlusMinusNoneString(gold));
@@ -1043,6 +964,18 @@ function ViewYieldsPage()
 		StoreInBaseYields("TOURISM", 0); -- not passed here
 		--BRS end
 		return lineInstance;
+	end
+	
+	--BRS this function will be used to set singular fields in LineItemInstance, based on YieldType
+	function SetFieldInLineItemInstance(lineItemInstance:table, yieldType:string, yieldValue:number)
+		if     yieldType == "YIELD_PRODUCTION" then lineItemInstance.Production:SetText( toPlusMinusNoneString(yieldValue) );
+		elseif yieldType == "YIELD_FOOD"       then lineItemInstance.Food:SetText(       toPlusMinusNoneString(yieldValue) );
+		elseif yieldType == "YIELD_GOLD"       then lineItemInstance.Gold:SetText(       toPlusMinusNoneString(yieldValue) );
+		elseif yieldType == "YIELD_FAITH"      then lineItemInstance.Faith:SetText(      toPlusMinusNoneString(yieldValue) );
+		elseif yieldType == "YIELD_SCIENCE"    then lineItemInstance.Science:SetText(    toPlusMinusNoneString(yieldValue) );
+		elseif yieldType == "YIELD_CULTURE"    then lineItemInstance.Culture:SetText(    toPlusMinusNoneString(yieldValue) );
+		end
+		StoreInBaseYields(yieldType, yieldValue);
 	end
 
 	for cityName,kCityData in spairs( m_kCityData, function( t, a, b ) return sortFunction( t, a, b ) end ) do --BRS sorting
@@ -1093,7 +1026,7 @@ function ViewYieldsPage()
 		cultureCityTotal= cultureCityTotal + kCityData.CulturePerTurn;
 		tourismCityTotal= tourismCityTotal + kCityData.WorkedTileYields["TOURISM"];
 		
-		if not Controls.CityBuildingsCheckbox:IsSelected() then --BRS
+		if not Controls.HideCityBuildingsCheckbox:IsSelected() then --BRS
 
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			--District line item
@@ -1146,23 +1079,9 @@ function ViewYieldsPage()
 				if greatWorks[kBuilding.Type] ~= nil then
 					--Add our line items!
 					for _, kGreatWork in ipairs(greatWorks[kBuilding.Type]) do
-						local pLineItemInstance = CreatLineItemInstance(	pCityInstance, INDENT_STRING .. INDENT_STRING ..  Locale.Lookup(kGreatWork.Name), 0, 0, 0,	0, 0, 0);
+						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, INDENT_STRING..INDENT_STRING..Locale.Lookup(kGreatWork.Name), 0, 0, 0,	0, 0, 0);
 						for _, yield in ipairs(kGreatWork.YieldChanges) do
-							if (yield.YieldType == "YIELD_FOOD") then
-								pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_PRODUCTION") then
-								pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_GOLD") then
-								pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_SCIENCE") then
-								pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_CULTURE") then
-								pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_FAITH") then
-								pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							end
-							-- Infixo How come Great Works don't provide Tourism???
-							StoreInBaseYields(yield.YieldType, yield.YieldChange); --BRS
+							SetFieldInLineItemInstance(pLineItemInstance, yield.YieldType, yield.YieldChange);
 						end
 					end
 				end
@@ -1177,21 +1096,7 @@ function ViewYieldsPage()
 					local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, wonder.Name, 0, 0, 0, 0, 0, 0);
 					-- Show yields
 					for _, yield in ipairs(wonder.Yields) do
-						if (yield.YieldType == "YIELD_FOOD") then
-							pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
-						elseif (yield.YieldType == "YIELD_PRODUCTION") then
-							pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.YieldChange) );
-						elseif (yield.YieldType == "YIELD_GOLD") then
-							pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.YieldChange) );
-						elseif (yield.YieldType == "YIELD_SCIENCE") then
-							pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.YieldChange) );
-						elseif (yield.YieldType == "YIELD_CULTURE") then
-							pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.YieldChange) );
-						elseif (yield.YieldType == "YIELD_FAITH") then
-							pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
-						end
-						-- Infixo How come Wonders don't provide Tourism???
-						StoreInBaseYields(yield.YieldType, yield.YieldChange); --BRS
+						SetFieldInLineItemInstance(pLineItemInstance, yield.YieldType, yield.YieldChange);
 					end
 				end
 
@@ -1199,23 +1104,9 @@ function ViewYieldsPage()
 				if greatWorks[wonder.Type] ~= nil then
 					--Add our line items!
 					for _, kGreatWork in ipairs(greatWorks[wonder.Type]) do
-						local pLineItemInstance = CreatLineItemInstance(	pCityInstance, INDENT_STRING ..  Locale.Lookup(kGreatWork.Name), 0, 0, 0,	0, 0, 0);
+						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, INDENT_STRING..Locale.Lookup(kGreatWork.Name), 0, 0, 0, 0, 0, 0);
 						for _, yield in ipairs(kGreatWork.YieldChanges) do
-							if (yield.YieldType == "YIELD_FOOD") then
-								pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_PRODUCTION") then
-								pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_GOLD") then
-								pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_SCIENCE") then
-								pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_CULTURE") then
-								pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							elseif (yield.YieldType == "YIELD_FAITH") then
-								pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
-							end
-							-- Infixo How come Great Works don't provide Tourism???
-							StoreInBaseYields(yield.YieldType, yield.YieldChange); --BRS
+							SetFieldInLineItemInstance(pLineItemInstance, yield.YieldType, yield.YieldChange);
 						end
 					end
 				end
@@ -1231,26 +1122,12 @@ function ViewYieldsPage()
 						local pDestPlayer:table = Players[route.DestinationCityPlayer];
 						local pDestPlayerCities:table = pDestPlayer:GetCities();
 						local pDestCity:table = pDestPlayerCities:FindID(route.DestinationCityID);
-
 						--Assign yields to the line item
 						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, Locale.Lookup("LOC_HUD_REPORTS_TRADE_WITH", Locale.Lookup(pDestCity:GetName())), 0, 0, 0, 0, 0, 0);
 						for j,yield in ipairs(route.OriginYields) do
 							local yieldInfo = GameInfo.Yields[yield.YieldIndex];
 							if yieldInfo then
-								if (yieldInfo.YieldType == "YIELD_FOOD") then
-									pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.Amount) );
-								elseif (yieldInfo.YieldType == "YIELD_PRODUCTION") then
-									pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.Amount) );
-								elseif (yieldInfo.YieldType == "YIELD_GOLD") then
-									pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.Amount) );
-								elseif (yieldInfo.YieldType == "YIELD_SCIENCE") then
-									pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.Amount) );
-								elseif (yieldInfo.YieldType == "YIELD_CULTURE") then
-									pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.Amount) );
-								elseif (yieldInfo.YieldType == "YIELD_FAITH") then
-									pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.Amount) );
-								end
-								StoreInBaseYields(yieldInfo.YieldType, yield.Amount); --BRS
+								SetFieldInLineItemInstance(pLineItemInstance, yieldInfo.YieldType, yield.Amount);
 							end
 						end
 					end
@@ -1260,7 +1137,7 @@ function ViewYieldsPage()
 
 		--Worked Tiles
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format(" (%d)", kCityData.NumWorkedTiles),
+								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.NumWorkedTiles),
 								kCityData.WorkedTileYields["YIELD_PRODUCTION"],
 								kCityData.WorkedTileYields["YIELD_GOLD"],
 								kCityData.WorkedTileYields["YIELD_FOOD"],
@@ -1272,7 +1149,7 @@ function ViewYieldsPage()
 		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
 		local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_CITY_POPULATION")..string.format(" (%d)", kCityData.Population),
+								Locale.Lookup("LOC_HUD_CITY_POPULATION")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.Population),
 								0,
 								0,
 								0,
@@ -1293,8 +1170,13 @@ function ViewYieldsPage()
 								kCityData.WorkedTileYields["YIELD_CULTURE"] * iYieldPercent,
 								kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent);
 		--]]
+		local sModifierColor:string;
+		if     kCityData.HappinessNonFoodYieldModifier == 0 then sModifierColor = "COLOR_White";
+		elseif kCityData.HappinessNonFoodYieldModifier  > 0 then sModifierColor = "COLOR_Green";
+		else                                                     sModifierColor = "COLOR_Red"; -- <0
+		end
 		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES")..string.format(" (%d%%)", kCityData.HappinessNonFoodYieldModifier),
+								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES")..string.format("  ["..sModifierColor.."]%+d%%[ENDCOLOR]", kCityData.HappinessNonFoodYieldModifier),
 								kBaseYields.YIELD_PRODUCTION * iYieldPercent,
 								kBaseYields.YIELD_GOLD * iYieldPercent,
 								0,
@@ -1305,7 +1187,7 @@ function ViewYieldsPage()
 		pCityInstance.LineItemStack:CalculateSize();
 		pCityInstance.Darken:SetSizeY( pCityInstance.LineItemStack:GetSizeY() + DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y );
 		pCityInstance.Top:ReprocessAnchoring();
-		end --BRS if CityBuildingsCheckbox:IsSelected
+		end --BRS if HideCityBuildingsCheckbox:IsSelected
 	end
 
 	local pFooterInstance:table = {};
@@ -1373,13 +1255,16 @@ function ViewYieldsPage()
 		end
 	end
 	--]]
+	local bHideFreeBuildings:boolean = Controls.HideFreeBuildingsCheckbox:IsSelected(); --BRS
 	for sName, data in pairs(kBuildingExpenses) do
-		local pBuildingInstance:table = {};
-		ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack );
-		TruncateStringWithTooltip(pBuildingInstance.BuildingName, 224, Locale.Lookup(sName)); 
-		pBuildingInstance.BuildingCount:SetText( Locale.Lookup(data.Count) );
-		pBuildingInstance.Gold:SetText( data.Maintenance == 0 and "0" or "-"..tostring(data.Maintenance));
-		iTotalBuildingMaintenance = iTotalBuildingMaintenance - data.Maintenance;
+		if data.Maintenance ~= 0 or not bHideFreeBuildings then
+			local pBuildingInstance:table = {};
+			ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack );
+			TruncateStringWithTooltip(pBuildingInstance.BuildingName, 224, Locale.Lookup(sName)); 
+			pBuildingInstance.BuildingCount:SetText( Locale.Lookup(data.Count) );
+			pBuildingInstance.Gold:SetText( data.Maintenance == 0 and "0" or "-"..tostring(data.Maintenance));
+			iTotalBuildingMaintenance = iTotalBuildingMaintenance - data.Maintenance;
+		end
 	end
 	local pBuildingFooterInstance:table = {};		
 	ContextPtr:BuildInstanceForControl( "GoldFooterInstance", pBuildingFooterInstance, instance.ContentStack ) ;		
@@ -1401,13 +1286,16 @@ function ViewYieldsPage()
 
 		-- Units
 		local iTotalUnitMaintenance:number = 0;
+		local bHideFreeUnits:boolean = Controls.HideFreeUnitsCheckbox:IsSelected(); --BRS
 		for UnitType,kUnitData in pairs(m_kUnitData) do
-			local pUnitInstance:table = {};
-			ContextPtr:BuildInstanceForControl( "UnitExpensesEntryInstance", pUnitInstance, instance.ContentStack );
-			pUnitInstance.UnitName:SetText(Locale.Lookup( kUnitData.Name ));
-			pUnitInstance.UnitCount:SetText(kUnitData.Count);
-			pUnitInstance.Gold:SetText( kUnitData.Maintenance == 0 and "0" or tostring(kUnitData.Maintenance) );
-			iTotalUnitMaintenance = iTotalUnitMaintenance + kUnitData.Maintenance;
+			if kUnitData.Maintenance ~= 0 or not bHideFreeUnits then
+				local pUnitInstance:table = {};
+				ContextPtr:BuildInstanceForControl( "UnitExpensesEntryInstance", pUnitInstance, instance.ContentStack );
+				pUnitInstance.UnitName:SetText(Locale.Lookup( kUnitData.Name ));
+				pUnitInstance.UnitCount:SetText(kUnitData.Count);
+				pUnitInstance.Gold:SetText( kUnitData.Maintenance == 0 and "0" or "-"..tostring(kUnitData.Maintenance) );
+				iTotalUnitMaintenance = iTotalUnitMaintenance - kUnitData.Maintenance;
+			end
 		end
 
 		-- Footer
@@ -1490,7 +1378,6 @@ function ViewYieldsPage()
 	Controls.TourismIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income["TOURISM"] ));	
 	Controls.TourismBalance:SetText( m_kCityTotalData.Treasury["TOURISM"] );
 	
-	Controls.CityBuildingsCheckbox:SetHide( false ) --BRS
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( false );
 	Controls.BottomYieldTotals:SetSizeY( SIZE_HEIGHT_BOTTOM_YIELDS );
@@ -1614,7 +1501,6 @@ function ViewResourcesPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( false );
@@ -1753,7 +1639,6 @@ function ViewCityStatusPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
 	Controls.CollapseAll:SetHide( true );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
@@ -2098,7 +1983,6 @@ function ViewUnitsPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 	
-	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true )
 	Controls.BottomResourceTotals:SetHide( true )
@@ -2170,7 +2054,6 @@ function ViewDealsPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
@@ -2245,17 +2128,28 @@ function Resize()
 end
 
 -- ===========================================================================
---
--- ===========================================================================
+-- BRS checkboxes for hiding city details and free units/buildings
 
-function OnToggleCityBuildings() --BRS
-	local isChecked = Controls.CityBuildingsCheckbox:IsSelected();
-	Controls.CityBuildingsCheckbox:SetSelected( not isChecked );
+function OnToggleHideCityBuildings()
+	local isChecked = Controls.HideCityBuildingsCheckbox:IsSelected();
+	Controls.HideCityBuildingsCheckbox:SetSelected( not isChecked );
+	ViewYieldsPage()
+end
+
+function OnToggleHideFreeBuildings()
+	local isChecked = Controls.HideFreeBuildingsCheckbox:IsSelected();
+	Controls.HideFreeBuildingsCheckbox:SetSelected( not isChecked );
+	ViewYieldsPage()
+end
+
+function OnToggleHideFreeUnits()
+	local isChecked = Controls.HideFreeUnitsCheckbox:IsSelected();
+	Controls.HideFreeUnitsCheckbox:SetSelected( not isChecked );
 	ViewYieldsPage()
 end
 
 -- ===========================================================================
---ARISTOS: Toggles for different resources in Resources tab
+-- ARISTOS: Toggles for different resources in Resources tab
 function OnToggleStrategic()
 	local isChecked = Controls.StrategicCheckbox:IsSelected();
 	Controls.StrategicCheckbox:SetSelected( not isChecked );
@@ -2304,18 +2198,24 @@ function Initialize()
 	Controls.CollapseAll:RegisterCallback( Mouse.eLClick, OnCollapseAllButton );
 	Controls.CollapseAll:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
-	Controls.CityBuildingsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleCityBuildings )
-	Controls.CityBuildingsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
+	--BRS Yields tab toggle
+	Controls.HideCityBuildingsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideCityBuildings )
+	Controls.HideCityBuildingsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
+	Controls.HideCityBuildingsCheckbox:SetSelected( true );
+	Controls.HideFreeBuildingsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideFreeBuildings )
+	Controls.HideFreeBuildingsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
+	Controls.HideFreeBuildingsCheckbox:SetSelected( true );
+	Controls.HideFreeUnitsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideFreeUnits )
+	Controls.HideFreeUnitsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
+	Controls.HideFreeUnitsCheckbox:SetSelected( true );
 	
 	--ARISTOS: Resources toggle
 	Controls.LuxuryCheckbox:RegisterCallback( Mouse.eLClick, OnToggleLuxury );
 	Controls.LuxuryCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.LuxuryCheckbox:SetSelected( true );
-
 	Controls.StrategicCheckbox:RegisterCallback( Mouse.eLClick, OnToggleStrategic );
 	Controls.StrategicCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.StrategicCheckbox:SetSelected( true );
-
 	Controls.BonusCheckbox:RegisterCallback( Mouse.eLClick, OnToggleBonus );
 	Controls.BonusCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.BonusCheckbox:SetSelected( true );

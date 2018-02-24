@@ -8,7 +8,6 @@
 		<Button				ID="CloseButton"		Anchor="R,T"	Offset="-3,-1"	Size="44,44"																			Texture="Controls_CloseLarge"  />
 		<Image														Anchor="C,T"									Size="parent,44"					Color="61,112,154,255"	Texture="Controls_Gradient_HalfRadial"  />
 		<GridButton		ID="CollapseAll"									Offset="48,13"	SizeToText="80,12"				Style="RoundedButton"		String="LOC_HUD_REPORTS_COLLAPSE_ALL"  Hidden="0" />
-		<GridButton   ID="CityBuildingsCheckbox"  Style="CheckBoxControl" SizeToText="80,12" String="Hide City Buildings" Offset="220,15" Hidden="1"/>
 		<Label														Anchor="C,T"	Offset="0,16"															Style="FontFlair20"			String="{LOC_HUD_REPORTS_TITLE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="28" SmallCapsType="EveryWord" />
 		<Grid															Anchor="C,T"	Offset="0,44"		Size="parent-6,8"					Style="Divider3Grid" />
 		
@@ -52,6 +51,9 @@
 			<Grid																					Offset="480,6"	Size="522,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
 			<Grid																					Offset="480,35"	Size="522,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
 			<Grid																					Offset="480,64"	Size="212,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
+			<GridButton ID="HideCityBuildingsCheckbox" Style="CheckBoxControl" Anchor="L,T" Offset="20,12" Size="220,26" String="LOC_BRS_CHECKBOX_HIDE_DETAILS" Hidden="0"/>
+			<GridButton ID="HideFreeBuildingsCheckbox" Style="CheckBoxControl" Anchor="L,T" Offset="20,41" Size="220,26" String="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Hidden="0"/>
+			<GridButton ID="HideFreeUnitsCheckbox"     Style="CheckBoxControl" Anchor="L,T" Offset="20,70" Size="220,26" String="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Hidden="0"/>
 			<Container																		Offset="485,12"	Size="500,50">
 				<Stack				StackGrowth="Right">
 					<Container																										Size="100,20">
@@ -130,17 +132,17 @@
 			<Image																Anchor="C,B"	Offset="0,2"		Size="parent,parent"				Texture="Controls_Gradient" Color="255,255,255,32">
 				<Grid			ID="StrategicGrid"											Offset="5,10"		Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_STRATEGICS" />-->
-					<GridButton ID="StrategicCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_RESOURCE_CHECKBOX_STRATEGIC" Size="120,25" Offset="5,0" Hidden="0"/>
+					<GridButton ID="StrategicCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_STRATEGIC" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="StrategicResources"		Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>				
 				<Grid			ID="BonusGrid"													Offset="510,10"	Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">-->
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_BONUSES" />-->
-					<GridButton ID="BonusCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_RESOURCE_CHECKBOX_BONUS" Size="120,25" Offset="5,0" Hidden="0"/>
+					<GridButton ID="BonusCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_BONUS" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="BonusResources"				Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>
 				<Grid			ID="LuxuryGrid"													Offset="5,55"		Size="parent-10,40"					Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">-->
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_LUXURIES" />-->
-					<GridButton ID="LuxuryCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_RESOURCE_CHECKBOX_LUXURY" Size="120,25" Offset="5,0" Hidden="0"/>
+					<GridButton ID="LuxuryCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_LUXURY" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="LuxuryResources"			Anchor="L,C"	Offset="150,-9"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>
 			</Image>
@@ -298,7 +300,7 @@
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																			Offset="1,0"	Size="232,parent">
-					<Label		ID="LineItemName"			Style="ReportRowStart"			String="District" Offset="36,0" />
+					<Label		ID="LineItemName"			Style="ReportRowStart"			String="District" Offset="24,0" />
 					<Image		ID="DistrictIcon" Size="16,16" Anchor="L,C" Offset="1,-1" Texture="Controls_GradientSmall" Hidden="1" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />

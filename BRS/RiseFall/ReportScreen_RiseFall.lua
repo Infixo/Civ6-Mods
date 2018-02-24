@@ -129,7 +129,6 @@ function ViewCityStatusPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	Controls.CityBuildingsCheckbox:SetHide( true ) --BRS
 	Controls.CollapseAll:SetHide( true );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );

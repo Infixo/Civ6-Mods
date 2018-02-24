@@ -21,13 +21,23 @@
 		<Text>Number of Buildings/Districts</Text>
 	</Row>
 	<!-- Resource checkboxes -->
-	<Row Tag="LOC_BRS_RESOURCE_CHECKBOX_STRATEGIC">
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS">
+		<Text>Hide City Details</Text>
+	</Row>
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS">
+		<Text>Hide Free Buildings</Text>
+	</Row>
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS">
+		<Text>Hide Free Units</Text>
+	</Row>
+	<!-- Resource checkboxes -->
+	<Row Tag="LOC_BRS_CHECKBOX_RESOURCE_STRATEGIC">
 		<Text>Strategic</Text>
 	</Row>
-	<Row Tag="LOC_BRS_RESOURCE_CHECKBOX_LUXURY">
+	<Row Tag="LOC_BRS_CHECKBOX_RESOURCE_LUXURY">
 		<Text>Luxury</Text>
 	</Row>
-	<Row Tag="LOC_BRS_RESOURCE_CHECKBOX_BONUS">
+	<Row Tag="LOC_BRS_CHECKBOX_RESOURCE_BONUS">
 		<Text>Bonus</Text>
 	</Row>
 	<!-- Unit groups -->
