@@ -63,6 +63,7 @@ VALUES  -- generated from Excel
 ('STAR_FORT','BALLISTICS',NULL,380,'CITY_CENTER',1,'GENERIC'),
 ('STAVE_CHURCH',NULL,'DIVINE_RIGHT',80,'HOLY_SITE',2,'RELIGIOUS'),
 ('STOCK_EXCHANGE','COMPUTERS',NULL,445,'COMMERCIAL_HUB',0,'GENERIC'),
+('SUKIENNICE','MATHEMATICS',NULL,50,'COMMERCIAL_HUB',0,NULL),
 ('SYNAGOGUE',NULL,'REFORMED_CHURCH',130,'HOLY_SITE',0,NULL),
 ('TEMPLE',NULL,'DIVINE_RIGHT',80,'HOLY_SITE',2,'RELIGIOUS'),
 ('TLACHTLI',NULL,'MILITARY_TRAINING',65,'ENTERTAINMENT_COMPLEX',1,NULL),
@@ -72,6 +73,10 @@ VALUES  -- generated from Excel
 ('WATER_MILL','ENGINEERING',NULL,40,'CITY_CENTER',1,'GENERIC'),
 ('WORKSHOP','EDUCATION',NULL,85,'INDUSTRIAL_ZONE',1,'GENERIC'),
 ('ZOO',NULL,'CONSERVATION',300,'ENTERTAINMENT_COMPLEX',0,'GENERIC');
+
+-- DLC: Poland - remove upgrade if base building is not there
+DELETE FROM RBUConfig
+WHERE BType = 'SUKIENNICE' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_SUKIENNICE');
 
 --------------------------------------------------------------
 -- BUILDINGS
@@ -174,6 +179,13 @@ UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_FILM_STUDIO' WHERE
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_MADRASA' WHERE BuildingType = 'BUILDING_MADRASA_UPGRADE';
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_STAVE_CHURCH' WHERE BuildingType = 'BUILDING_STAVE_CHURCH_UPGRADE';
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TLACHTLI' WHERE BuildingType = 'BUILDING_TLACHTLI_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_SUKIENNICE' WHERE BuildingType = 'BUILDING_SUKIENNICE_UPGRADE';
+
+-- DLC: Poland
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
+SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'GREAT_PERSON_CLASS_MERCHANT', 1
+FROM RBUConfig
+WHERE BType = 'SUKIENNICE';
 
 INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
 SELECT CivUniqueBuildingType||'_UPGRADE', ReplacesBuildingType||'_UPGRADE'
@@ -183,7 +195,8 @@ WHERE CivUniqueBuildingType IN (
 	'BUILDING_MADRASA',
 	'BUILDING_STAVE_CHURCH',
 	'BUILDING_ELECTRONICS_FACTORY',
-	'BUILDING_TLACHTLI');
+	'BUILDING_TLACHTLI',
+	'BUILDING_SUKIENNICE');
 
 -- Connect Upgrades to Base Buildings
 INSERT INTO BuildingPrereqs (Building, PrereqBuilding)
@@ -262,6 +275,12 @@ VALUES  -- generated from Excel
 ('BUILDING_WATER_MILL_UPGRADE', 'YIELD_PRODUCTION', 1),
 ('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1),
 ('BUILDING_ZOO_UPGRADE', 'YIELD_GOLD', 1);
+
+-- DLC: Poland must be separately
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'YIELD_GOLD', 2
+FROM RBUConfig
+WHERE BType = 'SUKIENNICE';
 
 --------------------------------------------------------------
 -- MODIFIERS
@@ -372,3 +391,8 @@ VALUES
 	-- Stadium +10% for all Tourism
 	('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
 
+--------------------------------------------------------------
+-- AI
+-- System Buildings contains only Wonders
+-- Will use AiBuildSpecializations that contains only one list: DefaultCitySpecialization
+--------------------------------------------------------------

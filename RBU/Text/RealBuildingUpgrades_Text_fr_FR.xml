@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+	<LocalizedText>
+	
+<!-- NAMES -->
+
+<Replace Tag="LOC_BUILDING_AIRPORT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’aéroport</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’amphithéatre</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_ARENA_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’arčne</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_ARMORY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’armurerie</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_BANK_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la banque</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_BARRACKS_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration des barraquements</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_BROADCAST_CENTER_UPGRADE_NAME" Language="fr_FR">
+<Text>Améliorationdu centre de diffusion</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_CASTLE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration des murs médiévaux</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_CATHEDRAL_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la cathédrale</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_ELECTRONICS_FACTORY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’usine d’électronique</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_FACTORY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’usine</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_FILM_STUDIO_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du studio de film</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_GRANARY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du grenier</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_GURDWARA_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du gurdwara</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_HANGAR_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du hangard</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_LIBRARY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la bibliotheque</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_NAME" Language="fr_FR">
+<Text>Lighthouse Upgrade</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MADRASA_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du madrasa</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MARKET_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du marché</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MEETING_HOUSE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration des quartiers résidentiels</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MILITARY_ACADEMY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’école militaire</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MONUMENT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du monument</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MOSQUE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la mosquée</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du musé d’art</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du musé archeologique</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_PAGODA_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la pagode</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_PALACE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du palais</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la centrale électrique</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_RESEARCH_LAB_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du laboratoire de recherche</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_SEAPORT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du spatioport</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_SEWER_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du réseau d’égouts</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_SHIPYARD_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du chantier naval</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_SHRINE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’autel</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_STABLE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’etable</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_STADIUM_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du stade</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_STAR_FORT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration des murs de la renaissances</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_STAVE_CHURCH_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’eglise en bois</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la bourse</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_NAME" Language="fr_FR">
+<Text>amélioration du sukiennice</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_SYNAGOGUE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de la synagoge</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_TEMPLE_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du temple</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_TLACHTLI_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du terraint de tlachtli</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’université</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_WALLS_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration des murs antiques</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_WAT_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du wat</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_WATER_MILL_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du moulin</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_WORKSHOP_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration de l’usine</Text>
+</Replace>
+<Replace Tag="LOC_BUILDING_ZOO_UPGRADE_NAME" Language="fr_FR">
+<Text>Amélioration du zoo</Text>
+</Replace> 
+
+		<!-- DESCRIPTIONS -->
+
+		<Replace Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration qui premet a l'amphithéatre d'acceuillir plus de spectateurs.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_AIRPORT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Ajoute +1 emplacement pour avion dans l'aérodrome.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_ARENA_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration qui permet a l'arene de pouvoir acceuilir des combats de gladiateurs.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_ARMORY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration qui permet d'autres activitées plus sociables que boire de la bierre.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_BANK_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration de la banque qui leurs permet d'aider les fonds scientifiques.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_BARRACKS_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>+1 [ICON_Production] en production sur le campement.[NEWLINE][NEWLINE]ne peut pas etre construit sur un campement possédant deja une écurie.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_BROADCAST_CENTER_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration au centre de diffusion qui leur permet de diffuser 24 heures sur 24 et 7 jours sur 7.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_CASTLE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Permet d'améliorer les défences de votre muraille.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_CATHEDRAL_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_ELECTRONICS_FACTORY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration de l'usine d'électronique unique au japon. +2 [ICON_Production] De production pour toutes les villes dans un rayon de 6 cases. Aprčs avoir découvert l'électricitée, donne un bonus additionel de +2 [ICON_Culture] de culture pour cette ville.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_FACTORY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Le bonus s'étend a toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_FILM_STUDIO_UPGRADE_DESCRIPTION" Language="fr_FR"> 
+			<Text>Une amélioration du studio de film unique a l'amérique. +2 [ICON_Culture] de Culture et + 2 [ICON_Gold] d'or a toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_GRANARY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration du grenier qui lui permet d'etre plus productif.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_GURDWARA_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_HANGAR_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Ajoute +1 emplacement pour avion dans cat aerodrome.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration de la bibliothčque qui la permet de stocker plus de tablettes d'argiles, de parchemins et de livres.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Le rayon du phare agrandi nous permmet de pouvoir pecher des poissons plus loin.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration du madrassa unique a l'arabie qui permmet l'éducation de ces (méchantes) femmes.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration du marchée qui lui pemmet d'acceuilir plus de marchands et de commercants .</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MEETING_HOUSE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MILITARY_ACADEMY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration da l'académie militaire incluant un campus pour plus d'eleves.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MONUMENT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Nous pouvons enfin marquer le nom de notre manifique dirigeant-vous!</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MOSQUE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>+1 [ICON_Gold] d'or pour chaque [ICON_GreatWork_Landscape] oeuvre d'art non-religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>+1 [ICON_Gold] d'or pour chaque [ICON_GreatWork_Artifact] arctefact non-religieux.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_PAGODA_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_PALACE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Le palais a maintenant la place pour un nouveau résident-vous!</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Un bonus qui s'étend sur toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_RESEARCH_LAB_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Un bonus qui s'étend sur toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_SEAPORT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration récent qui permet au spacioport l'acceuillir plus de vaisseaux.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_SEWER_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Un égout amélioré pour mieux servir les habitants.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_SHRINE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Un tombeau amélioré avec de plus belle décorations.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_STABLE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>+1 [ICON_Production] de production pour tout les paturages.[NEWLINE][NEWLINE]ne peut pas etre construit dans un campement possédand deja des baraquements.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_SHIPYARD_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Un chantier naval amélioré qui permet de pecher plus loin, rapporte plus d' [ICON_Food] éxedent alimentaire.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_STADIUM_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Tout les [ICON_Tourism] rendements touristiques sont améliorés de +10%.[NEWLINE][NEWLINE]Ce bonus s'étend a toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_STAR_FORT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Il semble que vos ingénieurs se soit surpassés. cette amélioration permet de mettre votre défense a son plus haut niveau niveau possible.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_STAVE_CHURCH_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration a l'aménagement unique de la norvege. produit +1 [ICON_Faith] de foi pour les scieries.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Ce bonus s'étend a toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration unique a la pologne. fournis +1 [ICON_GreatMerchant] point de general illustre bonus par tour.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_SYNAGOGUE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_TEMPLE_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce temple serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_TLACHTLI_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration unique aux asteques. genere +1 [ICON_Faith] de foi et +1 [ICON_Culture] de Culture.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration de l'universitée qui garantis une recherche plus rapide.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_WALLS_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Multiplie la défense de vos murs par 1,5.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_WATER_MILL_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>+1 [ICON_Food] de nourriture pour les plantations.[NEWLINE][NEWLINE]le centre ville doit ętre adjacent a une rivičre.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_WAT_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une rénovation de ce lieu de culte serait le bienvenu de votre communautée religieuse.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_WORKSHOP_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>+1 [ICON_Production] de production pour les carričres.</Text>
+		</Replace>
+		<Replace Tag="LOC_BUILDING_ZOO_UPGRADE_DESCRIPTION" Language="fr_FR">
+			<Text>Une amélioration du zoo qui lui permet d'exiber de nouvelles especes animales.[NEWLINE][NEWLINE]Ce bonus s'étend a toutes les villes dans un rayon de 6 cases.</Text>
+		</Replace>
+		
+	</LocalizedText>
+</GameData>

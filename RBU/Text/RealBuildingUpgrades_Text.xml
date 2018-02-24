@@ -124,6 +124,9 @@
 		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_NAME">
 			<Text>Stock Exchange Upgrade</Text>
 		</Row>
+		<Row Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_NAME">
+			<Text>Sukiennice Upgrade</Text>
+		</Row>
 		<Row Tag="LOC_BUILDING_SYNAGOGUE_UPGRADE_NAME">
 			<Text>Synagogue Upgrade</Text>
 		</Row>
@@ -267,6 +270,9 @@
 		</Row>
 		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_DESCRIPTION">
 			<Text>Bonus extends to each city center within 6 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_DESCRIPTION">
+			<Text>An upgrade building unique to Poland. Grants additional +1 [ICON_GreatMerchant] Great Merchant point per turn.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SYNAGOGUE_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
