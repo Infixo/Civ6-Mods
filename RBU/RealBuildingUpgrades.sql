@@ -3,6 +3,8 @@
 -- Author: Infixo
 -- Mar 20th, 2017 - Version 1 created
 -- Aug 2nd, 2017 - Version 1.3, fix for summer patch
+-- Sep 10th, 2017 - Version 1.3.1, tech fix for column names
+-- Sep 18th, 2017 - Version 1.4, fix for Aztecs DLC
 --------------------------------------------------------------
 
 -- first, some balance fixes
@@ -86,6 +88,10 @@ VALUES  -- generated from Excel
 DELETE FROM RBUConfig
 WHERE BType = 'SUKIENNICE' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_SUKIENNICE');
 
+-- DLC: Aztecs - remove upgrade if base building is not there
+DELETE FROM RBUConfig
+WHERE BType = 'TLACHTLI' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_TLACHTLI');
+
 --------------------------------------------------------------
 -- BUILDINGS
 --------------------------------------------------------------
@@ -96,7 +102,13 @@ SELECT 'BUILDING_'||BType||'_UPGRADE', 'KIND_BUILDING'
 FROM RBUConfig;
 
 -- New buildings
-INSERT INTO Buildings  -- do we need a list of fields???
+INSERT INTO Buildings
+	(BuildingType, Name, PrereqTech, PrereqCivic, Cost, MaxPlayerInstances, MaxWorldInstances, Capital, PrereqDistrict, AdjacentDistrict, Description, 
+	RequiresPlacement, RequiresRiver, OuterDefenseHitPoints, Housing, Entertainment, AdjacentResource, Coast, 
+	EnabledByReligion, AllowsHolyCity, PurchaseYield, MustPurchase, Maintenance, IsWonder, TraitType, OuterDefenseStrength, CitizenSlots, 
+	MustBeLake, MustNotBeLake, RegionalRange, AdjacentToMountain, ObsoleteEra, RequiresReligion,
+	GrantFortification, DefenseModifier, InternalOnly, RequiresAdjacentRiver, Quote, QuoteAudio, MustBeAdjacentLand,
+	AdvisorType, AdjacentCapital, AdjacentImprovement, CityAdjacentTerrain)
 SELECT
 	'BUILDING_'||BType||'_UPGRADE',
 	'LOC_BUILDING_'||BType||'_UPGRADE_NAME',
@@ -112,7 +124,7 @@ SELECT
 	0, 0, 0, 0, 'NO_ERA', 0,  -- MustBeLake, MustNotBeLake, RegionalRange, AdjacentToMountain, ObsoleteEra, RequiresReligion
 	0, 0, 0, 0, NULL, NULL, 0,  -- GrantFortification, DefenseModifier, InternalOnly, RequiresAdjacentRiver, Quote, QuoteAudio, MustBeAdjacentLand
 	CASE WHEN Advis IS NULL THEN NULL ELSE 'ADVISOR_'||Advis END, 0, NULL,  -- AdvisorType, AdjacentCapital, AdjacentImprovement
-	NULL  -- CityAdjacentTerrrain [Version 1.1, fix for summer patch]
+	NULL  -- CityAdjacentTerrain [Version 1.1, fix for summer patch]
 FROM RBUConfig;
 
 -- Palace Upgrade
@@ -284,8 +296,6 @@ VALUES  -- generated from Excel
 ('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_SCIENCE', 2),
 ('BUILDING_TEMPLE_UPGRADE', 'YIELD_FAITH', 2),
 ('BUILDING_TEMPLE_UPGRADE', 'YIELD_FOOD', 1),
-('BUILDING_TLACHTLI_UPGRADE', 'YIELD_FAITH', 1),
-('BUILDING_TLACHTLI_UPGRADE', 'YIELD_CULTURE', 1),
 ('BUILDING_UNIVERSITY_UPGRADE', 'YIELD_CULTURE', 1),
 ('BUILDING_UNIVERSITY_UPGRADE', 'YIELD_SCIENCE', 2),
 ('BUILDING_WAT_UPGRADE', 'YIELD_FAITH', 2),
@@ -295,11 +305,21 @@ VALUES  -- generated from Excel
 ('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1),
 ('BUILDING_ZOO_UPGRADE', 'YIELD_GOLD', 1);
 
--- DLC: Poland must be separately
+-- DLC: Poland must be updated separately
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
 SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'YIELD_GOLD', 2
 FROM RBUConfig
 WHERE BType = 'SUKIENNICE';
+
+-- DLC: Aztecs must be updated separately
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_FAITH', 1
+FROM RBUConfig
+WHERE BType = 'TLACHTLI';
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_CULTURE', 1
+FROM RBUConfig
+WHERE BType = 'TLACHTLI';
 
 --------------------------------------------------------------
 -- MODIFIERS
