@@ -661,7 +661,7 @@ function GetCityData( pCity:table )
 		local plotID		:number = kPlot:GetIndex();	
 		local districtTable :table	= { 
 			Name		= Locale.Lookup(districtInfo.Name), 
-			Type		= districtType,
+			DistrictType = districtType,
 			YieldBonus	= GetDistrictYieldText( district ),
 			isPillaged  = pCityDistricts:IsPillaged(district:GetType());
 			isBuilt		= pCityDistricts:HasDistrict(districtInfo.Index, true);
@@ -741,7 +741,7 @@ function GetCityData( pCity:table )
 			if building.IsWonder then
 				table.insert( data.Wonders, {
 					Name				= Locale.Lookup(building.Name), 
-					Type				= building.BuildingType,
+					BuildingType		= building.BuildingType,
 					--Yields				= kYields,
 					Icon				= "ICON_"..building.BuildingType,
 					--Citizens
@@ -759,7 +759,7 @@ function GetCityData( pCity:table )
 				data.BuildingsNum = data.BuildingsNum + 1;
 				table.insert( districtTable.Buildings, { 
 					Name				= Locale.Lookup(building.Name),
-					Type				= building.BuildingType,
+					BuildingType		= building.BuildingType,
 					--Yields				= kYields,
 					Icon				= "ICON_"..building.BuildingType,
 					Citizens			= kPlot:GetWorkerCount(),
@@ -816,6 +816,7 @@ local tModifiers = {}; -- main table to store all modifiers; will be populated o
 --   .ModifierType
 --   .RunOnce / .NewOnly / .Permanent
 --   .OwnerReqSetId / .SubjectReqSetId
+--   .OwnerReqSet / .SubjectReqSet
 --   .CollectionType
 --   .EffectType
 --   .Arguments - table of {Name=Value}
@@ -830,7 +831,7 @@ local tReqSets = {}; -- main table to store all requirement sets; will be popula
 -- ReqSet
 --   .ReqSetId
 --   .TestAll / .TestAny
---   .Reqs - table of {Id=Req}
+--   .Reqs - table of {Req}
 
 local INDENT1 = "    ";
 local INDENT2 = INDENT1..INDENT1;
@@ -913,8 +914,7 @@ function FetchAndCacheDataReqSet(sReqSetId:string)
 	-- fill actual Requirements (from RequirementSetRequirements)
 	for req in GameInfo.RequirementSetRequirements() do
 		if req.RequirementSetId == sReqSetId then
-			table.insert(tReqSet.Reqs, req.RequirementId);
-			FetchAndCacheDataReq(req.RequirementId);
+			table.insert(tReqSet.Reqs, FetchAndCacheDataReq(req.RequirementId));
 		end
 	end
 	-- done!
@@ -928,7 +928,7 @@ function DecodeReqSet(tOut:table, sReqSetId:string)
 	if not tReqSet then return "ERROR: "..sReqSetId.." not defined!"; end
 	if tReqSet.TestAll then table.insert(tOut, INDENT1.."Test All of:"); end
 	if tReqSet.TestAny then table.insert(tOut, INDENT1.."Test Any of:"); end
-	for _,req in ipairs(tReqSet.Reqs) do DecodeReq(tOut, req); end
+	for _,req in ipairs(tReqSet.Reqs) do DecodeReq(tOut, req.ReqId); end
 end
 
 
@@ -980,8 +980,8 @@ function FetchAndCacheData(sModifierId:string)
 		end
 	end
 	-- requirements
-	if tModifier.OwnerReqSetId then FetchAndCacheDataReqSet(tModifier.OwnerReqSetId); end
-	if tModifier.SubjectReqSetId then FetchAndCacheDataReqSet(tModifier.SubjectReqSetId); end
+	if tModifier.OwnerReqSetId   then tModifier.OwnerReqSet   = FetchAndCacheDataReqSet(tModifier.OwnerReqSetId);   end
+	if tModifier.SubjectReqSetId then tModifier.SubjectReqSet = FetchAndCacheDataReqSet(tModifier.SubjectReqSetId); end
 	-- done!
 	tModifiers[ sModifierId ] = tModifier;
 	return tModifier; 
@@ -1018,13 +1018,13 @@ function DecodeModifier(sModifierId:string)
 	-- TODO: add support for other owners later, if necessary
 	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], "Player";
 	-- build a collection of subjects
-	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tOwner, sOwnerType, tMod);
+	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
 	dprint("Subjects are:"); dshowtable(tSubjects); -- debug
 	table.insert(tOut, "Subject(s): "..sSubjectType..", num: "..table.count(tSubjects));
 	-- calculate impact of the modifier
 	local tImpact:table = YieldTableNew();
 	for i,subject in pairs(tSubjects) do
-		local tSubjectImpact:table = ApplyEffectAndCalculateImpact(subject, sSubjectType, tMod); -- it will return nil if effect unknown
+		local tSubjectImpact:table = ApplyEffectAndCalculateImpact(tMod, subject, sSubjectType); -- it will return nil if effect unknown
 		if tSubjectImpact then
 			dprint("Impact for subject (i)", i); dshowtable(tSubjectImpact); -- debug
 			tImpact = YieldTableAdd(tImpact, tSubjectImpact);
@@ -1052,12 +1052,146 @@ end
 
 
 ------------------------------------------------------------------------------
+-- Requires 3 arguments
+--  table - requirement
+--  table - subject to analyze (from tCities or any other)
+--  string - type of subject (e.g. "City", "District")
+function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
+	dprint("FUNCAL CheckOneRequirement(req,type,sub)",tReq.ReqId,tReq.ReqType,sSubjectType);
+	local bIsValidSubject:boolean = false;
+	-- MAIN DISPATCHER FOR REQUIREMENTS
+	local function CheckForMismatchError(sExpectedType:string)
+		if sExpectedType == sSubjectType then return false; end
+		print("ERROR: CheckOneRequirement mismatch for subject", sSubjectType);
+		dshowtable(tReq);
+		return true;
+	end
+	if     tReq.ReqType == "REQUIREMENT_REQUIREMENTSET_IS_MET" then -- 19
+		-- recursion? could be diffcult
+		
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
+		if CheckForMismatchError("City") then return false; end
+		for _,district in ipairs(tSubject.Districts) do
+			for _,building in ipairs(district.Buildings) do
+				local buildingType:string = building.BuildingType;	
+				if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+				bIsValidSubject = ( buildingType == tReq.Arguments.BuildingType ); -- BUILDING_LIGHTHOUSE, etc.
+				if bIsValidSubject then break; end
+			end
+			if bIsValidSubject then break; end
+		end
+		if not bIsValidSubject then -- still not found
+			for _,wonder in ipairs(tSubject.Wonders) do
+				-- wonders don't have replacements
+				bIsValidSubject = ( wonder.BuildingType == tReq.Arguments.BuildingType ); -- BUILDING_ST_BASILS_CATHEDRAL, etc.
+				if bIsValidSubject then break; end
+			end
+		end
+
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_DISTRICT" then -- 10
+		if CheckForMismatchError("City") then return false; end
+		for _,district in ipairs(tSubject.Districts) do
+			local districtType:string = district.DistrictType;	
+			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+			bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
+			if bIsValidSubject then break; end
+		end
+
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_SPECIALTY_DISTRICTS" then -- 4
+		if CheckForMismatchError("City") then return false; end
+		
+	elseif tReq.ReqType == "REQUIREMENT_DISTRICT_TYPE_MATCHES" then -- 12
+		if CheckForMismatchError("District") then return false; end
+		local districtType:string = tSubject.DistrictType;
+		if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+		bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
+			
+	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_BUILDING" then -- 9
+		if CheckForMismatchError("Player") then return false; end
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_TECHNOLOGY" then -- 9
+		if CheckForMismatchError("Player") then return false; end
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_DISTRICT" then -- 1
+		if CheckForMismatchError("Player") then return false; end
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES" then -- 14
+		if CheckForMismatchError("Plot") then return false; end
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES" then -- 10
+		if CheckForMismatchError("Plot") then return false; end
+		
+	else
+		-- do nothing here... probably will never implement all possible types
+		return false;
+	end
+	if tReq.Inverse then return not bIsValidSubject; end
+	return bIsValidSubject;
+end
+
+
+------------------------------------------------------------------------------
+-- Requires 3 arguments
+--  table - requirement set
+--  table - subject to analyze (from tCities or any other)
+--  string - type of subject (e.g. "City", "District")
+function CheckAllRequirements(tReqSet:table, tSubject:table, sSubjectType:string)
+	dprint("FUNCAL CheckAllRequirements(req,type,sub)",tReqSet.ReqSetId,sSubjectType);
+	for _,req in ipairs(tReqSet.Reqs) do
+		local bIsValid:boolean = CheckOneRequirement(req, tSubject, sSubjectType);
+		if tReqSet.TestAny and     bIsValid then return true;  end -- we found 1 positive, that is all needed for TestAny
+		if tReqSet.TestAll and not bIsValid then return false; end -- we found 1 negative, that is all needed for TestAll
+	end
+	-- we went through all reqs and didn't break, it means that opposite condition to TestAll/Any is met
+	if tReqSet.TestAny then return false; end -- all were negative
+	if tReqSet.TestAll then return true;  end -- all were positive
+	-- still nothing? error...
+	print("ERROR: checked all requirements and nothing seems to work out for subject", sSubjectType);
+	dshowtable(tReqSet);
+	return false;
+end
+
+
+------------------------------------------------------------------------------
 -- BuildCollectionOfSubjects return 2 values
 --  table - of subjects - these are objects from tCities (cities, districts or buildings), TODO: filtered using SubReqs
 --  strng - type of the subject
-function BuildCollectionOfSubjects(tOwner:table, sOwnerType:string, tMod:table)
+function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
+	print("FUNCAL BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
 	local tSubjects:table, sSubjectType:string = {}, "(unknown)";
-	-- TODO process
+	local tReqSet:table = tMod.SubjectReqSet; -- speed up some checking
+	dprint("  Subject requirement set is (id)", tMod.SubjectReqSetId);
+	-- MAIN DISPATCHER FOR COLLECTIONS
+	if tMod.CollectionType == "COLLECTION_OWNER" then
+		-- most difficult one... not yet...
+	elseif tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
+		-- need City here as owner
+		sSubjectType = "District";
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_CAPITAL_CITY" then
+		sSubjectType = "City";
+		for cityname,citydata in pairs(tCities) do
+			if citydata.IsCapital then
+			end
+		end
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_CITIES" then
+		sSubjectType = "City";
+		for cityname,citydata in pairs(tCities) do
+			if tReqSet and CheckAllRequirements(tReqSet, citydata, sSubjectType) then
+				table.insert(tSubjects, citydata);
+			end
+		end
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_DISTRICTS" then
+		sSubjectType = "District";
+		for cityname,citydata in pairs(tCities) do
+			for _,district in ipairs(citydata.Districts) do
+				if tReqSet and CheckAllRequirements(tReqSet, district, sSubjectType) then
+					table.insert(tSubjects, district);
+				end
+			end
+		end
+	else
+		-- do nothing here... probably will never implement all possible types
+	end
 	return tSubjects, sSubjectType;
 end
 
@@ -1065,7 +1199,7 @@ end
 ------------------------------------------------------------------------------
 -- Returns a table of extended yields
 -- It will return nil if an effect is unknown
-function ApplyEffectAndCalculateImpact(tSubject:table, sSubjectType:string, tMod:table)
+function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:string)
 	return nil;
 end
 
