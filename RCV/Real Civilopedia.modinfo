@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
+  <Properties>
+    <Name>Real Civilopedia</Name>
+    <Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE][NEWLINE]Version 0.2</Description>
+    <Teaser>More information in Civilopedia!</Teaser>
+    <Authors>Infixo</Authors>
+    <AffectsSavedGames>0</AffectsSavedGames>
+  </Properties>
+  <InGameActions>
+	<!--
+    <AddGameplayScripts id="RMA_Main">
+      <File>RealModifierAnalysis.lua</File>
+    </AddGameplayScripts>
+	-->
+    <AddUserInterfaces id="RMA_Main">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>RealModifierAnalysis.xml</File>
+    </AddUserInterfaces>
+    <ReplaceUIScript id="RCP_Replace_CivilopediaScreen">
+      <Properties>
+	    <LuaContext>CivilopediaScreen</LuaContext>
+	    <LuaReplace>CivilopediaScreen_RCP.lua</LuaReplace>
+	  </Properties>
+    </ReplaceUIScript>
+  </InGameActions>
+  <Files>
+    <File>CivilopediaScreen_RCP.lua</File>
+    <File>CivilopediaSupport_RCP.lua</File>
+    <File>RealModifierAnalysis.lua</File>
+    <File>RealModifierAnalysis.xml</File>
+  </Files>
+</Mod>
