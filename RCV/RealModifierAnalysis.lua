@@ -60,6 +60,13 @@ function dshowrectable(tTable:table, iLevel:number)
 	end
 end
 
+-- debug routine - prints extended yields table in a compacted form (1 line, formatted)
+function dshowyields(pYields:table)
+	local tOut:table = {}; table.insert(tOut, "  yields :");
+	for yield,value in pairs(pYields) do table.insert(tOut, string.format("%s %5.2f :", yield, value)); end
+	print(table.concat(tOut, " "));
+end
+
 
 -- ===========================================================================
 -- DATA AND VARIABLES
@@ -68,6 +75,15 @@ end
 local bBaseDataDirty:boolean = true; -- set to true to refresh the data
 local tCities:table = nil; -- dynamically filled when needed (e.g. after refresh)
 
+-- supported Subject types, will be put into SubjectType field of respective tables
+local SubjectTypes:table = {
+	Game = "Game",
+	Player = "Player",
+	City = "City",
+	District = "District",
+	Building = "Building",
+	GreatWork = "GreatWork",
+}
 
 -- ===========================================================================
 -- EXTENDED YIELDS
@@ -76,14 +92,22 @@ local tCities:table = nil; -- dynamically filled when needed (e.g. after refresh
 
 -- YieldsTypes 0..5 are for FOOD, PRODUCTION, GOLD, SCIENCE, CULTURE and FAITH
 -- they correspond to respective YIELD_ type in Yields table
-YieldTypes.TOURISM =  6;
-YieldTypes.AMENITY =  7;
-YieldTypes.HOUSING =  8;
+--YieldTypes.TOURISM =  6;
+--YieldTypes.AMENITY =  7;
+--YieldTypes.HOUSING =  8;
 --YieldTypes.GPPOINT =  9; -- Great Person Point
 --YieldTypes.ENVOY   = 10;
 --YieldTypes.APPEAL  = 11;
 --YieldTypes.LOYALTY = 12;
 -- whereever possible keep yields in a table named Yields with entries { YieldType = YieldValue }
+
+-- create a map (speed up)
+local YieldTypesMap = {};
+for yield in GameInfo.Yields() do
+	YieldTypesMap[ yield.YieldType ] = string.gsub(yield.YieldType, "YIELD_","");
+end
+--dshowtable(YieldTypes);
+--dshowtable(YieldTypesMap);
 
 -- get a new table with all 0
 function YieldTableNew()
@@ -114,6 +138,18 @@ end
 -- multiply by a percentage given as integer 0..100
 function YieldTablePercent(pYields:table, iPercent:number)
 	return YieldTableMultiply(pYields, iPercent/100.0);
+end
+
+-- get a specific yield, takes both YieldTypes and "YIELD_XXX" form
+function YieldTableGetYield(pYields:table, sYield:string)
+	if YieldTypesMap[ sYield ] then return pYields[ YieldTypesMap[ sYield ] ];
+	else                            return pYields[ sYield ];                  end
+end
+
+-- set a specific yield, takes both YieldTypes and "YIELD_XXX" form
+function YieldTableSetYield(pYields:table, sYield:string, fValue:number)
+	if YieldTypesMap[ sYield ] then pYields[ YieldTypesMap[ sYield ] ] = fValue;
+	else                            pYields[ sYield ] = fValue;                  end
 end
 
 
@@ -306,6 +342,7 @@ end
 -- ===========================================================================
 --	Update the yield data for a city.
 -- ===========================================================================
+--[[
 function UpdateYieldData( pCity:table, data:table )
 	data.CulturePerTurn				= pCity:GetYield( YieldTypes.CULTURE );
 	data.CulturePerTurnToolTip		= pCity:GetYieldToolTip(YieldTypes.CULTURE);
@@ -327,7 +364,7 @@ function UpdateYieldData( pCity:table, data:table )
 
 	return data;
 end
-
+--]]
 
 -- ===========================================================================
 -- ===========================================================================
@@ -374,6 +411,14 @@ function GetCityData( pCity:table )
 
 	-- Return value is here, 0/nil may be filled out below.
 	local data :table = {
+		City					= pCity,
+		SubjectType				= SubjectTypes.City,
+		Name					= pCity:GetName(),
+		Yields 					= YieldTableNew(), -- extended yields
+		Districts				= {},		-- Per Entry Format: { Name, YieldType, YieldChange, Buildings={ Name,YieldType,YieldChange,isPillaged,isBuilt} }
+		Wonders					= {},		-- Format per entry: { Name, YieldType, YieldChange }
+		ContinentType			= 0,
+		--- not used yet
 		AmenitiesNetAmount				= 0,
 		AmenitiesNum					= 0,
 		AmenitiesFromLuxuries			= 0,
@@ -390,11 +435,8 @@ function GetCityData( pCity:table )
 		BeliefsOfDominantReligion		= {},
 		Buildings						= {},		-- Per Entry Format: { Name, CitizenNum }
 		BuildingsNum					= 0,
-		Districts						= {},		-- Per Entry Format: { Name, YieldType, YieldChange, Buildings={ Name,YieldType,YieldChange,isPillaged,isBuilt} }
 		CityWallTotalHP					= 0,
 		CityWallHPPercent				= 0,
-		City							= pCity,
-		CityName						= pCity:GetName(),
 		CulturePerTurn					= 0,
 		CurrentFoodPercent				= 0;		
 		CurrentProdPercent				= 0,
@@ -433,9 +475,7 @@ function GetCityData( pCity:table )
 		TurnsUntilGrowth				= 0,
 		TurnsUntilExpansion				= 0,
 		UnitStats						= nil,
-		Wonders							= {},		-- Format per entry: { Name, YieldType, YieldChange }		
-		YieldFilters					= {},
-		Yields 						= YieldTableNew(), -- extended yields
+		--YieldFilters					= {},
 	};
 
 	-- extended yields
@@ -525,9 +565,10 @@ function GetCityData( pCity:table )
 		end
 	end
 
+	data.ContinentType					= Map.GetPlot( pCity:GetX(), pCity:GetY() ):GetContinentType();
 	data.AmenitiesNetAmount				= pCityGrowth:GetAmenities() - pCityGrowth:GetAmenitiesNeeded();
 	data.AmenitiesNum					= pCityGrowth:GetAmenities();
-	data.Yields.AMENITY 				= data.AmenitiesNum;
+	--data.Yields.AMENITY 				= data.AmenitiesNum;
 	data.AmenitiesFromLuxuries			= pCityGrowth:GetAmenitiesFromLuxuries();
 	data.AmenitiesFromEntertainment		= pCityGrowth:GetAmenitiesFromEntertainment();
 	data.AmenitiesFromCivics			= pCityGrowth:GetAmenitiesFromCivics();
@@ -561,7 +602,7 @@ function GetCityData( pCity:table )
 	data.HitpointsCurrent				= districtHitpoints-currentDistrictDamage;
 	data.HitpointsTotal					= districtHitpoints;
 	data.Housing						= pCityGrowth:GetHousing();
-	data.Yields.HOUSING 				= data.Housing;
+	--data.Yields.HOUSING 				= data.Housing;
 	data.HousingFromWater				= pCityGrowth:GetHousingFromWater();
 	data.HousingFromBuildings			= pCityGrowth:GetHousingFromBuildings();
 	data.HousingFromImprovements		= pCityGrowth:GetHousingFromImprovements();
@@ -581,7 +622,8 @@ function GetCityData( pCity:table )
 	data.TurnsUntilGrowth				= turnsUntilGrowth;
 	data.UnitStats						= nil; --GetUnitStats( pBuildQueue:GetCurrentProductionTypeHash() );	--NIL if not a unit -- Infixo: NO UNIT STATS
 	
-	-- Helper to get an internally used enum based on the state of a certain yield.	
+	-- Helper to get an internally used enum based on the state of a certain yield.
+	--[[
 	local pCitizens :table = pCity:GetCitizens();
 	function GetYieldState( yieldEnum:number )
 		if pCitizens:IsFavoredYield(yieldEnum) then			return YIELD_STATE.FAVORED;
@@ -595,7 +637,8 @@ function GetCityData( pCity:table )
 	data.YieldFilters[YieldTypes.GOLD]		= GetYieldState(YieldTypes.GOLD);
 	data.YieldFilters[YieldTypes.PRODUCTION]= GetYieldState(YieldTypes.PRODUCTION);
 	data.YieldFilters[YieldTypes.SCIENCE]	= GetYieldState(YieldTypes.SCIENCE);
-	data = UpdateYieldData( pCity, data );
+	--]]
+	--data = UpdateYieldData( pCity, data );
 
 	-- Determine builds, districts, and wonders
 	local pCityBuildings	:table = pCity:GetBuildings();
@@ -660,19 +703,23 @@ function GetCityData( pCity:table )
 		local kPlot			:table  = Map.GetPlot(locX,locY);
 		local plotID		:number = kPlot:GetIndex();	
 		local districtTable :table	= { 
-			Name		= Locale.Lookup(districtInfo.Name), 
-			DistrictType = districtType,
+			SubjectType		= SubjectTypes.District,
+			Name			= Locale.Lookup(districtInfo.Name), 
+			Yields   = YieldTableNew(), -- district yields
+			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
+			DistrictType 	= districtType,
+			-- not used yet
 			YieldBonus	= GetDistrictYieldText( district ),
 			isPillaged  = pCityDistricts:IsPillaged(district:GetType());
 			isBuilt		= pCityDistricts:HasDistrict(districtInfo.Index, true);
 			Icon		= "ICON_"..districtType,
 			Buildings	= {},
-			Culture		= GetDistrictYield(district, "YIELD_CULTURE" ),			
-			Faith		= GetDistrictYield(district, "YIELD_FAITH" ),
-			Food		= GetDistrictYield(district, "YIELD_FOOD" ),
-			Gold		= GetDistrictYield(district, "YIELD_GOLD" ),
-			Production	= GetDistrictYield(district, "YIELD_PRODUCTION" ),
-			Science		= GetDistrictYield(district, "YIELD_SCIENCE" ),
+			--Culture		= GetDistrictYield(district, "YIELD_CULTURE" ),			
+			--Faith		= GetDistrictYield(district, "YIELD_FAITH" ),
+			--Food		= GetDistrictYield(district, "YIELD_FOOD" ),
+			--Gold		= GetDistrictYield(district, "YIELD_GOLD" ),
+			--Production	= GetDistrictYield(district, "YIELD_PRODUCTION" ),
+			--Science		= GetDistrictYield(district, "YIELD_SCIENCE" ),
 			Tourism		= 0,
 			Maintenance = districtInfo.Maintenance,
 			--[[
@@ -685,8 +732,6 @@ function GetCityData( pCity:table )
 				Science		= GetDistrictBonus(district, "YIELD_SCIENCE"),
 			},
 			--]]
-			Yields   = YieldTableNew(), -- district yields
-			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
 		};
 		
 		-- extended yields -- Infixo: CHECK seems that Districts don't produce yields by themselves, only adjacency yields
@@ -696,9 +741,9 @@ function GetCityData( pCity:table )
 		-- the third ise used by GREATPERSON_EXTRA_REGIONAL_BUILDING_PRODUCTION
 		-- OK, Minors are giving yields to Buildings now, not Districts, different modifiers are used
 		-- Another problem is that calling it with 6 gives negative big integers, unknown (bug?)
-		for yield,yid in pairs(YieldTypes) do districtTable.Yields[ yield ] = district:GetYield( yid ); end
-		if districtTable.Yields.TOURISM < 0 then districtTable.Yields.TOURISM = 0; end
-		--for yield,yid in pairs(YieldTypes) do districtTable.AdjYields[ yield ] = district:GetAdjacencyYield( yid ); end -- Infixo: ADJACENCY = STANDARD YIELD
+		--for yield,yid in pairs(YieldTypes) do districtTable.Yields[ yield ] = district:GetYield( yid ); end
+		for yield,yid in pairs(YieldTypes) do districtTable.Yields[ yield ] = district:GetAdjacencyYield( yid ); end -- Infixo: ADJACENCY = STANDARD YIELD
+		--districtTable.Yields.TOURISM = 0; -- tourism is produced in another way, GetYield() produces stupid numbers here
 
 		local buildingTypes = pCityBuildings:GetBuildingsAtLocation(plotID);
 		for _, buildingType in ipairs(buildingTypes) do
@@ -727,51 +772,55 @@ function GetCityData( pCity:table )
 			end
 
 			-- Duplicate of data but common yields in an easy to parse format.
-			local culture	:number = YieldFind( kYields, "YIELD_CULTURE" );
-			local faith		:number = YieldFind( kYields, "YIELD_FAITH" );
-			local food		:number = YieldFind( kYields, "YIELD_FOOD" );
-			local gold		:number = YieldFind( kYields, "YIELD_GOLD" );
-			local production:number = YieldFind( kYields, "YIELD_PRODUCTION" );
-			local science	:number = YieldFind( kYields, "YIELD_SCIENCE" );
+			--local culture	:number = YieldFind( kYields, "YIELD_CULTURE" );
+			--local faith		:number = YieldFind( kYields, "YIELD_FAITH" );
+			--local food		:number = YieldFind( kYields, "YIELD_FOOD" );
+			--local gold		:number = YieldFind( kYields, "YIELD_GOLD" );
+			--local production:number = YieldFind( kYields, "YIELD_PRODUCTION" );
+			--local science	:number = YieldFind( kYields, "YIELD_SCIENCE" );
 			-- extended yields
 			local extyields :table = YieldTableNew();
 			for yield,yid in pairs(YieldTypes) do extyields[ yield ] = pCity:GetBuildingYield(buildingType, yid); end
-			if extyields.TOURISM < 0 then extyields.TOURISM = 0; end 
+			-- extyields.TOURISM = 0; -- tourism is produced in another way, GetBuildingYield() produces stupid numbers here ??? I don't know, the bug is for districts for sure
 			
 			if building.IsWonder then
 				table.insert( data.Wonders, {
+					SubjectType			= SubjectTypes.Building,
 					Name				= Locale.Lookup(building.Name), 
+					Yields				= extyields,
 					BuildingType		= building.BuildingType,
+					-- not used yet
 					--Yields				= kYields,
 					Icon				= "ICON_"..building.BuildingType,
 					--Citizens
 					isPillaged			= pCityBuildings:IsPillaged(building.BuildingType),
 					isBuilt				= pCityBuildings:HasBuilding(building.Index),
-					CulturePerTurn		= culture,	
-					FaithPerTurn		= faith,		
-					FoodPerTurn			= food,		
-					GoldPerTurn			= gold,		
-					ProductionPerTurn	= production,
-					SciencePerTurn		= science,
-					Yields				= extyields,
+					--CulturePerTurn		= culture,	
+					--FaithPerTurn		= faith,		
+					--FoodPerTurn			= food,		
+					--GoldPerTurn			= gold,		
+					--ProductionPerTurn	= production,
+					--SciencePerTurn		= science,
 				});
 			else
 				data.BuildingsNum = data.BuildingsNum + 1;
 				table.insert( districtTable.Buildings, { 
+					SubjectType			= SubjectTypes.Building,
 					Name				= Locale.Lookup(building.Name),
+					Yields				= extyields,
 					BuildingType		= building.BuildingType,
+					-- not used yet
 					--Yields				= kYields,
 					Icon				= "ICON_"..building.BuildingType,
 					Citizens			= kPlot:GetWorkerCount(),
 					isPillaged			= pCityBuildings:IsPillaged(buildingType);
 					isBuilt				= pCityBuildings:HasBuilding(building.Index);
-					CulturePerTurn		= culture,	
-					FaithPerTurn		= faith,		
-					FoodPerTurn			= food,		
-					GoldPerTurn			= gold,		
-					ProductionPerTurn	= production,
-					SciencePerTurn		= science,
-					Yields				= extyields,
+					--CulturePerTurn		= culture,	
+					--FaithPerTurn		= faith,		
+					--FoodPerTurn			= food,		
+					--GoldPerTurn			= gold,		
+					--ProductionPerTurn	= production,
+					--SciencePerTurn		= science,
 				});
 			end
 
@@ -1016,7 +1065,7 @@ function DecodeModifier(sModifierId:string)
 	if bBaseDataDirty then RefreshBaseData(); end -- make sure we have current data
 	-- TODO: ASSUMPTION Owner will be Player, this is true for Policies and many other modifiers
 	-- TODO: add support for other owners later, if necessary
-	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], "Player";
+	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], SubjectTypes.Player;
 	-- build a collection of subjects
 	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
 	dprint("Subjects are:"); dshowtable(tSubjects); -- debug
@@ -1026,11 +1075,11 @@ function DecodeModifier(sModifierId:string)
 	for i,subject in pairs(tSubjects) do
 		local tSubjectImpact:table = ApplyEffectAndCalculateImpact(tMod, subject, sSubjectType); -- it will return nil if effect unknown
 		if tSubjectImpact then
-			dprint("Impact for subject (i)", i); dshowtable(tSubjectImpact); -- debug
+			--dprint("Impact for subject (i)", i); dshowtable(tSubjectImpact); -- debug
 			tImpact = YieldTableAdd(tImpact, tSubjectImpact);
 		end
 	end
-	dprint("Impact for all subjects"); dshowtable(tImpact); -- debug
+	dprint("Impact for all subjects"); dshowyields(tImpact); -- debug
 	-- create an output string
 	local sImpactText:string = "Effect: ";
 	local bImpact:boolean = false;
@@ -1057,20 +1106,21 @@ end
 --  table - subject to analyze (from tCities or any other)
 --  string - type of subject (e.g. "City", "District")
 function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
-	dprint("FUNCAL CheckOneRequirement(req,type,sub)",tReq.ReqId,tReq.ReqType,sSubjectType);
-	local bIsValidSubject:boolean = false;
-	-- MAIN DISPATCHER FOR REQUIREMENTS
+	dprint("FUNCAL CheckOneRequirement(req,type,sub)(subject)",tReq.ReqId,tReq.ReqType,sSubjectType,tSubject.SubjectType,tSubject.Name);
+	
 	local function CheckForMismatchError(sExpectedType:string)
 		if sExpectedType == sSubjectType then return false; end
-		print("ERROR: CheckOneRequirement mismatch for subject", sSubjectType);
-		dshowtable(tReq);
-		return true;
+		print("ERROR: CheckOneRequirement mismatch for subject", sSubjectType); dshowtable(tReq); return true;
 	end
+	
+	-- MAIN DISPATCHER FOR REQUIREMENTS
+	local bIsValidSubject:boolean = false;
+	
 	if     tReq.ReqType == "REQUIREMENT_REQUIREMENTSET_IS_MET" then -- 19
 		-- recursion? could be diffcult
 		
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
-		if CheckForMismatchError("City") then return false; end
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		for _,district in ipairs(tSubject.Districts) do
 			for _,building in ipairs(district.Buildings) do
 				local buildingType:string = building.BuildingType;	
@@ -1089,7 +1139,7 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		end
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_DISTRICT" then -- 10
-		if CheckForMismatchError("City") then return false; end
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		for _,district in ipairs(tSubject.Districts) do
 			local districtType:string = district.DistrictType;	
 			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
@@ -1099,9 +1149,16 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_SPECIALTY_DISTRICTS" then -- 4
 		if CheckForMismatchError("City") then return false; end
-		
+
+	elseif tReq.ReqType == "REQUIREMENT_CITY_IS_OWNER_CAPITAL_CONTINENT" then
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		-- compare capital's continent to this one
+		local pCapital:table = Players[ tSubject.City:GetOwner() ]:GetCities():GetCapitalCity(); -- TODO: probably should be stored in thePlayer object
+		local eOwnerCapitalContinent:number = Map.GetPlot( pCapital:GetX(), pCapital:GetY() ):GetContinentType();
+		bIsValidSubject = ( tSubject.ContinentType == eOwnerCapitalContinent );
+	
 	elseif tReq.ReqType == "REQUIREMENT_DISTRICT_TYPE_MATCHES" then -- 12
-		if CheckForMismatchError("District") then return false; end
+		if CheckForMismatchError(SubjectTypes.District) then return false; end
 		local districtType:string = tSubject.DistrictType;
 		if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
 		bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
@@ -1136,7 +1193,7 @@ end
 --  table - subject to analyze (from tCities or any other)
 --  string - type of subject (e.g. "City", "District")
 function CheckAllRequirements(tReqSet:table, tSubject:table, sSubjectType:string)
-	dprint("FUNCAL CheckAllRequirements(req,type,sub)",tReqSet.ReqSetId,sSubjectType);
+	dprint("FUNCAL CheckAllRequirements(req,sub)(subject)",tReqSet.ReqSetId,sSubjectType,tSubject.SubjectType,tSubject.Name);
 	for _,req in ipairs(tReqSet.Reqs) do
 		local bIsValid:boolean = CheckOneRequirement(req, tSubject, sSubjectType);
 		if tReqSet.TestAny and     bIsValid then return true;  end -- we found 1 positive, that is all needed for TestAny
@@ -1174,17 +1231,21 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 			end
 		end
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_CITIES" then
-		sSubjectType = "City";
+		sSubjectType = SubjectTypes.City;
 		for cityname,citydata in pairs(tCities) do
-			if tReqSet and CheckAllRequirements(tReqSet, citydata, sSubjectType) then
+			if tReqSet then 
+				if CheckAllRequirements(tReqSet, citydata, sSubjectType) then table.insert(tSubjects, citydata); end
+			else
 				table.insert(tSubjects, citydata);
 			end
 		end
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_DISTRICTS" then
-		sSubjectType = "District";
+		sSubjectType = SubjectTypes.District;
 		for cityname,citydata in pairs(tCities) do
 			for _,district in ipairs(citydata.Districts) do
-				if tReqSet and CheckAllRequirements(tReqSet, district, sSubjectType) then
+				if tReqSet then  
+					if CheckAllRequirements(tReqSet, district, sSubjectType) then table.insert(tSubjects, district); end
+				else
 					table.insert(tSubjects, district);
 				end
 			end
@@ -1200,6 +1261,45 @@ end
 -- Returns a table of extended yields
 -- It will return nil if an effect is unknown
 function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:string)
+	dprint("FUNCAL ApplyEffectAndCalculateImpact(mod,eff,sub)(subject)",tMod.ModifierId,tMod.EffectType,sSubjectType,tSubject.SubjectType,tSubject.Name);
+
+	local function CheckForMismatchError(sExpectedType:string)
+		if sExpectedType == tSubject.SubjectType then return false; end
+		print("ERROR: ApplyEffectAndCalculateImpact mismatch for subject", sSubjectType); dshowtable(tMod); return true;
+	end
+	
+	-- MAIN DISPATCHER FOR EFFECTS
+	local tImpact:table = YieldTableNew();
+	
+	if tMod.EffectType == "" then
+	
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_MODIFIER" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
+		dprint("  Impact for subject (type,name)",tSubject.SubjectType,tSubject.Name); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
+		return tImpact;
+	
+	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_MODIFIER" then
+		if CheckForMismatchError(SubjectTypes.District) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
+		dprint("  Impact for subject (type)", tSubject.DistrictType); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
+		return tImpact;
+	
+	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_CHANGE" then
+		if CheckForMismatchError("District") then return nil; end
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_CHANGE" then
+		if CheckForMismatchError("District") then return nil; end
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIER" then
+		if CheckForMismatchError("District") then return nil; end
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_HOUSING" then
+		if CheckForMismatchError("City") then return nil; end
+		
+	else
+		-- do nothing here... probably will never implement all possible types
+	end
 	return nil;
 end
 
