@@ -67,6 +67,10 @@ function dshowyields(pYields:table)
 	print(table.concat(tOut, " "));
 end
 
+-- debug routine - prints extended yields table in a compacted form (1 line, formatted)
+function dshowsubject(pSubject:table)
+	print("    sub: ", pSubject.SubjectType, pSubject.Name);
+end
 
 -- ===========================================================================
 -- DATA AND VARIABLES
@@ -93,8 +97,8 @@ local SubjectTypes:table = {
 -- YieldsTypes 0..5 are for FOOD, PRODUCTION, GOLD, SCIENCE, CULTURE and FAITH
 -- they correspond to respective YIELD_ type in Yields table
 --YieldTypes.TOURISM =  6;
---YieldTypes.AMENITY =  7;
---YieldTypes.HOUSING =  8;
+YieldTypes.AMENITY =  7;
+YieldTypes.HOUSING =  8;
 --YieldTypes.GPPOINT =  9; -- Great Person Point
 --YieldTypes.ENVOY   = 10;
 --YieldTypes.APPEAL  = 11;
@@ -203,9 +207,13 @@ end
 function GetYieldTextIcon( yieldType:string )
 	local  iconString:string = "";
 	if		yieldType == nil or yieldType == ""	then
-		iconString="Error:NIL";
+		iconString = "Error:NIL";
+	elseif  yieldType == "YIELD_AMENITY" then
+		iconString = "[ICON_Amenities]"
+	elseif  yieldType == "YIELD_HOUSING" then
+		iconString = "[ICON_Housing]"
 	elseif	GameInfo.Yields[yieldType] ~= nil and GameInfo.Yields[yieldType].IconString ~= nil and GameInfo.Yields[yieldType].IconString ~= "" then
-		iconString=GameInfo.Yields[yieldType].IconString;
+		iconString = GameInfo.Yields[yieldType].IconString;
 	else
 		iconString = "Unknown:"..yieldType; 
 	end			
@@ -216,14 +224,16 @@ end
 --	Return the inline entry for a yield's color
 -- ===========================================================================
 function GetYieldTextColor( yieldType:string )
-	if		yieldType == nil or yieldType == "" then return "[COLOR:255,255,255,255]NIL ";
-	elseif	yieldType == "YIELD_FOOD"			then return "[COLOR:ResFoodLabelCS]";
-	elseif	yieldType == "YIELD_PRODUCTION"		then return "[COLOR:ResProductionLabelCS]";
-	elseif	yieldType == "YIELD_GOLD"			then return "[COLOR:ResGoldLabelCS]";
-	elseif	yieldType == "YIELD_SCIENCE"		then return "[COLOR:ResScienceLabelCS]";
-	elseif	yieldType == "YIELD_CULTURE"		then return "[COLOR:ResCultureLabelCS]";
-	elseif	yieldType == "YIELD_FAITH"			then return "[COLOR:ResFaithLabelCS]";
-	else											 return "[COLOR:255,255,255,0]ERROR ";
+	if     yieldType == nil or yieldType == "" then return "[COLOR:255,255,255,255]NIL ";
+	elseif yieldType == "YIELD_FOOD"		   then return "[COLOR:ResFoodLabelCS]";
+	elseif yieldType == "YIELD_PRODUCTION"	   then return "[COLOR:ResProductionLabelCS]";
+	elseif yieldType == "YIELD_GOLD"		   then return "[COLOR:ResGoldLabelCS]";
+	elseif yieldType == "YIELD_SCIENCE"		   then return "[COLOR:ResScienceLabelCS]";
+	elseif yieldType == "YIELD_CULTURE"		   then return "[COLOR:ResCultureLabelCS]";
+	elseif yieldType == "YIELD_FAITH"		   then return "[COLOR:ResFaithLabelCS]";
+	elseif yieldType == "YIELD_AMENITY"        then return "[COLOR_Black]";
+	elseif yieldType == "YIELD_HOUSING"        then return "[COLOR_Black]";
+	else											return "[COLOR:255,255,255,0]ERROR ";
 	end				
 end
 
@@ -413,11 +423,13 @@ function GetCityData( pCity:table )
 	local data :table = {
 		City					= pCity,
 		SubjectType				= SubjectTypes.City,
-		Name					= pCity:GetName(),
+		Name					= Locale.Lookup(pCity:GetName()),
 		Yields 					= YieldTableNew(), -- extended yields
-		Districts				= {},		-- Per Entry Format: { Name, YieldType, YieldChange, Buildings={ Name,YieldType,YieldChange,isPillaged,isBuilt} }
-		Wonders					= {},		-- Format per entry: { Name, YieldType, YieldChange }
 		ContinentType			= 0,
+		Districts				= {},		-- Per Entry Format: { Name, YieldType, YieldChange, Buildings={ Name,YieldType,YieldChange,isPillaged,isBuilt} }
+		FoodSurplus				= 0,
+		Population				= pCity:GetPopulation(),
+		Wonders					= {},		-- Format per entry: { Name, YieldType, YieldChange }
 		--- not used yet
 		AmenitiesNetAmount				= 0,
 		AmenitiesNum					= 0,
@@ -450,7 +462,6 @@ function GetCityData( pCity:table )
 		FaithPerTurn					= 0,
 		FoodPercentNextTurn				= 0,
 		FoodPerTurn						= 0,
-		FoodSurplus						= 0,
 		GoldPerTurn						= 0,
 		GrowthPercent					= 100,
 		Happiness						= 0,		
@@ -464,7 +475,6 @@ function GetCityData( pCity:table )
 		Owner							= owner,
 		OtherGrowthModifiers			= 0,
 		PantheonBelief					= -1,
-		Population						= pCity:GetPopulation(),
 		ProdPercentNextTurn				= 0,
 		ProductionPerTurn				= 0;		
 		ProductionQueue					= {},
@@ -492,6 +502,10 @@ function GetCityData( pCity:table )
 	local pctNextTurn					:number = 0;
 	local prodTurnsLeft					:number = -1;
 	local productionInfo				:table = nil; --GetCurrentProductionInfoOfCity( pCity, SIZE_PRODUCTION_ICON ); -- Infixo: NO PRODUCTION INFO YET
+
+	-- extended yields
+	data.Yields.HOUSING = pCityGrowth:GetHousing();
+	data.Yields.AMENITY = pCityGrowth:GetAmenities();
 
 	-- If something is currently being produced, mark it in the queue.
 	if productionInfo ~= nil then
@@ -564,11 +578,10 @@ function GetCityData( pCity:table )
 			followersAll = followersAll + religionData.Followers;
 		end
 	end
-
+	
 	data.ContinentType					= Map.GetPlot( pCity:GetX(), pCity:GetY() ):GetContinentType();
 	data.AmenitiesNetAmount				= pCityGrowth:GetAmenities() - pCityGrowth:GetAmenitiesNeeded();
 	data.AmenitiesNum					= pCityGrowth:GetAmenities();
-	--data.Yields.AMENITY 				= data.AmenitiesNum;
 	data.AmenitiesFromLuxuries			= pCityGrowth:GetAmenitiesFromLuxuries();
 	data.AmenitiesFromEntertainment		= pCityGrowth:GetAmenitiesFromEntertainment();
 	data.AmenitiesFromCivics			= pCityGrowth:GetAmenitiesFromCivics();
@@ -594,7 +607,7 @@ function GetCityData( pCity:table )
 	data.CurrentProductionStats			= productionInfo and productionInfo.StatString;
 	data.CurrentTurnsLeft				= prodTurnsLeft;		
 	data.FoodPercentNextTurn			= foodpctNextTurn;
-	data.FoodSurplus					= foodSurplus; --Round( foodSurplus, 1);
+	data.FoodSurplus					= foodSurplus; --Round( foodSurplus, 1); -- this is rounded to integer actually already
 	data.Happiness						= pCityGrowth:GetHappiness();
 	data.HappinessGrowthModifier		= pCityGrowth:GetHappinessGrowthModifier();
 	data.HappinessNonFoodYieldModifier	= pCityGrowth:GetHappinessNonFoodYieldModifier();
@@ -602,7 +615,6 @@ function GetCityData( pCity:table )
 	data.HitpointsCurrent				= districtHitpoints-currentDistrictDamage;
 	data.HitpointsTotal					= districtHitpoints;
 	data.Housing						= pCityGrowth:GetHousing();
-	--data.Yields.HOUSING 				= data.Housing;
 	data.HousingFromWater				= pCityGrowth:GetHousingFromWater();
 	data.HousingFromBuildings			= pCityGrowth:GetHousingFromBuildings();
 	data.HousingFromImprovements		= pCityGrowth:GetHousingFromImprovements();
@@ -708,6 +720,7 @@ function GetCityData( pCity:table )
 			Yields   = YieldTableNew(), -- district yields
 			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
 			DistrictType 	= districtType,
+			CityCenter		= districtInfo.CityCenter,
 			-- not used yet
 			YieldBonus	= GetDistrictYieldText( district ),
 			isPillaged  = pCityDistricts:IsPillaged(district:GetType());
@@ -1068,7 +1081,7 @@ function DecodeModifier(sModifierId:string)
 	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], SubjectTypes.Player;
 	-- build a collection of subjects
 	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
-	dprint("Subjects are:"); dshowtable(tSubjects); -- debug
+	dprint("Subjects are:"); for k,v in pairs(tSubjects) do print(k,v.SubjectType,v.Name); end -- debug
 	table.insert(tOut, "Subject(s): "..sSubjectType..", num: "..table.count(tSubjects));
 	-- calculate impact of the modifier
 	local tImpact:table = YieldTableNew();
@@ -1146,9 +1159,29 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 			bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
 			if bIsValidSubject then break; end
 		end
+		
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_HIGH_ADJACENCY_DISTRICT" then
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		-- must use 3 arguments actually, plus replacements
+		for _,district in ipairs(tSubject.Districts) do
+			local districtType:string = district.DistrictType;	
+			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+			bIsValidSubject = ( ( districtType == tReq.Arguments.DistrictType ) and -- DISTRICT_THEATER, etc.
+								( YieldTableGetYield(district.Yields, tReq.Arguments.YieldType) >= tonumber(tReq.Arguments.Amount)) );
+			if bIsValidSubject then break; end
+		end
 
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_POPULATION" then
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		bIsValidSubject = ( tSubject.Population >= tonumber(tReq.Arguments.Amount) );
+		
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_SPECIALTY_DISTRICTS" then -- 4
-		if CheckForMismatchError("City") then return false; end
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		local iNumDistricts:number = 0;
+		for _,district in ipairs(tSubject.Districts) do
+			if not district.CityCenter then iNumDistricts = iNumDistricts + 1; end
+		end
+		bIsValidSubject = ( iNumDistricts >= tonumber(tReq.Arguments.Amount) );
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_IS_OWNER_CAPITAL_CONTINENT" then
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
@@ -1182,6 +1215,7 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		-- do nothing here... probably will never implement all possible types
 		return false;
 	end
+	-- done!
 	if tReq.Inverse then return not bIsValidSubject; end
 	return bIsValidSubject;
 end
@@ -1224,12 +1258,16 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 	elseif tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
 		-- need City here as owner
 		sSubjectType = "District";
+
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_CAPITAL_CITY" then
-		sSubjectType = "City";
+		sSubjectType = SubjectTypes.City;
 		for cityname,citydata in pairs(tCities) do
 			if citydata.IsCapital then
+				table.insert(tSubjects, citydata);
+				break;
 			end
 		end
+
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_CITIES" then
 		sSubjectType = SubjectTypes.City;
 		for cityname,citydata in pairs(tCities) do
@@ -1239,6 +1277,7 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 				table.insert(tSubjects, citydata);
 			end
 		end
+
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_DISTRICTS" then
 		sSubjectType = SubjectTypes.District;
 		for cityname,citydata in pairs(tCities) do
@@ -1270,37 +1309,83 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	
 	-- MAIN DISPATCHER FOR EFFECTS
 	local tImpact:table = YieldTableNew();
+	local bApplied:boolean = false;
 	
 	if tMod.EffectType == "" then
 	
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_CHANGE" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
+
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
-		dprint("  Impact for subject (type,name)",tSubject.SubjectType,tSubject.Name); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
-		return tImpact;
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_GROWTH" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.FOOD = tSubject.FoodSurplus * tonumber(tMod.Arguments.Amount) / 100.0;
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.District) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
-		dprint("  Impact for subject (type)", tSubject.DistrictType); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
-		return tImpact;
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_CHANGE" then
 		if CheckForMismatchError("District") then return nil; end
+		return nil;
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_CHANGE" then
-		if CheckForMismatchError("District") then return nil; end
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local sBuildingType:string = tMod.Arguments.BuildingType;
+		for _,district in ipairs(tSubject.Districts) do
+			for _,building in ipairs(district.Buildings) do
+				local buildingType:string = building.BuildingType;	
+				if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+				if buildingType == sBuildingType then
+					YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount)); bApplied = true; break;
+				end
+			end
+			if bApplied then break; end
+		end
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIER" then
 		if CheckForMismatchError("District") then return nil; end
+		return nil;
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIERS_FOR_DISTRICT" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		-- must use 3 arguments actually, plus replacements
+		for _,district in ipairs(tSubject.Districts) do
+			local districtType:string = district.DistrictType;	
+			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+			if districtType == tMod.Arguments.DistrictType then -- DISTRICT_THEATER, etc.
+				local fYieldChange:number = 0.0;
+				for _,building in ipairs(district.Buildings) do
+					fYieldChange = fYieldChange + YieldTableGetYield(building.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0;
+				end
+				YieldTableSetYield(tImpact, tMod.Arguments.YieldType, fYieldChange);
+				break;
+			end
+		end
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_HOUSING" then
 		if CheckForMismatchError("City") then return nil; end
+		return nil;
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_POLICY_HOUSING" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.HOUSING = tonumber(tMod.Arguments.Amount);
 		
+	elseif tMod.EffectType == "EFFECT_ADJUST_POLICY_AMENITY" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.AMENITY = tonumber(tMod.Arguments.Amount);
+
 	else
 		-- do nothing here... probably will never implement all possible types
+		return nil;
 	end
-	return nil;
+	-- done!
+	dprint("  Impact for subject (type,name)",tSubject.SubjectType,tSubject.Name); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
+	return tImpact;
 end
 
 
