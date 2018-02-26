@@ -78,6 +78,7 @@ end
 
 local bBaseDataDirty:boolean = true; -- set to true to refresh the data
 local tCities:table = nil; -- dynamically filled when needed (e.g. after refresh)
+local tPlayer:table = nil; -- dynamically filled when needed (e.g. after refresh)
 
 -- supported Subject types, will be put into SubjectType field of respective tables
 local SubjectTypes:table = {
@@ -428,6 +429,9 @@ function GetCityData( pCity:table )
 		ContinentType			= 0,
 		Districts				= {},		-- Per Entry Format: { Name, YieldType, YieldChange, Buildings={ Name,YieldType,YieldChange,isPillaged,isBuilt} }
 		FoodSurplus				= 0,
+		IsEstablishedGovernor	= false,
+		NumDistricts			= 0,
+		NumSpecialtyDistricts	= 0,
 		Population				= pCity:GetPopulation(),
 		Wonders					= {},		-- Format per entry: { Name, YieldType, YieldChange }
 		--- not used yet
@@ -506,7 +510,10 @@ function GetCityData( pCity:table )
 	-- extended yields
 	data.Yields.HOUSING = pCityGrowth:GetHousing();
 	data.Yields.AMENITY = pCityGrowth:GetAmenities();
-
+	
+	-- additional data
+	data.IsEstablishedGovernor = ( (pCity:GetAssignedGovernor() and pCity:GetAssignedGovernor():IsEstablished()) or false );
+	
 	-- If something is currently being produced, mark it in the queue.
 	if productionInfo ~= nil then
 		currentProduction				= productionInfo.Name;
@@ -721,6 +728,7 @@ function GetCityData( pCity:table )
 			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
 			DistrictType 	= districtType,
 			CityCenter		= districtInfo.CityCenter,
+			OnePerCity		= districtInfo.OnePerCity,
 			-- not used yet
 			YieldBonus	= GetDistrictYieldText( district ),
 			isPillaged  = pCityDistricts:IsPillaged(district:GetType());
@@ -746,6 +754,13 @@ function GetCityData( pCity:table )
 			},
 			--]]
 		};
+		-- count all districts and specialty ones
+		if not districtInfo.CityCenter and                             districtType ~= "DISTRICT_WONDER" then
+			data.NumDistricts = data.NumDistricts + 1;
+		end
+		if not districtInfo.CityCenter and districtInfo.OnePerCity and districtType ~= "DISTRICT_WONDER" then
+			data.NumSpecialtyDistricts = data.NumSpecialtyDistricts + 1;
+		end
 		
 		-- extended yields -- Infixo: CHECK seems that Districts don't produce yields by themselves, only adjacency yields
 		-- there is no table for that, also both functions produce the same results
@@ -854,6 +869,22 @@ function GetCityData( pCity:table )
 
 
 	return data;
+end
+
+-- ===========================================================================
+-- Diplomatic data (city states and allies)
+-- Trade routes (?)
+-- Units (?)
+function GetPlayerData(ePlayerID:number)
+	local pPlayer:table = Players[ Game.GetLocalPlayer() ];
+	if ePlayerID then pPlayer = Players[ ePlayerID ]; end
+	if not pPlayer then return; end -- error
+	
+	tPlayer 			= {}; -- clear old data
+	tPlayer.Player 		= pPlayer;
+	tPlayer.SubjectType = SubjectTypes.Player;
+	tPlayer.Name 		= Locale.Lookup(PlayerConfigurations[pPlayer:GetID()]:GetCivilizationShortDescription());
+	tPlayer.Cities		= tCities;
 end
 
 
@@ -1175,13 +1206,17 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		bIsValidSubject = ( tSubject.Population >= tonumber(tReq.Arguments.Amount) );
 		
-	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_SPECIALTY_DISTRICTS" then -- 4
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_SPECIALTY_DISTRICTS" then
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
-		local iNumDistricts:number = 0;
-		for _,district in ipairs(tSubject.Districts) do
-			if not district.CityCenter then iNumDistricts = iNumDistricts + 1; end
-		end
-		bIsValidSubject = ( iNumDistricts >= tonumber(tReq.Arguments.Amount) );
+		--local iNumDistricts:number = 0;
+		--for _,district in ipairs(tSubject.Districts) do
+			--if not district.CityCenter then iNumDistricts = iNumDistricts + 1; end
+		--end
+		bIsValidSubject = ( tSubject.NumSpecialtyDistricts >= tonumber(tReq.Arguments.Amount) );
+
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_GOVERNOR" then
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		bIsValidSubject = tSubject.IsEstablishedGovernor;
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_IS_OWNER_CAPITAL_CONTINENT" then
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
@@ -1309,7 +1344,6 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	
 	-- MAIN DISPATCHER FOR EFFECTS
 	local tImpact:table = YieldTableNew();
-	local bApplied:boolean = false;
 	
 	if tMod.EffectType == "" then
 	
@@ -1317,10 +1351,23 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_ALL_YIELDS_CHANGE" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local fYieldChange:number = tonumber(tMod.Arguments.Amount);
+		for yield in GameInfo.Yields() do YieldTableSetYield(tImpact, yield.YieldType, fYieldChange); end
+		
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount) * tSubject.NumDistricts);
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_POPULATION" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount) * tSubject.Population);
+		
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_GROWTH" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		tImpact.FOOD = tSubject.FoodSurplus * tonumber(tMod.Arguments.Amount) / 100.0;
@@ -1336,6 +1383,7 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_CHANGE" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		local sBuildingType:string = tMod.Arguments.BuildingType;
+		local bApplied:boolean = false;
 		for _,district in ipairs(tSubject.Districts) do
 			for _,building in ipairs(district.Buildings) do
 				local buildingType:string = building.BuildingType;	
@@ -1371,6 +1419,10 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError("City") then return nil; end
 		return nil;
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_HOUSING_PER_DISTRICT" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.HOUSING = tSubject.NumDistricts;
+		
 	elseif tMod.EffectType == "EFFECT_ADJUST_POLICY_HOUSING" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		tImpact.HOUSING = tonumber(tMod.Arguments.Amount);
@@ -1420,6 +1472,9 @@ function RefreshBaseData(ePlayerID:number)
 		--dprint("**** CITY DATA ****", cityName); -- debug
 		--dshowrectable(data); -- debug
 	end
+	
+	GetPlayerData(); -- for COLLECTION_OWNER as Player
+	
 	bBaseDataDirty = false; -- clean :)
 end
 
