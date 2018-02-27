@@ -331,6 +331,16 @@ function GetData()
 		for eResourceType,amount in pairs(data.Resources) do
 			AddResourceData(kResources, eResourceType, cityName, "LOC_HUD_REPORTS_TRADE_OWNED", amount);
 		end
+		
+		-- ADDITIONAL DATA
+		
+		-- Garrison in a city
+		data.IsGarrisonUnit = false;
+		local pPlotCity:table = Map.GetPlot( pCity:GetX(), pCity:GetY() );
+		for _,unit in ipairs(Units.GetUnitsInPlot(pPlotCity)) do
+			if GameInfo.Units[ unit:GetUnitType() ].FormationClass == "FORMATION_CLASS_LAND_COMBAT" then data.IsGarrisonUnit = true; break; end
+		end
+		
 	end
 
 	kCityTotalData.Expenses[YieldTypes.GOLD] = pTreasury:GetTotalMaintenance();
@@ -1571,10 +1581,17 @@ function city_fields( kCityData, pCityInstance )
 	local happinessText:string = Locale.Lookup( GameInfo.Happinesses[kCityData.Happiness].Name );
 	pCityInstance.CitizenHappiness:SetText( happinessText );
 
-	-- WarWeariness, Strength and Damage
+	-- WarWeariness
 	local warWearyValue:number = kCityData.AmenitiesLostFromWarWeariness;
 	pCityInstance.WarWeariness:SetText( (warWearyValue==0) and "0" or ColorRed("-"..tostring(warWearyValue)) );
-	pCityInstance.Strength:SetText( tostring(kCityData.Defense) );
+	
+	-- Strength and icon for Garrison Unit
+	if kCityData.IsGarrisonUnit then 
+		pCityInstance.Strength:SetText( tostring(kCityData.Defense).."[ICON_Fortified]" ); -- [ICON_Unit] small person [ICON_Exclamation] it's in a circle
+	else
+		pCityInstance.Strength:SetText( tostring(kCityData.Defense) );
+	end
+	-- Damage
 	--pCityInstance.Damage:SetText( tostring(kCityData.Damage) );	-- Infixo (vanilla version)
 	if kCityData.HitpointsTotal > kCityData.HitpointsCurrent then
 		pCityInstance.Damage:SetText( ColorRed(kCityData.HitpointsTotal - kCityData.HitpointsCurrent) );
