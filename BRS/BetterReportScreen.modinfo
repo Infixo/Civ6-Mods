@@ -36,7 +36,8 @@
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_RiseFall" criteria="Expansion1">
 			<Properties>
 				<LuaContext>ReportScreen</LuaContext>
-				<LuaReplace>RiseFall/ReportScreen_RiseFall.lua</LuaReplace>
+				<!--<LuaReplace>RiseFall/ReportScreen_RiseFall.lua</LuaReplace>-->
+				<LuaReplace>ReportScreen.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
     </InGameActions>
@@ -47,7 +48,7 @@
 		<File>UnitPromotionPopup.lua</File>
 		<File>BetterReportScreen_Text.xml</File>
 		<!-- Rise & Fall files -->
-		<File>RiseFall/ReportScreen_RiseFall.lua</File>
+		<!--<File>RiseFall/ReportScreen_RiseFall.lua</File>-->
 		<File>RiseFall/ReportScreen.xml</File>
     </Files>
 </Mod>

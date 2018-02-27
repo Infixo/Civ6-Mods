@@ -10,6 +10,12 @@ include("InstanceManager");
 include("SupportFunctions");
 include("TabSupport");
 
+-- ===========================================================================
+-- Rise & Fall check
+-- ===========================================================================
+
+local bIsRiseFall:boolean = (Game.GetEmergencyManager ~= nil) -- this is for UI scripts; for GamePlay use Game.ChangePlayerEraScore
+
 
 -- ===========================================================================
 --	DEBUG
@@ -92,6 +98,25 @@ local m_kUnitDataReport	:table = nil;
 m_kCurrentTab = 1;
 -- !!
 
+-- ===========================================================================
+-- Time helpers
+-- ===========================================================================
+local fStartTime1:number = 0.0
+local fStartTime2:number = 0.0
+function Timer1Start()
+	fStartTime1 = Automation.GetTime()
+	--print("Timer1 Start", fStartTime1)
+end
+function Timer2Start()
+	fStartTime2 = Automation.GetTime()
+	--print("Timer2 Start() (start)", fStartTime2)
+end
+function Timer1Tick(txt:string)
+	print("Timer1 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime1))
+end
+function Timer2Tick(txt:string)
+	print("Timer2 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime2))
+end
 
 -- ===========================================================================
 --	Single exit point for display
@@ -124,7 +149,9 @@ function Open()
 
 	-- BRS !! new line to add new variables 
 	-- m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData = GetData();
+	Timer1Start()
 	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
+	Timer1Tick("GetData")
 	
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
 	--m_tabs.SelectTab( 1 );
@@ -702,13 +729,21 @@ end
 -- Obtain unit maintenance
 -- This function will use GameInfo for vanilla game and UnitManager for Rise&Fall
 function GetUnitMaintenance(pUnit:table)
+	if bIsRiseFall then
+		-- Rise & Fall version
+		local iUnitInfoHash:number = GameInfo.Units[ pUnit:GetUnitType() ].Hash;
+		local unitMilitaryFormation = pUnit:GetMilitaryFormation();
+		if unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION then return UnitManager.GetUnitCorpsMaintenance(iUnitInfoHash); end
+		if unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION  then return UnitManager.GetUnitArmyMaintenance(iUnitInfoHash); end
+																				return UnitManager.GetUnitMaintenance(iUnitInfoHash);
+	end
+	-- vanilla version
 	local iUnitMaintenance:number = GameInfo.Units[ pUnit:GetUnitType() ].Maintenance;
 	local unitMilitaryFormation = pUnit:GetMilitaryFormation();
 	if unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION then return math.ceil(iUnitMaintenance * 1.5); end -- it is 150% rounded UP
 	if unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION  then return iUnitMaintenance * 2; end -- it is 200%
 	                                                                        return iUnitMaintenance;
 end
-
 
 -- ===========================================================================
 --	Set a group to it's proper collapse/open state
@@ -887,9 +922,9 @@ end
 --	Tab Callback
 -- ===========================================================================
 function ViewYieldsPage()	
-
+	Timer1Start()
 	ResetTabForNewPageContent();
-
+	Timer1Tick("ResetTabForNewPageContent")
 	local pPlayer:table = Players[Game.GetLocalPlayer()]; --BRS
 
 	local instance:table = nil;
@@ -899,6 +934,7 @@ function ViewYieldsPage()
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityIncomeHeaderInstance", pHeaderInstance, instance.ContentStack ) ;	
+	Timer1Tick("CityIncomeHeaderInstance")
 
 	--BRS sorting
 	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() sortBy( "CityName" ) end )
@@ -1189,6 +1225,7 @@ function ViewYieldsPage()
 
 	SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() );
 	RealizeGroup( instance );
+	Timer1Tick("end of city details")
 
 
 	-- ========== Building Expenses ==========
@@ -1485,11 +1522,37 @@ end
 --	Tab Callback
 -- ===========================================================================
 
-function city_fields( kCityData, pCityInstance ) --BRS helper
 
-	TruncateStringWithTooltip(pCityInstance.CityName, 130, Locale.Lookup(kCityData.CityName)); 
-	pCityInstance.Population:SetText( tostring(kCityData.Population) );
+function city_fields( kCityData, pCityInstance )
 
+	local function ColorRed(text) return("[COLOR_Red]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
+
+	-- Infixo: status will show various icons
+	--pCityInstance.Status:SetText( kCityData.IsUnderSiege and Locale.Lookup("LOC_HUD_REPORTS_STATUS_UNDER_SEIGE") or Locale.Lookup("LOC_HUD_REPORTS_STATUS_NORMAL") );
+	local sStatusText:string = "";
+	if kCityData.Population > kCityData.Housing then sStatusText = sStatusText.."[ICON_HousingInsufficient]"; end -- insufficient housing
+	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then sStatusText = sStatusText.."[ICON_AmenitiesInsufficient]"; end -- insufficient amenities
+	if kCityData.IsUnderSiege then sStatusText = sStatusText.."[ICON_UnderSiege]"; end -- under siege
+	if kCityData.Occupied then sStatusText = sStatusText.."[ICON_Occupied]"; end -- occupied
+	pCityInstance.Status:SetText( sStatusText );
+	
+	-- CityName
+	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
+	TruncateStringWithTooltip(pCityInstance.CityName, 150, Locale.Lookup(kCityData.CityName));
+	
+	-- Population and Housing
+	if bIsRiseFall then
+		if kCityData.Population > kCityData.Housing then
+			pCityInstance.Population:SetText( tostring(kCityData.Population) .. " / "..ColorRed(kCityData.Housing));
+		else
+			pCityInstance.Population:SetText( tostring(kCityData.Population) .. " / " .. tostring(kCityData.Housing));
+		end
+	else -- vanilla version
+		pCityInstance.Population:SetText( tostring(kCityData.Population) ); -- Infixo
+		pCityInstance.Housing:SetText( tostring( kCityData.Housing ) );
+	end
+	
+	-- GrowthRateStatus
 	if kCityData.HousingMultiplier == 0 or kCityData.Occupied then
 		status = "LOC_HUD_REPORTS_STATUS_HALTED";
 	elseif kCityData.HousingMultiplier <= 0.5 then
@@ -1497,36 +1560,65 @@ function city_fields( kCityData, pCityInstance ) --BRS helper
 	else
 		status = "LOC_HUD_REPORTS_STATUS_NORMAL";
 	end
-	
 	pCityInstance.GrowthRateStatus:SetText( Locale.Lookup(status) );
 
-	pCityInstance.Housing:SetText( tostring( kCityData.Housing ) );
-	pCityInstance.Amenities:SetText( tostring(kCityData.AmenitiesNum).." / "..tostring(kCityData.AmenitiesRequiredNum) );
-
+	-- Amenities and Happiness
+	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then
+		pCityInstance.Amenities:SetText( ColorRed(kCityData.AmenitiesNum).." / "..tostring(kCityData.AmenitiesRequiredNum) );
+	else
+		pCityInstance.Amenities:SetText( tostring(kCityData.AmenitiesNum).." / "..tostring(kCityData.AmenitiesRequiredNum) );
+	end
 	local happinessText:string = Locale.Lookup( GameInfo.Happinesses[kCityData.Happiness].Name );
 	pCityInstance.CitizenHappiness:SetText( happinessText );
 
+	-- WarWeariness, Strength and Damage
 	local warWearyValue:number = kCityData.AmenitiesLostFromWarWeariness;
-	pCityInstance.WarWeariness:SetText( (warWearyValue==0) and "0" or "-"..tostring(warWearyValue) );
-
-	local statusText:string = kCityData.IsUnderSiege and Locale.Lookup("LOC_HUD_REPORTS_STATUS_UNDER_SEIGE") or Locale.Lookup("LOC_HUD_REPORTS_STATUS_NORMAL");
-	TruncateStringWithTooltip(pCityInstance.Status, 80, statusText); 
-
+	pCityInstance.WarWeariness:SetText( (warWearyValue==0) and "0" or ColorRed("-"..tostring(warWearyValue)) );
 	pCityInstance.Strength:SetText( tostring(kCityData.Defense) );
-	pCityInstance.Damage:SetText( tostring(kCityData.Damage) );		
+	--pCityInstance.Damage:SetText( tostring(kCityData.Damage) );	-- Infixo (vanilla version)
+	if kCityData.HitpointsTotal > kCityData.HitpointsCurrent then
+		pCityInstance.Damage:SetText( ColorRed(kCityData.HitpointsTotal - kCityData.HitpointsCurrent) );
+	else
+		pCityInstance.Damage:SetText( "0" );
+	end
+
+	if not bIsRiseFall then return end -- the 2 remaining fields are for Rise & Fall only
+	
+	-- Loyalty -- Infixo: this is not stored - try to store it for sorting later!
+	local pCulturalIdentity = kCityData.City:GetCulturalIdentity();
+	local currentLoyalty = pCulturalIdentity:GetLoyalty();
+	local maxLoyalty = pCulturalIdentity:GetMaxLoyalty();
+	local loyaltyPerTurn:number = pCulturalIdentity:GetLoyaltyPerTurn();
+	local loyaltyFontIcon:string = loyaltyPerTurn >= 0 and "[ICON_PressureUp]" or "[ICON_PressureDown]";
+	pCityInstance.Loyalty:SetText(loyaltyFontIcon .. " " .. Round(currentLoyalty, 1) .. "/" .. maxLoyalty);
+	kCityData.Loyalty = currentLoyalty; -- Infixo: store for sorting
+
+	-- Governor -- Infixo: this is not stored neither
+	local pAssignedGovernor = kCityData.City:GetAssignedGovernor();
+	if pAssignedGovernor then
+		local eGovernorType = pAssignedGovernor:GetType();
+		local governorDefinition = GameInfo.Governors[eGovernorType];
+		local governorMode = pAssignedGovernor:IsEstablished() and "_FILL" or "_SLOT";
+		local governorIcon = "ICON_" .. governorDefinition.GovernorType .. governorMode;
+		pCityInstance.Governor:SetText("[" .. governorIcon .. "]");
+		kCityData.Governor = governorDefinition.GovernorType;
+	else
+		pCityInstance.Governor:SetText("");
+		kCityData.Governor = "";
+	end
 
 end
 
-function sort_cities( type, instance ) --BRS helper
+function sort_cities( type, instance )
 
 	local i = 0
 	
 	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city_sortFunction( instance.Descend, type, t, a, b ); end ) do
 		i = i + 1
 		local cityInstance = instance.Children[i]
-		
+
 		city_fields( kCityData, cityInstance )
-		
+
 		-- go to the city after clicking
 		cityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
 		cityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
@@ -1534,7 +1626,7 @@ function sort_cities( type, instance ) --BRS helper
 	
 end
 
-function city_sortFunction( descend, type, t, a, b ) --BRS helper
+function city_sortFunction( descend, type, t, a, b )
 
 	local aCity = 0
 	local bCity = 0
@@ -1542,18 +1634,36 @@ function city_sortFunction( descend, type, t, a, b ) --BRS helper
 	if type == "name" then
 		aCity = Locale.Lookup( t[a].CityName )
 		bCity = Locale.Lookup( t[b].CityName )
+	elseif type == "gover" then
+		aCity = t[a].Governor
+		bCity = t[b].Governor
+	elseif type == "loyal" then
+		aCity = t[a].Loyalty
+		bCity = t[b].Loyalty
 	elseif type == "pop" then
 		aCity = t[a].Population
 		bCity = t[b].Population
-	elseif type == "house" then
+		if aCity == bCity then -- same pop, sort by Housing
+			aCity = t[a].Housing
+			bCity = t[b].Housing
+		end
+	elseif type == "house" then -- Infixo: can leave it, will not be used
 		aCity = t[a].Housing
 		bCity = t[b].Housing
 	elseif type == "amen" then
 		aCity = t[a].AmenitiesNum
 		bCity = t[b].AmenitiesNum
+		if aCity == bCity then -- same amenities, sort by required
+			aCity = t[a].AmenitiesRequiredNum
+			bCity = t[b].AmenitiesRequiredNum
+		end
 	elseif type == "happy" then
 		aCity = t[a].Happiness
 		bCity = t[b].Happiness
+		if aCity == bCity then -- same happiness, sort by difference in amenities
+			aCity = t[a].AmenitiesNum - t[a].AmenitiesRequiredNum
+			bCity = t[b].AmenitiesNum - t[b].AmenitiesRequiredNum
+		end
 	elseif type == "growth" then
 		aCity = t[a].HousingMultiplier
 		bCity = t[b].HousingMultiplier
@@ -1579,19 +1689,20 @@ function ViewCityStatusPage()
 
 	ResetTabForNewPageContent();
 
-	local instance:table = m_simpleIM:GetInstance();	
+	local instance:table = m_simpleIM:GetInstance();
 	instance.Top:DestroyAllChildren();
 	
 	instance.Children = {}
 	instance.Descend = true
 	
-	local pHeaderInstance:table = {}
-	ContextPtr:BuildInstanceForControl( "CityStatusHeaderInstance", pHeaderInstance, instance.Top ) ;	
-
-	--BRS sorting
+	local pHeaderInstance:table = {};
+	ContextPtr:BuildInstanceForControl( "CityStatusHeaderInstance", pHeaderInstance, instance.Top );
+	
 	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "name", instance ) end )
+	if bIsRiseFall then pHeaderInstance.CityGovernorButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "gover", instance ) end ) end -- Infixo
+	if bIsRiseFall then pHeaderInstance.CityLoyaltyButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "loyal", instance ) end ) end -- Infixo
 	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "pop", instance ) end )
-	pHeaderInstance.CityHousingButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "house", instance ) end )
+	if not bIsRiseFall then pHeaderInstance.CityHousingButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "house", instance ) end ) end -- Infixo
 	pHeaderInstance.CityGrowthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "growth", instance ) end )
 	pHeaderInstance.CityAmenitiesButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "amen", instance ) end )
 	pHeaderInstance.CityHappinessButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "happy", instance ) end )
@@ -1605,9 +1716,9 @@ function ViewCityStatusPage()
 
 		local pCityInstance:table = {}
 
-		ContextPtr:BuildInstanceForControl( "CityStatusEntryInstance", pCityInstance, instance.Top ) ;	
+		ContextPtr:BuildInstanceForControl( "CityStatusEntryInstance", pCityInstance, instance.Top )
 		table.insert( instance.Children, pCityInstance )
-
+		
 		city_fields( kCityData, pCityInstance )
 
 		-- go to the city after clicking
@@ -1626,6 +1737,7 @@ function ViewCityStatusPage()
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 3;
 end
+
 
 -- ===========================================================================
 -- BRS NEW SECTION (UNITS)
@@ -2054,7 +2166,9 @@ function AddTabSection( name:string, populateCallback:ifunction )
 			m_tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
 		end
 		kTab.Selection:SetHide(false);
+		Timer2Start()
 		populateCallback();
+		Timer2Tick("Section "..Locale.Lookup(name))
 	end
 
 	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );

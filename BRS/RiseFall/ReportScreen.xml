@@ -679,7 +679,7 @@
 			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<!-- Infixo: in R&F status is removed, let's leave it for a moment -->
+				<!-- Infixo: in R&F status is removed, let's use in both versions for more -->
 				<Container																										Size="60,parent">
 					<GridButton		ID="CityStatusButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_STATUS" />
@@ -764,7 +764,7 @@
 			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<!-- Infixo: in R&F status is removed, let's show some icons here -->
+				<!-- Infixo: in R&F status is removed, let's use in both versions for more -->
 				<Container																										Size="60,parent">
 					<Label				ID="Status"	Offset="0,4"																	Style="ReportValueText"	String="$Status$" />
 				</Container>
