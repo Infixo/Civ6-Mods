@@ -87,7 +87,9 @@ local SubjectTypes:table = {
 	City = "City",
 	District = "District",
 	Building = "Building",
+	Unit = "Unit",
 	GreatWork = "GreatWork",
+	TradeRoute = "TradeRoute",
 }
 
 -- ===========================================================================
@@ -127,17 +129,13 @@ function YieldTableClear(pYields:table)
 end
 
 -- add two tables
-function YieldTableAdd(pYieldsA:table, pYieldsB:table)
-	local tRes:table = YieldTableNew();
-	for yield,_ in pairs(YieldTypes) do tRes[ yield ] = pYieldsA[ yield ] + pYieldsB[ yield ]; end
-	return tRes;
+function YieldTableAdd(pYields:table, pYieldsToAdd:table)
+	for yield,_ in pairs(YieldTypes) do pYields[ yield ] = pYields[ yield ] + pYieldsToAdd[ yield ]; end
 end
 
 -- multiply by a given number
 function YieldTableMultiply(pYields:table, fModifier:number)
-	local tRes:table = YieldTableNew();
-	for yield,_ in pairs(YieldTypes) do tRes[ yield ] = pYields[ yield ] * fModifier; end
-	return tRes;
+	for yield,_ in pairs(YieldTypes) do pYields[ yield ] = pYields[ yield ] * fModifier; end
 end
 
 -- multiply by a percentage given as integer 0..100
@@ -390,6 +388,34 @@ function GetDistrictYieldText(district)
 	return yieldText;
 end
 
+
+-- ===========================================================================
+--	Obtain the total resources for a given city.
+-- ===========================================================================
+function GetCityResourceData( pCity:table )
+
+	-- Loop through all the plots for a given city; tallying the resource amount.
+	local kResources : table = {};
+	local cityPlots : table = Map.GetCityPlots():GetPurchasedPlots(pCity)
+	for _, plotID in ipairs(cityPlots) do
+		local plot			: table = Map.GetPlotByIndex(plotID)
+		local plotX			: number = plot:GetX()
+		local plotY			: number = plot:GetY()
+		local eResourceType : number = plot:GetResourceType();
+
+		-- TODO: Account for trade/diplomacy resources.
+		if eResourceType ~= -1 and Players[pCity:GetOwner()]:GetResources():IsResourceExtractableAt(plot) then
+			if kResources[eResourceType] == nil then
+				kResources[eResourceType] = 1;
+			else
+				kResources[eResourceType] = kResources[eResourceType] + 1;
+			end
+		end
+	end
+	return kResources;
+end
+
+
 -- ===========================================================================
 --	For a given city, return a table o' data for it and the surrounding
 --	districts.
@@ -399,11 +425,12 @@ end
 --				.Districts - table of Districts (has Buildings inside)
 --						.Buildings - table of Buildings in the District
 --				.Wonders - wonders
+--				.OutgoingRoutes - trade routes
 -- ===========================================================================
 function GetCityData( pCity:table )
 
-	local owner					:number = pCity:GetOwner();
-	local pPlayer				:table	= Players[owner];
+	local ownerID					:number = pCity:GetOwner();
+	local pPlayer				:table	= Players[ownerID];
 	local pCityDistricts		:table	= pCity:GetDistricts();
 	local pMainDistrict			:table	= pPlayer:GetDistricts():FindID( pCity:GetDistrictID() );	-- Note player GetDistrict's object is different than above.
 	local districtHitpoints		:number	= 0;
@@ -476,7 +503,7 @@ function GetCityData( pCity:table )
 		IsCapital						= pCity:IsCapital(),
 		IsUnderSiege					= false,
 		OccupationMultiplier            = 0,
-		Owner							= owner,
+		OwnerID							= ownerID,
 		OtherGrowthModifiers			= 0,
 		PantheonBelief					= -1,
 		ProdPercentNextTurn				= 0,
@@ -513,6 +540,7 @@ function GetCityData( pCity:table )
 	
 	-- additional data
 	data.IsEstablishedGovernor = ( (pCity:GetAssignedGovernor() and pCity:GetAssignedGovernor():IsEstablished()) or false );
+	data.ContinentType         = Map.GetPlot( pCity:GetX(), pCity:GetY() ):GetContinentType();
 	
 	-- If something is currently being produced, mark it in the queue.
 	if productionInfo ~= nil then
@@ -586,7 +614,6 @@ function GetCityData( pCity:table )
 		end
 	end
 	
-	data.ContinentType					= Map.GetPlot( pCity:GetX(), pCity:GetY() ):GetContinentType();
 	data.AmenitiesNetAmount				= pCityGrowth:GetAmenities() - pCityGrowth:GetAmenitiesNeeded();
 	data.AmenitiesNum					= pCityGrowth:GetAmenities();
 	data.AmenitiesFromLuxuries			= pCityGrowth:GetAmenitiesFromLuxuries();
@@ -685,8 +712,8 @@ function GetCityData( pCity:table )
 		UI.DataError("Some data will be missing as unable to obtain the corresponding district for city: "..pCity:GetName());
 	end
 
-
-	-- Districts
+	-------------------------------------
+	-- DISTRICTS
 	for i, district in pCityDistricts:Members() do
 
 		-- Helper to obtain yields for a district: build a lookup table and then match type.
@@ -724,7 +751,7 @@ function GetCityData( pCity:table )
 		local districtTable :table	= { 
 			SubjectType		= SubjectTypes.District,
 			Name			= Locale.Lookup(districtInfo.Name), 
-			Yields   = YieldTableNew(), -- district yields
+			Yields   		= YieldTableNew(), -- district yields (from adjacency)
 			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
 			DistrictType 	= districtType,
 			CityCenter		= districtInfo.CityCenter,
@@ -770,9 +797,18 @@ function GetCityData( pCity:table )
 		-- OK, Minors are giving yields to Buildings now, not Districts, different modifiers are used
 		-- Another problem is that calling it with 6 gives negative big integers, unknown (bug?)
 		--for yield,yid in pairs(YieldTypes) do districtTable.Yields[ yield ] = district:GetYield( yid ); end
-		for yield,yid in pairs(YieldTypes) do districtTable.Yields[ yield ] = district:GetAdjacencyYield( yid ); end -- Infixo: ADJACENCY = STANDARD YIELD
+		--for yield,yid in pairs(YieldTypes) do districtTable.Yields[ yield ] = district:GetAdjacencyYield( yid ); end -- Infixo: ADJACENCY = STANDARD YIELD
 		--districtTable.Yields.TOURISM = 0; -- tourism is produced in another way, GetYield() produces stupid numbers here
+		-- SECOND APPROACH
+		-- GetYield and GetAdjacencyYield give yields AFTER applying modifiers
+		-- We can get raw, unmodified yields from Plot:GetAdjacencyYield, however this requires a bit more complex call
+		-- kPlot holds the plot, district:GetType(), also produces 0 for index=6, so it's ok
+		for yield,yid in pairs(YieldTypes) do
+			districtTable.Yields[ yield ] = kPlot:GetAdjacencyYield(ownerID, pCity:GetID(), district:GetType(), yid)
+		end
 
+		---------------------------------------------------------------------
+		-- BUILDINGS
 		local buildingTypes = pCityBuildings:GetBuildingsAtLocation(plotID);
 		for _, buildingType in ipairs(buildingTypes) do
 			local building		:table = GameInfo.Buildings[buildingType];
@@ -860,6 +896,8 @@ function GetCityData( pCity:table )
 		end
 	end
 
+	---------------------------------------------------------------
+	-- TRADING POSTS
 	local pTrade:table = pCity:GetTrade();
 	for iPlayer:number = 0, MapConfiguration.GetMaxMajorPlayers()-1,1 do
 		if (pTrade:HasActiveTradingPost(iPlayer)) then
@@ -867,8 +905,90 @@ function GetCityData( pCity:table )
 		end
 	end
 
+	---------------------------------------------------------------
+	-- TRADE ROUTES
+	local pPlayerDiplomaticAI:table = pPlayer:GetDiplomaticAI()
+	data.OutgoingRoutes = {}
+	data.NumRoutesDomestic = 0
+	data.NumRoutesInternational = 0
+	for _,route in ipairs(pTrade:GetOutgoingRoutes()) do
+		local routeData:table = {
+			SubjectType = SubjectTypes.TradeRoute,
+			Name        = "", -- later
+			IsDomestic  = (route.OriginCityPlayer == route.DestinationCityPlayer), -- boolean
+			Yields      = YieldTableNew(), -- later
+			NumImprovedResourcesAtDestination = 0, -- later
+			IsDestinationPlayerAlly = false, -- later
+		}
+		-- copy yields
+		for _,yield in ipairs(route.OriginYields) do
+			YieldTableSetYield(routeData.Yields, GameInfo.Yields[yield.YieldIndex].YieldType, yield.Amount)
+		end
+	
+		-- counters
+		if routeData.IsDomestic then data.NumRoutesDomestic      = data.NumRoutesDomestic + 1
+		else                         data.NumRoutesInternational = data.NumRoutesInternational + 1 end
 
-	return data;
+		-- Find destination city
+		local pDestPlayer:table = Players[ route.DestinationCityPlayer ] -- can be used to find out diplo details
+		local pDestCity:table = pDestPlayer:GetCities():FindID(route.DestinationCityID)
+		routeData.Name = data.Name.." - "..Locale.Lookup(pDestCity:GetName())
+
+		-- market economy: number of resources improved at destination (lux, strat)
+		local tResources:table = GetCityResourceData(pDestCity) -- Firaxis function
+		local function CountImprovedResources(sResourceClassToCount:string)
+			local iNum:number = 0
+			for eResourceType,amount in pairs(tResources) do
+				if GameInfo.Resources[eResourceType].ResourceClassType == sResourceClassToCount then iNum = iNum + amount end
+			end
+			return iNum
+		end
+		routeData.NumImprovedResourcesStrategic = CountImprovedResources("RESOURCECLASS_STRATEGIC")
+		routeData.NumImprovedResourcesLuxury    = CountImprovedResources("RESOURCECLASS_LUXURY")
+		routeData.NumImprovedResourcesBonus     = CountImprovedResources("RESOURCECLASS_BONUS")
+		-- if destination is Ally (diplo)
+		routeData.IsDestinationPlayerAlly = ( GameInfo.DiplomaticStates[ pPlayerDiplomaticAI:GetDiplomaticStateIndex(route.DestinationCityPlayer) ].StateType == "DIPLO_STATE_ALLIED" )
+		
+		table.insert(data.OutgoingRoutes, routeData)
+	end
+	data.NumRoutes = table.count(data.OutgoingRoutes)
+	
+	-- incoming routes are a bit easier, only yields are needed as for now
+	data.IncomingRoutes = {}
+	for _,route in ipairs(pTrade:GetIncomingRoutes()) do
+		local routeData:table = {
+			SubjectType = SubjectTypes.TradeRoute,
+			Name        = "", -- later
+			IsDomestic  = (route.OriginCityPlayer == route.DestinationCityPlayer), -- boolean
+			Yields      = YieldTableNew(), -- later
+		}
+		-- copy yields
+		for _,yield in ipairs(route.DestinationYields) do
+			YieldTableSetYield(routeData.Yields, GameInfo.Yields[yield.YieldIndex].YieldType, yield.Amount)
+		end
+
+		-- Find origin city
+		local pOriginPlayer:table = Players[ route.OriginCityPlayer ]
+		local pOriginCity:table = pOriginPlayer:GetCities():FindID(route.OriginCityID)
+		routeData.Name = Locale.Lookup(pOriginCity:GetName()).." - "..data.Name -- opposite to outgoing
+
+		table.insert(data.IncomingRoutes, routeData)
+	end
+	
+	-- done!
+	return data
+end
+
+
+-- ===========================================================================
+-- Obtain unit maintenance
+-- This function will use GameInfo for vanilla game and UnitManager for Rise&Fall
+function GetUnitMaintenance(pUnit:table)
+	local iUnitMaintenance:number = GameInfo.Units[ pUnit:GetUnitType() ].Maintenance;
+	local unitMilitaryFormation = pUnit:GetMilitaryFormation();
+	if unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION then return math.ceil(iUnitMaintenance * 1.5); end -- it is 150% rounded UP
+	if unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION  then return iUnitMaintenance * 2; end -- it is 200%
+	                                                                        return iUnitMaintenance;
 end
 
 -- ===========================================================================
@@ -876,15 +996,82 @@ end
 -- Trade routes (?)
 -- Units (?)
 function GetPlayerData(ePlayerID:number)
-	local pPlayer:table = Players[ Game.GetLocalPlayer() ];
-	if ePlayerID then pPlayer = Players[ ePlayerID ]; end
-	if not pPlayer then return; end -- error
+	local pPlayer:table = Players[ Game.GetLocalPlayer() ]
+	if ePlayerID then pPlayer = Players[ ePlayerID ] end
+	if not pPlayer then return end -- error
 	
-	tPlayer 			= {}; -- clear old data
-	tPlayer.Player 		= pPlayer;
-	tPlayer.SubjectType = SubjectTypes.Player;
-	tPlayer.Name 		= Locale.Lookup(PlayerConfigurations[pPlayer:GetID()]:GetCivilizationShortDescription());
-	tPlayer.Cities		= tCities;
+	tPlayer 			= {} -- clear old data
+	tPlayer.Player 		= pPlayer
+	tPlayer.SubjectType = SubjectTypes.Player
+	tPlayer.Name 		= Locale.Lookup(PlayerConfigurations[pPlayer:GetID()]:GetCivilizationShortDescription())
+	tPlayer.Cities		= tCities
+	
+	-- YIELDS
+	tPlayer.Yields = YieldTableNew()
+	tPlayer.Yields.GOLD    = pPlayer:GetTreasury():GetGoldYield()
+	tPlayer.Yields.SCIENCE = pPlayer:GetTechs():GetScienceYield()
+	tPlayer.Yields.CULTURE = pPlayer:GetCulture():GetCultureYield()
+	tPlayer.Yields.FAITH   = pPlayer:GetReligion():GetFaithYield()
+	--tPlayer.Yields.TOURISM = pPlayer:GetStats():GetTourism()
+	local iTotFood:number, iTotProd:number, iTotAmenity:number, iTotHousing:number = 0, 0, 0, 0
+	for _,city in pPlayer:GetCities():Members() do
+		iTotFood    = iTotFood    + city:GetGrowth():GetFoodSurplus()
+		iTotAmenity = iTotAmenity + city:GetGrowth():GetAmenities()
+		iTotHousing = iTotHousing + city:GetGrowth():GetHousing()
+		iTotProd    = iTotProd    + city:GetBuildQueue():GetProductionYield()
+	end
+	tPlayer.Yields.FOOD = iTotFood
+	tPlayer.Yields.PRODUCTION = iTotProd
+	tPlayer.Yields.AMENITY = iTotAmenity
+	tPlayer.Yields.HOUSING = iTotHousing
+
+	-- TRADE ROUTES
+	tPlayer.NumRoutes = 0
+	tPlayer.NumRoutesDomestic = 0
+	tPlayer.NumRoutesInternational = 0
+	for cityname,city in pairs(tCities) do
+		tPlayer.NumRoutes = tPlayer.NumRoutes + city.NumRoutes
+		tPlayer.NumRoutesDomestic = tPlayer.NumRoutesDomestic + city.NumRoutesDomestic
+		tPlayer.NumRoutesInternational = tPlayer.NumRoutesInternational + city.NumRoutesInternational
+	end
+
+	-- UNITS
+	tPlayer.Units = {}
+	for _,unit in pPlayer:GetUnits():Members() do
+		local pUnitInfo:table = GameInfo.Units[ unit:GetUnitType() ]
+		
+		-- get localized unit name with appropriate suffix
+		local unitName:string = Locale.Lookup(pUnitInfo.Name);
+		local unitMilitaryFormation:number = unit:GetMilitaryFormation()
+		if (unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION) then
+			unitName = unitName.." [ICON_Corps]"
+		elseif (unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION) then
+			unitName = unitName.." [ICON_Army]"
+		else
+			--BRS Civilian units can be NO_FORMATION (-1) or STANDARD (0)
+			unitMilitaryFormation = MilitaryFormationTypes.STANDARD_FORMATION; -- 0
+		end
+		local unitData:table = {
+			SubjectType = SubjectTypes.Unit,
+			Name = unitName,
+			MilitaryFormation = unitMilitaryFormation,
+			Maintenance = GetUnitMaintenance(unit),
+			IsCivilian = (pUnitInfo.FormationClass == "FORMATION_CLASS_CIVILIAN"),
+		}
+		table.insert(tPlayer.Units, unitData)
+	end
+
+	-- WMDs
+	tPlayer.WMDs = {
+		Num = 0,
+		Maintenance = 0,
+	}
+	for row in GameInfo.WMDs() do
+		local iNum:number = pPlayer:GetWMDs():GetWeaponCount(row.Index)
+		tPlayer.WMDs.Num = tPlayer.WMDs.Num + iNum
+		tPlayer.WMDs.Maintenance = tPlayer.WMDs.Maintenance + iNum * row.Maintenance
+	end
+	
 end
 
 
@@ -1120,7 +1307,7 @@ function DecodeModifier(sModifierId:string)
 		local tSubjectImpact:table = ApplyEffectAndCalculateImpact(tMod, subject, sSubjectType); -- it will return nil if effect unknown
 		if tSubjectImpact then
 			--dprint("Impact for subject (i)", i); dshowtable(tSubjectImpact); -- debug
-			tImpact = YieldTableAdd(tImpact, tSubjectImpact);
+			YieldTableAdd(tImpact, tSubjectImpact);
 		end
 	end
 	dprint("Impact for all subjects"); dshowyields(tImpact); -- debug
@@ -1290,6 +1477,11 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 	-- MAIN DISPATCHER FOR COLLECTIONS
 	if tMod.CollectionType == "COLLECTION_OWNER" then
 		-- most difficult one... not yet...
+		-- for a start - we assume Player is the owner
+		-- we'll need some exception handling here if this is not true
+		sSubjectType = SubjectTypes.Player;
+		table.insert(tSubjects, tPlayer); -- there's only one
+
 	elseif tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
 		-- need City here as owner
 		sSubjectType = "District";
@@ -1431,6 +1623,80 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		tImpact.AMENITY = tonumber(tMod.Arguments.Amount);
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_MAINTENANCE_DISCOUNT" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		local iAmount:number = tonumber(tMod.Arguments.Amount);
+		local iDiscount:number = 0;
+		for _,unit in ipairs(tSubject.Units) do
+			if not unit.IsCivilian then iDiscount = iDiscount + math.min(iAmount, unit.Maintenance); end
+		end
+		tImpact.GOLD = iDiscount;
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_WMD_MAINTENANCE_MODIFIER" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		tImpact.GOLD = tSubject.WMDs.Maintenance * tonumber(tMod.Arguments.Amount) / 100.0;
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_TRADE_ROUTE_YIELD_MODIFIER" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		local bOrigin:boolean = true; -- apply to Outgoing routes (i.e. we are Origin)
+		if tonumber(tMod.Arguments.Destination) == 1 then bOrigin = false;
+		elseif tonumber(tMod.Arguments.Origin) == 1 then bOrigin = true; -- just making sure
+		else return nil; end -- bad args
+		for cityname,city in pairs(tSubject.Cities) do
+			local tRoutes:table = city.OutgoingRoutes; -- default
+			if not bOrigin then tRoutes = city.IncomingRoutes; end
+			for _,route in ipairs(tRoutes) do
+				local tSingleRouteImpact:table = YieldTableNew();
+				--dprint("route yields for", route.Name); dshowyields(route.Yields);
+				YieldTableSetYield(tSingleRouteImpact, tMod.Arguments.YieldType, YieldTableGetYield(route.Yields, tMod.Arguments.YieldType));
+				YieldTablePercent(tSingleRouteImpact, tonumber(tMod.Arguments.Amount));
+				--dprint("single impact is"); dshowyields(tSingleRouteImpact);
+				YieldTableAdd(tImpact, tSingleRouteImpact);
+			end
+		end
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_TRADE_ROUTE_YIELD" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil end
+		local iNum:number = 0
+		for cityname,city in pairs(tSubject.Cities) do iNum = iNum + city.NumRoutes end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_TRADE_ROUTE_YIELD_FOR_DOMESTIC" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		local iNum:number = 0;
+		for cityname,city in pairs(tSubject.Cities) do iNum = iNum + city.NumRoutesDomestic end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_TRADE_ROUTE_YIELD_FOR_INTERNATIONAL" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		local iNum:number = 0;
+		for cityname,city in pairs(tSubject.Cities) do iNum = iNum + city.NumRoutesInternational end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TRADE_ROUTE_YIELD_PER_DESTINATION_STRATEGIC_RESOURCE_FOR_INTERNATIONAL" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local iNum:number = 0;
+		for _,route in ipairs(tSubject.OutgoingRoutes) do
+			if not route.IsDomestic then iNum = iNum + route.NumImprovedResourcesStrategic; end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TRADE_ROUTE_YIELD_PER_DESTINATION_LUXURY_RESOURCE_FOR_INTERNATIONAL" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local iNum:number = 0
+		for _,route in ipairs(tSubject.OutgoingRoutes) do
+			if not route.IsDomestic then iNum = iNum + route.NumImprovedResourcesLuxury; end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TRADE_ROUTE_YIELD_PER_DESTINATION_STRATEGIC_RESOURCE_FOR_DOMESTIC" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local iNum:number = 0;
+		for _,route in ipairs(tSubject.OutgoingRoutes) do
+			if route.IsDomestic then iNum = iNum + route.NumImprovedResourcesStrategic; end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+
 	else
 		-- do nothing here... probably will never implement all possible types
 		return nil;
@@ -1467,7 +1733,6 @@ function RefreshBaseData(ePlayerID:number)
 		-- Add more data (not in CitySupport)
 		--data.Resources			= GetCityResourceData( pCity );
 		--data.WorkedTileYields, data.NumWorkedTiles = GetWorkedTileYieldData( pCity, pCulture );
-		--data.OutgoingRoutes = pCity:GetTrade():GetOutgoingRoutes(); -- Add outgoing route data
 		tCities[ cityName ] = data;
 		--dprint("**** CITY DATA ****", cityName); -- debug
 		--dshowrectable(data); -- debug

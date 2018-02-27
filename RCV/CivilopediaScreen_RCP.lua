@@ -23,6 +23,18 @@ for k,v in pairs(PageLayouts) do
 	BASE_PageLayouts[k] = v;
 end
 
+
+--------------------------------------------------------------
+-- Time helpers
+--------------------------------------------------------------
+local fStartTime:number = 0.0
+function TimerStart()
+	fStartTime = Automation.GetTime()
+end
+function TimerTick(txt:string)
+	print("Timer1 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime))
+end
+
 --------------------------------------------------------------
 -- 2018-02-22: Remember last visited page (based on CQUI code)
 
@@ -112,6 +124,7 @@ function ShowModifiers(page)
 	local chapter_body = {};
 	-- iterate and find them
 	--print("...checking modifiers (obj,table,field)", page.PageId, sModifiersTable, sObjectType);
+	TimerStart()
 	for mod in GameInfo[sModifiersTable]() do
 		if mod[sObjectType] == page.PageId then
 			-- stupid Firaxis, some fields are named ModifierId and some ModifierID (sic!)
@@ -130,6 +143,7 @@ function ShowModifiers(page)
 	if #chapter_body == 0 then
 		table.insert(chapter_body, "No modifiers for this object.");
 	end
+	TimerTick("All modifiers for "..page.PageId)
 	AddChapter("Modifiers", chapter_body);
 end
 
