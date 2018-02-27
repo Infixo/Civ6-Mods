@@ -10,6 +10,8 @@ if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
 -- insert functions/objects into RMA in Initialize()
 
+-- Rise & Fall check
+local bIsRiseFall:boolean = (Game.GetEmergencyManager ~= nil) -- this is for UI scripts; for GamePlay use Game.ChangePlayerEraScore
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -72,13 +74,21 @@ function dshowsubject(pSubject:table)
 	print("    sub: ", pSubject.SubjectType, pSubject.Name);
 end
 
+	--dprint("Subjects are:"); for k,v in pairs(tSubjects) do print(k,v.SubjectType,v.Name); end -- debug
+-- debug routne - prints all subjects in 1 line
+function dshowsubjects(pSubjects:table)
+	local tOut:table = {};
+	for _,subject in pairs(pSubjects) do table.insert(tOut, subject.Name); end
+	print("Subjects:", table.count(pSubjects), table.concat(tOut, ","));
+end
+
 -- ===========================================================================
 -- DATA AND VARIABLES
 -- ===========================================================================
 
 local bBaseDataDirty:boolean = true; -- set to true to refresh the data
-local tCities:table = nil; -- dynamically filled when needed (e.g. after refresh)
-local tPlayer:table = nil; -- dynamically filled when needed (e.g. after refresh)
+tCities = nil; -- dynamically filled when needed (e.g. after refresh)
+tPlayer = nil; -- dynamically filled when needed (e.g. after refresh)
 
 -- supported Subject types, will be put into SubjectType field of respective tables
 local SubjectTypes:table = {
@@ -99,13 +109,13 @@ local SubjectTypes:table = {
 
 -- YieldsTypes 0..5 are for FOOD, PRODUCTION, GOLD, SCIENCE, CULTURE and FAITH
 -- they correspond to respective YIELD_ type in Yields table
---YieldTypes.TOURISM =  6;
-YieldTypes.AMENITY =  7;
-YieldTypes.HOUSING =  8;
---YieldTypes.GPPOINT =  9; -- Great Person Point
---YieldTypes.ENVOY   = 10;
---YieldTypes.APPEAL  = 11;
---YieldTypes.LOYALTY = 12;
+YieldTypes.TOURISM =  6
+YieldTypes.AMENITY = 7
+YieldTypes.HOUSING = 8
+YieldTypes.LOYALTY = 9
+--YieldTypes.GPPOINT =  9 -- Great Person Point
+--YieldTypes.ENVOY   = 10
+--YieldTypes.APPEAL  = 11
 -- whereever possible keep yields in a table named Yields with entries { YieldType = YieldValue }
 
 -- create a map (speed up)
@@ -207,10 +217,14 @@ function GetYieldTextIcon( yieldType:string )
 	local  iconString:string = "";
 	if		yieldType == nil or yieldType == ""	then
 		iconString = "Error:NIL";
+	elseif  yieldType == "YIELD_TOURISM" then
+		iconString = "[ICON_Tourism]"
 	elseif  yieldType == "YIELD_AMENITY" then
-		iconString = "[ICON_Amenities]"
+		iconString = "[ICON_Amenities]" -- [ICON_Therefore] a green arrow pointing to the right
 	elseif  yieldType == "YIELD_HOUSING" then
-		iconString = "[ICON_Housing]"
+		iconString = "[ICON_Housing]" -- [ICON_LocationPip] a blue pin pointing down
+	elseif  yieldType == "YIELD_LOYALTY" then
+		iconString = "[ICON_PressureUp]" -- [ICON_PressureDown] is a red arrow pointing down
 	elseif	GameInfo.Yields[yieldType] ~= nil and GameInfo.Yields[yieldType].IconString ~= nil and GameInfo.Yields[yieldType].IconString ~= "" then
 		iconString = GameInfo.Yields[yieldType].IconString;
 	else
@@ -230,8 +244,10 @@ function GetYieldTextColor( yieldType:string )
 	elseif yieldType == "YIELD_SCIENCE"		   then return "[COLOR:ResScienceLabelCS]";
 	elseif yieldType == "YIELD_CULTURE"		   then return "[COLOR:ResCultureLabelCS]";
 	elseif yieldType == "YIELD_FAITH"		   then return "[COLOR:ResFaithLabelCS]";
+	elseif yieldType == "YIELD_TOURISM"		   then return "[COLOR:ResTourismLabelCS]";
 	elseif yieldType == "YIELD_AMENITY"        then return "[COLOR_Black]";
 	elseif yieldType == "YIELD_HOUSING"        then return "[COLOR_Black]";
+	elseif yieldType == "YIELD_LOYALTY"        then return "[COLOR_Black]";
 	else											return "[COLOR:255,255,255,0]ERROR ";
 	end				
 end
@@ -268,6 +284,7 @@ end
 
 -- ===========================================================================
 --	This function is from SupportFunctions.lua
+--	return a table indexed by buildingType, with a table of GameInfo.GreatWorks in that building
 -- ===========================================================================
 
 function GetGreatWorksForCity(pCity:table)
@@ -288,6 +305,7 @@ function GetGreatWorksForCity(pCity:table)
 						if greatWorkIndex ~= -1 then
 							local greatWorkType:number = pCityBldgs:GetGreatWorkTypeFromIndex(greatWorkIndex);
 							table.insert(greatWorksInBuilding, GameInfo.GreatWorks[greatWorkType]);
+							-- YIELDS: only Tourism (field Tourism)
 						end
 					end
 
@@ -295,6 +313,10 @@ function GetGreatWorksForCity(pCity:table)
 					if #greatWorksInBuilding > 0 then
 						result[buildingType] = greatWorksInBuilding;
 					end
+					-- THEMED use pCityBldgs:IsBuildingThemedCorrectly()
+					-- local regularTourism:number = pCityBldgs:GetBuildingTourismFromGreatWorks(false, buildingIndex);
+					-- local religionTourism:number = pCityBldgs:GetBuildingTourismFromGreatWorks(true, buildingIndex);
+					-- local yieldValue:number = pCityBldgs:GetBuildingYieldFromGreatWorks(yieldIndex, buildingIndex);
 				end
 			end
 		end
@@ -415,6 +437,21 @@ function GetCityResourceData( pCity:table )
 	return kResources;
 end
 
+-- ===========================================================================
+-- Retrieve Governor data, if applicable
+-- Is established?, Count how many promotions a governor has
+function GetGovernorData(pCity:table)
+	if not bIsRiseFall then return false, 0 end
+	local pGovernor:table = pCity:GetAssignedGovernor()
+	if not pGovernor then return false, 0 end
+	-- count promotions
+	local iNumPromos:number = 0
+	local sGovernorType:string = GameInfo.Governors[ pGovernor:GetType() ].GovernorType
+	for row in GameInfo.GovernorPromotions() do
+		if row.GovernorType == sGovernorType and pGovernor:HasPromotion(row.Index) then iNumPromos = iNumPromos + 1 end
+	end
+	return pGovernor:IsEstablished(), iNumPromos
+end
 
 -- ===========================================================================
 --	For a given city, return a table o' data for it and the surrounding
@@ -429,7 +466,7 @@ end
 -- ===========================================================================
 function GetCityData( pCity:table )
 
-	local ownerID					:number = pCity:GetOwner();
+	local ownerID				:number = pCity:GetOwner();
 	local pPlayer				:table	= Players[ownerID];
 	local pCityDistricts		:table	= pCity:GetDistricts();
 	local pMainDistrict			:table	= pPlayer:GetDistricts():FindID( pCity:GetDistrictID() );	-- Note player GetDistrict's object is different than above.
@@ -456,7 +493,7 @@ function GetCityData( pCity:table )
 		ContinentType			= 0,
 		Districts				= {},		-- Per Entry Format: { Name, YieldType, YieldChange, Buildings={ Name,YieldType,YieldChange,isPillaged,isBuilt} }
 		FoodSurplus				= 0,
-		IsEstablishedGovernor	= false,
+		IsGovernorEstablished	= false,
 		NumDistricts			= 0,
 		NumSpecialtyDistricts	= 0,
 		Population				= pCity:GetPopulation(),
@@ -539,9 +576,17 @@ function GetCityData( pCity:table )
 	data.Yields.AMENITY = pCityGrowth:GetAmenities();
 	
 	-- additional data
-	data.IsEstablishedGovernor = ( (pCity:GetAssignedGovernor() and pCity:GetAssignedGovernor():IsEstablished()) or false );
-	data.ContinentType         = Map.GetPlot( pCity:GetX(), pCity:GetY() ):GetContinentType();
-	
+	data.IsGovernorEstablished, data.NumGovernorPromotions = GetGovernorData(pCity)
+	data.ContinentType = Map.GetPlot( pCity:GetX(), pCity:GetY() ):GetContinentType()
+	data.GreatWorks = GetGreatWorksForCity(pCity)
+
+	-- Garrison in a city
+	data.IsGarrisonUnit = false;
+	local pPlotCity:table = Map.GetPlot( pCity:GetX(), pCity:GetY() );
+	for _,unit in ipairs(Units.GetUnitsInPlot(pPlotCity)) do
+		if GameInfo.Units[ unit:GetUnitType() ].FormationClass == "FORMATION_CLASS_LAND_COMBAT" then data.IsGarrisonUnit = true; break; end
+	end
+
 	-- If something is currently being produced, mark it in the queue.
 	if productionInfo ~= nil then
 		currentProduction				= productionInfo.Name;
@@ -1072,6 +1117,17 @@ function GetPlayerData(ePlayerID:number)
 		tPlayer.WMDs.Maintenance = tPlayer.WMDs.Maintenance + iNum * row.Maintenance
 	end
 	
+	-- CITY-STATES
+	tPlayer.NumSuzerainCityStates = 0;
+	tPlayer.NumInfluenceTokensGiven = 0;
+	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
+		-- we need to check for City State actually, because Free Cities are considered Minors as well
+		if minor:IsMinor() then 
+			if minor:GetInfluence():GetSuzerain() == pPlayer:GetID() then tPlayer.NumSuzerainCityStates = tPlayer.NumSuzerainCityStates + 1; end
+			tPlayer.NumInfluenceTokensGiven = tPlayer.NumInfluenceTokensGiven + minor:GetInfluence():GetTokensReceived(pPlayer:GetID());
+		end
+	end
+
 end
 
 
@@ -1299,18 +1355,22 @@ function DecodeModifier(sModifierId:string)
 	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], SubjectTypes.Player;
 	-- build a collection of subjects
 	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
-	dprint("Subjects are:"); for k,v in pairs(tSubjects) do print(k,v.SubjectType,v.Name); end -- debug
+	--dprint("Subjects are:"); for k,v in pairs(tSubjects) do print(k,v.SubjectType,v.Name); end -- debug
+	dshowsubjects(tSubjects); -- debug
 	table.insert(tOut, "Subject(s): "..sSubjectType..", num: "..table.count(tSubjects));
 	-- calculate impact of the modifier
+	local bUnknownEffect:boolean = false;
 	local tImpact:table = YieldTableNew();
 	for i,subject in pairs(tSubjects) do
 		local tSubjectImpact:table = ApplyEffectAndCalculateImpact(tMod, subject, sSubjectType); -- it will return nil if effect unknown
 		if tSubjectImpact then
-			--dprint("Impact for subject (i)", i); dshowtable(tSubjectImpact); -- debug
+			--dprint("Impact for subject ", subject.Name); dshowyields(tSubjectImpact); -- debug
 			YieldTableAdd(tImpact, tSubjectImpact);
+		else
+			bUnknownEffect = true;
 		end
 	end
-	dprint("Impact for all subjects"); dshowyields(tImpact); -- debug
+	--dprint("Impact for all subjects"); dshowyields(tImpact); -- debug
 	-- create an output string
 	local sImpactText:string = "Effect: ";
 	local bImpact:boolean = false;
@@ -1322,6 +1382,7 @@ function DecodeModifier(sModifierId:string)
 	end
 	if not bImpact then sImpactText = sImpactText.."yields not affected"; end
 	table.insert(tOut, sImpactText);
+	if bUnknownEffect then table.insert(tOut, "[ICON_Exclamation][COLOR_Red]Unknown effect[ENDCOLOR]"); end
 	-- return 3 values
 	return table.concat(tOut, "[NEWLINE]"), tImpact, ((tMod.EffectType == "EFFECT_ATTACH_MODIFIER") and tMod.Arguments.ModifierId) or nil
 end
@@ -1337,7 +1398,7 @@ end
 --  table - subject to analyze (from tCities or any other)
 --  string - type of subject (e.g. "City", "District")
 function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
-	dprint("FUNCAL CheckOneRequirement(req,type,sub)(subject)",tReq.ReqId,tReq.ReqType,sSubjectType,tSubject.SubjectType,tSubject.Name);
+	--dprint("FUNCAL CheckOneRequirement(req,type,sub)(subject)",tReq.ReqId,tReq.ReqType,sSubjectType,tSubject.SubjectType,tSubject.Name);
 	
 	local function CheckForMismatchError(sExpectedType:string)
 		if sExpectedType == sSubjectType then return false; end
@@ -1403,7 +1464,15 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_GOVERNOR" then
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
-		bIsValidSubject = tSubject.IsEstablishedGovernor;
+		bIsValidSubject = tSubject.IsGovernorEstablished;
+
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_GOVERNOR_WITH_X_TITLES" then
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		bIsValidSubject = (tSubject.IsGovernorEstablished and tSubject.NumGovernorPromotions >= tonumber(tReq.Arguments.Amount))
+		
+	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_GARRISON_UNIT" then
+		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		bIsValidSubject = tSubject.IsGarrisonUnit;
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_IS_OWNER_CAPITAL_CONTINENT" then
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
@@ -1449,7 +1518,7 @@ end
 --  table - subject to analyze (from tCities or any other)
 --  string - type of subject (e.g. "City", "District")
 function CheckAllRequirements(tReqSet:table, tSubject:table, sSubjectType:string)
-	dprint("FUNCAL CheckAllRequirements(req,sub)(subject)",tReqSet.ReqSetId,sSubjectType,tSubject.SubjectType,tSubject.Name);
+	--dprint("FUNCAL CheckAllRequirements(req,sub)(subject)",tReqSet.ReqSetId,sSubjectType,tSubject.SubjectType,tSubject.Name);
 	for _,req in ipairs(tReqSet.Reqs) do
 		local bIsValid:boolean = CheckOneRequirement(req, tSubject, sSubjectType);
 		if tReqSet.TestAny and     bIsValid then return true;  end -- we found 1 positive, that is all needed for TestAny
@@ -1470,7 +1539,7 @@ end
 --  table - of subjects - these are objects from tCities (cities, districts or buildings), TODO: filtered using SubReqs
 --  strng - type of the subject
 function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
-	print("FUNCAL BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
+	--print("FUNCAL BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
 	local tSubjects:table, sSubjectType:string = {}, "(unknown)";
 	local tReqSet:table = tMod.SubjectReqSet; -- speed up some checking
 	dprint("  Subject requirement set is (id)", tMod.SubjectReqSetId);
@@ -1505,6 +1574,18 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 			end
 		end
 
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_GOVERNORS" then -- we'll use cities that have an assigned Governor (doesn't need to be established?)
+		sSubjectType = SubjectTypes.City;
+		for cityname,citydata in pairs(tCities) do
+			if bIsRiseFall and citydata.City:GetAssignedGovernor() then
+				if tReqSet then 
+					if CheckAllRequirements(tReqSet, citydata, sSubjectType) then table.insert(tSubjects, citydata); end
+				else
+					table.insert(tSubjects, citydata);
+				end
+			end
+		end
+
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_DISTRICTS" then
 		sSubjectType = SubjectTypes.District;
 		for cityname,citydata in pairs(tCities) do
@@ -1527,7 +1608,7 @@ end
 -- Returns a table of extended yields
 -- It will return nil if an effect is unknown
 function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:string)
-	dprint("FUNCAL ApplyEffectAndCalculateImpact(mod,eff,sub)(subject)",tMod.ModifierId,tMod.EffectType,sSubjectType,tSubject.SubjectType,tSubject.Name);
+	--dprint("FUNCAL ApplyEffectAndCalculateImpact(mod,eff,sub)(subject)",tMod.ModifierId,tMod.EffectType,sSubjectType,tSubject.SubjectType,tSubject.Name);
 
 	local function CheckForMismatchError(sExpectedType:string)
 		if sExpectedType == tSubject.SubjectType then return false; end
@@ -1563,7 +1644,11 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_GROWTH" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		tImpact.FOOD = tSubject.FoodSurplus * tonumber(tMod.Arguments.Amount) / 100.0;
-	
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_IDENTITY_PER_TURN" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.LOYALTY = tonumber(tMod.Arguments.Amount);
+		
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.District) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
@@ -1632,6 +1717,18 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		end
 		tImpact.GOLD = iDiscount;
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_YIELD_CHANGE_PER_USED_INFLUENCE_TOKEN" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tSubject.NumInfluenceTokensGiven * tonumber(tMod.Arguments.Amount));
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_YIELD_CHANGE_PER_TRIBUTARY" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tSubject.NumSuzerainCityStates * tonumber(tMod.Arguments.Amount));
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_YIELD_MODIFIER_PER_TRIBUTARY" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tSubject.NumSuzerainCityStates * tonumber(tMod.Arguments.Amount) / 100.0);
+
 	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_WMD_MAINTENANCE_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
 		tImpact.GOLD = tSubject.WMDs.Maintenance * tonumber(tMod.Arguments.Amount) / 100.0;
@@ -1660,6 +1757,16 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		local iNum:number = 0
 		for cityname,city in pairs(tSubject.Cities) do iNum = iNum + city.NumRoutes end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_TRADE_ROUTE_ORIGIN_YIELD_FOR_ALLY_ROUTE" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil end
+		local iNum:number = 0
+		for cityname,city in pairs(tSubject.Cities) do
+			for _,route in ipairs(city.OutgoingRoutes) do
+				if route.IsDestinationPlayerAlly then iNum = iNum + 1 end
+			end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount))
 
 	elseif tMod.EffectType == "EFFECT_ADJUST_TRADE_ROUTE_YIELD_FOR_DOMESTIC" then
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
@@ -1697,12 +1804,44 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
 
+	elseif tMod.EffectType == "EFFECT_GOVERNOR_ADJUST_IDENITITY_PER_TITLE" then -- WARNING! Firaxis made typo here in IDENITITY
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.LOYALTY = tSubject.NumGovernorPromotions * tonumber(tMod.Arguments.Amount);
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TOURISM" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		-- this effect is quite complex, it supports 4 argument types: BoostsWonders (=1), GreatWorkObjectType (=GREATWORKOBJECT_PORTRAIT), ImprovementType (=IMPROVEMENT_BEACH_RESORT), Religious (=1), ScalingFactor (=200)
+		-- the key ones are GreatWorkObjectType and ScalingFactor used for "scale tourism from specific GW by X%"
+		if tMod.Arguments.GreatWorkObjectType and tMod.Arguments.ScalingFactor then
+			-- we must actualy count Tourism not GWs because each GW can have a different value (even if now they all are the same for a given object type)
+			local function GetTourismFromGreatWorks(sGreatWorkObjectType:string)
+				local iTourism:number = 0;
+				--	return a table indexed by buildingType, with a table of GameInfo.GreatWorks in that building
+				for buildingType,greatWorks in pairs(tSubject.GreatWorks) do
+					for _,greatWork in ipairs(greatWorks) do -- this should give GameInfo.GreatWorks object
+						if greatWork.GreatWorkObjectType == sGreatWorkObjectType then iTourism = iTourism + greatWork.Tourism; end
+					end
+				end
+				--dprint("Tourism from GWs (type) in (city) is (num)", sGreatWorkObjectType, tSubject.Name, iTourism);
+				return iTourism;
+			end
+			-- impact is only difference, hence -100, and for ScalingFactor<100 it is actualy a negative impact!
+			tImpact.TOURISM = GetTourismFromGreatWorks(tMod.Arguments.GreatWorkObjectType) * (tonumber(tMod.Arguments.ScalingFactor)-100) / 100.0;
+			-- TODO: don't know how stacking works - this assumes it additive (so, each modifier is applied to base yield)
+			-- TODO: nothing about theming
+		else
+			-- other arguments
+			-- ImprovementType is used by CRISTOREDENTOR_BEACHTOURISM (TODO: applied to all Beach Resorts)and TRAIT_WONDER_DOUBLETOURISM
+			-- BoostsWonders is used by COMMEMORATION_TOURISM_GA_WONDERS
+			-- Religious is used by STBASILS_ADDRELIGIOUSTOURISM (City level)
+		end
+
 	else
 		-- do nothing here... probably will never implement all possible types
 		return nil;
 	end
 	-- done!
-	dprint("  Impact for subject (type,name)",tSubject.SubjectType,tSubject.Name); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
+	--dprint("  Impact for subject (type,name)",tSubject.SubjectType,tSubject.Name); dshowyields(tSubject.Yields); dshowyields(tImpact); -- debug
 	return tImpact;
 end
 
@@ -1712,7 +1851,7 @@ end
 -- Probably could use a Lua event for that (TODO)
 -- TODO: what about other players? probably will need multiple tables of cities, but let's start with LocalPlayer
 function RefreshBaseData(ePlayerID:number)
-	dprint("FUNCAL RefreshBaseData(player)",ePlayerID)
+	--dprint("FUNCAL RefreshBaseData(player)",ePlayerID)
 	local playerID:number = ePlayerID;
 	if playerID == nil then playerID = Game.GetLocalPlayer(); end
 	local pPlayer	:table = Players[playerID];
@@ -1772,6 +1911,13 @@ function Initialize()
     Events.GovernorPromoted.Add(         function() bBaseDataDirty = true end );
 	Events.PantheonFounded.Add(          function() bBaseDataDirty = true end );
 	Events.ReligionFounded.Add(          function() bBaseDataDirty = true end );
+	Events.UnitAddedToMap.Add(           function() bBaseDataDirty = true end );
+	Events.UnitRemovedFromMap.Add(       function() bBaseDataDirty = true end );
+	Events.UnitMoveComplete.Add(         function() bBaseDataDirty = true end );
+	Events.UnitGreatPersonActivated.Add( function() bBaseDataDirty = true end );
+	Events.DiplomacyMeet.Add(            function() bBaseDataDirty = true end );
+	Events.DiplomacyRelationshipChanged.Add( function() bBaseDataDirty = true end );
+	Events.InfluenceGiven.Add(           function() bBaseDataDirty = true end );
 	
 end
 Initialize();
