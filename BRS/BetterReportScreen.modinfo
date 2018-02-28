@@ -3,8 +3,8 @@
 	<Properties>
 		<Name>Better Report Screen</Name>
 		<Teaser>Better Report Screen</Teaser>
-		<Description>Adds Units, Current Deals and Better Yields in Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 1.0.</Description>
-		<Authors>Greg Miller, Infixo</Authors>
+		<Description>Adds Policies impact, Units, Current Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 2.0.</Description>
+		<Authors>Infixo, Greg Miller</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
 	<ActionCriteria>
