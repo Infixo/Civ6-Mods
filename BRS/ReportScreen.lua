@@ -1539,19 +1539,37 @@ end
 --	Tab Callback
 -- ===========================================================================
 
+-- helper from CityPanel.lua
+function GetPercentGrowthColor( percent:number )
+	if percent == 0 then return "Error"; end
+	if percent <= 0.25 then return "WarningMajor"; end
+	if percent <= 0.5 then return "WarningMinor"; end
+	return "StatNormalCSGlow";
+end
 
 function city_fields( kCityData, pCityInstance )
 
 	local function ColorRed(text) return("[COLOR_Red]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
+	local function ColorGreen(text) return("[COLOR_Green]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
 
 	-- Infixo: status will show various icons
 	--pCityInstance.Status:SetText( kCityData.IsUnderSiege and Locale.Lookup("LOC_HUD_REPORTS_STATUS_UNDER_SEIGE") or Locale.Lookup("LOC_HUD_REPORTS_STATUS_NORMAL") );
 	local sStatusText:string = "";
-	if kCityData.Population > kCityData.Housing then sStatusText = sStatusText.."[ICON_HousingInsufficient]"; end -- insufficient housing
-	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then sStatusText = sStatusText.."[ICON_AmenitiesInsufficient]"; end -- insufficient amenities
-	if kCityData.IsUnderSiege then sStatusText = sStatusText.."[ICON_UnderSiege]"; end -- under siege
-	if kCityData.Occupied then sStatusText = sStatusText.."[ICON_Occupied]"; end -- occupied
+	local tStatusToolTip:table = {};
+	if kCityData.Population > kCityData.Housing then
+		sStatusText = sStatusText.."[ICON_HousingInsufficient]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_CITY_BANNER_HOUSING_INSUFFICIENT"));
+	end -- insufficient housing   
+	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then
+		sStatusText = sStatusText.."[ICON_AmenitiesInsufficient]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_CITY_BANNER_AMENITIES_INSUFFICIENT"));
+	end -- insufficient amenities
+	if kCityData.IsUnderSiege then
+		sStatusText = sStatusText.."[ICON_UnderSiege]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_HUD_REPORTS_STATUS_UNDER_SEIGE"));
+	end -- under siege
+	if kCityData.Occupied then
+		sStatusText = sStatusText.."[ICON_Occupied]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_HUD_CITY_GROWTH_OCCUPIED"));
+	end -- occupied 
 	pCityInstance.Status:SetText( sStatusText );
+	pCityInstance.Status:SetToolTipString( table.concat(tStatusToolTip, "[NEWLINE]") );
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
@@ -1570,14 +1588,16 @@ function city_fields( kCityData, pCityInstance )
 	end
 	
 	-- GrowthRateStatus
-	if kCityData.HousingMultiplier == 0 or kCityData.Occupied then
-		status = "LOC_HUD_REPORTS_STATUS_HALTED";
-	elseif kCityData.HousingMultiplier <= 0.5 then
-		status = "LOC_HUD_REPORTS_STATUS_SLOWED";
-	else
-		status = "LOC_HUD_REPORTS_STATUS_NORMAL";
-	end
-	pCityInstance.GrowthRateStatus:SetText( Locale.Lookup(status) );
+	--<ColorSet Name="WarningMinor"         Color0="206,199,91,255"   Color1="0,0,0,200" />
+	--<ColorSet Name="WarningMajor"         Color0="200,146,52,255"   Color1="0,0,0,200" />
+	--<ColorSet Name="Error"                Color0="200,62,52,255"    Color1="0,0,0,200" />
+	local sGRStatus:string = "LOC_HUD_REPORTS_STATUS_NORMAL";
+	local sGRColor:string = "";
+	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED"; sGRColor = "[COLOR:200,62,52,255]"; -- Error
+	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = "LOC_HUD_REPORTS_STATUS_SLOWED"; sGRColor = "[COLOR:200,146,52,255]"; -- WarningMajor
+	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = "LOC_HUD_REPORTS_STATUS_SLOWED"; sGRColor = "[COLOR:206,199,91,255]"; end -- WarningMinor
+	pCityInstance.GrowthRateStatus:SetText( sGRColor..Locale.Lookup(sGRStatus)..(sGRColor~="" and "[ENDCOLOR]" or "") );
+	--if sGRColor ~= "" then pCityInstance.GrowthRateStatus:SetColorByName( sGRColor ); end
 
 	-- Amenities and Happiness
 	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then
@@ -1585,27 +1605,38 @@ function city_fields( kCityData, pCityInstance )
 	else
 		pCityInstance.Amenities:SetText( tostring(kCityData.AmenitiesNum).." / "..tostring(kCityData.AmenitiesRequiredNum) );
 	end
-	local happinessText:string = Locale.Lookup( GameInfo.Happinesses[kCityData.Happiness].Name );
+	local happinessInfo:table = GameInfo.Happinesses[kCityData.Happiness];
+	local happinessText:string = Locale.Lookup( happinessInfo.Name );
+	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:StatBadCS]"..happinessText.."[ENDCOLOR]"; end
+	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:StatGoodCS]"..happinessText.."[ENDCOLOR]"; end
 	pCityInstance.CitizenHappiness:SetText( happinessText );
-
-	-- WarWeariness
-	local warWearyValue:number = kCityData.AmenitiesLostFromWarWeariness;
-	pCityInstance.WarWeariness:SetText( (warWearyValue==0) and "0" or ColorRed("-"..tostring(warWearyValue)) );
+	--<ColorSet Name="StatGoodCS"										Color0="80,255,90,240"		Color1="0,0,0,200" />
+	--<ColorSet Name="StatNormalCS"									Color0="200,200,200,240"	Color1="0,0,0,200" />
+	--<ColorSet Name="StatBadCS"										Color0="255,40,50,240"		Color1="0,0,0,200" />
 	
 	-- Strength and icon for Garrison Unit
 	if kCityData.IsGarrisonUnit then 
 		pCityInstance.Strength:SetText( tostring(kCityData.Defense).."[ICON_Fortified]" ); -- [ICON_Unit] small person [ICON_Exclamation] it's in a circle
+		pCityInstance.Strength:SetToolTipString("Garrison Unit");
 	else
 		pCityInstance.Strength:SetText( tostring(kCityData.Defense) );
-	end
-	-- Damage
-	--pCityInstance.Damage:SetText( tostring(kCityData.Damage) );	-- Infixo (vanilla version)
-	if kCityData.HitpointsTotal > kCityData.HitpointsCurrent then
-		pCityInstance.Damage:SetText( ColorRed(kCityData.HitpointsTotal - kCityData.HitpointsCurrent) );
-	else
-		pCityInstance.Damage:SetText( "0" );
+		pCityInstance.Strength:SetToolTipString("");
 	end
 
+	-- WarWeariness
+	local warWearyValue:number = kCityData.AmenitiesLostFromWarWeariness;
+	--pCityInstance.WarWeariness:SetText( (warWearyValue==0) and "0" or ColorRed("-"..tostring(warWearyValue)) );
+	-- Damage
+	--pCityInstance.Damage:SetText( tostring(kCityData.Damage) );	-- Infixo (vanilla version)
+	local sDamageWWText:string = "0";
+	if kCityData.HitpointsTotal > kCityData.HitpointsCurrent then sDamageWWText = ColorRed(kCityData.HitpointsTotal - kCityData.HitpointsCurrent); end
+	sDamageWWText = sDamageWWText.." / "..( (warWearyValue==0) and "0" or ColorRed("-"..tostring(warWearyValue)) );
+	pCityInstance.Damage:SetText( sDamageWWText );
+	pCityInstance.Damage:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_HEADER_DAMAGE").." / "..Locale.Lookup("LOC_HUD_REPORTS_HEADER_WAR_WEARINESS") );
+
+	-- Districts
+	-- TODO
+	
 	if not bIsRiseFall then return end -- the 2 remaining fields are for Rise & Fall only
 	
 	-- Loyalty -- Infixo: this is not stored - try to store it for sorting later!
@@ -1614,8 +1645,19 @@ function city_fields( kCityData, pCityInstance )
 	local maxLoyalty = pCulturalIdentity:GetMaxLoyalty();
 	local loyaltyPerTurn:number = pCulturalIdentity:GetLoyaltyPerTurn();
 	local loyaltyFontIcon:string = loyaltyPerTurn >= 0 and "[ICON_PressureUp]" or "[ICON_PressureDown]";
-	pCityInstance.Loyalty:SetText(loyaltyFontIcon .. " " .. Round(currentLoyalty, 1) .. "/" .. maxLoyalty);
+	local iNumTurnsLoyalty:number = 0;
+	if loyaltyPerTurn > 0 then
+		iNumTurnsLoyalty = math.ceil((maxLoyalty-currentLoyalty)/loyaltyPerTurn);
+		pCityInstance.Loyalty:SetText( loyaltyFontIcon.." "..toPlusMinusString(loyaltyPerTurn).."/"..( iNumTurnsLoyalty == 0 and tostring(iNumTurnsLoyalty) or ColorGreen(iNumTurnsLoyalty) ) );
+	elseif loyaltyPerTurn < 0 then
+		iNumTurnsLoyalty = math.ceil(currentLoyalty/(-loyaltyPerTurn));
+		pCityInstance.Loyalty:SetText( loyaltyFontIcon.." "..ColorRed(toPlusMinusString(loyaltyPerTurn).."/"..iNumTurnsLoyalty) );
+	else
+		pCityInstance.Loyalty:SetText( loyaltyFontIcon.." 0" );
+	end
+	pCityInstance.Loyalty:SetToolTipString(loyaltyFontIcon .. " " .. Round(currentLoyalty, 1) .. "/" .. maxLoyalty);
 	kCityData.Loyalty = currentLoyalty; -- Infixo: store for sorting
+	kCityData.LoyaltyPerTurn = loyaltyPerTurn; -- Infixo: store for sorting
 
 	-- Governor -- Infixo: this is not stored neither
 	local pAssignedGovernor = kCityData.City:GetAssignedGovernor();
@@ -1625,6 +1667,7 @@ function city_fields( kCityData, pCityInstance )
 		local governorMode = pAssignedGovernor:IsEstablished() and "_FILL" or "_SLOT";
 		local governorIcon = "ICON_" .. governorDefinition.GovernorType .. governorMode;
 		pCityInstance.Governor:SetText("[" .. governorIcon .. "]");
+		pCityInstance.Governor:SetToolTipString(Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title));
 		kCityData.Governor = governorDefinition.GovernorType;
 	else
 		pCityInstance.Governor:SetText("");
@@ -1703,6 +1746,9 @@ function city_sortFunction( descend, type, t, a, b )
 	elseif type == "dam" then
 		aCity = t[a].Damage
 		bCity = t[b].Damage
+	elseif type == "districts" then
+		aCity = t[a].NumDistricts
+		bCity = t[b].NumDistricts
 	end
 	
 	if descend then return bCity > aCity else return bCity < aCity end
@@ -1730,7 +1776,8 @@ function ViewCityStatusPage()
 	pHeaderInstance.CityGrowthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "growth", instance ) end )
 	pHeaderInstance.CityAmenitiesButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "amen", instance ) end )
 	pHeaderInstance.CityHappinessButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "happy", instance ) end )
-	pHeaderInstance.CityWarButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "war", instance ) end )
+	--pHeaderInstance.CityWarButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "war", instance ) end )
+	pHeaderInstance.CityDistrictsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "districts", instance ) end )
 	pHeaderInstance.CityStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "status", instance ) end )
 	pHeaderInstance.CityStrengthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "str", instance ) end )
 	pHeaderInstance.CityDamageButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "dam", instance ) end )
@@ -1862,34 +1909,41 @@ function common_unit_fields( unit, unitInstance )
 
 	unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) )
 			
-	if ( unit:GetFormationUnitCount() > 1 ) then
-		unitInstance.UnitMove:SetText( tostring( unit:GetFormationMovesRemaining() ) .. "/" .. tostring( unit:GetFormationMaxMoves() ) )
-		unitInstance.Formation:SetHide( false )
-	elseif unitInstance.UnitMove then
-		unitInstance.UnitMove:SetText( tostring( unit:GetMovesRemaining() ) .. "/" .. tostring( unit:GetMaxMoves() ) )
-	end
-			
 	-- adds the status icon
 	local activityType:number = UnitManager.GetActivityType( unit )
-	
+	print("Unit", unit:GetID(),activityType,unit:GetSpyOperation(),unit:GetSpyOperationEndTurn());
 	unitInstance.UnitStatus:SetHide( false )
-
+	local bIsMoving:boolean = true; -- Infixo
+	
 	if activityType == ActivityTypes.ACTIVITY_SLEEP then
 		local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas( "ICON_STATS_SLEEP", 22 )
 		unitInstance.UnitStatus:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
+		bIsMoving = false;
 	elseif activityType == ActivityTypes.ACTIVITY_HOLD then
 		local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas( "ICON_STATS_SKIP", 22 )
 		unitInstance.UnitStatus:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
 	elseif activityType ~= ActivityTypes.ACTIVITY_AWAKE and unit:GetFortifyTurns() > 0 then
 		local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas( "ICON_DEFENSE", 22 )
 		unitInstance.UnitStatus:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
+		bIsMoving = false;
 	else
 		-- just use a random icon for sorting purposes
 		local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas( "ICON_STATS_SPREADCHARGES", 22 )
 		unitInstance.UnitStatus:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
 		unitInstance.UnitStatus:SetHide( true )
 	end
+	if activityType == ActivityTypes.ACTIVITY_SENTRY then bIsMoving = false; end
+	if unit:GetSpyOperation() ~= -1 then bIsMoving = false; end
 	
+	-- moves here to mark units that should move this turn
+	if ( unit:GetFormationUnitCount() > 1 ) then
+		unitInstance.UnitMove:SetText( tostring( unit:GetFormationMovesRemaining() ) .. "/" .. tostring( unit:GetFormationMaxMoves() ) )
+		unitInstance.Formation:SetHide( false )
+	elseif unitInstance.UnitMove then
+		if unit:GetMovesRemaining() == 0 then bIsMoving = false; end
+		unitInstance.UnitMove:SetText( (bIsMoving and "[COLOR_Red]" or "")..tostring( unit:GetMovesRemaining() ).."/"..tostring( unit:GetMaxMoves() )..(bIsMoving and "[ENDCOLOR]" or "") )
+	end
+			
 end
 
 function group_military( unit, unitInstance, group, parent, type )
@@ -2053,7 +2107,8 @@ function ViewUnitsPage()
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) );
-		instance.RowHeaderLabel:SetHide( true ); --BRS
+		instance.RowHeaderLabel:SetHide( false ); --BRS
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_UNITS_GROUP_NUM_UNITS", #kUnitGroup.units) );
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )

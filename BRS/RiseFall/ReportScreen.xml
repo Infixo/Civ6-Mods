@@ -702,9 +702,9 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
-				<Container																										Size="65,parent">
-					<GridButton		ID="CityGovernorButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_REPORTS_GOVERNOR" />
+				<Container																										Size="40,parent">
+					<GridButton		ID="CityGovernorButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_REPORTS_GOVERNOR">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Citizen]" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -747,9 +747,16 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
+				<!-- merged with damage
 				<Container																										Size="100,parent">
 					<GridButton		ID="CityWarButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_WAR_WEARINESS" />
+					</GridButton>
+				</Container>
+				-->
+				<Container																										Size="100,parent">
+					<GridButton		ID="CityDistrictsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_DISTRICTS" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -785,7 +792,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
-				<Container																										Size="65,parent">
+				<Container																										Size="40,parent">
 					<Label				ID="Governor"	Offset="0,3"																Style="ReportValueText"	String="$Housing$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -815,8 +822,13 @@
 					<Label				ID="CitizenHappiness"													Style="ReportValueText"	String="$CitizenHappiness$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
+				<!-- merged with damage
 				<Container																										Size="100,parent">
 					<Label				ID="WarWeariness"															Style="ReportValueText"	String="$WarWeariness$" />
+				</Container>
+				-->
+				<Container																										Size="100,parent">
+					<Label				ID="Districts"															Style="ReportValueText"	String="$Districts$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 				<Container																										Size="65,parent">
@@ -1163,10 +1175,13 @@
 				<Container Offset="1,0" Size="50,parent">
 					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
 				</Container>
-				
 				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
 				</Container>
+
+
 				
 				<Container Offset="1,0" Size="50,parent">
 					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
@@ -1197,10 +1212,11 @@
 						<Image Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" Icon="ICON_UNITCOMMAND_UPGRADE"/>
 					</Button>
 				</Container>
-				
+				<!--
 				<Container Offset="1,0" Size="73,parent">
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
+				-->
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
@@ -1218,7 +1234,9 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
 				</Container>
 				
 				<Container Offset="1,0" Size="50,parent">
@@ -1233,11 +1251,11 @@
 				<Container Offset="1,0" Size="100,parent">
 					<Label ID="UnitCharges" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				
+				<!--
 				<Container Offset="1,0" Size="401,parent">
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
-				
+				-->
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
@@ -1254,7 +1272,9 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
 				</Container>
 				
 				<Container Offset="1,0" Size="50,parent">
@@ -1268,11 +1288,11 @@
 				<Container Offset="1,0" Size="300,parent">
 					<Label ID="UnitYields" Style="ReportValueText" String="No Yields" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				
+				<!--
 				<Container Offset="1,0" Size="26,parent">
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>				
-				
+				-->
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
@@ -1289,7 +1309,9 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
 				</Container>
 				
 				<Container Offset="1,0" Size="50,parent">
@@ -1304,11 +1326,11 @@
 				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitClass" Style="ReportValueText" String="Great Person" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				
+				<!--
 				<Container Offset="1,0" Size="251,parent">
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
-				
+				-->
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
@@ -1325,7 +1347,9 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
 				</Container>
 				
 				<Container Offset="1,0" Size="50,parent">
@@ -1344,11 +1368,11 @@
 				<Container Offset="1,0" Size="100,parent">
 					<Label ID="UnitSpreads" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				
+				<!--
 				<Container Offset="1,0" Size="300,parent">
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
-				
+				-->
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
@@ -1365,7 +1389,9 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
 				</Container>
 				
 				<Container Offset="1,0" Size="50,parent">
@@ -1384,11 +1410,11 @@
 				<Container Offset="1,0" Size="200,parent">
 					<Label ID="UnitTurns" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				
+				<!--
 				<Container Offset="1,0" Size="100,parent">
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
-				
+				-->
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
