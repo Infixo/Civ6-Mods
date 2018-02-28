@@ -1539,6 +1539,88 @@ end
 --	Tab Callback
 -- ===========================================================================
 
+--[[ district icons
+ICON_District
+<Row Name="DISTRICT_CITYCENTER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="176"/>
+<Row Name="DISTRICT_CAMPUS" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="177"/>
+<Row Name="DISTRICT_COMMERCIAL_HUB" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="178"/>
+<Row Name="DISTRICT_ENCAMPMENT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="179"/>
+<Row Name="DISTRICT_HOLYSITE" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="180"/>
+<Row Name="DISTRICT_LAVRA" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="181"/>
+<Row Name="DISTRICT_NEIGHBORHOOD" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="181"/>
+<Row Name="DISTRICT_MBANZA" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="181"/>
+<Row Name="DISTRICT_THEATER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="182"/>
+<Row Name="DISTRICT_ACROPOLIS" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="182"/>
+<Row Name="DISTRICT_AQUEDUCT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="183"/>
+<Row Name="DISTRICT_BATH" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="183"/>
+<Row Name="DISTRICT_HARBOR" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="184"/>
+<Row Name="DISTRICT_ROYAL_NAVY_DOCKYARD" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="184"/>
+<Row Name="DISTRICT_INDUSTRIAL_ZONE" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="185"/>
+<Row Name="DISTRICT_HANSA" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="185"/>
+<Row Name="DISTRICT_SPACEPORT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="186"/>
+<Row Name="DISTRICT_WONDER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="187"/>
+<Row Name="DISTRICT_ENTERTAINMENT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="188"/>
+--]]
+local tDistrictsOrder:table = {
+	-- we'll use order from GameInfo.Districts, tweaked a bit
+	-- Ancient Era
+	--"DISTRICT_GOVERNMENT", -- to save space, will be treated separately
+	"DISTRICT_HOLY_SITE", -- icon is DISTRICT_HOLYSITE
+	"DISTRICT_CAMPUS",
+	"DISTRICT_ENCAMPMENT",
+	-- Classical Era
+	"DISTRICT_THEATER",
+	"DISTRICT_COMMERCIAL_HUB",
+	"DISTRICT_HARBOR",
+	"DISTRICT_ENTERTAINMENT_COMPLEX", -- with DISTRICT_WATER_ENTERTAINMENT_COMPLEX, icon is DISTRICT_ENTERTAINMENT
+	-- Medieval Era
+	"DISTRICT_INDUSTRIAL_ZONE",
+	-- others
+	"DISTRICT_AQUEDUCT",
+	"DISTRICT_NEIGHBORHOOD",
+	"DISTRICT_SPACEPORT",
+	"DISTRICT_AERODROME", -- no icon
+}
+for k,v in pairs(tDistrictsOrder) do print("tDistrictsOrder",k,v) end;
+
+function HasCityDistrict(kCityData:table, sDistrictType:string)
+	for _,district in ipairs(kCityData.BuildingsAndDistricts) do
+		if district.isBuilt then
+			local sDistrictInCity:string = district.Type;
+			--if district.DistrictType == sDistrictType then return true; end
+			if GameInfo.DistrictReplaces[ sDistrictInCity ] then sDistrictInCity = GameInfo.DistrictReplaces[ sDistrictInCity ].ReplacesDistrictType; end
+			if sDistrictInCity == sDistrictType then return true; end
+			-- check mutually exclusive
+			for row in GameInfo.MutuallyExclusiveDistricts() do
+				if sDistrictInCity == row.District and row.MutuallyExclusiveDistrict == sDistrictType then return true; end
+			end
+		end
+	end
+	return false;
+end
+
+-- districts
+function GetDistrictsForCity(kCityData:table)
+	local sDistricts:string = "";
+	for _,districtType in ipairs(tDistrictsOrder) do
+		local sDistrictIcon:string = "[ICON_Bullet]"; -- default empty
+		if HasCityDistrict(kCityData, districtType) then
+			sDistrictIcon = "[ICON_"..districtType.."]"; -- default for a district
+			-- exceptions
+			if     districtType == "DISTRICT_HOLY_SITE" then             sDistrictIcon = "[ICON_DISTRICT_HOLYSITE]";
+			elseif districtType == "DISTRICT_ENTERTAINMENT_COMPLEX" then sDistrictIcon = "[ICON_DISTRICT_ENTERTAINMENT]";
+			elseif districtType == "DISTRICT_AERODROME" then             sDistrictIcon = "[ICON_District]";
+			end
+		end
+		sDistricts = sDistricts..sDistrictIcon;
+	end
+	return sDistricts;
+	--DistrictType
+	--		isBuilt		= pCityDistricts:HasDistrict(districtInfo.Index, true);
+
+end
+
+
 -- helper from CityPanel.lua
 function GetPercentGrowthColor( percent:number )
 	if percent == 0 then return "Error"; end
@@ -1567,7 +1649,10 @@ function city_fields( kCityData, pCityInstance )
 	end -- under siege
 	if kCityData.Occupied then
 		sStatusText = sStatusText.."[ICON_Occupied]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_HUD_CITY_GROWTH_OCCUPIED"));
-	end -- occupied 
+	end -- occupied
+	if HasCityDistrict(kCityData, "DISTRICT_GOVERNMENT") then
+		sStatusText = sStatusText.."[ICON_DISTRICT_GOVERNMENT]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_DISTRICT_GOVERNMENT_NAME"));
+	end
 	pCityInstance.Status:SetText( sStatusText );
 	pCityInstance.Status:SetToolTipString( table.concat(tStatusToolTip, "[NEWLINE]") );
 	
@@ -1635,7 +1720,7 @@ function city_fields( kCityData, pCityInstance )
 	pCityInstance.Damage:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_HEADER_DAMAGE").." / "..Locale.Lookup("LOC_HUD_REPORTS_HEADER_WAR_WEARINESS") );
 
 	-- Districts
-	-- TODO
+	pCityInstance.Districts:SetText( GetDistrictsForCity(kCityData) );
 	
 	if not bIsRiseFall then return end -- the 2 remaining fields are for Rise & Fall only
 	
