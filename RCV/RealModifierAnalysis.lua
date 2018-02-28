@@ -1350,17 +1350,17 @@ function DecodeModifier(sModifierId:string)
 	local tMod:table = FetchAndCacheData(sModifierId);
 	if not tMod then return "ERROR: "..sModifierId.." not defined!"; end
 	local tOut = {};
-	table.insert(tOut, "Id: "..Capitalize(tMod.ModifierId));
+	table.insert(tOut, "Modifier: "..Capitalize(tMod.ModifierId));
 	if tMod.OwnerReqSetId then
 		table.insert(tOut, "Owner: "..Capitalize(tMod.OwnerReqSetId));
 		DecodeReqSet(tOut, tMod.OwnerReqSetId);
 	end
-	table.insert(tOut, Capitalize(tMod.CollectionType));
+	table.insert(tOut, "Collection: "..Capitalize(tMod.CollectionType));
 	if tMod.SubjectReqSetId then
 		table.insert(tOut, "Subject: "..Capitalize(tMod.SubjectReqSetId));
 		DecodeReqSet(tOut, tMod.SubjectReqSetId);
 	end
-	table.insert(tOut, Capitalize(tMod.EffectType));
+	table.insert(tOut, "Effect: "..Capitalize(tMod.EffectType));
 	for name,value in pairs(tMod.Arguments) do table.insert(tOut, name.." = "..value); end
 	if tMod.ScaleByGameSpeed then table.insert(tOut, "Scaled by Game Speed"); end
 	if tMod.RunOnce then table.insert(tOut, "Run Once"); end
@@ -1405,7 +1405,7 @@ function DecodeModifier(sModifierId:string)
 	end
 	if not bImpact then sImpactText = sImpactText.."yields not affected"; end
 	table.insert(tOut, sImpactText);
-	if bUnknownEffect then table.insert(tOut, "[ICON_Exclamation][COLOR_Red]Unknown effect[ENDCOLOR]"); end
+	if bUnknownEffect then table.insert(tOut, "[COLOR_Red]Unknown effect[ENDCOLOR]"); end -- [ICON_Exclamation]
 	-- return 3 values
 	return table.concat(tOut, "[NEWLINE]"), tImpact, ((tMod.EffectType == "EFFECT_ATTACH_MODIFIER") and tMod.Arguments.ModifierId) or nil, bUnknownEffect
 end

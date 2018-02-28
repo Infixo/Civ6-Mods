@@ -1511,42 +1511,42 @@
 				
 				<!-- YIELDS are in order as defined in YieldTypes - easy to sort and display! names correspond do this table as well -->
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonFOOD" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonFOOD"  ToolTip="Food" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Food]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonPRODUCTION" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonPRODUCTION"  ToolTip="Production" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Production]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonGOLD" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonGOLD"  ToolTip="Gold" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 				
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonSCIENCE" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonSCIENCE"  ToolTip="Science" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Science]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonCULTURE" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonCULTURE"  ToolTip="Culture" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Culture]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonFAITH" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonFAITH"  ToolTip="Faith" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Faith]"/>
 					</GridButton>
 				</Container>
@@ -1554,28 +1554,28 @@
 				
 				<!-- thinner a bit (no decimals) -->
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonTOURISM" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonTOURISM"  ToolTip="Tourism" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Tourism]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonAMENITY" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonAMENITY"  ToolTip="Amenities" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Amenities]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonHOUSING" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonHOUSING"  ToolTip="Housing" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Housing]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 				
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonLOYALTY" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonLOYALTY"  ToolTip="Loyalty" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_PressureUp]"/>
 					</GridButton>
 				</Container>

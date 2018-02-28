@@ -75,7 +75,29 @@
 	<Row Tag="LOC_BRS_TOOLTIP_LOOKATUNIT">
 		<Text>View this unit on the map</Text>
 	</Row>
-	
+	<!-- POLICIES -->
+	<Row Tag="LOC_BRS_POLICY_GROUP_NUM_POLICIES">
+		<Text>{1_Number} {1_Number : plural 1?policy; other?policies;}</Text>
+	</Row>
+	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY">
+		<Text>Military Policies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC">
+		<Text>Economic Policies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC">
+		<Text>Diplomatic Policies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON">
+		<Text>Great People Policies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY">
+		<Text>Legacy Policies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE">
+		<Text>Dark Age Policies</Text>
+	</Row>
+
 </BaseGameText>
 
 </GameData>

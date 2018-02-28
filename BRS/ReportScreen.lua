@@ -2193,6 +2193,14 @@ function ViewPolicyPage()
 		SLOT_DARKAGE = {},
 	};
 	Timer1Start();
+	local ePlayerID:number = Game.GetLocalPlayer();
+	local pPlayer:table = Players[ePlayerID];
+	if not pPlayer then return; end -- assert
+	local pPlayerCulture:table = pPlayer:GetCulture();
+	-- find out which polices are slotted now
+	local tSlottedPolicies:table = {};
+	for i = 0, pPlayerCulture:GetNumPolicySlots()-1 do tSlottedPolicies[ pPlayerCulture:GetSlotPolicy(i) ] = true; end
+	-- iterate through all policies
 	for policy in GameInfo.Policies() do
 		local policyData:table = {
 			Index = policy.Index,
@@ -2200,12 +2208,16 @@ function ViewPolicyPage()
 			Description = Locale.Lookup(policy.Description),
 			--Yields from modifiers
 			-- Status TODO from Player:GetCulture?
+			IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
+			IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
 		};
 		local sSlotType:string = policy.GovernmentSlotType;
 		if sSlotType == "SLOT_WILDCARD" then sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_LEGACY") or "SLOT_DARKAGE"); end
 		table.insert(m_kPolicyData[sSlotType], policyData);
-		-- effect
-		policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Policy", policy.PolicyType, Game.GetLocalPlayer(), nil);
+		-- policy impact from modifiers
+		policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Policy", policy.PolicyType, ePlayerID, nil);
+		policyData.IsImpact = false; -- for toggling options
+		for _,value in pairs(policyData.Yields) do if value ~= 0 then policyData.IsImpact = true; break; end end
 	end
 	Timer1Tick("--- ALL POLICY DATA ---");
 
@@ -2217,9 +2229,9 @@ function ViewPolicyPage()
 	for policyGroup,policies in pairs(m_kPolicyData) do
 		local instance : table = NewCollapsibleGroupInstance()
 		
-		instance.RowHeaderButton:SetText( Locale.Lookup(policyGroup) ); -- TODO proper group name
+		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
 		instance.RowHeaderLabel:SetHide( false );
-		instance.RowHeaderLabel:SetText( table.count(policies).." policies" );
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_NUM_POLICIES", table.count(policies)) );
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
@@ -2237,24 +2249,29 @@ function ViewPolicyPage()
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
 			
 			--common_unit_fields( unit, unitInstance ) -- fill a single entry
-			local sStatusText:string, sStatusToolTip = "", "";
-			sStatusText = sStatusText..policy.Index;
+			-- status with tooltip
+			local sStatusText:string;
+			local sStatusToolTip:string = "Id "..tostring(policy.Index);
+			if policy.IsActive then sStatusText = "[ICON_CheckSuccess]"; sStatusToolTip = sStatusToolTip.." Active policy";
+			else                    sStatusText = "[ICON_CheckFail]";    sStatusToolTip = sStatusToolTip.." Inactive policy (obsolete or not yet unlocked)"; end
 			if policy.UnknownEffect then
 				sStatusText = sStatusText.." [ICON_Exclamation]";
-				sStatusToolTip = sStatusToolTip.."[COLOR_Red]Unknown effect[ENDCOLOR] was not processed.";
+				sStatusToolTip = sStatusToolTip.."[NEWLINE][COLOR_Red]Unknown effect[ENDCOLOR] was not processed.";
 			end
 			pPolicyInstance.PolicyEntryStatus:SetText(sStatusText);
-			if sStatusToolTip ~= "" then pPolicyInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip); end
-			TruncateString(pPolicyInstance.PolicyEntryName, 178, policy.Name);
+			pPolicyInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
+			-- name with description
+			local sPolicyName:string = policy.Name;
+			if policy.IsSlotted then sPolicyName = "[ICON_Checkmark]"..sPolicyName; end
+			TruncateString(pPolicyInstance.PolicyEntryName, 178, sPolicyName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pPolicyInstance.PolicyEntryName:SetToolTipString(policy.Description);
-			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, policy.Impact=="" and "---" or policy.Impact);
+			-- impact with modifiers
+			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, policy.Impact=="" and "[ICON_CheckmarkBlue]" or policy.Impact);
 			pPolicyInstance.PolicyEntryImpact:SetToolTipString(policy.ImpactToolTip);
 			-- fill out yields
-			--if policyData.Yields then
-				for yield,value in pairs(policy.Yields) do
-					if value ~= 0 then pPolicyInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
-				end
-			--end
+			for yield,value in pairs(policy.Yields) do
+				if value ~= 0 then pPolicyInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
+			end
 		end
 		
 		-- no footer
