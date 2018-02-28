@@ -129,13 +129,19 @@ YieldTypes.LOYALTY = 9
 --YieldTypes.APPEAL  = 11
 -- whereever possible keep yields in a table named Yields with entries { YieldType = YieldValue }
 
--- create a map (speed up)
+-- create maps (speed up)
 local YieldTypesMap = {};
 for yield in GameInfo.Yields() do
 	YieldTypesMap[ yield.YieldType ] = string.gsub(yield.YieldType, "YIELD_","");
 end
+local YieldTypesOrder = {};
+for yield,yid in pairs(YieldTypes) do
+	YieldTypesOrder[yid] = yield;
+end 
 --dshowtable(YieldTypes);
 --dshowtable(YieldTypesMap);
+--dshowtable(YieldTypesOrder);
+--for yid,yield in ipairs(YieldTypesOrder) do dprint("YieldTypesOrder", yid, yield) end
 
 -- get a new table with all 0
 function YieldTableNew()
@@ -256,9 +262,9 @@ function GetYieldTextColor( yieldType:string )
 	elseif yieldType == "YIELD_CULTURE"		   then return "[COLOR:ResCultureLabelCS]";
 	elseif yieldType == "YIELD_FAITH"		   then return "[COLOR:ResFaithLabelCS]";
 	elseif yieldType == "YIELD_TOURISM"		   then return "[COLOR:ResTourismLabelCS]";
-	elseif yieldType == "YIELD_AMENITY"        then return "[COLOR_Black]";
-	elseif yieldType == "YIELD_HOUSING"        then return "[COLOR_Black]";
-	elseif yieldType == "YIELD_LOYALTY"        then return "[COLOR_Black]";
+	elseif yieldType == "YIELD_AMENITY"        then return "[COLOR_White]";
+	elseif yieldType == "YIELD_HOUSING"        then return "[COLOR_White]";
+	elseif yieldType == "YIELD_LOYALTY"        then return "[COLOR_White]";
 	else											return "[COLOR:255,255,255,0]ERROR ";
 	end				
 end
@@ -1368,8 +1374,13 @@ function DecodeModifier(sModifierId:string)
 	-- build a collection of subjects
 	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
 	--dprint("Subjects are:"); for k,v in pairs(tSubjects) do print(k,v.SubjectType,v.Name); end -- debug
-	dshowsubjects(tSubjects); -- debug
-	table.insert(tOut, "Subject(s): "..sSubjectType..", num: "..table.count(tSubjects));
+	--dshowsubjects(tSubjects); -- debug
+	-- list subjects
+	local tSubjectsOut:table = {};
+	table.insert(tSubjectsOut, "Subject(s): "..sSubjectType);
+	table.insert(tSubjectsOut, table.count(tSubjects));
+	for _,subject in ipairs(tSubjects) do table.insert(tSubjectsOut, subject.Name); end
+	table.insert(tOut, table.concat(tSubjectsOut, ", "));
 	-- calculate impact of the modifier
 	local bUnknownEffect:boolean = false;
 	local tImpact:table = YieldTableNew();
@@ -1554,7 +1565,7 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 	--print("FUNCAL BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
 	local tSubjects:table, sSubjectType:string = {}, "(unknown)";
 	local tReqSet:table = tMod.SubjectReqSet; -- speed up some checking
-	dprint("  Subject requirement set is (id)", tMod.SubjectReqSetId);
+	--dprint("  Subject requirement set is (id)", tMod.SubjectReqSetId);
 	-- MAIN DISPATCHER FOR COLLECTIONS
 	if tMod.CollectionType == "COLLECTION_OWNER" then
 		-- most difficult one... not yet...
@@ -1896,8 +1907,8 @@ function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:n
 	local sObjectTypeField:string = sObject.."Type"; -- simple version for starters
 	
 	-- iterate and find them
-	dprint("...calculating modifiers (obj,table,field)", sObject, sObjectType, ePlayerID, iCityID);
-	TimerStart()
+	--dprint("...calculating modifiers (obj,table,field)", sObject, sObjectType, ePlayerID, iCityID);
+	--TimerStart(); -- debug
 	local tTotalImpact:table = YieldTableNew();
 	local tToolTip:table = {}; -- tooltip
 	local bUnknownEffect:boolean = false;
@@ -1927,21 +1938,24 @@ function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:n
 	-- generate total impact string
 	local sTotalImpact:string = "";
 	local bImpact:boolean = false;
-	for	yield,value in pairs(tTotalImpact) do
-		if value ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, value); end
+	--for yield,value in pairs(tTotalImpact) do
+		--if value ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, value); end
+	--end
+	for	_,yield in ipairs(YieldTypesOrder) do
+		if tTotalImpact[yield] ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, tTotalImpact[yield]); end
 	end
 	if sTotalImpact == "" then
-		sTotalImpact = "-"; -- just to show that there's nothing; empty string could be misleading
+		--sTotalImpact = "-"; -- just to show that there's nothing; empty string could be misleading
 		table.insert(tToolTip, "Yields not affected.");
 	end
 	if bUnknownEffect then
-		sTotalImpact = sTotalImpact.." [ICON_Exclamation]";
+		--sTotalImpact = sTotalImpact.." [ICON_Exclamation]";
 		table.insert(tToolTip, "[COLOR_Red]Unknown effect[ENDCOLOR] was not processed.");
 	end
 	
-	TimerTick("All modifiers for object "..sObject..":"..sObjectType)
+	--TimerTick("All modifiers for object "..sObject..":"..sObjectType); -- debug
 	-- done!
-	return sTotalImpact, tTotalImpact, table.concat(tToolTip, "[NEWLINE]");
+	return sTotalImpact, tTotalImpact, table.concat(tToolTip, "[NEWLINE]"), bUnknownEffect;
 end
 
 ------------------------------------------------------------------------------

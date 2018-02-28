@@ -10,6 +10,10 @@ include("InstanceManager");
 include("SupportFunctions");
 include("TabSupport");
 
+-- exposing functions and variables
+if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
+local RMA = ExposedMembers.RMA;
+
 -- ===========================================================================
 -- Rise & Fall check
 -- ===========================================================================
@@ -1733,10 +1737,10 @@ function ViewCityStatusPage()
 
 		local pCityInstance:table = {}
 
-		ContextPtr:BuildInstanceForControl( "CityStatusEntryInstance", pCityInstance, instance.Top )
-		table.insert( instance.Children, pCityInstance )
+		ContextPtr:BuildInstanceForControl( "CityStatusEntryInstance", pCityInstance, instance.Top );
+		table.insert( instance.Children, pCityInstance );
 		
-		city_fields( kCityData, pCityInstance )
+		city_fields( kCityData, pCityInstance );
 
 		-- go to the city after clicking
 		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
@@ -2175,6 +2179,7 @@ end
 -- ===========================================================================
 -- POLICY PAGE
 -- ===========================================================================
+
 function ViewPolicyPage()
 
 	-- prepare data
@@ -2187,18 +2192,22 @@ function ViewPolicyPage()
 		SLOT_LEGACY = {},
 		SLOT_DARKAGE = {},
 	};
+	Timer1Start();
 	for policy in GameInfo.Policies() do
 		local policyData:table = {
 			Index = policy.Index,
 			Name = Locale.Lookup(policy.Name),
 			Description = Locale.Lookup(policy.Description),
-			--Yields TODO from modifiers
+			--Yields from modifiers
 			-- Status TODO from Player:GetCulture?
 		};
 		local sSlotType:string = policy.GovernmentSlotType;
 		if sSlotType == "SLOT_WILDCARD" then sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_LEGACY") or "SLOT_DARKAGE"); end
 		table.insert(m_kPolicyData[sSlotType], policyData);
+		-- effect
+		policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Policy", policy.PolicyType, Game.GetLocalPlayer(), nil);
 	end
+	Timer1Tick("--- ALL POLICY DATA ---");
 
 	ResetTabForNewPageContent();
 
@@ -2228,11 +2237,24 @@ function ViewPolicyPage()
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
 			
 			--common_unit_fields( unit, unitInstance ) -- fill a single entry
-			pPolicyInstance.PolicyEntryStatus:SetText(policy.Index);
-			TruncateStringWithTooltip(pPolicyInstance.PolicyEntryName, 148, policy.Name);
-			--pPolicyInstance.PolicyEntryDescription:SetText(policy.Description);
-			TruncateStringWithTooltip(pPolicyInstance.PolicyEntryDescription, 298, policy.Description);
-			
+			local sStatusText:string, sStatusToolTip = "", "";
+			sStatusText = sStatusText..policy.Index;
+			if policy.UnknownEffect then
+				sStatusText = sStatusText.." [ICON_Exclamation]";
+				sStatusToolTip = sStatusToolTip.."[COLOR_Red]Unknown effect[ENDCOLOR] was not processed.";
+			end
+			pPolicyInstance.PolicyEntryStatus:SetText(sStatusText);
+			if sStatusToolTip ~= "" then pPolicyInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip); end
+			TruncateString(pPolicyInstance.PolicyEntryName, 178, policy.Name);
+			pPolicyInstance.PolicyEntryName:SetToolTipString(policy.Description);
+			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, policy.Impact=="" and "---" or policy.Impact);
+			pPolicyInstance.PolicyEntryImpact:SetToolTipString(policy.ImpactToolTip);
+			-- fill out yields
+			--if policyData.Yields then
+				for yield,value in pairs(policy.Yields) do
+					if value ~= 0 then pPolicyInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
+				end
+			--end
 		end
 		
 		-- no footer
@@ -2271,7 +2293,7 @@ function AddTabSection( name:string, populateCallback:ifunction )
 	end
 
 	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );
-	kTab.Button:SetSizeToText( 40, 20 );
+	kTab.Button:SetSizeToText( 0, 20 ); -- default 40,20
     kTab.Button:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
 	m_tabs.AddTab( kTab.Button, callback );
