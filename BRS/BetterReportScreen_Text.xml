@@ -97,6 +97,13 @@
 	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE">
 		<Text>Dark Age Policies</Text>
 	</Row>
+	<!-- Checkboxes -->
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES">
+		<Text>Hide Inactive Policies</Text>
+	</Row>
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES">
+		<Text>Hide Policies with No Impact</Text>
+	</Row>
 
 </BaseGameText>
 

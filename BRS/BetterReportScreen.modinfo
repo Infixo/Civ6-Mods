@@ -13,6 +13,12 @@
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
+		<AddUserInterfaces id="RMA_Main">
+			<Properties>
+				<Context>InGame</Context>
+			</Properties>
+			<File>RealModifierAnalysis.xml</File>
+		</AddUserInterfaces>
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BRS_ImportFiles">
             <Items>
@@ -42,13 +48,15 @@
 		</ReplaceUIScript>
     </InGameActions>
     <Files>
-		<!-- Vanilla files -->
+		<!-- Shared files -->
         <File>ReportScreen.lua</File>
-		<File>ReportScreen.xml</File>
+		<File>RealModifierAnalysis.lua</File>-->
+		<File>RealModifierAnalysis.xml</File>-->
 		<File>UnitPromotionPopup.lua</File>
 		<File>BetterReportScreen_Text.xml</File>
+		<!-- Vanilla files -->
+		<File>ReportScreen.xml</File>
 		<!-- Rise & Fall files -->
-		<!--<File>RiseFall/ReportScreen_RiseFall.lua</File>-->
 		<File>RiseFall/ReportScreen.xml</File>
     </Files>
 </Mod>

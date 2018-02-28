@@ -98,30 +98,30 @@
 						<Label		ID="FaithNet"					Style="ReportEndValueText"	String="F"	ColorSet="ResFaithLabelCS" />
 					</Container>
 					<Container Size="6,1" />
-					<Grid																					 Offset="0,-4"	Size="94,29"	Style="YieldBacking" Color="24,156,216,150">
-						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_ScienceLarge]"/>
-						<Label		ID="ScienceBalance"		Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResScienceLabelCS" FontStyle="Stroke" String="0"/>
-					</Grid>
 					<Container Size="9,1" />
-					<Grid																					 Offset="0,-4"	Size="94,30"	Style="YieldBacking" Color="254,42,237,100">
-						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_CultureLarge]"/>
-						<Label		ID="CultureBalance"		Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResCultureLabelCS" FontStyle="Stroke" String="0"/>
-					</Grid>
 					<Container Size="9,1" />
-					<Grid																					 Offset="0,-4"	Size="94,30"	Style="YieldBacking" Color="181,116,102,150" >
-						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_TourismLarge]"/>
-						<Label		ID="TourismBalance"		Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResTourismLabelCS" String="0"	/>
-					</Grid>
 				</Stack>
 
 				<Stack																					 Offset="-4,85"	  StackGrowth="Right" Padding="4">
-					<Grid																													Size="101,26"	Style="YieldBacking" Color="185,176,70,150">
+					<Grid						Size="100,26"	Style="YieldBacking" Color="185,176,70,150">
 						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_GoldLarge]"/>
 						<Label		ID="GoldBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResGoldLabelCS" String="0"	/>
 					</Grid>
-					<Grid																													Size="101,26"	Style="YieldBacking" Color="99,114,159,200"	>
+					<Grid						Size="100,26"	Style="YieldBacking" Color="99,114,159,200"	>
 						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_FaithLarge]"/>
 						<Label		ID="FaithBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResFaithLabelCS" String="0" />
+					</Grid>
+					<Grid						Size="100,29"	Style="YieldBacking" Color="24,156,216,150">
+						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_ScienceLarge]"/>
+						<Label		ID="ScienceBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResScienceLabelCS" FontStyle="Stroke" String="0"/>
+					</Grid>
+					<Grid						Size="100,30"	Style="YieldBacking" Color="254,42,237,100">
+						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_CultureLarge]"/>
+						<Label		ID="CultureBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResCultureLabelCS" FontStyle="Stroke" String="0"/>
+					</Grid>
+					<Grid						Size="100,30"	Style="YieldBacking" Color="181,116,102,150" >
+						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_TourismLarge]"/>
+						<Label		ID="TourismBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResTourismLabelCS" String="0"	/>
 					</Grid>
 				</Stack>
 				</Container>	
@@ -148,6 +148,15 @@
 			</Image>
 		</Container>
 		
+		<!-- NEW TAB: POLICIES -->
+		<Container ID="BottomPoliciesFilters" Anchor="C,B" Offset="0,0" Size="parent-6,50">
+			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
+			<Image Anchor="C,B" Offset="0,2" Size="parent,parent" Texture="Controls_Gradient" Color="255,255,255,32">
+				<GridButton ID="HideInactivePoliciesCheckbox" Style="CheckBoxControl" Anchor="C,C" Offset="-150,2" Size="240,26" String="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Hidden="0"/>
+				<GridButton ID="HideNoImpactPoliciesCheckbox" Style="CheckBoxControl" Anchor="C,C" Offset="150,2" Size="240,26" String="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Hidden="0"/>
+			</Image>
+		</Container>
+
 	</Box>
 
 
@@ -251,6 +260,7 @@
 				<Container																			Offset="1,0"	Size="232,40" >
 					<GridButton ID="GoToCityButton" Anchor="C,T" Size="parent-2,32" Style="ButtonLightWeightSquareGrid" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY">
 						<Label ID="CityName" Anchor="L,C" Offset="10,0" Style="ReportCityName" Color="Science" String="$CityName$" />
+						<Label ID="CityPopulation" Size="30,parent" Anchor="R,C" Offset="10,8" Style="RowButton" String="$CP$"/>
 					</GridButton>
 				</Container>
 				<Box																													Size="2,40"	Color="46,70,95,255" />

@@ -97,6 +97,7 @@ local m_isCollapsing		:boolean = true;
 --BRS !! new variables
 local m_kCurrentDeals	:table = nil;
 local m_kUnitDataReport	:table = nil;
+local m_kPolicyData		:table = nil;
 -- !!
 -- Remember last tab variable: ARISTOS
 m_kCurrentTab = 1;
@@ -153,9 +154,10 @@ function Open()
 
 	-- BRS !! new line to add new variables 
 	-- m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData = GetData();
-	Timer1Start()
+	Timer2Start()
 	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
-	Timer1Tick("GetData")
+	UpdatePolicyData();
+	Timer2Tick("GetData")
 	
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
 	--m_tabs.SelectTab( 1 );
@@ -895,6 +897,7 @@ function ViewTestPage()
 	
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomYieldTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );
 end
 
@@ -935,10 +938,10 @@ end
 -- ===========================================================================
 --	Tab Callback
 -- ===========================================================================
-function ViewYieldsPage()	
-	Timer1Start()
+function ViewYieldsPage()
+
 	ResetTabForNewPageContent();
-	Timer1Tick("ResetTabForNewPageContent")
+
 	local pPlayer:table = Players[Game.GetLocalPlayer()]; --BRS
 
 	local instance:table = nil;
@@ -948,7 +951,6 @@ function ViewYieldsPage()
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityIncomeHeaderInstance", pHeaderInstance, instance.ContentStack ) ;	
-	Timer1Tick("CityIncomeHeaderInstance")
 
 	--BRS sorting
 	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() sortBy( "CityName" ) end )
@@ -1018,7 +1020,8 @@ function ViewYieldsPage()
 		local pCityInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "CityIncomeInstance", pCityInstance, instance.ContentStack ) ;
 		pCityInstance.LineItemStack:DestroyAllChildren();
-		TruncateStringWithTooltip(pCityInstance.CityName, 230, Locale.Lookup(kCityData.CityName)); 
+		TruncateStringWithTooltip(pCityInstance.CityName, 230, Locale.Lookup(kCityData.CityName));
+		pCityInstance.CityPopulation:SetText(kCityData.Population);
 
 		--Great works
 		local greatWorks:table = GetGreatWorksForCity(kCityData.City);
@@ -1239,8 +1242,6 @@ function ViewYieldsPage()
 
 	SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() );
 	RealizeGroup( instance );
-	Timer1Tick("end of city details")
-
 
 	-- ========== Building Expenses ==========
 
@@ -1402,9 +1403,10 @@ function ViewYieldsPage()
 	Controls.TourismBalance:SetText( m_kCityTotalData.Treasury["TOURISM"] );
 	
 	Controls.CollapseAll:SetHide( false );
-	Controls.BottomYieldTotals:SetHide( false );
+	Controls.BottomYieldTotals:SetHide( false ); -- ViewYieldsPage
 	Controls.BottomYieldTotals:SetSizeY( SIZE_HEIGHT_BOTTOM_YIELDS );
 	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomYieldTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 1;
@@ -1526,7 +1528,8 @@ function ViewResourcesPage()
 
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
-	Controls.BottomResourceTotals:SetHide( false );
+	Controls.BottomResourceTotals:SetHide( false ); -- ViewResourcesPage
+	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomResourceTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 2;
@@ -1754,6 +1757,7 @@ function ViewCityStatusPage()
 	Controls.CollapseAll:SetHide( true );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 3;
@@ -2099,6 +2103,7 @@ function ViewUnitsPage()
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true )
 	Controls.BottomResourceTotals:SetHide( true )
+	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88 )
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 5;
@@ -2170,6 +2175,7 @@ function ViewDealsPage()
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 4;
@@ -2180,11 +2186,10 @@ end
 -- POLICY PAGE
 -- ===========================================================================
 
-function ViewPolicyPage()
-
+function UpdatePolicyData()
 	-- prepare data
 	-- this will be moved outside to be only calculated once
-	local m_kPolicyData:table = {
+	m_kPolicyData = {
 		SLOT_MILITARY = {},
 		SLOT_ECONOMIC = {},
 		SLOT_DIPLOMATIC = {},
@@ -2220,18 +2225,19 @@ function ViewPolicyPage()
 		for _,value in pairs(policyData.Yields) do if value ~= 0 then policyData.IsImpact = true; break; end end
 	end
 	Timer1Tick("--- ALL POLICY DATA ---");
+end
+
+function ViewPolicyPage()
 
 	ResetTabForNewPageContent();
 
 	-- fill
-
 	--for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
 	for policyGroup,policies in pairs(m_kPolicyData) do
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
 		instance.RowHeaderLabel:SetHide( false );
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_NUM_POLICIES", table.count(policies)) );
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
@@ -2242,11 +2248,18 @@ function ViewPolicyPage()
 		--if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
 
 		-- fill a single group
+		local iNumPolices:number = 0;
 		for _,policy in ipairs(policies) do
+		
+			--FILTERS
+			if (not Controls.HideInactivePoliciesCheckbox:IsSelected() or policy.IsActive) and
+				(not Controls.HideNoImpactPoliciesCheckbox:IsSelected() or policy.IsImpact) then
+		
 			local pPolicyInstance:table = {}
 			--table.insert( instance.Children, unitInstance )
 			
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
+			iNumPolices = iNumPolices + 1;
 			
 			--common_unit_fields( unit, unitInstance ) -- fill a single entry
 			-- status with tooltip
@@ -2272,7 +2285,12 @@ function ViewPolicyPage()
 			for yield,value in pairs(policy.Yields) do
 				if value ~= 0 then pPolicyInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
 			end
+			
+			end -- FILTERS
+			
 		end
+		
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_NUM_POLICIES", iNumPolices) );
 		
 		-- no footer
 		SetGroupCollapsePadding(instance, 0 );
@@ -2286,7 +2304,9 @@ function ViewPolicyPage()
 	Controls.CollapseAll:SetHide( false );
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	Controls.BottomPoliciesFilters:SetHide( false ); -- ViewPolicyPage
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomPoliciesFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
+	--Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 6;
 end
@@ -2304,9 +2324,9 @@ function AddTabSection( name:string, populateCallback:ifunction )
 			m_tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
 		end
 		kTab.Selection:SetHide(false);
-		Timer2Start()
+		Timer1Start();
 		populateCallback();
-		Timer2Tick("Section "..Locale.Lookup(name))
+		Timer1Tick("Section "..Locale.Lookup(name).." populated");
 	end
 
 	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );
@@ -2360,7 +2380,7 @@ function Resize()
 end
 
 -- ===========================================================================
--- BRS checkboxes for hiding city details and free units/buildings
+-- Checkboxes for hiding city details and free units/buildings
 
 function OnToggleHideCityBuildings()
 	local isChecked = Controls.HideCityBuildingsCheckbox:IsSelected();
@@ -2381,7 +2401,8 @@ function OnToggleHideFreeUnits()
 end
 
 -- ===========================================================================
--- ARISTOS: Toggles for different resources in Resources tab
+-- Checkboxes for different resources in Resources tab
+
 function OnToggleStrategic()
 	local isChecked = Controls.StrategicCheckbox:IsSelected();
 	Controls.StrategicCheckbox:SetSelected( not isChecked );
@@ -2399,8 +2420,23 @@ function OnToggleBonus()
 	Controls.BonusCheckbox:SetSelected( not isChecked );
 	ViewResourcesPage();
 end
---ARISTOS: End resources toggle
 
+-- ===========================================================================
+-- Checkboxes for policy filters
+
+function OnToggleInactivePolicies()
+	local isChecked = Controls.HideInactivePoliciesCheckbox:IsSelected();
+	Controls.HideInactivePoliciesCheckbox:SetSelected( not isChecked );
+	ViewPolicyPage();
+end
+
+function OnToggleNoImpactPolicies()
+	local isChecked = Controls.HideNoImpactPoliciesCheckbox:IsSelected();
+	Controls.HideNoImpactPoliciesCheckbox:SetSelected( not isChecked );
+	ViewPolicyPage();
+end
+
+-- ===========================================================================
 function Initialize()
 
 	Resize();	
@@ -2421,7 +2457,7 @@ function Initialize()
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );
 	ContextPtr:SetInputHandler( OnInputHandler, true );
-	ContextPtr:SetRefreshHandler( function() if bUnits.group then m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData(); sort_units( bUnits.type, bUnits.group, bUnits.parent ); end; end )
+	ContextPtr:SetRefreshHandler( function() if bUnits.group then m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData(); UpdatePolicyData(); sort_units( bUnits.type, bUnits.group, bUnits.parent ); end; end )
 	
 	Events.UnitPromoted.Add( function() LuaEvents.UnitPanel_HideUnitPromotion(); ContextPtr:RequestRefresh() end )
 	Events.UnitUpgraded.Add( function() ContextPtr:RequestRefresh() end )
@@ -2452,6 +2488,14 @@ function Initialize()
 	Controls.BonusCheckbox:RegisterCallback( Mouse.eLClick, OnToggleBonus );
 	Controls.BonusCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.BonusCheckbox:SetSelected( true );
+
+	-- Polices Filters
+	Controls.HideInactivePoliciesCheckbox:RegisterCallback( Mouse.eLClick, OnToggleInactivePolicies );
+	Controls.HideInactivePoliciesCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.HideInactivePoliciesCheckbox:SetSelected( true );
+	Controls.HideNoImpactPoliciesCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNoImpactPolicies );
+	Controls.HideNoImpactPoliciesCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.HideNoImpactPoliciesCheckbox:SetSelected( false );
 
 	-- Events
 	LuaEvents.TopPanel_OpenReportsScreen.Add( OnTopOpenReportsScreen );
