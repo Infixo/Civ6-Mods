@@ -1581,7 +1581,7 @@ local tDistrictsOrder:table = {
 	"DISTRICT_SPACEPORT",
 	"DISTRICT_AERODROME", -- no icon
 }
-for k,v in pairs(tDistrictsOrder) do print("tDistrictsOrder",k,v) end;
+--for k,v in pairs(tDistrictsOrder) do print("tDistrictsOrder",k,v) end;
 
 function HasCityDistrict(kCityData:table, sDistrictType:string)
 	for _,district in ipairs(kCityData.BuildingsAndDistricts) do
@@ -1661,16 +1661,16 @@ function city_fields( kCityData, pCityInstance )
 	TruncateStringWithTooltip(pCityInstance.CityName, 150, Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
-	if bIsRiseFall then
+	--if bIsRiseFall then
 		if kCityData.Population > kCityData.Housing then
 			pCityInstance.Population:SetText( tostring(kCityData.Population) .. " / "..ColorRed(kCityData.Housing));
 		else
 			pCityInstance.Population:SetText( tostring(kCityData.Population) .. " / " .. tostring(kCityData.Housing));
 		end
-	else -- vanilla version
-		pCityInstance.Population:SetText( tostring(kCityData.Population) ); -- Infixo
-		pCityInstance.Housing:SetText( tostring( kCityData.Housing ) );
-	end
+	--else -- vanilla version
+		--pCityInstance.Population:SetText( tostring(kCityData.Population) ); -- Infixo
+		--pCityInstance.Housing:SetText( tostring( kCityData.Housing ) );
+	--end
 	
 	-- GrowthRateStatus
 	--<ColorSet Name="WarningMinor"         Color0="206,199,91,255"   Color1="0,0,0,200" />
@@ -1857,7 +1857,7 @@ function ViewCityStatusPage()
 	if bIsRiseFall then pHeaderInstance.CityGovernorButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "gover", instance ) end ) end -- Infixo
 	if bIsRiseFall then pHeaderInstance.CityLoyaltyButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "loyal", instance ) end ) end -- Infixo
 	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "pop", instance ) end )
-	if not bIsRiseFall then pHeaderInstance.CityHousingButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "house", instance ) end ) end -- Infixo
+	--pHeaderInstance.CityHousingButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "house", instance ) end ) end -- Infixo
 	pHeaderInstance.CityGrowthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "growth", instance ) end )
 	pHeaderInstance.CityAmenitiesButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "amen", instance ) end )
 	pHeaderInstance.CityHappinessButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "happy", instance ) end )
@@ -1996,7 +1996,7 @@ function common_unit_fields( unit, unitInstance )
 			
 	-- adds the status icon
 	local activityType:number = UnitManager.GetActivityType( unit )
-	print("Unit", unit:GetID(),activityType,unit:GetSpyOperation(),unit:GetSpyOperationEndTurn());
+	--print("Unit", unit:GetID(),activityType,unit:GetSpyOperation(),unit:GetSpyOperationEndTurn());
 	unitInstance.UnitStatus:SetHide( false )
 	local bIsMoving:boolean = true; -- Infixo
 	
@@ -2334,9 +2334,13 @@ function UpdatePolicyData()
 		SLOT_ECONOMIC = {},
 		SLOT_DIPLOMATIC = {},
 		SLOT_GREAT_PERSON = {},
-		SLOT_LEGACY = {},
-		SLOT_DARKAGE = {},
+		--SLOT_LEGACY = {},
+		--SLOT_DARKAGE = {},
 	};
+	if bIsRiseFall then
+		m_kPolicyData.SLOT_LEGACY = {};
+		m_kPolicyData.SLOT_DARKAGE = {};
+	end
 	Timer1Start();
 	local ePlayerID:number = Game.GetLocalPlayer();
 	local pPlayer:table = Players[ePlayerID];

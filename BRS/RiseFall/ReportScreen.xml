@@ -704,7 +704,7 @@
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="35,parent">
 					<GridButton		ID="CityGovernorButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_REPORTS_GOVERNOR">
-						<Label													Style="ReportHeaderSmallText"		String="[ICON_Governor]" /> <!--  ICON_Citizen --> 
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Governor]" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -1175,13 +1175,12 @@
 				<Container Offset="1,0" Size="50,parent">
 					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
 				</Container>
+
 				<Container Offset="1,0" Size="250,parent">
 					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
 						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
 					</GridButton>
 				</Container>
-
-
 				
 				<Container Offset="1,0" Size="50,parent">
 					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
@@ -1217,7 +1216,6 @@
 					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
 				</Container>
 				-->
-				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>

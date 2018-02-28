@@ -690,7 +690,7 @@ function GetCityData( pCity:table )
 	data.AmenitiesLostFromWarWeariness	= pCityGrowth:GetAmenitiesLostFromWarWeariness();
 	data.AmenitiesLostFromBankruptcy	= pCityGrowth:GetAmenitiesLostFromBankruptcy();
 	data.AmenitiesRequiredNum			= pCityGrowth:GetAmenitiesNeeded();
-	data.AmenitiesFromGovernors			= pCityGrowth:GetAmenitiesFromGovernors();
+	--data.AmenitiesFromGovernors			= pCityGrowth:GetAmenitiesFromGovernors();
 	data.AmenityAdvice					= pCity:GetAmenityAdvice();
 	data.CityWallHPPercent				= (wallHitpoints-currentWallDamage) / wallHitpoints;
 	data.CityWallCurrentHP				= wallHitpoints-currentWallDamage;
@@ -1696,8 +1696,19 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		end
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIER" then
-		if CheckForMismatchError("District") then return nil; end
-		return nil;
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local sBuildingType:string = tMod.Arguments.BuildingType;
+		local bApplied:boolean = false;
+		for _,district in ipairs(tSubject.Districts) do
+			for _,building in ipairs(district.Buildings) do
+				local buildingType:string = building.BuildingType;	
+				if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+				if buildingType == sBuildingType then
+					YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(building.Yields, tMod.Arguments.YieldType)*tonumber(tMod.Arguments.Amount)/100.0); bApplied = true; break;
+				end
+			end
+			if bApplied then break; end
+		end
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIERS_FOR_DISTRICT" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
