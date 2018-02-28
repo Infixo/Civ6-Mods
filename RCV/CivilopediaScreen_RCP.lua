@@ -166,7 +166,12 @@ end
 function ShowPage(page)
 	--print("...showing page layout", page.PageLayoutId);
 	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
-	ShowModifiers(page);
+	--ShowModifiers(page);
+	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
+	local chapter_body = {};
+	table.insert(chapter_body, sImpact);
+	table.insert(chapter_body, sToolTip);
+	AddChapter("New modifiers", chapter_body);
 	ShowInternalPageInfo(page);
 end
 for k,v in pairs(PageLayouts) do

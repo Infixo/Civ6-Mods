@@ -82,6 +82,17 @@ function dshowsubjects(pSubjects:table)
 	print("Subjects:", table.count(pSubjects), table.concat(tOut, ","));
 end
 
+--------------------------------------------------------------
+-- Timer
+--------------------------------------------------------------
+local fStartTime:number = 0.0
+function TimerStart()
+	fStartTime = Automation.GetTime()
+end
+function TimerTick(txt:string)
+	print("Timer Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime))
+end
+
 -- ===========================================================================
 -- DATA AND VARIABLES
 -- ===========================================================================
@@ -1328,6 +1339,7 @@ end
 --  string - decoded into text (tooltip), contains info about structure, owner, subjects and final impact
 --  table - extended yields table
 --  string - id of the attached modifier, if an effect is "attach modifier"
+--  boolean - true if there was an unknown effect
 function DecodeModifier(sModifierId:string)
 	local tMod:table = FetchAndCacheData(sModifierId);
 	if not tMod then return "ERROR: "..sModifierId.." not defined!"; end
@@ -1384,7 +1396,7 @@ function DecodeModifier(sModifierId:string)
 	table.insert(tOut, sImpactText);
 	if bUnknownEffect then table.insert(tOut, "[ICON_Exclamation][COLOR_Red]Unknown effect[ENDCOLOR]"); end
 	-- return 3 values
-	return table.concat(tOut, "[NEWLINE]"), tImpact, ((tMod.EffectType == "EFFECT_ATTACH_MODIFIER") and tMod.Arguments.ModifierId) or nil
+	return table.concat(tOut, "[NEWLINE]"), tImpact, ((tMod.EffectType == "EFFECT_ATTACH_MODIFIER") and tMod.Arguments.ModifierId) or nil, bUnknownEffect
 end
 
 -- ===========================================================================
@@ -1847,6 +1859,92 @@ end
 
 
 ------------------------------------------------------------------------------
+-- Main entry point for calculating effects for entire objects
+-- returns effect:string, yields:table, tooltip:string
+------------------------------------------------------------------------------
+local TOOLTIP_SEP:string = "-------------------";
+
+-- Tables with modifiers
+local tModifiersTables:table = {
+	["Belief"] = "BeliefModifiers", -- BeliefType
+	["Building"] = "BuildingModifiers", -- BuildingType
+	["Civic"] = "CivicModifiers", -- CivicType
+	-- CommemorationModifiers -- no Pedia page for that!
+	["District"] = "DistrictModifiers", -- DistrictType
+	-- GameModifiers -- not shown in Pedia?
+	["Government"] = "GovernmentModifiers", -- GovernmentType
+	-- GovernorModifiers -- currently not used
+	["GovernorPromotion"] = "GovernorPromotionModifiers", -- GovernorPromotionType
+	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
+	-- GreatPersonIndividualActionModifiers -- GreatPersonIndividualType + AttachmentTargetType
+	["Improvement"] = "ImprovementModifiers", -- ImprovementType
+	-- ["Leader"] = "LeaderTraits" => "TraitModifiers" -- TraitType
+	["Policy"] = "PolicyModifiers", -- PolicyType
+	["Project"] = "ProjectCompletionModifiers", -- ProjectType
+	["Technology"] = "TechnologyModifiers", -- TechnologyType
+	["Trait"] = "TraitModifiers", -- TraitType
+	-- ["Unit"] = "UnitAbilityModifiers", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
+	["UnitPromotion"] = "UnitPromotionModifiers", -- UnitPromotionType
+}
+
+-- for policies:  ("Policy",   policyType,   Game.GetLocalPlayer(), nil)
+-- for governors: ("Governor", governorType, Game.GetLocalPlayer(), iCityID)
+function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:number, iCityID:number)
+	local sModifiersTable:string = tModifiersTables[ sObject ];
+	-- check if there are modifiers at all
+	if sModifiersTable == nil then return "(error)", nil, "No modifiers' table for object "..sObject; end
+	local sObjectTypeField:string = sObject.."Type"; -- simple version for starters
+	
+	-- iterate and find them
+	dprint("...calculating modifiers (obj,table,field)", sObject, sObjectType, ePlayerID, iCityID);
+	TimerStart()
+	local tTotalImpact:table = YieldTableNew();
+	local tToolTip:table = {}; -- tooltip
+	local bUnknownEffect:boolean = false;
+	for mod in GameInfo[sModifiersTable]() do
+		if mod[sObjectTypeField] == sObjectType then
+			-- stupid Firaxis, some fields are named ModifierId and some ModifierID (sic!)
+			local sModifierId:string = mod.ModifierId;
+			if not sModifierId then sModifierId = mod.ModifierID; end -- fix for BeliefModifiers, GoodyHutSubTypes, ImprovementModifiers
+			local sText:string, pYields:table, sAttachedId:string, bUnknown:boolean = DecodeModifier(sModifierId, ePlayerID, iCityID);
+			table.insert(tToolTip, sText);
+			if sAttachedId then
+				table.insert(tToolTip, "Attached modifier");
+				sText, pYields, sAttachedId, bUnknown = DecodeModifier(sAttachedId, ePlayerID, iCityID);
+				table.insert(tToolTip, sText);
+			end
+			if pYields then YieldTableAdd(tTotalImpact, pYields); end
+			bUnknownEffect = bUnknownEffect or bUnknown;
+		--else
+			--print("comp:", mod[sObjectType], page.PageId);
+			table.insert(tToolTip, TOOLTIP_SEP);
+		end
+	end
+	if #tToolTip == 0 then
+		table.insert(tToolTip, "No modifiers for this object.");
+	end
+	
+	-- generate total impact string
+	local sTotalImpact:string = "";
+	local bImpact:boolean = false;
+	for	yield,value in pairs(tTotalImpact) do
+		if value ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, value); end
+	end
+	if sTotalImpact == "" then
+		sTotalImpact = "-"; -- just to show that there's nothing; empty string could be misleading
+		table.insert(tToolTip, "Yields not affected.");
+	end
+	if bUnknownEffect then
+		sTotalImpact = sTotalImpact.." [ICON_Exclamation]";
+		table.insert(tToolTip, "[COLOR_Red]Unknown effect[ENDCOLOR] was not processed.");
+	end
+	
+	TimerTick("All modifiers for object "..sObject..":"..sObjectType)
+	-- done!
+	return sTotalImpact, tTotalImpact, table.concat(tToolTip, "[NEWLINE]");
+end
+
+------------------------------------------------------------------------------
 -- RefreshBaseData should be called when the window is open or after the data has changed
 -- Probably could use a Lua event for that (TODO)
 -- TODO: what about other players? probably will need multiple tables of cities, but let's start with LocalPlayer
@@ -1882,10 +1980,12 @@ function RefreshBaseData(ePlayerID:number)
 	bBaseDataDirty = false; -- clean :)
 end
 
+------------------------------------------------------------------------------
 function Initialize()
 	-- exposed members
 	RMA.DecodeModifier  = DecodeModifier;
 	RMA.RefreshBaseData = RefreshBaseData;
+	RMA.CalculateModifierEffect = CalculateModifierEffect;
 	
 	-- add events that require the base data to be refreshed
 	-- only set the dirty flag, the actual data will be refreshed when necessary
