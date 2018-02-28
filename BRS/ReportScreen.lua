@@ -2171,6 +2171,88 @@ function ViewDealsPage()
 	m_kCurrentTab = 4;
 end
 
+
+-- ===========================================================================
+-- POLICY PAGE
+-- ===========================================================================
+function ViewPolicyPage()
+
+	-- prepare data
+	-- this will be moved outside to be only calculated once
+	local m_kPolicyData:table = {
+		SLOT_MILITARY = {},
+		SLOT_ECONOMIC = {},
+		SLOT_DIPLOMATIC = {},
+		SLOT_GREAT_PERSON = {},
+		SLOT_LEGACY = {},
+		SLOT_DARKAGE = {},
+	};
+	for policy in GameInfo.Policies() do
+		local policyData:table = {
+			Index = policy.Index,
+			Name = Locale.Lookup(policy.Name),
+			Description = Locale.Lookup(policy.Description),
+			--Yields TODO from modifiers
+			-- Status TODO from Player:GetCulture?
+		};
+		local sSlotType:string = policy.GovernmentSlotType;
+		if sSlotType == "SLOT_WILDCARD" then sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_LEGACY") or "SLOT_DARKAGE"); end
+		table.insert(m_kPolicyData[sSlotType], policyData);
+	end
+
+	ResetTabForNewPageContent();
+
+	-- fill
+
+	--for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
+	for policyGroup,policies in pairs(m_kPolicyData) do
+		local instance : table = NewCollapsibleGroupInstance()
+		
+		instance.RowHeaderButton:SetText( Locale.Lookup(policyGroup) ); -- TODO proper group name
+		instance.RowHeaderLabel:SetHide( false );
+		instance.RowHeaderLabel:SetText( table.count(policies).." policies" );
+		
+		local pHeaderInstance:table = {}
+		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
+
+		-- set sorting callbacks
+		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
+		--if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
+		--if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
+
+		-- fill a single group
+		for _,policy in ipairs(policies) do
+			local pPolicyInstance:table = {}
+			--table.insert( instance.Children, unitInstance )
+			
+			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
+			
+			--common_unit_fields( unit, unitInstance ) -- fill a single entry
+			pPolicyInstance.PolicyEntryStatus:SetText(policy.Index);
+			TruncateStringWithTooltip(pPolicyInstance.PolicyEntryName, 148, policy.Name);
+			--pPolicyInstance.PolicyEntryDescription:SetText(policy.Description);
+			TruncateStringWithTooltip(pPolicyInstance.PolicyEntryDescription, 298, policy.Description);
+			
+		end
+		
+		-- no footer
+		SetGroupCollapsePadding(instance, 0 );
+		RealizeGroup( instance );
+	end
+	
+	-- finishing
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	Controls.CollapseAll:SetHide( false );
+	Controls.BottomYieldTotals:SetHide( true );
+	Controls.BottomResourceTotals:SetHide( true );
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 6;
+end
+
+
 -- ===========================================================================
 --
 -- ===========================================================================
@@ -2292,6 +2374,7 @@ function Initialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );	
 	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
+	AddTabSection( "Policies",			ViewPolicyPage );
 
 	m_tabs.SameSizedTabs(50);
 	m_tabs.CenterAlignTabs(-10);		

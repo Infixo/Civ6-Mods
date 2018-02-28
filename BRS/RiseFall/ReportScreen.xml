@@ -1465,4 +1465,198 @@
 		</Container>
 	</Instance>
 
+	<!-- NEW TAB: POLICY INFORMATION
+		Displayes all policies and processed info about their impact; style similar to CityStatus
+		Group - similar to Resources and Units
+			[PolicyGroup]
+			PolicyGroup is basically GovernmentSlotType, but can be split into DarkAge policies and Legacy policies, both have flags in DB
+			Sections will allow for other objects, like City-States, etc. later
+		Header: list of columns, some are sortable
+			[Status][PolicyName][Description][Yields]
+			Status - some info, if available, if obsolete, etc. Also info if all modifiers were correctly processed
+			Yields are actually separate columns for each yield, rather thin (like 30-40); there are 9 (5 basic yields+4 extended)
+			Descrption is a long description, rather a tooltip, we'll see how much space will be left
+			Sorting: group / name / yields; status are icons?
+		Entry: above information
+			There are 126 policies, so this line cannot be thick (CityStatus entry)
+		Footer: none
+	-->
+
+	<Instance Name="PolicyHeaderInstance">
+		<Container ID="Top" Offset="8,0" Size="1003,22">
+			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+			<Stack StackGrowth="Right">
+				<Box Size="2,parent" Color="46,70,95,255" /> <!-- this is a thin vertical line, more visible -->
+				
+				<Container Offset="0,0 "Size="60,parent">
+					<GridButton ID="PolicyHeaderButtonStatus"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="Status"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128" /> <!-- this is a thin vertical line, less visible -->
+				
+				<Container Offset="0,0" Size="150,parent">
+					<GridButton ID="PolicyHeaderButtonName"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="Name"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128" /> <!-- this is a thin vertical line, less visible -->
+				
+				<Container Offset="0,0" Size="300,parent">
+					<GridButton ID="PolicyHeaderButtonDescription"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="Description"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128" /> <!-- this is a thin vertical line, less visible -->
+				
+				<!-- YIELDS are in order as defined in YieldTypes - easy to sort and display! names correspond do this table as well -->
+				
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonFOOD" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Food]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonPRODUCTION" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Production]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonGOLD" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+				
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonSCIENCE" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Science]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonCULTURE" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Culture]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonFAITH" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Faith]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonTOURISM" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Tourism]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonAMENITY" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Amenities]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonHOUSING" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Housing]"/>
+					</GridButton>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
+				
+				<Container Offset="0,0" Size="40,parent">
+					<GridButton ID="PolicyHeaderButtonLOYALTY" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_PressureUp]"/>
+					</GridButton>
+				</Container>
+				
+				<Box Size="2,parent" Color="46,70,95,255" /> <!-- this is a thin vertical line, more visible -->
+			</Stack>
+		</Container>
+	</Instance>
+	
+	<Instance Name="PolicyEntryInstance">
+		<Container ID="Top" Offset="8,0" Size="1003,22">
+			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+			<Stack StackGrowth="Right" >
+				<Box Size="2,parent" Color="46,70,95,255"/>
+				
+				<Container Offset="0,0" Size="60,parent">
+					<Label ID="PolicyEntryStatus" Style="ReportValueText" String="$Status$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				
+				<Container Offset="0,0" Size="150,parent">
+					<Label ID="PolicyEntryName" Style="ReportValueLeftName" String="$Name$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				
+				<Container Offset="0,0" Size="300,parent">
+					<Label ID="PolicyEntryDescription" Style="ReportValueLeftName" String="$Description$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				
+				<!-- YIELDS -->
+				
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldFOOD" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldPRODUCTION" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldGOLD" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldSCIENCE" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldCULTURE" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldFAITH" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldTOURISM" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldAMENITY" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldHOUSING" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,64"/>
+				
+				<Container Offset="0,0" Size="40,parent">
+					<Label ID="PolicyEntryYieldLOYALTY" Style="ReportValueText" String="" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Box Size="2,parent" Color="46,70,95,255"/>
+			</Stack>
+		</Container>
+	</Instance>
+	
 </Context>
