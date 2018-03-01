@@ -2261,14 +2261,14 @@ function ViewDealsPage()
 	ResetTabForNewPageContent();
 	
 	for j, pDeal in spairs( m_kCurrentDeals, function( t, a, b ) return t[b].EndTurn > t[a].EndTurn end ) do
-		local ending = pDeal.EndTurn - Game.GetCurrentGameTurn()
-		local turns = "turns"
-		if ending == 1 then turns = "turn" end
+		--local ending = pDeal.EndTurn - Game.GetCurrentGameTurn()
+		--local turns = "turns"
+		--if ending == 1 then turns = "turn" end
 
 		local instance : table = NewCollapsibleGroupInstance()
 
-		instance.RowHeaderButton:SetText( "Deal With " .. pDeal.WithCivilization )
-		instance.RowHeaderLabel:SetText( "Ends in " .. ending .. " " .. turns .. " (" .. pDeal.EndTurn .. ")" )
+		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_TRADE_DEAL_WITH")..pDeal.WithCivilization )
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_DEAL_ENDS_IN_TURNS", pDeal.EndTurn-Game.GetCurrentGameTurn()).." ("..tostring(pDeal.EndTurn)..")" )
 		instance.RowHeaderLabel:SetHide( false )
 
 		local dealHeaderInstance : table = {}
@@ -2302,8 +2302,8 @@ function ViewDealsPage()
 	
 		local pFooterInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "DealsFooterInstance", pFooterInstance, instance.ContentStack )
-		pFooterInstance.Outgoing:SetText( "Total: " .. #pDeal.Sending )
-		pFooterInstance.Incoming:SetText( "Total: " .. #pDeal.Receiving )
+		pFooterInstance.Outgoing:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS")..#pDeal.Sending )
+		pFooterInstance.Incoming:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS")..#pDeal.Receiving )
 	
 		SetGroupCollapsePadding( instance, pFooterInstance.Top:GetSizeY() )
 		RealizeGroup( instance );
@@ -2385,7 +2385,8 @@ function ViewPolicyPage()
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
-
+		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
+		
 		-- set sorting callbacks
 		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
 		--if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
@@ -2403,6 +2404,7 @@ function ViewPolicyPage()
 			--table.insert( instance.Children, unitInstance )
 			
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
+			pPolicyInstance.PolicyEntryYieldLOYALTY:SetHide( not bIsRiseFall );
 			iNumPolices = iNumPolices + 1;
 			
 			--common_unit_fields( unit, unitInstance ) -- fill a single entry
@@ -2592,8 +2594,8 @@ function Initialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );	
 	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
-	AddTabSection( "Policies",			ViewPolicyPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage ); 
+	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
 
 	m_tabs.SameSizedTabs(50);
 	m_tabs.CenterAlignTabs(-10);		

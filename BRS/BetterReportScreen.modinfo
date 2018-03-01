@@ -2,8 +2,8 @@
 <Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" version="1">
 	<Properties>
 		<Name>Better Report Screen</Name>
-		<Teaser>Better Report Screen</Teaser>
-		<Description>Adds Policies impact, Units, Current Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 2.0.</Description>
+		<Teaser>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.</Teaser>
+		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 2.1.</Description>
 		<Authors>Infixo, Greg Miller</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
@@ -28,7 +28,9 @@
             </Items>
         </ImportFiles>
 		<UpdateText id="BRS_UpdateText">
-			<File>BetterReportScreen_Text.xml</File>
+			<File>Text/BetterReportScreen_Text.xml</File>
+			<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
+			<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
 		</UpdateText>
 		<!-- Rise&Fall actions - replace lua and import xml (there's no 'replace' for xml) -->
         <ImportFiles id="BRS_ImportFiles_RiseFall" criteria="Expansion1">
@@ -42,7 +44,6 @@
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_RiseFall" criteria="Expansion1">
 			<Properties>
 				<LuaContext>ReportScreen</LuaContext>
-				<!--<LuaReplace>RiseFall/ReportScreen_RiseFall.lua</LuaReplace>-->
 				<LuaReplace>ReportScreen.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
@@ -53,7 +54,9 @@
 		<File>RealModifierAnalysis.lua</File>-->
 		<File>RealModifierAnalysis.xml</File>-->
 		<File>UnitPromotionPopup.lua</File>
-		<File>BetterReportScreen_Text.xml</File>
+		<File>Text/BetterReportScreen_Text.xml</File>
+		<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
+		<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
 		<!-- Vanilla files -->
 		<File>ReportScreen.xml</File>
 		<!-- Rise & Fall files -->

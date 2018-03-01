@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-02-23: Created -->
+<GameData>
+
+<LocalizedText>
+	<!-- Tab names -->
+	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="pl_PL">
+		<Text>Umowy</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="pl_PL">
+		<Text>Jednostki</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="pl_PL">
+		<Text>Doktryny</Text>
+	</Replace>
+	<!-- Column headers -->
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="pl_PL">
+		<Text>Nazwa budowli/dzielnicy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="pl_PL">
+		<Text>Liczba budowli/dzielnic</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="pl_PL">
+		<Text>Wzrost</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="pl_PL">
+		<Text>Zadowolenie</Text>
+	</Replace>
+	<!-- Resource checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="pl_PL">
+		<Text>Ukryj szczegóły miast</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="pl_PL">
+		<Text>Ukryj darmowe budowle</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="pl_PL">
+		<Text>Ukryj darmowe jednostki</Text>
+	</Replace>
+	<!-- UNITS -->
+	<!-- Unit groups -->
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NUM_UNITS" Language="pl_PL">
+		<Text>{1_Number} {1_Number : plural 1?jednostka; 2?jednostki; 3?jednostki; 4?jednostki; other?jednostek;}</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="pl_PL">
+		<Text>Wojskowe - Powietrzne</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="pl_PL">
+		<Text>Wojskowe - Morskie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="pl_PL">
+		<Text>Wojskowe - Lądowe</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="pl_PL">
+		<Text>Cywilne</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="pl_PL">
+		<Text>Wsparcie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="pl_PL">
+		<Text>Szpiedzy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="pl_PL">
+		<Text>Kupcy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="pl_PL">
+		<Text>Wielcy ludzie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="pl_PL">
+		<Text>Religijne</Text>
+	</Replace>
+	<!-- Tooltips -->
+	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="pl_PL">
+		<Text>Idź do tego miasta</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="pl_PL">
+		<Text>Znajdź tę jednostkę na mapie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="pl_PL">
+		<Text>Garnizon</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_PROMOTION_AVAILABLE" Language="pl_PL">
+		<Text>Dostępny awans</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_IN_FORMATION" Language="pl_PL">
+		<Text>W formacji</Text>
+	</Replace>
+	<!-- POLICIES -->
+	<Replace Tag="LOC_BRS_POLICY_GROUP_NUM_POLICIES" Language="pl_PL">
+		<Text>{1_Number} {1_Number : plural 1?doktryna; 2?doktryny; 3?doktryny; 4?doktryny; other?doktryn;}</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="pl_PL">
+		<Text>Wojskowe</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="pl_PL">
+		<Text>Gospodarcze</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="pl_PL">
+		<Text>Dyplomatyczne</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="pl_PL">
+		<Text>Wielkich ludzi</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="pl_PL">
+		<Text>Spuścizny</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="pl_PL">
+		<Text>Ciemnych wieków</Text>
+	</Replace>
+	<!-- Checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="pl_PL">
+		<Text>Ukryj nieaktywne doktryny</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="pl_PL">
+		<Text>Ukryj doktryny bez żadnego wpływu</Text>
+	</Replace>
+	<!-- Deals -->
+	<Replace Tag="LOC_BRS_DEAL_ENDS_IN_TURNS" Language="pl_PL">
+		<Text>Kończy się za {1_Turns} {1_Turns : plural 1?turę; 2:tury; 3:tury; 4:tury; other?tur;}</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>

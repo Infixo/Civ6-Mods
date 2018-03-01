@@ -132,17 +132,17 @@
 			<Image																Anchor="C,B"	Offset="0,2"		Size="parent,parent"				Texture="Controls_Gradient" Color="255,255,255,32">
 				<Grid			ID="StrategicGrid"											Offset="5,10"		Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_STRATEGICS" />-->
-					<GridButton ID="StrategicCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_STRATEGIC" Size="120,25" Offset="5,0" Hidden="0"/>
+					<GridButton ID="StrategicCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_RESOURCECLASS_STRATEGIC_NAME" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="StrategicResources"		Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>				
 				<Grid			ID="BonusGrid"													Offset="510,10"	Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_BONUSES" />-->
-					<GridButton ID="BonusCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_BONUS" Size="120,25" Offset="5,0" Hidden="0"/>
+					<GridButton ID="BonusCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_RESOURCECLASS_BONUS_NAME" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="BonusResources"				Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>
 				<Grid			ID="LuxuryGrid"													Offset="5,55"		Size="parent-10,40"					Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_LUXURIES" />-->
-					<GridButton ID="LuxuryCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_BRS_CHECKBOX_RESOURCE_LUXURY" Size="120,25" Offset="5,0" Hidden="0"/>
+					<GridButton ID="LuxuryCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_RESOURCECLASS_LUXURY_NAME" Size="120,25" Offset="5,0" Hidden="0"/>
 					<Stack	ID="LuxuryResources"			Anchor="L,C"	Offset="150,-9"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
 				</Grid>
 			</Image>
@@ -768,7 +768,7 @@
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="265,parent">
 					<GridButton		ID="CityDistrictsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_DISTRICTS" />
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_DISTRICTS" />
 					</GridButton>
 				</Container>
 				<!--<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />-->
@@ -1193,7 +1193,7 @@
 				<Container Offset="1,0" Size="125,parent">
 					<Label ID="UnitExp" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
 					<Button ID="Promotion" Hidden="1" Anchor="R,C" Size="32,32" StateOffsetIncrement="0,0" Offset="10,0">
-						<Image Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="Promotion Available" Icon="ICON_PROMOTION"/>
+						<Image Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_BRS_PROMOTION_AVAILABLE" Icon="ICON_PROMOTION"/>
 					</Button>
 				</Container>
 				
@@ -1203,7 +1203,7 @@
 				
 				<Container Offset="1,0" Size="125,parent">
 					<Label ID="UnitMove" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
-					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="In Formation" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
+					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_BRS_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
@@ -1545,42 +1545,42 @@
 				
 				<!-- YIELDS are in order as defined in YieldTypes - easy to sort and display! names correspond do this table as well -->
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonFOOD"  ToolTip="Food" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonFOOD"  ToolTip="LOC_HUD_REPORTS_HEADER_FOOD" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Food]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonPRODUCTION"  ToolTip="Production" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonPRODUCTION"  ToolTip="LOC_HUD_REPORTS_HEADER_PRODUCTION" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Production]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonGOLD"  ToolTip="Gold" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonGOLD"  ToolTip="LOC_HUD_REPORTS_HEADER_GOLD" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 				
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonSCIENCE"  ToolTip="Science" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonSCIENCE"  ToolTip="LOC_HUD_REPORTS_HEADER_SCIENCE" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Science]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonCULTURE"  ToolTip="Culture" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonCULTURE"  ToolTip="LOC_HUD_REPORTS_HEADER_CULTURE" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Culture]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="55,parent">
-					<GridButton ID="PolicyHeaderButtonFAITH"  ToolTip="Faith" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonFAITH"  ToolTip="LOC_HUD_REPORTS_HEADER_FAITH" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Faith]"/>
 					</GridButton>
 				</Container>
@@ -1588,28 +1588,28 @@
 				
 				<!-- thinner a bit (no decimals) -->
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonTOURISM"  ToolTip="Tourism" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonTOURISM"  ToolTip="LOC_HUD_REPORTS_HEADER_TOURISM" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Tourism]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonAMENITY"  ToolTip="Amenities" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonAMENITY"  ToolTip="LOC_HUD_REPORTS_HEADER_AMENITIES" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Amenities]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonHOUSING"  ToolTip="Housing" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonHOUSING"  ToolTip="LOC_HUD_REPORTS_HEADER_HOUSING" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Housing]"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,64" /> <!-- this is a thin vertical line, almost invisible -->
 				
 				<Container Offset="0,0" Size="45,parent">
-					<GridButton ID="PolicyHeaderButtonLOYALTY"  ToolTip="Loyalty" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+					<GridButton ID="PolicyHeaderButtonLOYALTY"  ToolTip="LOC_REPORTS_LOYALTY" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_PressureUp]"/>
 					</GridButton>
 				</Container>
