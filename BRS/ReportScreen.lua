@@ -1429,6 +1429,8 @@ function ViewResourcesPage()
 
 	for eResourceType,kSingleResourceData in pairs(m_kResourceData) do
 		
+		local kResource :table = GameInfo.Resources[eResourceType];
+		
 		--!!ARISTOS: Only display list of selected resource types, according to checkboxes
 		if (kSingleResourceData.IsStrategic and Controls.StrategicCheckbox:IsSelected()) or
 			(kSingleResourceData.IsLuxury and Controls.LuxuryCheckbox:IsSelected()) or
@@ -1436,9 +1438,9 @@ function ViewResourcesPage()
 
 		local instance:table = NewCollapsibleGroupInstance();	
 
-		local kResource :table = GameInfo.Resources[eResourceType];
 		instance.RowHeaderButton:SetText(  kSingleResourceData.Icon..Locale.Lookup( kResource.Name ) );
-		instance.RowHeaderLabel:SetHide( true ); --BRS
+		instance.RowHeaderLabel:SetHide( false ); --BRS
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(kSingleResourceData.Total) );
 
 		local pHeaderInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "ResourcesHeaderInstance", pHeaderInstance, instance.ContentStack ) ;
@@ -1452,9 +1454,9 @@ function ViewResourcesPage()
 			pEntryInstance.Amount:SetText( (kEntry.Amount<=0) and tostring(kEntry.Amount) or "+"..tostring(kEntry.Amount) );
 		end
 
-		local pFooterInstance:table = {};
-		ContextPtr:BuildInstanceForControl( "ResourcesFooterInstance", pFooterInstance, instance.ContentStack ) ;
-		pFooterInstance.Amount:SetText( tostring(kSingleResourceData.Total) );		
+		--local pFooterInstance:table = {};
+		--ContextPtr:BuildInstanceForControl( "ResourcesFooterInstance", pFooterInstance, instance.ContentStack ) ;
+		--pFooterInstance.Amount:SetText( tostring(kSingleResourceData.Total) );
 
 		-- Show how many of this resource are being allocated to what cities
 		local localPlayerID = Game.GetLocalPlayer();
@@ -1462,8 +1464,10 @@ function ViewResourcesPage()
 		local citiesProvidedTo: table = localPlayer:GetResources():GetResourceAllocationCities(GameInfo.Resources[kResource.ResourceType].Index);
 		local numCitiesProvidingTo: number = table.count(citiesProvidedTo);
 		if (numCitiesProvidingTo > 0) then
-			pFooterInstance.AmenitiesContainer:SetHide(false);
-			pFooterInstance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..numCitiesProvidingTo.." "..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME"));
+			--pFooterInstance.AmenitiesContainer:SetHide(false);
+			instance.AmenitiesContainer:SetHide(false); ---BRS
+			--pFooterInstance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..numCitiesProvidingTo.." "..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME"));
+			instance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..numCitiesProvidingTo.." "..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME"));
 			local amenitiesTooltip: string = "";
 			local playerCities = localPlayer:GetCities();
 			for i,city in ipairs(citiesProvidedTo) do
@@ -1473,55 +1477,48 @@ function ViewResourcesPage()
 				end
 				amenitiesTooltip = amenitiesTooltip.. city.AllocationAmount.." [ICON_".. kResource.ResourceType.."] [Icon_GoingTo] " ..cityName;
 			end
-			pFooterInstance.Amenities:SetToolTipString(amenitiesTooltip);
-		else
-			pFooterInstance.AmenitiesContainer:SetHide(true);
+			--pFooterInstance.Amenities:SetToolTipString(amenitiesTooltip);
+			instance.Amenities:SetToolTipString(amenitiesTooltip);
+		--else
+			--pFooterInstance.AmenitiesContainer:SetHide(true);
 		end
 
-		SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
+		--SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
+		SetGroupCollapsePadding(instance, 0); --BRS no footer
 		RealizeGroup( instance ); --BRS moved into if
 
 		end -- ARISTOS checkboxes
 
-		if kSingleResourceData.IsStrategic then
-			--strategicResources = strategicResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );
-			table.insert(kStrategics, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
-		elseif kSingleResourceData.IsLuxury then			
-			--luxuryResources = luxuryResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );			
-			table.insert(kLuxuries, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
-		else
-			table.insert(kBonuses, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
-		end
+		local tResBottomData:table = {
+			Text = kSingleResourceData.Icon..tostring(kSingleResourceData.Total),
+			ToolTip = kSingleResourceData.Icon..Locale.Lookup( kResource.Name ).." "..tostring(kSingleResourceData.Total),
+		};
+		if     kSingleResourceData.IsStrategic then table.insert(kStrategics, tResBottomData);
+		elseif kSingleResourceData.IsLuxury    then table.insert(kLuxuries,   tResBottomData);
+		else                                        table.insert(kBonuses,    tResBottomData); end
 
 		--SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
 		--RealizeGroup( instance ); --BRS moved into if
 	end
 	
-	m_strategicResourcesIM:ResetInstances();
-	for i,v in ipairs(kStrategics) do
-		local resourceInstance:table = m_strategicResourcesIM:GetInstance();	
-		resourceInstance.Info:SetText( v );
+	local function ShowResources(kResIM:table, kResources:table)
+		kResIM:ResetInstances();
+		for i,v in ipairs(kResources) do
+			local resourceInstance:table = kResIM:GetInstance();
+			resourceInstance.Info:SetText( v.Text );
+			resourceInstance.Info:SetToolTipString( v.ToolTip );
+		end
 	end
+	ShowResources(m_strategicResourcesIM, kStrategics);
 	Controls.StrategicResources:CalculateSize();
 	Controls.StrategicGrid:ReprocessAnchoring();
-
-	m_bonusResourcesIM:ResetInstances();
-	for i,v in ipairs(kBonuses) do
-		local resourceInstance:table = m_bonusResourcesIM:GetInstance();	
-		resourceInstance.Info:SetText( v );
-	end
+	ShowResources(m_bonusResourcesIM, kBonuses);
 	Controls.BonusResources:CalculateSize();
 	Controls.BonusGrid:ReprocessAnchoring();
-
-	m_luxuryResourcesIM:ResetInstances();
-	for i,v in ipairs(kLuxuries) do
-		local resourceInstance:table = m_luxuryResourcesIM:GetInstance();	
-		resourceInstance.Info:SetText( v );
-	end
-	
+	ShowResources(m_luxuryResourcesIM, kLuxuries);
 	Controls.LuxuryResources:CalculateSize();
 	Controls.LuxuryResources:ReprocessAnchoring();
-	Controls.LuxuryGrid:ReprocessAnchoring();
+	--Controls.LuxuryGrid:ReprocessAnchoring();
 	
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
@@ -2193,10 +2190,11 @@ function ViewUnitsPage()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) );
 		instance.RowHeaderLabel:SetHide( false ); --BRS
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_UNITS_GROUP_NUM_UNITS", #kUnitGroup.units) );
+		--instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_UNITS_GROUP_NUM_UNITS", #kUnitGroup.units) );
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
+		local iNumRows:number = 0;
 
 		if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
@@ -2218,7 +2216,8 @@ function ViewUnitsPage()
 			local unitInstance:table = {}
 			table.insert( instance.Children, unitInstance )
 			
-			ContextPtr:BuildInstanceForControl( kUnitGroup.Entry, unitInstance, instance.ContentStack )
+			ContextPtr:BuildInstanceForControl( kUnitGroup.Entry, unitInstance, instance.ContentStack );
+			iNumRows = iNumRows + 1;
 			
 			common_unit_fields( unit, unitInstance )
 			
@@ -2228,13 +2227,15 @@ function ViewUnitsPage()
 			unitInstance.LookAtButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( unit:GetX( ), unit:GetY( ) ); UI.SelectUnit( unit ); end )
 			unitInstance.LookAtButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end )
 		end
+
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(iNumRows) );
 	
-		local pFooterInstance:table = {}
-		ContextPtr:BuildInstanceForControl( "UnitsFooterInstance", pFooterInstance, instance.ContentStack )
-		pFooterInstance.Amount:SetText( tostring( #kUnitGroup.units ) )
+		--local pFooterInstance:table = {}
+		--ContextPtr:BuildInstanceForControl( "UnitsFooterInstance", pFooterInstance, instance.ContentStack )
+		--pFooterInstance.Amount:SetText( tostring( #kUnitGroup.units ) )
 	
-		SetGroupCollapsePadding( instance, pFooterInstance.Top:GetSizeY() )
-		RealizeGroup( instance )
+		SetGroupCollapsePadding(instance, 0); --pFooterInstance.Top:GetSizeY() )
+		RealizeGroup( instance );
 	end
 
 	Controls.Stack:CalculateSize();
@@ -2261,15 +2262,16 @@ function ViewDealsPage()
 	ResetTabForNewPageContent();
 	
 	for j, pDeal in spairs( m_kCurrentDeals, function( t, a, b ) return t[b].EndTurn > t[a].EndTurn end ) do
-		--local ending = pDeal.EndTurn - Game.GetCurrentGameTurn()
+		print("deal", pDeal.EndTurn, Game.GetCurrentGameTurn(), pDeal.EndTurn-Game.GetCurrentGameTurn());
+		local iNumTurns:number = pDeal.EndTurn - Game.GetCurrentGameTurn();
 		--local turns = "turns"
 		--if ending == 1 then turns = "turn" end
 
 		local instance : table = NewCollapsibleGroupInstance()
 
-		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_TRADE_DEAL_WITH")..pDeal.WithCivilization )
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_DEAL_ENDS_IN_TURNS", pDeal.EndTurn-Game.GetCurrentGameTurn()).." ("..tostring(pDeal.EndTurn)..")" )
-		instance.RowHeaderLabel:SetHide( false )
+		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_TRADE_DEAL_WITH")..pDeal.WithCivilization );
+		instance.RowHeaderLabel:SetText( tostring(iNumTurns).." "..Locale.Lookup("LOC_HUD_REPORTS_TURNS_UNTIL_COMPLETED", iNumTurns).." ("..tostring(pDeal.EndTurn)..")" );
+		instance.RowHeaderLabel:SetHide( false );
 
 		local dealHeaderInstance : table = {}
 		ContextPtr:BuildInstanceForControl( "DealsHeader", dealHeaderInstance, instance.ContentStack )
@@ -2385,6 +2387,7 @@ function ViewPolicyPage()
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
+		local iNumRows:number = 0;
 		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
 		
 		-- set sorting callbacks
@@ -2393,7 +2396,6 @@ function ViewPolicyPage()
 		--if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
 
 		-- fill a single group
-		local iNumPolices:number = 0;
 		for _,policy in ipairs(policies) do
 		
 			--FILTERS
@@ -2405,7 +2407,7 @@ function ViewPolicyPage()
 			
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
 			pPolicyInstance.PolicyEntryYieldLOYALTY:SetHide( not bIsRiseFall );
-			iNumPolices = iNumPolices + 1;
+			iNumRows = iNumRows + 1;
 			
 			--common_unit_fields( unit, unitInstance ) -- fill a single entry
 			-- status with tooltip
@@ -2436,7 +2438,7 @@ function ViewPolicyPage()
 			
 		end
 		
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_NUM_POLICIES", iNumPolices) );
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(iNumRows) );
 		
 		-- no footer
 		SetGroupCollapsePadding(instance, 0 );

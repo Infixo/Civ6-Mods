@@ -28,6 +28,9 @@
 	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="ja_JP">
 		<Text>幸福度</Text>
 	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="ja_JP">
+		<Text>Nazwa doktryny</Text>
+	</Replace>
 	<!-- Resource checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="ja_JP">
 		<Text>都市の詳細を隠す</Text>
@@ -40,9 +43,6 @@
 	</Replace>
 	<!-- UNITS -->
 	<!-- Unit groups -->
-	<Replace Tag="LOC_BRS_UNITS_GROUP_NUM_UNITS" Language="ja_JP">
-		<Text>{1_Number} {1_Number : plural 1?ユニット; other?ユニット;}</Text>
-	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="ja_JP">
 		<Text>航空戦</Text>
 	</Replace>
@@ -70,6 +70,31 @@
 	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="ja_JP">
 		<Text>宗教</Text>
 	</Replace>
+	<!-- Headers -->
+	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="ja_JP">
+		<Text>Typ</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="ja_JP">
+		<Text>Poziom</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="ja_JP">
+		<Text>Żywotność</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="ja_JP">
+		<Text>Rodzaj</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="ja_JP">
+		<Text>Potencjał</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="ja_JP">
+		<Text>Przychody</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="ja_JP">
+		<Text>Szlak handlowy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="ja_JP">
+		<Text>Misja</Text>
+	</Replace>
 	<!-- Tooltips -->
 	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="ja_JP">
 		<Text>都市へ移動</Text>
@@ -80,16 +105,10 @@
 	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="ja_JP">
 		<Text>Garnizon</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_PROMOTION_AVAILABLE" Language="ja_JP">
-		<Text>Dostępny awans</Text>
-	</Replace>
 	<Replace Tag="LOC_BRS_IN_FORMATION" Language="ja_JP">
 		<Text>W formacji</Text>
 	</Replace>
 	<!-- POLICIES -->
-	<Replace Tag="LOC_BRS_POLICY_GROUP_NUM_POLICIES" Language="ja_JP">
-		<Text>{1_Number} {1_Number : plural 1?政策; other?政策;}</Text>
-	</Replace>
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="ja_JP">
 		<Text>軍事政策</Text>
 	</Replace>
@@ -116,9 +135,12 @@
 		<Text>影響のない政策を隠す</Text>
 	</Replace>
 	<!-- Deals -->
-	<Replace Tag="LOC_BRS_DEAL_ENDS_IN_TURNS" Language="ja_JP">
-		<Text>Kończy się za {1_Turns} {1_Turns : plural 1?turę; 2:tury; 3:tury; 4:tury; other?tur;}</Text>
-	</Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="ja_JP">
+      <Text>自国</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="ja_JP">
+      <Text>相手</Text>
+    </Replace>
 
 </LocalizedText>
 
