@@ -700,7 +700,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																			Offset="1,0"	Size="140,parent">
+				<Container																			Offset="1,0"	Size="145,parent">
 					<GridButton		ID="CityNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
 					</GridButton>
@@ -745,7 +745,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="85,parent">
 					<GridButton		ID="CityHappinessButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_HAPPINESS" />
 					</GridButton>
@@ -790,7 +790,7 @@
 					<Label				ID="Status"	Offset="0,5"																	Style="ReportValueText"	String="$Status$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																			Offset="1,0"	Size="140,parent">
+				<Container																			Offset="1,0"	Size="145,parent">
 					<GridButton ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
 						<Label ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
 					</GridButton>
@@ -822,7 +822,7 @@
 					<Label				ID="Amenities"																Style="ReportValueText"	String="$Amenities$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="85,parent">
 					<Label				ID="CitizenHappiness"													Style="ReportValueText"	String="$CitizenHappiness$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -840,7 +840,7 @@
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="265,parent">
-					<Label				ID="Districts" Offset="0,3"														Style="ReportValueText"	String="$Districts$" />
+					<Label				ID="Districts" Offset="2,3"														Style="ReportValueText"	String="$Districts$" />
 				</Container>
 				<!--<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />-->
 			</Stack>

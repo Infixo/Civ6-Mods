@@ -106,9 +106,6 @@
 	<Row Tag="LOC_BRS_TOOLTIP_GARRISON">
 		<Text>Garrison</Text>
 	</Row>
-    <Row Tag="LOC_BRS_IN_FORMATION">
-		<Text>In Formation</Text>
-    </Row>
 	<!-- POLICIES -->
 	<Row Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY">
 		<Text>Military Policies</Text>

@@ -1479,8 +1479,9 @@ function ViewResourcesPage()
 			end
 			--pFooterInstance.Amenities:SetToolTipString(amenitiesTooltip);
 			instance.Amenities:SetToolTipString(amenitiesTooltip);
-		--else
+		else
 			--pFooterInstance.AmenitiesContainer:SetHide(true);
+			instance.AmenitiesContainer:SetHide(true);
 		end
 
 		--SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
@@ -1606,7 +1607,7 @@ function GetDistrictsForCity(kCityData:table)
 			-- exceptions
 			if     districtType == "DISTRICT_HOLY_SITE" then             sDistrictIcon = "[ICON_DISTRICT_HOLYSITE]";
 			elseif districtType == "DISTRICT_ENTERTAINMENT_COMPLEX" then sDistrictIcon = "[ICON_DISTRICT_ENTERTAINMENT]";
-			elseif districtType == "DISTRICT_AERODROME" then             sDistrictIcon = "[ICON_District]";
+			elseif districtType == "DISTRICT_AERODROME" then             sDistrictIcon = "[ICON_DISTRICT_WONDER]";
 			end
 		end
 		sDistricts = sDistricts..sDistrictIcon;
@@ -1655,7 +1656,7 @@ function city_fields( kCityData, pCityInstance )
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
-	TruncateStringWithTooltip(pCityInstance.CityName, 150, Locale.Lookup(kCityData.CityName));
+	TruncateStringWithTooltip(pCityInstance.CityName, 143, Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
 	--if bIsRiseFall then
@@ -1689,8 +1690,8 @@ function city_fields( kCityData, pCityInstance )
 	end
 	local happinessInfo:table = GameInfo.Happinesses[kCityData.Happiness];
 	local happinessText:string = Locale.Lookup( happinessInfo.Name );
-	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:StatBadCS]"..happinessText.."[ENDCOLOR]"; end
-	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:StatGoodCS]"..happinessText.."[ENDCOLOR]"; end
+	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:255,40,50,160]"..happinessText.."[ENDCOLOR]"; end
+	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:80,255,90,160]"..happinessText.."[ENDCOLOR]"; end
 	pCityInstance.CitizenHappiness:SetText( happinessText );
 	--<ColorSet Name="StatGoodCS"										Color0="80,255,90,240"		Color1="0,0,0,200" />
 	--<ColorSet Name="StatNormalCS"									Color0="200,200,200,240"	Color1="0,0,0,200" />
@@ -1699,7 +1700,7 @@ function city_fields( kCityData, pCityInstance )
 	-- Strength and icon for Garrison Unit
 	if kCityData.IsGarrisonUnit then 
 		pCityInstance.Strength:SetText( tostring(kCityData.Defense).."[ICON_Fortified]" ); -- [ICON_Unit] small person [ICON_Exclamation] it's in a circle
-		pCityInstance.Strength:SetToolTipString("Garrison Unit");
+		pCityInstance.Strength:SetToolTipString(Locale.Lookup("LOC_BRS_TOOLTIP_GARRISON"));
 	else
 		pCityInstance.Strength:SetText( tostring(kCityData.Defense) );
 		pCityInstance.Strength:SetToolTipString("");
@@ -2635,7 +2636,7 @@ function Initialize()
 	Controls.StrategicCheckbox:SetSelected( true );
 	Controls.BonusCheckbox:RegisterCallback( Mouse.eLClick, OnToggleBonus );
 	Controls.BonusCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.BonusCheckbox:SetSelected( true );
+	Controls.BonusCheckbox:SetSelected( false ); -- not so important
 
 	-- Polices Filters
 	Controls.HideInactivePoliciesCheckbox:RegisterCallback( Mouse.eLClick, OnToggleInactivePolicies );

@@ -105,9 +105,6 @@
 	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="ja_JP">
 		<Text>Garnizon</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_IN_FORMATION" Language="ja_JP">
-		<Text>W formacji</Text>
-	</Replace>
 	<!-- POLICIES -->
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="ja_JP">
 		<Text>軍事政策</Text>
