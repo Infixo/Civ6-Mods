@@ -48,12 +48,12 @@
 				<Label																			Offset="4,0"		Style="ReportBottomLabelText" String="LOC_HUD_REPORTS_TREASURY" />
 			</Grid>
 
-			<Grid																					Offset="480,6"	Size="522,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
+			<Grid																					Offset="480,7"	Size="522,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
 			<Grid																					Offset="480,35"	Size="522,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
-			<Grid																					Offset="480,64"	Size="212,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
-			<GridButton ID="HideCityBuildingsCheckbox" Style="CheckBoxControl" Anchor="L,T" Offset="20,12" Size="220,26" String="LOC_BRS_CHECKBOX_HIDE_DETAILS" Hidden="0"/>
-			<GridButton ID="HideFreeBuildingsCheckbox" Style="CheckBoxControl" Anchor="L,T" Offset="20,41" Size="220,26" String="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Hidden="0"/>
-			<GridButton ID="HideFreeUnitsCheckbox"     Style="CheckBoxControl" Anchor="L,T" Offset="20,70" Size="220,26" String="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Hidden="0"/>
+			<Grid																					Offset="480,63"	Size="212,31"		SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255"  />
+			<GridButton ID="HideCityBuildingsCheckbox" Style="CheckBoxControl" Anchor="L,T" Offset="20,12" Size="240,26" String="LOC_BRS_CHECKBOX_HIDE_DETAILS" Hidden="0"/>
+			<GridButton ID="HideFreeBuildingsCheckbox" Style="CheckBoxControl" Anchor="L,T" Offset="20,41" Size="240,26" String="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Hidden="0"/>
+			<GridButton ID="HideFreeUnitsCheckbox"     Style="CheckBoxControl" Anchor="L,T" Offset="20,70" Size="240,26" String="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Hidden="0"/>
 			<Container																		Offset="485,12"	Size="500,50">
 				<Stack				StackGrowth="Right">
 					<Container																										Size="100,20">
@@ -89,39 +89,39 @@
 					<Box															Anchor="C,C"								Size="2,18"	Color="46,70,95,255" />
 					<Container																										Size="100,20"/>
 				</Stack>
-				<Stack				StackGrowth="Right"		Offset="0,58">
+				<Stack				StackGrowth="Right"		Offset="0,57">
 					<Container																										Size="100,20">
 						<Label		ID="GoldNet"					Style="ReportEndValueText"	String="G"	ColorSet="ResGoldLabelCS" />
 					</Container>
-					<Box															Anchor="C,C"								Size="2,18"	Color="46,70,95,255" />
+					<Box														Anchor="C,C" Offset="0,-7"								Size="2,18"	Color="46,70,95,255" />
 					<Container																										Size="100,20">
 						<Label		ID="FaithNet"					Style="ReportEndValueText"	String="F"	ColorSet="ResFaithLabelCS" />
 					</Container>
-					<Container Size="6,1" />
-					<Container Size="9,1" />
-					<Container Size="9,1" />
-				</Stack>
-
-				<Stack																					 Offset="-4,85"	  StackGrowth="Right" Padding="4">
-					<Grid						Size="100,26"	Style="YieldBacking" Color="185,176,70,150">
-						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_GoldLarge]"/>
-						<Label		ID="GoldBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResGoldLabelCS" String="0"	/>
-					</Grid>
-					<Grid						Size="100,26"	Style="YieldBacking" Color="99,114,159,200"	>
-						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_FaithLarge]"/>
-						<Label		ID="FaithBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResFaithLabelCS" String="0" />
-					</Grid>
-					<Grid						Size="100,29"	Style="YieldBacking" Color="24,156,216,150">
+					<Container Size="2,1" />
+					<Grid						Size="100,30"	Offset="0,-5" Style="YieldBacking" Color="24,156,216,150">
 						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_ScienceLarge]"/>
 						<Label		ID="ScienceBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResScienceLabelCS" FontStyle="Stroke" String="0"/>
 					</Grid>
-					<Grid						Size="100,30"	Style="YieldBacking" Color="254,42,237,100">
+					<Container Size="2,1" />
+					<Grid						Size="100,30"	Offset="0,-5" Style="YieldBacking" Color="254,42,237,100">
 						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_CultureLarge]"/>
 						<Label		ID="CultureBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResCultureLabelCS" FontStyle="Stroke" String="0"/>
 					</Grid>
-					<Grid						Size="100,30"	Style="YieldBacking" Color="181,116,102,150" >
+					<Container Size="2,1" />
+					<Grid						Size="100,30"	Offset="0,-5" Style="YieldBacking" Color="181,116,102,150" >
 						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_TourismLarge]"/>
 						<Label		ID="TourismBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResTourismLabelCS" String="0"	/>
+					</Grid>
+				</Stack>
+
+				<Stack																					 Offset="-4,85"	  StackGrowth="Right" Padding="4">
+					<Grid						Size="100,30"	Offset="0,-5" Style="YieldBacking" Color="185,176,70,150">
+						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_GoldLarge]"/>
+						<Label		ID="GoldBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResGoldLabelCS" String="0"	/>
+					</Grid>
+					<Grid						Size="100,30"	Offset="0,-5" Style="YieldBacking" Color="99,114,159,200"	>
+						<Label													Anchor="L,C" Offset="-9,0"								String="[ICON_FaithLarge]"/>
+						<Label		ID="FaithBalance"			Anchor="C,C"															Style="ReportEndTotalText" ColorSet="ResFaithLabelCS" String="0" />
 					</Grid>
 				</Stack>
 				</Container>	

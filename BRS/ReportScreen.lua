@@ -446,7 +446,7 @@ function GetData()
 							if pReceivingName == "Agreements" then
 								deal.Name = pDealItem:GetSubTypeNameID()
 							elseif pReceivingName == "Gold" then
-								deal.Name = deal.Amount .. " Gold Per Turn"
+								deal.Name = deal.Amount .. Locale.Lookup("LOC_DIPLOMACY_DEAL_GOLD_PER_TURN");
 								deal.Icon = "[ICON_GOLD]"
 							else
 								if deal.Amount > 1 then
@@ -476,7 +476,7 @@ function GetData()
 							if pSendingName == "Agreements" then
 								deal.Name = pDealItem:GetSubTypeNameID()
 							elseif pSendingName == "Gold" then
-								deal.Name = deal.Amount .. " Gold Per Turn"
+								deal.Name = deal.Amount .. Locale.Lookup("LOC_DIPLOMACY_DEAL_GOLD_PER_TURN");
 								deal.Icon = "[ICON_GOLD]"
 							else
 								if deal.Amount > 1 then
@@ -948,6 +948,7 @@ function ViewYieldsPage()
 	instance = NewCollapsibleGroupInstance();
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_CITY_INCOME") );
 	instance.RowHeaderLabel:SetHide( true ); --BRS
+	instance.AmenitiesContainer:SetHide(true);
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityIncomeHeaderInstance", pHeaderInstance, instance.ContentStack ) ;	
@@ -1267,6 +1268,7 @@ function ViewYieldsPage()
 	instance = NewCollapsibleGroupInstance();
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_BUILDING_EXPENSES") );
 	instance.RowHeaderLabel:SetHide( true ); --BRS
+	instance.AmenitiesContainer:SetHide(true);
 
 	-- Header
 	local pHeader:table = {};
@@ -1300,6 +1302,7 @@ function ViewYieldsPage()
 		instance = NewCollapsibleGroupInstance();
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_UNIT_EXPENSES") );
 		instance.RowHeaderLabel:SetHide( true ); --BRS
+		instance.AmenitiesContainer:SetHide(true);
 
 		-- Header
 		local pHeader:table = {};
@@ -1337,6 +1340,7 @@ function ViewYieldsPage()
 		instance = NewCollapsibleGroupInstance();	
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") );
 		instance.RowHeaderLabel:SetHide( true ); --BRS
+		instance.AmenitiesContainer:SetHide(true);
 
 		local pHeader:table = {};
 		ContextPtr:BuildInstanceForControl( "DealHeaderInstance", pHeader, instance.ContentStack ) ;
@@ -2192,6 +2196,7 @@ function ViewUnitsPage()
 		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) );
 		instance.RowHeaderLabel:SetHide( false ); --BRS
 		--instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_UNITS_GROUP_NUM_UNITS", #kUnitGroup.units) );
+		instance.AmenitiesContainer:SetHide(true);
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
@@ -2263,7 +2268,7 @@ function ViewDealsPage()
 	ResetTabForNewPageContent();
 	
 	for j, pDeal in spairs( m_kCurrentDeals, function( t, a, b ) return t[b].EndTurn > t[a].EndTurn end ) do
-		print("deal", pDeal.EndTurn, Game.GetCurrentGameTurn(), pDeal.EndTurn-Game.GetCurrentGameTurn());
+		--print("deal", pDeal.EndTurn, Game.GetCurrentGameTurn(), pDeal.EndTurn-Game.GetCurrentGameTurn());
 		local iNumTurns:number = pDeal.EndTurn - Game.GetCurrentGameTurn();
 		--local turns = "turns"
 		--if ending == 1 then turns = "turn" end
@@ -2273,6 +2278,7 @@ function ViewDealsPage()
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_TRADE_DEAL_WITH")..pDeal.WithCivilization );
 		instance.RowHeaderLabel:SetText( tostring(iNumTurns).." "..Locale.Lookup("LOC_HUD_REPORTS_TURNS_UNTIL_COMPLETED", iNumTurns).." ("..tostring(pDeal.EndTurn)..")" );
 		instance.RowHeaderLabel:SetHide( false );
+		instance.AmenitiesContainer:SetHide(true);
 
 		local dealHeaderInstance : table = {}
 		ContextPtr:BuildInstanceForControl( "DealsHeader", dealHeaderInstance, instance.ContentStack )
@@ -2385,6 +2391,7 @@ function ViewPolicyPage()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
 		instance.RowHeaderLabel:SetHide( false );
+		instance.AmenitiesContainer:SetHide(true);
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
