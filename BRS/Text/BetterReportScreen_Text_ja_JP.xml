@@ -13,7 +13,7 @@
 		<Text>ユニット</Text>
 	</Replace>
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="ja_JP">
-		<Text>Doktryny</Text>
+		<Text>政策</Text>
 	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="ja_JP">
@@ -29,7 +29,7 @@
 		<Text>幸福度</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="ja_JP">
-		<Text>Nazwa doktryny</Text>
+		<Text>政策名</Text>
 	</Replace>
 	<!-- Resource checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="ja_JP">
@@ -72,28 +72,28 @@
 	</Replace>
 	<!-- Headers -->
 	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="ja_JP">
-		<Text>Typ</Text>
+		<Text>種類</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="ja_JP">
-		<Text>Poziom</Text>
+		<Text>レベル</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="ja_JP">
-		<Text>Żywotność</Text>
+		<Text>体力</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="ja_JP">
-		<Text>Rodzaj</Text>
+		<Text>種類</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="ja_JP">
-		<Text>Potencjał</Text>
+		<Text>労働力</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="ja_JP">
-		<Text>Przychody</Text>
+		<Text>産出</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="ja_JP">
-		<Text>Szlak handlowy</Text>
+		<Text>交易路</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="ja_JP">
-		<Text>Misja</Text>
+		<Text>ミッション</Text>
 	</Replace>
 	<!-- Tooltips -->
 	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="ja_JP">
@@ -103,7 +103,7 @@
 		<Text>このユニットをマップで見る</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="ja_JP">
-		<Text>Garnizon</Text>
+		<Text>守備隊</Text>
 	</Replace>
 	<!-- POLICIES -->
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="ja_JP">
