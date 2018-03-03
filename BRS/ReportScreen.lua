@@ -345,7 +345,11 @@ function GetData()
 		data.IsGarrisonUnit = false;
 		local pPlotCity:table = Map.GetPlot( pCity:GetX(), pCity:GetY() );
 		for _,unit in ipairs(Units.GetUnitsInPlot(pPlotCity)) do
-			if GameInfo.Units[ unit:GetUnitType() ].FormationClass == "FORMATION_CLASS_LAND_COMBAT" then data.IsGarrisonUnit = true; break; end
+			if GameInfo.Units[ unit:GetUnitType() ].FormationClass == "FORMATION_CLASS_LAND_COMBAT" then
+				data.IsGarrisonUnit = true;
+				data.GarrisonUnitName = Locale.Lookup( unit:GetName() );
+				break;
+			end
 		end
 		
 	end
@@ -1056,13 +1060,35 @@ function ViewYieldsPage()
 			end
 		end
 
+		-- Infixo: this is the place to add Yield Focus
+		--[[
 		pCityInstance.Production:SetText( toPlusMinusString(kCityData.ProductionPerTurn) );
 		pCityInstance.Food:SetText( toPlusMinusString(kCityData.FoodPerTurn) );
 		pCityInstance.Gold:SetText( toPlusMinusString(kCityData.GoldPerTurn) );
 		pCityInstance.Faith:SetText( toPlusMinusString(kCityData.FaithPerTurn) );
 		pCityInstance.Science:SetText( toPlusMinusString(kCityData.SciencePerTurn) );
 		pCityInstance.Culture:SetText( toPlusMinusString(kCityData.CulturePerTurn) );
-		pCityInstance.Tourism:SetText( toPlusMinusString(kCityData.WorkedTileYields["TOURISM"]) );
+		--]]
+		local function SetYieldTextAndFocusFlag(pLabel:table, fValue:number, eYieldType:number)
+			local sText:string = toPlusMinusString(fValue);
+			local sToolTip:string = "";
+			if     kCityData.YieldFilters[eYieldType] == YIELD_STATE.FAVORED then
+				sText = sText.."  [COLOR:0,255,0,255]!"; -- [ICON_FoodSurplus][ICON_CheckSuccess]
+				sToolTip = Locale.Lookup("LOC_HUD_CITY_YIELD_FOCUSING", GameInfo.Yields[eYieldType].Name);
+			elseif kCityData.YieldFilters[eYieldType] == YIELD_STATE.IGNORED then
+				sText = sText.."  [COLOR:255,0,0,255]!"; -- [ICON_FoodDeficit][ICON_CheckFail]
+				sToolTip = Locale.Lookup("LOC_HUD_CITY_YIELD_IGNORING", GameInfo.Yields[eYieldType].Name);
+			end
+			pLabel:SetText( sText );
+			pLabel:SetToolTipString( sToolTip );
+		end
+		SetYieldTextAndFocusFlag( pCityInstance.Production,kCityData.ProductionPerTurn,YieldTypes.PRODUCTION );
+		SetYieldTextAndFocusFlag( pCityInstance.Food,      kCityData.FoodPerTurn,      YieldTypes.FOOD );
+		SetYieldTextAndFocusFlag( pCityInstance.Gold,      kCityData.GoldPerTurn,      YieldTypes.GOLD );
+		SetYieldTextAndFocusFlag( pCityInstance.Faith,     kCityData.FaithPerTurn,     YieldTypes.FAITH );
+		SetYieldTextAndFocusFlag( pCityInstance.Science,   kCityData.SciencePerTurn,   YieldTypes.SCIENCE );
+		SetYieldTextAndFocusFlag( pCityInstance.Culture,   kCityData.CulturePerTurn,   YieldTypes.CULTURE );
+		pCityInstance.Tourism:SetText( toPlusMinusString(kCityData.WorkedTileYields["TOURISM"]) ); -- unchanged (no focus feature here)
 
 		-- Add to all cities totals
 		goldCityTotal	= goldCityTotal + kCityData.GoldPerTurn;
@@ -1699,18 +1725,35 @@ function city_fields( kCityData, pCityInstance )
 	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:255,40,50,160]"..happinessText.."[ENDCOLOR]"; end
 	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:80,255,90,160]"..happinessText.."[ENDCOLOR]"; end
 	pCityInstance.CitizenHappiness:SetText( happinessText );
-	--<ColorSet Name="StatGoodCS"										Color0="80,255,90,240"		Color1="0,0,0,200" />
-	--<ColorSet Name="StatNormalCS"									Color0="200,200,200,240"	Color1="0,0,0,200" />
-	--<ColorSet Name="StatBadCS"										Color0="255,40,50,240"		Color1="0,0,0,200" />
+	--<ColorSet Name="StatGoodCS"		Color0="80,255,90,240"		Color1="0,0,0,200" />
+	--<ColorSet Name="StatNormalCS"		Color0="200,200,200,240"	Color1="0,0,0,200" />
+	--<ColorSet Name="StatBadCS"		Color0="255,40,50,240"		Color1="0,0,0,200" />
 	
-	-- Strength and icon for Garrison Unit
-	if kCityData.IsGarrisonUnit then 
-		pCityInstance.Strength:SetText( tostring(kCityData.Defense).."[ICON_Fortified]" ); -- [ICON_Unit] small person [ICON_Exclamation] it's in a circle
-		pCityInstance.Strength:SetToolTipString(Locale.Lookup("LOC_BRS_TOOLTIP_GARRISON"));
-	else
-		pCityInstance.Strength:SetText( tostring(kCityData.Defense) );
-		pCityInstance.Strength:SetToolTipString("");
+	-- Strength and icon for Garrison Unit, and Walls
+	local sStrength:string = tostring(kCityData.Defense);
+	local sStrengthToolTip:string = "";
+	local function CheckForWalls(sWallsType:string)
+		local pCityBuildings:table = kCityData.City:GetBuildings();
+		if pCityBuildings:HasBuilding( GameInfo.Buildings[ sWallsType ].Index ) then
+			sStrengthToolTip = sStrengthToolTip..(string.len(sStrengthToolTip) == 0 and "" or "[NEWLINE]")..Locale.Lookup(GameInfo.Buildings[ sWallsType ].Name);
+			if pCityBuildings:IsPillaged( GameInfo.Buildings[ sWallsType ].Index ) then
+				sStrength = sStrength.."[COLOR_Red]!";
+				sStrengthToolTip = sStrengthToolTip.." "..Locale.Lookup("LOC_TOOLTIP_PLOT_PILLAGED_TEXT");
+			else
+				sStrength = sStrength.."[COLOR_Green]!";
+			end
+		end
 	end
+	CheckForWalls("BUILDING_WALLS");
+	CheckForWalls("BUILDING_CASTLE");
+	CheckForWalls("BUILDING_STAR_FORT");
+	-- Garrison
+	if kCityData.IsGarrisonUnit then 
+		sStrength = sStrength.."[ICON_Fortified]";
+		sStrengthToolTip = sStrengthToolTip..(string.len(sStrengthToolTip) == 0 and "" or "[NEWLINE]")..Locale.Lookup("LOC_BRS_TOOLTIP_GARRISON").." ("..kCityData.GarrisonUnitName..")";
+	end
+	pCityInstance.Strength:SetText( sStrength );
+	pCityInstance.Strength:SetToolTipString( sStrengthToolTip );
 
 	-- WarWeariness
 	local warWearyValue:number = kCityData.AmenitiesLostFromWarWeariness;
@@ -2454,20 +2497,21 @@ function ViewPolicyPage()
 			local sStatusToolTip:string = "Id "..tostring(policy.Index);
 			if policy.IsActive then sStatusText = "[ICON_CheckSuccess]"; sStatusToolTip = sStatusToolTip.." Active policy";
 			else                    sStatusText = "[ICON_CheckFail]";    sStatusToolTip = sStatusToolTip.." Inactive policy (obsolete or not yet unlocked)"; end
-			if policy.UnknownEffect then
-				sStatusText = sStatusText.." [ICON_Exclamation]";
-				sStatusToolTip = sStatusToolTip.."[NEWLINE][COLOR_Red]Unknown effect[ENDCOLOR] was not processed.";
-			end
 			pPolicyInstance.PolicyEntryStatus:SetText(sStatusText);
-			pPolicyInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
+			--pPolicyInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
+			
 			-- name with description
 			local sPolicyName:string = policy.Name;
 			if policy.IsSlotted then sPolicyName = "[ICON_Checkmark]"..sPolicyName; end
 			TruncateString(pPolicyInstance.PolicyEntryName, 178, sPolicyName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pPolicyInstance.PolicyEntryName:SetToolTipString(policy.Description);
+			
 			-- impact with modifiers
-			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, policy.Impact=="" and "[ICON_CheckmarkBlue]" or policy.Impact);
-			pPolicyInstance.PolicyEntryImpact:SetToolTipString(policy.ImpactToolTip);
+			local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
+			if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
+			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, sPolicyImpact);
+			pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip.."[NEWLINE]"..policy.ImpactToolTip);
+			
 			-- fill out yields
 			for yield,value in pairs(policy.Yields) do
 				if value ~= 0 then pPolicyInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end

@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Report Screen</Name>
 		<Teaser>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.</Teaser>
-		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 2.1.</Description>
+		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 2.2.</Description>
 		<Authors>Infixo, Greg Miller</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>

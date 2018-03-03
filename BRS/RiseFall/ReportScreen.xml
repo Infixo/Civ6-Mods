@@ -1676,7 +1676,7 @@
 				<Box Size="2,parent" Color="46,70,95,255"/>
 				
 				<Container Offset="0,0" Size="50,parent">
-					<Label ID="PolicyEntryStatus" Style="ReportValueText" String="$Status$"/>
+					<Label ID="PolicyEntryStatus" Style="ReportValueText" String="$Status$" Offset="0,4"/>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,128"/>
 				
