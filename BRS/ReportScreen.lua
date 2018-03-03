@@ -52,25 +52,26 @@ end
 --BRS !! Added function to sort out tables for units
 local bUnits = { group = {}, parent = {}, type = "" }
 
-function spairs( t, order )
-		local keys = {}
-
-		for k in pairs(t) do keys[#keys+1] = k end
-		
-		if order then
-			table.sort(keys, function(a,b) return order(t, a, b) end)
-		else
-			table.sort(keys)
-		end
-
-		local i = 0
-		return function()
-			i = i + 1
-			if keys[i] then
-				return keys[i], t[keys[i]]
-			end
+-- Infixo: this is an iterator to replace pairs
+-- it sorts t and returns its elements one by one
+function spairs( t, order_function )
+	local keys:table = {}; -- actual table of keys that will bo sorted
+	for key,_ in pairs(t) do table.insert(keys, key); end
+	
+	if order_function then
+		table.sort(keys, function(a,b) return order_function(t, a, b) end)
+	else
+		table.sort(keys)
+	end
+	-- iterator here
+	local i:number = 0;
+	return function()
+		i = i + 1;
+		if keys[i] then
+			return keys[i], t[keys[i]]
 		end
 	end
+end
 -- !! end of function
 
 -- ===========================================================================
@@ -446,7 +447,7 @@ function GetData()
 							if pReceivingName == "Agreements" then
 								deal.Name = pDealItem:GetSubTypeNameID()
 							elseif pReceivingName == "Gold" then
-								deal.Name = deal.Amount .. Locale.Lookup("LOC_DIPLOMACY_DEAL_GOLD_PER_TURN");
+								deal.Name = deal.Amount.." "..Locale.Lookup("LOC_DIPLOMACY_DEAL_GOLD_PER_TURN");
 								deal.Icon = "[ICON_GOLD]"
 							else
 								if deal.Amount > 1 then
@@ -476,7 +477,7 @@ function GetData()
 							if pSendingName == "Agreements" then
 								deal.Name = pDealItem:GetSubTypeNameID()
 							elseif pSendingName == "Gold" then
-								deal.Name = deal.Amount .. Locale.Lookup("LOC_DIPLOMACY_DEAL_GOLD_PER_TURN");
+								deal.Name = deal.Amount.." "..Locale.Lookup("LOC_DIPLOMACY_DEAL_GOLD_PER_TURN");
 								deal.Icon = "[ICON_GOLD]"
 							else
 								if deal.Amount > 1 then
@@ -903,32 +904,32 @@ end
 
 --BRS !! sort features for income
 
-local sort : table = { by = "CityName", descend = false }
+local sortCities : table = { by = "CityName", descend = false }
 
-local function sortBy( name )
-	if name == sort.by then
-		sort.descend = not sort.descend
+local function sortByCities( name )
+	if name == sortCities.by then
+		sortCities.descend = not sortCities.descend
 	else
-		sort.by = name
-		sort.descend = true
-		if name == "CityName" then sort.descend = false; end -- exception
+		sortCities.by = name
+		sortCities.descend = true
+		if name == "CityName" then sortCities.descend = false; end -- exception
 	end
 	ViewYieldsPage()
 end
 
 local function sortFunction( t, a, b )
 
-	if sort.by == "TourismPerTurn" then
-		if sort.descend then
+	if sortCities.by == "TourismPerTurn" then
+		if sortCities.descend then
 			return t[b].WorkedTileYields["TOURISM"] < t[a].WorkedTileYields["TOURISM"]
 		else
 			return t[b].WorkedTileYields["TOURISM"] > t[a].WorkedTileYields["TOURISM"]
 		end
 	else
-		if sort.descend then
-			return t[b][sort.by] < t[a][sort.by]
+		if sortCities.descend then
+			return t[b][sortCities.by] < t[a][sortCities.by]
 		else
-			return t[b][sort.by] > t[a][sort.by]
+			return t[b][sortCities.by] > t[a][sortCities.by]
 		end
 	end
 
@@ -954,14 +955,15 @@ function ViewYieldsPage()
 	ContextPtr:BuildInstanceForControl( "CityIncomeHeaderInstance", pHeaderInstance, instance.ContentStack ) ;	
 
 	--BRS sorting
-	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() sortBy( "CityName" ) end )
-	pHeaderInstance.ProductionButton:RegisterCallback( Mouse.eLClick, function() sortBy( "ProductionPerTurn" ) end )
-	pHeaderInstance.FoodButton:RegisterCallback( Mouse.eLClick, function() sortBy( "FoodPerTurn" ) end )
-	pHeaderInstance.GoldButton:RegisterCallback( Mouse.eLClick, function() sortBy( "GoldPerTurn" ) end )
-	pHeaderInstance.FaithButton:RegisterCallback( Mouse.eLClick, function() sortBy( "FaithPerTurn" ) end )
-	pHeaderInstance.ScienceButton:RegisterCallback( Mouse.eLClick, function() sortBy( "SciencePerTurn" ) end )
-	pHeaderInstance.CultureButton:RegisterCallback( Mouse.eLClick, function() sortBy( "CulturePerTurn" ) end )
-	pHeaderInstance.TourismButton:RegisterCallback( Mouse.eLClick, function() sortBy( "TourismPerTurn" ) end )
+	-- sorting is a bit weird because ViewYieldsPage is called again and entire tab is recreated, so new callbacks are registered
+	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "CityName" ) end )
+	pHeaderInstance.ProductionButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "ProductionPerTurn" ) end )
+	pHeaderInstance.FoodButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "FoodPerTurn" ) end )
+	pHeaderInstance.GoldButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "GoldPerTurn" ) end )
+	pHeaderInstance.FaithButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "FaithPerTurn" ) end )
+	pHeaderInstance.ScienceButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "SciencePerTurn" ) end )
+	pHeaderInstance.CultureButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "CulturePerTurn" ) end )
+	pHeaderInstance.TourismButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "TourismPerTurn" ) end )
 
 	local goldCityTotal		:number = 0;
 	local faithCityTotal	:number = 0;
@@ -1902,10 +1904,14 @@ end
 -- BRS NEW SECTION (UNITS)
 -- ===========================================================================
 
-function unit_sortFunction( descend, type, t, a, b )
+-- returns the name of the City that the unit is currently in, or ""
+function GetCityForUnit(pUnit:table)
+	local pCity:table = Cities.GetCityInPlot( pUnit:GetX(), pUnit:GetY() );
+	return ( pCity and Locale.Lookup(pCity:GetName()) ) or "";
+end
 
-	local aUnit = 0
-	local bUnit = 0
+function unit_sortFunction( descend, type, t, a, b )
+	local aUnit, bUnit
 
 	if type == "type" then
 		aUnit = UnitManager.GetTypeName( t[a] )
@@ -1931,7 +1937,6 @@ function unit_sortFunction( descend, type, t, a, b )
 		else
 			aUnit = t[a]:GetMovesRemaining()
 		end
-		
 		if ( t[b]:GetFormationUnitCount() > 1 ) then
 			bUnit = t[b]:GetFormationMovesRemaining()
 		else
@@ -1961,6 +1966,18 @@ function unit_sortFunction( descend, type, t, a, b )
 	elseif type == "turns" then
 		aUnit = t[a].turns
 		bUnit = t[b].turns
+	elseif type == "city" then
+		aUnit = t[a].City
+		bUnit = t[b].City
+		if aUnit ~= "" and bUnit ~= "" then 
+			if descend then return bUnit > aUnit else return bUnit < aUnit end
+		else
+			if     aUnit == "" then return false;
+			elseif bUnit == "" then return true;
+			else                    return false; end
+		end
+	else
+		return false; -- assert
 	end
 	
 	if descend then return bUnit > aUnit else return bUnit < aUnit end
@@ -2030,7 +2047,10 @@ function common_unit_fields( unit, unitInstance )
 		if unit:GetMovesRemaining() == 0 then bIsMoving = false; end
 		unitInstance.UnitMove:SetText( (bIsMoving and "[COLOR_Red]" or "")..tostring( unit:GetMovesRemaining() ).."/"..tostring( unit:GetMaxMoves() )..(bIsMoving and "[ENDCOLOR]" or "") )
 	end
-			
+	
+	unit.City = GetCityForUnit(unit);
+	unitInstance.UnitCity:SetText(unit.City);
+
 end
 
 function group_military( unit, unitInstance, group, parent, type )
@@ -2058,7 +2078,15 @@ function group_military( unit, unitInstance, group, parent, type )
 		unitInstance.Promotion:RegisterCallback( Mouse.eLClick, function() bUnits.group = group; bUnits.parent = parent; bUnits.type = type; LuaEvents.Report_PromoteUnit( unit ); end )
 	end
 
-	unitInstance.UnitHealth:SetText( tostring( unit:GetMaxDamage() - unit:GetDamage() ) .. "/" .. tostring( unit:GetMaxDamage() ) )
+	-- Unit Health
+	local iHealthPoints:number = unit:GetMaxDamage() - unit:GetDamage();
+	local fHealthPercent:number = iHealthPoints / unit:GetMaxDamage();
+	local sHealthColor:string = "";
+	-- Common format is 0xBBGGRRAA (BB blue, GG green, RR red, AA alpha); stupid Firaxis - it's 0xAABBGGRR
+	if     fHealthPercent > 0.7 then sHealthColor = "[COLOR:16,232,75,160]";   -- COLORS.METER_HP_GOOD 0xFF4BE810
+	elseif fHealthPercent > 0.4 then sHealthColor = "[COLOR:248,255,45,160]";  -- COLORS.METER_HP_OK   0xFF2DFFF8
+	else                             sHealthColor = "[COLOR:245,1,1,160]"; end -- COLORS.METER_HP_BAD  0xFF0101F5
+	unitInstance.UnitHealth:SetText( sHealthColor..tostring(iHealthPoints).."/"..tostring(unit:GetMaxDamage()).."[ENDCOLOR]" );
 			
 	local bCanStart, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.UPGRADE, false, true);
 
@@ -2200,7 +2228,7 @@ function ViewUnitsPage()
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
-		local iNumRows:number = 0;
+		--local iNumRows:number = 0;
 
 		if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
@@ -2217,13 +2245,14 @@ function ViewUnitsPage()
 		if pHeaderInstance.UnitSpreadButton then   pHeaderInstance.UnitSpreadButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "spread", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitMissionButton then  pHeaderInstance.UnitMissionButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "mission", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitTurnsButton then    pHeaderInstance.UnitTurnsButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "turns", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitCityButton then     pHeaderInstance.UnitCityButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "city", iUnitGroup, instance ) end ) end
 
 		for _,unit in ipairs( kUnitGroup.units ) do			
 			local unitInstance:table = {}
 			table.insert( instance.Children, unitInstance )
 			
 			ContextPtr:BuildInstanceForControl( kUnitGroup.Entry, unitInstance, instance.ContentStack );
-			iNumRows = iNumRows + 1;
+			--iNumRows = iNumRows + 1;
 			
 			common_unit_fields( unit, unitInstance )
 			
@@ -2234,7 +2263,7 @@ function ViewUnitsPage()
 			unitInstance.LookAtButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end )
 		end
 
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(iNumRows) );
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(#kUnitGroup.units) );
 	
 		--local pFooterInstance:table = {}
 		--ContextPtr:BuildInstanceForControl( "UnitsFooterInstance", pFooterInstance, instance.ContentStack )
@@ -2386,7 +2415,8 @@ function ViewPolicyPage()
 
 	-- fill
 	--for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
-	for policyGroup,policies in pairs(m_kPolicyData) do
+	--for policyGroup,policies in pairs(m_kPolicyData) do
+	for policyGroup,policies in spairs( m_kPolicyData, function(t,a,b) return a < b; end ) do -- simple sort by group code name
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
@@ -2404,7 +2434,8 @@ function ViewPolicyPage()
 		--if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
 
 		-- fill a single group
-		for _,policy in ipairs(policies) do
+		--for _,policy in ipairs(policies) do
+		for _,policy in spairs( policies, function(t,a,b) return t[a].Name < t[b].Name; end ) do -- sort by name
 		
 			--FILTERS
 			if (not Controls.HideInactivePoliciesCheckbox:IsSelected() or policy.IsActive) and
