@@ -24,7 +24,6 @@
             <Items>
                 <File>ReportScreen.lua</File>
 				<File>ReportScreen.xml</File>
-				<!--<File>UnitPromotionPopup.lua</File>-->
             </Items>
         </ImportFiles>
 		<UpdateText id="BRS_UpdateText">

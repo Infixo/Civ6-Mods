@@ -7,136 +7,136 @@
 <LocalizedText>
 	<!-- Tab names -->
 	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="de_DE">
-		<Text>Umowy</Text>
+		<Text>Vereinbarungen</Text>
 	</Replace>
 	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="de_DE">
-		<Text>Jednostki</Text>
+		<Text>Einheiten</Text>
 	</Replace>
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="de_DE">
-		<Text>Doktryny</Text>
+		<Text>Politiken</Text>
 	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="de_DE">
-		<Text>Nazwa budowli/dzielnicy</Text>
+		<Text>Gebäudename/Bezirkname</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="de_DE">
-		<Text>Liczba budowli/dzielnic</Text>
+		<Text>Gebäudezahl/Bezirkzahl</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="de_DE">
-		<Text>Wzrost</Text>
+		<Text>Wachstum</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="de_DE">
-		<Text>Zadowolenie</Text>
+		<Text>Zufriedenheit</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="de_DE">
-		<Text>Nazwa doktryny</Text>
+		<Text>Politikname</Text>
 	</Replace>
 	<!-- Resource checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="de_DE">
-		<Text>Ukryj szczegóły miast</Text>
+		<Text>Versteck Stadtdetails</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="de_DE">
-		<Text>Ukryj darmowe budowle</Text>
+		<Text>Versteck kostenlosen Gebäude</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="de_DE">
-		<Text>Ukryj darmowe jednostki</Text>
+		<Text>Versteck kostenlosen Einheiten</Text>
 	</Replace>
 	<!-- UNITS -->
 	<!-- Unit groups -->
 	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="de_DE">
-		<Text>Wojskowe - Powietrzne</Text>
+		<Text>Militärische - Luft</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="de_DE">
-		<Text>Wojskowe - Morskie</Text>
+		<Text>Militärische - Marine</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="de_DE">
-		<Text>Wojskowe - Lądowe</Text>
+		<Text>Militärische - Boden</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="de_DE">
-		<Text>Cywilne</Text>
+		<Text>Zivilist</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="de_DE">
-		<Text>Wsparcie</Text>
+		<Text>Unterstützung</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="de_DE">
-		<Text>Szpiedzy</Text>
+		<Text>Spione</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="de_DE">
-		<Text>Kupcy</Text>
+		<Text>Händler</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="de_DE">
-		<Text>Wielcy ludzie</Text>
+		<Text>Große Persönlichkeiten</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="de_DE">
-		<Text>Religijne</Text>
+		<Text>Religiöse</Text>
 	</Replace>
 	<!-- Headers -->
 	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="de_DE">
 		<Text>Typ</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="de_DE">
-		<Text>Poziom</Text>
+		<Text>Stufe</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="de_DE">
-		<Text>Żywotność</Text>
+		<Text>Gesundheit</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="de_DE">
-		<Text>Rodzaj</Text>
+		<Text>Klasse</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="de_DE">
-		<Text>Potencjał</Text>
+		<Text>Ladungen</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="de_DE">
-		<Text>Przychody</Text>
+		<Text>Erträge</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="de_DE">
-		<Text>Szlak handlowy</Text>
+		<Text>Handelswege</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="de_DE">
-		<Text>Misja</Text>
+		<Text>Mission</Text>
 	</Replace>
 	<!-- Tooltips -->
 	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="de_DE">
-		<Text>Idź do tego miasta</Text>
+		<Text>Geh in diese Stadt</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="de_DE">
-		<Text>Znajdź tę jednostkę na mapie</Text>
+		<Text>Find diese Einheit auf der Karte</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="de_DE">
-		<Text>Garnizon</Text>
+		<Text>Garnison</Text>
 	</Replace>
 	<!-- POLICIES -->
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="de_DE">
-		<Text>Wojskowe</Text>
+		<Text>Militärische</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="de_DE">
-		<Text>Gospodarcze</Text>
+		<Text>Wirtschaftliche</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="de_DE">
-		<Text>Dyplomatyczne</Text>
+		<Text>Diplomatische</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="de_DE">
-		<Text>Wielkich ludzi</Text>
+		<Text>Große-Persönlichkeiten</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="de_DE">
-		<Text>Spuścizny</Text>
+		<Text>Vermächtnisses</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="de_DE">
-		<Text>Ciemnych wieków</Text>
+		<Text>Dunkles Zeitalter</Text>
 	</Replace>
 	<!-- Checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="de_DE">
-		<Text>Ukryj nieaktywne doktryny</Text>
+		<Text>Versteck inaktiven Politiken</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="de_DE">
-		<Text>Ukryj doktryny bez żadnego wpływu</Text>
+		<Text>Versteck Politiken mit keinen Effekten</Text>
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="de_DE">
-      <Text>Wychodzące</Text>
+      <Text>Ausgehende</Text>
     </Replace>
     <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="de_DE">
-      <Text>Przychodzące</Text>
+      <Text>Eingehende</Text>
     </Replace>
 
 </LocalizedText>
