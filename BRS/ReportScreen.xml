@@ -700,6 +700,12 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<GridButton		ID="CityReligionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Religion]" ToolTip="LOC_HUD_CITY_RELIGION" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																			Offset="1,0"	Size="145,parent">
 					<GridButton		ID="CityNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
@@ -789,6 +795,10 @@
 				<!-- Infixo: in R&F status is removed, let's use in both versions for more -->
 				<Container																										Size="55,parent">
 					<Label				ID="Status"	Offset="0,5"																	Style="ReportValueText"	String="$Status$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container Size="25,parent">
+					<Image ID="ReligionIcon" Anchor="C,C" Size="22,22" Texture="Religions22"/>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																			Offset="1,0"	Size="145,parent">

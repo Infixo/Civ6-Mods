@@ -1593,7 +1593,6 @@ ICON_District
 <Row Name="DISTRICT_ENTERTAINMENT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="188"/>
 --]]
 local tDistrictsOrder:table = {
-	-- we'll use order from GameInfo.Districts, tweaked a bit
 	-- Ancient Era
 	--"DISTRICT_GOVERNMENT", -- to save space, will be treated separately
 	"DISTRICT_HOLY_SITE", -- icon is DISTRICT_HOLYSITE
@@ -1610,7 +1609,7 @@ local tDistrictsOrder:table = {
 	"DISTRICT_AQUEDUCT",
 	"DISTRICT_NEIGHBORHOOD",
 	"DISTRICT_SPACEPORT",
-	"DISTRICT_AERODROME", -- no icon
+	"DISTRICT_AERODROME", -- no icon, we'll use an icon for DISTRICT_WONDER
 }
 --for k,v in pairs(tDistrictsOrder) do print("tDistrictsOrder",k,v) end;
 
@@ -1686,6 +1685,34 @@ function city_fields( kCityData, pCityInstance )
 	end
 	pCityInstance.Status:SetText( sStatusText );
 	pCityInstance.Status:SetToolTipString( table.concat(tStatusToolTip, "[NEWLINE]") );
+	
+	-- Religions
+	local eCityReligion:number = kCityData.City:GetReligion():GetMajorityReligion();
+	local eCityPantheon:number = kCityData.City:GetReligion():GetActivePantheon();
+	
+	if eCityReligion > 0 then
+		local iconName : string = "ICON_" .. GameInfo.Religions[eCityReligion].ReligionType;
+		local majorityReligionColor : number = UI.GetColorValue(GameInfo.Religions[eCityReligion].Color);
+		if (majorityReligionColor ~= nil) then
+			pCityInstance.ReligionIcon:SetColor(majorityReligionColor);
+		end
+		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName,22);
+		if (textureOffsetX ~= nil) then
+			pCityInstance.ReligionIcon:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
+		end
+		pCityInstance.ReligionIcon:SetHide(false);
+		pCityInstance.ReligionIcon:SetToolTipString(Game.GetReligion():GetName(eCityReligion));
+	elseif eCityPantheon >= 0 then
+		local iconName : string = "ICON_" .. GameInfo.Religions[0].ReligionType;
+		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName,22);
+		if (textureOffsetX ~= nil) then
+			pCityInstance.ReligionIcon:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
+		end
+		pCityInstance.ReligionIcon:SetHide(false);
+		pCityInstance.ReligionIcon:SetToolTipString(Locale.Lookup("LOC_HUD_CITY_PANTHEON_TT", GameInfo.Beliefs[eCityPantheon].Name));
+	else
+		pCityInstance.ReligionIcon:SetHide(true);
+	end
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
