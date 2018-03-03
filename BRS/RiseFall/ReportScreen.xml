@@ -717,7 +717,6 @@
 						<Label													Style="ReportHeaderSmallText"		String="LOC_REPORTS_LOYALTY" />
 					</GridButton>
 				</Container>
-
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="65,parent">
 					<GridButton		ID="CityPopulationButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
@@ -1213,14 +1212,15 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
-					<Label ID="UnitLevel" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
+					<Label ID="UnitLevel" Style="ReportValueText" String="0" Align="Center" Anchor="C,C"/>
 				</Container>
 				<!-- 400 -->
 				<Container Offset="1,0" Size="125,parent">
-					<Label ID="UnitExp" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
-					<Button ID="Promotion" Hidden="1" Anchor="R,C" Size="32,32" StateOffsetIncrement="0,0" Offset="10,0">
+					<Label ID="UnitExp" Style="ReportValueText" String="$0/0$" Align="Center" Anchor="C,C"/>
+					<!--<Image ID="PromotionIcon" Size="32,32" Texture="PromotionsSmall" TextureOffset="32,0" Anchor="R,C" Offset="0,4" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_PROMOTION_AVAILABLE"/>-->
+					<!--<Button ID="Promotion" Hidden="1" Anchor="R,C" Size="32,32" StateOffsetIncrement="0,0" Offset="10,0">
 						<Image Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_PROMOTION_AVAILABLE" Icon="ICON_PROMOTION"/>
-					</Button>
+					</Button>-->
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">

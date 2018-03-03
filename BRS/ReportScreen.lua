@@ -262,7 +262,8 @@ function GetData()
 			if     group_name == "LAND_COMBAT" then  kUnitDataReport[group_name] = { ID= 1, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
 			elseif group_name == "NAVAL" then        kUnitDataReport[group_name] = { ID= 2, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
 			elseif group_name == "AIR" then          kUnitDataReport[group_name] = { ID= 3, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
-			elseif group_name == "SUPPORT" then      kUnitDataReport[group_name] = { ID= 4, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
+			--elseif group_name == "SUPPORT" then      kUnitDataReport[group_name] = { ID= 4, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
+			elseif group_name == "SUPPORT" then      kUnitDataReport[group_name] = { ID= 4, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
 			elseif group_name == "CIVILIAN" then     kUnitDataReport[group_name] = { ID= 5, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
 			elseif group_name == "RELIGIOUS" then    kUnitDataReport[group_name] = { ID= 6, func= group_religious,Header= "UnitsReligiousHeaderInstance",  Entry= "UnitsReligiousEntryInstance" };
 			elseif group_name == "GREAT_PERSON" then kUnitDataReport[group_name] = { ID= 7, func= group_great,    Header= "UnitsGreatPeopleHeaderInstance",Entry= "UnitsGreatPeopleEntryInstance" };
@@ -2048,7 +2049,7 @@ end
 
 function common_unit_fields( unit, unitInstance )
 
-	if unitInstance.Formation then unitInstance.Formation:SetHide( true ) end
+	--if unitInstance.Formation then unitInstance.Formation:SetHide( true ) end
 
 	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas( "ICON_" .. UnitManager.GetTypeName( unit ), 32 )
 	unitInstance.UnitType:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
@@ -2084,11 +2085,13 @@ function common_unit_fields( unit, unitInstance )
 	
 	-- moves here to mark units that should move this turn
 	if ( unit:GetFormationUnitCount() > 1 ) then
-		unitInstance.UnitMove:SetText( tostring( unit:GetFormationMovesRemaining() ) .. "/" .. tostring( unit:GetFormationMaxMoves() ) )
-		unitInstance.Formation:SetHide( false )
+		unitInstance.UnitMove:SetText( tostring(unit:GetFormationMovesRemaining()).."/"..tostring(unit:GetFormationMaxMoves()).." [ICON_Formation]" );
+		--unitInstance.Formation:SetHide( false )
+		unitInstance.UnitMove:SetToolTipString( Locale.Lookup("LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION") );
 	elseif unitInstance.UnitMove then
 		if unit:GetMovesRemaining() == 0 then bIsMoving = false; end
 		unitInstance.UnitMove:SetText( (bIsMoving and "[COLOR_Red]" or "")..tostring( unit:GetMovesRemaining() ).."/"..tostring( unit:GetMaxMoves() )..(bIsMoving and "[ENDCOLOR]" or "") )
+		unitInstance.UnitMove:SetToolTipString( "" );
 	end
 	
 	unit.City = GetCityForUnit(unit);
@@ -2100,7 +2103,6 @@ function group_military( unit, unitInstance, group, parent, type )
 
 	local unitExp : table = unit:GetExperience()
 	
-	unitInstance.Promotion:SetHide( true )
 	unitInstance.Upgrade:SetHide( true )
 				
 	if ( unit:GetMilitaryFormation() == MilitaryFormationTypes.CORPS_FORMATION ) then
@@ -2108,18 +2110,22 @@ function group_military( unit, unitInstance, group, parent, type )
 	elseif ( unit:GetMilitaryFormation() == MilitaryFormationTypes.ARMY_FORMATION ) then
 		unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) .. " " .. "[ICON_Army]" )
 	end
-			
-	unitInstance.UnitLevel:SetText( tostring( unitExp:GetLevel() ) )
-				
-	unitInstance.UnitExp:SetText( tostring( unitExp:GetExperiencePoints() ) .. "/" .. tostring( unitExp:GetExperienceForNextLevel() ) )
 	
-	local bCanStart, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.PROMOTE, true, true );
-	
-	if ( bCanStart and tResults ) then
-		unitInstance.Promotion:SetHide( false )
-		local tPromotions = tResults[UnitCommandResults.PROMOTIONS];
-		unitInstance.Promotion:RegisterCallback( Mouse.eLClick, function() bUnits.group = group; bUnits.parent = parent; bUnits.type = type; LuaEvents.Report_PromoteUnit( unit ); end )
+	-- Level and Promotions
+	local iUnitLevel:number = unitExp:GetLevel();
+	if     iUnitLevel < 2  then unitInstance.UnitLevel:SetText( tostring(iUnitLevel) );
+	elseif iUnitLevel == 2 then unitInstance.UnitLevel:SetText( tostring(iUnitLevel).." [ICON_Promotion]" );
+	else                        unitInstance.UnitLevel:SetText( tostring(iUnitLevel).." [ICON_Promotion]"..string.rep("*", iUnitLevel-2) ); end
+	local sPromotionsTT:string = "";
+	for _,promo in ipairs(unitExp:GetPromotions()) do
+		sPromotionsTT = sPromotionsTT..(string.len(sPromotionsTT) == 0 and "" or "[NEWLINE]")..Locale.Lookup(GameInfo.UnitPromotions[promo].Name)..": "..Locale.Lookup(GameInfo.UnitPromotions[promo].Description);
 	end
+	unitInstance.UnitLevel:SetToolTipString(sPromotionsTT);
+	
+	-- XP and Promotion Available
+	local bCanStart, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.PROMOTE, true, true );
+	unitInstance.UnitExp:SetText( tostring(unitExp:GetExperiencePoints()).."/"..tostring(unitExp:GetExperienceForNextLevel())..((bCanStart and tResults) and " [ICON_Promotion]" or "") );
+	unitInstance.UnitExp:SetToolTipString( (bCanStart and tResults) and Locale.Lookup("LOC_HUD_UNIT_ACTION_AUTOEXPLORE_PROMOTION_AVAILABLE") or "" );
 
 	-- Unit Health
 	local iHealthPoints:number = unit:GetMaxDamage() - unit:GetDamage();

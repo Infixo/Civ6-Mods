@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-03-03: Created -->
+<GameData>
+
+<LocalizedText>
+	<!-- Tab names -->
+	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="de_DE">
+		<Text>Umowy</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="de_DE">
+		<Text>Jednostki</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="de_DE">
+		<Text>Doktryny</Text>
+	</Replace>
+	<!-- Column headers -->
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="de_DE">
+		<Text>Nazwa budowli/dzielnicy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="de_DE">
+		<Text>Liczba budowli/dzielnic</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="de_DE">
+		<Text>Wzrost</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="de_DE">
+		<Text>Zadowolenie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="de_DE">
+		<Text>Nazwa doktryny</Text>
+	</Replace>
+	<!-- Resource checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="de_DE">
+		<Text>Ukryj szczegóły miast</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="de_DE">
+		<Text>Ukryj darmowe budowle</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="de_DE">
+		<Text>Ukryj darmowe jednostki</Text>
+	</Replace>
+	<!-- UNITS -->
+	<!-- Unit groups -->
+	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="de_DE">
+		<Text>Wojskowe - Powietrzne</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="de_DE">
+		<Text>Wojskowe - Morskie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="de_DE">
+		<Text>Wojskowe - Lądowe</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="de_DE">
+		<Text>Cywilne</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="de_DE">
+		<Text>Wsparcie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="de_DE">
+		<Text>Szpiedzy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="de_DE">
+		<Text>Kupcy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="de_DE">
+		<Text>Wielcy ludzie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="de_DE">
+		<Text>Religijne</Text>
+	</Replace>
+	<!-- Headers -->
+	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="de_DE">
+		<Text>Typ</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="de_DE">
+		<Text>Poziom</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="de_DE">
+		<Text>Żywotność</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="de_DE">
+		<Text>Rodzaj</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="de_DE">
+		<Text>Potencjał</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="de_DE">
+		<Text>Przychody</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="de_DE">
+		<Text>Szlak handlowy</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="de_DE">
+		<Text>Misja</Text>
+	</Replace>
+	<!-- Tooltips -->
+	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="de_DE">
+		<Text>Idź do tego miasta</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="de_DE">
+		<Text>Znajdź tę jednostkę na mapie</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="de_DE">
+		<Text>Garnizon</Text>
+	</Replace>
+	<!-- POLICIES -->
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="de_DE">
+		<Text>Wojskowe</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="de_DE">
+		<Text>Gospodarcze</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="de_DE">
+		<Text>Dyplomatyczne</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="de_DE">
+		<Text>Wielkich ludzi</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="de_DE">
+		<Text>Spuścizny</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="de_DE">
+		<Text>Ciemnych wieków</Text>
+	</Replace>
+	<!-- Checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="de_DE">
+		<Text>Ukryj nieaktywne doktryny</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="de_DE">
+		<Text>Ukryj doktryny bez żadnego wpływu</Text>
+	</Replace>
+	<!-- Deals -->
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="de_DE">
+      <Text>Wychodzące</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="de_DE">
+      <Text>Przychodzące</Text>
+    </Replace>
+
+</LocalizedText>
+
+</GameData>

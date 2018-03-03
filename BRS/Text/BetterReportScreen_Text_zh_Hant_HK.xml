@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-03-03: Translated by copysoul -->
+<GameData>
+
+<LocalizedText>
+	<!-- Tab names -->
+	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="zh_Hant_HK">
+		<Text>外交協議</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="zh_Hant_HK">
+		<Text>單位</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="zh_Hant_HK">
+		<Text>政策</Text>
+	</Replace>
+	<!-- Column headers -->
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="zh_Hant_HK">
+		<Text>建築與城區名稱</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="zh_Hant_HK">
+		<Text>建築與城區數目</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="zh_Hant_HK">
+		<Text>成長</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="zh_Hant_HK">
+		<Text>幸福感</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="zh_Hant_HK">
+		<Text>政策名稱</Text>
+	</Replace>
+	<!-- Resource checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="zh_Hant_HK">
+		<Text>隱藏城市細節</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="zh_Hant_HK">
+		<Text>隱藏免費建築</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="zh_Hant_HK">
+		<Text>隱藏免費單位</Text>
+	</Replace>
+	<!-- UNITS -->
+	<!-- Unit groups -->
+	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="zh_Hant_HK">
+		<Text>空軍單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="zh_Hant_HK">
+		<Text>海軍單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="zh_Hant_HK">
+		<Text>陸軍單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="zh_Hant_HK">
+		<Text>平民單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="zh_Hant_HK">
+		<Text>輔助單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="zh_Hant_HK">
+		<Text>間諜單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="zh_Hant_HK">
+		<Text>貿易單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="zh_Hant_HK">
+		<Text>偉人</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="zh_Hant_HK">
+		<Text>宗教單位</Text>
+	</Replace>
+	<!-- Headers -->
+	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="zh_Hant_HK">
+		<Text>類型</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="zh_Hant_HK">
+		<Text>等級</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="zh_Hant_HK">
+		<Text>生命值</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="zh_Hant_HK">
+		<Text>類別</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="zh_Hant_HK">
+		<Text>可用次數</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="zh_Hant_HK">
+		<Text>產出</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="zh_Hant_HK">
+		<Text>商路</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="zh_Hant_HK">
+		<Text>任務</Text>
+	</Replace>
+	<!-- Tooltips -->
+	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="zh_Hant_HK">
+		<Text>前往該城市</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="zh_Hant_HK">
+		<Text>在地圖上查看該單位</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="zh_Hant_HK">
+		<Text>軍隊駐防</Text>
+	</Replace>
+	<!-- POLICIES -->
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="zh_Hant_HK">
+		<Text>軍事政策</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="zh_Hant_HK">
+		<Text>經濟政策</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="zh_Hant_HK">
+		<Text>外交政策</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="zh_Hant_HK">
+		<Text>偉人政策</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="zh_Hant_HK">
+		<Text>政體遺產政策</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="zh_Hant_HK">
+		<Text>黑暗時代政策</Text>
+	</Replace>
+	<!-- Checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="zh_Hant_HK">
+		<Text>隱藏未開啟政策</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="zh_Hant_HK">
+		<Text>隱藏無影響政策</Text>
+	</Replace>
+	<!-- Deals -->
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="zh_Hant_HK">
+      <Text>輸出</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="zh_Hant_HK">
+      <Text>輸入</Text>
+    </Replace>
+
+</LocalizedText>
+
+</GameData>
