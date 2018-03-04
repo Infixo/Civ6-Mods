@@ -3,8 +3,9 @@
 	<Properties>
 		<Name>Better Report Screen</Name>
 		<Teaser>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.</Teaser>
-		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Version 2.2.</Description>
-		<Authors>Infixo, Greg Miller</Authors>
+		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Supported languages: English, German, French, Japanese, Polish, Simplified Chinese, Traditional Chinese. Version 2.2.[NEWLINE][NEWLINE]Original Units and Deals tabs created by Greg Miller.</Description>
+		<Authors>Infixo</Authors>
+		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul</SpecialThanks>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
 	<ActionCriteria>
