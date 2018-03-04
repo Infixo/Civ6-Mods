@@ -700,19 +700,19 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="25,parent">
+				<Container																										Size="24,parent">
 					<GridButton		ID="CityReligionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="[ICON_Religion]" ToolTip="LOC_HUD_CITY_RELIGION" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																			Offset="1,0"	Size="145,parent">
+				<Container																										Size="140,parent">
 					<GridButton		ID="CityNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="35,parent">
+				<Container																										Size="30,parent">
 					<GridButton		ID="CityGovernorButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_REPORTS_GOVERNOR">
 						<Label													Style="ReportHeaderSmallText"		String="[ICON_Governor]" />
 					</GridButton>
@@ -724,7 +724,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="65,parent">
+				<Container																										Size="60,parent">
 					<GridButton		ID="CityPopulationButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_POPULATION" />
 					</GridButton>
@@ -738,7 +738,7 @@
 				</Container>
 				-->
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="70,parent">
+				<Container																										Size="60,parent">
 					<GridButton		ID="CityGrowthButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_GROWTH" />
 					</GridButton>
@@ -769,7 +769,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="58,parent">
+				<Container																										Size="53,parent">
 					<GridButton		ID="CityDamageButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_DAMAGE" />
 					</GridButton>
@@ -795,17 +795,17 @@
 					<Label				ID="Status"	Offset="0,5"																	Style="ReportValueText"	String="$Status$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container Size="25,parent">
+				<Container 																										Size="24,parent">
 					<Image ID="ReligionIcon" Anchor="C,C" Size="22,22" Texture="Religions22"/>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																			Offset="1,0"	Size="145,parent">
+				<Container																										Size="140,parent">
 					<GridButton ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
 						<Label ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="35,parent">
+				<Container																										Size="30,parent">
 					<Label				ID="Governor"	Offset="0,3"																Style="ReportValueText"	String="$Housing$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -813,7 +813,7 @@
 					<Label				ID="Loyalty"																		Style="ReportValueText"	String="$Status$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="65,parent">
+				<Container																										Size="60,parent">
 					<Label				ID="Population"																Style="ReportValueText"	String="$Population$" />
 				</Container>
 				<!-- Infixo: in R&F housing is shown together with population
@@ -823,7 +823,7 @@
 				</Container>
 				-->
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="70,parent">
+				<Container																										Size="60,parent">
 					<Label				ID="GrowthRateStatus"													Style="ReportValueText"	String="$GrowthRateStatus$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -844,7 +844,7 @@
 					<Label				ID="Strength"																	Style="ReportValueText"	String="$Strength$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="58,parent">
+				<Container																										Size="53,parent">
 					<Label				ID="Damage"																		Style="ReportValueText"	String="$Damage$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />

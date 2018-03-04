@@ -1460,7 +1460,8 @@ function ViewResourcesPage()
 	local kStrategics		:table	= {};
 	
 
-	for eResourceType,kSingleResourceData in pairs(m_kResourceData) do
+	--for eResourceType,kSingleResourceData in pairs(m_kResourceData) do
+	for eResourceType,kSingleResourceData in spairs(m_kResourceData, function(t,a,b) return Locale.Lookup(GameInfo.Resources[a].Name) < Locale.Lookup(GameInfo.Resources[b].Name) end) do
 		
 		local kResource :table = GameInfo.Resources[eResourceType];
 		
@@ -1867,6 +1868,10 @@ function city_sortFunction( descend, type, t, a, b )
 	elseif type == "loyal" then
 		aCity = t[a].Loyalty
 		bCity = t[b].Loyalty
+		if aCity == bCity then 
+			aCity = t[a].City:GetCulturalIdentity():GetLoyaltyPerTurn();
+			bCity = t[b].City:GetCulturalIdentity():GetLoyaltyPerTurn();
+		end
 	elseif type == "pop" then
 		aCity = t[a].Population
 		bCity = t[b].Population
@@ -1909,6 +1914,34 @@ function city_sortFunction( descend, type, t, a, b )
 	elseif type == "districts" then
 		aCity = t[a].NumDistricts
 		bCity = t[b].NumDistricts
+	elseif type == "religion" then
+		aCity = t[a].City:GetReligion():GetMajorityReligion();
+		bCity = t[b].City:GetReligion():GetMajorityReligion();
+		if aCity > 0 and bCity > 0 then 
+			-- both cities have religion
+			if descend then return bCity > aCity else return bCity < aCity end
+		elseif aCity > 0 then
+			-- only A has religion, must ALWAYS be before B
+			return true
+		elseif bCity > 0 then
+			-- only B has religion, must ALWAYS be before A
+		end
+		-- none has, check pantheons
+		aCity = t[a].City:GetReligion():GetActivePantheon();
+		bCity = t[b].City:GetReligion():GetActivePantheon();
+		if aCity > 0 and bCity > 0 then 
+			-- both cities have a pantheon
+			if descend then return bCity > aCity else return bCity < aCity end
+		elseif aCity > 0 then
+			-- only A has pantheon, must ALWAYS be before B
+			return true
+		elseif bCity > 0 then
+			-- only B has pantheon, must ALWAYS be before A
+		end
+		-- none has, no more checks
+		return false
+	else
+		-- nothing to do here
 	end
 	
 	if descend then return bCity > aCity else return bCity < aCity end
@@ -1928,6 +1961,7 @@ function ViewCityStatusPage()
 	local pHeaderInstance:table = {};
 	ContextPtr:BuildInstanceForControl( "CityStatusHeaderInstance", pHeaderInstance, instance.Top );
 	
+	pHeaderInstance.CityReligionButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "religion", instance ) end )
 	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "name", instance ) end )
 	if bIsRiseFall then pHeaderInstance.CityGovernorButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "gover", instance ) end ) end -- Infixo
 	if bIsRiseFall then pHeaderInstance.CityLoyaltyButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "loyal", instance ) end ) end -- Infixo
@@ -2238,18 +2272,19 @@ function group_trader( unit, unitInstance, group, parent, type )
 
 	local owningPlayer:table = Players[unit:GetOwner()];
 	local cities:table = owningPlayer:GetCities();
-	local yieldtype : table = { ["YIELD_FOOD"] = "[ICON_Food]",
-								["YIELD_PRODUCTION"] = "[ICON_Production]",
-								["YIELD_GOLD"] = "[ICON_Gold]",
-								["YIELD_SCIENCE"] = "[ICON_Science]",
-								["YIELD_CULTURE"] = "[ICON_Culture]",
-								["YIELD_FAITH"] = "[ICON_Faith]"
-										  }
+	local yieldtype: table = {
+		YIELD_FOOD = "[ICON_Food]",
+		YIELD_PRODUCTION = "[ICON_Production]",
+		YIELD_GOLD = "[ICON_Gold]",
+		YIELD_SCIENCE = "[ICON_Science]",
+		YIELD_CULTURE = "[ICON_Culture]",
+		YIELD_FAITH = "[ICON_Faith]",
+	};
 	local yields : string = ""
 	
-	unitInstance.UnitYields:SetText( "No Yields" )
-	unitInstance.UnitRoute:SetText( "No Route" )
-	unit.yields = "No Yields"
+	unitInstance.UnitYields:SetText( "" );
+	unitInstance.UnitRoute:SetText( "[COLOR_Red]"..Locale.Lookup("LOC_UNITOPERATION_MAKE_TRADE_ROUTE_DESCRIPTION") );
+	unit.yields = ""
 	unit.route = "No Route"
 
 	for _, city in cities:Members() do
