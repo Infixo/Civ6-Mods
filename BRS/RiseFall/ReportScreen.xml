@@ -274,7 +274,7 @@
 					<Label		ID="Production"				Style="ReportValueText"			String="P"  Color="Production" />
 				</Container>
 				<Box																													Size="2,40"	Color="46,70,95,255" />
-				<Container																										Size="100,40">
+				<Container		ID="FoodContainer"																				Size="100,40">
 					<Label		ID="Food"							Style="ReportValueText"			String="F"	Color="Food" />
 				</Container>
 				<Box																													Size="2,40"	Color="46,70,95,255" />

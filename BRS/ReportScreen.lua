@@ -353,7 +353,81 @@ function GetData()
 			end
 		end
 		
-	end
+		-- Growth and related data
+		-- This part of code is from CityPanelOverview.lua, retrofitted to use here (it uses data as prepared by CitySupport.lua)
+		-- line 1, data.FoodPerTurn
+		data.FoodConsumption = -(data.FoodPerTurn - data.FoodSurplus); -- line 2, it will be always negative!
+		-- line 3, data.FoodSurplus
+		-- line 4, data.HappinessGrowthModifier
+		-- line 5, data.OccupationMultiplier
+		data.FoodPerTurnModified = 0; -- line 6, modified food per turn [=line3 * (1+line4+line5)
+		-- line 7, data.HousingMultiplier
+		-- line 8a vanilla, data.OccupationMultiplier
+		-- line 8b ris&fal, loyalty calculated
+		data.TotalFoodSurplus = 0; -- line 9, as displayed in City Details
+		-- line 10, data.TurnsUntilGrowth
+		-- growth changes related to Loyalty
+		if bIsRiseFall then
+			data.LoyaltyGrowthModifier = Round( 100 * pCity:GetGrowth():GetLoyaltyGrowthModifier() - 100, 0 );
+			data.LoyaltyLevelName = GameInfo.LoyaltyLevels[ pCity:GetCulturalIdentity():GetLoyaltyLevel() ].Name;
+		end
+		
+		local tGrowthTT:table = {}; -- growth tooltip
+		local function AddGrowthToolTip(sText:string, fValue:number, sSuffix:string)
+			if fValue then table.insert(tGrowthTT, Locale.Lookup(sText)..": "..toPlusMinusString(fValue)..(sSuffix and sSuffix or ""));
+			else           table.insert(tGrowthTT, Locale.Lookup(sText)..": "..Locale.Lookup("LOC_HUD_CITY_NOT_APPLICABLE")); end
+		end
+		local function AddGrowthToolTipSeparator()
+			table.insert(tGrowthTT, "----------");
+		end
+
+		AddGrowthToolTip("LOC_HUD_CITY_FOOD_PER_TURN", data.FoodPerTurn); -- line 1: food per turn
+		AddGrowthToolTip("LOC_HUD_CITY_FOOD_CONSUMPTION", data.FoodConsumption); -- line 2: food consumption
+		AddGrowthToolTipSeparator();
+		AddGrowthToolTip("LOC_HUD_CITY_GROWTH_FOOD_PER_TURN", data.FoodSurplus); -- line 3: food growth per turn
+
+		if data.TurnsUntilGrowth > -1 then
+			-- GROWTH IN: Set bonuses and multipliers
+			AddGrowthToolTip("LOC_HUD_CITY_HAPPINESS_GROWTH_BONUS", Round(data.HappinessGrowthModifier, 0), "%"); -- line 4: amenities (happiness) growth bonus
+			AddGrowthToolTip("LOC_HUD_CITY_OTHER_GROWTH_BONUSES", Round(data.OtherGrowthModifiers * 100, 0), "%"); -- line 5: other growth bonuses
+			AddGrowthToolTipSeparator();
+			local growthModifier =  math.max(1 + (data.HappinessGrowthModifier/100) + data.OtherGrowthModifiers, 0); -- This is unintuitive but it's in parity with the logic in City_Growth.cpp
+			data.FoodPerTurnModified = Round(data.FoodSurplus * growthModifier, 2); -- line 6
+			AddGrowthToolTip("LOC_HUD_CITY_MODIFIED_GROWTH_FOOD_PER_TURN", data.FoodPerTurnModified); -- line 6: modified food per turn
+			table.insert(tGrowthTT, Locale.Lookup("LOC_HUD_CITY_HOUSING_MULTIPLIER")..": "..data.HousingMultiplier); -- line 7: housing multiplier
+			data.TotalFoodSurplus = data.FoodPerTurnModified * data.HousingMultiplier;
+			-- occupied
+			if data.Occupied then data.TotalFoodSurplus = data.FoodPerTurnModified * data.OccupationMultiplier; end
+			AddGrowthToolTip("LOC_HUD_CITY_OCCUPATION_MULTIPLIER", (data.Occupied and data.OccupationMultiplier * 100) or nil, "%"); -- line 8a
+			if bIsRiseFall then
+				if data.LoyaltyGrowthModifier ~= 0 then AddGrowthToolTip(data.LoyaltyLevelName, data.LoyaltyGrowthModifier, "%"); -- line 8b
+				else table.insert(tGrowthTT, Locale.Lookup(data.LoyaltyLevelName)..": "..Locale.Lookup("LOC_CULTURAL_IDENTITY_LOYALTY_NO_GROWTH_PENALTY")); end -- line 8b
+			end
+			AddGrowthToolTipSeparator();
+			-- final
+			AddGrowthToolTip("LOC_HUD_CITY_TOTAL_FOOD_SURPLUS", data.TotalFoodSurplus, (data.TotalFoodSurplus > 0 and "[ICON_FoodSurplus]") or "[ICON_FoodDeficit]"); -- line 9
+			if data.Occupied then AddGrowthToolTip("LOC_HUD_CITY_GROWTH_OCCUPIED"); -- line 10, occupied: no growth
+			else table.insert(tGrowthTT, Locale.Lookup("LOC_HUD_CITY_TURNS_UNTIL_CITIZEN_BORN", math.abs(data.TurnsUntilGrowth))); end -- line 10
+		else
+			-- CITIZEN LOST IN: In a deficit, no bonuses or multipliers apply
+			AddGrowthToolTip("LOC_HUD_CITY_HAPPINESS_GROWTH_BONUS"); -- line 4: amenities (happiness) growth bonus
+			AddGrowthToolTip("LOC_HUD_CITY_OTHER_GROWTH_BONUSES"); -- line 5: other growth bonuses
+			AddGrowthToolTipSeparator();
+			data.FoodPerTurnModified = data.FoodSurplus; -- line 6
+			AddGrowthToolTip("LOC_HUD_CITY_MODIFIED_GROWTH_FOOD_PER_TURN", data.FoodPerTurnModified); -- line 6: modified food per turn
+			AddGrowthToolTip("LOC_HUD_CITY_HOUSING_MULTIPLIER"); -- line 7: housing multiplier
+			AddGrowthToolTip("LOC_HUD_CITY_OCCUPATION_MULTIPLIER", (data.Occupied and data.OccupationMultiplier * 100) or nil, "%"); -- line 8a
+			if bIsRiseFall then AddGrowthToolTip(data.LoyaltyLevelName); end -- line 8b
+			AddGrowthToolTipSeparator();
+			data.TotalFoodSurplus = data.FoodPerTurnModified; -- line 9
+			AddGrowthToolTip("LOC_HUD_CITY_TOTAL_FOOD_DEFICIT", data.TotalFoodSurplus, "[ICON_FoodDeficit]"); -- line 9
+			table.insert(tGrowthTT, "[Color:StatBadCS]"..string.upper(Locale.Lookup("LOC_HUD_CITY_STARVING")).."[ENDCOLOR]"); -- starving marker
+			table.insert(tGrowthTT, Locale.Lookup("LOC_HUD_CITY_TURNS_UNTIL_CITIZEN_LOST", math.abs(data.TurnsUntilGrowth))); -- line 10
+		end	
+		
+		data.TotalFoodSurplusToolTip = table.concat(tGrowthTT, "[NEWLINE]");
+
+	end -- for Cities:Members
 
 	kCityTotalData.Expenses[YieldTypes.GOLD] = pTreasury:GetTotalMaintenance();
 
@@ -1084,12 +1158,15 @@ function ViewYieldsPage()
 			pLabel:SetToolTipString( sToolTip );
 		end
 		SetYieldTextAndFocusFlag( pCityInstance.Production,kCityData.ProductionPerTurn,YieldTypes.PRODUCTION );
-		SetYieldTextAndFocusFlag( pCityInstance.Food,      kCityData.FoodPerTurn,      YieldTypes.FOOD );
+		--SetYieldTextAndFocusFlag( pCityInstance.Food,      kCityData.FoodPerTurn,      YieldTypes.FOOD );
+		SetYieldTextAndFocusFlag( pCityInstance.Food,      kCityData.TotalFoodSurplus, YieldTypes.FOOD );
 		SetYieldTextAndFocusFlag( pCityInstance.Gold,      kCityData.GoldPerTurn,      YieldTypes.GOLD );
 		SetYieldTextAndFocusFlag( pCityInstance.Faith,     kCityData.FaithPerTurn,     YieldTypes.FAITH );
 		SetYieldTextAndFocusFlag( pCityInstance.Science,   kCityData.SciencePerTurn,   YieldTypes.SCIENCE );
 		SetYieldTextAndFocusFlag( pCityInstance.Culture,   kCityData.CulturePerTurn,   YieldTypes.CULTURE );
 		pCityInstance.Tourism:SetText( toPlusMinusString(kCityData.WorkedTileYields["TOURISM"]) ); -- unchanged (no focus feature here)
+		-- BIG food tooltip
+		pCityInstance.FoodContainer:SetToolTipString(kCityData.TotalFoodSurplusToolTip);
 
 		-- Add to all cities totals
 		goldCityTotal	= goldCityTotal + kCityData.GoldPerTurn;
@@ -1099,6 +1176,28 @@ function ViewYieldsPage()
 		tourismCityTotal= tourismCityTotal + kCityData.WorkedTileYields["TOURISM"];
 		
 		if not Controls.HideCityBuildingsCheckbox:IsSelected() then --BRS
+		
+		--Worked Tiles
+		CreatLineItemInstance(	pCityInstance,
+								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.NumWorkedTiles),
+								kCityData.WorkedTileYields["YIELD_PRODUCTION"],
+								kCityData.WorkedTileYields["YIELD_GOLD"],
+								kCityData.WorkedTileYields["YIELD_FOOD"],
+								kCityData.WorkedTileYields["YIELD_SCIENCE"],
+								kCityData.WorkedTileYields["YIELD_CULTURE"],
+								kCityData.WorkedTileYields["YIELD_FAITH"]);
+
+		-- Additional Yields from Population
+		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
+		local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
+		CreatLineItemInstance(	pCityInstance,
+								Locale.Lookup("LOC_HUD_CITY_POPULATION")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.Population),
+								0,
+								0,
+								kCityData.FoodConsumption, -- food
+								kCityData.Population * populationToScienceScale,
+								kCityData.Population * populationToCultureScale, 
+								0);
 
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			--District line item
@@ -1206,28 +1305,6 @@ function ViewYieldsPage()
 				end
 			end
 		end
-
-		--Worked Tiles
-		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.NumWorkedTiles),
-								kCityData.WorkedTileYields["YIELD_PRODUCTION"],
-								kCityData.WorkedTileYields["YIELD_GOLD"],
-								kCityData.WorkedTileYields["YIELD_FOOD"],
-								kCityData.WorkedTileYields["YIELD_SCIENCE"],
-								kCityData.WorkedTileYields["YIELD_CULTURE"],
-								kCityData.WorkedTileYields["YIELD_FAITH"]);
-
-		-- Additional Yields from Population
-		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
-		local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
-		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_CITY_POPULATION")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.Population),
-								0,
-								0,
-								0,
-								kCityData.Population * populationToScienceScale,
-								kCityData.Population * populationToCultureScale, 
-								0);
 
 		-- Yields from Amenities -- Infixo TOTALLY WRONG amenities are applied to all yields, not only Worked Tiles; also must be the LAST calculated entry
 		--local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1); -- Infixo Buggy formula
