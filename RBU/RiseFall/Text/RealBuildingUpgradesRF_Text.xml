@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Real Building Upgrades
+ Author: Infixo
+ 2018-03-04: Created
+-->
+<GameData>
+	<BaseGameText>
+		<!-- Government Buildings -->
+		<!--
+		<Row Tag="LOC_BUILDING_GOV_TALL_NAME">
+			<Text>Audience Chamber</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_WIDE_NAME">
+			<Text>Ancestral Hall</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_CONQUEST_NAME">
+			<Text>Warlord's Throne</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_FAITH_NAME">
+			<Text>Grand Master's Chapel</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_CITYSTATES_NAME">
+			<Text>Foreign Ministry</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_SPIES_NAME">
+			<Text>Intelligence Agency</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_MILITARY_NAME">
+			<Text>War Department</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_CULTURE_NAME">
+			<Text>National History Museum</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_SCIENCE_NAME">
+			<Text>Royal Society</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_TALL_DESCRIPTION">
+			<Text>+1 [ICON_Amenities] Amenity and +4 [ICON_Housing] Housing in Cities with [ICON_Governor] Governors[NEWLINE]-2 Loyalty in Cities without [ICON_Governor] Governors.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_WIDE_DESCRIPTION">
+			<Text>50% increased [ICON_Production] Production toward Settlers.[NEWLINE]New cities receive a free Builder.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_CONQUEST_DESCRIPTION">
+			<Text>Capturing an enemy City grants 20% bonus [ICON_Production] Production in all Cities for 5 turns.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_CITYSTATES_DESCRIPTION">
+			<Text>Leveraging City States costs half [ICON_Gold] Gold.[NEWLINE]Leveraged Units gain +4 [ICON_Strength] Combat Strength.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="GOV_CITYSTATES_COMBAT_STRENGTH_DESCRIPTION">
+			<Text>+4 from Foreign Ministry</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_SPIES_DESCRIPTION">
+			<Text>+1 Spy and Spy capacity.[NEWLINE]All Spy Operations have a higher chance of success.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_FAITH_DESCRIPTION">
+			<Text>Grants the ability to buy land units with [ICON_Faith] Faith.[NEWLINE]Pillaging Improvements and Districts provides bonus [ICON_Faith] Faith.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_MILITARY_DESCRIPTION">
+			<Text>All units when they eliminate a unit, they heal up to 20 hit points.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_CULTURE_DESCRIPTION">
+			<Text>Provides 4 slots for any Great Work.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GOV_SCIENCE_DESCRIPTION">
+			<Text>Builders gain the ability to use all of their charges to provide bonus [ICON_Production] Production to a District Project. Once per city per turn.[NEWLINE]Awards +1 [Icon_Governor] Governor Title.</Text>
+		</Row>
+		-->
+		<!-- Water Entertainment Complex Buildings -->
+		<Row Tag="LOC_BUILDING_FERRIS_WHEEL_UPGRADE_NAME">
+			<Text>Ferris Wheel Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FERRIS_WHEEL_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)+2 [ICON_Tourism] Tourism</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_AQUARIUM_UPGRADE_NAME">
+			<Text>Aquarium Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_AQUARIUM_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)Bonus Amenity extends to each city center within 9 tiles. This bonus applies once to a city, and multiple copies of this building within 9 tiles of a city center do not provide additional bonuses. +1 [ICON_SCIENCE] Science to each coastal resource, Shipwreck, and Reef tile in this city.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_AQUATICS_CENTER_UPGRADE_NAME">
+			<Text>Aquatics Center Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_AQUATICS_CENTER_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)Bonus Amenity extends to each city center within 9 tiles. This bonus applies once to a city, and multiple copies of this building within 9 tiles of a city center do not provide additional bonuses. +2 [ICON_Tourism] Tourism for each Wonder built in this city on or adjacent to a Coast tile.</Text>
+		</Row>
+		<!-- Neighborhood Buildings -->
+		<Row Tag="LOC_BUILDING_FOOD_MARKET_UPGRADE_NAME">
+			<Text>Food Market Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FOOD_MARKET_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_NAME">
+			<Text>Shopping Mall Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)+4 [ICON_Tourism] Tourism. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+		</Row>
+		<!-- Uniques -->
+		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_NAME">
+			<Text>Ordu Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)A building unique to Mongolia. Grants an ability that gives +1 [ICON_MOVEMENT] Movement to Heavy and Light Cavalry trained in this city. +25% combat experience for all cavalry class units trained in this city. May not be built in an Encampment district that already has a Barracks.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_NAME">
+			<Text>Tsikhe Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_DESCRIPTION">
+			<Text>(ERROR)A building unique to Georgia. Lower [ICON_Production] Production cost than Renaissance Walls. Raises the strength of your outer defenses to the highest possible level. Provides 3 [ICON_TOURISM] Tourism after advancing to the Conservation Civic. Provides 3 [ICON_Faith] Faith.</Text>
+		</Row>
+	</BaseGameText>
+</GameData>

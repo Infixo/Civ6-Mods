@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Real Building Upgrades
+ Author: Infixo
+ 2018-03-04: Created
+-->
+<GameInfo>
+	<IconTextureAtlases>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_RF" IconSize="32" IconsPerRow="4" IconsPerColumn="4"  Filename="RBU_RF_Buildings32.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_RF" IconSize="38" IconsPerRow="4" IconsPerColumn="4"  Filename="RBU_RF_Buildings38.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_RF" IconSize="50" IconsPerRow="4" IconsPerColumn="4"  Filename="RBU_RF_Buildings50.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_RF" IconSize="80" IconsPerRow="4" IconsPerColumn="4"  Filename="RBU_RF_Buildings80.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_RF" IconSize="128" IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings128.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_RF" IconSize="256" IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings256.dds"/>
+		<!-- no separate FOW icons -->
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" IconSize="32"  IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings32.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" IconSize="38"  IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings38.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" IconSize="50"  IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings50.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" IconSize="80"  IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings80.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" IconSize="128" IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings128.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" IconSize="256" IconsPerRow="4" IconsPerColumn="4" Filename="RBU_RF_Buildings256.dds"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+		<!-- BUILDINGS -->
+		<!-- no gov plaza
+		<Row Name="ICON_BUILDING_GOV_TALL"          Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="0"/>
+		<Row Name="ICON_BUILDING_GOV_WIDE"          Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="1"/>
+		<Row Name="ICON_BUILDING_GOV_CONQUEST"      Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="2"/>
+		<Row Name="ICON_BUILDING_GOV_CITYSTATES"    Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="3"/>
+		<Row Name="ICON_BUILDING_GOV_SPIES"         Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="4"/>
+		<Row Name="ICON_BUILDING_GOV_FAITH"         Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="5"/>
+		<Row Name="ICON_BUILDING_GOV_MILITARY"      Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="6"/>
+		<Row Name="ICON_BUILDING_GOV_CULTURE"       Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="7"/>
+		<Row Name="ICON_BUILDING_GOV_SCIENCE"       Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS" Index="8"/>
+		-->
+		<Row Name="ICON_BUILDING_AQUARIUM_UPGRADE"          Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="0"/>
+		<Row Name="ICON_BUILDING_AQUATICS_CENTER_UPGRADE"	Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="1"/>
+		<Row Name="ICON_BUILDING_FERRIS_WHEEL_UPGRADE"      Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="2"/>
+		<Row Name="ICON_BUILDING_SHOPPING_MALL_UPGRADE"     Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="3"/>
+		<Row Name="ICON_BUILDING_FOOD_MARKET_UPGRADE"       Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="4"/>
+		<!-- uniques -->
+		<Row Name="ICON_BUILDING_ORDU_UPGRADE" 				Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="5"/>
+		<Row Name="ICON_BUILDING_TSIKHE_UPGRADE" 			Atlas="ICON_ATLAS_BUILDING_UPGRADES_RF" Index="6"/>
+		<!-- BUILDINGS FOW -->
+		<!-- no gov plaza
+		<Row Name="ICON_BUILDING_GOV_TALL"          Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="0"/>
+		<Row Name="ICON_BUILDING_GOV_WIDE"          Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="1"/>
+		<Row Name="ICON_BUILDING_GOV_CONQUEST"      Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="2"/>
+		<Row Name="ICON_BUILDING_GOV_CITYSTATES"    Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="3"/>
+		<Row Name="ICON_BUILDING_GOV_SPIES"         Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="4"/>
+		<Row Name="ICON_BUILDING_GOV_FAITH"         Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="5"/>
+		<Row Name="ICON_BUILDING_GOV_MILITARY"      Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="6"/>
+		<Row Name="ICON_BUILDING_GOV_CULTURE"       Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="7"/>
+		<Row Name="ICON_BUILDING_GOV_SCIENCE"       Atlas="ICON_ATLAS_EXPANSION_1_DISTRICT_BUILDINGS_FOW" Index="8"/>
+		-->
+		<Row Name="ICON_BUILDING_AQUARIUM_UPGRADE_FOW"          Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="0"/>
+		<Row Name="ICON_BUILDING_AQUATICS_CENTER_UPGRADE_FOW"   Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="1"/>
+		<Row Name="ICON_BUILDING_FERRIS_WHEEL_UPGRADE_FOW"      Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="2"/>
+		<Row Name="ICON_BUILDING_SHOPPING_MALL_UPGRADE_FOW"     Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="3"/>
+		<Row Name="ICON_BUILDING_FOOD_MARKET_UPGRADE_FOW"       Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="4"/>
+		<!-- uniques -->
+		<Row Name="ICON_BUILDING_ORDU_UPGRADE_FOW" 				Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="5"/>
+		<Row Name="ICON_BUILDING_TSIKHE_UPGRADE_FOW" 			Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_RF" Index="6"/>
+	</IconDefinitions>
+</GameInfo>
