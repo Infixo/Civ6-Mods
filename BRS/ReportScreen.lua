@@ -1717,7 +1717,7 @@ function city_fields( kCityData, pCityInstance )
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
-	TruncateStringWithTooltip(pCityInstance.CityName, 143, Locale.Lookup(kCityData.CityName));
+	TruncateStringWithTooltip(pCityInstance.CityName, 138, Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
 	--if bIsRiseFall then
