@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="a768ead1-32b9-4da5-9b05-eb966364670b" version="1">
+  <Properties>
+    <Name>Real Building Upgrades</Name>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 2.0.[NEWLINE]French localization only for vanilla buildings.</Description>
+    <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
+    <Authors>Infixo</Authors>
+    <SpecialThanks>Godzicraft (French tr.)</SpecialThanks>
+    <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
+  </Properties>
+  <FrontEndActions />
+  <InGameActions>
+    <UpdateIcons id="RBU_Icons">
+      <File>Icons/RealBuildingUpgrades_Icons.xml</File>
+    </UpdateIcons>
+    <UpdateDatabase id="RBU_Database">
+      <File>RealBuildingUpgrades.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RBU_Text">
+      <File>Text/RealBuildingUpgrades_Text.xml</File>
+      <File>Text/RealBuildingUpgrades_Text_fr_FR.xml</File>
+    </UpdateText>
+    <ImportFiles id="RBU_Imports">
+      <File>Icons/RBU_Buildings32.dds</File>
+      <File>Icons/RBU_Buildings38.dds</File>
+      <File>Icons/RBU_Buildings50.dds</File>
+      <File>Icons/RBU_Buildings80.dds</File>
+      <File>Icons/RBU_Buildings128.dds</File>
+      <File>Icons/RBU_Buildings256.dds</File>
+    </ImportFiles>
+    <UpdateIcons id="RBU_RF_Icons">
+      <Properties>
+        <LoadOrder>2</LoadOrder>
+      </Properties>
+      <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
+    </UpdateIcons>
+    <UpdateDatabase id="RBU_RF_Database">
+      <Properties>
+        <LoadOrder>2</LoadOrder>
+      </Properties>
+      <File>RiseFall/RealBuildingUpgradesRF.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RBU_RF_Text">
+      <Properties>
+        <LoadOrder>2</LoadOrder>
+      </Properties>
+      <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
+    </UpdateText>
+    <ImportFiles id="RBU_RF_Imports">
+      <Properties>
+        <LoadOrder>2</LoadOrder>
+      </Properties>
+      <File>RiseFall/Icons/RBU_RF_Buildings32.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings38.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings50.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings80.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings128.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings256.dds</File>
+    </ImportFiles>
+  </InGameActions>
+  <Files>
+    <File>Icons/RBU_Buildings128.dds</File>
+    <File>Icons/RBU_Buildings256.dds</File>
+    <File>Icons/RBU_Buildings32.dds</File>
+    <File>Icons/RBU_Buildings38.dds</File>
+    <File>Icons/RBU_Buildings50.dds</File>
+    <File>Icons/RBU_Buildings80.dds</File>
+    <File>Icons/RealBuildingUpgrades_Icons.xml</File>
+    <File>RealBuildingUpgrades.sql</File>
+    <File>RiseFall/Icons/RBU_RF_Buildings128.dds</File>
+    <File>RiseFall/Icons/RBU_RF_Buildings256.dds</File>
+    <File>RiseFall/Icons/RBU_RF_Buildings32.dds</File>
+    <File>RiseFall/Icons/RBU_RF_Buildings38.dds</File>
+    <File>RiseFall/Icons/RBU_RF_Buildings50.dds</File>
+    <File>RiseFall/Icons/RBU_RF_Buildings80.dds</File>
+    <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
+    <File>RiseFall/RealBuildingUpgradesRF.sql</File>
+    <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
+    <File>Text/RealBuildingUpgrades_Text.xml</File>
+    <File>Text/RealBuildingUpgrades_Text_fr_FR.xml</File>
+  </Files>
+</Mod>
