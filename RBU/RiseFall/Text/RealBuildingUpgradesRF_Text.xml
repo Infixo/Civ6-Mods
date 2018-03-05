@@ -71,13 +71,13 @@
 			<Text>Ferris Wheel Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FERRIS_WHEEL_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)+2 [ICON_Tourism] Tourism</Text>
+			<Text>+1 [ICON_Tourism] Tourism and all tiles in this City gain [COLOR_Green]+1[ENDCOLOR] Appeal.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUARIUM_UPGRADE_NAME">
 			<Text>Aquarium Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUARIUM_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)Bonus Amenity extends to each city center within 9 tiles. This bonus applies once to a city, and multiple copies of this building within 9 tiles of a city center do not provide additional bonuses. +1 [ICON_SCIENCE] Science to each coastal resource, Shipwreck, and Reef tile in this city.</Text>
+			<Text>Scientific research conducted here generates +1 [ICON_GreatScientist] Great Scientist point.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUATICS_CENTER_UPGRADE_NAME">
 			<Text>Aquatics Center Upgrade</Text>
@@ -90,7 +90,7 @@
 			<Text>Food Market Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FOOD_MARKET_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+			<Text>+1 [ICON_Food] Food from Pastures, Camps and Fishing Boats.[NEWLINE][NEWLINE]Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_NAME">
 			<Text>Shopping Mall Upgrade</Text>
@@ -103,13 +103,13 @@
 			<Text>Ordu Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)A building unique to Mongolia. Grants an ability that gives +1 [ICON_MOVEMENT] Movement to Heavy and Light Cavalry trained in this city. +25% combat experience for all cavalry class units trained in this city. May not be built in an Encampment district that already has a Barracks.</Text>
+			<Text>Grants +1 [ICON_GreatGeneral] Great General point and +1 [ICON_Production] Production from Pastures.[NEWLINE][NEWLINE]May not be built in an Encampment district that already has a Barracks.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_NAME">
 			<Text>Tsikhe Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)A building unique to Georgia. Lower [ICON_Production] Production cost than Renaissance Walls. Raises the strength of your outer defenses to the highest possible level. Provides 3 [ICON_TOURISM] Tourism after advancing to the Conservation Civic. Provides 3 [ICON_Faith] Faith.</Text>
+			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [ICON_Amenities] Amenity and +1 [ICON_Faith] Faith.</Text>
 		</Row>
 	</BaseGameText>
 </GameData>

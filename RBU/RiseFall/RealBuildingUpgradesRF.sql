@@ -72,7 +72,7 @@ FROM RBUConfig;
 
 -- Tsikhe
 UPDATE Buildings
-SET PurchaseYield = NULL, OuterDefenseHitPoints = 25, OuterDefenseStrength = 1, RegionalRange = 6
+SET PurchaseYield = NULL, OuterDefenseHitPoints = 25, OuterDefenseStrength = 1, Entertainment = 1
 WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
 
 -- Buildings with Regional Effects
@@ -150,6 +150,7 @@ INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
 ('MODIFIER_CITY_PLOT_YIELDS_ADJUST_TOURISM', 'COLLECTION_CITY_PLOT_YIELDS', 'EFFECT_ADJUST_CITY_TOURISM');
 
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_ORDU_UPGRADE', 'STABLEUPGRADE_ADDPASTUREPRODUCTION'), -- the same effect as Stable Upgrade
 ('BUILDING_FERRIS_WHEEL_UPGRADE', 'FERRIS_WHEEL_UPGRADE_TOURISM'),
 ('BUILDING_FERRIS_WHEEL_UPGRADE', 'FERRIS_WHEEL_UPGRADE_APPEAL'),
 ('BUILDING_FOOD_MARKET_UPGRADE', 'FOOD_MARKET_UPGRADE_ADD_PASTURE_FOOD'),
