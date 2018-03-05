@@ -302,7 +302,7 @@
 			<Text>Increases the strength of your Walls by half.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WATER_MILL_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Food] Food from Plantations.[NEWLINE][NEWLINE]City must be adjacent to a River.</Text>
+			<Text>City must be adjacent to a River.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WAT_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>

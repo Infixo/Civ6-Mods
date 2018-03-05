@@ -71,7 +71,7 @@
 			<Text>Ferris Wheel Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FERRIS_WHEEL_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Tourism] Tourism and all tiles in this City gain [COLOR_Green]+1[ENDCOLOR] Appeal.</Text>
+			<Text>+1 [ICON_Tourism] Tourism and all tiles in this City gain +1 Appeal.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUARIUM_UPGRADE_NAME">
 			<Text>Aquarium Upgrade</Text>
