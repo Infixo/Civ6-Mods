@@ -77,39 +77,39 @@
 			<Text>Aquarium Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUARIUM_UPGRADE_DESCRIPTION">
-			<Text>Scientific research conducted here generates +1 [ICON_GreatScientist] Great Scientist point.</Text>
+			<Text>Scientific research conducted here generates +1 [ICON_GreatScientist] Great Scientist point. Bonus Amenity extends to each city center within 9 tiles.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUATICS_CENTER_UPGRADE_NAME">
 			<Text>Aquatics Center Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AQUATICS_CENTER_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)Bonus Amenity extends to each city center within 9 tiles. This bonus applies once to a city, and multiple copies of this building within 9 tiles of a city center do not provide additional bonuses. +2 [ICON_Tourism] Tourism for each Wonder built in this city on or adjacent to a Coast tile.</Text>
+			<Text>All [ICON_Tourism] Tourism yields are increased +10%. Bonus Amenity extends to each city center within 9 tiles.</Text>
 		</Row>
 		<!-- Neighborhood Buildings -->
 		<Row Tag="LOC_BUILDING_FOOD_MARKET_UPGRADE_NAME">
 			<Text>Food Market Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FOOD_MARKET_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Food] Food from Pastures, Camps and Fishing Boats.[NEWLINE][NEWLINE]Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+			<Text>Bigger market can service more food providers. +1 [ICON_Food] Food from Plantations, Pastures and Camps. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_NAME">
 			<Text>Shopping Mall Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_DESCRIPTION">
-			<Text>(ERROR)+4 [ICON_Tourism] Tourism. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+			<Text>Luxury goods bring more tourists and improve revenues. +2 [ICON_Tourism] Tourism in the City. +2 [ICON_Gold] from Luxury Resources. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
 		</Row>
 		<!-- Uniques -->
 		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_NAME">
 			<Text>Ordu Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_DESCRIPTION">
-			<Text>Grants +1 [ICON_GreatGeneral] Great General point and +1 [ICON_Production] Production from Pastures.[NEWLINE][NEWLINE]May not be built in an Encampment district that already has a Barracks.</Text>
+			<Text>Grants +1 [ICON_GreatGeneral] Great General point and +1 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_NAME">
 			<Text>Tsikhe Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_DESCRIPTION">
-			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [ICON_Amenities] Amenity and +1 [ICON_Faith] Faith.</Text>
+			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [ICON_Housing] Housing, +1 [ICON_Amenities] Amenity and +1 [ICON_Faith] Faith.</Text>
 		</Row>
 	</BaseGameText>
 </GameData>
