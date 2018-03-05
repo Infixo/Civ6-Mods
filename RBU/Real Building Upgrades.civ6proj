@@ -2,12 +2,12 @@
 <Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
-    <Name>LOC_RBU_MOD_NAME</Name>
+    <Name>Real Building Upgrades</Name>
     <Guid>a768ead1-32b9-4da5-9b05-eb966364670b</Guid>
     <ProjectGuid>1a3ca0a0-a62f-4f96-a7ad-dd9625927847</ProjectGuid>
     <ModVersion>1</ModVersion>
-    <Teaser>LOC_RBU_MOD_TEASER</Teaser>
-    <Description>LOC_RBU_MOD_DESCRIPTION</Description>
+    <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 2.0.[NEWLINE]French localization only for vanilla buildings.</Description>
     <Authors>Infixo</Authors>
     <SpecialThanks>Godzicraft (French tr.)</SpecialThanks>
     <AffectsSavedGames>true</AffectsSavedGames>
