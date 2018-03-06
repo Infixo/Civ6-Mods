@@ -399,8 +399,8 @@ function GetData()
 			
 		-- Big calls, obtain city data and add report specific fields to it.
 		local data		:table	= GetCityData( pCity );
-		data.Resources			= GetCityResourceData( pCity );					-- Add more data (not in CitySupport)			
-		data.WorkedTileYields, data.NumWorkedTiles = GetWorkedTileYieldData( pCity, pCulture );	-- Add more data (not in CitySupport)
+		data.Resources			= GetCityResourceData( pCity ); -- Add more data (not in CitySupport)			
+		data.WorkedTileYields, data.NumWorkedTiles, data.SpecialistYields, data.NumSpecialists = GetWorkedTileYieldData( pCity, pCulture );	-- Add more data (not in CitySupport)
 
 		-- Add to totals.
 		kCityTotalData.Income[YieldTypes.CULTURE]	= kCityTotalData.Income[YieldTypes.CULTURE] + data.CulturePerTurn;
@@ -480,6 +480,22 @@ function GetData()
 			end
 		end
 		
+		-- count all districts and specialty ones
+		data.NumDistricts = 0;
+		data.NumSpecialtyDistricts = 0
+		for _,district in pCity:GetDistricts():Members() do
+
+			local districtInfo	:table	= GameInfo.Districts[district:GetType()];
+			local districtType	:string = districtInfo.DistrictType;	
+			local isBuilt		:boolean = pCity:GetDistricts():HasDistrict(districtInfo.Index, true);
+			if isBuilt and not districtInfo.CityCenter and                             districtType ~= "DISTRICT_WONDER" then
+				data.NumDistricts = data.NumDistricts + 1;
+			end
+			if isBuilt and not districtInfo.CityCenter and districtInfo.OnePerCity and districtType ~= "DISTRICT_WONDER" then
+				data.NumSpecialtyDistricts = data.NumSpecialtyDistricts + 1;
+			end
+		end
+
 		-- Growth and related data
 		-- This part of code is from CityPanelOverview.lua, retrofitted to use here (it uses data as prepared by CitySupport.lua)
 		-- line 1, data.FoodPerTurn
@@ -911,41 +927,74 @@ end
 
 -- ===========================================================================
 --	Obtain the yields from the worked plots
+-- Infixo: again, original function is incomplete, the game uses a different algorithm
+-- 1. Get info about all tiles and citizens from CityManager.GetCommandTargets
+-- 2. If the plot is worked then
+--    2a. if it is a District then Yield = NumSpecs * District_CitizenYieldChanges.YieldChange
+--    2b. if it is NOT a District then Yield = plot:GetYield()
+-- I will break it into 2 rows, "Worked Tiles" and "Specialists" to avoid confusion
 -- ===========================================================================
 function GetWorkedTileYieldData( pCity:table, pCulture:table )
-
-	-- Loop through all the plots for a given city; tallying the resource amount.
-	local kYields : table = {
-		YIELD_PRODUCTION= 0,
-		YIELD_FOOD		= 0,
-		YIELD_GOLD		= 0,
-		YIELD_FAITH		= 0,
-		YIELD_SCIENCE	= 0,
-		YIELD_CULTURE	= 0,
-		TOURISM			= 0,
-	};
-	local cityPlots : table = Map.GetCityPlots():GetPurchasedPlots(pCity);
-	local pCitizens	: table = pCity:GetCitizens();	
+	-- return data
+	local kYields:table     = { YIELD_PRODUCTION = 0, YIELD_FOOD = 0, YIELD_GOLD = 0, YIELD_FAITH = 0, YIELD_SCIENCE = 0, YIELD_CULTURE	= 0, TOURISM = 0 };
+	local kSpecYields:table = { YIELD_PRODUCTION = 0, YIELD_FOOD = 0, YIELD_GOLD = 0, YIELD_FAITH = 0, YIELD_SCIENCE = 0, YIELD_CULTURE	= 0 };
 	local iNumWorkedPlots:number = 0;
-	for _, plotID in ipairs(cityPlots) do		
-		local plot	: table = Map.GetPlotByIndex(plotID);
-		local x		: number = plot:GetX();
-		local y		: number = plot:GetY();
-		isPlotWorked = pCitizens:IsPlotWorked(x,y);
-		if isPlotWorked then
-			for row in GameInfo.Yields() do			
-				kYields[row.YieldType] = kYields[row.YieldType] + plot:GetYield(row.Index);				
-			end
-			iNumWorkedPlots = iNumWorkedPlots + 1; --BRS
-		end
+	local iNumSpecialists:number = 0;
+	
+	-- code partially taken from PlotInfo.lua
+	local tParameters:table = {};
+	tParameters[CityCommandTypes.PARAM_MANAGE_CITIZEN] = UI.GetInterfaceModeParameter(CityCommandTypes.PARAM_MANAGE_CITIZEN);
+	local tResults:table = CityManager.GetCommandTargets( pCity, CityCommandTypes.MANAGE, tParameters );
+	if tResults == nil then
+		print("ERROR: GetWorkedTileYieldData, GetCommandTargets returned nil")
+		return kYields, 0, kSpecYields, 0;
+	end
 
+	local tPlots:table = tResults[CityCommandResults.PLOTS];
+	local tUnits:table = tResults[CityCommandResults.CITIZENS];
+	--local tMaxUnits		:table = tResults[CityCommandResults.MAX_CITIZENS]; -- not used
+	--local tLockedUnits	:table = tResults[CityCommandResults.LOCKED_CITIZENS]; -- not used
+	if tPlots == nil or table.count(tPlots) == 0 then
+		print("ERROR: GetWorkedTileYieldData, GetCommandTargets returned 0 plots")
+		return kYields, 0, kSpecYields, 0;
+	end
+	
+	--print("--- CITIZENS OF", pCity:GetName(), table.count(tPlots)); -- debug
+	for i,plotId in pairs(tPlots) do
+
+		local kPlot	:table = Map.GetPlotByIndex(plotId);
+		local index:number = kPlot:GetIndex();
+		local eDistrictType:number = kPlot:GetDistrictType();
+		local numUnits:number = tUnits[i];
+		--local maxUnits:number = tMaxUnits[i];
+		print("..plot", index, kPlot:GetX(), kPlot:GetY(), eDistrictType, numUnits, "yields", kPlot:GetYield(0), kPlot:GetYield(1));
+		
+		if numUnits > 0 then -- if worked at all
+			if eDistrictType > 0 then -- CITY_CENTER is treated as normal tile with yields, it is not a specialist
+				-- district
+				iNumSpecialists = iNumSpecialists + numUnits;
+				local sDistrictType:string = GameInfo.Districts[ eDistrictType ].DistrictType;
+				for row in GameInfo.District_CitizenYieldChanges() do
+					if row.DistrictType == sDistrictType then
+						kSpecYields[row.YieldType] = kSpecYields[row.YieldType] + numUnits * row.YieldChange;
+					end
+				end
+			else
+				-- normal tile or City Center
+				iNumWorkedPlots = iNumWorkedPlots + 1;
+				for row in GameInfo.Yields() do			
+					kYields[row.YieldType] = kYields[row.YieldType] + kPlot:GetYield(row.Index);				
+				end
+			end
+		end
 		-- Support tourism.
 		-- Not a common yield, and only exposure from game core is based off
 		-- of the plot so the sum is easily shown, but it's not possible to 
 		-- show how individual buildings contribute... yet.
-		kYields["TOURISM"] = kYields["TOURISM"] + pCulture:GetTourismAt( plotID );
+		kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( index );
 	end
-	return kYields, iNumWorkedPlots; --BRS added num of worked plots
+	--print("--- SUMMARY OF", pCity:GetName(), iNumWorkedPlots, iNumSpecialists); -- debug
+	return kYields, iNumWorkedPlots, kSpecYields, iNumSpecialists;
 end
 
 -- ===========================================================================
@@ -1298,15 +1347,29 @@ function ViewYieldsPage()
 		
 		if not Controls.HideCityBuildingsCheckbox:IsSelected() then --BRS
 		
-		--Worked Tiles
-		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.NumWorkedTiles),
-								kCityData.WorkedTileYields["YIELD_PRODUCTION"],
-								kCityData.WorkedTileYields["YIELD_GOLD"],
-								kCityData.WorkedTileYields["YIELD_FOOD"],
-								kCityData.WorkedTileYields["YIELD_SCIENCE"],
-								kCityData.WorkedTileYields["YIELD_CULTURE"],
-								kCityData.WorkedTileYields["YIELD_FAITH"]);
+		-- Worked Tiles
+		if kCityData.NumWorkedTiles > 0 then 
+			CreatLineItemInstance(	pCityInstance,
+									Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.NumWorkedTiles),
+									kCityData.WorkedTileYields["YIELD_PRODUCTION"],
+									kCityData.WorkedTileYields["YIELD_GOLD"],
+									kCityData.WorkedTileYields["YIELD_FOOD"],
+									kCityData.WorkedTileYields["YIELD_SCIENCE"],
+									kCityData.WorkedTileYields["YIELD_CULTURE"],
+									kCityData.WorkedTileYields["YIELD_FAITH"]);
+		end
+
+		-- Specialists
+		if kCityData.NumSpecialists > 0 then
+			CreatLineItemInstance(	pCityInstance,
+									Locale.Lookup("LOC_BRS_SPECIALISTS")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.NumSpecialists),
+									kCityData.SpecialistYields["YIELD_PRODUCTION"],
+									kCityData.SpecialistYields["YIELD_GOLD"],
+									kCityData.SpecialistYields["YIELD_FOOD"],
+									kCityData.SpecialistYields["YIELD_SCIENCE"],
+									kCityData.SpecialistYields["YIELD_CULTURE"],
+									kCityData.SpecialistYields["YIELD_FAITH"]);
+		end
 
 		-- Additional Yields from Population
 		-- added modifiers with EFFECT_ADJUST_CITY_YIELD_PER_POPULATION
@@ -1438,7 +1501,11 @@ function ViewYieldsPage()
 		local bFlatYields:boolean = false;
 		for _,mod in ipairs(kCityData.Modifiers) do
 			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_CHANGE" then
-				tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + mod.Arguments.Amount;
+				tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount);
+				bFlatYields = true;
+			end
+			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT" then
+				tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount) * kCityData.NumSpecialtyDistricts;
 				bFlatYields = true;
 			end
 		end
@@ -1459,7 +1526,7 @@ function ViewYieldsPage()
 		local bShowFollowers:boolean = false;
 		for _,mod in ipairs(kCityData.Modifiers) do
 			if mod.Modifier.EffectType == "EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER" then
-				tFollowersModifiers[ mod.Arguments.YieldType ] = tFollowersModifiers[ mod.Arguments.YieldType ] + mod.Arguments.Amount;
+				tFollowersModifiers[ mod.Arguments.YieldType ] = tFollowersModifiers[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount);
 				bShowFollowers = true;
 			end
 		end
@@ -1476,6 +1543,28 @@ function ViewYieldsPage()
 									true); -- don't store in base yields, we'll need it for other rows
 		end
 		
+		-- Percentage scaled yields from Modifiers EFFECT_ADJUST_CITY_YIELD_MODIFIER
+		local tPercYields:table = GetEmptyYieldsTable();
+		local bPercYields:boolean = false;
+		for _,mod in ipairs(kCityData.Modifiers) do
+			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_MODIFIER" then
+				tPercYields[ mod.Arguments.YieldType ] = tPercYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount);
+				bPercYields = true;
+			end
+		end
+		--print("MOD from PERC YIELDS", cityName); for k,v in pairs(tPercYields) do print(k,v); end
+		if bPercYields then
+			CreatLineItemInstance(	pCityInstance,
+									Locale.Lookup("LOC_BRS_FROM_MODIFIERS_PERCENT"),
+									kBaseYields.YIELD_PRODUCTION * tPercYields.YIELD_PRODUCTION / 100.0,
+									kBaseYields.YIELD_GOLD       * tPercYields.YIELD_GOLD       / 100.0,
+									kBaseYields.YIELD_FOOD       * tPercYields.YIELD_FOOD       / 100.0,
+									kBaseYields.YIELD_SCIENCE    * tPercYields.YIELD_SCIENCE    / 100.0,
+									kBaseYields.YIELD_CULTURE    * tPercYields.YIELD_CULTURE    / 100.0,
+									kBaseYields.YIELD_FAITH      * tPercYields.YIELD_FAITH      / 100.0,
+									true); -- don't store in base yields, we'll need it for other rows
+		end
+
 		-- Yields from Amenities -- Infixo TOTALLY WRONG amenities are applied to all yields, not only Worked Tiles; also must be the LAST calculated entry
 		--local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1); -- Infixo Buggy formula
 		local iYieldPercent:number = kCityData.HappinessNonFoodYieldModifier/100;

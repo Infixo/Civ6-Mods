@@ -140,6 +140,9 @@
 		<Text>Incoming</Text>
     </Row>
 	<!-- Other -->
+    <Row Tag="LOC_BRS_SPECIALISTS"> <!-- LOC_PEDIA_CONCEPTS_PAGE_CITIES_9_CHAPTER_CONTENT_TITLE -->
+		<Text>Specialists</Text>
+    </Row>
     <Row Tag="LOC_BRS_FROM_MODIFIERS">
 		<Text>From Modifiers</Text>
     </Row>
