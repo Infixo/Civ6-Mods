@@ -140,6 +140,9 @@
 		<Text>Entrante</Text>
     </Replace>
 	<!-- Other -->
+    <Replace Tag="LOC_BRS_SPECIALISTS" Language="es_ES"> <!-- LOC_PEDIA_CONCEPTS_PAGE_CITIES_9_CHAPTER_CONTENT_TITLE -->
+		<Text>Especialistas</Text>
+    </Replace>
     <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="es_ES">
 		<Text>A modificadores</Text>
     </Replace>

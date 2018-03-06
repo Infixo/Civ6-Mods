@@ -139,6 +139,9 @@
 		<Text>输入</Text>
     </Replace>
 	<!-- Other -->
+    <Replace Tag="LOC_BRS_SPECIALISTS" Language="zh_Hans_CN"> <!-- LOC_PEDIA_CONCEPTS_PAGE_CITIES_9_CHAPTER_CONTENT_TITLE -->
+		<Text>专家</Text>
+    </Replace>
     <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="zh_Hans_CN">
 		<Text>来自修正值</Text>
     </Replace>

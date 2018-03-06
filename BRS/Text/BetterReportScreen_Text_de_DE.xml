@@ -139,6 +139,9 @@
 		<Text>Eingehende</Text>
     </Replace>
 	<!-- Other -->
+    <Replace Tag="LOC_BRS_SPECIALISTS" Language="de_DE"> <!-- LOC_PEDIA_CONCEPTS_PAGE_CITIES_9_CHAPTER_CONTENT_TITLE -->
+		<Text>Spezialisten</Text>
+    </Replace>
     <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="de_DE">
 		<Text>Durch Modifikatoren</Text>
     </Replace>
