@@ -103,13 +103,13 @@
 			<Text>Ordu Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_DESCRIPTION">
-			<Text>Grants +1 [ICON_GreatGeneral] Great General point and +1 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
+			<Text>A building upgrade unique to Mongolia. Grants +1 [ICON_GreatGeneral] Great General point and +1 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_NAME">
 			<Text>Tsikhe Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_DESCRIPTION">
-			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [ICON_Housing] Housing, +1 [ICON_Amenities] Amenity and +1 [ICON_Faith] Faith.</Text>
+			<Text>A building upgrade unique to Georgia. It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [ICON_Housing] Housing, +1 [ICON_Amenities] Amenity and +1 [ICON_Faith] Faith.</Text>
 		</Row>
 	</BaseGameText>
 </GameData>

@@ -8,6 +8,7 @@
 -- Nov 13th, 2017 - Version 1.5, fix for Apadana crash
 -- 2018-03-04: Added Dar-e Mehr and Stupa
 -- 2018-03-05: Removed all EnabledByReligion=1 Upgrades (game only allows for 1), removed Apadana fix (no longer necessary)
+--             Added Basilikoi Paides and Prasat, some tweaks
 --------------------------------------------------------------
 
 -- Version 1.5 Fix for Apadana crash; 2018-03-05 no longer necessary (tested)
@@ -47,6 +48,7 @@ VALUES  -- generated from Excel
 ('ARMORY','GUNPOWDER',NULL,145,'ENCAMPMENT',2,'CONQUEST'),
 ('BANK','SCIENTIFIC_THEORY',NULL,215,'COMMERCIAL_HUB',0,'GENERIC'),
 ('BARRACKS','ENGINEERING',NULL,60,'ENCAMPMENT',1,'CONQUEST'),
+('BASILIKOI_PAIDES','ENGINEERING',NULL,45,'ENCAMPMENT',1,'CONQUEST'),
 ('BROADCAST_CENTER','COMPUTERS',NULL,720,'THEATER',3,'CULTURE'),
 ('CASTLE','PRINTING',NULL,165,'CITY_CENTER',1,'GENERIC'),
 --('CATHEDRAL',NULL,'REFORMED_CHURCH',140,'HOLY_SITE',0,NULL),
@@ -70,6 +72,7 @@ VALUES  -- generated from Excel
 --('PAGODA',NULL,'REFORMED_CHURCH',140,'HOLY_SITE',0,NULL),
 ('PALACE',NULL,'CODE_OF_LAWS',150,'CITY_CENTER',0,'GENERIC'),
 ('POWER_PLANT','COMPUTERS',NULL,720,'INDUSTRIAL_ZONE',4,'GENERIC'),
+('PRASAT',NULL,'DIVINE_RIGHT',90,'HOLY_SITE',2,'RELIGIOUS'),
 ('RESEARCH_LAB','NUCLEAR_FISSION',NULL,720,'CAMPUS',4,'TECHNOLOGY'),
 ('SEAPORT','COMPUTERS',NULL,720,'HARBOR',0,'GENERIC'),
 ('SEWER','CHEMISTRY',NULL,150,'CITY_CENTER',2,'GENERIC'),
@@ -99,6 +102,14 @@ WHERE BType = 'SUKIENNICE' AND NOT EXISTS (SELECT * FROM Buildings WHERE Buildin
 -- DLC: Aztecs - remove upgrade if base building is not there
 DELETE FROM RBUConfig
 WHERE BType = 'TLACHTLI' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_TLACHTLI');
+
+-- DLC: Macedon - remove upgrade if base building is not there
+DELETE FROM RBUConfig
+WHERE BType = 'BASILIKOI_PAIDES' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES');
+
+-- DLC: Khmer - remove upgrade if base building is not there
+DELETE FROM RBUConfig
+WHERE BType = 'PRASAT' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_PRASAT');
 
 --------------------------------------------------------------
 -- BUILDINGS
@@ -193,43 +204,36 @@ WHERE BuildingType IN (
 	'BUILDING_LIBRARY_UPGRADE',
 	'BUILDING_STADIUM_UPGRADE');
 	
--- Buildings enabled by Religion
+-- Buildings enabled by Religion - removed
 -- 2018-03-05 Game only allows for 1 such building, so Upgrades cannot be built :(
-/*
-UPDATE Buildings
-SET EnabledByReligion = 1, PurchaseYield = 'YIELD_FAITH'
-WHERE BuildingType IN (
-	'BUILDING_CATHEDRAL_UPGRADE',
-	'BUILDING_DAR_E_MEHR_UPGRADE',
-	'BUILDING_GURDWARA_UPGRADE',
-	'BUILDING_MEETING_HOUSE_UPGRADE',
-	'BUILDING_MOSQUE_UPGRADE',
-	'BUILDING_PAGODA_UPGRADE',
-	'BUILDING_STUPA_UPGRADE',
-	'BUILDING_SYNAGOGUE_UPGRADE',
-	'BUILDING_WAT_UPGRADE');
-*/
 
 -- Additonal Food same as Adjacency Bonuses
-INSERT INTO Building_YieldDistrictCopies (BuildingType, OldYieldType, NewYieldType)
-VALUES
-	('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_PRODUCTION', 'YIELD_GOLD'),
-	('BUILDING_SEAPORT_UPGRADE', 'YIELD_GOLD', 'YIELD_FOOD');
+INSERT INTO Building_YieldDistrictCopies (BuildingType, OldYieldType, NewYieldType) VALUES
+('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_PRODUCTION', 'YIELD_GOLD'),
+('BUILDING_SEAPORT_UPGRADE', 'YIELD_GOLD', 'YIELD_FOOD');
 
 -- Unique Buildings' Upgrades
 -- TraitType will be inserted separately, there are only 5 buildings
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_ELECTRONICS_FACTORY' WHERE BuildingType = 'BUILDING_ELECTRONICS_FACTORY_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_FILM_STUDIO' WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_MADRASA' WHERE BuildingType = 'BUILDING_MADRASA_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_STAVE_CHURCH' WHERE BuildingType = 'BUILDING_STAVE_CHURCH_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TLACHTLI' WHERE BuildingType = 'BUILDING_TLACHTLI_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_SUKIENNICE' WHERE BuildingType = 'BUILDING_SUKIENNICE_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_FILM_STUDIO'         WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_MADRASA'             WHERE BuildingType = 'BUILDING_MADRASA_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_STAVE_CHURCH'        WHERE BuildingType = 'BUILDING_STAVE_CHURCH_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TLACHTLI'            WHERE BuildingType = 'BUILDING_TLACHTLI_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_SUKIENNICE'          WHERE BuildingType = 'BUILDING_SUKIENNICE_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_BASILIKOI_PAIDES'    WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES_UPGRADE';
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_PRASAT'              WHERE BuildingType = 'BUILDING_PRASAT_UPGRADE';
 
 -- DLC: Poland
 INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
 SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'GREAT_PERSON_CLASS_MERCHANT', 1
-FROM RBUConfig
-WHERE BType = 'SUKIENNICE';
+FROM Buildings
+WHERE BuildingType = 'BUILDING_SUKIENNICE';
+
+-- DLC: Macedon
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'GREAT_PERSON_CLASS_SCIENTIST', 1
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
 
 INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
 SELECT CivUniqueBuildingType||'_UPGRADE', ReplacesBuildingType||'_UPGRADE'
@@ -240,6 +244,8 @@ WHERE CivUniqueBuildingType IN (
 	'BUILDING_STAVE_CHURCH',
 	'BUILDING_ELECTRONICS_FACTORY',
 	'BUILDING_TLACHTLI',
+	'BUILDING_BASILIKOI_PAIDES',
+	'BUILDING_PRASAT',
 	'BUILDING_SUKIENNICE');
 
 -- Connect Upgrades to Base Buildings
@@ -257,6 +263,16 @@ INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding) VAL
 ('BUILDING_MUSEUM_ART_UPGRADE', 'BUILDING_MUSEUM_ARTIFACT_UPGRADE'),
 ('BUILDING_MUSEUM_ARTIFACT_UPGRADE', 'BUILDING_MUSEUM_ART'),
 ('BUILDING_MUSEUM_ARTIFACT_UPGRADE', 'BUILDING_MUSEUM_ART_UPGRADE');
+
+-- DLC: Macedon
+INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
+INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE_UPGRADE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
 
 
 --------------------------------------------------------------
@@ -337,21 +353,34 @@ VALUES  -- generated from Excel
 ('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1),
 ('BUILDING_ZOO_UPGRADE', 'YIELD_GOLD', 1);
 
--- DLC: Poland must be updated separately
+-- DLC: Poland
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
 SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'YIELD_GOLD', 2
-FROM RBUConfig
-WHERE BType = 'SUKIENNICE';
+FROM Buildings
+WHERE BuildingType = 'BUILDING_SUKIENNICE';
 
--- DLC: Aztecs must be updated separately
+-- DLC: Aztecs
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
 SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_FAITH', 1
-FROM RBUConfig
-WHERE BType = 'TLACHTLI';
+FROM Buildings
+WHERE BuildingType = 'BUILDING_TLACHTLI';
+-- DLC: Aztecs
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
 SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_CULTURE', 1
-FROM RBUConfig
-WHERE BType = 'TLACHTLI';
+FROM Buildings
+WHERE BuildingType = 'BUILDING_TLACHTLI';
+
+-- DLC: Khmer
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'YIELD_FAITH', 2
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+-- DLC: Khmer
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'YIELD_FOOD', 1
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
 
 --------------------------------------------------------------
 -- MODIFIERS
@@ -460,27 +489,30 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('MUSEUMSUPGRADE_GREAT_WORK_WRITING_GOLD', 'YieldChange', '1'),
 -- Stadium Upgrade +10% to all Tourism
 ('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
-	
---------------------------------------------------------------
--- MODIFIERS FOR BELIEFS
--- 2018-03-05 Game only allows for 1 such building, so Upgrades cannot be built :(
---------------------------------------------------------------
-/*
-INSERT INTO BeliefModifiers (BeliefType, ModifierId)
-SELECT BeliefType, ModifierId||'_UPGRADE'
-FROM BeliefModifiers
-WHERE ModifierId IN (SELECT ModifierId FROM Modifiers WHERE ModifierType = 'MODIFIER_PLAYER_RELIGION_ADD_RELIGIOUS_BUILDING');
 
-INSERT INTO Modifiers (ModifierId, ModifierType)
-SELECT 'ALLOW_'||BType||'_UPGRADE', 'MODIFIER_PLAYER_RELIGION_ADD_RELIGIOUS_BUILDING'
-FROM RBUConfig
-WHERE 'BUILDING_'||BType||'_UPGRADE' IN (SELECT BuildingType FROM Buildings WHERE EnabledByReligion = 1);
+-- DLC: Macedon
+INSERT INTO BuildingModifiers (BuildingType, ModifierId)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION' -- Barracks' replacement
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
 
+-- DLC: Khmer
+INSERT INTO BuildingModifiers (BuildingType, ModifierId)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'PRASAT_UPGRADE_TOURISM'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+-- DLC: Khmer
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId)
+SELECT 'PRASAT_UPGRADE_TOURISM', 'MODIFIER_PLAYER_DISTRICT_ADJUST_TOURISM_CHANGE', 0, 0, NULL, NULL
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+-- DLC: Khmer
 INSERT INTO ModifierArguments (ModifierId, Name, Value)
-SELECT 'ALLOW_'||BType||'_UPGRADE', 'BuildingType', 'BUILDING_'||BType||'_UPGRADE'
-FROM RBUConfig
-WHERE 'BUILDING_'||BType||'_UPGRADE' IN (SELECT BuildingType FROM Buildings WHERE EnabledByReligion = 1);
-*/
+-- Prasat Upgrade +2 Tourism
+SELECT 'PRASAT_UPGRADE_TOURISM', 'Amount', '2'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
 
 --------------------------------------------------------------
 -- AI
