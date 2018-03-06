@@ -1204,7 +1204,7 @@ function ViewYieldsPage()
 			--BRS The only yields are from Adjacency, so this will duplicate them
 			--BRS show this line only for an icon and a name
 			local districtInstance = CreatLineItemInstance(	pCityInstance, 
-															kDistrict.Name,
+															(kDistrict.isBuilt and kDistrict.Name) or Locale.Lookup("LOC_CITY_BANNER_PRODUCING", kDistrict.Name),
 															0,--kDistrict.Production,
 															0,--kDistrict.Gold,
 															0,--kDistrict.Food,
@@ -1224,7 +1224,7 @@ function ViewYieldsPage()
 			end
 
 			--Adjacency
-			if HasValidAdjacencyBonus(kDistrict.AdjacencyBonus) then
+			if kDistrict.isBuilt and HasValidAdjacencyBonus(kDistrict.AdjacencyBonus) then -- Infixo fix for checking if it is actually built!
 				CreatLineItemInstance(	pCityInstance,
 										INDENT_STRING .. Locale.Lookup("LOC_HUD_REPORTS_ADJACENCY_BONUS"),
 										kDistrict.AdjacencyBonus.Production,

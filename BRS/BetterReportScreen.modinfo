@@ -3,9 +3,9 @@
 	<Properties>
 		<Name>Better Report Screen</Name>
 		<Teaser>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.</Teaser>
-		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise and Fall[ENDCOLOR] expansion. Supported languages: English, German, French, Japanese, Polish, Simplified Chinese, Traditional Chinese. Version 2.2.[NEWLINE][NEWLINE]Original Units and Deals tabs created by Greg Miller.</Description>
+		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supported languages: English, German, Spanish, French, Japanese, Korean, Polish, Simplified Chinese, Traditional Chinese. Version 2.3.[NEWLINE][NEWLINE]Original Units and Deals tabs created by Greg Miller.</Description>
 		<Authors>Infixo</Authors>
-		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul</SpecialThanks>
+		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul, RohBang, Gorlod</SpecialThanks>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
 	<ActionCriteria>
@@ -30,8 +30,10 @@
 		<UpdateText id="BRS_UpdateText">
 			<File>Text/BetterReportScreen_Text.xml</File>
 			<File>Text/BetterReportScreen_Text_de_DE.xml</File>
+			<File>Text/BetterReportScreen_Text_es_ES.xml</File>
 			<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
 			<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
+			<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
 			<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
 			<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
 			<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
@@ -57,11 +59,12 @@
         <File>ReportScreen.lua</File>
 		<File>RealModifierAnalysis.lua</File>
 		<File>RealModifierAnalysis.xml</File>
-		<!--<File>UnitPromotionPopup.lua</File>-->
 		<File>Text/BetterReportScreen_Text.xml</File>
 		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
+		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
 		<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
 		<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
+		<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
 		<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
 		<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
 		<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>

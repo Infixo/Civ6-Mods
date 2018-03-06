@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-02-23: Created -->
+<!-- 2018-03-05: Translated by Gorlod -->
+<GameData>
+
+<LocalizedText>
+	<!-- Tab names -->
+	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="es_ES">
+		<Text>Tratos en curso</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="es_ES">
+		<Text>Unidades</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="es_ES">
+		<Text>Políticas</Text>
+	</Replace>
+	<!-- Column headers -->
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="es_ES">
+		<Text>Edificios y Distritos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="es_ES">
+		<Text>Número de Edificios y Distritos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="es_ES">
+		<Text>Crecimiento</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="es_ES">
+		<Text>Felicidad</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="es_ES">
+		<Text>Nombre de la Política</Text>
+	</Replace>
+	<!-- Resource checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="es_ES">
+		<Text>Ocultar Detalles de Ciudad</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="es_ES">
+		<Text>Ocultar Edificios Gratuitos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="es_ES">
+		<Text>Ocultar Unidades Gratuitas</Text>
+	</Replace>
+	<!-- UNITS -->
+	<!-- Unit groups -->
+	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="es_ES">
+		<Text>Militares - Aéreas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="es_ES">
+		<Text>Militares - Navales</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="es_ES">
+		<Text>Militares - Terrestres</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="es_ES">
+		<Text>Civiles</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="es_ES">
+		<Text>Apoyo</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="es_ES">
+		<Text>Espías</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="es_ES">
+		<Text>Comerciantes</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="es_ES">
+		<Text>Grandes Personajes</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="es_ES">
+		<Text>Religiosas</Text>
+	</Replace>
+	<!-- Headers -->
+	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="es_ES">
+		<Text>Tipo</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="es_ES">
+		<Text>Nivel</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="es_ES">
+		<Text>Salud</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="es_ES">
+		<Text>Clase</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="es_ES">
+		<Text>Cargas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="es_ES">
+		<Text>Rendimientos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="es_ES">
+		<Text>Ruta comercial</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="es_ES">
+		<Text>Misión</Text>
+	</Replace>
+	<!-- Tooltips -->
+	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="es_ES">
+		<Text>Ir a esta Ciudad</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="es_ES">
+		<Text>Ver esta Unidad en el mapa</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="es_ES">
+		<Text>Guarnición</Text>
+	</Replace>
+	<!-- POLICIES -->
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="es_ES">
+		<Text>Políticas Militares</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="es_ES">
+		<Text>Políticas Económicas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="es_ES">
+		<Text>Políticas Diplomáticas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="es_ES">
+		<Text>Políticas Comodín</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="es_ES">
+		<Text>Políticas Gubernamentales</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="es_ES">
+		<Text>Políticas de Edad Oscura</Text>
+	</Replace>
+	<!-- Checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="es_ES">
+		<Text>Ocultar Políticas Inactivas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="es_ES">
+		<Text>Ocultar Políticas Sin Impacto</Text>
+	</Replace>
+	<!-- Deals -->
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="es_ES">
+      <Text>Saliente</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="es_ES">
+      <Text>Entrante</Text>
+    </Replace>
+
+</LocalizedText>
+
+</GameData>
