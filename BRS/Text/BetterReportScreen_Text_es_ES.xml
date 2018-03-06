@@ -134,10 +134,17 @@
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="es_ES">
-      <Text>Saliente</Text>
+		<Text>Saliente</Text>
     </Replace>
     <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="es_ES">
-      <Text>Entrante</Text>
+		<Text>Entrante</Text>
+    </Replace>
+	<!-- Other -->
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="es_ES">
+		<Text>A modificadores</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="es_ES">
+		<Text>A modificadores [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
 
 </LocalizedText>

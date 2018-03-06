@@ -133,10 +133,17 @@
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="zh_Hant_HK">
-      <Text>輸出</Text>
+		<Text>輸出</Text>
     </Replace>
     <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="zh_Hant_HK">
-      <Text>輸入</Text>
+		<Text>輸入</Text>
+    </Replace>
+	<!-- Other -->
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="zh_Hant_HK">
+		<Text>來自修正值</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="zh_Hant_HK">
+		<Text>來自修正值 [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
 
 </LocalizedText>

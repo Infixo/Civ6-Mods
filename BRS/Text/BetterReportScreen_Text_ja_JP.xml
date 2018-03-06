@@ -133,10 +133,17 @@
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="ja_JP">
-      <Text>自国</Text>
+		<Text>自国</Text>
     </Replace>
     <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="ja_JP">
-      <Text>相手</Text>
+		<Text>相手</Text>
+    </Replace>
+	<!-- Other -->
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="ja_JP">
+		<Text>修正により</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="ja_JP">
+		<Text>修正により [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
 
 </LocalizedText>

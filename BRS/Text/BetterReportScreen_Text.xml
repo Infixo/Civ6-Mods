@@ -134,17 +134,17 @@
 	</Row>
 	<!-- Deals -->
     <Row Tag="LOC_BRS_CURRENT_DEALS_OUTGOING">
-      <Text>Outgoing</Text>
+		<Text>Outgoing</Text>
     </Row>
     <Row Tag="LOC_BRS_CURRENT_DEALS_INCOMING">
-      <Text>Incoming</Text>
+		<Text>Incoming</Text>
     </Row>
 	<!-- Other -->
     <Row Tag="LOC_BRS_FROM_MODIFIERS">
-      <Text>From Modifiers</Text>
+		<Text>From Modifiers</Text>
     </Row>
     <Row Tag="LOC_BRS_FROM_MODIFIERS_PERCENT">
-      <Text>From Modifiers [COLOR_White]%[ENDCOLOR]</Text>
+		<Text>From Modifiers [COLOR_White]%[ENDCOLOR]</Text>
     </Row>
 
 </BaseGameText>

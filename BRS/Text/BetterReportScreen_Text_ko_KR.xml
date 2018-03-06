@@ -139,6 +139,13 @@
     <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="ko_KR">
 		<Text>수입</Text>
     </Replace>
+	<!-- Other -->
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="ko_KR">
+		<Text>보정치에서</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="ko_KR">
+		<Text>보정치에서 [COLOR_White]%[ENDCOLOR]</Text>
+    </Replace>
 
 </LocalizedText>
 
