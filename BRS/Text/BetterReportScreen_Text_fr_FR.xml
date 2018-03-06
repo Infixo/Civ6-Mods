@@ -17,10 +17,10 @@
 	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="fr_FR">
-		<Text>Bâtiments et Quartiers</Text>
+		<Text>Nom du bâtiment</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="fr_FR">
-		<Text>Nombre de Bâtiments et Quartiers</Text>
+		<Text>Nombre de bâtiments</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="fr_FR">
 		<Text>Croissance</Text>
@@ -33,13 +33,13 @@
 	</Replace>
 	<!-- Resource checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="fr_FR">
-		<Text>Masquer les détails pour la ville</Text>
+		<Text>Masquer détails des villes</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="fr_FR">
-		<Text>Masquer les bâtiments gratuits</Text>
+		<Text>Masquer bâtiments gratuits</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="fr_FR">
-		<Text>Masquer les unités gratuites</Text>
+		<Text>Masquer unités gratuites</Text>
 	</Replace>
 	<!-- UNITS -->
 	<!-- Unit groups -->
@@ -126,17 +126,17 @@
 	</Replace>
 	<!-- Checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="fr_FR">
-		<Text>Masquer les doctrines inactives</Text>
+		<Text>Masquer doctrines inactives</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="fr_FR">
-		<Text>Masquer les doctrines sans impactes</Text>
+		<Text>Masquer doctrines sans impactes</Text>
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="fr_FR">
-      <Text>Sortant(Donne)</Text>
+      <Text>Sortant (Donne)</Text>
     </Replace>
     <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="fr_FR">
-      <Text>Entrant(Obtient)</Text>
+      <Text>Entrant (Obtient)</Text>
     </Replace>
 
 </LocalizedText>

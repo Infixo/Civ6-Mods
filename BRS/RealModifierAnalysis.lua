@@ -2008,6 +2008,7 @@ end
 ------------------------------------------------------------------------------
 function Initialize()
 	-- exposed members
+	RMA.FetchAndCacheData = FetchAndCacheData;
 	RMA.DecodeModifier  = DecodeModifier;
 	RMA.RefreshBaseData = RefreshBaseData;
 	RMA.CalculateModifierEffect = CalculateModifierEffect;
