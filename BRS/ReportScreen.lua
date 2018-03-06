@@ -293,6 +293,8 @@ function GetData()
 	-- .Modifier - static as returned by RMA.FetchAndCacheData
 	-----------------------------------
 	m_kModifiers = {}; -- clear main table
+	local sTrackedPlayer:string = PlayerConfigurations[playerID]:GetLeaderName(); -- LOC_LEADER_xxx_NAME
+	print("Tracking player", sTrackedPlayer);
 	local tTrackedEffects:table = {
 		EFFECT_ADJUST_CITY_YIELD_CHANGE = true, -- all listed as Modifiers in CityPanel
 		EFFECT_ADJUST_CITY_YIELD_MODIFIER = true, -- e.g. governor's +20%, Wonders use it, some beliefs
@@ -303,36 +305,96 @@ function GetData()
 	};
 	for k,v in pairs(tTrackedEffects) do print(k,v); end
 	local tTrackedOwners:table = {};
-	for _,city in player:GetCities():Members() do tTrackedOwners[ city:GetName() ] = true; end
+	for _,city in player:GetCities():Members() do
+		tTrackedOwners[ city:GetName() ] = true;
+		m_kModifiers[ city:GetName() ] = {}; -- we need al least empty table for each city
+	end
 	for k,v in pairs(tTrackedOwners) do print(k,v); end
 	-- main loop
-	for _,instid in ipairs(GameEffects.GetModifiers()) do
-		local sOwnerName:string = GameEffects.GetObjectName( GameEffects.GetModifierOwner(instid) ); -- LOC_CITY_NAME_xxx
-		--print("checking", sOwnerName); -- debug
-		if tTrackedOwners[ sOwnerName ] then
-			local instdef:table = GameEffects.GetModifierDefinition(instid);
-			local data:table = {
-				ID = instid,
-				Active = GameEffects.GetModifierActive(instid), -- should always be true? but check to be safe
-				Definition = instdef, -- .Id has the static name
-				Arguments = instdef.Arguments, -- same structure as static, Name = Value
-				OwnerType = GameEffects.GetObjectType( GameEffects.GetModifierOwner(instid) ), -- LOC_MODIFIER_OBJECT_CITY, LOC_MODIFIER_OBJECT_GOVERNOR
-				OwnerName = sOwnerName,
-				Modifier = RMA.FetchAndCacheData(instdef.Id),
-			};
-			-- debug
-			print("TRACKING", sOwnerName); -- debug
-			for k,v in pairs(data) do print(k,v); end -- debug
-			print("MODIFIER:", data.Definition.Id);
-			print("COLLECTION:", data.Modifier.CollectionType);
-			print("EFFECT:", data.Modifier.EffectType);
-			print("ARGUMENTS:");
+	for _,instID in ipairs(GameEffects.GetModifiers()) do
+		local iOwnerID:number = GameEffects.GetModifierOwner( instID );
+		local iPlayerID:number = GameEffects.GetObjectsPlayerId( iOwnerID );
+		local sOwnerType:string = GameEffects.GetObjectType( iOwnerID ); -- LOC_MODIFIER_OBJECT_CITY, LOC_MODIFIER_OBJECT_PLAYER, LOC_MODIFIER_OBJECT_GOVERNOR
+		local sOwnerName:string = GameEffects.GetObjectName( iOwnerID ); -- LOC_CITY_xxx_NAME, LOC_LEADER_xxx_NAME, etc.
+		local tSubjects:table = GameEffects.GetModifierSubjects( instID ); -- table of objectIDs or nil
+		print("checking", instID, sOwnerName, sOwnerType, iOwnerID, iPlayerID); -- debug
+		
+		local instdef:table = GameEffects.GetModifierDefinition(instID);
+		local data:table = {
+			ID = instID,
+			Active = GameEffects.GetModifierActive(instID), -- should always be true? but check to be safe
+			Definition = instdef, -- .Id has the static name
+			Arguments = instdef.Arguments, -- same structure as static, Name = Value
+			OwnerType = sOwnerType,
+			OwnerName = sOwnerName,
+			SubjectType = nil, -- will be filled for modifiers taken from Subjects
+			SubjectName = nil, -- will be filled for modifiers taken from Subjects
+			Modifier = RMA.FetchAndCacheData(instdef.Id),
+		};
+		
+		local function RegisterModifierForCity(sSubjectType:string, sSubjectName:string)
+			--print("registering", data.ID, sSubjectType, sSubjectName);
+			if sSubjectType == nil or sSubjectName == nil then
+				data.SubjectType = nil;
+				data.SubjectName = nil;
+				--if not m_kModifiers[sOwnerName] then m_kModifiers[sOwnerName] = {}; end
+				table.insert(m_kModifiers[sOwnerName], data);
+			else -- register as subject
+				data.SubjectType = sSubjectType;
+				data.SubjectName = sSubjectName;
+				--if not m_kModifiers[sSubjectName] then m_kModifiers[sSubjectName] = {}; end
+				table.insert(m_kModifiers[sSubjectName], data);
+			end
+			-- debug output
+			print("---------------");
+			print("--- TRACKING", sOwnerName, sSubjectName);
+			for k,v in pairs(data) do print(k,v); end
+			print("--- MODIFIER:", data.Definition.Id);
+			print("--- COLLECTION:", data.Modifier.CollectionType);
+			print("--- EFFECT:", data.Modifier.EffectType);
+			print("--- ARGUMENTS:");
 			for k,v in pairs(data.Arguments) do print(k,v); end -- debug
-			if not m_kModifiers[sOwnerName] then m_kModifiers[sOwnerName] = {}; end
-			table.insert(m_kModifiers[sOwnerName], data);
+		end
+		
+		-- this part is for modifiers attached directly to the city (COLLECTION_OWNER)
+		if tTrackedOwners[ sOwnerName ] then
+			RegisterModifierForCity(); -- City is owner
+		end
+		
+		-- this part is for modifiers attached to the player
+		-- we need to analyze Subjects (COLLECTION_PLAYER_CITIES, COLLECTION_PLAYER_CAPITAL_CITY)
+		-- GetModifierTrackedObjects gives all Subjects, but GetModifierSubjects gves only those with met requirements!
+		if sOwnerType == "LOC_MODIFIER_OBJECT_PLAYER" and sOwnerName == sTrackedPlayer and tSubjects then
+			for _,subjectID in ipairs(tSubjects) do
+				local sSubjectType:string = GameEffects.GetObjectType( subjectID ); -- LOC_MODIFIER_OBJECT_CITY, LOC_MODIFIER_OBJECT_PLAYER, LOC_MODIFIER_OBJECT_GOVERNOR
+				local sSubjectName:string = GameEffects.GetObjectName( subjectID ); -- LOC_CITY_xxx_NAME, LOC_LEADER_xxx_NAME, etc.
+				if sSubjectType == "LOC_MODIFIER_OBJECT_CITY" then RegisterModifierForCity(sSubjectType, sSubjectName); end
+			end
+		end
+		
+		-- this part is for modifiers attached to Districts
+		-- we process all districts, but sOwnerName contains DistrictName if necessary LOC_DISTRICT_xxx_NAME
+		-- for each there is always set of Subjects, even if only 1 for a singular effect
+		-- those subjects can be LOC_MODIFIER_OBJECT_DISTRICT or LOC_MODIFIER_OBJECT_PLOT_YIELDS
+		-- then we need to find its City, which is stupidly hidden in a description string "District: districtID, Owner: playerID, City: cityID"
+		if iPlayerID == playerID and sOwnerType == "LOC_MODIFIER_OBJECT_DISTRICT" and tSubjects then
+			for _,subjectID in ipairs(tSubjects) do
+				local sSubjectType:string = GameEffects.GetObjectType( subjectID );
+				local sSubjectName:string = GameEffects.GetObjectName( subjectID );
+				if sSubjectType == "LOC_MODIFIER_OBJECT_DISTRICT" then
+					-- find a city
+					local sSubjectString:string = GameEffects.GetObjectString( subjectID );
+					local iCityID:number = tonumber( string.sub(sSubjectString, string.find(sSubjectString, "City:")+6) );
+					if iCityID ~= nil then
+						local pCity:table = player:GetCities():FindID(iCityID);
+						if pCity then RegisterModifierForCity(sSubjectType, pCity:GetName()); end
+					end
+				end
+			end
 		end
 	end
-	print("FOUND MODIFIERS"); for k,v in pairs(m_kModifiers) do print(k, #v); end
+	print("--------------"); print("FOUND MODIFIERS"); for k,v in pairs(m_kModifiers) do print(k, #v); end
+
 
 	local pCities = player:GetCities();
 	for i, pCity in pCities:Members() do	
@@ -1390,9 +1452,28 @@ function ViewYieldsPage()
 			end
 		end
 
-		-- Flat yields from Modifiers
-		
-		-- Religious followers
+		-- Flat yields from Modifiers EFFECT_ADJUST_CITY_YIELD_CHANGE
+		local tFlatYields:table = GetEmptyYieldsTable();
+		local bFlatYields:boolean = false;
+		for _,mod in ipairs(kCityData.Modifiers) do
+			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_CHANGE" then
+				tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + mod.Arguments.Amount;
+				bFlatYields = true;
+			end
+		end
+		print("MOD from FLAT YIELDS"); for k,v in pairs(tFlatYields) do print(k,v); end
+		if bFlatYields then
+			CreatLineItemInstance(	pCityInstance,
+									Locale.Lookup("LOC_BRS_FROM_MODIFIERS"),
+									tFlatYields.YIELD_PRODUCTION,
+									tFlatYields.YIELD_GOLD,
+									tFlatYields.YIELD_FOOD,
+									tFlatYields.YIELD_SCIENCE,
+									tFlatYields.YIELD_CULTURE,
+									tFlatYields.YIELD_FAITH); -- this one needs to be stored
+		end
+
+		-- Religious followers EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER
 		if kCityData.MajorityReligionFollowers > 0 then
 			local tFollowersModifiers:table = GetEmptyYieldsTable(); -- not yields, but stores numbers anyway
 			for _,mod in ipairs(kCityData.Modifiers) do
