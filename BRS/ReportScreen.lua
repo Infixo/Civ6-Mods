@@ -294,7 +294,7 @@ function GetData()
 	-----------------------------------
 	m_kModifiers = {}; -- clear main table
 	local sTrackedPlayer:string = PlayerConfigurations[playerID]:GetLeaderName(); -- LOC_LEADER_xxx_NAME
-	print("Tracking player", sTrackedPlayer);
+	--print("Tracking player", sTrackedPlayer); -- debug
 	local tTrackedEffects:table = {
 		EFFECT_ADJUST_CITY_YIELD_CHANGE = true, -- all listed as Modifiers in CityPanel
 		EFFECT_ADJUST_CITY_YIELD_MODIFIER = true, -- e.g. governor's +20%, Wonders use it, some beliefs
@@ -303,13 +303,13 @@ function GetData()
 		EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER = true, -- Work Ethic belief +1% Production; use the number of followers of the majority religion in the city
 		--EFFECT_ADJUST_CITY_YIELD_FROM_FOREIGN_TRADE_ROUTES_PASSING_THROUGH = true, -- unknown
 	};
-	for k,v in pairs(tTrackedEffects) do print(k,v); end
+	--for k,v in pairs(tTrackedEffects) do print(k,v); end -- debug
 	local tTrackedOwners:table = {};
 	for _,city in player:GetCities():Members() do
 		tTrackedOwners[ city:GetName() ] = true;
 		m_kModifiers[ city:GetName() ] = {}; -- we need al least empty table for each city
 	end
-	for k,v in pairs(tTrackedOwners) do print(k,v); end
+	-- for k,v in pairs(tTrackedOwners) do print(k,v); end -- debug
 	-- main loop
 	for _,instID in ipairs(GameEffects.GetModifiers()) do
 		local iOwnerID:number = GameEffects.GetModifierOwner( instID );
@@ -317,7 +317,7 @@ function GetData()
 		local sOwnerType:string = GameEffects.GetObjectType( iOwnerID ); -- LOC_MODIFIER_OBJECT_CITY, LOC_MODIFIER_OBJECT_PLAYER, LOC_MODIFIER_OBJECT_GOVERNOR
 		local sOwnerName:string = GameEffects.GetObjectName( iOwnerID ); -- LOC_CITY_xxx_NAME, LOC_LEADER_xxx_NAME, etc.
 		local tSubjects:table = GameEffects.GetModifierSubjects( instID ); -- table of objectIDs or nil
-		print("checking", instID, sOwnerName, sOwnerType, iOwnerID, iPlayerID); -- debug
+		--print("checking", instID, sOwnerName, sOwnerType, iOwnerID, iPlayerID); -- debug
 		
 		local instdef:table = GameEffects.GetModifierDefinition(instID);
 		local data:table = {
@@ -337,23 +337,20 @@ function GetData()
 			if sSubjectType == nil or sSubjectName == nil then
 				data.SubjectType = nil;
 				data.SubjectName = nil;
-				--if not m_kModifiers[sOwnerName] then m_kModifiers[sOwnerName] = {}; end
 				table.insert(m_kModifiers[sOwnerName], data);
 			else -- register as subject
 				data.SubjectType = sSubjectType;
 				data.SubjectName = sSubjectName;
-				--if not m_kModifiers[sSubjectName] then m_kModifiers[sSubjectName] = {}; end
 				table.insert(m_kModifiers[sSubjectName], data);
 			end
 			-- debug output
-			print("---------------");
-			print("--- TRACKING", sOwnerName, sSubjectName);
-			for k,v in pairs(data) do print(k,v); end
-			print("--- MODIFIER:", data.Definition.Id);
-			print("--- COLLECTION:", data.Modifier.CollectionType);
-			print("--- EFFECT:", data.Modifier.EffectType);
-			print("--- ARGUMENTS:");
-			for k,v in pairs(data.Arguments) do print(k,v); end -- debug
+			--print("--------- Tracking", data.ID, sOwnerType, sOwnerName, sSubjectName);
+			--for k,v in pairs(data) do print(k,v); end
+			--print("- Modifier:", data.Definition.Id);
+			--print("- Collection:", data.Modifier.CollectionType);
+			--print("- Effect:", data.Modifier.EffectType);
+			--print("- Arguments:");
+			--for k,v in pairs(data.Arguments) do print(k,v); end -- debug
 		end
 		
 		-- this part is for modifiers attached directly to the city (COLLECTION_OWNER)
@@ -363,7 +360,7 @@ function GetData()
 		
 		-- this part is for modifiers attached to the player
 		-- we need to analyze Subjects (COLLECTION_PLAYER_CITIES, COLLECTION_PLAYER_CAPITAL_CITY)
-		-- GetModifierTrackedObjects gives all Subjects, but GetModifierSubjects gves only those with met requirements!
+		-- GetModifierTrackedObjects gives all Subjects, but GetModifierSubjects gives only those with met requirements!
 		if sOwnerType == "LOC_MODIFIER_OBJECT_PLAYER" and sOwnerName == sTrackedPlayer and tSubjects then
 			for _,subjectID in ipairs(tSubjects) do
 				local sSubjectType:string = GameEffects.GetObjectType( subjectID ); -- LOC_MODIFIER_OBJECT_CITY, LOC_MODIFIER_OBJECT_PLAYER, LOC_MODIFIER_OBJECT_GOVERNOR
@@ -374,7 +371,7 @@ function GetData()
 		
 		-- this part is for modifiers attached to Districts
 		-- we process all districts, but sOwnerName contains DistrictName if necessary LOC_DISTRICT_xxx_NAME
-		-- for each there is always set of Subjects, even if only 1 for a singular effect
+		-- for each there is always a set of Subjects, even if only 1 for a singular effect
 		-- those subjects can be LOC_MODIFIER_OBJECT_DISTRICT or LOC_MODIFIER_OBJECT_PLOT_YIELDS
 		-- then we need to find its City, which is stupidly hidden in a description string "District: districtID, Owner: playerID, City: cityID"
 		if iPlayerID == playerID and sOwnerType == "LOC_MODIFIER_OBJECT_DISTRICT" and tSubjects then
@@ -393,7 +390,7 @@ function GetData()
 			end
 		end
 	end
-	print("--------------"); print("FOUND MODIFIERS"); for k,v in pairs(m_kModifiers) do print(k, #v); end
+	--print("--------------"); print("FOUND MODIFIERS"); for k,v in pairs(m_kModifiers) do print(k, #v); end
 
 
 	local pCities = player:GetCities();
@@ -470,7 +467,7 @@ function GetData()
 				if religionData.Religion == eDominantReligion then data.MajorityReligionFollowers = religionData.Followers; end
 			end
 		end
-		print("Majority religion followers for", cityName, data.MajorityReligionFollowers);
+		--print("Majority religion followers for", cityName, data.MajorityReligionFollowers);
 		
 		-- Garrison in a city
 		data.IsGarrisonUnit = false;
@@ -1148,6 +1145,10 @@ end
 -- ===========================================================================
 --	Tab Callback
 -- ===========================================================================
+
+local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
+local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
+
 function ViewYieldsPage()
 
 	ResetTabForNewPageContent();
@@ -1182,27 +1183,9 @@ function ViewYieldsPage()
 	
 	-- helper for calculating lines from modifiers
 	local function GetEmptyYieldsTable()
-		return {
-			YIELD_PRODUCTION = 0,
-			YIELD_FOOD		 = 0,
-			YIELD_GOLD		 = 0,
-			YIELD_FAITH		 = 0,
-			YIELD_SCIENCE	 = 0,
-			YIELD_CULTURE	 = 0,
-		};
+		return { YIELD_PRODUCTION = 0, YIELD_FOOD = 0, YIELD_GOLD = 0, YIELD_FAITH = 0, YIELD_SCIENCE = 0, YIELD_CULTURE = 0 };
 	end
 	-- Infixo needed to properly calculate yields from % modifiers (like amenities)
-	--[[
-	local kBaseYields : table = {
-		YIELD_PRODUCTION = 0,
-		YIELD_FOOD		 = 0, -- not affected, but added for consistency
-		YIELD_GOLD		 = 0,
-		YIELD_FAITH		 = 0,
-		YIELD_SCIENCE	 = 0,
-		YIELD_CULTURE	 = 0,
-		TOURISM			 = 0,
-	};
-	--]]
 	local kBaseYields:table = GetEmptyYieldsTable();
 	kBaseYields.TOURISM = 0;
 	local function StoreInBaseYields(sYield:string, fValue:number) kBaseYields[ sYield ] = kBaseYields[ sYield ] + fValue; end
@@ -1282,14 +1265,6 @@ function ViewYieldsPage()
 		end
 
 		-- Infixo: this is the place to add Yield Focus
-		--[[
-		pCityInstance.Production:SetText( toPlusMinusString(kCityData.ProductionPerTurn) );
-		pCityInstance.Food:SetText( toPlusMinusString(kCityData.FoodPerTurn) );
-		pCityInstance.Gold:SetText( toPlusMinusString(kCityData.GoldPerTurn) );
-		pCityInstance.Faith:SetText( toPlusMinusString(kCityData.FaithPerTurn) );
-		pCityInstance.Science:SetText( toPlusMinusString(kCityData.SciencePerTurn) );
-		pCityInstance.Culture:SetText( toPlusMinusString(kCityData.CulturePerTurn) );
-		--]]
 		local function SetYieldTextAndFocusFlag(pLabel:table, fValue:number, eYieldType:number)
 			local sText:string = toPlusMinusString(fValue);
 			local sToolTip:string = "";
@@ -1334,17 +1309,23 @@ function ViewYieldsPage()
 								kCityData.WorkedTileYields["YIELD_FAITH"]);
 
 		-- Additional Yields from Population
-		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
-		local populationToScienceScale:number = GameInfo.GlobalParameters["SCIENCE_PERCENTAGE_YIELD_PER_POP"].Value / 100; -- Infixo added science per pop
+		-- added modifiers with EFFECT_ADJUST_CITY_YIELD_PER_POPULATION
+		local tPopYields:table = GetEmptyYieldsTable(); -- will always show
+		for _,mod in ipairs(kCityData.Modifiers) do
+			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_POPULATION" then
+				tPopYields[ mod.Arguments.YieldType ] = tPopYields[ mod.Arguments.YieldType ] + kCityData.Population * tonumber(mod.Arguments.Amount);
+			end
+		end
 		CreatLineItemInstance(	pCityInstance,
 								Locale.Lookup("LOC_HUD_CITY_POPULATION")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.Population),
-								0,
-								0,
-								kCityData.FoodConsumption, -- food
-								kCityData.Population * populationToScienceScale,
-								kCityData.Population * populationToCultureScale, 
-								0);
+								tPopYields.YIELD_PRODUCTION,
+								tPopYields.YIELD_GOLD,
+								tPopYields.YIELD_FOOD    + kCityData.FoodConsumption, -- food
+								tPopYields.YIELD_SCIENCE + kCityData.Population * populationToScienceScale,
+								tPopYields.YIELD_CULTURE + kCityData.Population * populationToCultureScale,
+								tPopYields.YIELD_FAITH);
 
+		-- Main loop for all districts and buildings
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			--District line item
 			--BRS The only yields are from Adjacency, so this will duplicate them
@@ -1461,7 +1442,7 @@ function ViewYieldsPage()
 				bFlatYields = true;
 			end
 		end
-		print("MOD from FLAT YIELDS"); for k,v in pairs(tFlatYields) do print(k,v); end
+		--print("MOD from FLAT YIELDS"); for k,v in pairs(tFlatYields) do print(k,v); end
 		if bFlatYields then
 			CreatLineItemInstance(	pCityInstance,
 									Locale.Lookup("LOC_BRS_FROM_MODIFIERS"),
@@ -1474,14 +1455,16 @@ function ViewYieldsPage()
 		end
 
 		-- Religious followers EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER
-		if kCityData.MajorityReligionFollowers > 0 then
-			local tFollowersModifiers:table = GetEmptyYieldsTable(); -- not yields, but stores numbers anyway
-			for _,mod in ipairs(kCityData.Modifiers) do
-				if mod.Modifier.EffectType == "EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER" then
-					tFollowersModifiers[ mod.Arguments.YieldType ] = tFollowersModifiers[ mod.Arguments.YieldType ] + mod.Arguments.Amount;
-				end
+		local tFollowersModifiers:table = GetEmptyYieldsTable(); -- not yields, but stores numbers anyway
+		local bShowFollowers:boolean = false;
+		for _,mod in ipairs(kCityData.Modifiers) do
+			if mod.Modifier.EffectType == "EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER" then
+				tFollowersModifiers[ mod.Arguments.YieldType ] = tFollowersModifiers[ mod.Arguments.YieldType ] + mod.Arguments.Amount;
+				bShowFollowers = true;
 			end
-			print("MOD from FOLLOWERS"); for k,v in pairs(tFollowersModifiers) do print(k,v); end
+		end
+		--print("MOD from FOLLOWERS"); for k,v in pairs(tFollowersModifiers) do print(k,v); end
+		if bShowFollowers then
 			CreatLineItemInstance(	pCityInstance,
 									Locale.Lookup("LOC_UI_RELIGION_FOLLOWERS")..string.format("  [COLOR_White]%d[ENDCOLOR]", kCityData.MajorityReligionFollowers),
 									kBaseYields.YIELD_PRODUCTION * tFollowersModifiers.YIELD_PRODUCTION * kCityData.MajorityReligionFollowers / 100.0,
@@ -1496,16 +1479,6 @@ function ViewYieldsPage()
 		-- Yields from Amenities -- Infixo TOTALLY WRONG amenities are applied to all yields, not only Worked Tiles; also must be the LAST calculated entry
 		--local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1); -- Infixo Buggy formula
 		local iYieldPercent:number = kCityData.HappinessNonFoodYieldModifier/100;
-		--[[
-		CreatLineItemInstance(	pCityInstance,
-								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES"),
-								kCityData.WorkedTileYields["YIELD_PRODUCTION"] * iYieldPercent,
-								kCityData.WorkedTileYields["YIELD_GOLD"] * iYieldPercent,
-								0,
-								kCityData.WorkedTileYields["YIELD_SCIENCE"] * iYieldPercent,
-								kCityData.WorkedTileYields["YIELD_CULTURE"] * iYieldPercent,
-								kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent);
-		--]]
 		local sModifierColor:string;
 		if     kCityData.HappinessNonFoodYieldModifier == 0 then sModifierColor = "COLOR_White";
 		elseif kCityData.HappinessNonFoodYieldModifier  > 0 then sModifierColor = "COLOR_Green";
@@ -2784,6 +2757,15 @@ function UpdatePolicyData()
 	Timer1Tick("--- ALL POLICY DATA ---");
 end
 
+local tPolicyOrder:table = {
+	SLOT_MILITARY = 1,
+	SLOT_ECONOMIC = 2,
+	SLOT_DIPLOMATIC = 3,
+	SLOT_GREAT_PERSON = 4,
+	SLOT_LEGACY = 5,
+	SLOT_DARKAGE = 6,
+}
+
 function ViewPolicyPage()
 
 	ResetTabForNewPageContent();
@@ -2791,7 +2773,7 @@ function ViewPolicyPage()
 	-- fill
 	--for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
 	--for policyGroup,policies in pairs(m_kPolicyData) do
-	for policyGroup,policies in spairs( m_kPolicyData, function(t,a,b) return a < b; end ) do -- simple sort by group code name
+	for policyGroup,policies in spairs( m_kPolicyData, function(t,a,b) return tPolicyOrder[a] < tPolicyOrder[b]; end ) do -- simple sort by group code name
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
