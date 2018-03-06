@@ -967,7 +967,7 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 		local eDistrictType:number = kPlot:GetDistrictType();
 		local numUnits:number = tUnits[i];
 		--local maxUnits:number = tMaxUnits[i];
-		print("..plot", index, kPlot:GetX(), kPlot:GetY(), eDistrictType, numUnits, "yields", kPlot:GetYield(0), kPlot:GetYield(1));
+		--print("..plot", index, kPlot:GetX(), kPlot:GetY(), eDistrictType, numUnits, "yields", kPlot:GetYield(0), kPlot:GetYield(1));
 		
 		if numUnits > 0 then -- if worked at all
 			if eDistrictType > 0 then -- CITY_CENTER is treated as normal tile with yields, it is not a specialist
