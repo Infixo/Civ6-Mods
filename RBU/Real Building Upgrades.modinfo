@@ -8,6 +8,11 @@
     <SpecialThanks>Godzicraft (French tr.)</SpecialThanks>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
   </Properties>
+  <ActionCriteria>
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+  </ActionCriteria>
   <FrontEndActions />
   <InGameActions>
     <UpdateIcons id="RBU_Icons">
@@ -28,25 +33,25 @@
       <File>Icons/RBU_Buildings128.dds</File>
       <File>Icons/RBU_Buildings256.dds</File>
     </ImportFiles>
-    <UpdateIcons id="RBU_RF_Icons">
+    <UpdateIcons id="RBU_RF_Icons" criteria="Expansion1">
       <Properties>
         <LoadOrder>2</LoadOrder>
       </Properties>
       <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
     </UpdateIcons>
-    <UpdateDatabase id="RBU_RF_Database">
+    <UpdateDatabase id="RBU_RF_Database" criteria="Expansion1">
       <Properties>
         <LoadOrder>2</LoadOrder>
       </Properties>
       <File>RiseFall/RealBuildingUpgradesRF.sql</File>
     </UpdateDatabase>
-    <UpdateText id="RBU_RF_Text">
+    <UpdateText id="RBU_RF_Text" criteria="Expansion1">
       <Properties>
         <LoadOrder>2</LoadOrder>
       </Properties>
       <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
     </UpdateText>
-    <ImportFiles id="RBU_RF_Imports">
+    <ImportFiles id="RBU_RF_Imports" criteria="Expansion1">
       <Properties>
         <LoadOrder>2</LoadOrder>
       </Properties>
