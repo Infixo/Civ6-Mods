@@ -1,15 +1,15 @@
-print("Loading CivilopediaScreen_RCP.lua from Real Civilopedia, version 0.1");
+print("Loading CivilopediaScreen_RCP.lua from Real Civilopedia, version 0.3");
 --------------------------------------------------------------
 -- Real Civilopedia
 -- Author: Infixo
 -- 2018-02-18: Created, raw modifier analysis
 -- 2018-02-22: Remember last visited page (based on CQUI code)
+-- 2018-03-07: Added Civs, Leaders, Units, Great People and reworked City-States
 --------------------------------------------------------------
 
--- exposing functions and variables
+-- exposed functions and variables
 if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
--- insert functions/objects into RMA in Initialize()
 
 -- Base File
 include("CivilopediaScreen");
@@ -23,17 +23,6 @@ for k,v in pairs(PageLayouts) do
 	BASE_PageLayouts[k] = v;
 end
 
-
---------------------------------------------------------------
--- Time helpers
---------------------------------------------------------------
-local fStartTime:number = 0.0
-function TimerStart()
-	fStartTime = Automation.GetTime()
-end
-function TimerTick(txt:string)
-	print("Timer1 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime))
-end
 
 --------------------------------------------------------------
 -- 2018-02-22: Remember last visited page (based on CQUI code)
@@ -61,95 +50,12 @@ function OnClose()
 	BASE_OnClose();
 end
 
+
 --------------------------------------------------------------
-
--- Tables with modifiers
-local tModifiersTables = {
-	["Belief"] = "BeliefModifiers", -- BeliefType
-	["Building"] = "BuildingModifiers", -- BuildingType
-	["Civic"] = "CivicModifiers", -- CivicType
-	-- CommemorationModifiers -- no Pedia page for that!
-	["District"] = "DistrictModifiers", -- DistrictType
-	-- GameModifiers -- not shown in Pedia?
-	["Government"] = "GovernmentModifiers", -- GovernmentType
-	-- GovernorModifiers -- currently not used
-	["GovernorPromotion"] = "GovernorPromotionModifiers", -- GovernorPromotionType
-	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
-	-- GreatPersonIndividualActionModifiers -- GreatPersonIndividualType + AttachmentTargetType
-	["Improvement"] = "ImprovementModifiers", -- ImprovementType
-	-- ["Leader"] = "LeaderTraits" => "TraitModifiers" -- TraitType
-	["Policy"] = "PolicyModifiers", -- PolicyType
-	["Project"] = "ProjectCompletionModifiers", -- ProjectType
-	["Technology"] = "TechnologyModifiers", -- TechnologyType
-	["Trait"] = "TraitModifiers", -- TraitType
-	-- ["Unit"] = "UnitAbilityModifiers", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
-	["UnitPromotion"] = "UnitPromotionModifiers", -- UnitPromotionType
-}
-
--- Owners for various modifiers, i.e. tells which owner to use when collection is "COLLECTION_OWNER"
-local tModifiersOwners = {
-	["Belief"] = "Player",
-	["Building"] = "City",
-	["Civic"] = "Player",
-	-- CommemorationModifiers -- no Pedia page for that!
-	["District"] = "District", -- or City?
-	-- GameModifiers -- not shown in Pedia?
-	["Government"] = "Player",
-	-- GovernorModifiers -- currently not used
-	["GovernorPromotion"] = "City",
-	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
-	-- GreatPersonIndividualActionModifiers -- GreatPersonIndividualType + AttachmentTargetType
-	["Improvement"] = "City",
-	-- ["Leader"] = "LeaderTraits" => "TraitModifiers" -- TraitType
-	["Policy"] = "Player",
-	["Project"] = "City", -- depends on MaxPlayerInstances, if 1 then "Player", if NULL then "City"
-	["Technology"] = "Player",
-	["Trait"] = "Player",
-	-- ["Unit"] = "UnitAbilityModifiers", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
-	["UnitPromotion"] = "Unit",
-}
-	
---PageLayouts["Building"] = function(page)
-	--print("INSIDE MY OWN FUNCTON, showing (page)...");
-	--for k,v in pairs(page) do print(k,v); end
-	--BASE_PageLayout_Building(page);
-	--ShowInternalPageInfo(page);
---end
-
-function ShowModifiers(page)
-	local sModifiersTable:string = tModifiersTables[ page.PageLayoutId ];
-	-- check if there are modifiers at all
-	if sModifiersTable == nil then return; end
-	local sObjectType:string = page.PageLayoutId.."Type"; -- simple version for starters
-	local chapter_body = {};
-	-- iterate and find them
-	--print("...checking modifiers (obj,table,field)", page.PageId, sModifiersTable, sObjectType);
-	TimerStart()
-	for mod in GameInfo[sModifiersTable]() do
-		if mod[sObjectType] == page.PageId then
-			-- stupid Firaxis, some fields are named ModifierId and some ModifierID (sic!)
-			local sModifierId:string = mod.ModifierId;
-			if not sModifierId then sModifierId = mod.ModifierID; end -- fix for BeliefModifiers, GoodyHutSubTypes, ImprovementModifiers
-			local sText:string, pYields:table, sAttachedId:string = RMA.DecodeModifier(sModifierId);
-			table.insert(chapter_body, sText);
-			if sAttachedId then
-				sText, pYields, sAttachedId = RMA.DecodeModifier(sAttachedId);
-				table.insert(chapter_body, sText);
-			end
-		--else
-			--print("comp:", mod[sObjectType], page.PageId);
-		end
-	end
-	if #chapter_body == 0 then
-		table.insert(chapter_body, "No modifiers for this object.");
-	end
-	TimerTick("All modifiers for "..page.PageId)
-	AddChapter("Modifiers", chapter_body);
-end
+-- GENERIC ADDITION
 
 function ShowInternalPageInfo(page)
-	-- now do it in the window! -- Left Column
-	--AddChapter("Test Single", "This is a single paragraph.");
+	if true then return end
 	local chapter_body = {};
 	for k,v in pairs(page) do
 		if type(v) ~= "table" then
@@ -159,26 +65,137 @@ function ShowInternalPageInfo(page)
 		end
 	end
 	AddChapter("Internal page info", chapter_body);
-	--end
 end
+
+local tPagesToSkip:table = {
+	FrontPage = true,
+	Simple = true,
+	Resource = true,
+	Terrain = true,
+	Feature = true,
+	Religion = true,
+	Route = true,
+	HistoricMoment = true,
+}
 
 -- add internal info to all pages at once
 function ShowPage(page)
 	--print("...showing page layout", page.PageLayoutId);
 	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
-	--ShowModifiers(page);
+	if tPagesToSkip[ page.PageLayoutId ] then return; end
+
 	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
 	local chapter_body = {};
 	table.insert(chapter_body, sImpact);
 	table.insert(chapter_body, sToolTip);
-	AddChapter("New modifiers", chapter_body);
+	AddChapter("Modifiers", chapter_body);
+
 	ShowInternalPageInfo(page);
 end
+
 for k,v in pairs(PageLayouts) do
 	PageLayouts[k] = ShowPage;
 end
 
--- exceptions
+
+--------------------------------------------------------------
+-- EXCEPTIONS
+
+PageLayouts["GreatPerson"] = function(page)
+	print("...showing page layout", page.PageLayoutId);
+	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	-- we need to show (a) GreatPersonIndividualActionModifiers (b) GreatPersonIndividualBirthModifiers
+	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("GreatPersonIndividual", page.PageId, Game.GetLocalPlayer(), nil);
+	local chapter_body = {};
+	table.insert(chapter_body, sImpact);
+	table.insert(chapter_body, sToolTip);
+	AddChapter("Action Modifiers", chapter_body);
+	ShowInternalPageInfo(page);
+end
+
+
+-- exceptions Units
+-- Units.UnitType=UNIT_INDIAN_VARU
+-- TypeTags.Type=UNIT_INDIAN_VARU /.Tag=CLASS_VARU
+-- TypeTags.Type=UNIT_INDIAN_VARU /.Tag=CLASS_HEAVY_CAVALRY
+-- TypeTags.Type=ABILITY_VARU / .Class=CLASS_VARU
+-- UnitAbilities.UnitAbilityType=ABILITY_VARU
+PageLayouts["Unit"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	-- start with page.PageId, it contains UnitType
+	-- built ability list
+	local tAbilities:table = {};
+	for row in GameInfo.TypeTags() do
+		if row.Type == page.PageId then
+			-- add class
+			for row2 in GameInfo.TypeTags() do
+				if row2.Tag == row.Tag and string.sub(row2.Type, 1, 7) == "ABILITY" then tAbilities[ row2.Type ] = true; end
+			end
+		end
+	end
+	-- show modifiers
+	--for k,v in pairs(tAbilities) do print(k,v) end
+	for ability,_ in pairs(tAbilities) do
+		local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("UnitAbility", ability, Game.GetLocalPlayer(), nil);
+		local chapter_body = {};
+		table.insert(chapter_body, sImpact);
+		table.insert(chapter_body, sToolTip);
+		AddChapter(Locale.Lookup(GameInfo.UnitAbilities[ability].Name), chapter_body);
+	end
+	
+	ShowInternalPageInfo(page);
+end
+
+
+-- build a table of all uniques in the DB
+local tAllUniques:table = {};
+function AddUniques(sTable:string)
+	for row in GameInfo[sTable]() do
+		if row.TraitType then tAllUniques[ row.TraitType ] = row.Name; end
+	end
+end
+AddUniques("Units");
+AddUniques("Buildings");
+AddUniques("Districts");
+AddUniques("Improvements");
+
+PageLayouts["Civilization"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	-- iterate through Traits that are not Uniques
+	for row in GameInfo.CivilizationTraits() do
+		if row.CivilizationType == page.PageId and not tAllUniques[row.TraitType] then
+			local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", row.TraitType, Game.GetLocalPlayer(), nil);
+			local chapter_body = {};
+			table.insert(chapter_body, sImpact);
+			table.insert(chapter_body, sToolTip);
+			AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body);
+		end
+	end
+	ShowInternalPageInfo(page);
+end
+
+PageLayouts["Leader"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	-- iterate through Traits
+	for row in GameInfo.LeaderTraits() do
+		if row.LeaderType == page.PageId then
+			local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", row.TraitType, Game.GetLocalPlayer(), nil);
+			local chapter_body = {};
+			table.insert(chapter_body, sImpact);
+			table.insert(chapter_body, sToolTip);
+			AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body);
+		end
+	end
+	ShowInternalPageInfo(page);
+end
+
+
 PageLayouts["CityState"] = function(page)
 	print("...showing page layout", page.PageLayoutId);
 	BASE_PageLayouts[page.PageLayoutId](page); -- call original function
@@ -226,15 +243,6 @@ PageLayouts["CityState"] = function(page)
 		has_leader[v.LeaderType] = true;
 	end
 	
-	-- Show leaders
-	--for k,v in pairs(has_leader) do if v then print(civType, "has leader", k) end end
-	local tOut = {};
-	--table.insert(tOut, "Leaders:");
-	for k,v in pairs(has_leader) do
-		if v then table.insert(tOut, k); end
-	end
-	AddChapter("Leaders", tOut);
-	
 	-- TRAITS
     local traits = {};
     local has_trait = {};
@@ -253,45 +261,17 @@ PageLayouts["CityState"] = function(page)
 
     -- Populate traits from leaders (including inherited)
     for row in GameInfo.LeaderTraits() do
-        if(has_leader[row.LeaderType] == true and has_trait[row.TraitType] ~= true) then AddTrait(row.TraitType); end
-    end
-	
-	-- Show Traits
-	--for k,v in pairs(has_leader) do if v then print(civType, "has leader", k) end end
-	tOut = {};
-	--table.insert(tOut, "Leaders:");
-	for i,trait in ipairs(traits) do
-		local sTrait:string = trait.TraitType;
-		if trait.InternalOnly then sTrait = sTrait.." (internal)"; end
-		table.insert(tOut, sTrait);
-	end
-	AddChapter("Traits", tOut);
-
-	-- Show Modifiers
-	local chapter_body = {};
-	-- iterate and find them
-	--print("...checking modifiers (obj,table,field)", page.PageId, sModifiersTable, sObjectType);
-	for mod in GameInfo.TraitModifiers() do
-		if has_trait[mod.TraitType] then
-			local sModifierId:string = mod.ModifierId;
-			local sText:string, pYields:table, sAttachedId:string = RMA.DecodeModifier(sModifierId);
-			table.insert(chapter_body, sText);
-			if sAttachedId then
-				sText, pYields, sAttachedId = RMA.DecodeModifier(sAttachedId);
-				table.insert(chapter_body, sText);
-			end
-		--else
-			--print("comp:", mod[sObjectType], page.PageId);
+        if has_leader[row.LeaderType] and not has_trait[row.TraitType] and row.TraitType ~= "MINOR_CIV_DEFAULT_TRAIT" then
+			-- just display the trait
+			local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", row.TraitType, Game.GetLocalPlayer(), nil);
+			local chapter_body = {};
+			table.insert(chapter_body, sImpact);
+			table.insert(chapter_body, sToolTip);
+			AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body);
 		end
-	end
-	if #chapter_body == 0 then
-		table.insert(chapter_body, "No modifiers for this object.");
-	end
-	AddChapter("Modifiers", chapter_body);
-	
-	-- end
+    end
+
 	ShowInternalPageInfo(page);
 end
-
 
 print("OK loaded CivilopediaScreen_RCP.lua from Real Civilopedia");
