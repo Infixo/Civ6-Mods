@@ -1895,17 +1895,17 @@ local tModifiersTables:table = {
 	["District"] = "DistrictModifiers", -- DistrictType
 	-- GameModifiers -- not shown in Pedia?
 	["Government"] = "GovernmentModifiers", -- GovernmentType
-	-- GovernorModifiers -- currently not used
+	["Governor"] = "GovernorModifiers", -- currently empty
 	["GovernorPromotion"] = "GovernorPromotionModifiers", -- GovernorPromotionType
 	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
-	-- GreatPersonIndividualActionModifiers -- GreatPersonIndividualType + AttachmentTargetType
+	["GreatPersonIndividual"] = "GreatPersonIndividualActionModifiers", -- GreatPersonIndividualType + AttachmentTargetType
 	["Improvement"] = "ImprovementModifiers", -- ImprovementType
 	-- ["Leader"] = "LeaderTraits" => "TraitModifiers" -- TraitType
 	["Policy"] = "PolicyModifiers", -- PolicyType
 	["Project"] = "ProjectCompletionModifiers", -- ProjectType
 	["Technology"] = "TechnologyModifiers", -- TechnologyType
 	["Trait"] = "TraitModifiers", -- TraitType
-	-- ["Unit"] = "UnitAbilityModifiers", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
+	["UnitAbility"] = "UnitAbilityModifiers", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
 	["UnitPromotion"] = "UnitPromotionModifiers", -- UnitPromotionType
 }
 
