@@ -336,6 +336,10 @@ function GetData()
 		
 		local function RegisterModifierForCity(sSubjectType:string, sSubjectName:string)
 			--print("registering", data.ID, sSubjectType, sSubjectName);
+			-- fix for sudden changes in modifier system, like Veterancy changed in March 2018 patch
+			-- some modifiers might be removed, but still are attached to objects from old games
+			-- the game itself seems to be resistant to such situation
+			if data.Modifier == nil then print("WARNING! GetData/Modifiers: Ignoring non-existing modifier", data.ID, data.Definition.Id, sOwnerName, sSubjectName); return end
 			if sSubjectType == nil or sSubjectName == nil then
 				data.SubjectType = nil;
 				data.SubjectName = nil;

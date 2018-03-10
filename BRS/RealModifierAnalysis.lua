@@ -1307,7 +1307,7 @@ function FetchAndCacheData(sModifierId:string)
 		end
 	end
 	-- check if it exists!
-	if table.count(tModifier) == 0 then return nil; end
+	if table.count(tModifier) == 0 then print("WARNING! FetchAndCacheData: No definition for Modifier", sModifierId); return nil; end
 	-- DynamicModifiers
 	sModifierType = tModifier.ModifierType;
 	for mod in GameInfo.DynamicModifiers() do
