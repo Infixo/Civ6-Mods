@@ -50,7 +50,8 @@ do
 end
 --]]
 --BRS !! Added function to sort out tables for units
-local bUnits = { group = {}, parent = {}, type = "" }
+-- Infixo: this is only used by Upgrade Callback; parent will be used a flag; must be set to nil when leaving report screen
+local tUnitSort = { type = "", group = "", parent = nil };
 
 -- Infixo: this is an iterator to replace pairs
 -- it sorts t and returns its elements one by one
@@ -135,6 +136,7 @@ function Close()
 
 	UIManager:DequeuePopup(ContextPtr);
 	--print("Closing... current tab is:", m_kCurrentTab);
+	tUnitSort.parent = nil; -- unit upgrades off the report screen should not call re-sort
 end
 
 
@@ -2401,7 +2403,7 @@ function unit_sortFunction( descend, type, t, a, b )
 		aUnit = t[a].City
 		bUnit = t[b].City
 		if aUnit ~= "" and bUnit ~= "" then 
-			if descend then return bUnit > aUnit else return bUnit < aUnit end
+			if descend then return aUnit > bUnit else return aUnit < bUnit end
 		else
 			if     aUnit == "" then return false;
 			elseif bUnit == "" then return true;
@@ -2411,14 +2413,13 @@ function unit_sortFunction( descend, type, t, a, b )
 		return false; -- assert
 	end
 	
-	if descend then return bUnit > aUnit else return bUnit < aUnit end
+	if descend then return aUnit > bUnit else return aUnit < bUnit end
 	
 end
 
 function sort_units( type, group, parent )
 
 	local i = 0
-	--local unit_group = m_kUnitData["Unit_Report"][group]
 	local unit_group = m_kUnitDataReport[group]
 	
 	for _, unit in spairs( unit_group.units, function( t, a, b ) return unit_sortFunction( parent.Descend, type, t, a, b ) end ) do
@@ -2528,7 +2529,12 @@ function group_military( unit, unitInstance, group, parent, type )
 
 	if ( bCanStart ) then
 		unitInstance.Upgrade:SetHide( false )
-		unitInstance.Upgrade:RegisterCallback( Mouse.eLClick, function() bUnits.group = group; bUnits.parent = parent; bUnits.type = type; UnitManager.RequestCommand( unit, UnitCommandTypes.UPGRADE ); end )
+		unitInstance.Upgrade:RegisterCallback( Mouse.eLClick, function()
+			-- the only case where we need to re-sort units preserving current order
+			-- actual re-sort must be done in Event, otherwise unit info is not refreshed (ui cache?)
+			tUnitSort.type = type; tUnitSort.group = group; tUnitSort.parent = parent;
+			UnitManager.RequestCommand( unit, UnitCommandTypes.UPGRADE );
+		end )
 		local upgradeUnitName = GameInfo.Units[tResults[UnitOperationResults.UNIT_TYPE]].Name;
 		local toolTipString	= Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_DESCRIPTION" );
 		toolTipString = toolTipString .. " " .. Locale.Lookup(upgradeUnitName);
@@ -2653,20 +2659,20 @@ end
 function ViewUnitsPage()
 
 	ResetTabForNewPageContent();
+	tUnitSort.parent = nil;
 	
-	--for iUnitGroup, kUnitGroup in spairs( m_kUnitData["Unit_Report"], function( t, a, b ) return t[b].ID > t[a].ID end ) do
 	for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup(kUnitGroup.Name) );
 		instance.RowHeaderLabel:SetHide( false ); --BRS
-		--instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_BRS_UNITS_GROUP_NUM_UNITS", #kUnitGroup.units) );
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(#kUnitGroup.units) );
 		instance.AmenitiesContainer:SetHide(true);
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
-		--local iNumRows:number = 0;
 
+		-- Infixo: important info - iUnitGroup is NOT integer nor table, it is a STRING taken from FORMATION_CLASS_xxx
 		if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
@@ -2684,28 +2690,22 @@ function ViewUnitsPage()
 		if pHeaderInstance.UnitTurnsButton then    pHeaderInstance.UnitTurnsButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "turns", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitCityButton then     pHeaderInstance.UnitCityButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "city", iUnitGroup, instance ) end ) end
 
-		for _,unit in ipairs( kUnitGroup.units ) do			
+		instance.Descend = false;
+		for _,unit in spairs( kUnitGroup.units, function( t, a, b ) return unit_sortFunction( false, "name", t, a, b ) end ) do -- initial sort by name ascending
 			local unitInstance:table = {}
 			table.insert( instance.Children, unitInstance )
 			
 			ContextPtr:BuildInstanceForControl( kUnitGroup.Entry, unitInstance, instance.ContentStack );
-			--iNumRows = iNumRows + 1;
 			
 			common_unit_fields( unit, unitInstance )
 			
-			if kUnitGroup.func then kUnitGroup.func( unit, unitInstance, iUnitGroup, instance ) end
+			if kUnitGroup.func then kUnitGroup.func( unit, unitInstance, iUnitGroup, instance, "name" ) end
 			
 			-- allows you to select a unit and zoom to them
 			unitInstance.LookAtButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( unit:GetX( ), unit:GetY( ) ); UI.SelectUnit( unit ); end )
 			unitInstance.LookAtButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end )
 		end
 
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(#kUnitGroup.units) );
-	
-		--local pFooterInstance:table = {}
-		--ContextPtr:BuildInstanceForControl( "UnitsFooterInstance", pFooterInstance, instance.ContentStack )
-		--pFooterInstance.Amount:SetText( tostring( #kUnitGroup.units ) )
-	
 		SetGroupCollapsePadding(instance, 0); --pFooterInstance.Top:GetSizeY() )
 		RealizeGroup( instance );
 	end
@@ -3091,10 +3091,15 @@ function Initialize()
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );
 	ContextPtr:SetInputHandler( OnInputHandler, true );
-	ContextPtr:SetRefreshHandler( function() if bUnits.group then m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData(); UpdatePolicyData(); sort_units( bUnits.type, bUnits.group, bUnits.parent ); end; end )
-	
-	Events.UnitPromoted.Add( function() LuaEvents.UnitPanel_HideUnitPromotion(); ContextPtr:RequestRefresh() end )
-	Events.UnitUpgraded.Add( function() ContextPtr:RequestRefresh() end )
+
+	Events.UnitUpgraded.Add(
+		function()
+			if not tUnitSort.parent then return; end
+			-- refresh data and re-sort group which upgraded unit was from
+			m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
+			UpdatePolicyData();
+			sort_units( tUnitSort.type, tUnitSort.group, tUnitSort.parent );
+		end );
 
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnCloseButton );
 	Controls.CloseButton:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
