@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+--------------------------------------------------------------
+-- Real Civilopedia
+-- Author: Infixo
+-- 2018-03-11: Created
+--------------------------------------------------------------
+-->
+<GameInfo>
+	<!-- Dedications will be addedd as another PageGroup in GOVERNMENTS section -->
+	<CivilopediaPageGroups>
+		<Row SectionID="GOVERNMENTS" PageGroupId="DEDICATIONS" Name="LOC_PEDIA_CONCEPTS_PAGE_DEDICATIONS_CHAPTER_CONTENT_TITLE" Tooltip="" VisibleIfEmpty="false" SortIndex="70"/>
+	</CivilopediaPageGroups>
+	<!-- A query to select dedications into a PageGroup -->
+	<CivilopediaPageQueries>
+		<Row SectionId="GOVERNMENTS" PageGroupIdColumn="PageGroupId" TooltipColumn="Tooltip" SortIndex="10">
+			<SQL>SELECT CommemorationType as PageId, "DEDICATIONS" as PageGroupId, "Commemoration" as PageLayoutId, CategoryDescription as Name, NULL as Tooltip FROM CommemorationTypes</SQL>
+		</Row>
+	</CivilopediaPageQueries>
+	<!-- new layout -->
+	<CivilopediaPageLayouts>
+		<Row PageLayoutId="Commemoration" ScriptTemplate="Commemoration"/>
+	</CivilopediaPageLayouts>
+	<!-- no special chapters -->
+	<CivilopediaPageLayoutChapters>
+	</CivilopediaPageLayoutChapters>
+</GameInfo>

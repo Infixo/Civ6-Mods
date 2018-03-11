@@ -1,25 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
-  <Properties>
-    <Name>Real Civilopedia</Name>
-    <Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE][NEWLINE]Version 0.3</Description>
-    <Teaser>More information in Civilopedia!</Teaser>
-    <Authors>Infixo</Authors>
-    <AffectsSavedGames>0</AffectsSavedGames>
-  </Properties>
-  <Dependencies>
-    <Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" minversion="1" maxversion="999" title="Better Report Screen"/>
-  </Dependencies>
-  <InGameActions>
-    <ReplaceUIScript id="RCP_Replace_CivilopediaScreen">
-      <Properties>
-	    <LuaContext>CivilopediaScreen</LuaContext>
-	    <LuaReplace>CivilopediaScreen_RCP.lua</LuaReplace>
-	  </Properties>
-    </ReplaceUIScript>
-  </InGameActions>
-  <Files>
-    <File>CivilopediaScreen_RCP.lua</File>
-    <File>CivilopediaSupport_RCP.lua</File>
-  </Files>
+	<Properties>
+		<Name>Real Civilopedia</Name>
+		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE][NEWLINE]Version 0.4</Description>
+		<Teaser>More information in Civilopedia!</Teaser>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<Dependencies>
+		<Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" minversion="1" maxversion="999" title="Better Report Screen"/>
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="Expansion1">
+			<GameCoreInUse>Expansion1</GameCoreInUse>
+		</Criteria>
+	</ActionCriteria>
+	<InGameActions>
+		<ImportFiles id="RCP_Imports_RiseFall" criteria="Expansion1">
+			<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
+		</ImportFiles>
+		<UpdateDatabase id="RCP_Database_RiseFall" criteria="Expansion1">
+			<File>RiseFall/Civilopedia_Commemorations.xml</File>
+		</UpdateDatabase>
+		<ReplaceUIScript id="RCP_Replace_CivilopediaScreen">
+			<Properties>
+				<LuaContext>CivilopediaScreen</LuaContext>
+				<LuaReplace>CivilopediaScreen_RCP.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+	</InGameActions>
+	<Files>
+		<!-- shared -->
+		<File>CivilopediaScreen_RCP.lua</File>
+		<!-- Rise & Fall -->
+		<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
+		<File>RiseFall/Civilopedia_Commemorations.xml</File>
+	</Files>
 </Mod>

@@ -1891,7 +1891,7 @@ local tModifiersTables:table = {
 	["Belief"] = "BeliefModifiers", -- BeliefType
 	["Building"] = "BuildingModifiers", -- BuildingType
 	["Civic"] = "CivicModifiers", -- CivicType
-	-- CommemorationModifiers -- no Pedia page for that!
+	["Commemoration"] = "CommemorationModifiers", -- no Pedia page for that!
 	["District"] = "DistrictModifiers", -- DistrictType
 	-- GameModifiers -- not shown in Pedia?
 	["Government"] = "GovernmentModifiers", -- GovernmentType
