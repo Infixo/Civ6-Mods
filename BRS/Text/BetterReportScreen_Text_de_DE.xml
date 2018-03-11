@@ -148,6 +148,19 @@
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="de_DE">
 		<Text>Durch Modifikatoren [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="de_DE"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>Für Gebäude</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="de_DE"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>Für Bezirke</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="de_DE"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>Für Einheiten</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="de_DE"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>Durch {1_Num : plural 1?{1} Bezirk; other?{1} Bezirke;}</Text>
+    </Replace>
 
 </LocalizedText>
 

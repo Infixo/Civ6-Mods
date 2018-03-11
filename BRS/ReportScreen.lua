@@ -502,6 +502,17 @@ function GetData()
 			end
 		end
 
+		-- current production type
+		data.CurrentProductionType = "NONE";
+		local iCurrentProductionHash:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
+		if iCurrentProductionHash ~= 0 then
+			if     GameInfo.Buildings[iCurrentProductionHash] ~= nil then data.CurrentProductionType = "BUILDING";
+			elseif GameInfo.Districts[iCurrentProductionHash] ~= nil then data.CurrentProductionType = "DISTRICT";
+			elseif GameInfo.Units[iCurrentProductionHash]     ~= nil then data.CurrentProductionType = "UNIT";
+			elseif GameInfo.Projects[iCurrentProductionHash]  ~= nil then data.CurrentProductionType = "PROJECT";
+			end
+		end
+		
 		-- Growth and related data
 		-- This part of code is from CityPanelOverview.lua, retrofitted to use here (it uses data as prepared by CitySupport.lua)
 		-- line 1, data.FoodPerTurn
@@ -1286,7 +1297,7 @@ function ViewYieldsPage()
 		local pCityInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "CityIncomeInstance", pCityInstance, instance.ContentStack ) ;
 		pCityInstance.LineItemStack:DestroyAllChildren();
-		TruncateStringWithTooltip(pCityInstance.CityName, 230, Locale.Lookup(kCityData.CityName));
+		TruncateStringWithTooltip(pCityInstance.CityName, 230, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
 		pCityInstance.CityPopulation:SetText(kCityData.Population);
 
 		--Great works
@@ -1510,23 +1521,87 @@ function ViewYieldsPage()
 				tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount);
 				bFlatYields = true;
 			end
-			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT" then
-				tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount) * kCityData.NumSpecialtyDistricts;
-				bFlatYields = true;
-			end
 		end
 		--print("MOD from FLAT YIELDS"); for k,v in pairs(tFlatYields) do print(k,v); end
 		if bFlatYields then
-			CreatLineItemInstance(	pCityInstance,
-									Locale.Lookup("LOC_BRS_FROM_MODIFIERS"),
-									tFlatYields.YIELD_PRODUCTION,
-									tFlatYields.YIELD_GOLD,
-									tFlatYields.YIELD_FOOD,
-									tFlatYields.YIELD_SCIENCE,
-									tFlatYields.YIELD_CULTURE,
-									tFlatYields.YIELD_FAITH); -- this one needs to be stored
+			CreatLineItemInstance(
+				pCityInstance, Locale.Lookup("LOC_BRS_FROM_MODIFIERS"),
+				tFlatYields.YIELD_PRODUCTION, tFlatYields.YIELD_GOLD, tFlatYields.YIELD_FOOD, tFlatYields.YIELD_SCIENCE, tFlatYields.YIELD_CULTURE, tFlatYields.YIELD_FAITH
+			); -- this one needs to be stored
 		end
 
+		-- Flat yields from Modifiers EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT
+		if kCityData.NumSpecialtyDistricts > 0 then
+			tFlatYields = GetEmptyYieldsTable();
+			bFlatYields = false;
+			for _,mod in ipairs(kCityData.Modifiers) do
+				if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT" then
+					tFlatYields[ mod.Arguments.YieldType ] = tFlatYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount) * kCityData.NumSpecialtyDistricts;
+					bFlatYields = true;
+				end
+			end
+			if bFlatYields then
+				CreatLineItemInstance(
+					pCityInstance, Locale.Lookup("LOC_BRS_HAVING_DISTRICTS", kCityData.NumSpecialtyDistricts),
+					tFlatYields.YIELD_PRODUCTION, tFlatYields.YIELD_GOLD, tFlatYields.YIELD_FOOD, tFlatYields.YIELD_SCIENCE, tFlatYields.YIELD_CULTURE, tFlatYields.YIELD_FAITH
+				); -- this one needs to be stored
+			end
+		end
+		
+		-- Flat yields from Modifiers EFFECT_ADJUST_CITY_PRODUCTION_BUILDING
+		if kCityData.CurrentProductionType == "BUILDING" then
+			tFlatYields = GetEmptyYieldsTable();
+			bFlatYields = false;
+			for _,mod in ipairs(kCityData.Modifiers) do
+				if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_BUILDING" then
+					tFlatYields.YIELD_PRODUCTION = tFlatYields.YIELD_PRODUCTION + tonumber(mod.Arguments.Amount);
+					bFlatYields = true;
+				end
+			end
+			if bFlatYields then
+				CreatLineItemInstance(
+					pCityInstance, Locale.Lookup("LOC_BRS_PROD_BUILDINGS"),
+					tFlatYields.YIELD_PRODUCTION, tFlatYields.YIELD_GOLD, tFlatYields.YIELD_FOOD, tFlatYields.YIELD_SCIENCE, tFlatYields.YIELD_CULTURE, tFlatYields.YIELD_FAITH
+				); -- this one needs to be stored
+			end
+		end
+		
+		-- Flat yields from Modifiers EFFECT_ADJUST_CITY_PRODUCTION_DISTRICT
+		if kCityData.CurrentProductionType == "DISTRICT" then
+			tFlatYields = GetEmptyYieldsTable();
+			bFlatYields = false;
+			for _,mod in ipairs(kCityData.Modifiers) do
+				if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_DISTRICT" then
+					tFlatYields.YIELD_PRODUCTION = tFlatYields.YIELD_PRODUCTION + tonumber(mod.Arguments.Amount);
+					bFlatYields = true;
+				end
+			end
+			if bFlatYields then
+				CreatLineItemInstance(
+					pCityInstance, Locale.Lookup("LOC_BRS_PROD_DISTRICTS"),
+					tFlatYields.YIELD_PRODUCTION, tFlatYields.YIELD_GOLD, tFlatYields.YIELD_FOOD, tFlatYields.YIELD_SCIENCE, tFlatYields.YIELD_CULTURE, tFlatYields.YIELD_FAITH
+				); -- this one needs to be stored
+			end
+		end
+		
+		-- Flat yields from Modifiers EFFECT_ADJUST_CITY_PRODUCTION_UNIT
+		if kCityData.CurrentProductionType == "UNIT" then
+			tFlatYields = GetEmptyYieldsTable();
+			bFlatYields = false;
+			for _,mod in ipairs(kCityData.Modifiers) do
+				if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_UNIT" then
+					tFlatYields.YIELD_PRODUCTION = tFlatYields.YIELD_PRODUCTION + tonumber(mod.Arguments.Amount);
+					bFlatYields = true;
+				end
+			end
+			if bFlatYields then
+				CreatLineItemInstance(
+					pCityInstance, Locale.Lookup("LOC_BRS_PROD_UNITS"),
+					tFlatYields.YIELD_PRODUCTION, tFlatYields.YIELD_GOLD, tFlatYields.YIELD_FOOD, tFlatYields.YIELD_SCIENCE, tFlatYields.YIELD_CULTURE, tFlatYields.YIELD_FAITH
+				); -- this one needs to be stored
+			end
+		end
+		
 		-- Religious followers EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER
 		local tFollowersModifiers:table = GetEmptyYieldsTable(); -- not yields, but stores numbers anyway
 		local bShowFollowers:boolean = false;
@@ -2049,7 +2124,7 @@ function city_fields( kCityData, pCityInstance )
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
-	TruncateStringWithTooltip(pCityInstance.CityName, 138, Locale.Lookup(kCityData.CityName));
+	TruncateStringWithTooltip(pCityInstance.CityName, 138, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
 	--if bIsRiseFall then

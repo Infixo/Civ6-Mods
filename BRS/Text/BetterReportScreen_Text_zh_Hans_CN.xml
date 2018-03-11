@@ -148,6 +148,19 @@
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="zh_Hans_CN">
 		<Text>来自修正值 [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="zh_Hans_CN"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>有助于建筑</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="zh_Hans_CN"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>有助于区域</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="zh_Hans_CN"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>有助于单位</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="zh_Hans_CN"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>来自拥有的{1_Num : plural 1?{1} 区域; other?{1} 区域;}</Text>
+    </Replace>
 
 </LocalizedText>
 

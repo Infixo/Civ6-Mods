@@ -149,6 +149,19 @@
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="ko_KR">
 		<Text>보정치에서 [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="ko_KR"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>건물로</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="ko_KR"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>특수지구로</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="ko_KR"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>유닛으로</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="ko_KR"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>특수지구 소유에서 가 제공됩니다 {1_Num}</Text>
+    </Replace>
 
 </LocalizedText>
 

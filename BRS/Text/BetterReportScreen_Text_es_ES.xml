@@ -149,6 +149,19 @@
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="es_ES">
 		<Text>A modificadores [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="es_ES"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>A edificios</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="es_ES"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>A distritos</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="es_ES"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>A unidades</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="es_ES"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>Por tener {1_Num: plural 1?{1} distrito; other?{1} distritos;}</Text>
+    </Replace>
 
 </LocalizedText>
 

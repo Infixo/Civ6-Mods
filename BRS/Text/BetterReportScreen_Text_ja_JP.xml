@@ -148,6 +148,19 @@
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="ja_JP">
 		<Text>修正により [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="ja_JP"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>建造物に対して</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="ja_JP"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>区域に対して</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="ja_JP"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>ユニットに対して</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="ja_JP"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>{1_Num : plural 1?{1} 区域; other?{1} 区域;}の所有により</Text>
+    </Replace>
 
 </LocalizedText>
 

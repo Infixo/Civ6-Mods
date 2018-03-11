@@ -148,6 +148,19 @@
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="pl_PL">
 		<Text>Z modyfikatorów [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="pl_PL"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>Do budowli</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="pl_PL"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>Do dzielnic</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="pl_PL"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>Do jednostek</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="pl_PL"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>Dzięki posiadaniu {1_Num} {1_Num: plural 1?dzielnicy; other?dzielnic;}</Text>
+    </Replace>
 
 </LocalizedText>
 

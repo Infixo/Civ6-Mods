@@ -149,6 +149,19 @@
     <Row Tag="LOC_BRS_FROM_MODIFIERS_PERCENT">
 		<Text>From Modifiers [COLOR_White]%[ENDCOLOR]</Text>
     </Row>
+    <Row Tag="LOC_BRS_PROD_BUILDINGS"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>Towards buildings</Text>
+    </Row>
+    <Row Tag="LOC_BRS_PROD_DISTRICTS"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>Towards districts</Text>
+    </Row>
+    <Row Tag="LOC_BRS_PROD_UNITS"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>Towards units</Text>
+    </Row>
+    <Row Tag="LOC_BRS_HAVING_DISTRICTS"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>From having {1_Num : plural 1?{1} district; other?{1} districts;}</Text>
+    </Row>
 
 </BaseGameText>
 
