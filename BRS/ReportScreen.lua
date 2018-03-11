@@ -1457,7 +1457,8 @@ function ViewYieldsPage()
 				if greatWorks[kBuilding.Type] ~= nil then
 					--Add our line items!
 					for _, kGreatWork in ipairs(greatWorks[kBuilding.Type]) do
-						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, INDENT_STRING..INDENT_STRING..Locale.Lookup(kGreatWork.Name), 0, 0, 0,	0, 0, 0);
+						local sIconString:string = GameInfo.GreatWorkObjectTypes[ kGreatWork.GreatWorkObjectType ].IconString;
+						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, INDENT_STRING..INDENT_STRING..sIconString..Locale.Lookup(kGreatWork.Name), 0, 0, 0, 0, 0, 0);
 						for _, yield in ipairs(kGreatWork.YieldChanges) do
 							SetFieldInLineItemInstance(pLineItemInstance, yield.YieldType, yield.YieldChange);
 						end
@@ -1472,6 +1473,8 @@ function ViewYieldsPage()
 				if wonder.Yields[1] ~= nil or greatWorks[wonder.Type] ~= nil then
 				-- Assign yields to the line item
 					local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, wonder.Name, 0, 0, 0, 0, 0, 0);
+					pLineItemInstance.DistrictIcon:SetHide(false);
+					pLineItemInstance.DistrictIcon:SetIcon("ICON_DISTRICT_WONDER");
 					-- Show yields
 					for _, yield in ipairs(wonder.Yields) do
 						SetFieldInLineItemInstance(pLineItemInstance, yield.YieldType, yield.YieldChange);
@@ -1482,7 +1485,8 @@ function ViewYieldsPage()
 				if greatWorks[wonder.Type] ~= nil then
 					--Add our line items!
 					for _, kGreatWork in ipairs(greatWorks[wonder.Type]) do
-						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, INDENT_STRING..Locale.Lookup(kGreatWork.Name), 0, 0, 0, 0, 0, 0);
+						local sIconString:string = GameInfo.GreatWorkObjectTypes[ kGreatWork.GreatWorkObjectType ].IconString;
+						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, INDENT_STRING..sIconString..Locale.Lookup(kGreatWork.Name), 0, 0, 0, 0, 0, 0);
 						for _, yield in ipairs(kGreatWork.YieldChanges) do
 							SetFieldInLineItemInstance(pLineItemInstance, yield.YieldType, yield.YieldChange);
 						end
