@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- BetterReportScreen_Config -->
+<!-- Author: Infixo -->
+<!-- 2018-03-12: Created -->
+<GameInfo>
+	<!-- New Hot Key F8 -->
+	<InputActions>
+		<Row ActionId="ToggleReports" Name="LOC_OPTIONS_HOTKEY_UI_REPORTS" Description="LOC_OPTIONS_HOTKEY_UI_REPORTS_HELP" CategoryId="UI" ContextId="World" />
+	</InputActions>
+	<InputActionDefaultGestures>
+		<Row ActionId="ToggleReports" Index="0" GestureType="KBMouse" GestureData="LOC_OPTIONS_KEY_F8"/>
+	</InputActionDefaultGestures>
+</GameInfo>

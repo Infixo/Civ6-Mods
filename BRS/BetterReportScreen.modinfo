@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Report Screen</Name>
 		<Teaser>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.</Teaser>
-		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supported languages: English, German, Spanish, French, Japanese, Korean, Polish, Simplified Chinese, Traditional Chinese. Version 2.4.[NEWLINE][NEWLINE]Original Units and Deals tabs created by Greg Miller.</Description>
+		<Description>Adds Policies impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supported languages: English, German, Spanish, French, Japanese, Korean, Polish, Simplified Chinese, Traditional Chinese. Version 2.5.[NEWLINE][NEWLINE]Original Units and Deals tabs created by Greg Miller.</Description>
 		<Authors>Infixo</Authors>
 		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul, RohBang, Gorlod</SpecialThanks>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -13,6 +13,14 @@
 			<GameCoreInUse>Expansion1</GameCoreInUse>
 		</Criteria>
 	</ActionCriteria>
+	<FrontEndActions>
+		<UpdateDatabase id="BRS_FrontEnd_Database">
+			<File>Config/BRS_Config.xml</File>
+		</UpdateDatabase>
+		<UpdateText id="BRS_FrontEnd_Text">
+			<File>Config/BRS_ConfigText.xml</File>
+		</UpdateText>
+	</FrontEndActions>
 	<InGameActions>
 		<AddUserInterfaces id="RMA_Main">
 			<Properties>
@@ -25,9 +33,12 @@
             <Items>
                 <File>ReportScreen.lua</File>
 				<File>ReportScreen.xml</File>
+				<File>LaunchBar_BRS.lua</File> <!-- core file, will be included in wrappers -->
+				<File>LaunchBar_BRS_vanilla.lua</File> <!-- wrapper -->
             </Items>
         </ImportFiles>
 		<UpdateText id="BRS_UpdateText">
+			<File>Config/BRS_ConfigText.xml</File>
 			<File>Text/BetterReportScreen_Text.xml</File>
 			<File>Text/BetterReportScreen_Text_de_DE.xml</File>
 			<File>Text/BetterReportScreen_Text_es_ES.xml</File>
@@ -38,6 +49,13 @@
 			<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
 			<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
 		</UpdateText>
+		<!-- Vanilla actions -->
+		<ReplaceUIScript id="BRS_ReplaceUI_LaunchBar">
+			<Properties>
+				<LuaContext>LaunchBar</LuaContext>
+				<LuaReplace>LaunchBar_BRS_vanilla.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
 		<!-- Rise&Fall actions - replace lua and import xml (there's no 'replace' for xml) -->
         <ImportFiles id="BRS_ImportFiles_RiseFall" criteria="Expansion1">
 			<Properties>
@@ -45,6 +63,7 @@
             </Properties>		
             <Items>
 				<File>RiseFall/ReportScreen.xml</File>
+				<File>RiseFall/LaunchBar_BRS_RiseFall.lua</LuaReplace>
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_RiseFall" criteria="Expansion1">
@@ -53,12 +72,22 @@
 				<LuaReplace>ReportScreen.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
+		<ReplaceUIScript id="BRS_ReplaceUI_LaunchBar_RiseFall" criteria="Expansion1">
+			<Properties>
+				<LuaContext>LaunchBar</LuaContext>
+				<LuaReplace>RiseFall/LaunchBar_BRS_RiseFall.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
     </InGameActions>
     <Files>
+		<!-- Config files -->
+		<File>Config/BRS_Config.xml</File>
+		<File>Config/BRS_ConfigText.xml</File>
 		<!-- Shared files -->
         <File>ReportScreen.lua</File>
 		<File>RealModifierAnalysis.lua</File>
 		<File>RealModifierAnalysis.xml</File>
+		<File>LaunchBar_BRS.lua</File> <!-- core file, will be included in wrappers -->
 		<File>Text/BetterReportScreen_Text.xml</File>
 		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
 		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
@@ -70,7 +99,9 @@
 		<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
 		<!-- Vanilla files -->
 		<File>ReportScreen.xml</File>
+		<File>LaunchBar_BRS_vanilla.lua</File> <!-- wrapper -->
 		<!-- Rise & Fall files -->
 		<File>RiseFall/ReportScreen.xml</File>
+		<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File> <!-- wrapper -->
     </Files>
 </Mod>

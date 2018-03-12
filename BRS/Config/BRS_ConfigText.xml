@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_ConfigText -->
+<!-- Author: Infixo -->
+<!-- 2018-03-12: Created -->
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_OPTIONS_HOTKEY_UI_REPORTS">
+		<Text>Toggle Reports Screen</Text>
+	</Row>
+	<Row Tag="LOC_OPTIONS_HOTKEY_UI_REPORTS_HELP">
+		<Text>Toggles visibility of the Reports Screen</Text>
+	</Row>
+
+</BaseGameText>
+
+</GameData>
