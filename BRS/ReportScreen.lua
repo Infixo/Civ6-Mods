@@ -3097,6 +3097,40 @@ function Resize()
 end
 
 -- ===========================================================================
+-- CQUI removes a TopPanel button and allows for a bigger button in the LaunchBar
+-- The other change, "real housing from improvements value" is not implemented here as it would clash with RealModifierAnalyss module anyway
+
+function OnLoadScreenClose()
+  -- Add Icon to Launchbar
+  local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_CIVIC_FUTURE_CIVIC" ,38);
+  local reportsButtonInfo = {
+    -- ICON TEXTURE
+    IconTexture = {
+      OffsetX = textureOffsetX;
+      OffsetY = textureOffsetY;
+      Sheet = textureSheet;
+    };
+
+    -- BUTTON TEXTURE
+    BaseTexture = {
+      OffsetX = 4;
+      OffsetY = 245;
+      Sheet = "LaunchBar_Hook_CultureButton";
+
+      -- Offset to have when hovering
+      HoverOffsetX = 4;
+      HoverOffsetY = 5;
+    };
+
+    -- BUTTON INFO
+    Callback = Open;
+    Tooltip = Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS");
+  }
+
+  LuaEvents.LaunchBar_AddIcon(reportsButtonInfo);
+end
+
+-- ===========================================================================
 -- Checkboxes for hiding city details and free units/buildings
 
 function OnToggleHideCityBuildings()
@@ -3222,6 +3256,10 @@ function Initialize()
 	-- Events
 	LuaEvents.TopPanel_OpenReportsScreen.Add( OnTopOpenReportsScreen );
 	LuaEvents.TopPanel_CloseReportsScreen.Add( OnTopCloseReportsScreen );
+	
+	-- CQUI
+	Events.LoadScreenClose.Add( OnLoadScreenClose );
+
 end
 Initialize();
 
