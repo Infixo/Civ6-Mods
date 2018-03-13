@@ -65,7 +65,7 @@
             </Properties>		
             <Items>
 				<File>RiseFall/ReportScreen.xml</File>
-				<File>RiseFall/LaunchBar_BRS_RiseFall.lua</LuaReplace>
+				<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File>
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_RiseFall" criteria="Expansion1">
