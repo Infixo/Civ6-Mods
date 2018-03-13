@@ -33,8 +33,10 @@
             <Items>
                 <File>ReportScreen.lua</File>
 				<File>ReportScreen.xml</File>
-				<File>LaunchBar_BRS.lua</File> <!-- core file, will be included in wrappers -->
-				<File>LaunchBar_BRS_vanilla.lua</File> <!-- wrapper -->
+				<!-- core file, will be included in wrappers -->
+				<File>LaunchBar_BRS.lua</File>
+				<!-- wrapper -->
+				<File>LaunchBar_BRS_vanilla.lua</File>
             </Items>
         </ImportFiles>
 		<UpdateText id="BRS_UpdateText">
@@ -87,7 +89,7 @@
         <File>ReportScreen.lua</File>
 		<File>RealModifierAnalysis.lua</File>
 		<File>RealModifierAnalysis.xml</File>
-		<File>LaunchBar_BRS.lua</File> <!-- core file, will be included in wrappers -->
+		<File>LaunchBar_BRS.lua</File>
 		<File>Text/BetterReportScreen_Text.xml</File>
 		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
 		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
@@ -99,9 +101,9 @@
 		<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
 		<!-- Vanilla files -->
 		<File>ReportScreen.xml</File>
-		<File>LaunchBar_BRS_vanilla.lua</File> <!-- wrapper -->
+		<File>LaunchBar_BRS_vanilla.lua</File>
 		<!-- Rise & Fall files -->
 		<File>RiseFall/ReportScreen.xml</File>
-		<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File> <!-- wrapper -->
+		<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File>
     </Files>
 </Mod>
