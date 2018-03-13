@@ -76,6 +76,7 @@
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BRS_ReplaceUI_LaunchBar_RiseFall" criteria="Expansion1">
 			<Properties>
+                <LoadOrder>2</LoadOrder>
 				<LuaContext>LaunchBar</LuaContext>
 				<LuaReplace>RiseFall/LaunchBar_BRS_RiseFall.lua</LuaReplace>
 			</Properties>
