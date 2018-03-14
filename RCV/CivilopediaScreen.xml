@@ -24,6 +24,12 @@
 
 			<!-- Page Tab Area -->
 			<Box Size="250,parent-102" Color="0,0,0,0">
+				<!-- 2018-0314 Page history buttons -->
+				<Container	Anchor="L,T" Size="64,32">
+					<Button	ID="BackPageButton" Anchor="L,T" Offset="10,-24" Size="18,23" Texture="Controls_ArrowButtonLeft"  ToolTip="LOC_CREDITS_BACK_BUTTON"/>
+					<Button	ID="NextPageButton"	Anchor="L,T" Offset="34,-24" Size="18,23" Texture="Controls_ArrowButtonRight" ToolTip="LOC_CREDITS_NEXT_BUTTON"/>
+				</Container>
+
 				<Grid Style="Civilopedia_SearchPanel">
           <Container Anchor="L,C" Offset="24,0" Size="parent-30,16" >
             <EditBox ID="SearchEditBox" Style="Civilopedia_SearchEditBox" CallOnChar="1" />
