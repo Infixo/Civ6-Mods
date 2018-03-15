@@ -18,7 +18,8 @@ local RMA = ExposedMembers.RMA;
 -- Rise & Fall check
 -- ===========================================================================
 
-local bIsRiseFall:boolean = (Game.GetEmergencyManager ~= nil) -- this is for UI scripts; for GamePlay use Game.ChangePlayerEraScore
+--local bIsRiseFall:boolean = (Game.GetEmergencyManager ~= nil) -- this is for UI scripts; for GamePlay use Game.ChangePlayerEraScore
+local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 
 
 -- ===========================================================================
@@ -168,6 +169,9 @@ function Open()
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
 	--m_tabs.SelectTab( 1 );
 	m_tabs.SelectTab( m_kCurrentTab );
+	
+	-- show number of cities in the title bar
+	Controls.TotalsLabel:SetText( Locale.Lookup("LOC_DIPLOMACY_DEAL_CITIES").." "..tostring(Players[Game.GetLocalPlayer()]:GetCities():GetCount()) );
 end
 
 -- ===========================================================================
@@ -2006,6 +2010,19 @@ ICON_District
 <Row Name="DISTRICT_WONDER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="187"/>
 <Row Name="DISTRICT_ENTERTAINMENT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="188"/>
 --]]
+
+function GetFontIconForDistrict(sDistrictType:string)
+	-- exceptions first
+	if sDistrictType == "DISTRICT_CITY_CENTER"                 then return "[ICON_DISTRICT_CITYCENTER]";    end
+	if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLYSITE]";      end
+	if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
+	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT]"; end -- no need to check for mutuals with that
+	if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
+	-- default icon last
+	return "[ICON_"..sDistrictType.."]";
+end
+
+
 local tDistrictsOrder:table = {
 	-- Ancient Era
 	--"DISTRICT_GOVERNMENT", -- to save space, will be treated separately
@@ -2049,12 +2066,15 @@ function GetDistrictsForCity(kCityData:table)
 	for _,districtType in ipairs(tDistrictsOrder) do
 		local sDistrictIcon:string = "[ICON_Bullet]"; -- default empty
 		if HasCityDistrict(kCityData, districtType) then
+			sDistrictIcon = GetFontIconForDistrict(districtType);
+			--[[
 			sDistrictIcon = "[ICON_"..districtType.."]"; -- default for a district
 			-- exceptions
 			if     districtType == "DISTRICT_HOLY_SITE" then             sDistrictIcon = "[ICON_DISTRICT_HOLYSITE]";
 			elseif districtType == "DISTRICT_ENTERTAINMENT_COMPLEX" then sDistrictIcon = "[ICON_DISTRICT_ENTERTAINMENT]";
 			elseif districtType == "DISTRICT_AERODROME" then             sDistrictIcon = "[ICON_DISTRICT_WONDER]";
 			end
+			--]]
 		end
 		sDistricts = sDistricts..sDistrictIcon;
 	end
@@ -2428,6 +2448,18 @@ function GetCityForUnit(pUnit:table)
 	return ( pCity and Locale.Lookup(pCity:GetName()) ) or "";
 end
 
+-- returns the icon for the District that the unit is currently in, or ""
+function GetDistrictIconForUnit(pUnit:table)
+	local pPlot:table = Map.GetPlot( pUnit:GetX(), pUnit:GetY() );
+	if not pPlot then return ""; end -- assert
+	local eDistrictType:number = pPlot:GetDistrictType();
+	print("Unit", pUnit:GetName(), eDistrictType);
+	if eDistrictType < 0 then return ""; end
+	local sDistrictType:string = GameInfo.Districts[ eDistrictType ].DistrictType;
+	if GameInfo.DistrictReplaces[ sDistrictType ] then sDistrictType = GameInfo.DistrictReplaces[ sDistrictType ].ReplacesDistrictType; end
+	return GetFontIconForDistrict(sDistrictType);
+end
+
 function unit_sortFunction( descend, type, t, a, b )
 	local aUnit, bUnit
 
@@ -2567,6 +2599,8 @@ function common_unit_fields( unit, unitInstance )
 		unitInstance.UnitMove:SetToolTipString( "" );
 	end
 	
+	unit.District = GetDistrictIconForUnit(unit);
+	unitInstance.UnitDistrict:SetText(unit.District);
 	unit.City = GetCityForUnit(unit);
 	unitInstance.UnitCity:SetText(unit.City);
 
