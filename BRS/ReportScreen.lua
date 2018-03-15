@@ -252,6 +252,7 @@ function GetData()
 	-- ==========================
 	local kUnitDataReport:table = {};
 	local group_name:string;
+	local tUnitsDist:table = {}; -- temp table for calculating units' distance from cities
 
 	for _, unit in player:GetUnits():Members() do
 		local unitInfo : table = GameInfo.Units[unit:GetUnitType()];
@@ -283,7 +284,34 @@ function GetData()
 			kUnitDataReport[group_name].units = {};
 		end
 		table.insert( kUnitDataReport[group_name].units, unit );
+		-- store data for distance calculations
+		unit.NearCityDistance = 9999;
+		unit.NearCityName = "";
+		unit.NearCityIsCapital = false;
+		unit.NearCityIsOurs = true;
+		table.insert( tUnitsDist, unit );
 	end
+	
+	-- calculate distance to the closest city for all units
+	-- must iterate through all living players and their cities
+	for _,player in ipairs(PlayerManager.GetAlive()) do
+		local bIsOurs:boolean = ( player:GetID() == playerID );
+		for _,city in player:GetCities():Members() do
+			local iCityX:number, iCityY:number = city:GetX(), city:GetY();
+			local sCityName:string = Locale.Lookup( city:GetName() );
+			local bIsCapital:boolean = city:IsCapital();
+			for _,unit in ipairs(tUnitsDist) do
+				local iDistance:number = Map.GetPlotDistance( unit:GetX(), unit:GetY(), iCityX, iCityY );
+				if iDistance < unit.NearCityDistance then
+					unit.NearCityDistance = iDistance;
+					unit.NearCityName = sCityName;
+					unit.NearCityIsCapital = bIsCapital;
+					unit.NearCityIsOurs = bIsOurs;
+				end
+			end
+		end
+	end
+	
 	-- ==========================
 	-- !! end of edit
 	-- ==========================		
@@ -2517,8 +2545,13 @@ function unit_sortFunction( descend, type, t, a, b )
 		aUnit = t[a].turns
 		bUnit = t[b].turns
 	elseif type == "city" then
-		aUnit = t[a].City
-		bUnit = t[b].City
+		aUnit = t[a].NearCityName
+		bUnit = t[b].NearCityName
+		if aUnit == bUnit then
+			aUnit = t[a].NearCityDistance
+			bUnit = t[b].NearCityDistance
+		end
+		--[[
 		if aUnit ~= "" and bUnit ~= "" then 
 			if descend then return aUnit > bUnit else return aUnit < bUnit end
 		else
@@ -2526,6 +2559,7 @@ function unit_sortFunction( descend, type, t, a, b )
 			elseif bUnit == "" then return true;
 			else                    return false; end
 		end
+		--]]
 	else
 		return false; -- assert
 	end
@@ -2601,8 +2635,13 @@ function common_unit_fields( unit, unitInstance )
 	
 	unit.District = GetDistrictIconForUnit(unit);
 	unitInstance.UnitDistrict:SetText(unit.District);
-	unit.City = GetCityForUnit(unit);
-	unitInstance.UnitCity:SetText(unit.City);
+	--unit.City = GetCityForUnit(unit);
+	--unitInstance.UnitCity:SetText(unit.City);
+	local sCityName:string = ( unit.NearCityIsCapital and "[ICON_Capital]" or "" )..unit.NearCityName;
+	if     unit.NearCityDistance == 0 then sCityName = "[COLOR:16,232,75,160]"..sCityName.."[ENDCOLOR]";
+	elseif unit.NearCityIsOurs        then sCityName = sCityName.." "..unit.NearCityDistance;
+	else                                   sCityName = "[COLOR_Red]"..sCityName.." "..unit.NearCityDistance.."[ENDCOLOR]"; end
+	unitInstance.UnitCity:SetText( (unit.NearCityDistance > 3) and "" or sCityName );
 
 end
 
