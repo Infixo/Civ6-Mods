@@ -40,6 +40,7 @@ local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
 local INDENT_STRING								:string = "      ";
+local TOOLTIP_SEP								:string = "[NEWLINE]-------------------[NEWLINE]";
 
 -- Mapping of unit type to cost.
 --[[ Infixo not used
@@ -3027,7 +3028,7 @@ function ViewPolicyPage()
 			local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
 			if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
 			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, sPolicyImpact);
-			pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip.."[NEWLINE]"..policy.ImpactToolTip);
+			pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP..policy.ImpactToolTip);
 			
 			-- fill out yields
 			for yield,value in pairs(policy.Yields) do
@@ -3116,6 +3117,8 @@ function UpdateMinorData()
 				LeaderType = PlayerConfigurations[minor:GetID()]:GetLeaderTypeName(), -- LEADER_MINOR_CIV_VILNIUS
 				IsSuzerained = ( minor:GetInfluence():GetSuzerain() == ePlayerID ), -- boolean
 				NumTokens  = minor:GetInfluence():GetTokensReceived(ePlayerID),
+				HasMet     = minor:GetDiplomacy():HasMet(ePlayerID),
+				--HasMet     = Players[ePlayerID]:GetDiplomacy():HasMet(minor:GetID()),
 			};
 			tMinorRelations[ minorRelation.CivType ] = minorRelation;
 		end
@@ -3141,21 +3144,18 @@ function UpdateMinorData()
 					Trait = GetCityStateTrait(leader.LeaderType),
 					Influence = 0, -- this will hold number of City States that with this influence level
 					IsSuzerained = false, -- not used
+					HasMet = false, -- not used
 					--Yields from modifiers
 				};
-				-- impact from modifiers
-				minorData.Impact, minorData.Yields, minorData.ImpactToolTip, minorData.UnknownEffect = RMA.CalculateModifierEffect("Trait", minorData.Trait, ePlayerID, nil);
+				-- impact from modifiers; the 5th parameter is used to select proper modifiers, it is the ONLY place where it is used
+				minorData.Impact, minorData.Yields, minorData.ImpactToolTip, minorData.UnknownEffect = RMA.CalculateModifierEffect("Trait", minorData.Trait, ePlayerID, nil, sInfluence);
 				minorData.IsImpact = false; -- for toggling options
 				for _,value in pairs(minorData.Yields) do if value ~= 0 then minorData.IsImpact = true; break; end end
 				-- done!
 				table.insert(m_kMinorData[ minorData.Category ], minorData);
 				tMinorBonuses[ minorData.Category ][ iNumTokens ] = minorData;
 			end
-			-- we will have to actually triple this but TODO
-			--LOC_MINOR_CIV_SMALL_INFLUENCE_ENVOYS
-			--LOC_MINOR_CIV_MEDIUM_INFLUENCE_ENVOYS
-			--LOC_MINOR_CIV_LARGE_INFLUENCE_ENVOYS
-			
+			-- we will have to actually triple this
 			RegisterLeaderForInfluence(1, "SMALL"); -- unfortunately this is all hardcoded in LOCs
 			RegisterLeaderForInfluence(3, "MEDIUM");
 			RegisterLeaderForInfluence(6, "LARGE");
@@ -3176,6 +3176,7 @@ function UpdateMinorData()
 				Trait = "", -- later
 				Influence = 0, -- this will hold number of envoys sent to this CS
 				IsSuzerained = false, -- later
+				HasMet = false, -- later
 				--Yields from modifiers
 			};
 			minorData.Trait = GetCityStateTrait(minorData.LeaderType);
@@ -3183,6 +3184,7 @@ function UpdateMinorData()
 			if tMinorRelation ~= nil then
 				minorData.Influence = tMinorRelation.NumTokens;
 				minorData.IsSuzerained = tMinorRelation.IsSuzerained;
+				minorData.HasMet = tMinorRelation.HasMet;
 				-- register in bonuses
 				for _,bonus in pairs(tMinorBonuses[minorData.Category]) do
 					if minorData.Influence >= bonus.NumTokens then bonus.Influence = bonus.Influence + 1; end
@@ -3226,6 +3228,7 @@ function ViewMinorPage()
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
+		local iNumRows:number = 0;
 		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
 		
 		-- set sorting callbacks
@@ -3244,17 +3247,19 @@ function ViewMinorPage()
 			local pMinorInstance:table = {}
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pMinorInstance, instance.ContentStack ) -- instance ID, pTable, stack
 			pMinorInstance.PolicyEntryYieldLOYALTY:SetHide( not bIsRiseFall );
+			if minor.NumTokens == 0 then iNumRows = iNumRows + 1; end
 			
 			-- status with tooltip
 			local sStatusText:string;
 			local sStatusToolTip:string = minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait;
 			if minor.Influence > 0 then sStatusText = "[ICON_CheckSuccess]"; end
-			if minor.IsSuzerained then sStatusText = "[ICON_Checkmark]"; end
+			if minor.IsSuzerained  then sStatusText = "[ICON_Checkmark]";    end
 			pMinorInstance.PolicyEntryStatus:SetText( sStatusText );
-			pMinorInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
+			pMinorInstance.PolicyEntryStatus:SetToolTipString("");
 			
 			-- name with description
 			local sMinorName:string = minor.Name;
+			if minor.HasMet then sMinorName = "[ICON_Capital]"..sMinorName; end
 			if     minor.NumTokens > 0 then sMinorName = sMinorName.." "..tostring(minor.Influence);
 			elseif minor.Influence > 0 then sMinorName = "[COLOR_White]"..tostring(minor.Influence).."[ENDCOLOR] [ICON_Envoy] "..sMinorName; end
 			TruncateString(pMinorInstance.PolicyEntryName, 178, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
@@ -3264,7 +3269,7 @@ function ViewMinorPage()
 			local sMinorImpact:string = ( minor.Impact == "" and "[ICON_CheckmarkBlue]" ) or minor.Impact;
 			if minor.UnknownEffect then sMinorImpact = sMinorImpact.." [COLOR_Red]!"; end
 			TruncateString(pMinorInstance.PolicyEntryImpact, 218, sMinorImpact);
-			pMinorInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip.."[NEWLINE]"..minor.ImpactToolTip);
+			pMinorInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP..minor.ImpactToolTip);
 			
 			-- fill out yields
 			for yield,value in pairs(minor.Yields) do
@@ -3275,7 +3280,7 @@ function ViewMinorPage()
 			
 		end
 		
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(#minors) );
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(iNumRows) );
 		
 		-- no footer
 		SetGroupCollapsePadding(instance, 0);
