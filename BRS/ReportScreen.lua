@@ -524,14 +524,11 @@ function GetData()
 		data.NumDistricts = 0;
 		data.NumSpecialtyDistricts = 0
 		for _,district in pCity:GetDistricts():Members() do
-
-			local districtInfo	:table	= GameInfo.Districts[district:GetType()];
-			local districtType	:string = districtInfo.DistrictType;	
-			local isBuilt		:boolean = pCity:GetDistricts():HasDistrict(districtInfo.Index, true);
-			if isBuilt and not districtInfo.CityCenter and                             districtType ~= "DISTRICT_WONDER" then
+			local districtInfo:table = GameInfo.Districts[ district:GetType() ];
+			if district:IsComplete() and not districtInfo.CityCenter and                             districtInfo.DistrictType ~= "DISTRICT_WONDER" then
 				data.NumDistricts = data.NumDistricts + 1;
 			end
-			if isBuilt and not districtInfo.CityCenter and districtInfo.OnePerCity and districtType ~= "DISTRICT_WONDER" then
+			if district:IsComplete() and not districtInfo.CityCenter and districtInfo.OnePerCity and districtInfo.DistrictType ~= "DISTRICT_WONDER" then
 				data.NumSpecialtyDistricts = data.NumSpecialtyDistricts + 1;
 			end
 		end
@@ -2108,9 +2105,6 @@ function GetDistrictsForCity(kCityData:table)
 		sDistricts = sDistricts..sDistrictIcon;
 	end
 	return sDistricts;
-	--DistrictType
-	--		isBuilt		= pCityDistricts:HasDistrict(districtInfo.Index, true);
-
 end
 
 

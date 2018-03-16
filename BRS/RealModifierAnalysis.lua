@@ -812,7 +812,7 @@ function GetCityData( pCity:table )
 		local plotID		:number = kPlot:GetIndex();	
 		local districtTable :table	= { 
 			SubjectType		= SubjectTypes.District,
-			Name			= Locale.Lookup(districtInfo.Name), 
+			Name			= data.Name..": "..Locale.Lookup(districtInfo.Name),
 			Yields   		= YieldTableNew(), -- district yields (from adjacency)
 			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
 			DistrictType 	= districtType,
@@ -1450,13 +1450,15 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		for _,district in ipairs(tSubject.Districts) do
-			for _,building in ipairs(district.Buildings) do
-				local buildingType:string = building.BuildingType;	
-				if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
-				bIsValidSubject = ( buildingType == tReq.Arguments.BuildingType ); -- BUILDING_LIGHTHOUSE, etc.
+			if district.isBuilt then
+				for _,building in ipairs(district.Buildings) do
+					local buildingType:string = building.BuildingType;	
+					if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+					bIsValidSubject = ( buildingType == tReq.Arguments.BuildingType ); -- BUILDING_LIGHTHOUSE, etc.
+					if bIsValidSubject then break; end
+				end
 				if bIsValidSubject then break; end
-			end
-			if bIsValidSubject then break; end
+			end -- isBuilt
 		end
 		if not bIsValidSubject then -- still not found
 			for _,wonder in ipairs(tSubject.Wonders) do
@@ -1469,21 +1471,25 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_DISTRICT" then -- 10
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		for _,district in ipairs(tSubject.Districts) do
-			local districtType:string = district.DistrictType;	
-			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
-			bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
-			if bIsValidSubject then break; end
+			if district.isBuilt then
+				local districtType:string = district.DistrictType;	
+				if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+				bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
+				if bIsValidSubject then break; end
+			end -- isBuilt
 		end
 		
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_HIGH_ADJACENCY_DISTRICT" then
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		-- must use 3 arguments actually, plus replacements
 		for _,district in ipairs(tSubject.Districts) do
-			local districtType:string = district.DistrictType;	
-			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
-			bIsValidSubject = ( ( districtType == tReq.Arguments.DistrictType ) and -- DISTRICT_THEATER, etc.
-								( YieldTableGetYield(district.Yields, tReq.Arguments.YieldType) >= tonumber(tReq.Arguments.Amount)) );
-			if bIsValidSubject then break; end
+			if district.isBuilt then
+				local districtType:string = district.DistrictType;	
+				if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+				bIsValidSubject = ( ( districtType == tReq.Arguments.DistrictType ) and -- DISTRICT_THEATER, etc.
+									( YieldTableGetYield(district.Yields, tReq.Arguments.YieldType) >= tonumber(tReq.Arguments.Amount)) );
+				if bIsValidSubject then break; end
+			end -- isBuilt
 		end
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_X_POPULATION" then
@@ -1626,10 +1632,12 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 		sSubjectType = SubjectTypes.District;
 		for cityname,citydata in pairs(tCities) do
 			for _,district in ipairs(citydata.Districts) do
-				if tReqSet then  
-					if CheckAllRequirements(tReqSet, district, sSubjectType) then table.insert(tSubjects, district); end
-				else
-					table.insert(tSubjects, district);
+				if district.isBuilt then
+					if tReqSet then  
+						if CheckAllRequirements(tReqSet, district, sSubjectType) then table.insert(tSubjects, district); end
+					else
+						table.insert(tSubjects, district);
+					end
 				end
 			end
 		end
@@ -1698,14 +1706,16 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		local sBuildingType:string = tMod.Arguments.BuildingType;
 		local bApplied:boolean = false;
 		for _,district in ipairs(tSubject.Districts) do
-			for _,building in ipairs(district.Buildings) do
-				local buildingType:string = building.BuildingType;	
-				if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
-				if buildingType == sBuildingType then
-					YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount)); bApplied = true; break;
+			if district.isBuilt then
+				for _,building in ipairs(district.Buildings) do
+					local buildingType:string = building.BuildingType;	
+					if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+					if buildingType == sBuildingType then
+						YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount)); bApplied = true; break;
+					end
 				end
-			end
-			if bApplied then break; end
+				if bApplied then break; end
+			end -- isBuilt
 		end
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIER" then
@@ -1713,14 +1723,16 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		local sBuildingType:string = tMod.Arguments.BuildingType;
 		local bApplied:boolean = false;
 		for _,district in ipairs(tSubject.Districts) do
-			for _,building in ipairs(district.Buildings) do
-				local buildingType:string = building.BuildingType;	
-				if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
-				if buildingType == sBuildingType then
-					YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(building.Yields, tMod.Arguments.YieldType)*tonumber(tMod.Arguments.Amount)/100.0); bApplied = true; break;
+			if district.isBuilt then
+				for _,building in ipairs(district.Buildings) do
+					local buildingType:string = building.BuildingType;	
+					if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+					if buildingType == sBuildingType then
+						YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(building.Yields, tMod.Arguments.YieldType)*tonumber(tMod.Arguments.Amount)/100.0); bApplied = true; break;
+					end
 				end
-			end
-			if bApplied then break; end
+				if bApplied then break; end
+			end -- isBuilt
 		end
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_MODIFIERS_FOR_DISTRICT" then
@@ -1730,12 +1742,14 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			local districtType:string = district.DistrictType;	
 			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
 			if districtType == tMod.Arguments.DistrictType then -- DISTRICT_THEATER, etc.
-				local fYieldChange:number = 0.0;
-				for _,building in ipairs(district.Buildings) do
-					fYieldChange = fYieldChange + YieldTableGetYield(building.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0;
-				end
-				YieldTableSetYield(tImpact, tMod.Arguments.YieldType, fYieldChange);
-				break;
+				if district.isBuilt then
+					local fYieldChange:number = 0.0;
+					for _,building in ipairs(district.Buildings) do
+						fYieldChange = fYieldChange + YieldTableGetYield(building.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0;
+					end
+					YieldTableSetYield(tImpact, tMod.Arguments.YieldType, fYieldChange);
+					break;
+				end -- isBuilt
 			end
 		end
 		
@@ -2086,6 +2100,7 @@ function Initialize()
 	Events.GovernmentPolicyObsoleted.Add(function() bBaseDataDirty = true end );
 	Events.CityAddedToMap.Add(           function() bBaseDataDirty = true end );
 	Events.CityFocusChanged.Add(         function() bBaseDataDirty = true end );
+	Events.CityPopulationChanged.Add( 	 function() bBaseDataDirty = true end );
 	Events.CityProductionChanged.Add(    function() bBaseDataDirty = true end );
 	Events.CityProductionCompleted.Add(  function() bBaseDataDirty = true end );
 	Events.CityWorkerChanged.Add(        function() bBaseDataDirty = true end );
@@ -2094,6 +2109,8 @@ function Initialize()
 	Events.PlayerResourceChanged.Add(    function() bBaseDataDirty = true end );
 	Events.ResearchCompleted.Add(        function() bBaseDataDirty = true end );
 	Events.CivicCompleted.Add(           function() bBaseDataDirty = true end );
+	Events.TechBoostTriggered.Add( 		 function() bBaseDataDirty = true end );
+	Events.CivicBoostTriggered.Add( 	 function() bBaseDataDirty = true end );
 	Events.FaithChanged.Add(             function() bBaseDataDirty = true end );
 	Events.TreasuryChanged.Add(          function() bBaseDataDirty = true end );
 	Events.TradeRouteAddedToMap.Add(     function() bBaseDataDirty = true end );
@@ -2103,6 +2120,7 @@ function Initialize()
     Events.GovernorPromoted.Add(         function() bBaseDataDirty = true end );
 	Events.PantheonFounded.Add(          function() bBaseDataDirty = true end );
 	Events.ReligionFounded.Add(          function() bBaseDataDirty = true end );
+	Events.CityReligionChanged.Add( 	 function() bBaseDataDirty = true end );
 	Events.UnitAddedToMap.Add(           function() bBaseDataDirty = true end );
 	Events.UnitRemovedFromMap.Add(       function() bBaseDataDirty = true end );
 	Events.UnitMoveComplete.Add(         function() bBaseDataDirty = true end );
@@ -2110,6 +2128,14 @@ function Initialize()
 	Events.DiplomacyMeet.Add(            function() bBaseDataDirty = true end );
 	Events.DiplomacyRelationshipChanged.Add( function() bBaseDataDirty = true end );
 	Events.InfluenceGiven.Add(           function() bBaseDataDirty = true end );
+	Events.ImprovementAddedToMap.Add( 	 function() bBaseDataDirty = true end );
+	-- Rise & Fall
+	if bIsRiseFall then
+		Events.GovernorAssigned.Add(	 function() bBaseDataDirty = true end );
+		Events.GovernorPromoted.Add(	 function() bBaseDataDirty = true end );
+		Events.EmergencyStarted.Add( 	 function() bBaseDataDirty = true end );
+		Events.EmergencyCompleted.Add( 	 function() bBaseDataDirty = true end );
+	end
 	
 end
 Initialize();
