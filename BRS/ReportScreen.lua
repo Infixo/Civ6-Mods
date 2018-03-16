@@ -1268,7 +1268,8 @@ function ViewYieldsPage()
 	-- sorting is a bit weird because ViewYieldsPage is called again and entire tab is recreated, so new callbacks are registered
 	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "CityName" ) end )
 	pHeaderInstance.ProductionButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "ProductionPerTurn" ) end )
-	pHeaderInstance.FoodButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "FoodPerTurn" ) end )
+	--pHeaderInstance.FoodButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "FoodPerTurn" ) end )
+	pHeaderInstance.FoodButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "TotalFoodSurplus" ) end )
 	pHeaderInstance.GoldButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "GoldPerTurn" ) end )
 	pHeaderInstance.FaithButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "FaithPerTurn" ) end )
 	pHeaderInstance.ScienceButton:RegisterCallback( Mouse.eLClick, function() sortByCities( "SciencePerTurn" ) end )
@@ -2145,6 +2146,13 @@ function city_fields( kCityData, pCityInstance )
 	if HasCityDistrict(kCityData, "DISTRICT_GOVERNMENT") then
 		sStatusText = sStatusText.."[ICON_DISTRICT_GOVERNMENT]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_DISTRICT_GOVERNMENT_NAME"));
 	end
+	local bHasWonder:boolean = false;
+	for _,wonder in ipairs(kCityData.Wonders) do
+		bHasWonder = true;
+		table.insert(tStatusToolTip, wonder.Name);
+	end
+	if bHasWonder then sStatusText = sStatusText.."[ICON_DISTRICT_WONDER]"; end
+
 	pCityInstance.Status:SetText( sStatusText );
 	pCityInstance.Status:SetToolTipString( table.concat(tStatusToolTip, "[NEWLINE]") );
 	
@@ -2181,16 +2189,11 @@ function city_fields( kCityData, pCityInstance )
 	TruncateStringWithTooltip(pCityInstance.CityName, 138, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
-	--if bIsRiseFall then
-		if kCityData.Population > kCityData.Housing then
-			pCityInstance.Population:SetText( tostring(kCityData.Population) .. " / "..ColorRed(kCityData.Housing));
-		else
-			pCityInstance.Population:SetText( tostring(kCityData.Population) .. " / " .. tostring(kCityData.Housing));
-		end
-	--else -- vanilla version
-		--pCityInstance.Population:SetText( tostring(kCityData.Population) ); -- Infixo
-		--pCityInstance.Housing:SetText( tostring( kCityData.Housing ) );
-	--end
+	if kCityData.Population >= kCityData.Housing then
+		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..ColorRed(kCityData.Housing) );
+	else
+		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..tostring(kCityData.Housing) );
+	end
 	
 	-- GrowthRateStatus
 	--<ColorSet Name="WarningMinor"         Color0="206,199,91,255"   Color1="0,0,0,200" />
@@ -2481,7 +2484,7 @@ function GetDistrictIconForUnit(pUnit:table)
 	local pPlot:table = Map.GetPlot( pUnit:GetX(), pUnit:GetY() );
 	if not pPlot then return ""; end -- assert
 	local eDistrictType:number = pPlot:GetDistrictType();
-	print("Unit", pUnit:GetName(), eDistrictType);
+	--print("Unit", pUnit:GetName(), eDistrictType);
 	if eDistrictType < 0 then return ""; end
 	local sDistrictType:string = GameInfo.Districts[ eDistrictType ].DistrictType;
 	if GameInfo.DistrictReplaces[ sDistrictType ] then sDistrictType = GameInfo.DistrictReplaces[ sDistrictType ].ReplacesDistrictType; end

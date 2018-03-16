@@ -820,8 +820,8 @@ function GetCityData( pCity:table )
 			OnePerCity		= districtInfo.OnePerCity,
 			-- not used yet
 			YieldBonus	= GetDistrictYieldText( district ),
-			isPillaged  = pCityDistricts:IsPillaged(district:GetType());
-			isBuilt		= pCityDistricts:HasDistrict(districtInfo.Index, true);
+			isPillaged  = pCityDistricts:IsPillaged(district:GetType()),
+			isBuilt		= district:IsComplete(),--pCityDistricts:HasDistrict(districtInfo.Index, true);
 			Icon		= "ICON_"..districtType,
 			Buildings	= {},
 			--Culture		= GetDistrictYield(district, "YIELD_CULTURE" ),			
@@ -844,10 +844,10 @@ function GetCityData( pCity:table )
 			--]]
 		};
 		-- count all districts and specialty ones
-		if not districtInfo.CityCenter and                             districtType ~= "DISTRICT_WONDER" then
+		if district:IsComplete() and not districtInfo.CityCenter and                             districtType ~= "DISTRICT_WONDER" then
 			data.NumDistricts = data.NumDistricts + 1;
 		end
-		if not districtInfo.CityCenter and districtInfo.OnePerCity and districtType ~= "DISTRICT_WONDER" then
+		if district:IsComplete() and not districtInfo.CityCenter and districtInfo.OnePerCity and districtType ~= "DISTRICT_WONDER" then
 			data.NumSpecialtyDistricts = data.NumSpecialtyDistricts + 1;
 		end
 		
@@ -981,6 +981,7 @@ function GetCityData( pCity:table )
 			Yields      = YieldTableNew(), -- later
 			NumImprovedResourcesAtDestination = 0, -- later
 			IsDestinationPlayerAlly = false, -- later
+			NumSpecialtyDistricts = 0, -- later
 		}
 		-- copy yields
 		for _,yield in ipairs(route.OriginYields) do
@@ -1010,6 +1011,14 @@ function GetCityData( pCity:table )
 		routeData.NumImprovedResourcesBonus     = CountImprovedResources("RESOURCECLASS_BONUS")
 		-- if destination is Ally (diplo)
 		routeData.IsDestinationPlayerAlly = ( GameInfo.DiplomaticStates[ pPlayerDiplomaticAI:GetDiplomaticStateIndex(route.DestinationCityPlayer) ].StateType == "DIPLO_STATE_ALLIED" )
+		
+		-- GreatPerson number of specialty districts at destination
+		for _,district in pDestCity:GetDistricts():Members() do
+			local districtInfo:table = GameInfo.Districts[ district:GetType() ];
+			if district:IsComplete() and not districtInfo.CityCenter and districtInfo.OnePerCity and districtInfo.DistrictType ~= "DISTRICT_WONDER" then
+				routeData.NumSpecialtyDistricts = routeData.NumSpecialtyDistricts + 1;
+			end
+		end
 		
 		table.insert(data.OutgoingRoutes, routeData)
 	end
@@ -1434,6 +1443,10 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	if     tReq.ReqType == "REQUIREMENT_REQUIREMENTSET_IS_MET" then -- 19
 		-- recursion? could be diffcult
 		
+	-- bunch of reqs simulated to be always true (usually regarding player's situation)
+	elseif tReq.ReqType == "REQUIREMENT_PLAYER_IS_AT_PEACE"                 then return true;
+	elseif tReq.ReqType == "REQUIREMENT_PLAYER_IS_AT_PEACE_WITH_ALL_MAJORS" then return true;
+	
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
 		for _,district in ipairs(tSubject.Districts) do
@@ -1726,6 +1739,13 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			end
 		end
 		
+	-- special effects to boost production - we assume that they will always apply, no matter the production type
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_BUILDING" or
+	       tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_DISTRICT" or
+	       tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_UNIT" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount);
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_HOUSING" then
 		if CheckForMismatchError("City") then return nil; end
 		return nil;
@@ -1814,6 +1834,26 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		for cityname,city in pairs(tSubject.Cities) do iNum = iNum + city.NumRoutesInternational end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
 		
+	elseif tMod.EffectType == "EFFECT_ADJUST_TRADE_ROUTE_YIELD_PER_SPECIALTY_DISTRICT_FOR_DOMESTIC" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		local iNum:number = 0;
+		for cityname,city in pairs(tSubject.Cities) do
+			for _,route in ipairs(city.OutgoingRoutes) do
+				if route.IsDomestic then iNum = iNum + route.NumSpecialtyDistricts; end
+			end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount))
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_TRADE_ROUTE_YIELD_PER_SPECIALTY_DISTRICT_FOR_INTERNATIONAL" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		local iNum:number = 0;
+		for cityname,city in pairs(tSubject.Cities) do
+			for _,route in ipairs(city.OutgoingRoutes) do
+				if not route.IsDomestic then iNum = iNum + route.NumSpecialtyDistricts; end
+			end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount))
+
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TRADE_ROUTE_YIELD_PER_DESTINATION_STRATEGIC_RESOURCE_FOR_INTERNATIONAL" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		local iNum:number = 0;
@@ -1870,6 +1910,32 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			-- Religious is used by STBASILS_ADDRELIGIOUSTOURISM (City level)
 		end
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_GREATWORK_YIELD" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		local iNum:number = 0;
+		if tMod.Arguments.YieldChange then
+			-- version that adds flat yields
+			for buildingType,greatWorks in pairs(tSubject.GreatWorks) do
+				for _,greatWork in ipairs(greatWorks) do -- this should give GameInfo.GreatWorks object
+					if greatWork.GreatWorkObjectType == tMod.Arguments.GreatWorkObjectType then iNum = iNum + 1; end
+				end
+			end
+			YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.YieldChange));
+		elseif tMod.Arguments.ScalingFactor then
+			-- version that adds percentage on base yield
+			for buildingType,greatWorks in pairs(tSubject.GreatWorks) do
+				for _,greatWork in ipairs(greatWorks) do -- this should give GameInfo.GreatWorks object
+					if greatWork.GreatWorkObjectType == tMod.Arguments.GreatWorkObjectType then
+						-- get yield for this specific GW from external table
+						for row in GameInfo.GreatWork_YieldChanges() do
+							if row.GreatWorkType == greatWork.GreatWorkType and row.YieldType == tMod.Arguments.YieldType then iNum = iNum + row.YieldChange; end
+						end
+					end
+				end
+			end
+			YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * (tonumber(tMod.Arguments.ScalingFactor)-100) / 100.0);
+		end
+	
 	else
 		-- do nothing here... probably will never implement all possible types
 		return nil;
