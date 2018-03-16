@@ -15,6 +15,9 @@
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="ja_JP">
 		<Text>政策</Text>
 	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="ja_JP"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>都市国家</Text>
+	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="ja_JP">
 		<Text>建造物/区域名</Text>

@@ -15,6 +15,9 @@
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="zh_Hant_HK">
 		<Text>政策</Text>
 	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="zh_Hant_HK"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>城邦</Text>
+	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="zh_Hant_HK">
 		<Text>建築與城區名稱</Text>

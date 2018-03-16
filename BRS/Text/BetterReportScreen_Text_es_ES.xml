@@ -16,6 +16,9 @@
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="es_ES">
 		<Text>Políticas</Text>
 	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="es_ES"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>Ciudades-estado</Text>
+	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="es_ES">
 		<Text>Edificios y Distritos</Text>

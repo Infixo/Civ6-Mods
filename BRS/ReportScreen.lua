@@ -101,6 +101,7 @@ local m_isCollapsing		:boolean = true;
 local m_kCurrentDeals	:table = nil;
 local m_kUnitDataReport	:table = nil;
 local m_kPolicyData		:table = nil;
+local m_kMinorData		:table = nil;
 local m_kModifiers		:table = nil; -- to calculate yield per pop and other modifier-ralated effects on the city level
 -- !!
 -- Remember last tab variable: ARISTOS
@@ -164,6 +165,7 @@ function Open()
 	Timer2Start()
 	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
 	UpdatePolicyData();
+	UpdateMinorData();
 	Timer2Tick("GetData")
 	
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
@@ -1890,8 +1892,9 @@ end
 
 
 -- ===========================================================================
---	Tab Callback
+-- RESOURCES PAGE
 -- ===========================================================================
+
 function ViewResourcesPage()	
 
 	ResetTabForNewPageContent();
@@ -2010,32 +2013,10 @@ function ViewResourcesPage()
 	m_kCurrentTab = 2;
 end
 
--- ===========================================================================
---	Tab Callback
--- ===========================================================================
 
---[[ district icons
-ICON_District
-<Row Name="DISTRICT_CITYCENTER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="176"/>
-<Row Name="DISTRICT_CAMPUS" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="177"/>
-<Row Name="DISTRICT_COMMERCIAL_HUB" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="178"/>
-<Row Name="DISTRICT_ENCAMPMENT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="179"/>
-<Row Name="DISTRICT_HOLYSITE" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="180"/>
-<Row Name="DISTRICT_LAVRA" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="181"/>
-<Row Name="DISTRICT_NEIGHBORHOOD" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="181"/>
-<Row Name="DISTRICT_MBANZA" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="181"/>
-<Row Name="DISTRICT_THEATER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="182"/>
-<Row Name="DISTRICT_ACROPOLIS" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="182"/>
-<Row Name="DISTRICT_AQUEDUCT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="183"/>
-<Row Name="DISTRICT_BATH" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="183"/>
-<Row Name="DISTRICT_HARBOR" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="184"/>
-<Row Name="DISTRICT_ROYAL_NAVY_DOCKYARD" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="184"/>
-<Row Name="DISTRICT_INDUSTRIAL_ZONE" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="185"/>
-<Row Name="DISTRICT_HANSA" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="185"/>
-<Row Name="DISTRICT_SPACEPORT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="186"/>
-<Row Name="DISTRICT_WONDER" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="187"/>
-<Row Name="DISTRICT_ENTERTAINMENT" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="188"/>
---]]
+-- ===========================================================================
+-- CITY STATUS PAGE
+-- ===========================================================================
 
 function GetFontIconForDistrict(sDistrictType:string)
 	-- exceptions first
@@ -2047,7 +2028,6 @@ function GetFontIconForDistrict(sDistrictType:string)
 	-- default icon last
 	return "[ICON_"..sDistrictType.."]";
 end
-
 
 local tDistrictsOrder:table = {
 	-- Ancient Era
@@ -2093,20 +2073,11 @@ function GetDistrictsForCity(kCityData:table)
 		local sDistrictIcon:string = "[ICON_Bullet]"; -- default empty
 		if HasCityDistrict(kCityData, districtType) then
 			sDistrictIcon = GetFontIconForDistrict(districtType);
-			--[[
-			sDistrictIcon = "[ICON_"..districtType.."]"; -- default for a district
-			-- exceptions
-			if     districtType == "DISTRICT_HOLY_SITE" then             sDistrictIcon = "[ICON_DISTRICT_HOLYSITE]";
-			elseif districtType == "DISTRICT_ENTERTAINMENT_COMPLEX" then sDistrictIcon = "[ICON_DISTRICT_ENTERTAINMENT]";
-			elseif districtType == "DISTRICT_AERODROME" then             sDistrictIcon = "[ICON_DISTRICT_WONDER]";
-			end
-			--]]
 		end
 		sDistricts = sDistricts..sDistrictIcon;
 	end
 	return sDistricts;
 end
-
 
 -- helper from CityPanel.lua
 function GetPercentGrowthColor( percent:number )
@@ -2190,9 +2161,6 @@ function city_fields( kCityData, pCityInstance )
 	end
 	
 	-- GrowthRateStatus
-	--<ColorSet Name="WarningMinor"         Color0="206,199,91,255"   Color1="0,0,0,200" />
-	--<ColorSet Name="WarningMajor"         Color0="200,146,52,255"   Color1="0,0,0,200" />
-	--<ColorSet Name="Error"                Color0="200,62,52,255"    Color1="0,0,0,200" />
 	local sGRStatus:string = "LOC_HUD_REPORTS_STATUS_NORMAL";
 	local sGRColor:string = "";
 	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED"; sGRColor = "[COLOR:200,62,52,255]"; -- Error
@@ -2209,12 +2177,9 @@ function city_fields( kCityData, pCityInstance )
 	end
 	local happinessInfo:table = GameInfo.Happinesses[kCityData.Happiness];
 	local happinessText:string = Locale.Lookup( happinessInfo.Name );
-	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:255,40,50,160]"..happinessText.."[ENDCOLOR]"; end
-	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:80,255,90,160]"..happinessText.."[ENDCOLOR]"; end
-	pCityInstance.CitizenHappiness:SetText( happinessText );
-	--<ColorSet Name="StatGoodCS"		Color0="80,255,90,240"		Color1="0,0,0,200" />
-	--<ColorSet Name="StatNormalCS"		Color0="200,200,200,240"	Color1="0,0,0,200" />
-	--<ColorSet Name="StatBadCS"		Color0="255,40,50,240"		Color1="0,0,0,200" />
+	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:255,40,50,160]"..happinessText.."[ENDCOLOR]"; end -- StatBadCS    Color0="255,40,50,240"
+	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:80,255,90,160]"..happinessText.."[ENDCOLOR]"; end -- StatGoodCS   Color0="80,255,90,240"
+	pCityInstance.CitizenHappiness:SetText( happinessText );                                                           -- StatNormalCS Color0="200,200,200,240"
 	
 	-- Strength and icon for Garrison Unit, and Walls
 	local sStrength:string = tostring(kCityData.Defense);
@@ -2464,7 +2429,7 @@ end
 
 
 -- ===========================================================================
--- BRS NEW SECTION (UNITS)
+-- UNITS PAGE
 -- ===========================================================================
 
 -- returns the name of the City that the unit is currently in, or ""
@@ -2807,10 +2772,6 @@ function group_trader( unit, unitInstance, group, parent, type )
 	
 end
 
-
--- ===========================================================================
---	!! Start of Unit Report Page
--- ===========================================================================
 function ViewUnitsPage()
 
 	ResetTabForNewPageContent();
@@ -2877,13 +2838,11 @@ function ViewUnitsPage()
 	m_kCurrentTab = 5;
 end
 
--- ===========================================================================
---	!! End of Unit Report Page
--- ===========================================================================
 
 -- ===========================================================================
---	!! Start of Deals Report Page
+-- CURRENT DEALS PAGE
 -- ===========================================================================
+
 function ViewDealsPage()
 
 	ResetTabForNewPageContent();
@@ -3101,6 +3060,227 @@ function ViewPolicyPage()
 end
 
 
+
+-- ===========================================================================
+-- MINORS PAGE
+-- ===========================================================================
+
+-- helper to get Category out of Civ Type; categories are: CULTURAL, INDUSTRIAL, MILITARISTIC, etc.
+function GetCityStateCategory(sCivType:string)
+	for row in GameInfo.TypeProperties() do
+		if row.Type == sCivType and row.Name == "CityStateCategory" then return row.Value; end
+	end
+	print("ERROR: GetCityStateCategory() unknown City State category for", sCivType);
+	return "UNKNOWN";
+end
+
+-- helper to get a Leader for a Minor; assumes only 1 leader per Minor
+function GetCityStateLeader(sCivType:string)
+	for row in GameInfo.CivilizationLeaders() do
+		if row.CivilizationType == sCivType then return row.LeaderType; end
+	end
+	print("ERROR: GetCityStateLeader() unknown City State leader for", sCivType);
+	return "UNKNOWN";
+end
+
+function UpdateMinorData()
+	Timer1Start();
+
+	-- prepare empty categories
+	m_kMinorData = {};
+	for row in GameInfo.TypeProperties() do
+		if row.Name == "CityStateCategory" and m_kMinorData[ row.Value ] == nil then m_kMinorData[ row.Value ] = {}; end
+	end
+
+	-- find out our level of involvement with alive Minors
+	local tMinorRelations:table = {};
+	local ePlayerID:number = Game.GetLocalPlayer();
+	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
+		-- we need to check for City State actually, because Free Cities are considered Minors as well
+		if minor:IsMinor() then -- CIVILIZATION_LEVEL_CITY_STATE
+			local minorRelation:table = {
+				CivType    = PlayerConfigurations[minor:GetID()]:GetCivilizationTypeName(), -- CIVILIZATION_VILNIUS
+				LeaderType = PlayerConfigurations[minor:GetID()]:GetLeaderTypeName(), -- LEADER_MINOR_CIV_VILNIUS
+				IsSuzerain = ( minor:GetInfluence():GetSuzerain() == ePlayerID ), -- boolean
+				NumTokens  = minor:GetInfluence():GetTokensReceived(ePlayerID),
+			};
+			tMinorRelations[ minorRelation.CivType ] = minorRelation;
+		end
+	end
+
+-- LOC_CITY_STATES_SEND_ENVOY_AMOUNT ( {1_EnvoyNum}[ICON_Envoy] )
+	
+	-- iterate through all Minors
+	-- assumptions: no Civilization Traits are used, only Leader Traits; each has 1 leader; main leader is for Suzerain bonus; Inherited leaders are for small/medium/large bonuses
+	
+	-- first, fill out Inherited leaders
+	for leader in GameInfo.Leaders() do
+		if leader.InheritFrom == "LEADER_MINOR_CIV_DEFAULT" then
+			local sCategory:string = string.gsub(leader.LeaderType, "LEADER_MINOR_CIV_", "");
+
+			local function RegisterLeaderForInfluence(iNumTokens:number, sInfluence:string)
+				local minorData:table = {
+					--Index = civ.Index,
+					CivType = leader.LeaderType,
+					Category = sCategory,
+					Name = Locale.Lookup("LOC_MINOR_CIV_"..sInfluence.."_INFLUENCE_ENVOYS"), -- unfortunately this is all hardcoded in LOCs
+					LeaderType = leader.LeaderType,
+					Description = Locale.Lookup("LOC_MINOR_CIV_"..sCategory.."_TRAIT_"..sInfluence.."_INFLUENCE_BONUS"), -- unfortunately this is all hardcoded in LOCs
+					NumTokens = iNumTokens,
+					--Yields from modifiers
+					-- Status TODO from Player:GetCulture?
+					--IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
+					--IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
+				};
+				-- impact from modifiers
+				-- t.b.d.
+				table.insert(m_kMinorData[ minorData.Category ], minorData);
+			end
+			-- we will have to actually triple this but TODO
+			--LOC_MINOR_CIV_SMALL_INFLUENCE_ENVOYS
+			--LOC_MINOR_CIV_MEDIUM_INFLUENCE_ENVOYS
+			--LOC_MINOR_CIV_LARGE_INFLUENCE_ENVOYS
+			
+			RegisterLeaderForInfluence(1, "SMALL"); -- unfortunately this is all hardcoded in LOCs
+			RegisterLeaderForInfluence(3, "MEDIUM");
+			RegisterLeaderForInfluence(6, "LARGE");
+		end
+	end
+	
+	-- second, fill out Main leaders
+	for civ in GameInfo.Civilizations() do
+		if civ.StartingCivilizationLevelType == "CIVILIZATION_LEVEL_CITY_STATE" then
+			local minorData:table = {
+				--Index = civ.Index,
+				CivType = civ.CivilizationType,
+				Category = GetCityStateCategory(civ.CivilizationType),
+				Name = Locale.Lookup(civ.Name),
+				LeaderType = GetCityStateLeader(civ.CivilizationType),
+				Description = "", -- later
+				NumTokens = 0,
+				--Yields from modifiers
+				-- Status TODO from Player:GetCulture?
+				--IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
+				--IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
+			};
+			-- description is actually a suzerain bonus descripion
+			-- it can contain many lines, from many Traits
+			local tStr:table = {};
+			for row in GameInfo.LeaderTraits() do
+				if row.LeaderType == minorData.LeaderType then
+					local sLeaderTrait:string = row.TraitType;
+					for trait in GameInfo.Traits() do
+						if trait.TraitType == sLeaderTrait and not trait.InternalOnly then table.insert(tStr, Locale.Lookup(trait.Description)); end
+					end
+				end
+			end
+			if #tStr == 0 then print("WARNING: UpdateMinorData() no traits for", minorData.Name); end
+			minorData.Description = table.concat(tStr, "[NEWLINE]");
+			-- impact from modifiers
+			--policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Policy", policy.PolicyType, ePlayerID, nil);
+			--policyData.IsImpact = false; -- for toggling options
+			--for _,value in pairs(policyData.Yields) do if value ~= 0 then policyData.IsImpact = true; break; end end
+			-- done!
+			table.insert(m_kMinorData[ minorData.Category ], minorData);
+		end -- level City State
+	end -- all civs
+
+	Timer1Tick("--- ALL MINOR DATA ---");
+end
+
+--[[
+local tPolicyOrder:table = {
+	SLOT_MILITARY = 1,
+	SLOT_ECONOMIC = 2,
+	SLOT_DIPLOMATIC = 3,
+	SLOT_GREAT_PERSON = 4,
+	SLOT_LEGACY = 5,
+	SLOT_DARKAGE = 6,
+}
+--]]
+function ViewMinorPage()
+
+	ResetTabForNewPageContent();
+
+	for minorGroup,minors in spairs( m_kMinorData, function(t,a,b) return a < b; end ) do -- simple sort by group code name
+		local instance : table = NewCollapsibleGroupInstance()
+		
+		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_CITY_STATES_TYPE_"..minorGroup) );
+		instance.RowHeaderLabel:SetHide( false );
+		instance.AmenitiesContainer:SetHide(true);
+		
+		local pHeaderInstance:table = {}
+		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
+		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
+		
+		-- set sorting callbacks
+		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
+		--if pHeaderInstance.UnitNameButton then     pHeaderInstance.UnitNameButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "name", iUnitGroup, instance ) end ) end
+		--if pHeaderInstance.UnitStatusButton then   pHeaderInstance.UnitStatusButton:RegisterCallback(  Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "status", iUnitGroup, instance ) end ) end
+
+		-- fill a single group
+		--for _,policy in ipairs(policies) do
+		for _,minor in spairs( minors, function(t,a,b) return t[a].Name < t[b].Name; end ) do -- sort by name
+		
+			--FILTERS
+			--if (not Controls.HideInactivePoliciesCheckbox:IsSelected() or policy.IsActive) and
+				--(not Controls.HideNoImpactPoliciesCheckbox:IsSelected() or policy.IsImpact) then
+		
+			local pMinorInstance:table = {}
+			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pMinorInstance, instance.ContentStack ) -- instance ID, pTable, stack
+			pMinorInstance.PolicyEntryYieldLOYALTY:SetHide( not bIsRiseFall );
+			
+			-- status with tooltip
+			local sStatusText:string;
+			local sStatusToolTip:string = minor.CivType.." / "..minor.LeaderType;
+			--if policy.IsActive then sStatusText = "[ICON_CheckSuccess]"; sStatusToolTip = sStatusToolTip.." Active policy";
+			--else                    sStatusText = "[ICON_CheckFail]";    sStatusToolTip = sStatusToolTip.." Inactive policy (obsolete or not yet unlocked)"; end
+			pMinorInstance.PolicyEntryStatus:SetText("?");
+			pMinorInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
+			
+			-- name with description
+			local sMinorName:string = minor.Name;
+			--if policy.IsSlotted then sPolicyName = "[ICON_Checkmark]"..sPolicyName; end
+			TruncateString(pMinorInstance.PolicyEntryName, 178, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
+			pMinorInstance.PolicyEntryName:SetToolTipString(minor.Description);
+			
+			-- impact with modifiers
+			--local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
+			--if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
+			--TruncateString(pMinorInstance.PolicyEntryImpact, 218, sPolicyImpact);
+			--pMinorInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip.."[NEWLINE]"..policy.ImpactToolTip);
+			
+			-- fill out yields
+			--for yield,value in pairs(policy.Yields) do
+				--if value ~= 0 then pMinorInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
+			--end
+			
+			--end -- FILTERS
+			
+		end
+		
+		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(#minors) );
+		
+		-- no footer
+		SetGroupCollapsePadding(instance, 0);
+		RealizeGroup( instance );
+	end
+	
+	-- finishing
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	Controls.CollapseAll:SetHide( false );
+	Controls.BottomYieldTotals:SetHide( true );
+	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 7;
+end
+
+
+
 -- ===========================================================================
 --
 -- ===========================================================================
@@ -3238,10 +3418,11 @@ function Initialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );	
 	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage ); 
+	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_MINORS",		ViewMinorPage );
 
-	m_tabs.SameSizedTabs(50);
+	m_tabs.SameSizedTabs(40);
 	m_tabs.CenterAlignTabs(-10);		
 
 	-- UI Callbacks
@@ -3254,6 +3435,7 @@ function Initialize()
 			-- refresh data and re-sort group which upgraded unit was from
 			m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
 			UpdatePolicyData();
+			UpdateMinorData();
 			sort_units( tUnitSort.type, tUnitSort.group, tUnitSort.parent );
 		end );
 

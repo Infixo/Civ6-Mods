@@ -7,14 +7,17 @@
 <BaseGameText>
 
 	<!-- Tab names -->
-	<Row Tag="LOC_HUD_REPORTS_TAB_DEALS">
+	<Row Tag="LOC_HUD_REPORTS_TAB_DEALS"> <!-- LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS -->
 		<Text>Current Deals</Text>
 	</Row>
-	<Row Tag="LOC_HUD_REPORTS_TAB_UNITS">
+	<Row Tag="LOC_HUD_REPORTS_TAB_UNITS"> <!-- LOC_PEDIA_UNITS_TITLE -->
 		<Text>Units</Text>
 	</Row>
-	<Row Tag="LOC_HUD_REPORTS_TAB_POLICIES">
+	<Row Tag="LOC_HUD_REPORTS_TAB_POLICIES"> <!-- LOC_PEDIA_CONCEPTS_PAGE_GOVT_2_CHAPTER_CONTENT_TITLE -->
 		<Text>Policies</Text>
+	</Row>
+	<Row Tag="LOC_HUD_REPORTS_TAB_MINORS"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>City States</Text>
 	</Row>
 	<!-- Column headers -->
 	<Row Tag="LOC_BRS_HEADER_BUILDINGNAME">

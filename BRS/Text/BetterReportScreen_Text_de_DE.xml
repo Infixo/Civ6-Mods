@@ -15,6 +15,9 @@
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="de_DE">
 		<Text>Politiken</Text>
 	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="de_DE"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>Stadtstaaten</Text>
+	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="de_DE">
 		<Text>Gebäudename/Bezirkname</Text>

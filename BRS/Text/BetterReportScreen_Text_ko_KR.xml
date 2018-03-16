@@ -16,6 +16,9 @@
 	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="ko_KR">
 		<Text>정책</Text>
 	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="ko_KR"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>도시 국가</Text>
+	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="ko_KR">
 		<Text>건물/특수지구</Text>
