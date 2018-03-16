@@ -3070,7 +3070,7 @@ function GetCityStateCategory(sCivType:string)
 	for row in GameInfo.TypeProperties() do
 		if row.Type == sCivType and row.Name == "CityStateCategory" then return row.Value; end
 	end
-	print("ERROR: GetCityStateCategory() unknown City State category for", sCivType);
+	print("ERROR: GetCityStateCategory() no City State category for", sCivType);
 	return "UNKNOWN";
 end
 
@@ -3079,17 +3079,30 @@ function GetCityStateLeader(sCivType:string)
 	for row in GameInfo.CivilizationLeaders() do
 		if row.CivilizationType == sCivType then return row.LeaderType; end
 	end
-	print("ERROR: GetCityStateLeader() unknown City State leader for", sCivType);
+	print("ERROR: GetCityStateLeader() no City State leader for", sCivType);
+	return "UNKNOWN";
+end
+
+-- helper to get a Trait for a Minor Leader; assumes only 1 trait per Minor Leader
+function GetCityStateTrait(sLeaderType:string)
+	for row in GameInfo.LeaderTraits() do
+		if row.LeaderType == sLeaderType then return row.TraitType; end
+	end
+	print("ERROR: GetCityStateTrait() no Trait for", sLeaderType);
 	return "UNKNOWN";
 end
 
 function UpdateMinorData()
 	Timer1Start();
 
+	local tMinorBonuses:table = {}; -- helper table to quickly access bonuses
 	-- prepare empty categories
 	m_kMinorData = {};
 	for row in GameInfo.TypeProperties() do
-		if row.Name == "CityStateCategory" and m_kMinorData[ row.Value ] == nil then m_kMinorData[ row.Value ] = {}; end
+		if row.Name == "CityStateCategory" and m_kMinorData[ row.Value ] == nil then
+			m_kMinorData[ row.Value ] = {};
+			tMinorBonuses[ row.Value ] = {};
+		end
 	end
 
 	-- find out our level of involvement with alive Minors
@@ -3101,15 +3114,13 @@ function UpdateMinorData()
 			local minorRelation:table = {
 				CivType    = PlayerConfigurations[minor:GetID()]:GetCivilizationTypeName(), -- CIVILIZATION_VILNIUS
 				LeaderType = PlayerConfigurations[minor:GetID()]:GetLeaderTypeName(), -- LEADER_MINOR_CIV_VILNIUS
-				IsSuzerain = ( minor:GetInfluence():GetSuzerain() == ePlayerID ), -- boolean
+				IsSuzerained = ( minor:GetInfluence():GetSuzerain() == ePlayerID ), -- boolean
 				NumTokens  = minor:GetInfluence():GetTokensReceived(ePlayerID),
 			};
 			tMinorRelations[ minorRelation.CivType ] = minorRelation;
 		end
 	end
 
--- LOC_CITY_STATES_SEND_ENVOY_AMOUNT ( {1_EnvoyNum}[ICON_Envoy] )
-	
 	-- iterate through all Minors
 	-- assumptions: no Civilization Traits are used, only Leader Traits; each has 1 leader; main leader is for Suzerain bonus; Inherited leaders are for small/medium/large bonuses
 	
@@ -3123,18 +3134,22 @@ function UpdateMinorData()
 					--Index = civ.Index,
 					CivType = leader.LeaderType,
 					Category = sCategory,
-					Name = Locale.Lookup("LOC_MINOR_CIV_"..sInfluence.."_INFLUENCE_ENVOYS"), -- unfortunately this is all hardcoded in LOCs
+					Name = Locale.Lookup("LOC_MINOR_CIV_"..sInfluence.."_INFLUENCE_ENVOYS"), -- unfortunately this is all hardcoded in LOCs, [ICON_Envoy]
 					LeaderType = leader.LeaderType,
 					Description = Locale.Lookup("LOC_MINOR_CIV_"..sCategory.."_TRAIT_"..sInfluence.."_INFLUENCE_BONUS"), -- unfortunately this is all hardcoded in LOCs
-					NumTokens = iNumTokens,
+					NumTokens = iNumTokens, -- required number of envoys to achieve this influence level
+					Trait = GetCityStateTrait(leader.LeaderType),
+					Influence = 0, -- this will hold number of City States that with this influence level
+					IsSuzerained = false, -- not used
 					--Yields from modifiers
-					-- Status TODO from Player:GetCulture?
-					--IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
-					--IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
 				};
 				-- impact from modifiers
-				-- t.b.d.
+				minorData.Impact, minorData.Yields, minorData.ImpactToolTip, minorData.UnknownEffect = RMA.CalculateModifierEffect("Trait", minorData.Trait, ePlayerID, nil);
+				minorData.IsImpact = false; -- for toggling options
+				for _,value in pairs(minorData.Yields) do if value ~= 0 then minorData.IsImpact = true; break; end end
+				-- done!
 				table.insert(m_kMinorData[ minorData.Category ], minorData);
+				tMinorBonuses[ minorData.Category ][ iNumTokens ] = minorData;
 			end
 			-- we will have to actually triple this but TODO
 			--LOC_MINOR_CIV_SMALL_INFLUENCE_ENVOYS
@@ -3157,12 +3172,22 @@ function UpdateMinorData()
 				Name = Locale.Lookup(civ.Name),
 				LeaderType = GetCityStateLeader(civ.CivilizationType),
 				Description = "", -- later
-				NumTokens = 0,
+				NumTokens = 0, -- always 0
+				Trait = "", -- later
+				Influence = 0, -- this will hold number of envoys sent to this CS
+				IsSuzerained = false, -- later
 				--Yields from modifiers
-				-- Status TODO from Player:GetCulture?
-				--IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
-				--IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
 			};
+			minorData.Trait = GetCityStateTrait(minorData.LeaderType);
+			local tMinorRelation:table = tMinorRelations[ civ.CivilizationType ];
+			if tMinorRelation ~= nil then
+				minorData.Influence = tMinorRelation.NumTokens;
+				minorData.IsSuzerained = tMinorRelation.IsSuzerained;
+				-- register in bonuses
+				for _,bonus in pairs(tMinorBonuses[minorData.Category]) do
+					if minorData.Influence >= bonus.NumTokens then bonus.Influence = bonus.Influence + 1; end
+				end
+			end
 			-- description is actually a suzerain bonus descripion
 			-- it can contain many lines, from many Traits
 			local tStr:table = {};
@@ -3177,9 +3202,9 @@ function UpdateMinorData()
 			if #tStr == 0 then print("WARNING: UpdateMinorData() no traits for", minorData.Name); end
 			minorData.Description = table.concat(tStr, "[NEWLINE]");
 			-- impact from modifiers
-			--policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Policy", policy.PolicyType, ePlayerID, nil);
-			--policyData.IsImpact = false; -- for toggling options
-			--for _,value in pairs(policyData.Yields) do if value ~= 0 then policyData.IsImpact = true; break; end end
+			minorData.Impact, minorData.Yields, minorData.ImpactToolTip, minorData.UnknownEffect = RMA.CalculateModifierEffect("Trait", minorData.Trait, ePlayerID, nil);
+			minorData.IsImpact = false; -- for toggling options
+			for _,value in pairs(minorData.Yields) do if value ~= 0 then minorData.IsImpact = true; break; end end
 			-- done!
 			table.insert(m_kMinorData[ minorData.Category ], minorData);
 		end -- level City State
@@ -3188,16 +3213,6 @@ function UpdateMinorData()
 	Timer1Tick("--- ALL MINOR DATA ---");
 end
 
---[[
-local tPolicyOrder:table = {
-	SLOT_MILITARY = 1,
-	SLOT_ECONOMIC = 2,
-	SLOT_DIPLOMATIC = 3,
-	SLOT_GREAT_PERSON = 4,
-	SLOT_LEGACY = 5,
-	SLOT_DARKAGE = 6,
-}
---]]
 function ViewMinorPage()
 
 	ResetTabForNewPageContent();
@@ -3232,28 +3247,29 @@ function ViewMinorPage()
 			
 			-- status with tooltip
 			local sStatusText:string;
-			local sStatusToolTip:string = minor.CivType.." / "..minor.LeaderType;
-			--if policy.IsActive then sStatusText = "[ICON_CheckSuccess]"; sStatusToolTip = sStatusToolTip.." Active policy";
-			--else                    sStatusText = "[ICON_CheckFail]";    sStatusToolTip = sStatusToolTip.." Inactive policy (obsolete or not yet unlocked)"; end
-			pMinorInstance.PolicyEntryStatus:SetText("?");
+			local sStatusToolTip:string = minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait;
+			if minor.Influence > 0 then sStatusText = "[ICON_CheckSuccess]"; end
+			if minor.IsSuzerained then sStatusText = "[ICON_Checkmark]"; end
+			pMinorInstance.PolicyEntryStatus:SetText( sStatusText );
 			pMinorInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
 			
 			-- name with description
 			local sMinorName:string = minor.Name;
-			--if policy.IsSlotted then sPolicyName = "[ICON_Checkmark]"..sPolicyName; end
+			if     minor.NumTokens > 0 then sMinorName = sMinorName.." "..tostring(minor.Influence);
+			elseif minor.Influence > 0 then sMinorName = "[COLOR_White]"..tostring(minor.Influence).."[ENDCOLOR] [ICON_Envoy] "..sMinorName; end
 			TruncateString(pMinorInstance.PolicyEntryName, 178, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pMinorInstance.PolicyEntryName:SetToolTipString(minor.Description);
 			
 			-- impact with modifiers
-			--local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
-			--if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
-			--TruncateString(pMinorInstance.PolicyEntryImpact, 218, sPolicyImpact);
-			--pMinorInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip.."[NEWLINE]"..policy.ImpactToolTip);
+			local sMinorImpact:string = ( minor.Impact == "" and "[ICON_CheckmarkBlue]" ) or minor.Impact;
+			if minor.UnknownEffect then sMinorImpact = sMinorImpact.." [COLOR_Red]!"; end
+			TruncateString(pMinorInstance.PolicyEntryImpact, 218, sMinorImpact);
+			pMinorInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip.."[NEWLINE]"..minor.ImpactToolTip);
 			
 			-- fill out yields
-			--for yield,value in pairs(policy.Yields) do
-				--if value ~= 0 then pMinorInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
-			--end
+			for yield,value in pairs(minor.Yields) do
+				if value ~= 0 then pMinorInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
+			end
 			
 			--end -- FILTERS
 			
