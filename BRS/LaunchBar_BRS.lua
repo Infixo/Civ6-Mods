@@ -58,18 +58,23 @@ end
 -- ===========================================================================
 function Initialize()
 
-	if not bIsModHBWII then
+	if bIsModHBWII then
+		-- Replace existing button
+		Controls.ReportsButton:RegisterCallback(Mouse.eLClick, ToggleReports);
+		Controls.ReportsButton:SetTexture("LaunchBar_Hook_GreatWorksButton"); -- LaunchBar_Hook_ReligionButton
+		Controls.ReportsButton:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS").." "..Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS_TT") );
+		Controls.ReportsImage:SetTexture( IconManager:FindIconAtlas("ICON_TECH_ENGINEERING", 38) );
+	else
 		-- Create a new button
 		ContextPtr:BuildInstanceForControl("LaunchBarItem", m_ReportsInstance, Controls.ButtonStack);
 		m_ReportsInstance.LaunchItemButton:RegisterCallback(Mouse.eLClick, ToggleReports);
 		m_ReportsInstance.LaunchItemButton:SetTexture("LaunchBar_Hook_GreatWorksButton"); -- LaunchBar_Hook_ReligionButton
 		m_ReportsInstance.LaunchItemButton:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS").." "..Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS_TT") );
 		m_ReportsInstance.LaunchItemIcon:SetTexture( IconManager:FindIconAtlas("ICON_TECH_ENGINEERING", 38) );
-
 		-- Add a pin to the stack for each new item
 		ContextPtr:BuildInstanceForControl("LaunchBarPinInstance", m_ReportsInstancePip, Controls.ButtonStack);
 	end
-
+	
 	-- events called from ReportScreen when opened/closed
 	LuaEvents.ReportScreen_Opened.Add( function() m_isReportScreenOpen = true;  OnOpen();  end );
 	LuaEvents.ReportScreen_Closed.Add( function() m_isReportScreenOpen = false; OnClose(); end );
