@@ -1,4 +1,4 @@
-print("Loading Real Modifier Analysis.lua");
+print("Loading Real Modifier Analysis.lua from Better Report Screen version 3.0");
 -- ===========================================================================
 -- Real Modifier Analysis
 -- Author: Infixo
@@ -517,6 +517,7 @@ function GetCityData( pCity:table )
 		NumSpecialtyDistricts	= 0,
 		Population				= pCity:GetPopulation(),
 		Wonders					= {},		-- Format per entry: { Name, YieldType, YieldChange }
+		Plot 					= Map.GetPlot(pCity:GetX(), pCity:GetY()),
 		--- not used yet
 		AmenitiesNetAmount				= 0,
 		AmenitiesNum					= 0,
@@ -687,6 +688,16 @@ function GetCityData( pCity:table )
 			followersAll = followersAll + religionData.Followers;
 		end
 	end
+
+	-- number of followers of the main religion (from ReportScreen.lua)
+	data.MajorityReligionFollowers = 0;
+	--local eDominantReligion:number = pCity:GetReligion():GetMajorityReligion();
+	if eDominantReligion > 0 then -- WARNING! this rules out pantheons!
+		for _, religionData in pairs(pCity:GetReligion():GetReligionsInCity()) do
+			if religionData.Religion == eDominantReligion then data.MajorityReligionFollowers = religionData.Followers; end
+		end
+	end
+	--print("Majority religion followers for", cityName, data.MajorityReligionFollowers);
 	
 	data.AmenitiesNetAmount				= pCityGrowth:GetAmenities() - pCityGrowth:GetAmenitiesNeeded();
 	data.AmenitiesNum					= pCityGrowth:GetAmenities();
@@ -825,6 +836,7 @@ function GetCityData( pCity:table )
 		local districtTable :table	= { 
 			SubjectType		= SubjectTypes.District,
 			Name			= data.Name..": "..Locale.Lookup(districtInfo.Name),
+			Plot 			= kPlot,
 			Yields   		= YieldTableNew(), -- district yields (from adjacency)
 			--AdjYields   = YieldTableNew(), -- adjacency bonus yields -- Infixo: ADJACENCY = STANDARD YIELD
 			DistrictType 	= districtType,
@@ -1494,8 +1506,8 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	--dprint("FUNCAL CheckOneRequirement(req,type,sub)(subject)",tReq.ReqId,tReq.ReqType,sSubjectType,tSubject.SubjectType,tSubject.Name);
 	
 	local function CheckForMismatchError(sExpectedType:string)
-		if sExpectedType == sSubjectType then return false; end
-		print("ERROR: CheckOneRequirement mismatch for subject", sSubjectType); dshowtable(tReq); return true;
+		if sExpectedType == tSubject.SubjectType then return false; end
+		print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return true;
 	end
 	
 	-- MAIN DISPATCHER FOR REQUIREMENTS
@@ -1657,6 +1669,19 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
 		bIsValidSubject = ( tSubject.Plot:GetAppeal() >= tonumber(tReq.Arguments.MinimumAppeal) );
 		-- there is probably maximum appeal but it is not used at all
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_ADJACENT_TO_RIVER" then
+		--if CheckForMismatchError(SubjectTypes.Plot) then return false; end -- this could be District or Plot, maybe City?
+		if not( tSubject.SubjectType == SubjectTypes.Plot or tSubject.SubjectType == SubjectTypes.District or tSubject.SubjectType == SubjectTypes.City ) then
+			print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return nil;
+		end
+		bIsValidSubject = ( tSubject.Plot:IsRiver() or tSubject.Plot:IsRiverAdjacent() );
+	
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_DISTRICT_TYPE_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.District) then return false; end
+		local districtType:string = tSubject.DistrictType;
+		if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+		bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
 
 	else
 		-- do nothing here... probably will never implement all possible types
@@ -1826,6 +1851,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError(SubjectTypes.Plot) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
 
+	------------------------------ CITY ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_CHANGE" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
@@ -1856,9 +1883,13 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		tImpact.LOYALTY = tonumber(tMod.Arguments.Amount);
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_AMENITIES_FROM_RELIGION" then
-		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		if not( tSubject.SubjectType == SubjectTypes.City or tSubject.SubjectType == SubjectTypes.District ) then
+			print("ERROR: ApplyEffectAndCalculateImpact mismatch for subject", sSubjectType); dshowtable(tMod); return nil;
+		end
 		tImpact.AMENITY = tonumber(tMod.Arguments.Amount);
 		
+	------------------------------ DISTRICT ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.District) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tonumber(tMod.Arguments.Amount) / 100.0);
@@ -1866,7 +1897,59 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_CHANGE" then
 		if CheckForMismatchError("District") then return nil; end
 		return nil;
+
+	elseif tMod.EffectType == "EFFECT_FEATURE_ADJACENCY" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		-- complex effect, with 4 parameters
+		-- DistrictType, FeatureType (must be adjacent), YieldType, Amount
+		-- need to iterate through all built districts and check if there's an adjacent feature
 		
+		local function IsPlotAdjacentToFeature(iX:number, iY:number, sFeatureType:string)
+			local adjacentPlot:table, eFeature:number = nil, 0;
+			for direction = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1, 1 do
+				adjacentPlot = Map.GetAdjacentPlot(iX, iY, direction);
+				if adjacentPlot then
+					eFeature = adjacentPlot:GetFeatureType();
+					if eFeature > -1 and GameInfo.Features[eFeature].FeatureType == sFeatureType then return true; end
+				end
+			end
+			return false;
+		end
+		
+		local iNum:number = 0;
+		for _,district in ipairs(tSubject.Districts) do
+			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType and
+				IsPlotAdjacentToFeature(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.FeatureType) then iNum = iNum + 1; end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+		
+	elseif tMod.EffectType == "EFFECT_TERRAIN_ADJACENCY" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		-- complex effect, with 4 parameters
+		-- DistrictType, TerrainType (must be adjacent), YieldType, Amount
+		-- need to iterate through all built districts and check if there's an adjacent terrain
+		
+		local function IsPlotAdjacentToTerrain(iX:number, iY:number, sTerrainType:string)
+			local adjacentPlot:table, eTerrain:number = nil, 0;
+			for direction = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1, 1 do
+				adjacentPlot = Map.GetAdjacentPlot(iX, iY, direction);
+				if adjacentPlot then
+					eTerrain = adjacentPlot:GetTerrainType();
+					if eTerrain > -1 and GameInfo.Terrains[eTerrain].TerrainType == sTerrainType then return true; end
+				end
+			end
+			return false;
+		end
+		
+		local iNum:number = 0;
+		for _,district in ipairs(tSubject.Districts) do
+			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType and
+				IsPlotAdjacentToTerrain(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.TerrainType) then iNum = iNum + 1; end
+		end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+		
+	------------------------------ BUILDING ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_YIELD_CHANGE" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		local sBuildingType:string = tMod.Arguments.BuildingType;
@@ -1919,6 +2002,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			end
 		end
 		
+	------------------------------ PRODUCTION ------------------------------------------------
+	
 	-- special effects to boost production
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_BUILDING" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
@@ -1933,6 +2018,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_UNIT" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		if tSubject.CurrentProductionType == "UNIT" then tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount); end
+	
+	------------------------------  HOUSING AMENITY LOYALTY ------------------------------------------------
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_HOUSING" then
 		if CheckForMismatchError("City") then return nil; end
@@ -1959,6 +2046,12 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		tImpact.AMENITY = tonumber(tMod.Arguments.Amount);
 
+	elseif tMod.EffectType == "EFFECT_GOVERNOR_ADJUST_IDENITITY_PER_TITLE" then -- WARNING! Firaxis made typo here in IDENITITY
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.LOYALTY = tSubject.NumGovernorPromotions * tonumber(tMod.Arguments.Amount);
+		
+	------------------------------ UNIT ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_MAINTENANCE_DISCOUNT" then
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
 		local iAmount:number = tonumber(tMod.Arguments.Amount);
@@ -1968,6 +2061,12 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		end
 		tImpact.GOLD = iDiscount;
 
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_WMD_MAINTENANCE_MODIFIER" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		tImpact.GOLD = tSubject.WMDs.Maintenance * tonumber(tMod.Arguments.Amount) / 100.0;
+
+	------------------------------ ENVOY ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_YIELD_CHANGE_PER_USED_INFLUENCE_TOKEN" then
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tSubject.NumInfluenceTokensGiven * tonumber(tMod.Arguments.Amount));
@@ -1980,10 +2079,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tSubject.NumSuzerainCityStates * tonumber(tMod.Arguments.Amount) / 100.0);
 
-	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_WMD_MAINTENANCE_MODIFIER" then
-		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
-		tImpact.GOLD = tSubject.WMDs.Maintenance * tonumber(tMod.Arguments.Amount) / 100.0;
-
+	------------------------------ TRADE ROUTE ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_TRADE_ROUTE_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
 		local bOrigin:boolean = true; -- apply to Outgoing routes (i.e. we are Origin)
@@ -2075,10 +2172,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
 
-	elseif tMod.EffectType == "EFFECT_GOVERNOR_ADJUST_IDENITITY_PER_TITLE" then -- WARNING! Firaxis made typo here in IDENITITY
-		if CheckForMismatchError(SubjectTypes.City) then return nil; end
-		tImpact.LOYALTY = tSubject.NumGovernorPromotions * tonumber(tMod.Arguments.Amount);
-
+	------------------------------ GREAT WORK and TOURISM ------------------------------------------------
+	
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TOURISM" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		-- this effect is quite complex, it supports 4 argument types: BoostsWonders (=1), GreatWorkObjectType (=GREATWORKOBJECT_PORTRAIT), ImprovementType (=IMPROVEMENT_BEACH_RESORT), Religious (=1), ScalingFactor (=200)
@@ -2132,6 +2227,18 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			end
 			YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * (tonumber(tMod.Arguments.ScalingFactor)-100) / 100.0);
 		end
+	
+	------------------------------  WONDER ------------------------------------------------
+	
+	elseif tMod.EffectType == "EFFECT_ADJUST_WONDER_YIELD_CHANGE" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, table.count(tSubject.Wonders) * tonumber(tMod.Arguments.Amount));
+	
+	------------------------------  RELIGION ------------------------------------------------
+	
+	elseif tMod.EffectType == "EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tSubject.MajorityReligionFollowers * tonumber(tMod.Arguments.Amount) / 100.0);
 	
 	else
 		-- do nothing here... probably will never implement all possible types
@@ -2335,4 +2442,4 @@ function Initialize()
 end
 Initialize();
 
-print("OK loaded Real Modifier Analysis.lua");
+print("OK loaded Real Modifier Analysis.lua from BRS");
