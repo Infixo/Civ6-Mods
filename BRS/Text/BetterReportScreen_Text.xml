@@ -135,6 +135,12 @@
 	<Row Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES">
 		<Text>Hide Policies with No Impact</Text>
 	</Row>
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS">
+		<Text>Hide Not Met City States</Text>
+	</Row>
+	<Row Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS">
+		<Text>Hide City States with No Impact</Text>
+	</Row>
 	<!-- Deals -->
     <Row Tag="LOC_BRS_CURRENT_DEALS_OUTGOING">
 		<Text>Outgoing</Text>

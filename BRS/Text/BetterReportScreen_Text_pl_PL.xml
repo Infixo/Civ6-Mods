@@ -134,6 +134,12 @@
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="pl_PL">
 		<Text>Ukryj doktryny bez żadnego wpływu</Text>
 	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="pl_PL">
+		<Text>Ukryj niespotkane miasta-państwa</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="pl_PL">
+		<Text>Ukryj miasta-państwa bez żadnego wpływu</Text>
+	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="pl_PL">
 		<Text>Wychodzące</Text>

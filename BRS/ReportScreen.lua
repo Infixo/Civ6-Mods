@@ -1886,6 +1886,7 @@ function ViewYieldsPage()
 	Controls.BottomYieldTotals:SetSizeY( SIZE_HEIGHT_BOTTOM_YIELDS );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomYieldTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 1;
@@ -2009,6 +2010,7 @@ function ViewResourcesPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( false ); -- ViewResourcesPage
 	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomResourceTotals:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 2;
@@ -2423,6 +2425,7 @@ function ViewCityStatusPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 3;
@@ -2834,6 +2837,7 @@ function ViewUnitsPage()
 	Controls.BottomYieldTotals:SetHide( true )
 	Controls.BottomResourceTotals:SetHide( true )
 	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88 )
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 5;
@@ -2906,6 +2910,7 @@ function ViewDealsPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 4;
@@ -3054,8 +3059,8 @@ function ViewPolicyPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( false ); -- ViewPolicyPage
+	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomPoliciesFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
-	--Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 6;
 end
@@ -3144,7 +3149,7 @@ function UpdateMinorData()
 					Trait = GetCityStateTrait(leader.LeaderType),
 					Influence = 0, -- this will hold number of City States that with this influence level
 					IsSuzerained = false, -- not used
-					HasMet = false, -- not used
+					HasMet = false, -- will be true if any of that category has been met
 					--Yields from modifiers
 				};
 				-- impact from modifiers; the 5th parameter is used to select proper modifiers, it is the ONLY place where it is used
@@ -3188,6 +3193,7 @@ function UpdateMinorData()
 				-- register in bonuses
 				for _,bonus in pairs(tMinorBonuses[minorData.Category]) do
 					if minorData.Influence >= bonus.NumTokens then bonus.Influence = bonus.Influence + 1; end
+					if minorData.HasMet then bonus.HasMet = true; end
 				end
 			end
 			-- description is actually a suzerain bonus descripion
@@ -3241,8 +3247,8 @@ function ViewMinorPage()
 		for _,minor in spairs( minors, function(t,a,b) return t[a].Name < t[b].Name; end ) do -- sort by name
 		
 			--FILTERS
-			--if (not Controls.HideInactivePoliciesCheckbox:IsSelected() or policy.IsActive) and
-				--(not Controls.HideNoImpactPoliciesCheckbox:IsSelected() or policy.IsImpact) then
+			if (not Controls.HideNotMetMinorsCheckbox:IsSelected() or minor.HasMet) and
+				(not Controls.HideNoImpactMinorsCheckbox:IsSelected() or minor.IsImpact) then
 		
 			local pMinorInstance:table = {}
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pMinorInstance, instance.ContentStack ) -- instance ID, pTable, stack
@@ -3259,7 +3265,7 @@ function ViewMinorPage()
 			
 			-- name with description
 			local sMinorName:string = minor.Name;
-			if minor.HasMet then sMinorName = "[ICON_Capital]"..sMinorName; end
+			if minor.HasMet and minor.NumTokens == 0 then sMinorName = "[ICON_Capital]"..sMinorName; end
 			if     minor.NumTokens > 0 then sMinorName = sMinorName.." "..tostring(minor.Influence);
 			elseif minor.Influence > 0 then sMinorName = "[COLOR_White]"..tostring(minor.Influence).."[ENDCOLOR] [ICON_Envoy] "..sMinorName; end
 			TruncateString(pMinorInstance.PolicyEntryName, 178, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
@@ -3276,7 +3282,7 @@ function ViewMinorPage()
 				if value ~= 0 then pMinorInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
 			end
 			
-			--end -- FILTERS
+			end -- FILTERS
 			
 		end
 		
@@ -3295,7 +3301,9 @@ function ViewMinorPage()
 	Controls.BottomYieldTotals:SetHide( true );
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	Controls.BottomMinorsFilters:SetHide( false ); -- ViewMinorPage
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomMinorsFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
+	
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 7;
 end
@@ -3371,6 +3379,9 @@ end
 
 
 -- ===========================================================================
+-- CHECKBOXES
+-- ===========================================================================
+
 -- Checkboxes for hiding city details and free units/buildings
 
 function OnToggleHideCityBuildings()
@@ -3391,7 +3402,6 @@ function OnToggleHideFreeUnits()
 	ViewYieldsPage()
 end
 
--- ===========================================================================
 -- Checkboxes for different resources in Resources tab
 
 function OnToggleStrategic()
@@ -3412,7 +3422,6 @@ function OnToggleBonus()
 	ViewResourcesPage();
 end
 
--- ===========================================================================
 -- Checkboxes for policy filters
 
 function OnToggleInactivePolicies()
@@ -3426,6 +3435,21 @@ function OnToggleNoImpactPolicies()
 	Controls.HideNoImpactPoliciesCheckbox:SetSelected( not isChecked );
 	ViewPolicyPage();
 end
+
+-- Checkboxes for minors filters
+
+function OnToggleNotMetMinors()
+	local isChecked = Controls.HideNotMetMinorsCheckbox:IsSelected();
+	Controls.HideNotMetMinorsCheckbox:SetSelected( not isChecked );
+	ViewMinorPage();
+end
+
+function OnToggleNoImpactMinors()
+	local isChecked = Controls.HideNoImpactMinorsCheckbox:IsSelected();
+	Controls.HideNoImpactMinorsCheckbox:SetSelected( not isChecked );
+	ViewMinorPage();
+end
+
 
 -- ===========================================================================
 function Initialize()
@@ -3495,6 +3519,14 @@ function Initialize()
 	Controls.HideNoImpactPoliciesCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.HideNoImpactPoliciesCheckbox:SetSelected( false );
 
+	-- Minors Filters
+	Controls.HideNotMetMinorsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNotMetMinors );
+	Controls.HideNotMetMinorsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.HideNotMetMinorsCheckbox:SetSelected( true );
+	Controls.HideNoImpactMinorsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNoImpactMinors );
+	Controls.HideNoImpactMinorsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.HideNoImpactMinorsCheckbox:SetSelected( false );
+	
 	-- Events
 	LuaEvents.TopPanel_OpenReportsScreen.Add( OnTopOpenReportsScreen );
 	LuaEvents.TopPanel_CloseReportsScreen.Add( OnTopCloseReportsScreen );

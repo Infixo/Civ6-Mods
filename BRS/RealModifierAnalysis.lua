@@ -100,6 +100,7 @@ end
 local bBaseDataDirty:boolean = true; -- set to true to refresh the data
 tCities = nil; -- dynamically filled when needed (e.g. after refresh)
 tPlayer = nil; -- dynamically filled when needed (e.g. after refresh)
+tPlots = nil; -- only the local player's plots
 
 -- supported Subject types, will be put into SubjectType field of respective tables
 local SubjectTypes:table = {
@@ -111,6 +112,7 @@ local SubjectTypes:table = {
 	Unit = "Unit",
 	GreatWork = "GreatWork",
 	TradeRoute = "TradeRoute",
+	Plot = "Plot", -- also plot yields
 }
 
 -- ===========================================================================
@@ -120,7 +122,7 @@ local SubjectTypes:table = {
 
 -- YieldsTypes 0..5 are for FOOD, PRODUCTION, GOLD, SCIENCE, CULTURE and FAITH
 -- they correspond to respective YIELD_ type in Yields table
-YieldTypes.TOURISM =  6
+YieldTypes.TOURISM = 6
 YieldTypes.AMENITY = 7
 YieldTypes.HOUSING = 8
 YieldTypes.LOYALTY = 9
@@ -623,6 +625,16 @@ function GetCityData( pCity:table )
 		end
 	end
 
+	-- current production type
+	data.CurrentProductionType = "NONE";
+	local iCurrentProductionHash:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
+	if iCurrentProductionHash ~= 0 then
+		if     GameInfo.Buildings[iCurrentProductionHash] ~= nil then data.CurrentProductionType = "BUILDING";
+		elseif GameInfo.Districts[iCurrentProductionHash] ~= nil then data.CurrentProductionType = "DISTRICT";
+		elseif GameInfo.Units[iCurrentProductionHash]     ~= nil then data.CurrentProductionType = "UNIT";
+		elseif GameInfo.Projects[iCurrentProductionHash]  ~= nil then data.CurrentProductionType = "PROJECT";
+		end
+	end
 
 	local isGrowing	:boolean = pCityGrowth:GetTurnsUntilGrowth() ~= -1;
 	local isStarving:boolean = pCityGrowth:GetTurnsUntilStarvation() ~= -1;
@@ -1158,6 +1170,31 @@ end
 
 
 -- ===========================================================================
+-- PLOT YIELDS
+
+function GetPlotsData(ePlayerID:number)
+	local pPlayer:table = Players[ Game.GetLocalPlayer() ];
+	if ePlayerID then pPlayer = Players[ ePlayerID ]; end
+	if not pPlayer then return; end -- error
+	
+	tPlots = {}; -- clear old data
+	for _,city in pPlayer:GetCities():Members() do
+		for _,plotIndex in ipairs(Map.GetCityPlots():GetPurchasedPlots(city)) do
+			local pPlot:table = Map.GetPlotByIndex(plotIndex);
+			if pPlot then
+				local plotData:table = {
+					SubjectType = SubjectTypes.Plot,
+					Name = tostring(pPlot:GetX())..":"..tostring(pPlot:GetY()),
+					Plot = pPlot,
+				};
+				table.insert(tPlots, plotData);
+			end
+		end
+	end
+
+end
+
+-- ===========================================================================
 -- MODIFIERS' STATIC DATA
 -- ===========================================================================
 -- 0. Start with ModifierId
@@ -1388,7 +1425,9 @@ function DecodeModifier(sModifierId:string)
 	local tSubjectsOut:table = {};
 	table.insert(tSubjectsOut, "Subject(s): "..sSubjectType);
 	table.insert(tSubjectsOut, table.count(tSubjects));
-	for _,subject in ipairs(tSubjects) do table.insert(tSubjectsOut, subject.Name); end
+	--if sSubjectType ~= SubjectTypes.Plot then
+		for _,subject in ipairs(tSubjects) do table.insert(tSubjectsOut, subject.Name); end
+	--end
 	table.insert(tOut, table.concat(tSubjectsOut, ", "));
 	-- calculate impact of the modifier
 	local bUnknownEffect:boolean = false;
@@ -1539,11 +1578,42 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if CheckForMismatchError("Player") then return false; end
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES" then -- 14
-		if CheckForMismatchError("Plot") then return false; end
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local info:table = GameInfo.Terrains[ tReq.Arguments.TerrainType ];
+		if info == nil then return false; end -- error
+		bIsValidSubject = ( tSubject.Plot:GetTerrainType() == info.Index );
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES" then -- 10
-		if CheckForMismatchError("Plot") then return false; end
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local info:table = GameInfo.Features[ tReq.Arguments.FeatureType ];
+		if info == nil then return false; end -- error
+		bIsValidSubject = ( tSubject.Plot:GetFeatureType() == info.Index );
 		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local info:table = GameInfo.Resources[ tReq.Arguments.ResourceType ];
+		if info == nil then return false; end -- error
+		bIsValidSubject = ( tSubject.Plot:GetResourceType() == info.Index );
+
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_RESOURCE_CLASS_TYPE_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local resource:number = tSubject.Plot:GetResourceType();
+		if resource < 0 then return false; end -- no resource in the plot
+		local info:table = GameInfo.Resources[ resource ];
+		if info == nil then return false; end -- error
+		bIsValidSubject = ( info.ResourceClassType == tReq.Arguments.ResourceClassType );
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local info:table = GameInfo.Improvements[ tReq.Arguments.ImprovementType ];
+		if info == nil then return false; end -- error
+		bIsValidSubject = ( tSubject.Plot:GetImprovementType() == info.Index );
+		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_IS_APPEAL_BETWEEN" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = ( tSubject.Plot:GetAppeal() >= tonumber(tReq.Arguments.MinimumAppeal) );
+		-- there is probably maximum appeal but it is not used at all
+
 	else
 		-- do nothing here... probably will never implement all possible types
 		return false;
@@ -1579,7 +1649,7 @@ end
 ------------------------------------------------------------------------------
 -- BuildCollectionOfSubjects return 2 values
 --  table - of subjects - these are objects from tCities (cities, districts or buildings), TODO: filtered using SubReqs
---  strng - type of the subject
+--  string - type of the subject
 function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 	--print("FUNCAL BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
 	local tSubjects:table, sSubjectType:string = {}, "(unknown)";
@@ -1641,8 +1711,31 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 				end
 			end
 		end
+		
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_PLOT_YIELDS" then
+		sSubjectType = SubjectTypes.Plot;
+		for _,plot in ipairs(tPlots) do
+			if tReqSet then 
+				if CheckAllRequirements(tReqSet, plot, sSubjectType) then table.insert(tSubjects, plot); end
+			else
+				table.insert(tSubjects, plot);
+			end
+		end
+
+		
 	else
 		-- do nothing here... probably will never implement all possible types
+		--COLLECTION_ALL_PLOT_YIELDS
+		--COLLECTION_CITY_PLOT_YIELDS
+		--COLLECTION_SINGLE_PLOT_YIELDS
+		-- units
+		--COLLECTION_ALLIANCE_TRAINED_UNITS
+		--COLLECTION_ALLIANCE_UNITS
+		--COLLECTION_ALL_UNITS
+		--COLLECTION_CITY_TRAINED_UNITS
+		--COLLECTION_EMERGENCY_UNITS
+		--COLLECTION_PLAYER_TRAINED_UNITS
+		--COLLECTION_PLAYER_UNITS
 	end
 	return tSubjects, sSubjectType;
 end
@@ -1664,6 +1757,11 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	
 	if tMod.EffectType == "" then
 	
+	-- single effect for changing plot yields
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLOT_YIELD" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
+
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_CHANGE" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
@@ -1753,16 +1851,28 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			end
 		end
 		
-	-- special effects to boost production - we assume that they will always apply, no matter the production type
-	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_BUILDING" or
-	       tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_DISTRICT" or
-	       tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_UNIT" then
+	-- special effects to boost production
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_BUILDING" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
-		tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount);
+		if tSubject.CurrentProductionType == "BUILDING" then tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount); end
+		
+	-- special effects to boost production
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_DISTRICT" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		if tSubject.CurrentProductionType == "DISTRICT" then tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount); end
+		
+	-- special effects to boost production
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_UNIT" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		if tSubject.CurrentProductionType == "UNIT" then tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount); end
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_HOUSING" then
 		if CheckForMismatchError("City") then return nil; end
-		return nil;
+		local buildingInfo:table = GameInfo.Buildings[ tMod.Arguments.BuildingType ];
+		if buildingInfo == nil then return nil; end
+		if tSubject.City:GetBuildings():HasBuilding( buildingInfo.Index ) then
+			tImpact.HOUSING = tonumber(tMod.Arguments.Amount);
+		end
 
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_HOUSING_PER_DISTRICT" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
@@ -2084,6 +2194,8 @@ function RefreshBaseData(ePlayerID:number)
 	end
 	
 	GetPlayerData(); -- for COLLECTION_OWNER as Player
+	
+	GetPlotsData(); -- for COLLECTION_PLAYER_PLOT_YIELDS
 	
 	bBaseDataDirty = false; -- clean :)
 end

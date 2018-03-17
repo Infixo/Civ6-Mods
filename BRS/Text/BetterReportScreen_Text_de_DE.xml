@@ -134,6 +134,12 @@
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="de_DE">
 		<Text>Versteck Politiken mit keinen Effekten</Text>
 	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="de_DE"> <!-- todo -->
+		<Text>Hide Not Met City States</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="de_DE"> <!-- todo -->
+		<Text>Hide City States with No Impact</Text>
+	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="de_DE">
 		<Text>Ausgehende</Text>

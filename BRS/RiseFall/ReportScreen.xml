@@ -158,6 +158,15 @@
 			</Image>
 		</Container>
 
+		<!-- NEW TAB: CITY STATES -->
+		<Container ID="BottomMinorsFilters" Anchor="C,B" Offset="0,0" Size="parent-6,50">
+			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
+			<Image Anchor="C,B" Offset="0,2" Size="parent,parent" Texture="Controls_Gradient" Color="255,255,255,32">
+				<GridButton ID="HideNotMetMinorsCheckbox"   Style="CheckBoxControl" Anchor="C,C" Offset="-170,2" Size="270,26" String="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Hidden="0"/>
+				<GridButton ID="HideNoImpactMinorsCheckbox" Style="CheckBoxControl" Anchor="C,C" Offset="170,2" Size="270,26" String="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Hidden="0"/>
+			</Image>
+		</Container>
+		
 	</Box>
 
 

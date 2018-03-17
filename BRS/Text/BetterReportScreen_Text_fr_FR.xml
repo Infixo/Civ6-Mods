@@ -134,6 +134,12 @@
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="fr_FR">
 		<Text>Masquer doctrines sans impactes</Text>
 	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="fr_FR"> <!-- todo -->
+		<Text>Hide Not Met City States</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="fr_FR"> <!-- todo -->
+		<Text>Hide City States with No Impact</Text>
+	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="fr_FR">
 		<Text>Sortant (Donne)</Text>
