@@ -1677,7 +1677,7 @@
 				
 				<Container Offset="0,0" Size="180,parent">
 					<GridButton ID="PolicyHeaderButtonName"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_POLICY_NAME"/>
+						<Label ID="PolicyHeaderLabelName" Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_POLICY_NAME"/>
 					</GridButton>
 				</Container>
 				<Box Size="2,parent" Color="46,70,95,128" /> <!-- this is a thin vertical line, less visible -->

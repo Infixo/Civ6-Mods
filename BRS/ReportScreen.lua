@@ -2929,8 +2929,8 @@ function UpdatePolicyData()
 		SLOT_ECONOMIC = {},
 		SLOT_DIPLOMATIC = {},
 		SLOT_GREAT_PERSON = {},
-		--SLOT_LEGACY = {},
-		--SLOT_DARKAGE = {},
+		SLOT_PANTHEON = {},
+		SLOT_FOLLOWER = {},
 	};
 	if bIsRiseFall then
 		m_kPolicyData.SLOT_LEGACY = {};
@@ -2963,6 +2963,26 @@ function UpdatePolicyData()
 		policyData.IsImpact = false; -- for toggling options
 		for _,value in pairs(policyData.Yields) do if value ~= 0 then policyData.IsImpact = true; break; end end
 	end
+	-- iterate through all beliefs
+	for belief in GameInfo.Beliefs() do
+		if belief.BeliefClassType == "BELIEF_CLASS_PANTHEON" or belief.BeliefClassType == "BELIEF_CLASS_FOLLOWER" then
+			local policyData:table = {
+				Index = belief.Index,
+				Name = Locale.Lookup(belief.Name),
+				Description = Locale.Lookup(belief.Description),
+				--Yields from modifiers
+				-- Status TODO from Player:GetCulture?
+				IsActive = true, -- not used by pantheons
+				IsSlotted = ( pPlayer:GetReligion():GetPantheon() == belief.Index ),
+			};
+			local sSlotType:string = string.gsub(belief.BeliefClassType, "BELIEF_CLASS_", "SLOT_");
+			table.insert(m_kPolicyData[sSlotType], policyData);
+			-- belief impact from modifiers
+			policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Belief", belief.BeliefType, ePlayerID, nil);
+			policyData.IsImpact = false; -- for toggling options
+			for _,value in pairs(policyData.Yields) do if value ~= 0 then policyData.IsImpact = true; break; end end
+		end -- pantheons
+	end -- all beliefs
 	Timer1Tick("--- ALL POLICY DATA ---");
 end
 
@@ -2973,6 +2993,8 @@ local tPolicyOrder:table = {
 	SLOT_GREAT_PERSON = 4,
 	SLOT_LEGACY = 5,
 	SLOT_DARKAGE = 6,
+	SLOT_PANTHEON = 7,
+	SLOT_FOLLOWER = 8,
 }
 
 function ViewPolicyPage()
@@ -2986,11 +3008,14 @@ function ViewPolicyPage()
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
+		if policyGroup == "SLOT_PANTHEON" then instance.RowHeaderButton:SetText( Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_PANTHEON_BELIEFS_NAME") ); end
+		if policyGroup == "SLOT_FOLLOWER" then instance.RowHeaderButton:SetText( Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_FOLLOWER_BELIEFS_NAME") ); end
 		instance.RowHeaderLabel:SetHide( false );
 		instance.AmenitiesContainer:SetHide(true);
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
+		if policyGroup == "SLOT_PANTHEON" or policyGroup == "SLOT_FOLLOWER" then pHeaderInstance.PolicyHeaderLabelName:SetText( Locale.Lookup("LOC_BELIEF_NAME") ); end
 		local iNumRows:number = 0;
 		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
 		
@@ -3234,6 +3259,7 @@ function ViewMinorPage()
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
+		pHeaderInstance.PolicyHeaderLabelName:SetText( Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE") );
 		local iNumRows:number = 0;
 		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
 		
@@ -3256,18 +3282,18 @@ function ViewMinorPage()
 			if minor.NumTokens == 0 then iNumRows = iNumRows + 1; end
 			
 			-- status with tooltip
-			local sStatusText:string;
-			local sStatusToolTip:string = minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait;
-			if minor.Influence > 0 then sStatusText = "[ICON_CheckSuccess]"; end
-			if minor.IsSuzerained  then sStatusText = "[ICON_Checkmark]";    end
-			pMinorInstance.PolicyEntryStatus:SetText( sStatusText );
-			pMinorInstance.PolicyEntryStatus:SetToolTipString("");
+			local sStatusText:string = "";
+			local sStatusToolTip:string = "";
+			if minor.Influence > 0 then sStatusText = "[ICON_CheckSuccess]"; sStatusToolTip = Locale.Lookup("LOC_ENVOY_NAME");           end
+			if minor.IsSuzerained  then sStatusText = "[ICON_Checkmark]";    sStatusToolTip = Locale.Lookup("LOC_CITY_STATES_SUZERAIN"); end
+			pMinorInstance.PolicyEntryStatus:SetText(sStatusText);
+			pMinorInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);     
 			
 			-- name with description
 			local sMinorName:string = minor.Name;
 			if minor.HasMet and minor.NumTokens == 0 then sMinorName = "[ICON_Capital]"..sMinorName; end
 			if     minor.NumTokens > 0 then sMinorName = sMinorName.." "..tostring(minor.Influence);
-			elseif minor.Influence > 0 then sMinorName = "[COLOR_White]"..tostring(minor.Influence).."[ENDCOLOR] [ICON_Envoy] "..sMinorName; end
+			elseif minor.Influence > 0 then sMinorName = sMinorName.." [COLOR_White]"..tostring(minor.Influence).."[ENDCOLOR] [ICON_Envoy]"; end
 			TruncateString(pMinorInstance.PolicyEntryName, 178, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pMinorInstance.PolicyEntryName:SetToolTipString(minor.Description);
 			
@@ -3275,7 +3301,7 @@ function ViewMinorPage()
 			local sMinorImpact:string = ( minor.Impact == "" and "[ICON_CheckmarkBlue]" ) or minor.Impact;
 			if minor.UnknownEffect then sMinorImpact = sMinorImpact.." [COLOR_Red]!"; end
 			TruncateString(pMinorInstance.PolicyEntryImpact, 218, sMinorImpact);
-			pMinorInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP..minor.ImpactToolTip);
+			pMinorInstance.PolicyEntryImpact:SetToolTipString(minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait..TOOLTIP_SEP..minor.ImpactToolTip);
 			
 			-- fill out yields
 			for yield,value in pairs(minor.Yields) do

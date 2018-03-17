@@ -1387,12 +1387,15 @@ function FetchAndCacheData(sModifierId:string)
 end
 
 ------------------------------------------------------------------------------
--- Returns 3 values:
+-- Returns 5 values:
 --  string - decoded into text (tooltip), contains info about structure, owner, subjects and final impact
 --  table - extended yields table
 --  string - id of the attached modifier, if an effect is "attach modifier"
 --  boolean - true if there was an unknown effect
-function DecodeModifier(sModifierId:string)
+--  table - the modifier
+--  string - type of subjects
+function DecodeModifier(sModifierId:string, ePlayerID:number, iCityID:number, tMainSubjects:table, sMainSubjectType:string)
+	--dprint("FUN DecodeModifier(modid,pid,cid,subtype)",sModifierId,ePlayerID,iCityID,sMainSubjectType);
 	local tMod:table = FetchAndCacheData(sModifierId);
 	if not tMod then return "ERROR: "..sModifierId.." not defined!"; end
 	local tOut = {};
@@ -1418,7 +1421,19 @@ function DecodeModifier(sModifierId:string)
 	-- TODO: add support for other owners later, if necessary
 	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], SubjectTypes.Player;
 	-- build a collection of subjects
-	local tSubjects:table, sSubjectType:string = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
+	local tSubjects:table, sSubjectType:string = tMainSubjects, sMainSubjectType; -- let's start with passed args, will be nils most of the time
+	if tMainSubjects == nil or sMainSubjectType == nil then 
+		-- rebuild collection
+		tSubjects, sSubjectType = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
+	else
+		if tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
+			-- try to pass cities
+			tSubjects, sSubjectType = BuildCollectionOfSubjects(tMod, tMainSubjects, sMainSubjectType);
+		elseif tMod.CollectionType ~= "COLLECTION_OWNER" then
+			-- rebuild collection
+			tSubjects, sSubjectType = BuildCollectionOfSubjects(tMod, tOwner, sOwnerType);
+		end
+	end
 	--dprint("Subjects are:"); for k,v in pairs(tSubjects) do print(k,v.SubjectType,v.Name); end -- debug
 	--dshowsubjects(tSubjects); -- debug
 	-- list subjects
@@ -1454,8 +1469,15 @@ function DecodeModifier(sModifierId:string)
 	if not bImpact then sImpactText = sImpactText.."yields not affected"; end
 	table.insert(tOut, sImpactText);
 	if bUnknownEffect then table.insert(tOut, "[COLOR_Red]Unknown effect[ENDCOLOR]"); end -- [ICON_Exclamation]
-	-- return 5 values
-	return table.concat(tOut, "[NEWLINE]"), tImpact, ((tMod.EffectType == "EFFECT_ATTACH_MODIFIER") and tMod.Arguments.ModifierId) or nil, bUnknownEffect, tMod
+	-- return 7 values
+	return
+		table.concat(tOut, "[NEWLINE]"),
+		tImpact,
+		((tMod.EffectType == "EFFECT_ATTACH_MODIFIER") and tMod.Arguments.ModifierId) or nil,
+		bUnknownEffect,
+		tMod,
+		tSubjects,
+		sSubjectType;
 end
 
 -- ===========================================================================
@@ -1485,6 +1507,8 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	-- bunch of reqs simulated to be always true (usually regarding player's situation)
 	elseif tReq.ReqType == "REQUIREMENT_PLAYER_IS_AT_PEACE"                 then return true;
 	elseif tReq.ReqType == "REQUIREMENT_PLAYER_IS_AT_PEACE_WITH_ALL_MAJORS" then return true;
+	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_PANTHEON" then return true;
+	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_RELIGION" then return true;
 	
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
 		if CheckForMismatchError(SubjectTypes.City) then return false; end
@@ -1603,6 +1627,26 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if info == nil then return false; end -- error
 		bIsValidSubject = ( info.ResourceClassType == tReq.Arguments.ResourceClassType );
 		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local resource:number = tSubject.Plot:GetResourceType();
+		if resource < 0 then return false; end -- no resource in the plot
+		local info:table = GameInfo.Resources[ resource ];
+		if info == nil then return false; end -- error
+		local sResourceType:string = info.ResourceType;
+		bIsValidSubject = false;
+		for row in GameInfo.TypeTags() do
+			if row.Type == sResourceType and row.Tag == tReq.Arguments.Tag then
+				bIsValidSubject = true; break;
+			end
+		end
+
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_RESOURCE_VISIBLE" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		local resource:number = tSubject.Plot:GetResourceType();
+		if resource < 0 then return false; end -- no resource in the plot
+		bIsValidSubject = ( tPlayer.Player:GetResources():IsResourceVisible( resource ) );
+
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
 		local info:table = GameInfo.Improvements[ tReq.Arguments.ImprovementType ];
@@ -1651,8 +1695,8 @@ end
 --  table - of subjects - these are objects from tCities (cities, districts or buildings), TODO: filtered using SubReqs
 --  string - type of the subject
 function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
-	--print("FUNCAL BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
-	local tSubjects:table, sSubjectType:string = {}, "(unknown)";
+	--dprint("FUN BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
+	local tSubjects:table, sSubjectType:string = {}, "([COLOR_Red]unknown[ENDCOLOR])";
 	local tReqSet:table = tMod.SubjectReqSet; -- speed up some checking
 	--dprint("  Subject requirement set is (id)", tMod.SubjectReqSetId);
 	-- MAIN DISPATCHER FOR COLLECTIONS
@@ -1665,7 +1709,23 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 
 	elseif tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
 		-- need City here as owner
-		sSubjectType = "District";
+		sSubjectType = SubjectTypes.District;
+		if sOwnerType == SubjectTypes.City then
+			for cityname,citydata in pairs(tOwner) do
+				for _,district in ipairs(citydata.Districts) do
+					if district.isBuilt then
+						--print("working on district",district.Name)
+						if tReqSet then  
+							if CheckAllRequirements(tReqSet, district, sSubjectType) then table.insert(tSubjects, district); end
+						else
+							table.insert(tSubjects, district);
+						end
+					end
+				end
+			end
+		else
+			print("ERROR: BuildCollectionOfSubjects: Mismatch type for COLLECTION_CITY_DISTRICTS", sOwnerType); dshowtable(tMod);
+		end
 
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_CAPITAL_CITY" then
 		sSubjectType = SubjectTypes.City;
@@ -1676,7 +1736,9 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 			end
 		end
 
-	elseif tMod.CollectionType == "COLLECTION_PLAYER_CITIES" then
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_CITIES" or
+		-- WARNING! this is a shortcut for Beliefs; will produce incorrect results for e.g. Wonders or any other modifier that affects only single city
+		tMod.CollectionType == "COLLECTION_ALL_CITIES" then
 		sSubjectType = SubjectTypes.City;
 		for cityname,citydata in pairs(tCities) do
 			if tReqSet then 
@@ -1712,7 +1774,9 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 			end
 		end
 		
-	elseif tMod.CollectionType == "COLLECTION_PLAYER_PLOT_YIELDS" then
+	elseif tMod.CollectionType == "COLLECTION_PLAYER_PLOT_YIELDS" or 
+		-- WARNING! this is a shortcut for Pantheons; will produce incorrect results for e.g. Wonders or any other modifier that affects only single city
+		tMod.CollectionType == "COLLECTION_CITY_PLOT_YIELDS" then
 		sSubjectType = SubjectTypes.Plot;
 		for _,plot in ipairs(tPlots) do
 			if tReqSet then 
@@ -1726,7 +1790,6 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 	else
 		-- do nothing here... probably will never implement all possible types
 		--COLLECTION_ALL_PLOT_YIELDS
-		--COLLECTION_CITY_PLOT_YIELDS
 		--COLLECTION_SINGLE_PLOT_YIELDS
 		-- units
 		--COLLECTION_ALLIANCE_TRAINED_UNITS
@@ -1745,7 +1808,7 @@ end
 -- Returns a table of extended yields
 -- It will return nil if an effect is unknown
 function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:string)
-	--dprint("FUNCAL ApplyEffectAndCalculateImpact(mod,eff,sub)(subject)",tMod.ModifierId,tMod.EffectType,sSubjectType,tSubject.SubjectType,tSubject.Name);
+	--dprint("FUN ApplyEffectAndCalculateImpact(mod,eff,sub)(subject)",tMod.ModifierId,tMod.EffectType,sSubjectType,tSubject.SubjectType,tSubject.Name);
 
 	local function CheckForMismatchError(sExpectedType:string)
 		if sExpectedType == tSubject.SubjectType then return false; end
@@ -1755,7 +1818,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	-- MAIN DISPATCHER FOR EFFECTS
 	local tImpact:table = YieldTableNew();
 	
-	if tMod.EffectType == "" then
+	if tMod.EffectType == "EFFECT_ATTACH_MODIFIER" then
+		-- well, do nothing here but return tImpact, this will clear unknown flag
 	
 	-- single effect for changing plot yields
 	elseif tMod.EffectType == "EFFECT_ADJUST_PLOT_YIELD" then
@@ -1790,6 +1854,10 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_IDENTITY_PER_TURN" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		tImpact.LOYALTY = tonumber(tMod.Arguments.Amount);
+		
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_AMENITIES_FROM_RELIGION" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.AMENITY = tonumber(tMod.Arguments.Amount);
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_MODIFIER" then
 		if CheckForMismatchError(SubjectTypes.District) then return nil; end
@@ -1868,9 +1936,14 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_BUILDING_HOUSING" then
 		if CheckForMismatchError("City") then return nil; end
-		local buildingInfo:table = GameInfo.Buildings[ tMod.Arguments.BuildingType ];
-		if buildingInfo == nil then return nil; end
-		if tSubject.City:GetBuildings():HasBuilding( buildingInfo.Index ) then
+		-- two versions, one with BuildingType provided and the other unconditional
+		if tMod.Arguments.BuildingType then
+			local buildingInfo:table = GameInfo.Buildings[ tMod.Arguments.BuildingType ];
+			if buildingInfo == nil then return nil; end
+			if tSubject.City:GetBuildings():HasBuilding( buildingInfo.Index ) then
+				tImpact.HOUSING = tonumber(tMod.Arguments.Amount);
+			end
+		else
 			tImpact.HOUSING = tonumber(tMod.Arguments.Amount);
 		end
 
@@ -2103,6 +2176,7 @@ local tModifiersTables:table = {
 -- for governors: ("Governor", governorType, Game.GetLocalPlayer(), iCityID)
 -- for city states: the 5th parameter is used to select proper modifiers, it is the ONLY place where it is used
 function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:number, iCityID:number, sInfluence:string)
+	--dprint("FUN CalculateModifierEffect(obj,obtype,pid,cid,infl)",sObject,sObjectType,ePlayerID,iCityID,sInfluence);
 	local sModifiersTable:string = tModifiersTables[ sObject ];
 	-- check if there are modifiers at all
 	if sModifiersTable == nil then return "(error)", nil, "No modifiers' table for object "..sObject; end
@@ -2120,13 +2194,19 @@ function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:n
 			-- stupid Firaxis, some fields are named ModifierId and some ModifierID (sic!)
 			local sModifierId:string = mod.ModifierId;
 			if not sModifierId then sModifierId = mod.ModifierID; end -- fix for BeliefModifiers, GoodyHutSubTypes, ImprovementModifiers
-			local sText:string, pYields:table, sAttachedId:string, bUnknown:boolean, tMod:table = DecodeModifier(sModifierId, ePlayerID, iCityID);
+			local sText:string, pYields:table, sAttachedId:string, bUnknown:boolean, tMod:table, tSubjects:table, sSubjectType:string = DecodeModifier(sModifierId, ePlayerID, iCityID);
 			-- this the place to check for extra conditions
 			if sSubjectFilter == nil or tMod.SubjectReqSetId == sSubjectFilter then
 				table.insert(tToolTip, sText);
 				if sAttachedId then
 					table.insert(tToolTip, "Attached modifier");
-					sText, pYields, sAttachedId, bUnknown, tMod = DecodeModifier(sAttachedId, ePlayerID, iCityID);
+					-- in some cases the subjects will be passed down to be processed again
+					-- when (a) collection was processed correctly (b) there's more than 1 subject
+					if tSubjects then
+						sText, pYields, sAttachedId, bUnknown, tMod = DecodeModifier(sAttachedId, ePlayerID, iCityID, tSubjects, sSubjectType);
+					else
+						sText, pYields, sAttachedId, bUnknown, tMod = DecodeModifier(sAttachedId, ePlayerID, iCityID);
+					end
 					table.insert(tToolTip, sText);
 				end
 				if pYields then YieldTableAdd(tTotalImpact, pYields); end
@@ -2167,7 +2247,7 @@ end
 -- Probably could use a Lua event for that (TODO)
 -- TODO: what about other players? probably will need multiple tables of cities, but let's start with LocalPlayer
 function RefreshBaseData(ePlayerID:number)
-	--dprint("FUNCAL RefreshBaseData(player)",ePlayerID)
+	--dprint("FUN RefreshBaseData(player)",ePlayerID)
 	local playerID:number = ePlayerID;
 	if playerID == nil then playerID = Game.GetLocalPlayer(); end
 	local pPlayer	:table = Players[playerID];
