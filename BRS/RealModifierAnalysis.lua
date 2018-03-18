@@ -1361,6 +1361,7 @@ function FetchAndCacheData(sModifierId:string)
 			tModifier.Permanent    = mod.Permanent; -- boolean
 			tModifier.OwnerReqSetId = mod.OwnerRequirementSetId;
 			tModifier.SubjectReqSetId = mod.SubjectRequirementSetId;
+			--tModifier.Text = ""; -- filled later
 			break;
 		end
 	end
@@ -1374,6 +1375,11 @@ function FetchAndCacheData(sModifierId:string)
 			tModifier.EffectType     = mod.EffectType;
 			break;
 		end
+	end
+	-- ModifierStrings - this one must be searched entirely
+	-- WARNING! There are 4 modifiers with 2 strings, but 99% of them has only 1 - we'll get only 1 here!
+	for row in GameInfo.ModifierStrings() do
+		if row.ModifierId == sModifierId then tModifier.Text = row.Text; break; end
 	end
 	-- ModifierArguments - this one must be searched entirely
 	tModifier.Arguments = {};
@@ -2279,6 +2285,29 @@ local tModifiersTables:table = {
 	["UnitPromotion"] = "UnitPromotionModifiers", -- UnitPromotionType
 }
 
+-- Tables with objects
+local tObjectsTables:table = {
+	["Belief"] = "Beliefs", -- BeliefType
+	["Building"] = "Buildings", -- BuildingType
+	["Civic"] = "Civics", -- CivicType
+	["Commemoration"] = "CommemorationTypes", -- no Pedia page for that!
+	["District"] = "Districts", -- DistrictType
+	-- GameModifiers -- not shown in Pedia?
+	["Government"] = "Governments", -- GovernmentType
+	["Governor"] = "Governors", -- currently empty
+	["GovernorPromotion"] = "GovernorPromotions", -- GovernorPromotionType
+	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
+	["GreatPersonIndividual"] = "GreatPersonIndividuals", -- GreatPersonIndividualType + AttachmentTargetType
+	["Improvement"] = "Improvements", -- ImprovementType
+	-- ["Leader"] = "LeaderTraits" => "TraitModifiers" -- TraitType
+	["Policy"] = "Policies", -- PolicyType
+	["Project"] = "Projects", -- ProjectType
+	["Technology"] = "Technologies", -- TechnologyType
+	["Trait"] = "Traits", -- TraitType
+	["UnitAbility"] = "UnitAbilities", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
+	["UnitPromotion"] = "UnitPromotions", -- UnitPromotionType
+}
+
 -- for policies:  ("Policy",   policyType,   Game.GetLocalPlayer(), nil)
 -- for governors: ("Governor", governorType, Game.GetLocalPlayer(), iCityID)
 -- for city states: the 5th parameter is used to select proper modifiers, it is the ONLY place where it is used
@@ -2387,6 +2416,31 @@ function RefreshBaseData(ePlayerID:number)
 	bBaseDataDirty = false; -- clean :)
 end
 
+-- modifiers helper - could be time-consuming
+-- looking for an object that has a specified modifier attached
+function GetObjectNameForModifier(sModifierId:string)
+	--print("looking for", sModifierId);
+	for object,modtable in pairs(tModifiersTables) do
+		--print("checking", object, modtable)
+		for row in GameInfo[ modtable ]() do
+			if row.ModifierId == sModifierId or row.ModifierID == sModifierId then
+				--print("found", sModifierId, " for ", row[object.."Type"])
+				local objectInfo:table = GameInfo[ tObjectsTables[object] ][ row[object.."Type"] ];
+				--print("   ...", object, objectInfo[object.."Type"], objectInfo.Name)
+				if object == "Commemoration" then return Locale.Lookup(objectInfo.CategoryDescription); end
+				local sLocName:string = Locale.Lookup(objectInfo.Name);
+				if sLocName == objectInfo.Name then return "[COLOR_Grey]"..object.."[ENDCOLOR]"; end-- LOC_ not defined
+				return sLocName;
+			end
+		end
+	end
+	-- exception for 2nd table for GP modifiers, it contains multiple copies of modifiers, so there's no way to know from which GP the modifier comes anyway
+	if string.find(sModifierId, "GREATPERSON") then return "[COLOR_Grey]"..Locale.Lookup("LOC_SLOT_GREAT_PERSON_NAME").."[ENDCOLOR]"; end
+	print("ERROR: GetObjectNameForModifier cannot find object for modifier", sModifierId);
+	return "[COLOR_Red]unknown[ENDCOLOR]";
+end
+
+
 ------------------------------------------------------------------------------
 function Initialize()
 	-- exposed members
@@ -2394,6 +2448,7 @@ function Initialize()
 	RMA.DecodeModifier  = DecodeModifier;
 	RMA.RefreshBaseData = RefreshBaseData;
 	RMA.CalculateModifierEffect = CalculateModifierEffect;
+	RMA.GetObjectNameForModifier = GetObjectNameForModifier;
 	
 	-- add events that require the base data to be refreshed
 	-- only set the dirty flag, the actual data will be refreshed when necessary

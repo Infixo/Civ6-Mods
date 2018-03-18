@@ -40,7 +40,8 @@ local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
 local INDENT_STRING								:string = "      ";
-local TOOLTIP_SEP								:string = "[NEWLINE]-------------------[NEWLINE]";
+local TOOLTIP_SEP								:string = "-------------------";
+local TOOLTIP_SEP_NEWLINE						:string = "[NEWLINE]"..TOOLTIP_SEP.."[NEWLINE]";
 
 -- Mapping of unit type to cost.
 --[[ Infixo not used
@@ -104,6 +105,7 @@ local m_kUnitDataReport	:table = nil;
 local m_kPolicyData		:table = nil;
 local m_kMinorData		:table = nil;
 local m_kModifiers		:table = nil; -- to calculate yield per pop and other modifier-ralated effects on the city level
+local m_kModifiersUnits	:table = nil; -- to show various abilities and effects
 -- !!
 -- Remember last tab variable: ARISTOS
 m_kCurrentTab = 1;
@@ -332,8 +334,10 @@ function GetData()
 	-- .Modifier - static as returned by RMA.FetchAndCacheData
 	-----------------------------------
 	m_kModifiers = {}; -- clear main table
+	m_kModifiersUnits ={}; -- clear main table
 	local sTrackedPlayer:string = PlayerConfigurations[playerID]:GetLeaderName(); -- LOC_LEADER_xxx_NAME
 	--print("Tracking player", sTrackedPlayer); -- debug
+	--[[ not used
 	local tTrackedEffects:table = {
 		EFFECT_ADJUST_CITY_YIELD_CHANGE = true, -- all listed as Modifiers in CityPanel
 		EFFECT_ADJUST_CITY_YIELD_MODIFIER = true, -- e.g. governor's +20%, Wonders use it, some beliefs
@@ -342,11 +346,17 @@ function GetData()
 		EFFECT_ADJUST_FOLLOWER_YIELD_MODIFIER = true, -- Work Ethic belief +1% Production; use the number of followers of the majority religion in the city
 		--EFFECT_ADJUST_CITY_YIELD_FROM_FOREIGN_TRADE_ROUTES_PASSING_THROUGH = true, -- unknown
 	};
+	--]]
 	--for k,v in pairs(tTrackedEffects) do print(k,v); end -- debug
 	local tTrackedOwners:table = {};
 	for _,city in player:GetCities():Members() do
 		tTrackedOwners[ city:GetName() ] = true;
 		m_kModifiers[ city:GetName() ] = {}; -- we need al least empty table for each city
+	end
+	local tTrackedUnits:table = {};
+	for _,unit in player:GetUnits():Members() do
+		tTrackedUnits[ unit:GetID() ] = true;
+		m_kModifiersUnits[ unit:GetID() ] = {};
 	end
 	-- for k,v in pairs(tTrackedOwners) do print(k,v); end -- debug
 	-- main loop
@@ -368,11 +378,12 @@ function GetData()
 			OwnerName = sOwnerName,
 			SubjectType = nil, -- will be filled for modifiers taken from Subjects
 			SubjectName = nil, -- will be filled for modifiers taken from Subjects
+			UnitID = nil, -- will be used only for units' modifiers
 			Modifier = RMA.FetchAndCacheData(instdef.Id),
 		};
 		
 		local function RegisterModifierForCity(sSubjectType:string, sSubjectName:string)
-			--print("registering", data.ID, sSubjectType, sSubjectName);
+			--print("registering for city", data.ID, sSubjectType, sSubjectName);
 			-- fix for sudden changes in modifier system, like Veterancy changed in March 2018 patch
 			-- some modifiers might be removed, but still are attached to objects from old games
 			-- the game itself seems to be resistant to such situation
@@ -388,6 +399,31 @@ function GetData()
 			end
 			-- debug output
 			--print("--------- Tracking", data.ID, sOwnerType, sOwnerName, sSubjectName);
+			--for k,v in pairs(data) do print(k,v); end
+			--print("- Modifier:", data.Definition.Id);
+			--print("- Collection:", data.Modifier.CollectionType);
+			--print("- Effect:", data.Modifier.EffectType);
+			--print("- Arguments:");
+			--for k,v in pairs(data.Arguments) do print(k,v); end -- debug
+		end
+
+		local function RegisterModifierForUnit(iUnitID:number, sSubjectType:string, sSubjectName:string)
+			--print("registering for unit", iUnitID, data.ID, sSubjectType, sSubjectName);
+			-- fix for sudden changes in modifier system, like Veterancy changed in March 2018 patch
+			-- some modifiers might be removed, but still are attached to objects from old games
+			-- the game itself seems to be resistant to such situation
+			if data.Modifier == nil then print("WARNING! GetData/Modifiers: Ignoring non-existing modifier", data.ID, data.Definition.Id, sOwnerName, sSubjectName); return end
+			data.UnitID = iUnitID;
+			if sSubjectType == nil or sSubjectName == nil then
+				data.SubjectType = nil;
+				data.SubjectName = nil;
+			else -- register as subject
+				data.SubjectType = sSubjectType;
+				data.SubjectName = sSubjectName;
+			end
+			table.insert(m_kModifiersUnits[iUnitID], data);
+			-- debug output
+			--print("--------- Tracking", iUnitID, data.ID, sOwnerType, sOwnerName, sSubjectName);
 			--for k,v in pairs(data) do print(k,v); end
 			--print("- Modifier:", data.Definition.Id);
 			--print("- Collection:", data.Modifier.CollectionType);
@@ -425,6 +461,7 @@ function GetData()
 					-- find a city
 					local sSubjectString:string = GameEffects.GetObjectString( subjectID );
 					local iCityID:number = tonumber( string.sub(sSubjectString, string.find(sSubjectString, "City:")+6) );
+					--print("city:", sSubjectString, "decode:", iCityID)
 					if iCityID ~= nil then
 						local pCity:table = player:GetCities():FindID(iCityID);
 						if pCity then RegisterModifierForCity(sSubjectType, pCity:GetName()); end
@@ -432,9 +469,39 @@ function GetData()
 				end
 			end
 		end
+		
+		-- this part is for units as owners, we need to decode the unit and see if it's ours
+		if sOwnerType == "LOC_MODIFIER_OBJECT_UNIT" then
+			-- find a unit
+			local sOwnerString:string = GameEffects.GetObjectString( iOwnerID );
+			local iUnitID:number      = tonumber( string.sub(sOwnerString, string.find(sOwnerString,"Unit:")+6,  string.find(sOwnerString,", Owner:")-1) );
+			local iUnitOwnerID:number = tonumber( string.sub(sOwnerString, string.find(sOwnerString,"Owner:")+7, string.find(sOwnerString,", Type")-1) );
+			--print("unit:", sOwnerString, "decode:", iUnitOwnerID, iUnitID)
+			if iUnitID and iUnitOwnerID and iUnitOwnerID == playerID and tTrackedUnits[iUnitID] then
+				RegisterModifierForUnit(iUnitID);
+			end
+		end
+		
+		-- this part is for units as subjects; to make it more unified it will simply analyze all subjects' sets
+		if tSubjects then
+			for _,subjectID in ipairs(tSubjects) do
+				local sSubjectType:string = GameEffects.GetObjectType( subjectID );
+				local sSubjectName:string = GameEffects.GetObjectName( subjectID );
+				if sSubjectType == "LOC_MODIFIER_OBJECT_UNIT" then
+					-- find a unit
+					local sSubjectString:string = GameEffects.GetObjectString( subjectID );
+					local iUnitID:number      = tonumber( string.sub(sSubjectString, string.find(sSubjectString,"Unit:")+6,  string.find(sSubjectString,", Owner:")-1) );
+					local iUnitOwnerID:number = tonumber( string.sub(sSubjectString, string.find(sSubjectString,"Owner:")+7, string.find(sSubjectString,", Type")-1) );
+					if iUnitID and iUnitOwnerID and iUnitOwnerID == playerID and tTrackedUnits[iUnitID] then
+						RegisterModifierForUnit(iUnitID, sSubjectType, sSubjectName);
+					end
+				end -- unit
+			end -- subjects
+		end
+		
 	end
-	--print("--------------"); print("FOUND MODIFIERS"); for k,v in pairs(m_kModifiers) do print(k, #v); end
-
+	--print("--------------"); print("FOUND MODIFIERS FOR CITIES"); for k,v in pairs(m_kModifiers) do print(k, #v); end
+	--print("--------------"); print("FOUND MODIFIERS FOR UNITS"); for k,v in pairs(m_kModifiersUnits) do print(k, #v); end
 
 	local pCities = player:GetCities();
 	for i, pCity in pCities:Members() do	
@@ -2560,8 +2627,20 @@ function common_unit_fields( unit, unitInstance )
 	unitInstance.UnitType:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
 	unitInstance.UnitType:SetToolTipString( Locale.Lookup( GameInfo.Units[UnitManager.GetTypeName( unit )].Name ) )
 
+	-- debug section to see Modifiers for all units
+	local tPromoTT:table = {};
+	table.insert(tPromoTT, Locale.Lookup( GameInfo.Units[UnitManager.GetTypeName( unit )].Name ));
+	local tUnitModifiers:table = m_kModifiersUnits[ unit:GetID() ];
+	if table.count(tUnitModifiers) > 0 then table.insert(tPromoTT, TOOLTIP_SEP); end
+	local i = 0;
+	for _,mod in ipairs(tUnitModifiers) do
+		i = i + 1;
+		table.insert(tPromoTT, i..". "..Locale.Lookup(mod.OwnerName)..": "..mod.Modifier.ModifierId.." ("..RMA.GetObjectNameForModifier(mod.Modifier.ModifierId)..") "..mod.Modifier.EffectType.." "..( mod.Modifier.Text and "|"..Locale.Lookup(mod.Modifier.Text).."|" or "-"));
+	end
+	unitInstance.UnitType:SetToolTipString( table.concat(tPromoTT, "[NEWLINE]") );
+
 	unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) )
-			
+	
 	-- adds the status icon
 	local activityType:number = UnitManager.GetActivityType( unit )
 	--print("Unit", unit:GetID(),activityType,unit:GetSpyOperation(),unit:GetSpyOperationEndTurn());
@@ -2611,6 +2690,20 @@ function common_unit_fields( unit, unitInstance )
 
 end
 
+-- simple texts for modifiers' effects
+local tTextsForEffects:table = {
+	EFFECT_ADJUST_UNIT_EXTRACT_SEA_ARTIFACTS = "[ICON_RESOURCE_SHIPWRECK]",
+	EFFECT_ADJUST_UNIT_NUM_ATTACKS = "LOC_PROMOTION_WOLFPACK_DESCRIPTION",
+	EFFECT_ADJUST_UNIT_ATTACK_AND_MOVE = "LOC_PROMOTION_GUERRILLA_DESCRIPTION",
+	EFFECT_ADJUST_UNIT_MOVE_AND_ATTACK = "LOC_PROMOTION_GUERRILLA_DESCRIPTION",
+	EFFECT_ADJUST_UNIT_BYPASS_COMBAT_UNIT = "LOC_ABILITY_BYPASS_COMBAT_UNIT_NAME",
+	EFFECT_ADJUST_UNIT_IGNORE_TERRAIN_COST = "LOC_ABILITY_IGNORE_TERRAIN_COST_NAME", -- Arguments.Type = ALL HILLS FOREST
+	EFFECT_ADJUST_UNIT_PARADROP_ABILITY = "LOC_UNITCOMMAND_PARADROP_DESCRIPTION",
+	EFFECT_ADJUST_UNIT_SEE_HIDDEN = "LOC_ABILITY_SEE_HIDDEN_NAME",
+	EFFECT_ADJUST_UNIT_HIDDEN_VISIBILITY = "LOC_ABILITY_STEALTH_NAME",
+	EFFECT_ADJUST_UNIT_RAIDING = "LOC_ABILITY_COASTAL_RAID_NAME",
+};
+
 function group_military( unit, unitInstance, group, parent, type )
 
 	local unitExp : table = unit:GetExperience()
@@ -2628,11 +2721,50 @@ function group_military( unit, unitInstance, group, parent, type )
 	if     iUnitLevel < 2  then unitInstance.UnitLevel:SetText( tostring(iUnitLevel) );
 	elseif iUnitLevel == 2 then unitInstance.UnitLevel:SetText( tostring(iUnitLevel).." [ICON_Promotion]" );
 	else                        unitInstance.UnitLevel:SetText( tostring(iUnitLevel).." [ICON_Promotion]"..string.rep("*", iUnitLevel-2) ); end
-	local sPromotionsTT:string = "";
+	local tPromoTT:table = {};
 	for _,promo in ipairs(unitExp:GetPromotions()) do
-		sPromotionsTT = sPromotionsTT..(string.len(sPromotionsTT) == 0 and "" or "[NEWLINE]")..Locale.Lookup(GameInfo.UnitPromotions[promo].Name)..": "..Locale.Lookup(GameInfo.UnitPromotions[promo].Description);
+		table.insert(tPromoTT, Locale.Lookup(GameInfo.UnitPromotions[promo].Name)..": "..Locale.Lookup(GameInfo.UnitPromotions[promo].Description));
 	end
-	unitInstance.UnitLevel:SetToolTipString(sPromotionsTT);
+	-- this section might grow!
+	local tUnitModifiers:table = m_kModifiersUnits[ unit:GetID() ];
+	local tMod:table = nil;
+	local sText:string = "";
+	if table.count(tUnitModifiers) > 0 then table.insert(tPromoTT, TOOLTIP_SEP); end
+	local iPromoNum:number = 0;
+	for _,mod in ipairs(tUnitModifiers) do
+		local function AddExtraPromoText(sText:string)
+			iPromoNum = iPromoNum + 1;
+			table.insert(tPromoTT, tostring(iPromoNum)..". "..Locale.Lookup(mod.OwnerName).." ("..RMA.GetObjectNameForModifier(mod.Modifier.ModifierId)..") "..sText);
+		end
+		tMod = mod.Modifier;
+		sText = ""; if tMod.Text then sText = Locale.Lookup(tMod.Text); end
+		if sText ~= "" then
+			AddExtraPromoText( sText );
+		elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_STRENGTH_MODIFIER" or tMod.EffectType == "EFFECT_ADJUST_UNIT_DIPLO_VISIBILITY_COMBAT_MODIFIER" then
+			AddExtraPromoText( string.format("%+d [ICON_Strength]", tonumber(tMod.Arguments.Amount))); -- Strength
+		elseif tMod.EffectType == "EFFECT_GRANT_ABILITY" then
+			local unitAbility:table = GameInfo.UnitAbilities[ tMod.Arguments.AbilityType ];
+			if unitAbility then
+				AddExtraPromoText( Locale.Lookup(unitAbility.Name)..": "..Locale.Lookup(unitAbility.Description)); -- LOC_CIVICS_KEY_ABILITY
+			else
+				AddExtraPromoText( tMod.EffectType.." [COLOR_Red]"..tMod.Arguments.AbilityType.."[ENDCOLOR]")
+			end
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_EXPERIENCE_MODIFIER" then
+			--AddExtraPromoText( Locale.Lookup(mod.OwnerName)..string.format(": %+d%% ", tonumber(tMod.Arguments.Amount))..Locale.Lookup("LOC_HUD_UNIT_PANEL_XP")); -- +x%
+			AddExtraPromoText( string.format("%+d%% ", tonumber(tMod.Arguments.Amount))..Locale.Lookup("LOC_HUD_UNIT_PANEL_XP")); -- +x%
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_SEA_MOVEMENT" or tMod.EffectType == "EFFECT_ADJUST_UNIT_MOVEMENT" then
+			AddExtraPromoText( string.format("%+d [ICON_Movement]", tonumber(tMod.Arguments.Amount))); -- Movement
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_VALID_TERRAIN" then
+			AddExtraPromoText( Locale.Lookup( GameInfo.Terrains[tMod.Arguments.TerrainType].Name ) );
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_ATTACK_RANGE" then
+			AddExtraPromoText( string.format("%+d [ICON_Range]", tonumber(tMod.Arguments.Amount)));
+		elseif tTextsForEffects[tMod.EffectType] then
+			AddExtraPromoText( Locale.Lookup(tTextsForEffects[tMod.EffectType]) );
+		else
+			AddExtraPromoText( "[COLOR_Grey]"..tMod.EffectType.."[ENDCOLOR]" );
+		end
+	end
+	unitInstance.UnitLevel:SetToolTipString( table.concat(tPromoTT, "[NEWLINE]") );
 	
 	-- XP and Promotion Available
 	local bCanStart, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.PROMOTE, true, true );
@@ -3058,7 +3190,7 @@ function ViewPolicyPage()
 			local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
 			if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
 			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, sPolicyImpact);
-			pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP..policy.ImpactToolTip);
+			pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP_NEWLINE..policy.ImpactToolTip);
 			
 			-- fill out yields
 			for yield,value in pairs(policy.Yields) do
@@ -3301,7 +3433,7 @@ function ViewMinorPage()
 			local sMinorImpact:string = ( minor.Impact == "" and "[ICON_CheckmarkBlue]" ) or minor.Impact;
 			if minor.UnknownEffect then sMinorImpact = sMinorImpact.." [COLOR_Red]!"; end
 			TruncateString(pMinorInstance.PolicyEntryImpact, 218, sMinorImpact);
-			pMinorInstance.PolicyEntryImpact:SetToolTipString(minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait..TOOLTIP_SEP..minor.ImpactToolTip);
+			pMinorInstance.PolicyEntryImpact:SetToolTipString(minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait..TOOLTIP_SEP_NEWLINE..minor.ImpactToolTip);
 			
 			-- fill out yields
 			for yield,value in pairs(minor.Yields) do
