@@ -2436,6 +2436,10 @@ function GetObjectNameForModifier(sModifierId:string)
 	end
 	-- exception for 2nd table for GP modifiers, it contains multiple copies of modifiers, so there's no way to know from which GP the modifier comes anyway
 	if string.find(sModifierId, "GREATPERSON") then return "[COLOR_Grey]"..Locale.Lookup("LOC_SLOT_GREAT_PERSON_NAME").."[ENDCOLOR]"; end
+	-- last try - this could an attached modifer via EFFECT_ATTACH_MODIFIER
+	for row in GameInfo.ModifierArguments() do
+		if row.Name == "ModifierId" and row.Value == sModifierId then return GetObjectNameForModifier(row.ModifierId); end -- recursive for main modifier
+	end
 	print("ERROR: GetObjectNameForModifier cannot find object for modifier", sModifierId);
 	return "[COLOR_Red]unknown[ENDCOLOR]";
 end

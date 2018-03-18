@@ -2628,6 +2628,7 @@ function common_unit_fields( unit, unitInstance )
 	unitInstance.UnitType:SetToolTipString( Locale.Lookup( GameInfo.Units[UnitManager.GetTypeName( unit )].Name ) )
 
 	-- debug section to see Modifiers for all units
+	--[[
 	local tPromoTT:table = {};
 	table.insert(tPromoTT, Locale.Lookup( GameInfo.Units[UnitManager.GetTypeName( unit )].Name ));
 	local tUnitModifiers:table = m_kModifiersUnits[ unit:GetID() ];
@@ -2638,6 +2639,7 @@ function common_unit_fields( unit, unitInstance )
 		table.insert(tPromoTT, i..". "..Locale.Lookup(mod.OwnerName)..": "..mod.Modifier.ModifierId.." ("..RMA.GetObjectNameForModifier(mod.Modifier.ModifierId)..") "..mod.Modifier.EffectType.." "..( mod.Modifier.Text and "|"..Locale.Lookup(mod.Modifier.Text).."|" or "-"));
 	end
 	unitInstance.UnitType:SetToolTipString( table.concat(tPromoTT, "[NEWLINE]") );
+	--]]
 
 	unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) )
 	
@@ -2692,6 +2694,7 @@ end
 
 -- simple texts for modifiers' effects
 local tTextsForEffects:table = {
+	EFFECT_ATTACH_MODIFIER = "LOC_GREATPERSON_PASSIVE_NAME_DEFAULT",
 	EFFECT_ADJUST_UNIT_EXTRACT_SEA_ARTIFACTS = "[ICON_RESOURCE_SHIPWRECK]",
 	EFFECT_ADJUST_UNIT_NUM_ATTACKS = "LOC_PROMOTION_WOLFPACK_DESCRIPTION",
 	EFFECT_ADJUST_UNIT_ATTACK_AND_MOVE = "LOC_PROMOTION_GUERRILLA_DESCRIPTION",
@@ -2702,6 +2705,8 @@ local tTextsForEffects:table = {
 	EFFECT_ADJUST_UNIT_SEE_HIDDEN = "LOC_ABILITY_SEE_HIDDEN_NAME",
 	EFFECT_ADJUST_UNIT_HIDDEN_VISIBILITY = "LOC_ABILITY_STEALTH_NAME",
 	EFFECT_ADJUST_UNIT_RAIDING = "LOC_ABILITY_COASTAL_RAID_NAME",
+	EFFECT_ADJUST_UNIT_IGNORE_RIVERS = "LOC_PROMOTION_AMPHIBIOUS_NAME",
+	EFFECT_ADJUST_UNIT_IGNORE_SHORES = "[ICON_CheckmarkBlue]{LOC_UNITOPERATION_DISEMBARK_DESCRIPTION}",
 };
 
 function group_military( unit, unitInstance, group, parent, type )
@@ -2750,7 +2755,6 @@ function group_military( unit, unitInstance, group, parent, type )
 				AddExtraPromoText( tMod.EffectType.." [COLOR_Red]"..tMod.Arguments.AbilityType.."[ENDCOLOR]")
 			end
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_EXPERIENCE_MODIFIER" then
-			--AddExtraPromoText( Locale.Lookup(mod.OwnerName)..string.format(": %+d%% ", tonumber(tMod.Arguments.Amount))..Locale.Lookup("LOC_HUD_UNIT_PANEL_XP")); -- +x%
 			AddExtraPromoText( string.format("%+d%% ", tonumber(tMod.Arguments.Amount))..Locale.Lookup("LOC_HUD_UNIT_PANEL_XP")); -- +x%
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_SEA_MOVEMENT" or tMod.EffectType == "EFFECT_ADJUST_UNIT_MOVEMENT" then
 			AddExtraPromoText( string.format("%+d [ICON_Movement]", tonumber(tMod.Arguments.Amount))); -- Movement
@@ -2760,6 +2764,10 @@ function group_military( unit, unitInstance, group, parent, type )
 			AddExtraPromoText( string.format("%+d [ICON_Range]", tonumber(tMod.Arguments.Amount)));
 		elseif tTextsForEffects[tMod.EffectType] then
 			AddExtraPromoText( Locale.Lookup(tTextsForEffects[tMod.EffectType]) );
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_STRENGTH_REDUCTION_FOR_DAMAGE_MODIFIER" then
+			AddExtraPromoText( string.format("[ICON_Damaged] -%d%%", tonumber(tMod.Arguments.Amount)) ); -- +x%
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_POST_COMBAT_HEAL" then
+			AddExtraPromoText( Locale.Lookup("LOC_BRS_HEADER_HEALTH")..string.format(" %+d", tonumber(tMod.Arguments.Amount)) ); -- +x HP
 		else
 			AddExtraPromoText( "[COLOR_Grey]"..tMod.EffectType.."[ENDCOLOR]" );
 		end
