@@ -18,7 +18,6 @@ local RMA = ExposedMembers.RMA;
 -- Rise & Fall check
 -- ===========================================================================
 
---local bIsRiseFall:boolean = (Game.GetEmergencyManager ~= nil) -- this is for UI scripts; for GamePlay use Game.ChangePlayerEraScore
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 
 
@@ -2707,6 +2706,8 @@ local tTextsForEffects:table = {
 	EFFECT_ADJUST_UNIT_RAIDING = "LOC_ABILITY_COASTAL_RAID_NAME",
 	EFFECT_ADJUST_UNIT_IGNORE_RIVERS = "LOC_PROMOTION_AMPHIBIOUS_NAME",
 	EFFECT_ADJUST_UNIT_IGNORE_SHORES = "[ICON_CheckmarkBlue]{LOC_UNITOPERATION_DISEMBARK_DESCRIPTION}",
+	EFFECT_ADJUST_PLAYER_RANDOM_CIVIC_BOOST_GOODY_HUT = "{LOC_HUD_POPUP_CIVIC_BOOST_UNLOCKED}[ICON_CivicBoosted]",
+	EFFECT_ADJUST_PLAYER_RANDOM_TECHNOLOGY_BOOST_GOODY_HUT = "{LOC_HUD_POPUP_TECH_BOOST_UNLOCKED}[ICON_TechBoosted]",
 };
 
 function group_military( unit, unitInstance, group, parent, type )
@@ -2768,6 +2769,9 @@ function group_military( unit, unitInstance, group, parent, type )
 			AddExtraPromoText( string.format("[ICON_Damaged] -%d%%", tonumber(tMod.Arguments.Amount)) ); -- +x%
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_POST_COMBAT_HEAL" then
 			AddExtraPromoText( Locale.Lookup("LOC_BRS_HEADER_HEALTH")..string.format(" %+d", tonumber(tMod.Arguments.Amount)) ); -- +x HP
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_BARBARIAN_COMBAT" then
+			local iAdvStr:number = tonumber(tMod.Arguments.Amount);
+			AddExtraPromoText( string.gsub(Locale.Lookup("LOC_COMBAT_PREVIEW_BONUS_VS_BARBARIANS", iAdvStr), "+"..tostring(iAdvStr), "+"..tostring(iAdvStr).." [ICON_Strength]") );  -- +{1_Value} Advantage vs. Barbarians
 		else
 			AddExtraPromoText( "[COLOR_Grey]"..tMod.EffectType.."[ENDCOLOR]" );
 		end

@@ -11,7 +11,7 @@ local RMA = ExposedMembers.RMA;
 -- insert functions/objects into RMA in Initialize()
 
 -- Rise & Fall check
-local bIsRiseFall:boolean = (Game.GetEmergencyManager ~= nil) -- this is for UI scripts; for GamePlay use Game.ChangePlayerEraScore
+local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -2267,12 +2267,10 @@ local tModifiersTables:table = {
 	["Belief"] = "BeliefModifiers", -- BeliefType
 	["Building"] = "BuildingModifiers", -- BuildingType
 	["Civic"] = "CivicModifiers", -- CivicType
-	["Commemoration"] = "CommemorationModifiers", -- no Pedia page for that!
 	["District"] = "DistrictModifiers", -- DistrictType
 	-- GameModifiers -- not shown in Pedia?
+	--["GoodyHut"] = "GoodyHutSubTypes",
 	["Government"] = "GovernmentModifiers", -- GovernmentType
-	["Governor"] = "GovernorModifiers", -- currently empty
-	["GovernorPromotion"] = "GovernorPromotionModifiers", -- GovernorPromotionType
 	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
 	["GreatPersonIndividual"] = "GreatPersonIndividualActionModifiers", -- GreatPersonIndividualType + AttachmentTargetType
 	["Improvement"] = "ImprovementModifiers", -- ImprovementType
@@ -2283,19 +2281,22 @@ local tModifiersTables:table = {
 	["Trait"] = "TraitModifiers", -- TraitType
 	["UnitAbility"] = "UnitAbilityModifiers", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
 	["UnitPromotion"] = "UnitPromotionModifiers", -- UnitPromotionType
-}
+};
+
+if bIsRiseFall then
+	tModifiersTables["Commemoration"] = "CommemorationModifiers"; -- no Pedia page for that!
+	tModifiersTables["Governor"] = "GovernorModifiers"; -- currently empty
+	tModifiersTables["GovernorPromotion"] = "GovernorPromotionModifiers"; -- GovernorPromotionType
+end
 
 -- Tables with objects
 local tObjectsTables:table = {
 	["Belief"] = "Beliefs", -- BeliefType
 	["Building"] = "Buildings", -- BuildingType
 	["Civic"] = "Civics", -- CivicType
-	["Commemoration"] = "CommemorationTypes", -- no Pedia page for that!
 	["District"] = "Districts", -- DistrictType
 	-- GameModifiers -- not shown in Pedia?
 	["Government"] = "Governments", -- GovernmentType
-	["Governor"] = "Governors", -- currently empty
-	["GovernorPromotion"] = "GovernorPromotions", -- GovernorPromotionType
 	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
 	["GreatPersonIndividual"] = "GreatPersonIndividuals", -- GreatPersonIndividualType + AttachmentTargetType
 	["Improvement"] = "Improvements", -- ImprovementType
@@ -2307,6 +2308,13 @@ local tObjectsTables:table = {
 	["UnitAbility"] = "UnitAbilities", -- UnitAbilityType  via TypeTags, i.e. Unit -> Class(Tag) -> TypeTags
 	["UnitPromotion"] = "UnitPromotions", -- UnitPromotionType
 }
+
+if bIsRiseFall then
+	tObjectsTables["Commemoration"] = "CommemorationTypes"; -- no Pedia page for that!
+	tObjectsTables["Governor"] = "Governors"; -- currently empty
+	tObjectsTables["GovernorPromotion"] = "GovernorPromotions"; -- GovernorPromotionType
+end
+
 
 -- for policies:  ("Policy",   policyType,   Game.GetLocalPlayer(), nil)
 -- for governors: ("Governor", governorType, Game.GetLocalPlayer(), iCityID)
@@ -2436,6 +2444,10 @@ function GetObjectNameForModifier(sModifierId:string)
 	end
 	-- exception for 2nd table for GP modifiers, it contains multiple copies of modifiers, so there's no way to know from which GP the modifier comes anyway
 	if string.find(sModifierId, "GREATPERSON") then return "[COLOR_Grey]"..Locale.Lookup("LOC_SLOT_GREAT_PERSON_NAME").."[ENDCOLOR]"; end
+	-- check for GoodyHuts, modifiers for them are stored in a different manner
+	for row in GameInfo.GoodyHutSubTypes() do 
+		if row.ModifierID == sModifierId then return Locale.Lookup( GameInfo.Improvements["IMPROVEMENT_GOODY_HUT"].Name ); end
+	end
 	-- last try - this could an attached modifer via EFFECT_ATTACH_MODIFIER
 	for row in GameInfo.ModifierArguments() do
 		if row.Name == "ModifierId" and row.Value == sModifierId then return GetObjectNameForModifier(row.ModifierId); end -- recursive for main modifier
