@@ -51,11 +51,73 @@ function dshowrectable(tTable:table, iLevel:number)
 end
 
 
+-- ===========================================================================
+-- DATA AND HELPERS
+-- ===========================================================================
+
+local m_kExtraUnlockables:table = {}; -- simple table, each value is data for 1 extra unlock
+
+
+-- filter out the unlockables for a specific tech or civic
+function GetExtraUnlockables(sType:string)
+	local tExtras:table = {};
+	for _,item in ipairs(m_kExtraUnlockables) do
+		if item.Type == sType then table.insert(tExtras, item); end
+	end
+	print("found", #tExtras, "for", sType)
+	return tExtras;
+end
+
+function AddExtraUnlockable(sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string)
+	dprint("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+	local tItem:table = {
+		Type = sType,
+		UnlockKind = sUnlockKind, -- "BOOST", "IMPROVEMENT", "SPY", "HARVEST"
+		UnlockType = sUnlockType, -- actual object to be shown
+		Description = sDescription, -- additional info, to put on the icon OR into the tooltip
+		PediaKey = sPediaKey,
+	}
+	table.insert(m_kExtraUnlockables, tItem);
+end
 
 
 -- ===========================================================================
 --
 -- ===========================================================================
+
+local tBackgroundTextures:table = {
+	BOOST_CIVIC = "ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
+	BOOST_TECH = "ICON_TECHUNLOCK_5", -- "LaunchBar_Hook_ScienceButton",
+};
+
+-- this will add 1 simple unlockable, i.e. only background and icon
+function PopulateUnlockableSimple(tItem:table, instanceManager:table)
+	dprint("FUN PopulateUnlockableSimple"); dshowtable(tItem);
+
+	local unlockInstance = instanceManager:GetInstance();
+
+	-- background is taken from Kind
+	unlockInstance.UnlockIcon:SetTexture( IconManager:FindIconAtlas(tBackgroundTextures[tItem.UnlockKind], 38) );
+	--unlockInstance.UnlockIcon:SetTexture( tBackgroundTextures[tItem.UnlockKind] );
+	
+	-- the actual icon is taken from Type
+	unlockInstance.Icon:SetIcon("ICON_"..tItem.UnlockType); -- control:SetTexture( IconManager:FindIconAtlas("ICON_TECH_ENGINEERING", 38) );
+	unlockInstance.Icon:SetHide(false);
+	
+	-- tooltip
+	unlockInstance.UnlockIcon:SetToolTipString(tItem.Description);
+
+	-- civilopedia
+	if not IsTutorialRunning() and tItem.PediaKey then
+		unlockInstance.UnlockIcon:RegisterCallback(
+			Mouse.eRClick,
+			function() LuaEvents.OpenCivilopedia(civilopediaKey);
+		end);
+	end
+
+end
+
+
 function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:table, kGovernmentIM:table, callback:ifunction, hideDescriptionIcon:boolean )
 	--dprint("FUN PopulateUnlockablesForCivic (pid,cid,bhide)",playerID,civicID,hideDescriptionIcon);
 	
@@ -69,8 +131,14 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 	local iNumIcons:number = 0;
 	
 	iNumIcons = BTT_BASE_PopulateUnlockablesForCivic(playerID, civicID, kItemIM, kGovernmentIM, callback, hideDescriptionIcon );
+	if iNumIcons == nil then iNumIcons = 0; end
 	
 	print("Adding additional icons for", sCivicType);
+	
+	for _,item in ipairs( GetExtraUnlockables(sCivicType) ) do
+		PopulateUnlockableSimple(item, kItemIM);
+		iNumIcons = iNumIcons + 1;
+	end
 	
 	return iNumIcons;
 end
@@ -191,8 +259,14 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 	local iNumIcons:number = 0;
 	
 	iNumIcons = BTT_BASE_PopulateUnlockablesForTech(playerID, techID, instanceManager, callback);
+	if iNumIcons == nil then iNumIcons = 0; end
 	
 	print("Adding additional icons for", sTechType);
+	
+	for _,item in ipairs( GetExtraUnlockables(sTechType) ) do
+		PopulateUnlockableSimple(item, instanceManager);
+		iNumIcons = iNumIcons + 1;
+	end
 	
 	return iNumIcons;
 end
@@ -264,16 +338,36 @@ function PopulateUnlockablesForTech_REMOVE(playerID:number, techID:number, insta
 	return numIcons;
 end
 
+-- ===========================================================================
+-- POPULATE EXTRA UNLOCKABLES
+-- ===========================================================================
+
+-- simple version first, only for direct Civic/Tech boosts
+-- TODO: add support for Units, Districts and Buildings
+function PopulateBoosts()
+	for row in GameInfo.Boosts() do
+		if row.BoostingCivicType and row.TechnologyType then
+			AddExtraUnlockable(row.BoostingCivicType, "BOOST_TECH", row.TechnologyType, Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost), row.TechnologyType);
+		end
+		if row.BoostingTechType and row.CivicType then
+			AddExtraUnlockable(row.BoostingTechType, "BOOST_CIVIC", row.CivicType, Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost), row.CivicType);
+		end
+	end
+end
+
+
 
 function Initialize_BTT_TechTree()
 	dprint("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
+	PopulateBoosts();
 end
 
 
 function Initialize_BTT_CivicsTree()
 	dprint("FUN Initialize_BTT_CivicsTree()");
 	-- add all the new init stuff here
+	PopulateBoosts();
 end
 
 print("OK loaded TechAndCivicSupport_BTT.lua from Better Tech Tree");

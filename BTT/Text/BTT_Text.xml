@@ -6,23 +6,13 @@
 
 <BaseGameText>
 
-	<!-- Column headers
-	<Row Tag="LOC_BTT_HEADER_BUILDINGNAME">
-		<Text>Building/District Name</Text>
+	<Row Tag="LOC_BTT_BOOST_TECH_DESC">
+		<Text>{2_Percent}% [ICON_TechBoosted] Eureka for {1_TechName}.</Text>
 	</Row>
-	<Row Tag="LOC_BTT_HEADER_BUILDINGCOUNT">
-		<Text>Number of Buildings/Districts</Text>
+	<Row Tag="LOC_BTT_BOOST_CIVIC_DESC">
+		<Text>{2_Percent}% [ICON_CivicBoosted] Inspiration for {1_CivicName}.</Text>
 	</Row>
-	<Row Tag="LOC_BTT_HEADER_GROWTH">
-		<Text>Growth</Text>
-	</Row>
-	<Row Tag="LOC_BTT_HEADER_HAPPINESS">
-		<Text>Happiness</Text>
-	</Row>
-	<Row Tag="LOC_BTT_HEADER_POLICY_NAME">
-		<Text>Policy Name</Text>
-	</Row>
-	-->
+
 </BaseGameText>
 
 </GameData>
