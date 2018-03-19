@@ -64,12 +64,12 @@ function GetExtraUnlockables(sType:string)
 	for _,item in ipairs(m_kExtraUnlockables) do
 		if item.Type == sType then table.insert(tExtras, item); end
 	end
-	print("found", #tExtras, "for", sType)
+	--print("found", #tExtras, "for", sType)
 	return tExtras;
 end
 
 function AddExtraUnlockable(sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string)
-	dprint("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+	--dprint("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 	local tItem:table = {
 		Type = sType,
 		UnlockKind = sUnlockKind, -- "BOOST", "IMPROVEMENT", "SPY", "HARVEST"
@@ -86,22 +86,21 @@ end
 -- ===========================================================================
 
 local tBackgroundTextures:table = {
-	BOOST_CIVIC = "ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
-	BOOST_TECH = "ICON_TECHUNLOCK_5", -- "LaunchBar_Hook_ScienceButton",
+	BOOST_TECH = "ICON_BTT_BOOST_TECH", --"ICON_TECHUNLOCK_5", -- "LaunchBar_Hook_ScienceButton",
+	BOOST_CIVIC = "ICON_BTT_BOOST_CIVIC", --"ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
 };
 
 -- this will add 1 simple unlockable, i.e. only background and icon
 function PopulateUnlockableSimple(tItem:table, instanceManager:table)
-	dprint("FUN PopulateUnlockableSimple"); dshowtable(tItem);
+	--dprint("FUN PopulateUnlockableSimple"); dshowtable(tItem);
 
 	local unlockInstance = instanceManager:GetInstance();
 
 	-- background is taken from Kind
 	unlockInstance.UnlockIcon:SetTexture( IconManager:FindIconAtlas(tBackgroundTextures[tItem.UnlockKind], 38) );
-	--unlockInstance.UnlockIcon:SetTexture( tBackgroundTextures[tItem.UnlockKind] );
 	
 	-- the actual icon is taken from Type
-	unlockInstance.Icon:SetIcon("ICON_"..tItem.UnlockType); -- control:SetTexture( IconManager:FindIconAtlas("ICON_TECH_ENGINEERING", 38) );
+	unlockInstance.Icon:SetIcon("ICON_"..tItem.UnlockType);
 	unlockInstance.Icon:SetHide(false);
 	
 	-- tooltip
@@ -140,106 +139,9 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 		iNumIcons = iNumIcons + 1;
 	end
 	
-	return iNumIcons;
-end
-
-function PopulateUnlockablesForCivic_REMOVE(playerID:number, civicID:number, kItemIM:table, kGovernmentIM:table, callback:ifunction, hideDescriptionIcon:boolean )
-
-	local governmentData = GetGovernmentData();
-	local civicType:string = civicData.CivicType;
-
-	-- Unlockables is an array of {type, name}
-	local numIcons:number = 0;
-	local unlockables = GetUnlockablesForCivic_Cached(civicType, playerID);
-	
-	if(unlockables and #unlockables > 0) then
-		for i,v in ipairs(unlockables) do
-
-			local typeName = v[1];
-			local civilopediaKey = v[3];
-			local typeInfo = GameInfo.Types[typeName];
-		
-			if(kGovernmentIM and typeInfo and typeInfo.Kind == "KIND_GOVERNMENT") then
-
-				local unlock = kGovernmentIM:GetInstance();
-
-				local government = governmentData[typeName];
-				if(government) then
-					unlock.MilitaryPolicyLabel:SetText(tostring(government.NumSlotMilitary));
-					unlock.EconomicPolicyLabel:SetText(tostring(government.NumSlotEconomic));
-					unlock.DiplomaticPolicyLabel:SetText(tostring(government.NumSlotDiplomatic));
-					unlock.WildcardPolicyLabel:SetText(tostring(government.NumSlotWildcard));
-					unlock.GovernmentName:SetText(Locale.Lookup(government.Name));
-				end	
-				local toolTip = ToolTipHelper.GetToolTip(typeName, playerID);
-				unlock.GovernmentInstanceGrid:LocalizeAndSetToolTip(toolTip);
-
-				unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eLClick, callback);
-
-				if(not IsTutorialRunning()) then
-					unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eRClick, function() 
-						LuaEvents.OpenCivilopedia(civilopediaKey);
-					end);
-				end
-			else
-				local unlockIcon = kItemIM:GetInstance();
-				local icon = GetUnlockIcon(typeName);	
-				unlockIcon.Icon:SetIcon("ICON_"..typeName);
-				unlockIcon.Icon:SetHide(false);
-
-				local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(icon,38);
-				if textureSheet ~= nil then
-					unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-				end
-
-				local toolTip = ToolTipHelper.GetToolTip(typeName, playerID);
-
-				unlockIcon.UnlockIcon:LocalizeAndSetToolTip(toolTip);
-			
-				if callback ~= nil then		
-					unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
-				else
-					unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
-				end
-
-				if(not IsTutorialRunning()) then
-					unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-						LuaEvents.OpenCivilopedia(civilopediaKey);
-					end);
-				end
-			end
-
-			numIcons = numIcons + 1;
-		end
-		
-	end
-
-	if (civicData.Description and hideDescriptionIcon ~= true) then
-		local unlockIcon:table	= kItemIM:GetInstance();
-		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
-		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
-		if textureSheet ~= nil then
-			unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		end
-		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(GameInfo.Civics[civicID].Description);
-		if callback ~= nil then		
-			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
-		else
-			unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
-		end
-
-		if(not IsTutorialRunning()) then
-			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-				LuaEvents.OpenCivilopedia(civicType);
-			end);
-		end
-
-		numIcons = numIcons + 1;
-	end
-
 	kItemIM.m_ParentControl:CalculateSize();
-
-	return numIcons;
+	
+	return iNumIcons;
 end
 
 
@@ -260,10 +162,6 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 	
 	iNumIcons = BTT_BASE_PopulateUnlockablesForTech(playerID, techID, instanceManager, callback);
 	if iNumIcons == nil then iNumIcons = 0; end
-
-	-- debug
-	--local unlockables:table = GetUnlockablesForTech_Cached(sTechType, playerID);
-	--for i,v in ipairs(unlockables) do print("pedia key",v[3]) end
 	
 	--print("Adding additional icons for", sTechType);
 	
@@ -272,75 +170,11 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 		iNumIcons = iNumIcons + 1;
 	end
 	
+	instanceManager.m_ParentControl:CalculateSize();
+	
 	return iNumIcons;
 end
-	
-function PopulateUnlockablesForTech_REMOVE(playerID:number, techID:number, instanceManager:table, callback:ifunction )
 
-	-- Unlockables is an array of {type, name}
-	local numIcons:number = 0;
-	local unlockables:table = GetUnlockablesForTech_Cached(techType, playerID);
-
-	-- Hard-coded goodness.
-	if unlockables and table.count(unlockables) > 0 then
-		for i,v in ipairs(unlockables) do
-
-			local typeName	:string = v[1];
-			local civilopediaKey = v[3];
-			local unlockIcon:table	= instanceManager:GetInstance();
-			
-			local icon = GetUnlockIcon(typeName);		
-			unlockIcon.Icon:SetIcon("ICON_"..typeName);
-			unlockIcon.Icon:SetHide(false);
-			 
-			local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(icon,38);
-			if textureSheet ~= nil then
-				unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			end
-
-			local toolTip :string = ToolTipHelper.GetToolTip(typeName, playerID);
-			unlockIcon.UnlockIcon:LocalizeAndSetToolTip(toolTip);
-			if callback ~= nil then		
-				unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
-			else
-				unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
-			end
-
-			if(not IsTutorialRunning()) then
-				unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-					LuaEvents.OpenCivilopedia(civilopediaKey);
-				end);
-			end
-		end
-
-		numIcons = numIcons + 1;
-	end
-
-	if (GameInfo.Technologies[techID].Description) then
-		local unlockIcon:table	= instanceManager:GetInstance();
-		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
-		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
-		if textureSheet ~= nil then
-			unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		end
-		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(GameInfo.Technologies[techID].Description);
-		if callback ~= nil then		
-			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
-		else
-			unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
-		end
-
-		if(not IsTutorialRunning()) then
-			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-				LuaEvents.OpenCivilopedia(GameInfo.Technologies[techID].TechnologyType);
-			end);
-		end
-
-		numIcons = numIcons + 1;
-	end
-
-	return numIcons;
-end
 
 -- ===========================================================================
 -- POPULATE EXTRA UNLOCKABLES
@@ -349,91 +183,81 @@ end
 -- simple version first, only for direct Civic/Tech boosts
 -- TODO: add support for Units, Districts and Buildings
 function PopulateBoosts()
-	local sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string, objectInfo:table;
+	local sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sDescBoost:string, sPediaKey:string, objectInfo:table;
 	
 	for row in GameInfo.Boosts() do
 		-- what is boosted?
 		if     row.TechnologyType then
 			sUnlockKind = "BOOST_TECH"; sUnlockType = row.TechnologyType; sPediaKey = row.TechnologyType;
-			sDescription = Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost);
+			sDescBoost = ": "..Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost);
 		elseif row.CivicType then
 			sUnlockKind = "BOOST_CIVIC"; sUnlockType = row.CivicType; sPediaKey = row.CivicType;
-			sDescription = Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost);
+			sDescBoost = ": "..Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost);
 		else
 			-- error in boost definition
 		end
 		-- what is the boost? it gives Type; in rare cases can generate more than 1 unlock!
 		if row.BoostingCivicType then
 			sType = row.BoostingCivicType;
-			sDescription = Locale.Lookup( GameInfo.Civics[sType].Name )..": "..sDescription;
+			sDescription = Locale.Lookup( GameInfo.Civics[sType].Name )..sDescBoost;
 			AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 		end
 		if row.BoostingTechType then
 			sType = row.BoostingTechType;
-			sDescription = Locale.Lookup( GameInfo.Technologies[sType].Name )..": "..sDescription;
+			sDescription = Locale.Lookup( GameInfo.Technologies[sType].Name )..sDescBoost;
 			AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 		end
 		if row.DistrictType then
-			sType = nil;
+			sType = nil; sDescription = sDescBoost;
 			objectInfo = GameInfo.Districts[row.DistrictType];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
-				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_DISTRICTS" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_DISTRICTS" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
+				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
 		if row.BuildingType then
-			sType = nil;
+			sType = nil; sDescription = sDescBoost;
 			objectInfo = GameInfo.Buildings[row.BuildingType];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
-				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_BUILDINGS" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_BUILDINGS" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
+				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
 		if row.Unit1Type then
-			sType = nil;
+			sType = nil; sDescription = sDescBoost;
 			objectInfo = GameInfo.Units[row.Unit1Type];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
-				if row.BoostClass == "BOOST_TRIGGER_OWN_X_UNITS_OF_TYPE" or row.BoostClass == "BOOST_TRIGGER_MAINTAIN_X_TRADE_ROUTES" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				if row.BoostClass == "BOOST_TRIGGER_OWN_X_UNITS_OF_TYPE" or row.BoostClass == "BOOST_TRIGGER_MAINTAIN_X_TRADE_ROUTES" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
+				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
 		if row.ResourceType then
-			sType = nil;
+			sType = nil; sDescription = sDescBoost;
 			objectInfo = GameInfo.Resources[row.ResourceType];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
+				sDescription = Locale.Lookup(objectInfo.Name).."[ICON_"..row.ResourceType.."]"..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
 		if row.ImprovementType and row.ResourceType == nil then
-			sType = nil;
+			sType = nil; sDescription = sDescBoost;
 			objectInfo = GameInfo.Improvements[row.ImprovementType];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
-				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_IMPROVEMENTS" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_IMPROVEMENTS" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
+				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
-		--[[
-		if row.BoostingCivicType and row.TechnologyType then
-			AddExtraUnlockable(row.BoostingCivicType, "BOOST_TECH", row.TechnologyType, Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost), row.TechnologyType);
-		end
-		if row.BoostingTechType and row.CivicType then
-			AddExtraUnlockable(row.BoostingTechType, "BOOST_CIVIC", row.CivicType, Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost), row.CivicType);
-		end
-		--]]
-		--AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 	end
 end
-
 
 
 function Initialize_BTT_TechTree()

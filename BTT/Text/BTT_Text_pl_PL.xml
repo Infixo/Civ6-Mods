@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- BTT_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-03-19: Created -->
+<GameData>
+
+<LocalizedText>
+
+	<!-- Tab names -->
+	<Replace Tag="LOC_BTT_BOOST_TECH_DESC" Language="pl_PL"> <!-- LOC_QUEST_TRIGGER_TECH_BOOST_INSTANCE_NAME -->
+		<Text>{2_Percent}% [ICON_TechBoosted] Eureka dla {1_TechName}.</Text>
+	</Replace>
+	<Replace Tag="LOC_BTT_BOOST_CIVIC_DESC" Language="pl_PL"> <!-- LOC_QUEST_TRIGGER_CIVIC_BOOST_INSTANCE_NAME -->
+		<Text>{2_Percent}% [ICON_CivicBoosted] Inspiracja dla {1_CivicName}.</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>

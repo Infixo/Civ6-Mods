@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BTT_Icons -->
+<!-- Author: Infixo -->
+<!-- 2018-03-19: Created -->
+<GameInfo>
+
+	<IconTextureAtlases>
+		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS"     IconSize="38" IconsPerRow="2" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
+		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="2" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
+	</IconTextureAtlases>
+	
+	<IconDefinitions>
+		<Row Name="ICON_BTT_BOOST_TECH"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="0"/>
+		<Row Name="ICON_BTT_BOOST_CIVIC" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="1"/>
+		<!-- FOW -->
+		<Row Name="ICON_BTT_BOOST_TECH_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="0"/>
+		<Row Name="ICON_BTT_BOOST_CIVIC_FOW" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="1"/>
+	</IconDefinitions>
+	
+</GameInfo>

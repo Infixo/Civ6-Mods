@@ -27,7 +27,7 @@
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
             <Items>
-				<!--<File>GameCapabilities.lua</File>-->
+				<File>Icons/BTTUnlockFrames.dds</File>
 				<!-- core files, will be included in wrappers -->
 				<File>TechAndCivicSupport_BTT.lua</File>
 				<!-- wrappers -->
@@ -38,17 +38,11 @@
 		<UpdateText id="BTT_UpdateText">
 			<!--<File>Config/BTT_ConfigText.xml</File>-->
 			<File>Text/BTT_Text.xml</File>
-			<!--
-			<File>Text/BetterReportScreen_Text_de_DE.xml</File>
-			<File>Text/BetterReportScreen_Text_es_ES.xml</File>
-			<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
-			<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
-			<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
-			<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
-			<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
-			<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
-			-->
+			<File>Text/BTT_Text_pl_PL.xml</File>
 		</UpdateText>
+		<UpdateIcons id="BTT_Icons">
+			<File>Icons/BTT_Icons.xml</File>
+		</UpdateIcons>
 		<!-- Vanilla actions -->
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree">
 			<Properties>
@@ -87,19 +81,10 @@
 		<!--<File>GameCapabilities.lua</File>-->
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
-		<!--<File>CivicsTree_BTT_core.lua</File>-->
-		<!--<File>RealModifierAnalysis.xml</File>-->
 		<File>Text/BTT_Text.xml</File>
-		<!--
-		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
-		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
-		<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
-		<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
-		<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
-		<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
-		<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
-		<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
-		-->
+		<File>Text/BTT_Text_pl_PL.xml</File>
+		<File>Icons/BTT_Icons.xml</File>
+		<File>Icons/BTTUnlockFrames.dds</File>
 		<!-- Vanilla files -->
 		<!--<File>ReportScreen.xml</File>-->
 		<File>TechTree_BTT_vanilla.lua</File>
