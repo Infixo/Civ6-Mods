@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterTechTree_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-03-19: Created -->
+<GameData>
+
+<BaseGameText>
+
+	<!-- Column headers
+	<Row Tag="LOC_BTT_HEADER_BUILDINGNAME">
+		<Text>Building/District Name</Text>
+	</Row>
+	<Row Tag="LOC_BTT_HEADER_BUILDINGCOUNT">
+		<Text>Number of Buildings/Districts</Text>
+	</Row>
+	<Row Tag="LOC_BTT_HEADER_GROWTH">
+		<Text>Growth</Text>
+	</Row>
+	<Row Tag="LOC_BTT_HEADER_HAPPINESS">
+		<Text>Happiness</Text>
+	</Row>
+	<Row Tag="LOC_BTT_HEADER_POLICY_NAME">
+		<Text>Policy Name</Text>
+	</Row>
+	-->
+</BaseGameText>
+
+</GameData>

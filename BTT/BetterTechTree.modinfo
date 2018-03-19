@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="23acd19c-377a-4da8-b8cb-87d3c7fc71af" version="1">
+	<Properties>
+		<Name>Better Tech Tree</Name>
+		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supported languages: English, Polish. Version 1.0.</Description>
+		<Authors>Infixo</Authors>
+		<!--<SpecialThanks>t.b.d.</SpecialThanks>-->
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<ActionCriteria>
+		<Criteria id="Expansion1">
+			<GameCoreInUse>Expansion1</GameCoreInUse>
+		</Criteria>
+	</ActionCriteria>
+	<!--
+	<FrontEndActions>
+		<UpdateDatabase id="BTT_FrontEnd_Database">
+			<File>Config/BTT_Config.xml</File>
+		</UpdateDatabase>
+		<UpdateText id="BTT_FrontEnd_Text">
+			<File>Config/BTT_ConfigText.xml</File>
+		</UpdateText>
+	</FrontEndActions>
+	-->
+	<InGameActions>
+		<!-- Vanilla actions - simply import lua and xml -->
+        <ImportFiles id="BTT_ImportFiles">
+            <Items>
+				<!--<File>GameCapabilities.lua</File>-->
+				<!-- core files, will be included in wrappers -->
+				<File>TechAndCivicSupport_BTT.lua</File>
+				<!-- wrappers -->
+				<File>TechTree_BTT_vanilla.lua</File>
+				<File>CivicsTree_BTT.lua</File>
+            </Items>
+        </ImportFiles>
+		<UpdateText id="BTT_UpdateText">
+			<!--<File>Config/BTT_ConfigText.xml</File>-->
+			<File>Text/BTT_Text.xml</File>
+			<!--
+			<File>Text/BetterReportScreen_Text_de_DE.xml</File>
+			<File>Text/BetterReportScreen_Text_es_ES.xml</File>
+			<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
+			<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
+			<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
+			<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
+			<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
+			<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
+			-->
+		</UpdateText>
+		<!-- Vanilla actions -->
+		<ReplaceUIScript id="BTT_ReplaceUI_TechTree">
+			<Properties>
+				<LuaContext>TechTree</LuaContext>
+				<LuaReplace>TechTree_BTT_vanilla.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree">
+			<Properties>
+				<LuaContext>CivicsTree</LuaContext>
+				<LuaReplace>CivicsTree_BTT.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<!-- Rise&Fall actions - replace lua only for TechTree, Civics tree was not updated in R&F! -->
+        <ImportFiles id="BTT_ImportFiles_RiseFall" criteria="Expansion1">
+			<Properties>
+                <LoadOrder>2</LoadOrder>
+            </Properties>		
+            <Items>
+				<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
+            </Items>
+        </ImportFiles>
+		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_RiseFall" criteria="Expansion1">
+			<Properties>
+                <LoadOrder>2</LoadOrder>
+				<LuaContext>TechTree</LuaContext>
+				<LuaReplace>RiseFall/TechTree_BTT_RiseFall.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+    </InGameActions>
+    <Files>
+		<!-- Config files -->
+		<!--<File>Config/BTT_Config.xml</File>-->
+		<!--<File>Config/BTT_ConfigText.xml</File>-->
+		<!-- Shared files -->
+		<!--<File>GameCapabilities.lua</File>-->
+		<File>TechAndCivicSupport_BTT.lua</File>
+		<File>CivicsTree_BTT.lua</File>
+		<!--<File>CivicsTree_BTT_core.lua</File>-->
+		<!--<File>RealModifierAnalysis.xml</File>-->
+		<File>Text/BTT_Text.xml</File>
+		<!--
+		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
+		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
+		<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
+		<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
+		<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
+		<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
+		<File>Text/BetterReportScreen_Text_zh_Hans_CN.xml</File>
+		<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
+		-->
+		<!-- Vanilla files -->
+		<!--<File>ReportScreen.xml</File>-->
+		<File>TechTree_BTT_vanilla.lua</File>
+		<!-- Rise & Fall files -->
+		<!--<File>RiseFall/ReportScreen.xml</File>-->
+		<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
+    </Files>
+</Mod>
