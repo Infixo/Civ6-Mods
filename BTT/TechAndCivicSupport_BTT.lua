@@ -111,7 +111,7 @@ function PopulateUnlockableSimple(tItem:table, instanceManager:table)
 	if not IsTutorialRunning() and tItem.PediaKey then
 		unlockInstance.UnlockIcon:RegisterCallback(
 			Mouse.eRClick,
-			function() LuaEvents.OpenCivilopedia(civilopediaKey);
+			function() LuaEvents.OpenCivilopedia(tItem.PediaKey);
 		end);
 	end
 
@@ -133,7 +133,7 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 	iNumIcons = BTT_BASE_PopulateUnlockablesForCivic(playerID, civicID, kItemIM, kGovernmentIM, callback, hideDescriptionIcon );
 	if iNumIcons == nil then iNumIcons = 0; end
 	
-	print("Adding additional icons for", sCivicType);
+	--print("Adding additional icons for", sCivicType);
 	
 	for _,item in ipairs( GetExtraUnlockables(sCivicType) ) do
 		PopulateUnlockableSimple(item, kItemIM);
@@ -260,8 +260,12 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 	
 	iNumIcons = BTT_BASE_PopulateUnlockablesForTech(playerID, techID, instanceManager, callback);
 	if iNumIcons == nil then iNumIcons = 0; end
+
+	-- debug
+	--local unlockables:table = GetUnlockablesForTech_Cached(sTechType, playerID);
+	--for i,v in ipairs(unlockables) do print("pedia key",v[3]) end
 	
-	print("Adding additional icons for", sTechType);
+	--print("Adding additional icons for", sTechType);
 	
 	for _,item in ipairs( GetExtraUnlockables(sTechType) ) do
 		PopulateUnlockableSimple(item, instanceManager);
@@ -345,13 +349,88 @@ end
 -- simple version first, only for direct Civic/Tech boosts
 -- TODO: add support for Units, Districts and Buildings
 function PopulateBoosts()
+	local sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string, objectInfo:table;
+	
 	for row in GameInfo.Boosts() do
+		-- what is boosted?
+		if     row.TechnologyType then
+			sUnlockKind = "BOOST_TECH"; sUnlockType = row.TechnologyType; sPediaKey = row.TechnologyType;
+			sDescription = Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost);
+		elseif row.CivicType then
+			sUnlockKind = "BOOST_CIVIC"; sUnlockType = row.CivicType; sPediaKey = row.CivicType;
+			sDescription = Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost);
+		else
+			-- error in boost definition
+		end
+		-- what is the boost? it gives Type; in rare cases can generate more than 1 unlock!
+		if row.BoostingCivicType then
+			sType = row.BoostingCivicType;
+			sDescription = Locale.Lookup( GameInfo.Civics[sType].Name )..": "..sDescription;
+			AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+		end
+		if row.BoostingTechType then
+			sType = row.BoostingTechType;
+			sDescription = Locale.Lookup( GameInfo.Technologies[sType].Name )..": "..sDescription;
+			AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+		end
+		if row.DistrictType then
+			sType = nil;
+			objectInfo = GameInfo.Districts[row.DistrictType];
+			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
+			if sType then
+				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
+				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_DISTRICTS" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+			end
+		end
+		if row.BuildingType then
+			sType = nil;
+			objectInfo = GameInfo.Buildings[row.BuildingType];
+			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
+			if sType then
+				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
+				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_BUILDINGS" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+			end
+		end
+		if row.Unit1Type then
+			sType = nil;
+			objectInfo = GameInfo.Units[row.Unit1Type];
+			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
+			if sType then
+				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
+				if row.BoostClass == "BOOST_TRIGGER_OWN_X_UNITS_OF_TYPE" or row.BoostClass == "BOOST_TRIGGER_MAINTAIN_X_TRADE_ROUTES" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+			end
+		end
+		if row.ResourceType then
+			sType = nil;
+			objectInfo = GameInfo.Resources[row.ResourceType];
+			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
+			if sType then
+				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
+				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+			end
+		end
+		if row.ImprovementType and row.ResourceType == nil then
+			sType = nil;
+			objectInfo = GameInfo.Improvements[row.ImprovementType];
+			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
+			if sType then
+				sDescription = Locale.Lookup(objectInfo.Name)..": "..sDescription;
+				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_IMPROVEMENTS" then sDescription = tostring(row.NumItems).." "..sDescription; end
+				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+			end
+		end
+		--[[
 		if row.BoostingCivicType and row.TechnologyType then
 			AddExtraUnlockable(row.BoostingCivicType, "BOOST_TECH", row.TechnologyType, Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost), row.TechnologyType);
 		end
 		if row.BoostingTechType and row.CivicType then
 			AddExtraUnlockable(row.BoostingTechType, "BOOST_CIVIC", row.CivicType, Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost), row.CivicType);
 		end
+		--]]
+		--AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 	end
 end
 
