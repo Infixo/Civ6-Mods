@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- BetterReportScreen_Text -->
 <!-- Author: Infixo -->
 <!-- 2018-02-23: Created -->
@@ -135,11 +135,11 @@
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="ko_KR">
 		<Text>산출량없는정책 숨기기</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="ko_KR"> <!-- todo -->
-		<Text>Hide Not Met City States</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="ko_KR">
+		<Text>만나지못한 도시국가 숨기기</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="ko_KR"> <!-- todo -->
-		<Text>Hide City States with No Impact</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="ko_KR">
+		<Text>산출량없는 도시국가 숨기기</Text>
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="ko_KR">
