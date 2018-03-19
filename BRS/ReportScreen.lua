@@ -1,4 +1,4 @@
-print("Loading ReportScreen.lua from Better Report Screen version 3.0");
+print("Loading ReportScreen.lua from Better Report Screen version 3.0.1");
 -- ===========================================================================
 --	ReportScreen
 --	All the data

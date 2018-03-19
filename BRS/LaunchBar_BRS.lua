@@ -1,4 +1,4 @@
-print("Loading LaunchBar_BRS.lua from Better Report Screen version 3.0");
+print("Loading LaunchBar_BRS.lua from Better Report Screen version 3.0.1");
 -- ===========================================================================
 -- Better Report Screen
 -- Author: Infixo

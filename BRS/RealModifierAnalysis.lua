@@ -1,4 +1,4 @@
-print("Loading Real Modifier Analysis.lua from Better Report Screen version 3.0");
+print("Loading Real Modifier Analysis.lua from Better Report Screen version 3.0.1");
 -- ===========================================================================
 -- Real Modifier Analysis
 -- Author: Infixo
