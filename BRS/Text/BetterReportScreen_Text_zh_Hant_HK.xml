@@ -134,11 +134,11 @@
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="zh_Hant_HK">
 		<Text>隱藏無影響政策</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="zh_Hant_HK"> <!-- todo -->
-		<Text>Hide Not Met City States</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="zh_Hant_HK">
+		<Text>隱藏未遇到的城邦</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="zh_Hant_HK"> <!-- todo -->
-		<Text>Hide City States with No Impact</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="zh_Hant_HK">
+		<Text>隱藏無影響城邦</Text>
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="zh_Hant_HK">
