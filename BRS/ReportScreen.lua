@@ -217,6 +217,61 @@ end
 -- ===========================================================================
 --	Populate with all data required for any/all report tabs.
 -- ===========================================================================
+
+
+-- ===========================================================================
+-- CQUI calculate real housing from improvements
+function CQUI_RealHousingFromImprovements(pCity)
+  local CQUI_HousingFromImprovements = 0;
+  local pCityID = pCity:GetID();
+  local tParameters :table = {};
+  tParameters[CityCommandTypes.PARAM_MANAGE_CITIZEN] = UI.GetInterfaceModeParameter(CityCommandTypes.PARAM_MANAGE_CITIZEN);
+  local tResults :table = CityManager.GetCommandTargets( pCity, CityCommandTypes.MANAGE, tParameters );
+  local tPlots :table = tResults[CityCommandResults.PLOTS];
+  if tPlots ~= nil and (table.count(tPlots) > 0) then
+    for i, plotId in pairs(tPlots) do
+      local kPlot	:table = Map.GetPlotByIndex(plotId);
+      local eImprovementType :number = kPlot:GetImprovementType();
+      if( eImprovementType ~= -1 ) then
+        local kImprovementData = GameInfo.Improvements[eImprovementType].Housing;
+        if kImprovementData == 1 then    -- farms, pastures etc.
+          CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 1;
+        elseif kImprovementData == 2 then    -- stepwells and kampungs
+          if eImprovementType == 23 then    -- stepwells (Index == 23)
+            local CQUI_PlayerResearchedSanitation :boolean = Players[Game.GetLocalPlayer()]:GetTechs():HasTech(40);    -- check if a player researched Sanitation (Index == 40)
+            if not CQUI_PlayerResearchedSanitation then
+              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 2;
+            else
+              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 4;
+            end
+          else    -- kampungs (Index == 26, but after load a game Index == 25)
+            local CQUI_PlayerResearchedMassProduction :boolean = Players[Game.GetLocalPlayer()]:GetTechs():HasTech(27);    -- check if a player researched Mass Production (Index == 27)
+            if not CQUI_PlayerResearchedMassProduction then
+              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 2;
+            else
+              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 4;
+            end
+          end
+        end
+      end
+    end
+    CQUI_HousingFromImprovements = CQUI_HousingFromImprovements * 0.5;
+    CQUI_HousingFromImprovementsTable[pCityID] = CQUI_HousingFromImprovements;
+    CQUI_HousingUpdated[pCityID] = true;
+    LuaEvents.CQUI_RealHousingFromImprovementsCalculated(pCityID, CQUI_HousingFromImprovements);
+  else
+    return;
+  end
+end
+
+-- ===========================================================================
+-- CQUI update city's real housing from improvements
+function CQUI_OnCityInfoUpdated(pCityID)
+  CQUI_HousingUpdated[pCityID] = false;
+end
+
+
+
 function GetData()
 	local kResources	:table = {};
 	local kCityData		:table = {};
@@ -3444,6 +3499,13 @@ function ViewMinorPage()
 			-- impact with modifiers
 			local sMinorImpact:string = ( minor.Impact == "" and "[ICON_CheckmarkBlue]" ) or minor.Impact;
 			if minor.UnknownEffect then sMinorImpact = sMinorImpact.." [COLOR_Red]!"; end
+			-- this plugin shows actual impact as an additional info; only for influence bonuses
+			if minor.NumTokens > 0 then
+				local tActualYields:table = {};
+				for yield,value in pairs(minor.Yields) do tActualYields[yield] = value * minor.Influence; end
+				local sActualInfo:string = RMA.YieldTableGetInfo(tActualYields);
+				if sActualInfo ~= "" then sMinorImpact = sMinorImpact.."  ("..sActualInfo..")"; end
+			end
 			TruncateString(pMinorInstance.PolicyEntryImpact, 218, sMinorImpact);
 			pMinorInstance.PolicyEntryImpact:SetToolTipString(minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait..TOOLTIP_SEP_NEWLINE..minor.ImpactToolTip);
 			

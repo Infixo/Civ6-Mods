@@ -184,6 +184,14 @@ function YieldTableSetYield(pYields:table, sYield:string, fValue:number)
 	else                            pYields[ sYield ] = fValue;                  end
 end
 
+-- returns a compacted string with yields info
+function YieldTableGetInfo(pYields:table)
+	local sYieldInfo:string = "";
+	for	_,yield in ipairs(YieldTypesOrder) do
+		if pYields[yield] ~= 0 then sYieldInfo = sYieldInfo..(sYieldInfo == "" and "" or " ")..GetYieldString("YIELD_"..yield, pYields[yield]); end
+	end
+	return sYieldInfo;
+end
 
 -- ===========================================================================
 -- GENERIC FUNCTIONS AND HELPERS
@@ -2364,14 +2372,15 @@ function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:n
 	end
 	
 	-- generate total impact string
-	local sTotalImpact:string = "";
+	--local sTotalImpact:string = "";
 	local bImpact:boolean = false;
 	--for yield,value in pairs(tTotalImpact) do
 		--if value ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, value); end
 	--end
-	for	_,yield in ipairs(YieldTypesOrder) do
-		if tTotalImpact[yield] ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, tTotalImpact[yield]); end
-	end
+	--for	_,yield in ipairs(YieldTypesOrder) do
+		--if tTotalImpact[yield] ~= 0 then sTotalImpact = sTotalImpact..(sTotalImpact=="" and "" or " ")..GetYieldString("YIELD_"..yield, tTotalImpact[yield]); end
+	--end
+	local sTotalImpact:string = YieldTableGetInfo(tTotalImpact);
 	if sTotalImpact == "" then
 		--sTotalImpact = "-"; -- just to show that there's nothing; empty string could be misleading
 		table.insert(tToolTip, "Yields not affected.");
@@ -2465,6 +2474,7 @@ function Initialize()
 	RMA.RefreshBaseData = RefreshBaseData;
 	RMA.CalculateModifierEffect = CalculateModifierEffect;
 	RMA.GetObjectNameForModifier = GetObjectNameForModifier;
+	RMA.YieldTableGetInfo = YieldTableGetInfo;
 	
 	-- add events that require the base data to be refreshed
 	-- only set the dirty flag, the actual data will be refreshed when necessary
