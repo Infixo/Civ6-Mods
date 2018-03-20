@@ -96,12 +96,13 @@ local tBackgroundTextures:table = {
 };
 
 -- NOT USED!!!
+--[[
 function GetUnlockIcon(typeName)
 	if string.find(typeName, "TECH_") then return tBackgroundTextures.BOOST_TECH; end
 	if string.find(typeName, "CIVIC_") then return tBackgroundTextures.BOOST_CIVIC; end
 	return BTT_BASE_GetUnlockIcon(typeName);
 end
-
+--]]
 
 -- this will add 1 simple unlockable, i.e. only background and icon
 function PopulateUnlockableSimple(tItem:table, instanceManager:table)
@@ -191,6 +192,7 @@ end
 
 -- need to plug into these so the orginal functions will know about new unlockables and e.g. extend the size of nodes
 -- NOT USED!!!
+--[[
 function GetUnlockablesForCivic_Cached(civicType, playerId)
 	dprint("FUN GetUnlockablesForCivic_Cached",civicType,playerId);
 	-- get data from base function
@@ -208,8 +210,10 @@ function GetUnlockablesForCivic_Cached(civicType, playerId)
 	if civicType == "CIVIC_DIPLOMATIC_SERVICE" or civicType == "CIVIC_NATURAL_HISTORY" or civicType == "CIVIC_MOBILIZATION" or civicType == "CIVIC_CONSERVATION" then print(civicType); dshowrectable(results); end
 	return results;
 end
+--]]
 
 -- NOT USED!!!
+--[[
 function GetUnlockablesForTech_Cached(techType, playerId)
 	dprint("FUN GetUnlockablesForTech_Cached",techType,playerId);
 	-- get data from base function
@@ -226,7 +230,7 @@ function GetUnlockablesForTech_Cached(techType, playerId)
 	end
 	return results;
 end
-
+--]]
 
 -- ===========================================================================
 -- POPULATE EXTRA UNLOCKABLES
