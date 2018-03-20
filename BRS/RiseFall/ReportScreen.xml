@@ -974,8 +974,8 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="40,parent">
-					<GridButton		ID="UnitUPButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="UP"/>
+					<GridButton		ID="UnitUpgradeButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_PressureHigh]"/>
 					</GridButton>
 				</Container>
 				
@@ -1091,7 +1091,7 @@
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="252,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
 					</GridButton>
@@ -1250,31 +1250,31 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="100,parent">
-					<GridButton		ID="UnitMoveButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="LOC_HUD_UNIT_PANEL_MOVEMENT"/>
-					</GridButton>
-				</Container>
-
 				<Container Offset="1,0" Size="200,parent">
 					<GridButton		ID="UnitMissionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_MISSION"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="200,parent">
+				<Container Offset="1,0" Size="170,parent">
 					<GridButton		ID="UnitTurnsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_TURNS_REMAINING"/>
 					</GridButton>
 				</Container>
 				
+				<Container Offset="1,0" Size="100,parent">
+					<GridButton		ID="UnitMoveButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="LOC_HUD_UNIT_PANEL_MOVEMENT"/>
+					</GridButton>
+				</Container>
+
 				<Container Offset="1,0" Size="25,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="220,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
 					</GridButton>
@@ -1439,7 +1439,7 @@
 					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
 				</Container>
 
-				<Container Offset="1,0" Size="252,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				<!--
@@ -1579,24 +1579,24 @@
 					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
 				</Container>
 				
+				<Container Offset="1,0" Size="200,parent">
+					<Label ID="UnitOperation" Style="ReportValueText" String="None" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+
+				<Container Offset="1,0" Size="170,parent">
+					<Label ID="UnitTurns" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
 				<Container Offset="1,0" Size="100,parent">
 					<Label ID="UnitMove" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
 					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
 				</Container>
 
-				<Container Offset="1,0" Size="200,parent">
-					<Label ID="UnitOperation" Style="ReportValueText" String="None" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-
-				<Container Offset="1,0" Size="200,parent">
-					<Label ID="UnitTurns" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-				
 				<Container Offset="1,0" Size="25,parent">
 					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
 				</Container>
 
-				<Container Offset="1,0" Size="220,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				<!--

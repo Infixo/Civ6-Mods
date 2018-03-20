@@ -2065,7 +2065,11 @@ function ViewResourcesPage()
 
 		instance.RowHeaderButton:SetText(  kSingleResourceData.Icon..Locale.Lookup( kResource.Name ) );
 		instance.RowHeaderLabel:SetHide( false ); --BRS
-		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(kSingleResourceData.Total) );
+		if kSingleResourceData.Total < 0 then
+			instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." [COLOR_Red]"..tostring(kSingleResourceData.Total).."[ENDCOLOR]" );
+		else
+			instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(kSingleResourceData.Total) );
+		end
 
 		local pHeaderInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "ResourcesHeaderInstance", pHeaderInstance, instance.ContentStack ) ;
