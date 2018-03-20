@@ -27,8 +27,6 @@
         <ImportFiles id="BTT_ImportFiles">
             <Items>
 				<File>Icons/BTTUnlockFrames.dds</File>
-				<File>CivicsTree.xml</File>
-				<File>TechTreeNode.xml</File>
 				<!-- core files, will be included in wrappers -->
 				<File>TechAndCivicSupport_BTT.lua</File>
 				<!-- wrappers -->
@@ -64,7 +62,6 @@
             </Properties>		
             <Items>
 				<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
-				<File>RiseFall/TechTreeNode.xml</File>
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_RiseFall" criteria="Expansion1">
@@ -82,16 +79,13 @@
 		<!-- Shared files -->
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
-		<File>CivicsTree.xml</File>
 		<File>Text/BTT_Text.xml</File>
 		<File>Text/BTT_Text_pl_PL.xml</File>
 		<File>Icons/BTT_Icons.xml</File>
 		<File>Icons/BTTUnlockFrames.dds</File>
 		<!-- Vanilla files -->
 		<File>TechTree_BTT_vanilla.lua</File>
-		<File>TechTreeNode.xml</File>
 		<!-- Rise & Fall files -->
 		<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
-		<File>RiseFall/TechTreeNode.xml</File>
     </Files>
 </Mod>

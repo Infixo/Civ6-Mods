@@ -82,6 +82,12 @@ function AddExtraUnlockable(sType:string, sUnlockKind:string, sUnlockType:string
 	table.insert(m_kExtraUnlockables, tItem);
 end
 
+function IsExtraUnlockableAdded(sType:string, sUnlockKind:string, sUnlockType:string)
+	for _,item in ipairs(m_kExtraUnlockables) do
+		if item.Type == sType and item.UnlockKind == sUnlockKind and item.UnlockType == sUnlockType then return true; end
+	end
+	return false;
+end
 
 -- ===========================================================================
 --
@@ -92,7 +98,8 @@ local tBackgroundTextures:table = {
 	BOOST_CIVIC = "ICON_BTT_BOOST_CIVIC", --"ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
 	HARVEST = "ICON_BTT_HARVEST",
 	IMPR_BONUS = "ICON_BTT_IMPR_BONUS",
-	UNIT = "ICON_BTT_UNIT",
+	UNIT = "ICON_BTT_SQUARE",
+	TOURISM = "ICON_BTT_SQUARE",
 };
 
 -- NOT USED!!!
@@ -142,6 +149,12 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 	
 	local sCivicType:string = civicInfo.CivicType;
 	local iNumIcons:number = 0;
+	
+	-- I can block showing extra star by passing hideDescriptionIcon = true
+	-- BUT: not all can be disabled unfortunately...
+	-- must stay: other modifiers than spies, feature removal, adjacency bonuses
+	-- we're gonna HIDE the star by default - it will only be shown if a record exists in m_kShowStar
+	-- there's no flag like this in TechTree anyway, so no use doing it only for Civics
 	
 	iNumIcons = BTT_BASE_PopulateUnlockablesForCivic(playerID, civicID, kItemIM, kGovernmentIM, callback, hideDescriptionIcon );
 	if iNumIcons == nil then iNumIcons = 0; end
@@ -298,7 +311,7 @@ function PopulateBoosts()
 			objectInfo = GameInfo.Resources[row.ResourceType];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name).."[ICON_"..row.ResourceType.."]"..sDescription;
+				sDescription = Locale.Lookup(objectInfo.Name).."[ICON_"..row.ResourceType.."] "..Locale.Lookup(GameInfo.Improvements[row.ImprovementType].Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
@@ -336,13 +349,21 @@ function PopulateImprovementBonus()
 end
 
 function PopulateFromModifiers(sTreeKind:string)
-	local sDesc:string;
+	local sType:string, sDesc:string;
 	for row in GameInfo[sTreeKind.."Modifiers"]() do
+		sType = row[sTreeKind.."Type"];
 		for mod in GameInfo.Modifiers() do
 			if mod.ModifierId == row.ModifierId then
 				if mod.ModifierType == "MODIFIER_PLAYER_GRANT_SPY" then
 					sDesc = "+1 "..Locale.Lookup(GameInfo.Units["UNIT_SPY"].Name);
-					AddExtraUnlockable(row[sTreeKind.."Type"], "UNIT", "UNIT_SPY", sDesc, "UNIT_SPY");
+					AddExtraUnlockable(sType, "UNIT", "UNIT_SPY", sDesc, "UNIT_SPY");
+				elseif string.find(mod.ModifierType, "ADJUST_TOURISM") or mod.ModifierType == "MODIFIER_PLAYER_ADJUST_RELIGIOUS_TOURISM_REDUCTION" then
+					-- MODIFIER_PLAYER_CITIES_ADJUST_TOURISM MODIFIER_PLAYER_ADJUST_TOURISM  MODIFIER_PLAYER_DISTRICTS_ADJUST_TOURISM_CHANGE
+					-- tourism modifiers - no specific description, register only once (Conservation!)
+					if not IsExtraUnlockableAdded(sType, "TOURISM", "BTT_TOURISM") then
+						sDesc = Locale.Lookup("LOC_TOP_PANEL_TOURISM");
+						AddExtraUnlockable(sType, "TOURISM", "BTT_TOURISM", sDesc, "TOURISM_1");
+					end
 				else
 					-- check for other modifiers here
 				end

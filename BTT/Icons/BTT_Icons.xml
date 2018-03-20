@@ -5,8 +5,8 @@
 <GameInfo>
 
 	<IconTextureAtlases>
-		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS"     IconSize="38" IconsPerRow="5" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
-		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="5" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
+		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS"     IconSize="38" IconsPerRow="6" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
+		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="6" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
 	</IconTextureAtlases>
 	
 	<IconDefinitions>
@@ -14,13 +14,15 @@
 		<Row Name="ICON_BTT_BOOST_CIVIC" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="1"/>
 		<Row Name="ICON_BTT_HARVEST"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="2"/>
 		<Row Name="ICON_BTT_IMPR_BONUS"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="3"/>
-		<Row Name="ICON_BTT_UNIT"        Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="4"/>
+		<Row Name="ICON_BTT_SQUARE"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="4"/>
+		<Row Name="ICON_BTT_TOURISM"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="5"/> <!-- exception, will be used as front icon -->
 		<!-- FOW -->
 		<Row Name="ICON_BTT_BOOST_TECH_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="0"/>
 		<Row Name="ICON_BTT_BOOST_CIVIC_FOW" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="1"/>
 		<Row Name="ICON_BTT_HARVEST_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="2"/>
 		<Row Name="ICON_BTT_IMPR_BONUS_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="3"/>
-		<Row Name="ICON_BTT_UNIT_FOW"        Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="4"/>
+		<Row Name="ICON_BTT_SQUARE_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="4"/>
+		<Row Name="ICON_BTT_TOURISM_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="5"/> <!-- exception, will be used as front icon -->
 	</IconDefinitions>
 	
 </GameInfo>
