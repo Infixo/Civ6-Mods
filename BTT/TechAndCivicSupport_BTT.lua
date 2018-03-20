@@ -89,6 +89,7 @@ local tBackgroundTextures:table = {
 	BOOST_TECH = "ICON_BTT_BOOST_TECH", --"ICON_TECHUNLOCK_5", -- "LaunchBar_Hook_ScienceButton",
 	BOOST_CIVIC = "ICON_BTT_BOOST_CIVIC", --"ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
 	HARVEST = "ICON_BTT_HARVEST",
+	IMPR_BONUS = "ICON_BTT_IMPR_BONUS",
 };
 
 -- this will add 1 simple unlockable, i.e. only background and icon
@@ -268,12 +269,26 @@ function PopulateHarvests()
 	end
 end
 
+function PopulateImprovementBonus()
+	local sDesc:string;
+	local sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sDescBoost:string, sPediaKey:string, objectInfo:table;
+	for row in GameInfo.Improvement_BonusYieldChanges() do
+		if     row.PrereqTech  then sType = row.PrereqTech;
+		elseif row.PrereqCivic then sType = row.PrereqCivic;
+		else -- error in configuration
+		end
+		sDesc = Locale.Lookup(GameInfo.Improvements[row.ImprovementType].Name)..": +"..tostring(row.BonusYieldChange)..GameInfo.Yields[row.YieldType].IconString;
+		AddExtraUnlockable(sType, "IMPR_BONUS", row.ImprovementType, sDesc, row.ImprovementType);
+	end
+end
+
 
 function Initialize_BTT_TechTree()
 	dprint("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
 	PopulateHarvests();
+	PopulateImprovementBonus();
 end
 
 
@@ -281,6 +296,7 @@ function Initialize_BTT_CivicsTree()
 	dprint("FUN Initialize_BTT_CivicsTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
+	PopulateImprovementBonus();
 end
 
 print("OK loaded TechAndCivicSupport_BTT.lua from Better Tech Tree");
