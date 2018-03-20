@@ -15,7 +15,9 @@ print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
 -- ===========================================================================
 BTT_BASE_PopulateUnlockablesForCivic = PopulateUnlockablesForCivic;
 BTT_BASE_PopulateUnlockablesForTech = PopulateUnlockablesForTech;
-
+--BTT_BASE_GetUnlockablesForCivic_Cached = GetUnlockablesForCivic_Cached;
+--BTT_BASE_GetUnlockablesForTech_Cached = GetUnlockablesForTech_Cached;
+--BTT_BASE_GetUnlockIcon = GetUnlockIcon;
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -90,7 +92,16 @@ local tBackgroundTextures:table = {
 	BOOST_CIVIC = "ICON_BTT_BOOST_CIVIC", --"ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
 	HARVEST = "ICON_BTT_HARVEST",
 	IMPR_BONUS = "ICON_BTT_IMPR_BONUS",
+	UNIT = "ICON_BTT_UNIT",
 };
+
+-- NOT USED!!!
+function GetUnlockIcon(typeName)
+	if string.find(typeName, "TECH_") then return tBackgroundTextures.BOOST_TECH; end
+	if string.find(typeName, "CIVIC_") then return tBackgroundTextures.BOOST_CIVIC; end
+	return BTT_BASE_GetUnlockIcon(typeName);
+end
+
 
 -- this will add 1 simple unlockable, i.e. only background and icon
 function PopulateUnlockableSimple(tItem:table, instanceManager:table)
@@ -175,6 +186,45 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 	instanceManager.m_ParentControl:CalculateSize();
 	
 	return iNumIcons;
+end
+
+
+-- need to plug into these so the orginal functions will know about new unlockables and e.g. extend the size of nodes
+-- NOT USED!!!
+function GetUnlockablesForCivic_Cached(civicType, playerId)
+	dprint("FUN GetUnlockablesForCivic_Cached",civicType,playerId);
+	-- get data from base function
+	local results = BTT_BASE_GetUnlockablesForCivic_Cached(civicType, playerId);
+	-- add our own
+	for _,item in ipairs( GetExtraUnlockables(civicType) ) do
+		-- for some reasons it remembers previous inserts?
+		local bIsInserted:boolean = false;
+		for _,res in ipairs(results) do if res[1] == item.UnlockType and res[2] == item.Description then bIsInserted = true; break; end end
+		if not bIsInserted then
+			print("inserting extra civic unlock", item.UnlockType, item.Description, item.PediaKey);
+			table.insert(results, { item.UnlockType, item.Description, item.PediaKey });
+		end
+	end
+	if civicType == "CIVIC_DIPLOMATIC_SERVICE" or civicType == "CIVIC_NATURAL_HISTORY" or civicType == "CIVIC_MOBILIZATION" or civicType == "CIVIC_CONSERVATION" then print(civicType); dshowrectable(results); end
+	return results;
+end
+
+-- NOT USED!!!
+function GetUnlockablesForTech_Cached(techType, playerId)
+	dprint("FUN GetUnlockablesForTech_Cached",techType,playerId);
+	-- get data from base function
+	local results = BTT_BASE_GetUnlockablesForTech_Cached(techType, playerId);
+	-- add our own
+	for _,item in ipairs( GetExtraUnlockables(techType) ) do
+		-- for some reasons it remembers previous inserts?
+		local bIsInserted:boolean = false;
+		for _,res in ipairs(results) do if res[1] == item.UnlockType and res[2] == item.Description then bIsInserted = true; break; end end
+		if not bIsInserted then
+			print("inserting extra tech unlock", item.UnlockType, item.Description, item.PediaKey);
+			table.insert(results, { item.UnlockType, item.Description, item.PediaKey });
+		end
+	end
+	return results;
 end
 
 
@@ -270,8 +320,7 @@ function PopulateHarvests()
 end
 
 function PopulateImprovementBonus()
-	local sDesc:string;
-	local sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sDescBoost:string, sPediaKey:string, objectInfo:table;
+	local sType:string, sDesc:string;
 	for row in GameInfo.Improvement_BonusYieldChanges() do
 		if     row.PrereqTech  then sType = row.PrereqTech;
 		elseif row.PrereqCivic then sType = row.PrereqCivic;
@@ -282,21 +331,41 @@ function PopulateImprovementBonus()
 	end
 end
 
+function PopulateFromModifiers(sTreeKind:string)
+	local sDesc:string;
+	for row in GameInfo[sTreeKind.."Modifiers"]() do
+		for mod in GameInfo.Modifiers() do
+			if mod.ModifierId == row.ModifierId then
+				if mod.ModifierType == "MODIFIER_PLAYER_GRANT_SPY" then
+					sDesc = "+1 "..Locale.Lookup(GameInfo.Units["UNIT_SPY"].Name);
+					AddExtraUnlockable(row[sTreeKind.."Type"], "UNIT", "UNIT_SPY", sDesc, "UNIT_SPY");
+				else
+					-- check for other modifiers here
+				end
+				break;
+			end
+		end
+	end
+end
 
 function Initialize_BTT_TechTree()
-	dprint("FUN Initialize_BTT_TechTree()");
+	--dprint("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
 	PopulateHarvests();
 	PopulateImprovementBonus();
+	PopulateFromModifiers("Technology");
+	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 
 
 function Initialize_BTT_CivicsTree()
-	dprint("FUN Initialize_BTT_CivicsTree()");
+	--dprint("FUN Initialize_BTT_CivicsTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
 	PopulateImprovementBonus();
+	PopulateFromModifiers("Civic");
+	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 
 print("OK loaded TechAndCivicSupport_BTT.lua from Better Tech Tree");

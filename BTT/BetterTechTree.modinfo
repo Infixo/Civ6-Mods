@@ -5,7 +5,6 @@
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
 		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supported languages: English, Polish. Version 1.0.</Description>
 		<Authors>Infixo</Authors>
-		<!--<SpecialThanks>t.b.d.</SpecialThanks>-->
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
 	<ActionCriteria>
@@ -27,7 +26,6 @@
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
             <Items>
-				<File>CivicsTreeIconLoader_BTT.lua</File>
 				<File>Icons/BTTUnlockFrames.dds</File>
 				<!-- core files, will be included in wrappers -->
 				<File>TechAndCivicSupport_BTT.lua</File>
@@ -79,8 +77,6 @@
 		<!--<File>Config/BTT_Config.xml</File>-->
 		<!--<File>Config/BTT_ConfigText.xml</File>-->
 		<!-- Shared files -->
-		<!--<File>GameCapabilities.lua</File>-->
-		<File>CivicsTreeIconLoader_BTT.lua</File>
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
 		<File>Text/BTT_Text.xml</File>
@@ -88,10 +84,8 @@
 		<File>Icons/BTT_Icons.xml</File>
 		<File>Icons/BTTUnlockFrames.dds</File>
 		<!-- Vanilla files -->
-		<!--<File>ReportScreen.xml</File>-->
 		<File>TechTree_BTT_vanilla.lua</File>
 		<!-- Rise & Fall files -->
-		<!--<File>RiseFall/ReportScreen.xml</File>-->
 		<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
     </Files>
 </Mod>
