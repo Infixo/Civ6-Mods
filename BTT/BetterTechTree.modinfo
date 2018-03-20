@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Tech Tree</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supported languages: English, Polish. Version 1.0.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supports all languages. Version 1.0.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
@@ -12,16 +12,6 @@
 			<GameCoreInUse>Expansion1</GameCoreInUse>
 		</Criteria>
 	</ActionCriteria>
-	<!--
-	<FrontEndActions>
-		<UpdateDatabase id="BTT_FrontEnd_Database">
-			<File>Config/BTT_Config.xml</File>
-		</UpdateDatabase>
-		<UpdateText id="BTT_FrontEnd_Text">
-			<File>Config/BTT_ConfigText.xml</File>
-		</UpdateText>
-	</FrontEndActions>
-	-->
 	<InGameActions>
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
@@ -34,11 +24,6 @@
 				<File>CivicsTree_BTT.lua</File>
             </Items>
         </ImportFiles>
-		<UpdateText id="BTT_UpdateText">
-			<!--<File>Config/BTT_ConfigText.xml</File>-->
-			<File>Text/BTT_Text.xml</File>
-			<File>Text/BTT_Text_pl_PL.xml</File>
-		</UpdateText>
 		<UpdateIcons id="BTT_Icons">
 			<File>Icons/BTT_Icons.xml</File>
 		</UpdateIcons>
@@ -73,14 +58,9 @@
 		</ReplaceUIScript>
     </InGameActions>
     <Files>
-		<!-- Config files -->
-		<!--<File>Config/BTT_Config.xml</File>-->
-		<!--<File>Config/BTT_ConfigText.xml</File>-->
 		<!-- Shared files -->
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
-		<File>Text/BTT_Text.xml</File>
-		<File>Text/BTT_Text_pl_PL.xml</File>
 		<File>Icons/BTT_Icons.xml</File>
 		<File>Icons/BTTUnlockFrames.dds</File>
 		<!-- Vanilla files -->

@@ -258,10 +258,10 @@ function PopulateBoosts()
 		-- what is boosted?
 		if     row.TechnologyType then
 			sUnlockKind = "BOOST_TECH"; sUnlockType = row.TechnologyType; sPediaKey = row.TechnologyType;
-			sDescBoost = ": "..Locale.Lookup("LOC_BTT_BOOST_TECH_DESC", Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name), row.Boost);
+			sDescBoost = string.format(": %d%% [ICON_TechBoosted] %s [ICON_GoingTo] %s", row.Boost, Locale.Lookup("LOC_HUD_POPUP_TECH_BOOST_UNLOCKED"), Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name));
 		elseif row.CivicType then
 			sUnlockKind = "BOOST_CIVIC"; sUnlockType = row.CivicType; sPediaKey = row.CivicType;
-			sDescBoost = ": "..Locale.Lookup("LOC_BTT_BOOST_CIVIC_DESC", Locale.Lookup(GameInfo.Civics[row.CivicType].Name), row.Boost);
+			sDescBoost = string.format(": %d%% [ICON_CivicBoosted] %s [ICON_GoingTo] %s", row.Boost, Locale.Lookup("LOC_HUD_POPUP_CIVIC_BOOST_UNLOCKED"), Locale.Lookup(GameInfo.Civics[row.CivicType].Name));
 		else
 			-- error in boost definition
 		end
@@ -336,6 +336,27 @@ function PopulateHarvests()
 	end
 end
 
+-- many improvements are unique to a Civ
+-- must not show them unless the player is that Civ
+function CanShowImprovement(sImprovementType:string)
+	--dprint("FUN CanShowImprovement(imp)",sImprovementType);
+	local imprInfo:table = GameInfo.Improvements[sImprovementType];
+	if imprInfo == nil then return false; end -- assert
+	if imprInfo.TraitType == nil then return true; end -- not unique
+	if imprInfo.TraitType == "TRAIT_CIVILIZATION_NO_PLAYER" then return true; end -- generic for all players
+	if string.find(imprInfo.TraitType, "MINOR_CIV") then return true; end -- we may acquire that! ugly hack, but I don't to iterate LeaderTraits to check for 1 instance (Colossal Head)
+	-- find civ
+	local sLocalPlayerCivType:string = PlayerConfigurations[ Game.GetLocalPlayer() ]:GetCivilizationTypeName();
+	--dprint("checking trait for",sLocalPlayerCivType);
+	for row in GameInfo.CivilizationTraits() do
+		if row.TraitType == imprInfo.TraitType then
+			return row.CivilizationType == sLocalPlayerCivType; -- true if that's our improvement, false if somebody's else
+		end
+	end
+	-- didn't find any? error
+	return false;
+end
+
 function PopulateImprovementBonus()
 	local sType:string, sDesc:string;
 	for row in GameInfo.Improvement_BonusYieldChanges() do
@@ -343,8 +364,10 @@ function PopulateImprovementBonus()
 		elseif row.PrereqCivic then sType = row.PrereqCivic;
 		else -- error in configuration
 		end
-		sDesc = Locale.Lookup(GameInfo.Improvements[row.ImprovementType].Name)..": +"..tostring(row.BonusYieldChange)..GameInfo.Yields[row.YieldType].IconString;
-		AddExtraUnlockable(sType, "IMPR_BONUS", row.ImprovementType, sDesc, row.ImprovementType);
+		if CanShowImprovement(row.ImprovementType) then
+			sDesc = Locale.Lookup(GameInfo.Improvements[row.ImprovementType].Name)..": +"..tostring(row.BonusYieldChange)..GameInfo.Yields[row.YieldType].IconString;
+			AddExtraUnlockable(sType, "IMPR_BONUS", row.ImprovementType, sDesc, row.ImprovementType);
+		end
 	end
 end
 
