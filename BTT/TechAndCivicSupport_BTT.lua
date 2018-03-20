@@ -88,6 +88,7 @@ end
 local tBackgroundTextures:table = {
 	BOOST_TECH = "ICON_BTT_BOOST_TECH", --"ICON_TECHUNLOCK_5", -- "LaunchBar_Hook_ScienceButton",
 	BOOST_CIVIC = "ICON_BTT_BOOST_CIVIC", --"ICON_TECHUNLOCK_5", -- same as Resources "LaunchBar_Hook_CultureButton",
+	HARVEST = "ICON_BTT_HARVEST",
 };
 
 -- this will add 1 simple unlockable, i.e. only background and icon
@@ -259,11 +260,20 @@ function PopulateBoosts()
 	end
 end
 
+function PopulateHarvests()
+	local sDesc:string;
+	for row in GameInfo.Resource_Harvests() do
+		sDesc = Locale.Lookup("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION")..": "..Locale.Lookup(GameInfo.Resources[row.ResourceType].Name)..string.format("[ICON_%s] %+d ", row.ResourceType, row.Amount)..GameInfo.Yields[row.YieldType].IconString;
+		AddExtraUnlockable(row.PrereqTech, "HARVEST", row.ResourceType, sDesc, row.ResourceType);
+	end
+end
+
 
 function Initialize_BTT_TechTree()
 	dprint("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
+	PopulateHarvests();
 end
 
 
