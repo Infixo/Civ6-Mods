@@ -27,6 +27,7 @@
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
             <Items>
+				<File>CivicsTreeIconLoader_BTT.lua</File>
 				<File>Icons/BTTUnlockFrames.dds</File>
 				<!-- core files, will be included in wrappers -->
 				<File>TechAndCivicSupport_BTT.lua</File>
@@ -79,6 +80,7 @@
 		<!--<File>Config/BTT_ConfigText.xml</File>-->
 		<!-- Shared files -->
 		<!--<File>GameCapabilities.lua</File>-->
+		<File>CivicsTreeIconLoader_BTT.lua</File>
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
 		<File>Text/BTT_Text.xml</File>
