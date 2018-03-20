@@ -42,15 +42,6 @@ local INDENT_STRING								:string = "      ";
 local TOOLTIP_SEP								:string = "-------------------";
 local TOOLTIP_SEP_NEWLINE						:string = "[NEWLINE]"..TOOLTIP_SEP.."[NEWLINE]";
 
--- Mapping of unit type to cost.
---[[ Infixo not used
-local UnitCostMap:table = {};
-do
-	for row in GameInfo.Units() do
-		UnitCostMap[row.UnitType] = row.Maintenance;
-	end
-end
---]]
 --BRS !! Added function to sort out tables for units
 -- Infixo: this is only used by Upgrade Callback; parent will be used a flag; must be set to nil when leaving report screen
 local tUnitSort = { type = "", group = "", parent = nil };
@@ -111,7 +102,7 @@ m_kCurrentTab = 1;
 -- !!
 
 -- ===========================================================================
--- Time helpers
+-- Time helpers and debug routines
 -- ===========================================================================
 local fStartTime1:number = 0.0
 local fStartTime2:number = 0.0
@@ -128,6 +119,23 @@ function Timer1Tick(txt:string)
 end
 function Timer2Tick(txt:string)
 	print("Timer2 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime2))
+end
+
+-- debug routine - prints a table (no recursion)
+function dshowtable(tTable:table)
+	for k,v in pairs(tTable) do
+		print(k, type(v), tostring(v));
+	end
+end
+
+-- debug routine - prints a table, and tables inside recursively (up to 5 levels)
+function dshowrectable(tTable:table, iLevel:number)
+	local level:number = 0;
+	if iLevel ~= nil then level = iLevel; end
+	for k,v in pairs(tTable) do
+		print(string.rep("---:",level), k, type(v), tostring(v));
+		if type(v) == "table" and level < 5 then dshowrectable(v, level+1); end
+	end
 end
 
 -- ===========================================================================
@@ -219,57 +227,68 @@ end
 -- ===========================================================================
 
 
--- ===========================================================================
--- CQUI calculate real housing from improvements
-function CQUI_RealHousingFromImprovements(pCity)
-  local CQUI_HousingFromImprovements = 0;
-  local pCityID = pCity:GetID();
-  local tParameters :table = {};
-  tParameters[CityCommandTypes.PARAM_MANAGE_CITIZEN] = UI.GetInterfaceModeParameter(CityCommandTypes.PARAM_MANAGE_CITIZEN);
-  local tResults :table = CityManager.GetCommandTargets( pCity, CityCommandTypes.MANAGE, tParameters );
-  local tPlots :table = tResults[CityCommandResults.PLOTS];
-  if tPlots ~= nil and (table.count(tPlots) > 0) then
-    for i, plotId in pairs(tPlots) do
-      local kPlot	:table = Map.GetPlotByIndex(plotId);
-      local eImprovementType :number = kPlot:GetImprovementType();
-      if( eImprovementType ~= -1 ) then
-        local kImprovementData = GameInfo.Improvements[eImprovementType].Housing;
-        if kImprovementData == 1 then    -- farms, pastures etc.
-          CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 1;
-        elseif kImprovementData == 2 then    -- stepwells and kampungs
-          if eImprovementType == 23 then    -- stepwells (Index == 23)
-            local CQUI_PlayerResearchedSanitation :boolean = Players[Game.GetLocalPlayer()]:GetTechs():HasTech(40);    -- check if a player researched Sanitation (Index == 40)
-            if not CQUI_PlayerResearchedSanitation then
-              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 2;
-            else
-              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 4;
-            end
-          else    -- kampungs (Index == 26, but after load a game Index == 25)
-            local CQUI_PlayerResearchedMassProduction :boolean = Players[Game.GetLocalPlayer()]:GetTechs():HasTech(27);    -- check if a player researched Mass Production (Index == 27)
-            if not CQUI_PlayerResearchedMassProduction then
-              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 2;
-            else
-              CQUI_HousingFromImprovements = CQUI_HousingFromImprovements + 4;
-            end
-          end
-        end
-      end
-    end
-    CQUI_HousingFromImprovements = CQUI_HousingFromImprovements * 0.5;
-    CQUI_HousingFromImprovementsTable[pCityID] = CQUI_HousingFromImprovements;
-    CQUI_HousingUpdated[pCityID] = true;
-    LuaEvents.CQUI_RealHousingFromImprovementsCalculated(pCityID, CQUI_HousingFromImprovements);
-  else
-    return;
-  end
+-- REAL HOUSING FROM IMPROVEMENTS
+-- Get the real housing from improvements, not rounded-down
+-- The idea taken from CQUI, however CQUI's code is wrong(tested for vanilla and R&F) - the farm doesn't need to be worked, only created within borders
+-- GetHousingFromImprovements() returns math.floor(), i.e. +0.5 is rounded to 0, must have 2 farms to get +1 housing
+
+-- Some improvements provide more housing when a tech or civic is unlocked
+-- this is done via modifiers, so we need to find them first (EFFECT_ADJUST_IMPROVEMENT_HOUSING)
+-- STEPWELL_HOUSING_WITHTECH (REQUIREMENT_PLAYER_HAS_TECHNOLOGY) TechnologyType
+-- GOLFCOURSE_HOUSING_WITHGLOBLIZATION (REQUIREMENT_PLAYER_HAS_CIVIC) CivicType
+-- MEKEWAP_HOUSING_WITHCIVILSERVICE (REQUIREMENT_PLAYER_HAS_CIVIC)
+-- All set via SubjectRequirementSetId
+-- However, it is not clear if Amount=1 in modifier means +1 housing or +0.5 just as with base values
+-- CQUI calculates as +1 in this case, seems that wiki also says that each of them gives +1
+
+-- this table will hold Tech or Civic requirement for increased Housing
+local tImprMoreHousingReqs:table = nil;
+
+function PopulateImprMoreHousingReqs()
+	--print("PopulateImprMoreHousingReqs");
+	tImprMoreHousingReqs = {};
+	for mod in GameInfo.ImprovementModifiers() do
+		local tMod:table = RMA.FetchAndCacheData(mod.ModifierID); -- one of cases with upper case ID
+		--print(mod.ImprovementType, "fetched", tMod.ModifierId, tMod.EffectType, tMod.SubjectReqSetId);
+		if tMod and tMod.EffectType == "EFFECT_ADJUST_IMPROVEMENT_HOUSING" and tMod.SubjectReqSet then
+			--dshowrectable(tMod);
+			-- now extract requirement!
+			for _,req in ipairs(tMod.SubjectReqSet.Reqs) do
+				if req.ReqType == "REQUIREMENT_PLAYER_HAS_TECHNOLOGY" then
+					tImprMoreHousingReqs[ mod.ImprovementType ] = { IsTech = true, Prereq = req.Arguments.TechnologyType, Amount = tonumber(tMod.Arguments.Amount) };
+				elseif req.ReqType == "REQUIREMENT_PLAYER_HAS_CIVIC" then
+					tImprMoreHousingReqs[ mod.ImprovementType ] = { IsTech = false, Prereq = req.Arguments.CivicType, Amount = tonumber(tMod.Arguments.Amount) };
+				end
+			end
+		end
+	end
+	print("Found", table.count(tImprMoreHousingReqs), "improvements with additional Housing.");
+	for k,v in pairs(tImprMoreHousingReqs) do print(k, v.IsTech, v.Prereq, v.Amount); end
 end
 
--- ===========================================================================
--- CQUI update city's real housing from improvements
-function CQUI_OnCityInfoUpdated(pCityID)
-  CQUI_HousingUpdated[pCityID] = false;
+function GetRealHousingFromImprovements(pCity:table)
+	if tImprMoreHousingReqs == nil then PopulateImprMoreHousingReqs(); end -- do it once
+	local iNumHousing:number = 0; -- we'll add data from Housing field in Improvements here BUT this is 0.5 actually per each, so the final number must by divided by 2
+	for _,plotIndex in ipairs(Map.GetCityPlots():GetPurchasedPlots(pCity)) do
+		local pPlot:table = Map.GetPlotByIndex(plotIndex);
+		if pPlot and pPlot:GetImprovementType() > -1 and not pPlot:IsImprovementPillaged() then
+			local imprInfo:table = GameInfo.Improvements[ pPlot:GetImprovementType() ];
+			iNumHousing = iNumHousing + imprInfo.Housing; -- well, we can always add 0, right?
+			-- now check if there's more with techs/civics
+			-- this check is independent from base Housing: there could be an improvement that doesn't give housing as fresh but could later
+			if tImprMoreHousingReqs[ imprInfo.ImprovementType ] then
+				--print("ANALYZE WEIRD CASE", imprInfo.ImprovementType);
+				local reqs:table = tImprMoreHousingReqs[ imprInfo.ImprovementType ];
+				if reqs.IsTech then
+					if Players[Game.GetLocalPlayer()]:GetTechs():HasTech( GameInfo.Technologies[reqs.Prereq].Index ) then iNumHousing = iNumHousing + 2 * reqs.Amount; end
+				else
+					if Players[Game.GetLocalPlayer()]:GetCulture():HasCivic( GameInfo.Civics[reqs.Prereq].Index ) then iNumHousing = iNumHousing + 2 * reqs.Amount; end
+				end
+			end
+		end
+	end
+	return iNumHousing * 0.5;
 end
-
 
 
 function GetData()
@@ -622,6 +641,9 @@ function GetData()
 		
 		-- Modifiers
 		data.Modifiers = m_kModifiers[ cityName ]; -- just a reference to the main table
+		
+		-- real housing from improvements
+		data.RealHousingFromImprovements = GetRealHousingFromImprovements(pCity);
 		
 		-- number of followers of the main religion
 		data.MajorityReligionFollowers = 0;
@@ -2278,11 +2300,21 @@ function city_fields( kCityData, pCityInstance )
 	TruncateStringWithTooltip(pCityInstance.CityName, 138, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
-	if kCityData.Population >= kCityData.Housing then
-		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..ColorRed(kCityData.Housing) );
+	-- a bit more complicated due to real housing from improvements
+	local fRealHousing:number = kCityData.Housing - kCityData.HousingFromImprovements + kCityData.RealHousingFromImprovements;
+	if kCityData.Population >= fRealHousing then
+		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..ColorRed(fRealHousing) );
 	else
-		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..tostring(kCityData.Housing) );
+		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..tostring(fRealHousing) );
 	end
+	--[[ debug
+	local tTT:table = {};
+	table.insert(tTT, "Housing : "..kCityData.Housing);
+	table.insert(tTT, "FromImpr: "..kCityData.HousingFromImprovements);
+	table.insert(tTT, "RealImpr: "..kCityData.RealHousingFromImprovements);
+	table.insert(tTT, "RealHous: "..fRealHousing);
+	pCityInstance.Population:SetToolTipString(table.concat(tTT, "[NEWLINE]"));
+	--]]
 	
 	-- GrowthRateStatus
 	local sGRStatus:string = "LOC_HUD_REPORTS_STATUS_NORMAL";
