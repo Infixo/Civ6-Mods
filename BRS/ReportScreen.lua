@@ -1,4 +1,4 @@
-print("Loading ReportScreen.lua from Better Report Screen version 3.0.1");
+print("Loading ReportScreen.lua from Better Report Screen version "..GlobalParameters.BRS_VERSION_MAJOR.."."..GlobalParameters.BRS_VERSION_MINOR);
 -- ===========================================================================
 --	ReportScreen
 --	All the data

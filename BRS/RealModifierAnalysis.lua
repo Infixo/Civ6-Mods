@@ -1,4 +1,4 @@
-print("Loading Real Modifier Analysis.lua from Better Report Screen version 3.0.1");
+print("Loading Real Modifier Analysis.lua from Better Report Screen version "..GlobalParameters.BRS_VERSION_MAJOR.."."..GlobalParameters.BRS_VERSION_MINOR);
 -- ===========================================================================
 -- Real Modifier Analysis
 -- Author: Infixo
@@ -2523,4 +2523,4 @@ function Initialize()
 end
 Initialize();
 
-print("OK loaded Real Modifier Analysis.lua from BRS");
+print("OK loaded Real Modifier Analysis.lua from Better Report Screen");

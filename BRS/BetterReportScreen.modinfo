@@ -22,6 +22,9 @@
 		</UpdateText>
 	</FrontEndActions>
 	<InGameActions>
+		<UpdateDatabase id="BRS_UpdateDatabase">
+			<File>BetterReportScreen_Database.sql</File>
+		</UpdateDatabase>
 		<AddUserInterfaces id="RMA_Main">
 			<Properties>
 				<Context>InGame</Context>
@@ -87,6 +90,7 @@
 		<File>Config/BRS_Config.xml</File>
 		<File>Config/BRS_ConfigText.xml</File>
 		<!-- Shared files -->
+		<File>BetterReportScreen_Database.sql</File>
         <File>ReportScreen.lua</File>
 		<File>RealModifierAnalysis.lua</File>
 		<File>RealModifierAnalysis.xml</File>
