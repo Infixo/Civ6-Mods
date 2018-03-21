@@ -810,7 +810,7 @@
 	</Instance>
 
 	<Instance					Name="CityStatusEntryInstance">
-		<Container			ID="Top"														Offset="8,0" Size="1123,26">
+		<Container			ID="Top"														Offset="8,0" Size="1123,28">
 			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -882,6 +882,7 @@
 		</Container>
 	</Instance>
 
+	<!-- NOT USED
 	<Instance					Name="UnitStatusHeaderInstance">
 		<Container			ID="Top"														Offset="8,0" Size="1003,22">
 			<Image																						Offset="4,0"	Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
@@ -912,6 +913,7 @@
 			</Stack>
 		</Container>
 	</Instance>
+	-->
 	
 	<!-- ==================================================================	-->
 	<!-- Unit Report Screen	-->
@@ -947,7 +949,7 @@
 					</GridButton>
 				</Container>
 				<!-- 400 -->
-				<Container Offset="1,0" Size="125,parent">
+				<Container Offset="1,0" Size="100,parent">
 					<GridButton		ID="UnitExpButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_UNIT_PANEL_XP"/>
 					</GridButton>
@@ -965,21 +967,27 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="255,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="40,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitUpgradeButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="[ICON_New]"/>
+						<Label Style="ReportHeaderSmallText" String="[ICON_New]" ToolTip="LOC_UNITOPERATION_UPGRADE_DESCRIPTION"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
 					</GridButton>
 				</Container>
 				
@@ -1018,12 +1026,8 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="125,parent">
-					<!-- XP --><GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="100,parent">
-					<!-- health --><GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				<Container Offset="1,0" Size="200,parent">
+					<!-- empty --><GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
@@ -1032,20 +1036,26 @@
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="255,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="40,parent">
-					<GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty --><GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
+					</GridButton>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1065,7 +1075,7 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="250,parent">
+				<Container Offset="1,0" Size="200,parent">
 					<GridButton		ID="UnitNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_UNITNAME"/>
 					</GridButton>
@@ -1077,19 +1087,19 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="240,parent">
+				<Container Offset="1,0" Size="230,parent">
 					<GridButton		ID="UnitRouteButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 					<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_ROUTE"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="230,parent">
+				<Container Offset="1,0" Size="220,parent">
 					<GridButton		ID="UnitYieldButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_YIELDS"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
@@ -1098,6 +1108,16 @@
 				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
 					</GridButton>
 				</Container>
 				
@@ -1130,13 +1150,13 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="250,parent">
+				<Container Offset="1,0" Size="200,parent">
 					<GridButton		ID="UnitClassButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_CLASS"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="75,parent">
+				<Container Offset="1,0" Size="100,parent">
 					<GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
 				</Container>
 				
@@ -1146,20 +1166,26 @@
 					</GridButton>
 				</Container>				
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="255,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="40,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
+					</GridButton>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1192,14 +1218,20 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
+					<GridButton		ID="UnitLevelButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_LEVEL"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
 					<GridButton		ID="UnitSpreadButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_NUM_CHARGES"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="225,parent">
+				<Container Offset="1,0" Size="100,parent">
 					<GridButton		ID="UnitStrengthButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="LOC_HUD_UNIT_PANEL_RELIGIOUS_STRENGTH"/>
+						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_STRENGTH"/>
 					</GridButton>
 				</Container>
 
@@ -1209,20 +1241,26 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="255,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<GridButton		ID="UnitCityButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_HEADER_CITY"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="40,parent">
-					<GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty --><GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
+					</GridButton>
 				</Container>
 				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
@@ -1254,15 +1292,21 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="200,parent">
+				<Container Offset="1,0" Size="100,parent">
+					<GridButton		ID="UnitLevelButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_LEVEL"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="150,parent">
 					<GridButton		ID="UnitMissionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_MISSION"/>
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="170,parent">
+				<Container Offset="1,0" Size="50,parent">
 					<GridButton		ID="UnitTurnsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="LOC_TURNS_REMAINING"/>
+						<Label Style="ReportHeaderSmallText" String="LOC_HUD_RESEARCH_TURNS"/>
 					</GridButton>
 				</Container>
 				
@@ -1272,7 +1316,7 @@
 					</GridButton>
 				</Container>
 
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<GridButton		ID="UnitDistrictButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_District]" ToolTip="LOC_DISTRICT_NAME"/>
 					</GridButton>
@@ -1284,13 +1328,23 @@
 					</GridButton>
 				</Container>
 				
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty --> <GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
+					</GridButton>
+				</Container>
+				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
 	</Instance>
 	
 	<Instance Name="UnitsMilitaryEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1123,30">
+		<Container ID="Top" Offset="8,0" Size="1123,28">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1313,7 +1367,7 @@
 					<Label ID="UnitLevel" Style="ReportValueText" String="0" Align="Center" Anchor="C,C"/>
 				</Container>
 				<!-- 400 -->
-				<Container Offset="1,0" Size="125,parent">
+				<Container Offset="1,0" Size="100,parent">
 					<Label ID="UnitExp" Style="ReportValueText" String="$0/0$" Align="Center" Anchor="C,C"/>
 					<!--<Image ID="PromotionIcon" Size="32,32" Texture="PromotionsSmall" TextureOffset="32,0" Anchor="R,C" Offset="0,4" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_PROMOTION_AVAILABLE"/>-->
 					<!--<Button ID="Promotion" Hidden="1" Anchor="R,C" Size="32,32" StateOffsetIncrement="0,0" Offset="10,0">
@@ -1330,31 +1384,31 @@
 					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
 				</Container>
 
-				<Container Offset="1,0" Size="255,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="40,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<Button ID="Upgrade" Hidden="1" Anchor="C,C" Size="32,32" StateOffsetIncrement="0,0" Offset="0,0">
 						<Image Offset="0,0" Texture="Stats32" Size="20,20" Anchor="C,C" Icon="ICON_UNITCOMMAND_UPGRADE"/>
 					</Button>
 				</Container>
-				<!--
-				<Container Offset="1,0" Size="73,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				-->
+				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
 	</Instance>
 	
 	<Instance Name="UnitsCivilianEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1123,30">
+		<Container ID="Top" Offset="8,0" Size="1123,28">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1377,12 +1431,8 @@
 					<Label ID="UnitCharges" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="125,parent">
-					<!-- XP -->
-				</Container>
-				
-				<Container Offset="1,0" Size="100,parent">
-					<!-- health -->
+				<Container Offset="1,0" Size="200,parent">
+					<!-- empty -->
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
@@ -1390,29 +1440,29 @@
 					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
 				</Container>
 
-				<Container Offset="1,0" Size="255,parent">
+				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="40,parent">
-					
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty -->
 				</Container>
-				<!--
-				<Container Offset="1,0" Size="401,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				-->
+				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
 	</Instance>
 
 	<Instance Name="UnitsTraderEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1123,30">
+		<Container ID="Top" Offset="8,0" Size="1123,28">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1421,7 +1471,7 @@
 					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="250,parent">
+				<Container Offset="1,0" Size="200,parent">
 					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
 						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
 					</GridButton>
@@ -1431,140 +1481,37 @@
 					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
 				</Container>
 
-				<Container Offset="1,0" Size="240,parent">
+				<Container Offset="1,0" Size="230,parent">
 					<Label ID="UnitRoute" Style="ReportValueText" String="No Route" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 
-				<Container Offset="1,0" Size="230,parent">
+				<Container Offset="1,0" Size="220,parent">
 					<Label ID="UnitYields" Style="ReportValueText" String="No Yields" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
 				</Container>
 
 				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				<!--
-				<Container Offset="1,0" Size="26,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
-				</Container>				
-				-->
+				
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty -->
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
 	</Instance>
 
 	<Instance Name="UnitsGreatPeopleEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1123,30">
-			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
-			<Stack StackGrowth="Right" >
-				<Box Size="2,parent" Color="46,70,95,128"/>
-				
-				<Container Offset="1,0" Size="50,parent">
-					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="250,parent">
-					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
-						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
-					</GridButton>
-				</Container>
-				
-				<Container Offset="1,0" Size="50,parent">
-					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="250,parent">
-					<Label ID="UnitClass" Style="ReportValueText" String="Great Person" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="75,parent">
-					
-				</Container>
-				
-				<Container Offset="1,0" Size="100,parent">
-					<Label ID="UnitMove" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
-					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
-				</Container>				
-				
-				<Container Offset="1,0" Size="25,parent">
-					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
-				</Container>
-
-				<Container Offset="1,0" Size="255,parent">
-					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="40,parent">
-					
-				</Container>
-				<!--
-				<Container Offset="1,0" Size="251,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
-				</Container>
-				-->
-				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
-			</Stack>
-		</Container>
-	</Instance>
-
-	<Instance Name="UnitsReligiousEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1123,30">
-			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
-			<Stack StackGrowth="Right" >
-				<Box Size="2,parent" Color="46,70,95,128"/>
-				
-				<Container Offset="1,0" Size="50,parent">
-					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="250,parent">
-					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
-						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
-					</GridButton>
-				</Container>
-				
-				<Container Offset="1,0" Size="50,parent">
-					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="100,parent">
-					<Label ID="UnitSpreads" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-
-				<Container Offset="1,0" Size="225,parent">
-					<Label ID="UnitStrength" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-
-				<Container Offset="1,0" Size="100,parent">
-					<Label ID="UnitMove" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
-					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="25,parent">
-					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
-				</Container>
-
-				<Container Offset="1,0" Size="255,parent">
-					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
-				</Container>
-				
-				<Container Offset="1,0" Size="40,parent">
-					
-				</Container><!--
-				<Container Offset="1,0" Size="300,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
-				</Container>
-				-->
-				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
-			</Stack>
-		</Container>
-	</Instance>
-
-	<Instance Name="UnitsSpyEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="1123,30">
+		<Container ID="Top" Offset="8,0" Size="1123,28">
 			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
@@ -1584,10 +1531,126 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="200,parent">
+					<Label ID="UnitClass" Style="ReportValueText" String="Great Person" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
+					<!-- empty -->
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitMove" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
+					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
+				</Container>				
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
+				</Container>
+
+				<Container Offset="1,0" Size="250,parent">
+					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty -->
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance Name="UnitsReligiousEntryInstance">
+		<Container ID="Top" Offset="8,0" Size="1123,28">
+			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+			<Stack StackGrowth="Right" >
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				
+				<Container Offset="1,0" Size="50,parent">
+					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="250,parent">
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="50,parent">
+					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitLevel" Style="ReportValueText" String="0" Align="Center" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitSpreads" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitStrength" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitMove" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
+					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
+				</Container>
+
+				<Container Offset="1,0" Size="250,parent">
+					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty -->
+				</Container>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance Name="UnitsSpyEntryInstance">
+		<Container ID="Top" Offset="8,0" Size="1123,28">
+			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+			<Stack StackGrowth="Right" >
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				
+				<Container Offset="1,0" Size="50,parent">
+					<Image ID="UnitType" Anchor="C,C" Size="32,32"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="250,parent">
+					<GridButton ID="LookAtButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT" >
+						<Label ID="UnitName" Style="ReportValueText" String="$UnitName$" Align="Center" Anchor="C,C" Offset="0,0" Color="Science"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="50,parent">
+					<Image ID="UnitStatus" Anchor="C,C" Size="22,22"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitLevel" Style="ReportValueText" String="0" Align="Center" Anchor="C,C"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="150,parent">
 					<Label ID="UnitOperation" Style="ReportValueText" String="None" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 
-				<Container Offset="1,0" Size="170,parent">
+				<Container Offset="1,0" Size="50,parent">
 					<Label ID="UnitTurns" Style="ReportValueText" String="0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
@@ -1596,23 +1659,28 @@
 					<Image ID="Formation" Hidden="1" Offset="0,-1" Texture="Stats32" Size="32,32" Anchor="R,C" ToolTip="LOC_HUD_UNIT_ACTION_AUTOEXPLORE_IN_FORMATION" Icon="ICON_UNITCOMMAND_ENTER_FORMATION"/>
 				</Container>
 
-				<Container Offset="1,0" Size="25,parent">
+				<Container Offset="1,0" Size="30,parent">
 					<Label ID="UnitDistrict" Style="ReportValueText" String="$D$" Align="Center" Anchor="C,C" Offset="0,3"/>
 				</Container>
 
 				<Container Offset="1,0" Size="250,parent">
 					<Label ID="UnitCity" Style="ReportValueText" String="$City$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
-				<!--
-				<Container Offset="1,0" Size="100,parent">
-					<Button ID="LookAtButton" Anchor="R,C" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" Offset="10,0" ToolTip="LOC_BRS_TOOLTIP_LOOKATUNIT"/>
+				
+				<Container Offset="1,0" Size="30,parent">
+					<!-- empty -->
 				</Container>
-				-->
+				
+				<Container Offset="1,0" Size="30,parent">
+					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
 				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128"/>
 			</Stack>
 		</Container>
 	</Instance>
 	
+	<!-- NOT USED
 	<Instance Name="UnitsFooterInstance">
 		<Container ID="Top" Offset="8,0" Size="1123,30">
 			<Image Offset="4,0"	Size="parent-24,parent-2" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
@@ -1630,6 +1698,7 @@
 			<Grid Style="DividerGrid" Offset="-10,22" Size="parent+4,8" Color="47,63,76,255"/>
 		</Container>
 	</Instance>
+	-->
 
 	<Instance Name="DealsHeader">
 		<Container ID="Top" Offset="8,0" Size="1123,25">

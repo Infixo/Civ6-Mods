@@ -324,6 +324,8 @@ function GetData()
 	local pReligion	:table	= player:GetReligion();
 	local pScience	:table	= player:GetTechs();
 	local pResources:table	= player:GetResources();		
+	local MaintenanceDiscountPerUnit:number = pTreasury:GetMaintDiscountPerUnit(); -- this will be used in 2 reports
+
 
 	-- ==========================
 	-- BRS !! this will use the m_kUnitDataReport to fill out player's unit info
@@ -362,6 +364,8 @@ function GetData()
 			kUnitDataReport[group_name].units = {};
 		end
 		table.insert( kUnitDataReport[group_name].units, unit );
+		-- add some unit specific data
+		unit.MaintenanceAfterDiscount = math.max(GetUnitMaintenance(unit) - MaintenanceDiscountPerUnit, 0); -- cannot go below 0
 		-- store data for distance calculations
 		unit.NearCityDistance = 9999;
 		unit.NearCityName = "";
@@ -781,7 +785,7 @@ function GetData()
 
 
 	-- Units (TODO: Group units by promotion class and determine total maintenance cost)
-	local MaintenanceDiscountPerUnit:number = pTreasury:GetMaintDiscountPerUnit();
+	--local MaintenanceDiscountPerUnit:number = pTreasury:GetMaintDiscountPerUnit(); -- used also for Units tab, so defined earlier
 	local pUnits :table = player:GetUnits();
 	for i, pUnit in pUnits:Members() do
 		local pUnitInfo:table = GameInfo.Units[pUnit:GetUnitType()];
@@ -2620,6 +2624,13 @@ function unit_sortFunction( descend, type, t, a, b )
 	elseif type == "name" then
 		aUnit = Locale.Lookup( t[a]:GetName() )
 		bUnit = Locale.Lookup( t[b]:GetName() )
+		if aUnit == bUnit then
+			aUnit = t[a]:GetMilitaryFormation()
+			bUnit = t[b]:GetMilitaryFormation()
+		end
+	elseif type == "maintenance" then
+		aUnit = t[a].MaintenanceAfterDiscount;
+		bUnit = t[b].MaintenanceAfterDiscount;
 	elseif type == "status" then
 		aUnit = UnitManager.GetActivityType( t[a] )
 		bUnit = UnitManager.GetActivityType( t[b] )
@@ -2731,7 +2742,7 @@ function common_unit_fields( unit, unitInstance )
 	unitInstance.UnitType:SetToolTipString( table.concat(tPromoTT, "[NEWLINE]") );
 	--]]
 
-	unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) )
+	unitInstance.UnitName:SetText( Locale.Lookup(unit:GetName()) );
 	
 	-- adds the status icon
 	local activityType:number = UnitManager.GetActivityType( unit )
@@ -2779,7 +2790,8 @@ function common_unit_fields( unit, unitInstance )
 	elseif unit.NearCityIsOurs        then sCityName = sCityName.." "..unit.NearCityDistance;
 	else                                   sCityName = "[COLOR_Red]"..sCityName.." "..unit.NearCityDistance.."[ENDCOLOR]"; end
 	unitInstance.UnitCity:SetText( (unit.NearCityDistance > 3) and "" or sCityName );
-
+	
+	unitInstance.UnitMaintenance:SetText( toPlusMinusString(-unit.MaintenanceAfterDiscount) );
 end
 
 -- simple texts for modifiers' effects
@@ -2803,17 +2815,23 @@ local tTextsForEffects:table = {
 
 function group_military( unit, unitInstance, group, parent, type )
 
-	local unitExp : table = unit:GetExperience()
+	-- for military we'll show its base strength also
+	local eFormation:number = unit:GetMilitaryFormation();
+	local iCombat:number, iRanged:number, iBombard:number = unit:GetCombat(), unit:GetRangedCombat(), unit:GetBombardCombat();
 	
-	unitInstance.Upgrade:SetHide( true )
-				
-	if ( unit:GetMilitaryFormation() == MilitaryFormationTypes.CORPS_FORMATION ) then
-		unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) .. " " .. "[ICON_Corps]" )
-	elseif ( unit:GetMilitaryFormation() == MilitaryFormationTypes.ARMY_FORMATION ) then
-		unitInstance.UnitName:SetText( Locale.Lookup( unit:GetName() ) .. " " .. "[ICON_Army]" )
+	-- name will be: name .. formation .. strength
+	local sText:string = Locale.Lookup( unit:GetName() );
+	if     eFormation == MilitaryFormationTypes.CORPS_FORMATION then sText = sText .. " [ICON_Corps]";
+	elseif eFormation == MilitaryFormationTypes.ARMY_FORMATION  then sText = sText .. " [ICON_Army]" ;
 	end
-	
+	if     iBombard > 0 then sText = sText.." [ICON_Bombard]"..tostring(iBombard);
+	elseif iRanged > 0  then sText = sText.." [ICON_Ranged]"..tostring(iRanged);
+	elseif iCombat > 0  then sText = sText.." [ICON_Strength]"..tostring(iCombat);
+	end
+	unitInstance.UnitName:SetText( sText );
+
 	-- Level and Promotions
+	local unitExp : table = unit:GetExperience()
 	local iUnitLevel:number = unitExp:GetLevel();
 	if     iUnitLevel < 2  then unitInstance.UnitLevel:SetText( tostring(iUnitLevel) );
 	elseif iUnitLevel == 2 then unitInstance.UnitLevel:SetText( tostring(iUnitLevel).." [ICON_Promotion]" );
@@ -2845,6 +2863,13 @@ function group_military( unit, unitInstance, group, parent, type )
 				AddExtraPromoText( Locale.Lookup(unitAbility.Name)..": "..Locale.Lookup(unitAbility.Description)); -- LOC_CIVICS_KEY_ABILITY
 			else
 				AddExtraPromoText( tMod.EffectType.." [COLOR_Red]"..tMod.Arguments.AbilityType.."[ENDCOLOR]")
+			end
+		elseif tMod.EffectType == "EFFECT_GRANT_PROMOTION" then
+			local unitPromotion:table = GameInfo.UnitPromotions[ tMod.Arguments.PromotionType ];
+			if unitPromotion then
+				AddExtraPromoText( Locale.Lookup(unitPromotion.Name)..": "..Locale.Lookup(unitPromotion.Description));
+			else
+				AddExtraPromoText( tMod.EffectType.." [COLOR_Red]"..tMod.Arguments.PromotionType.."[ENDCOLOR]")
 			end
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_EXPERIENCE_MODIFIER" then
 			AddExtraPromoText( string.format("%+d%% ", tonumber(tMod.Arguments.Amount))..Locale.Lookup("LOC_HUD_UNIT_PANEL_XP")); -- +x%
@@ -2883,9 +2908,10 @@ function group_military( unit, unitInstance, group, parent, type )
 	elseif fHealthPercent > 0.4 then sHealthColor = "[COLOR:248,255,45,160]";  -- COLORS.METER_HP_OK   0xFF2DFFF8
 	else                             sHealthColor = "[COLOR:245,1,1,160]"; end -- COLORS.METER_HP_BAD  0xFF0101F5
 	unitInstance.UnitHealth:SetText( sHealthColor..tostring(iHealthPoints).."/"..tostring(unit:GetMaxDamage()).."[ENDCOLOR]" );
-			
+	
+	-- upgrade flag
+	unitInstance.Upgrade:SetHide( true )
 	local bCanStart, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.UPGRADE, false, true);
-
 	if ( bCanStart ) then
 		unitInstance.Upgrade:SetHide( false )
 		unitInstance.Upgrade:RegisterCallback( Mouse.eLClick, function()
@@ -2929,8 +2955,21 @@ function group_great( unit, unitInstance, group, parent, type )
 
 end
 
+function ShowUnitPromotions(unit:table, unitInstance:table)
+	-- Level and Promotions
+	local tPromoTT:table = {};
+	for _,promo in ipairs(unit:GetExperience():GetPromotions()) do
+		table.insert(tPromoTT, Locale.Lookup(GameInfo.UnitPromotions[promo].Name)..": "..Locale.Lookup(GameInfo.UnitPromotions[promo].Description));
+	end
+	if     #tPromoTT == 0 then unitInstance.UnitLevel:SetText("");
+	elseif #tPromoTT == 1 then unitInstance.UnitLevel:SetText("[ICON_Promotion]");
+	else                       unitInstance.UnitLevel:SetText("[ICON_Promotion]"..string.rep("*", #tPromoTT-1) ); end
+	unitInstance.UnitLevel:SetToolTipString( table.concat(tPromoTT, "[NEWLINE]") );
+end
+
 function group_religious( unit, unitInstance, group, parent, type )
 
+	ShowUnitPromotions(unit, unitInstance);
 	unitInstance.UnitSpreads:SetText( unit:GetSpreadCharges() )
 	unitInstance.UnitStrength:SetText( unit:GetReligiousStrength() )
 
@@ -2938,23 +2977,25 @@ end
 
 function group_spy( unit, unitInstance, group, parent, type )
 
+	ShowUnitPromotions(unit, unitInstance);
+
+	-- operation
 	local operationType : number = unit:GetSpyOperation();
 	
-	unitInstance.UnitOperation:SetText( "None" )
-	unitInstance.UnitTurns:SetText( "0" )
-	unit.mission = "None"
-	unit.turns = 0
+	unitInstance.UnitOperation:SetText( "-" );
+	unitInstance.UnitTurns:SetText( "[COLOR_Red]0[ENDCOLOR]" );
+	unit.mission = "-";
+	unit.turns = 0;
 
 	if ( operationType ~= -1 ) then
 		-- Mission Name
 		local operationInfo:table = GameInfo.UnitOperations[operationType];
-		unitInstance.UnitOperation:SetText( Locale.Lookup( operationInfo.Description ) )
-
+		unit.mission = Locale.Lookup( operationInfo.Description );
+		unitInstance.UnitOperation:SetText( unit.mission );
 		-- Turns Remaining
-		unitInstance.UnitTurns:SetText( Locale.Lookup( "LOC_UNITPANEL_ESPIONAGE_MORE_TURNS", unit:GetSpyOperationEndTurn() - Game.GetCurrentGameTurn() ) )
-		
-		unit.mission = Locale.Lookup( operationInfo.Description )
 		unit.turns = unit:GetSpyOperationEndTurn() - Game.GetCurrentGameTurn()
+		--unitInstance.UnitTurns:SetText( Locale.Lookup( "LOC_UNITPANEL_ESPIONAGE_MORE_TURNS", unit:GetSpyOperationEndTurn() - Game.GetCurrentGameTurn() ) )
+		unitInstance.UnitTurns:SetText( tostring(unit.turns) );
 	end
 
 end
@@ -3044,6 +3085,7 @@ function ViewUnitsPage()
 		if pHeaderInstance.UnitMissionButton then  pHeaderInstance.UnitMissionButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "mission", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitTurnsButton then    pHeaderInstance.UnitTurnsButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "turns", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitCityButton then     pHeaderInstance.UnitCityButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "city", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitMaintenanceButton then pHeaderInstance.UnitMaintenanceButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "maintenance", iUnitGroup, instance ) end ) end
 
 		instance.Descend = false;
 		for _,unit in spairs( kUnitGroup.units, function( t, a, b ) return unit_sortFunction( false, "name", t, a, b ) end ) do -- initial sort by name ascending
