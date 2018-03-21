@@ -979,7 +979,7 @@
 				
 				<Container Offset="1,0" Size="40,parent">
 					<GridButton		ID="UnitUpgradeButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="[ICON_PressureHigh]"/>
+						<Label Style="ReportHeaderSmallText" String="[ICON_New]"/>
 					</GridButton>
 				</Container>
 				

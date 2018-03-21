@@ -17,7 +17,7 @@
 		<Text>Políticas</Text>
 	</Replace>
 	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="es_ES"> <!-- LOC_CITY_STATES_CITY_STATES -->
-		<Text>Ciudades-estado</Text>
+		<Text>Ciudades Estado</Text>
 	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="es_ES">
@@ -153,10 +153,10 @@
 		<Text>Especialistas</Text>
     </Replace>
     <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="es_ES">
-		<Text>A modificadores</Text>
+		<Text>De modificadores</Text>
     </Replace>
     <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="es_ES">
-		<Text>A modificadores [COLOR_White]%[ENDCOLOR]</Text>
+		<Text>De modificadores [COLOR_White]%[ENDCOLOR]</Text>
     </Replace>
     <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="es_ES"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
 		<Text>A edificios</Text>
