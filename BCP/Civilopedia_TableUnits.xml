@@ -7,12 +7,6 @@
 --------------------------------------------------------------
 -->
 <GameInfo>
-	<!-- Units' tables will be addedd as another PageGroup in UNITS section -->
-	<!--
-	<CivilopediaPageGroups>
-		<Row SectionID="UNITS" PageGroupId="TABLEUNITS" Name="LOC_CITY_STATES_OVERVIEW" Tooltip="" VisibleIfEmpty="false" SortIndex="5"/>
-	</CivilopediaPageGroups>
-	-->
 	<!-- Each page will be added separately as there's no simple query to select the groups from DB -->
 	<CivilopediaPages>
 		<Row SectionID="UNITS" PageId="MELEE"   PageLayoutId="TableUnits" SortIndex="1" Name="{LOC_FORMATION_CLASS_LAND_COMBAT_NAME}: {LOC_PROMOTION_CLASS_MELEE_NAME}"/>

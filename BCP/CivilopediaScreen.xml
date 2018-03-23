@@ -215,12 +215,10 @@
 				</Container>
 				<Button ID="SpaceRight" Size="20,parent">
 				</Button>
-				<!-- Unique -->
-				<!--
-				<Container Size="100,parent">
-					<Label ID="StatUnique" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="100" String="$Unique$"/>
+				<!-- Type -->
+				<Container Size="25,parent">
+					<Label ID="StatPromo" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$T$"/>
 				</Container>
-				-->
 				<Box Size="2,parent+4" Offset="0,-2" Color="0,20,20,70"/>
 				<!-- Stat BaseMoves -->
 				<Container Size="67,parent">

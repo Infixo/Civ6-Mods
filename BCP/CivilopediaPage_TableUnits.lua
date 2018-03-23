@@ -8,8 +8,6 @@ print("Loading CivilopediaPage_TableUnits.lua from Better Civilopedia version ".
 --	Civilopedia - Table of Units Page Layout
 -- ===========================================================================
 
-include("SupportFunctions"); -- TruncateStringWithTooltip
-
 -- Cache base functions
 BCP_BASE_ResetPageContent = ResetPageContent;
 
@@ -28,7 +26,36 @@ end
 local tUnitGroupTypes:table = { "MELEE", "RANGED", "CAVALRY", "NAVAL", "AIR", "SUPPORT" };
 local tUnitGroups:table = {};
 
+local tPromotionClassIcons:table = {
+	PROMOTION_CLASS_AIR_BOMBER    = "[ICON_Bombard]",
+	PROMOTION_CLASS_AIR_FIGHTER   = "[ICON_Ranged]",
+	PROMOTION_CLASS_ANTI_CAVALRY  = "[ICON_Ability]",
+	PROMOTION_CLASS_HEAVY_CAVALRY = "[ICON_Fortified]",
+	PROMOTION_CLASS_LIGHT_CAVALRY = "[ICON_Fortifying]",
+	PROMOTION_CLASS_MELEE         = "[ICON_Strength]",
+	PROMOTION_CLASS_MONK          = "[ICON_Religion]",
+	PROMOTION_CLASS_RANGED        = "[ICON_Ranged]",
+	PROMOTION_CLASS_RECON         = "[ICON_TradeRoute]",
+	PROMOTION_CLASS_SIEGE         = "[ICON_Bombard]",
+	PROMOTION_CLASS_NAVAL_CARRIER = "[ICON_Movement]",
+	PROMOTION_CLASS_NAVAL_MELEE   = "[ICON_Strength]",
+	PROMOTION_CLASS_NAVAL_RAIDER  = "[ICON_Range]",
+	PROMOTION_CLASS_NAVAL_RANGED  = "[ICON_Ranged]",
+	PROMOTION_CLASS_SUPPORT       = "[ICON_Position]",
+};
+
+-- for convinience, one tooltip for all promo classes
+local sPromoClassesToolTip:string;
+
 function Initialize_TableUnits()
+	-- build a tooltip for promo classes
+	local tPromoClassesTT:table = {};
+	for promo,icon in pairs(tPromotionClassIcons) do
+		table.insert(tPromoClassesTT, icon..Locale.Lookup("LOC_"..promo.."_NAME"));
+	end
+	table.insert(tPromoClassesTT, "[ICON_Capital]"..Locale.Lookup("LOC_UI_PEDIA_SPECIAL_UNITS"));
+	sPromoClassesToolTip = table.concat(tPromoClassesTT, "[NEWLINE]");
+
 	-- CacheData();
 	-- init groups
 	for _,groupType in ipairs(tUnitGroupTypes) do tUnitGroups[ groupType ] = {}; end
@@ -39,7 +66,7 @@ function Initialize_TableUnits()
 		local baseUnit:table = unit;
 		if GameInfo.UnitReplaces[sUnitType] then baseUnit = GameInfo.Units[ GameInfo.UnitReplaces[sUnitType].ReplacesUnitType ]; bIsBaseUnit = false; end
 		-- group must be from base unit! to avoid group change for uniques!
-		local sGroup:string = "";
+		local sGroup:string, sType:string = "", "";
 		if     baseUnit.FormationClass == "FORMATION_CLASS_AIR"     then sGroup = "AIR";
 		elseif baseUnit.FormationClass == "FORMATION_CLASS_NAVAL"   then sGroup = "NAVAL";
 		elseif baseUnit.FormationClass == "FORMATION_CLASS_SUPPORT" then sGroup = "SUPPORT";
@@ -62,38 +89,33 @@ function Initialize_TableUnits()
 				IsUnique = ( unit.TraitType ~= nil ),
 				BaseUnitType = sBaseUnitType,
 				UnitType = sUnitType,
+				PromoClass = ( tPromotionClassIcons[ unit.PromotionClass ] and tPromotionClassIcons[ unit.PromotionClass ] or "[ICON_Capital]" ),
 				BaseUnitCost = GameInfo.Units[ sBaseUnitType ].Cost,
 			} );
 		end
 	end
 	-- sort groups
 	local function funSort( a, b )
-		if a.Era ==  b.Era then
+		if a.Era ~= b.Era then return a.Era < b.Era; end -- easy case of different eras
+		-- first level is by BaseUnit
+		if a.BaseUnitCost == b.BaseUnitCost then
 			if a.BaseUnitType == b.BaseUnitType then
-				if a.IsBaseUnit then return true; end
-				if b.IsBaseUnit then return false; end
-				return a.UnitType < b.UnitType;
-			else
-				if a.BaseUnitCost == b.BaseUnitCost then
-					-- a bit weird case is when they they are different BaseUnits but have the same cost
-					if a.IsUnique then return true; end
-					if b.IsUnique then return false; end
-					return a.UnitType < b.UnitType;
-				else
-					return a.BaseUnitCost < b.BaseUnitCost;
-				end
+				-- a group of replacements
+				if a.IsUnique and b.IsUnique then return a.UnitType < b.UnitType; end
+				if a.IsUnique then return false; end
+				return true; -- b.IsUnique
 			end
-		else
-			return a.Era < b.Era;
+			return a.BaseUnitType < b.BaseUnitType;
 		end
+		return a.BaseUnitCost < b.BaseUnitCost;
 	end
 	for group,units in pairs(tUnitGroups) do
 		table.sort(units, funSort);
 	end
 	-- debug
-	--for group,units in pairs(tUnitGroups) do
-		--for _,unit in ipairs(units) do print(group, unit.BaseUnitCost, unit.BaseUnitType, unit.UnitType); end
-	--end
+	for group,units in pairs(tUnitGroups) do
+		for _,unit in ipairs(units) do print(group, unit.Era, unit.BaseUnitCost, unit.BaseUnitType, unit.UnitType); end
+	end
 end
 Initialize_TableUnits();
 
@@ -101,7 +123,7 @@ Initialize_TableUnits();
 --------------------------------------------------------------
 -- Page Layout
 
-local COLOR_RED = "[COLOR:255,40,50,160]";
+local COLOR_RED   = "[COLOR:255,40,50,160]";
 local COLOR_GREEN = "[COLOR:80,255,90,160]";
 
 
@@ -119,31 +141,34 @@ PageLayouts["TableUnits"] = function(page)
 	headerLine.SpaceLeft:SetHide(true);
 	headerLine.Icon:SetHide(true);
 	headerLine.StatName:LocalizeAndSetText("LOC_UNIT_NAME");
+	headerLine.StatName:SetToolTipString(sPromoClassesToolTip);
+	headerLine.SpaceRight:SetHide(false);
+	headerLine.StatPromo:SetText("");
 	headerLine.StatBaseMoves:SetText("[ICON_Movement]");
 	headerLine.StatCombat:SetText("[ICON_Strength]");
 	headerLine.StatRangedCombat:SetText("[ICON_Ranged]");
 	headerLine.StatRange:SetText("[ICON_Range]");
 	headerLine.StatBombard:SetText("[ICON_Bombard]");
 	headerLine.StatCost:SetText("[ICON_Production]");
-	headerLine.SpaceRight:SetHide(false);
 	
 	-- ok, show the units!
 	local iCurrentEra:number = -1; 
 	for _,unit in ipairs(tUnitGroups[pageId]) do
-		if unit.Era > iCurrentEra and unit.IsBaseUnit then
+		if unit.Era > iCurrentEra then
 			iCurrentEra = unit.Era;
 			-- add era intermediate header
 			local eraLine = _LeftColumnUnitStatsManager:GetInstance();
 			eraLine.SpaceLeft:SetHide(true);
 			eraLine.Icon:SetHide(true);
 			eraLine.StatName:SetText("[COLOR:0,0,0,128]"..Locale.Lookup(GameInfo.Eras[iCurrentEra].Name).."[ENDCOLOR]");
+			eraLine.SpaceRight:SetHide(false);
+			eraLine.StatPromo:SetText("");
 			eraLine.StatBaseMoves:SetText("");
 			eraLine.StatCombat:SetText("");
 			eraLine.StatRangedCombat:SetText("");
 			eraLine.StatRange:SetText("");
 			eraLine.StatBombard:SetText("");
 			eraLine.StatCost:SetText("");
-			eraLine.SpaceRight:SetHide(false);
 		end
 		local unitInfo:table = unit.Unit;
 		local unitBaseInfo:table = GameInfo.Units[ unit.BaseUnitType ];
@@ -155,6 +180,7 @@ PageLayouts["TableUnits"] = function(page)
 		unitLine.StatName:SetText( (unit.IsUnique and "[ICON_You]" or "")..Locale.Lookup(unitInfo.Name) );
 		unitLine.StatName:SetToolTipString(Locale.Lookup(unitInfo.Description));
 		unitLine.SpaceRight:SetHide(not unit.IsBaseUnit);
+		unitLine.StatPromo:SetText(unit.PromoClass);
 		-- stats
 		local function ShowStat(name:string, bInverse:boolean)
 			local iStat:number = unitInfo[name];
