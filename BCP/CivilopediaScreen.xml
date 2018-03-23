@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
 				 Name="Civilopedia">
-	<Container Anchor="C,C" Size="1024,765" ConsumeMouse="1">
+	<Container Anchor="C,C" Size="1024,1050" ConsumeMouse="1">
 
 		<Image Size="parent,40" Texture="Controls_SubHeader2.dds" />
 		<Grid Size="parent+10,parent+10" Offset="-5,-5" Style="WindowFrameTitle"/>
@@ -24,7 +24,7 @@
 
 			<!-- Page Tab Area -->
 			<Box Size="250,parent-102" Color="0,0,0,0">
-				<!-- 2018-0314 Page history buttons -->
+				<!-- 2018-03-14 Page history buttons -->
 				<Container	Anchor="L,T" Size="64,32">
 					<Button	ID="BackPageButton" Anchor="L,T" Offset="10,-24" Size="18,23" Texture="Controls_ArrowButtonLeft"  ToolTip="LOC_CREDITS_BACK_BUTTON"/>
 					<Button	ID="NextPageButton"	Anchor="L,T" Offset="34,-24" Size="18,23" Texture="Controls_ArrowButtonRight" ToolTip="LOC_CREDITS_NEXT_BUTTON"/>
@@ -195,6 +195,64 @@
 					<Label ID="Header" String="Name of this ability" Style="Civilopedia_RightColumnStatHeader" />
 					<Label ID="Body" WrapWidth="parent-90" Style="Civilopedia_LeftColumnChapterParagraph" String="Description of the unique ability asdf asdf asdf asdf asdf adf asdf asdf adsf asdf adsf adf " />
 				</Stack>
+			</Stack>
+		</Container>
+	</Instance>
+	
+	<!-- 2018-03-23 Table of Units -->
+	<Instance Name="CivilopediaLeftColumnUnitStats">
+		<Container ID="Root" Size="parent,50">
+			<Stack StackGrowth="Right">
+				<!-- Icon to click -->
+				<Box Size="2,parent" Color="46,70,95,255"/>
+				<Button ID="Button" Size="50,50"> 
+					<Image ID="Icon" Texture="Civilopedia_IconSlot50" StretchMode="Uniform" Size="50,50" />
+				</Button>
+				<!-- Name -->
+				<Container Size="100,parent">
+					<Label ID="StatName" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="100" String="$Name$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Unique -->
+				<Container Size="100,parent">
+					<Label ID="StatUnique" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="100" String="$Unique$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Stat BaseMoves -->
+				<Container Size="60,parent">
+					<Label ID="StatBaseMoves" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Stat Combat -->
+				<Container Size="60,parent">
+					<Label ID="StatCombat" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Stat RangedCombat -->
+				<Container Size="60,parent">
+					<Label ID="StatRangedCombat" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Stat Range -->
+				<Container Size="60,parent">
+					<Label ID="StatRange" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Stat Bombard -->
+				<Container Size="60,parent">
+					<Label ID="StatBombard" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Stat Cost -->
+				<Container Size="60,parent">
+					<Label ID="StatCost" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,128"/>
+				<!-- Description -->
+				<Container Size="150,parent">
+					<Label ID="StatDescription" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="150" String="$Description$" />
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,255"/>
 			</Stack>
 		</Container>
 	</Instance>

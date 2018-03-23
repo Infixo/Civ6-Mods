@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+--------------------------------------------------------------
+-- Better Civilopedia
+-- Author: Infixo
+-- 2018-03-23: Created
+--------------------------------------------------------------
+-->
+<GameInfo>
+	<!-- Units' tables will be addedd as another PageGroup in UNITS section -->
+	<CivilopediaPageGroups>
+		<Row SectionID="UNITS" PageGroupId="TABLEUNITS" Name="LOC_CITY_STATES_OVERVIEW" Tooltip="" VisibleIfEmpty="false" SortIndex="5"/>
+	</CivilopediaPageGroups>
+	<!-- Each page will be added separately as there's no simple query to select the groups from DB -->
+	<CivilopediaPages>
+		<Row SectionID="UNITS" PageId="MELEE"   PageGroupId="TABLEUNITS" PageLayoutId="TableUnits" SortIndex="10" Name="{LOC_FORMATION_CLASS_LAND_COMBAT_NAME}: {LOC_PROMOTION_CLASS_MELEE_NAME}"/>
+		<Row SectionID="UNITS" PageId="RANGED"  PageGroupId="TABLEUNITS" PageLayoutId="TableUnits" SortIndex="20" Name="{LOC_FORMATION_CLASS_LAND_COMBAT_NAME}: {LOC_PROMOTION_CLASS_RANGED_NAME}"/>
+		<Row SectionID="UNITS" PageId="CAVALRY" PageGroupId="TABLEUNITS" PageLayoutId="TableUnits" SortIndex="30" Name="{LOC_FORMATION_CLASS_LAND_COMBAT_NAME}: {LOC_UNIT_CAVALRY_NAME}"/>
+		<Row SectionID="UNITS" PageId="NAVAL"   PageGroupId="TABLEUNITS" PageLayoutId="TableUnits" SortIndex="40" Name="LOC_FORMATION_CLASS_NAVAL_NAME"/>
+		<Row SectionID="UNITS" PageId="AIR"     PageGroupId="TABLEUNITS" PageLayoutId="TableUnits" SortIndex="50" Name="LOC_FORMATION_CLASS_AIR_NAME"/>
+		<Row SectionID="UNITS" PageId="SUPPORT" PageGroupId="TABLEUNITS" PageLayoutId="TableUnits" SortIndex="60" Name="LOC_FORMATION_CLASS_SUPPORT_NAME"/>
+	</CivilopediaPages>
+	<!-- new layout -->
+	<CivilopediaPageLayouts>
+		<Row PageLayoutId="TableUnits" ScriptTemplate="TableUnits"/>
+	</CivilopediaPageLayouts>
+	<!-- no special chapters -->
+	<CivilopediaPageLayoutChapters>
+	</CivilopediaPageLayoutChapters>
+</GameInfo>

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
 	<Properties>
-		<Name>Real Civilopedia</Name>
-		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE]Remembers visited pages (back/next buttons).[NEWLINE][NEWLINE]Version 0.5</Description>
+		<Name>Better Civilopedia</Name>
+		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE]Remembers visited pages (back/next buttons).[NEWLINE][NEWLINE]Version 1.0</Description>
 		<Teaser>More information in Civilopedia!</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -16,28 +16,36 @@
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
-		<ImportFiles id="RCP_Imports">
+		<UpdateDatabase id="BCP_Database">
+			<File>BetterCivilopedia_Database.sql</File>
+			<File>Civilopedia_TableUnits.xml</File>
+		</UpdateDatabase>
+		<ImportFiles id="BCP_Imports">
 			<File>CivilopediaScreen.xml</File>
+			<File>CivilopediaPage_TableUnits.lua</File>
 		</ImportFiles>
-		<ImportFiles id="RCP_Imports_RiseFall" criteria="Expansion1">
-			<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
-		</ImportFiles>
-		<UpdateDatabase id="RCP_Database_RiseFall" criteria="Expansion1">
+		<UpdateDatabase id="BCP_Database_RiseFall" criteria="Expansion1">
 			<File>RiseFall/Civilopedia_Commemorations.xml</File>
 		</UpdateDatabase>
-		<ReplaceUIScript id="RCP_Replace_CivilopediaScreen">
+		<ImportFiles id="BCP_Imports_RiseFall" criteria="Expansion1">
+			<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
+		</ImportFiles>
+		<ReplaceUIScript id="BCP_Replace_CivilopediaScreen">
 			<Properties>
 				<LuaContext>CivilopediaScreen</LuaContext>
-				<LuaReplace>CivilopediaScreen_RCP.lua</LuaReplace>
+				<LuaReplace>CivilopediaScreen_BCP.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 	</InGameActions>
 	<Files>
 		<!-- shared -->
+		<File>BetterCivilopedia_Database.sql</File>
+		<File>Civilopedia_TableUnits.xml</File>
+		<File>CivilopediaPage_TableUnits.lua</File>
 		<File>CivilopediaScreen.xml</File>
-		<File>CivilopediaScreen_RCP.lua</File>
+		<File>CivilopediaScreen_BCP.lua</File>
 		<!-- Rise & Fall -->
-		<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
 		<File>RiseFall/Civilopedia_Commemorations.xml</File>
+		<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
 	</Files>
 </Mod>

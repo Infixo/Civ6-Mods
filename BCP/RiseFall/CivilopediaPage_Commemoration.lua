@@ -1,6 +1,6 @@
-print("Loading CivilopediaPage_Commemoration.lua from Real Civilopedia, version 0.4");
+print("Loading CivilopediaPage_Commemoration.lua from Better Civilopedia version "..GlobalParameters.BCP_VERSION_MAJOR.."."..GlobalParameters.BCP_VERSION_MINOR);
 --------------------------------------------------------------
--- Real Civilopedia
+-- Better Civilopedia
 -- Author: Infixo
 -- 2018-03-11: Created
 --------------------------------------------------------------
@@ -36,4 +36,4 @@ PageLayouts["Commemoration"] = function(page)
 
 end
 
-print("OK loaded CivilopediaPage_Commemoration.lua from Real Civilopedia, version 0.4");
+print("OK loaded CivilopediaPage_Commemoration.lua from Better Civilopedia");
