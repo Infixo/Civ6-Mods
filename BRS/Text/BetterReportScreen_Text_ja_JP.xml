@@ -134,11 +134,11 @@
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="ja_JP">
 		<Text>影響のない政策を隠す</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="ja_JP"> <!-- todo -->
-		<Text>Hide Not Met City States</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="ja_JP">
+		<Text>未発見の都市国家を隠す</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="ja_JP"> <!-- todo -->
-		<Text>Hide City States with No Impact</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="ja_JP">
+		<Text>影響のない都市国家を隠す</Text>
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="ja_JP">

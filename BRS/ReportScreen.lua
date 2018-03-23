@@ -2328,22 +2328,27 @@ function city_fields( kCityData, pCityInstance )
 	local sGRStatus:string = "LOC_HUD_REPORTS_STATUS_NORMAL";
 	local sGRColor:string = "";
 	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED"; sGRColor = "[COLOR:200,62,52,255]"; -- Error
-	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = "LOC_HUD_REPORTS_STATUS_SLOWED"; sGRColor = "[COLOR:200,146,52,255]"; -- WarningMajor
-	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = "LOC_HUD_REPORTS_STATUS_SLOWED"; sGRColor = "[COLOR:206,199,91,255]"; end -- WarningMinor
+	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:200,146,52,255]"; -- WarningMajor "LOC_HUD_REPORTS_STATUS_SLOWED"; 
+	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:206,199,91,255]"; end -- WarningMinor "LOC_HUD_REPORTS_STATUS_SLOWED";
 	pCityInstance.GrowthRateStatus:SetText( sGRColor..Locale.Lookup(sGRStatus)..(sGRColor~="" and "[ENDCOLOR]" or "") );
 	--if sGRColor ~= "" then pCityInstance.GrowthRateStatus:SetColorByName( sGRColor ); end
 
-	-- Amenities and Happiness
+	-- Amenities
 	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then
 		pCityInstance.Amenities:SetText( ColorRed(kCityData.AmenitiesNum).." / "..tostring(kCityData.AmenitiesRequiredNum) );
 	else
 		pCityInstance.Amenities:SetText( tostring(kCityData.AmenitiesNum).." / "..tostring(kCityData.AmenitiesRequiredNum) );
 	end
-	local happinessInfo:table = GameInfo.Happinesses[kCityData.Happiness];
-	local happinessText:string = Locale.Lookup( happinessInfo.Name );
-	if happinessInfo.GrowthModifier < 0 then happinessText = "[COLOR:255,40,50,160]"..happinessText.."[ENDCOLOR]"; end -- StatBadCS    Color0="255,40,50,240"
-	if happinessInfo.GrowthModifier > 0 then happinessText = "[COLOR:80,255,90,160]"..happinessText.."[ENDCOLOR]"; end -- StatGoodCS   Color0="80,255,90,240"
-	pCityInstance.CitizenHappiness:SetText( happinessText );                                                           -- StatNormalCS Color0="200,200,200,240"
+	
+	-- Happiness
+	local happinessFormat:string = "%s";
+	local happinessText:string = Locale.Lookup( GameInfo.Happinesses[kCityData.Happiness].Name );
+	local happinessToolTip:string = happinessText;
+	if kCityData.HappinessGrowthModifier < 0 then happinessFormat = "[COLOR:255,40,50,160]%s[ENDCOLOR]"; end -- StatBadCS    Color0="255,40,50,240" StatNormalCS Color0="200,200,200,240"
+	if kCityData.HappinessGrowthModifier > 0 then happinessFormat = "[COLOR:80,255,90,160]%s[ENDCOLOR]"; end -- StatGoodCS   Color0="80,255,90,240"
+	if kCityData.HappinessGrowthModifier ~= 0 then happinessText = string.format("%+d%% %+d%%", kCityData.HappinessGrowthModifier, kCityData.HappinessNonFoodYieldModifier); end
+	pCityInstance.CitizenHappiness:SetText( string.format(happinessFormat, happinessText) );
+	pCityInstance.CitizenHappiness:SetToolTipString( string.format(happinessFormat, happinessToolTip) );
 	
 	-- Strength and icon for Garrison Unit, and Walls
 	local sStrength:string = tostring(kCityData.Defense);
@@ -2415,10 +2420,17 @@ function city_fields( kCityData, pCityInstance )
 		local governorMode = pAssignedGovernor:IsEstablished() and "_FILL" or "_SLOT";
 		local governorIcon = "ICON_" .. governorDefinition.GovernorType .. governorMode;
 		pCityInstance.Governor:SetText("[" .. governorIcon .. "]");
-		pCityInstance.Governor:SetToolTipString(Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title));
 		kCityData.Governor = governorDefinition.GovernorType;
+		-- name and promotions
+		local tGovernorTT:table = {};
+		table.insert(tGovernorTT, Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title));
+		for row in GameInfo.GovernorPromotions() do
+			if pAssignedGovernor:HasPromotion( row.Index ) then table.insert(tGovernorTT, Locale.Lookup(row.Name)..": "..Locale.Lookup(row.Description)); end
+		end
+		pCityInstance.Governor:SetToolTipString(table.concat(tGovernorTT, "[NEWLINE]"));
 	else
 		pCityInstance.Governor:SetText("");
+		pCityInstance.Governor:SetToolTipString("");
 		kCityData.Governor = "";
 	end
 
@@ -2726,7 +2738,8 @@ function common_unit_fields( unit, unitInstance )
 
 	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas( "ICON_" .. UnitManager.GetTypeName( unit ), 32 )
 	unitInstance.UnitType:SetTexture( textureOffsetX, textureOffsetY, textureSheet )
-	unitInstance.UnitType:SetToolTipString( Locale.Lookup( GameInfo.Units[UnitManager.GetTypeName( unit )].Name ) )
+	--unitInstance.UnitType:SetToolTipString( Locale.Lookup( GameInfo.Units[UnitManager.GetTypeName( unit )].Name ) )
+	unitInstance.UnitType:SetToolTipString( Locale.Lookup(GameInfo.Units[unit:GetUnitType()].Name).."[NEWLINE]"..Locale.Lookup(GameInfo.Units[unit:GetUnitType()].Description) );
 
 	-- debug section to see Modifiers for all units
 	--[[
