@@ -34,27 +34,32 @@ function Initialize_TableUnits()
 	for _,groupType in ipairs(tUnitGroupTypes) do tUnitGroups[ groupType ] = {}; end
 	-- sort out the units into proper groups
 	for unit in GameInfo.Units() do
-		-- group
+		local sUnitType:string = unit.UnitType;
+		local bIsBaseUnit:boolean = true;
+		local baseUnit:table = unit;
+		if GameInfo.UnitReplaces[sUnitType] then baseUnit = GameInfo.Units[ GameInfo.UnitReplaces[sUnitType].ReplacesUnitType ]; bIsBaseUnit = false; end
+		-- group must be from base unit! to avoid group change for uniques!
 		local sGroup:string = "";
-		if     unit.FormationClass == "FORMATION_CLASS_AIR"     then sGroup = "AIR";
-		elseif unit.FormationClass == "FORMATION_CLASS_NAVAL"   then sGroup = "NAVAL";
-		elseif unit.FormationClass == "FORMATION_CLASS_SUPPORT" then sGroup = "SUPPORT";
-		elseif unit.FormationClass == "FORMATION_CLASS_LAND_COMBAT" then
-			if     unit.PromotionClass == "PROMOTION_CLASS_HEAVY_CAVALRY" or unit.PromotionClass == "PROMOTION_CLASS_LIGHT_CAVALRY" then sGroup = "CAVALRY";
-			elseif unit.PromotionClass == "PROMOTION_CLASS_RANGED"        or unit.PromotionClass == "PROMOTION_CLASS_SIEGE"         then sGroup = "RANGED";
+		if     baseUnit.FormationClass == "FORMATION_CLASS_AIR"     then sGroup = "AIR";
+		elseif baseUnit.FormationClass == "FORMATION_CLASS_NAVAL"   then sGroup = "NAVAL";
+		elseif baseUnit.FormationClass == "FORMATION_CLASS_SUPPORT" then sGroup = "SUPPORT";
+		elseif baseUnit.FormationClass == "FORMATION_CLASS_LAND_COMBAT" then
+			if     baseUnit.PromotionClass == "PROMOTION_CLASS_HEAVY_CAVALRY" or baseUnit.PromotionClass == "PROMOTION_CLASS_LIGHT_CAVALRY" then sGroup = "CAVALRY";
+			elseif baseUnit.PromotionClass == "PROMOTION_CLASS_RANGED"        or baseUnit.PromotionClass == "PROMOTION_CLASS_SIEGE"         then sGroup = "RANGED";
 			else sGroup = "MELEE";
 			end
 		end
 		if sGroup ~= "" then
-			local bIsBaseUnit:boolean = true;
-			local sUnitType:string = unit.UnitType;
-			local sBaseUnitType:string = sUnitType;
-			if GameInfo.UnitReplaces[sUnitType] then sBaseUnitType = GameInfo.UnitReplaces[sUnitType].ReplacesUnitType; bIsBaseUnit = false; end
-			-- TODO: add here Era retrieval
+			local sBaseUnitType:string = baseUnit.UnitType;
+			-- era retrieval
+			local iEra:number = 0; -- Ancient by default
+			if     unit.PrereqTech  then iEra = GameInfo.Eras[ GameInfo.Technologies[unit.PrereqTech].EraType ].Index;
+			elseif unit.PrereqCivic then iEra = GameInfo.Eras[ GameInfo.Civics[unit.PrereqCivic].EraType ].Index; end
 			table.insert( tUnitGroups[sGroup], {
 				Unit = unit,
-				-- ERA
+				Era = iEra,
 				IsBaseUnit = bIsBaseUnit,
+				IsUnique = ( unit.TraitType ~= nil ),
 				BaseUnitType = sBaseUnitType,
 				UnitType = sUnitType,
 				BaseUnitCost = GameInfo.Units[ sBaseUnitType ].Cost,
@@ -63,12 +68,23 @@ function Initialize_TableUnits()
 	end
 	-- sort groups
 	local function funSort( a, b )
-		if a.BaseUnitType == b.BaseUnitType then
-			if a.IsBaseUnit then return true; end
-			if b.IsBaseUnit then return false; end
-			return a.UnitType < b.UnitType;
+		if a.Era ==  b.Era then
+			if a.BaseUnitType == b.BaseUnitType then
+				if a.IsBaseUnit then return true; end
+				if b.IsBaseUnit then return false; end
+				return a.UnitType < b.UnitType;
+			else
+				if a.BaseUnitCost == b.BaseUnitCost then
+					-- a bit weird case is when they they are different BaseUnits but have the same cost
+					if a.IsUnique then return true; end
+					if b.IsUnique then return false; end
+					return a.UnitType < b.UnitType;
+				else
+					return a.BaseUnitCost < b.BaseUnitCost;
+				end
+			end
 		else
-			return a.BaseUnitCost < b.BaseUnitCost;
+			return a.Era < b.Era;
 		end
 	end
 	for group,units in pairs(tUnitGroups) do
@@ -84,6 +100,10 @@ Initialize_TableUnits();
 
 --------------------------------------------------------------
 -- Page Layout
+
+local COLOR_RED = "[COLOR:255,40,50,160]";
+local COLOR_GREEN = "[COLOR:80,255,90,160]";
+
 
 PageLayouts["TableUnits"] = function(page)
 	local sectionId = page.SectionId;
@@ -108,25 +128,53 @@ PageLayouts["TableUnits"] = function(page)
 	headerLine.SpaceRight:SetHide(false);
 	
 	-- ok, show the units!
+	local iCurrentEra:number = -1; 
 	for _,unit in ipairs(tUnitGroups[pageId]) do
+		if unit.Era > iCurrentEra and unit.IsBaseUnit then
+			iCurrentEra = unit.Era;
+			-- add era intermediate header
+			local eraLine = _LeftColumnUnitStatsManager:GetInstance();
+			eraLine.SpaceLeft:SetHide(true);
+			eraLine.Icon:SetHide(true);
+			eraLine.StatName:SetText("[COLOR:0,0,0,128]"..Locale.Lookup(GameInfo.Eras[iCurrentEra].Name).."[ENDCOLOR]");
+			eraLine.StatBaseMoves:SetText("");
+			eraLine.StatCombat:SetText("");
+			eraLine.StatRangedCombat:SetText("");
+			eraLine.StatRange:SetText("");
+			eraLine.StatBombard:SetText("");
+			eraLine.StatCost:SetText("");
+			eraLine.SpaceRight:SetHide(false);
+		end
 		local unitInfo:table = unit.Unit;
+		local unitBaseInfo:table = GameInfo.Units[ unit.BaseUnitType ];
 		local unitLine = _LeftColumnUnitStatsManager:GetInstance();
 		-- icon and name plus indents
 		unitLine.SpaceLeft:SetHide(unit.IsBaseUnit);
 		unitLine.Icon:SetIcon("ICON_"..unit.UnitType);
-		unitLine.StatName:LocalizeAndSetText(unitInfo.Name);
+		unitLine.Icon:SetHide(false);
+		unitLine.StatName:SetText( (unit.IsUnique and "[ICON_You]" or "")..Locale.Lookup(unitInfo.Name) );
 		unitLine.StatName:SetToolTipString(Locale.Lookup(unitInfo.Description));
 		unitLine.SpaceRight:SetHide(not unit.IsBaseUnit);
 		-- stats
-		local function ShowStat(name:string)
-			unitLine["Stat"..name]:SetText( tostring(unitInfo[name]) );
+		local function ShowStat(name:string, bInverse:boolean)
+			local iStat:number = unitInfo[name];
+			if iStat == 0 then unitLine["Stat"..name]:SetText(""); return; end
+			if unit.IsBaseUnit then
+				unitLine["Stat"..name]:SetText( tostring(iStat) );
+			else
+				local iStatDiff:number = iStat - unitBaseInfo[name];
+				if iStatDiff == iStat then iStatDiff = 0; end -- e.g. Immortal case
+				if     iStatDiff > 0 then unitLine["Stat"..name]:SetText( string.format("%d ("..(bInverse and COLOR_RED or COLOR_GREEN).."%+d[ENDCOLOR])", iStat, iStatDiff) );
+				elseif iStatDiff < 0 then unitLine["Stat"..name]:SetText( string.format("%d ("..(bInverse and COLOR_GREEN or COLOR_RED).."%+d[ENDCOLOR])", iStat, iStatDiff) );
+				else                      unitLine["Stat"..name]:SetText( tostring(iStat) ); end
+			end
 		end
 		ShowStat("BaseMoves");
 		ShowStat("Combat");
 		ShowStat("RangedCombat");
 		ShowStat("Range");
 		ShowStat("Bombard");
-		ShowStat("Cost");
+		ShowStat("Cost", true); -- inverse colors!
 		-- click action
 		unitLine.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(sectionId, unit.UnitType); end);
 	end
