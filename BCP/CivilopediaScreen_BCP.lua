@@ -132,7 +132,7 @@ RCP_Initialize();
 -- GENERIC ADDITION
 
 function ShowInternalPageInfo(page)
-	if true then return end
+	--if true then return end
 	local chapter_body = {};
 	for k,v in pairs(page) do
 		if type(v) ~= "table" then
@@ -159,7 +159,7 @@ local tPagesToSkip:table = {
 function ShowPage(page)
 	--print("...showing page layout", page.PageLayoutId);
 	RCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
-	if tPagesToSkip[ page.PageLayoutId ] then return; end
+	--if tPagesToSkip[ page.PageLayoutId ] then return; end
 
 	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
 	local chapter_body = {};
