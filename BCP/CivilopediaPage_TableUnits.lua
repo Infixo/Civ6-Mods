@@ -8,10 +8,76 @@ print("Loading CivilopediaPage_TableUnits.lua from Better Civilopedia version ".
 --	Civilopedia - Table of Units Page Layout
 -- ===========================================================================
 
-PageLayouts["TableUnits" ] = function(page)
+local _LeftColumnUnitStatsManager = InstanceManager:new("CivilopediaLeftColumnUnitStats", "Root", Controls.LeftColumnStack);
+
+
+--------------------------------------------------------------
+-- Initialize table of units
+
+local tUnitGroupTypes:table = { "MELEE", "RANGED", "CAVALRY", "NAVAL", "AIR", "SUPPORT" };
+local tUnitGroups:table = {};
+
+function Initialize_TableUnits()
+	-- CacheData();
+	-- init groups
+	for _,groupType in ipairs(tUnitGroupTypes) do tUnitGroups[ groupType ] = {}; end
+	-- sort out the units into proper groups
+	for unit in GameInfo.Units() do
+		-- group
+		local sGroup:string = "";
+		if     unit.FormationClass == "FORMATION_CLASS_AIR"     then sGroup = "AIR";
+		elseif unit.FormationClass == "FORMATION_CLASS_NAVAL"   then sGroup = "NAVAL";
+		elseif unit.FormationClass == "FORMATION_CLASS_SUPPORT" then sGroup = "SUPPORT";
+		elseif unit.FormationClass == "FORMATION_CLASS_LAND_COMBAT" then
+			if     unit.PromotionClass == "PROMOTION_CLASS_HEAVY_CAVALRY" or unit.PromotionClass == "PROMOTION_CLASS_LIGHT_CAVALRY" then sGroup = "CAVALRY";
+			elseif unit.PromotionClass == "PROMOTION_CLASS_RANGED"        or unit.PromotionClass == "PROMOTION_CLASS_SIEGE"         then sGroup = "RANGED";
+			else sGroup = "MELEE";
+			end
+		end
+		if sGroup ~= "" then
+			local bIsBaseUnit:boolean = true;
+			local sUnitType:string = unit.UnitType;
+			local sBaseUnitType:string = sUnitType;
+			if GameInfo.UnitReplaces[sUnitType] then sBaseUnitType = GameInfo.UnitReplaces[sUnitType].ReplacesUnitType; bIsBaseUnit = false; end
+			-- TODO: add here Era retrieval
+			table.insert( tUnitGroups[sGroup], {
+				Unit = unit,
+				-- ERA
+				IsBaseUnit = bIsBaseUnit,
+				BaseUnitType = sBaseUnitType,
+				UnitType = sUnitType,
+				BaseUnitCost = GameInfo.Units[ sBaseUnitType ].Cost,
+			} );
+		end
+	end
+	-- sort groups
+	local function funSort( a, b )
+		if a.BaseUnitType == b.BaseUnitType then
+			if a.IsBaseUnit then return true; end
+			if b.IsBaseUnit then return false; end
+			return a.UnitType < b.UnitType;
+		else
+			return a.BaseUnitCost < b.BaseUnitCost;
+		end
+	end
+	for group,units in pairs(tUnitGroups) do
+		table.sort(units, funSort);
+	end
+	-- debug
+	--for group,units in pairs(tUnitGroups) do
+		--for _,unit in ipairs(units) do print(group, unit.BaseUnitCost, unit.BaseUnitType, unit.UnitType); end
+	--end
+end
+Initialize_TableUnits();
+
+
+PageLayouts["TableUnits"] = function(page)
 	local sectionId = page.SectionId;
 	local pageId = page.PageId;
 
+	-- ResetPageContent()
+	_LeftColumnUnitStatsManager:ResetInstances();
+	
 	SetPageHeader(page.Title);
 	SetPageSubHeader(page.Subtitle);
 
