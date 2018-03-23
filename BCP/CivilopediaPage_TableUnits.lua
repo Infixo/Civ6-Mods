@@ -51,10 +51,10 @@ function Initialize_TableUnits()
 		end
 		if sGroup ~= "" then
 			local sBaseUnitType:string = baseUnit.UnitType;
-			-- era retrieval
+			-- era retrieval (from base Unit!)
 			local iEra:number = 0; -- Ancient by default
-			if     unit.PrereqTech  then iEra = GameInfo.Eras[ GameInfo.Technologies[unit.PrereqTech].EraType ].Index;
-			elseif unit.PrereqCivic then iEra = GameInfo.Eras[ GameInfo.Civics[unit.PrereqCivic].EraType ].Index; end
+			if     baseUnit.PrereqTech  then iEra = GameInfo.Eras[ GameInfo.Technologies[baseUnit.PrereqTech].EraType ].Index;
+			elseif baseUnit.PrereqCivic then iEra = GameInfo.Eras[ GameInfo.Civics[baseUnit.PrereqCivic].EraType ].Index; end
 			table.insert( tUnitGroups[sGroup], {
 				Unit = unit,
 				Era = iEra,
