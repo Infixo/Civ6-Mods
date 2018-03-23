@@ -113,9 +113,9 @@ function Initialize_TableUnits()
 		table.sort(units, funSort);
 	end
 	-- debug
-	for group,units in pairs(tUnitGroups) do
-		for _,unit in ipairs(units) do print(group, unit.Era, unit.BaseUnitCost, unit.BaseUnitType, unit.UnitType); end
-	end
+	--for group,units in pairs(tUnitGroups) do
+		--for _,unit in ipairs(units) do print(group, unit.Era, unit.BaseUnitCost, unit.BaseUnitType, unit.UnitType); end
+	--end
 end
 Initialize_TableUnits();
 
