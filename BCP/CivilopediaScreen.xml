@@ -201,58 +201,63 @@
 	
 	<!-- 2018-03-23 Table of Units -->
 	<Instance Name="CivilopediaLeftColumnUnitStats">
-		<Container ID="Root" Size="parent,50">
+		<Container ID="Root" Size="parent,25" Offset="30,0">
 			<Stack StackGrowth="Right">
+				<Button ID="SpaceLeft" Size="30,parent">
+				</Button>
 				<!-- Icon to click -->
-				<Box Size="2,parent" Color="46,70,95,255"/>
-				<Button ID="Button" Size="50,50"> 
-					<Image ID="Icon" Texture="Civilopedia_IconSlot50" StretchMode="Uniform" Size="50,50" />
+				<Button ID="Button" Size="25,25">
+					<Image ID="Icon" Texture="Civilopedia_IconSlot50" StretchMode="Uniform" Size="45,45" Offset="-10,-10"/>
 				</Button>
 				<!-- Name -->
-				<Container Size="100,parent">
-					<Label ID="StatName" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="100" String="$Name$"/>
+				<Container Size="180,parent" Offset="30,0">
+					<Label ID="StatName" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="180" String="$Name$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				<Button ID="SpaceRight" Size="30,parent">
+				</Button>
 				<!-- Unique -->
+				<!--
 				<Container Size="100,parent">
 					<Label ID="StatUnique" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="100" String="$Unique$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				-->
+				<Box Size="2,parent" Color="0,20,20,70"/>
 				<!-- Stat BaseMoves -->
 				<Container Size="60,parent">
 					<Label ID="StatBaseMoves" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				<Box Size="2,parent" Color="0,20,20,70"/>
 				<!-- Stat Combat -->
 				<Container Size="60,parent">
 					<Label ID="StatCombat" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				<Box Size="2,parent" Color="0,20,20,70"/>
 				<!-- Stat RangedCombat -->
 				<Container Size="60,parent">
 					<Label ID="StatRangedCombat" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				<Box Size="2,parent" Color="0,20,20,70"/>
 				<!-- Stat Range -->
 				<Container Size="60,parent">
 					<Label ID="StatRange" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				<Box Size="2,parent" Color="0,20,20,70"/>
 				<!-- Stat Bombard -->
 				<Container Size="60,parent">
 					<Label ID="StatBombard" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
+				<Box Size="2,parent" Color="0,20,20,70"/>
 				<!-- Stat Cost -->
 				<Container Size="60,parent">
 					<Label ID="StatCost" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,128"/>
 				<!-- Description -->
+				<!--
 				<Container Size="150,parent">
 					<Label ID="StatDescription" Style="Civilopedia_RightColumnStatText" Anchor="L,C" WrapWidth="150" String="$Description$" />
 				</Container>
-				<Box Size="2,parent" Color="46,70,95,255"/>
+				-->
+				<Box Size="2,parent" Color="0,20,20,70"/>
 			</Stack>
 		</Container>
 	</Instance>

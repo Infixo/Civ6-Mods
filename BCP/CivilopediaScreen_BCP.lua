@@ -159,20 +159,22 @@ local tPagesToSkip:table = {
 	Religion = true,
 	Route = true,
 	HistoricMoment = true,
+	TableUnits = true,
 }
 
 -- add internal info to all pages at once
 function ShowPage(page)
 	--print("...showing page layout", page.PageLayoutId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
-	--if tPagesToSkip[ page.PageLayoutId ] then return; end
-
-	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
-	local chapter_body = {};
-	table.insert(chapter_body, sImpact);
-	table.insert(chapter_body, sToolTip);
-	if bOptionModifiers then AddChapter("Modifiers", chapter_body); end
-
+	
+	if not tPagesToSkip[ page.PageLayoutId ] then
+		local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
+		local chapter_body = {};
+		table.insert(chapter_body, sImpact);
+		table.insert(chapter_body, sToolTip);
+		if bOptionModifiers then AddChapter("Modifiers", chapter_body); end
+	end
+	
 	ShowInternalPageInfo(page);
 end
 
