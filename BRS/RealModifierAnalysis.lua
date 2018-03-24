@@ -1521,7 +1521,7 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	
 	local function CheckForMismatchError(sExpectedType:string)
 		if sExpectedType == tSubject.SubjectType then return false; end
-		print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return true;
+		print("ERROR: CheckOneRequirement mismatch for exp subject", sExpectedType, "got", tSubject.SubjectType, "req is", tReq.ReqId, tReq.ReqType); return true;
 	end
 	
 	-- MAIN DISPATCHER FOR REQUIREMENTS
@@ -1537,7 +1537,11 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_RELIGION" then return true;
 	
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
-		if CheckForMismatchError(SubjectTypes.City) then return false; end
+		--if CheckForMismatchError(SubjectTypes.City) then return false; end
+		if not( tSubject.SubjectType == SubjectTypes.City or tSubject.SubjectType == SubjectTypes.District ) then
+			print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return nil;
+		end
+		if tSubject.SubjectType == tSubject.SubjectType == SubjectTypes.City then
 		for _,district in ipairs(tSubject.Districts) do
 			if district.isBuilt then
 				for _,building in ipairs(district.Buildings) do
@@ -1555,6 +1559,16 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 				bIsValidSubject = ( wonder.BuildingType == tReq.Arguments.BuildingType ); -- BUILDING_ST_BASILS_CATHEDRAL, etc.
 				if bIsValidSubject then break; end
 			end
+		end
+		else --  subject is District
+			if tSubject.isBuilt then
+				for _,building in ipairs(tSubject.Buildings) do
+					local buildingType:string = building.BuildingType;	
+					if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+					bIsValidSubject = ( buildingType == tReq.Arguments.BuildingType ); -- BUILDING_LIGHTHOUSE, etc.
+					if bIsValidSubject then break; end
+				end
+			end -- isBuilt
 		end
 
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_DISTRICT" then -- 10
@@ -1935,7 +1949,11 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType and
 				IsPlotAdjacentToFeature(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.FeatureType) then iNum = iNum + 1; end
 		end
-		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+		-- compatibility tweak for CIVITAS CS mod - remove if not needed any more
+		-- they use YieldChange instead of Amount in this modifier
+		if     tMod.Arguments.Amount      then YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
+		elseif tMod.Arguments.YieldChange then YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.YieldChange));
+		end
 		
 	elseif tMod.EffectType == "EFFECT_TERRAIN_ADJACENCY" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end

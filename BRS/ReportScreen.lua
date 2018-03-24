@@ -435,7 +435,7 @@ function GetData()
 		tTrackedUnits[ unit:GetID() ] = true;
 		m_kModifiersUnits[ unit:GetID() ] = {};
 	end
-	-- for k,v in pairs(tTrackedOwners) do print(k,v); end -- debug
+	--for k,v in pairs(tTrackedOwners) do print(k,v); end -- debug
 	-- main loop
 	for _,instID in ipairs(GameEffects.GetModifiers()) do
 		local iOwnerID:number = GameEffects.GetModifierOwner( instID );
@@ -521,7 +521,7 @@ function GetData()
 			for _,subjectID in ipairs(tSubjects) do
 				local sSubjectType:string = GameEffects.GetObjectType( subjectID ); -- LOC_MODIFIER_OBJECT_CITY, LOC_MODIFIER_OBJECT_PLAYER, LOC_MODIFIER_OBJECT_GOVERNOR
 				local sSubjectName:string = GameEffects.GetObjectName( subjectID ); -- LOC_CITY_xxx_NAME, LOC_LEADER_xxx_NAME, etc.
-				if sSubjectType == "LOC_MODIFIER_OBJECT_CITY" then RegisterModifierForCity(sSubjectType, sSubjectName); end
+				if sSubjectType == "LOC_MODIFIER_OBJECT_CITY" and tTrackedOwners[sSubjectName] then RegisterModifierForCity(sSubjectType, sSubjectName); end
 			end
 		end
 		
@@ -541,7 +541,7 @@ function GetData()
 					--print("city:", sSubjectString, "decode:", iCityID)
 					if iCityID ~= nil then
 						local pCity:table = player:GetCities():FindID(iCityID);
-						if pCity then RegisterModifierForCity(sSubjectType, pCity:GetName()); end
+						if pCity and tTrackedOwners[pCity:GetName()] then RegisterModifierForCity(sSubjectType, pCity:GetName()); end
 					end
 				end
 			end
@@ -3212,6 +3212,7 @@ end
 -- ===========================================================================
 
 function UpdatePolicyData()
+	--print("*** UPDATE POLICY DATA ***");
 	-- prepare data
 	-- this will be moved outside to be only calculated once
 	m_kPolicyData = {
@@ -3414,6 +3415,7 @@ function GetCityStateTrait(sLeaderType:string)
 end
 
 function UpdateMinorData()
+	--print("*** UPDATE MINOR DATA ***");
 	Timer1Start();
 
 	local tMinorBonuses:table = {}; -- helper table to quickly access bonuses
@@ -3425,7 +3427,8 @@ function UpdateMinorData()
 			tMinorBonuses[ row.Value ] = {};
 		end
 	end
-
+	--dshowrectable(m_kMinorData); -- debug
+	
 	-- find out our level of involvement with alive Minors
 	local tMinorRelations:table = {};
 	local ePlayerID:number = Game.GetLocalPlayer();
@@ -3443,7 +3446,8 @@ function UpdateMinorData()
 			tMinorRelations[ minorRelation.CivType ] = minorRelation;
 		end
 	end
-
+	--dshowrectable(tMinorRelations);
+	
 	-- iterate through all Minors
 	-- assumptions: no Civilization Traits are used, only Leader Traits; each has 1 leader; main leader is for Suzerain bonus; Inherited leaders are for small/medium/large bonuses
 	
@@ -3467,6 +3471,7 @@ function UpdateMinorData()
 					HasMet = false, -- will be true if any of that category has been met
 					--Yields from modifiers
 				};
+				--print("registering leader", iNumTokens, sInfluence); dshowtable(minorData);
 				-- impact from modifiers; the 5th parameter is used to select proper modifiers, it is the ONLY place where it is used
 				minorData.Impact, minorData.Yields, minorData.ImpactToolTip, minorData.UnknownEffect = RMA.CalculateModifierEffect("Trait", minorData.Trait, ePlayerID, nil, sInfluence);
 				minorData.IsImpact = false; -- for toggling options
@@ -3481,7 +3486,8 @@ function UpdateMinorData()
 			RegisterLeaderForInfluence(6, "LARGE");
 		end
 	end
-	
+	--dshowrectable(tMinorBonuses); -- debug
+	-- OK UP TO THIS POINT
 	-- second, fill out Main leaders
 	for civ in GameInfo.Civilizations() do
 		if civ.StartingCivilizationLevelType == "CIVILIZATION_LEVEL_CITY_STATE" then
@@ -3499,6 +3505,7 @@ function UpdateMinorData()
 				HasMet = false, -- later
 				--Yields from modifiers
 			};
+			--print("*** Found CS ***"); dshowtable(minorData);
 			minorData.Trait = GetCityStateTrait(minorData.LeaderType);
 			local tMinorRelation:table = tMinorRelations[ civ.CivilizationType ];
 			if tMinorRelation ~= nil then
@@ -3524,16 +3531,20 @@ function UpdateMinorData()
 			end
 			if #tStr == 0 then print("WARNING: UpdateMinorData() no traits for", minorData.Name); end
 			minorData.Description = table.concat(tStr, "[NEWLINE]");
+			--print("=== before RMA ===");
 			-- impact from modifiers
 			minorData.Impact, minorData.Yields, minorData.ImpactToolTip, minorData.UnknownEffect = RMA.CalculateModifierEffect("Trait", minorData.Trait, ePlayerID, nil);
+			--print("=== after RMA ===");
 			minorData.IsImpact = false; -- for toggling options
 			for _,value in pairs(minorData.Yields) do if value ~= 0 then minorData.IsImpact = true; break; end end
 			-- done!
+			--print("*** Inserting CS ***"); dshowtable(minorData);
 			table.insert(m_kMinorData[ minorData.Category ], minorData);
 		end -- level City State
 	end -- all civs
 
 	Timer1Tick("--- ALL MINOR DATA ---");
+	--dshowrectable(m_kMinorData);
 end
 
 function ViewMinorPage()
