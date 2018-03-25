@@ -2310,6 +2310,7 @@ local tModifiersTables:table = {
 };
 
 if bIsRiseFall then
+	tModifiersTables["Alliance"] = "AllianceEffects"; -- no Pedia page for that!
 	tModifiersTables["Commemoration"] = "CommemorationModifiers"; -- no Pedia page for that!
 	tModifiersTables["Governor"] = "GovernorModifiers"; -- currently empty
 	tModifiersTables["GovernorPromotion"] = "GovernorPromotionModifiers"; -- GovernorPromotionType
@@ -2336,6 +2337,7 @@ local tObjectsTables:table = {
 }
 
 if bIsRiseFall then
+	tObjectsTables["Alliance"] = "Alliances"; -- no Pedia page for that!
 	tObjectsTables["Commemoration"] = "CommemorationTypes"; -- no Pedia page for that!
 	tObjectsTables["Governor"] = "Governors"; -- currently empty
 	tObjectsTables["GovernorPromotion"] = "GovernorPromotions"; -- GovernorPromotionType
