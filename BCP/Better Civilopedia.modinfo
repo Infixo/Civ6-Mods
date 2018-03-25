@@ -18,11 +18,11 @@
 	<InGameActions>
 		<UpdateDatabase id="BCP_Database">
 			<File>BetterCivilopedia_Database.sql</File>
-			<File>Civilopedia_TableUnits.xml</File>
+			<File>Civilopedia_BCP.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports">
 			<File>CivilopediaScreen.xml</File>
-			<File>CivilopediaPage_TableUnits.lua</File>
+			<File>CivilopediaPage_BCP.lua</File>
 		</ImportFiles>
 		<UpdateDatabase id="BCP_Database_RiseFall" criteria="Expansion1">
 			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
@@ -40,8 +40,8 @@
 	<Files>
 		<!-- shared -->
 		<File>BetterCivilopedia_Database.sql</File>
-		<File>Civilopedia_TableUnits.xml</File>
-		<File>CivilopediaPage_TableUnits.lua</File>
+		<File>Civilopedia_BCP.xml</File>
+		<File>CivilopediaPage_BCP.lua</File>
 		<File>CivilopediaScreen.xml</File>
 		<File>CivilopediaScreen_BCP.lua</File>
 		<!-- Rise & Fall -->
