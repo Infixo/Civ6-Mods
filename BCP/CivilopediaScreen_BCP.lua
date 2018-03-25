@@ -160,6 +160,7 @@ local tPagesToSkip:table = {
 	Route = true,
 	HistoricMoment = true,
 	TableUnits = true,
+	OverviewMoments = true,
 }
 
 -- add internal info to all pages at once
