@@ -58,19 +58,17 @@ PageLayouts["Alliance"] = function(page)
 	-- Right Column! empty
 	
 	-- Left Column!
-	
-	-- get modifiers; they will by sorted by level req already
-	local tAllianceEffects:table = {};
-	for row in GameInfo.AllianceEffects() do
-		if row.AllianceType == allianceType then tAllianceEffects[ row.LevelRequirement ] = row; end
-	end
-	
-	-- build the chapter
+	local qAllianceEffects = DB.Query("SELECT LevelRequirement, ModifierID FROM AllianceEffects WHERE AllianceType = ? ORDER BY LevelRequirement, ModifierID", allianceType);
+	if not qAllianceEffects then print("WARNING: PageLayouts[Alliace] no effects for an alliance", allianceType); return; end
 	local chapter_body:table = {};
-	for level,modifier in ipairs(tAllianceEffects) do
-		table.insert(chapter_body, Locale.Lookup("LOC_DIPLOACTION_ALLIANCE_LEVEL", level).."  "..string.rep("[ICON_Alliance]", level));
+	local iLevel:number = 0; 
+	for _,row in ipairs(qAllianceEffects) do
+		if row.LevelRequirement > iLevel then 
+			iLevel = row.LevelRequirement;
+			table.insert(chapter_body, Locale.Lookup("LOC_DIPLOACTION_ALLIANCE_LEVEL", iLevel).."  "..string.rep("[ICON_Alliance]", iLevel));
+		end
 		local sLocText:string = "(unknown)";
-		local modifierText = DB.Query("SELECT Text from ModifierStrings where ModifierID = ? and Context = 'Summary'", modifier.ModifierID);
+		local modifierText = DB.Query("SELECT Text from ModifierStrings where ModifierID = ? and Context = 'Summary'", row.ModifierID);
 		if modifierText and modifierText[1] then sLocText = modifierText[1].Text; end
 		table.insert(chapter_body, Locale.Lookup(sLocText));
 	end
