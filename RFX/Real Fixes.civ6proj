@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Name>Real Fixes</Name>
+    <Guid>835c3ece-1a9c-4efb-996d-367815774ff0</Guid>
+    <ProjectGuid>80ae6d7d-e7be-479a-97e3-898c98785fd0</ProjectGuid>
+    <ModVersion>1</ModVersion>
+    <Teaser>Various game fixes.</Teaser>
+    <Description>Various game fixes.</Description>
+    <Authors>Infixo</Authors>
+    <SpecialThanks>
+    </SpecialThanks>
+    <AffectsSavedGames>false</AffectsSavedGames>
+    <SupportsSinglePlayer>true</SupportsSinglePlayer>
+    <SupportsMultiplayer>true</SupportsMultiplayer>
+    <SupportsHotSeat>true</SupportsHotSeat>
+    <AssemblyName>Real Fixes</AssemblyName>
+    <RootNamespace>Real Fixes</RootNamespace>
+    <InGameActionData><![CDATA[<InGameActions><UpdateDatabase id="RFX_UpdateDatabase"><File>RFX_Main.sql</File></UpdateDatabase></InGameActions>]]></InGameActionData>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Mod.Art.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="RFX_Main.sql">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)Civ6.targets" />
+</Project>
