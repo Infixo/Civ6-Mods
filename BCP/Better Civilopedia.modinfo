@@ -25,10 +25,10 @@
 			<File>CivilopediaPage_TableUnits.lua</File>
 		</ImportFiles>
 		<UpdateDatabase id="BCP_Database_RiseFall" criteria="Expansion1">
-			<File>RiseFall/Civilopedia_Commemorations.xml</File>
+			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports_RiseFall" criteria="Expansion1">
-			<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
+			<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BCP_Replace_CivilopediaScreen">
 			<Properties>
@@ -45,7 +45,7 @@
 		<File>CivilopediaScreen.xml</File>
 		<File>CivilopediaScreen_BCP.lua</File>
 		<!-- Rise & Fall -->
-		<File>RiseFall/Civilopedia_Commemorations.xml</File>
-		<File>RiseFall/CivilopediaPage_Commemoration.lua</File>
+		<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
+		<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
 	</Files>
 </Mod>
