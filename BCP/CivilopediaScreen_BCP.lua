@@ -275,7 +275,9 @@ PageLayouts["Leader"] = function(page)
 			local chapter_body = {};
 			table.insert(chapter_body, sImpact);
 			table.insert(chapter_body, sToolTip);
-			if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body); end
+			local sName:string = Locale.Lookup(GameInfo.Traits[row.TraitType].Name);
+			if GameInfo.Traits[row.TraitType].InternalOnly then sName = "[ICON_Capital]"..row.TraitType; end
+			if bOptionModifiers then AddChapter(sName, chapter_body); end
 		end
 	end
 	ShowInternalPageInfo(page);
