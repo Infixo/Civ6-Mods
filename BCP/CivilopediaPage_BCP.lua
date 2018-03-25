@@ -1,9 +1,11 @@
-print("Loading CivilopediaPage_TableUnits.lua from Better Civilopedia version "..GlobalParameters.BCP_VERSION_MAJOR.."."..GlobalParameters.BCP_VERSION_MINOR);
+print("Loading CivilopediaPage_BCP.lua from Better Civilopedia version "..GlobalParameters.BCP_VERSION_MAJOR.."."..GlobalParameters.BCP_VERSION_MINOR);
 --------------------------------------------------------------
 -- Better Civilopedia
 -- Author: Infixo
 -- 2018-03-23: Created
 --------------------------------------------------------------
+
+
 -- ===========================================================================
 --	Civilopedia - Table of Units Page Layout
 -- ===========================================================================
@@ -128,7 +130,7 @@ local COLOR_GREEN = "[COLOR:80,255,90,160]";
 
 
 PageLayouts["TableUnits"] = function(page)
-	local sectionId = page.SectionId;
+	print("...showing page", page.PageLayoutId, page.PageId);
 	local pageId = page.PageId;
 	
 	if tUnitGroups[pageId] == nil then return; end -- assert
@@ -204,6 +206,49 @@ PageLayouts["TableUnits"] = function(page)
 		-- click action
 		unitLine.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(sectionId, unit.UnitType); end);
 	end
+	
 end
 
-print("OK loaded CivilopediaPage_TableUnits.lua from Better Civilopedia");
+
+-- ===========================================================================
+--	Civilopedia - Random Agenda Page Layout
+-- ===========================================================================
+
+PageLayouts["RandAgenda"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	local pageId = page.PageId;
+
+	SetPageHeader(page.Title);
+	SetPageSubHeader(page.Subtitle);
+
+	local agenda = GameInfo.Agendas[pageId];
+	if agenda == nil then return; end
+	local agendaType = agenda.AgendaType;
+
+	-- Right Column!
+	
+	-- Left Column!
+	local chapter_body:table = {};
+	table.insert(chapter_body, Locale.Lookup(agenda.Description));
+	if GameInfo.RandomAgendas[agendaType].GameLimit > 0 then 
+		table.insert(chapter_body, Locale.Lookup("LOC_VISIBILITY_LIMITED_NAME").." "..tostring(GameInfo.RandomAgendas[agendaType].GameLimit));
+	end
+	for row in GameInfo.AgendaPreferredLeaders() do
+		if row.AgendaType == agendaType then
+			table.insert(chapter_body, string.format("%s %d%%", Locale.Lookup(GameInfo.Leaders[row.LeaderType].Name), row.PercentageChance));
+		end
+	end
+	AddChapter(Locale.Lookup(agenda.Name), chapter_body);
+
+	-- iterate through Traits
+	for row in GameInfo.AgendaTraits() do
+		if row.AgendaType == agendaType then
+			AddTrait(row.TraitType, Locale.Lookup(GameInfo.Agendas[agendaType].Name));
+		end
+	end
+	ShowInternalPageInfo(page);
+	
+end
+
+
+print("OK loaded CivilopediaPage_BCP.lua from Better Civilopedia");

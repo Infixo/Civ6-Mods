@@ -161,6 +161,7 @@ local tPagesToSkip:table = {
 	HistoricMoment = true,
 	TableUnits = true,
 	OverviewMoments = true,
+	RandAgenda = true,
 }
 
 -- add internal info to all pages at once
@@ -247,6 +248,18 @@ AddUniques("Buildings");
 AddUniques("Districts");
 AddUniques("Improvements");
 
+-- helper
+function AddTrait(sTraitType:string, sUniqueName:string)
+	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", sTraitType, Game.GetLocalPlayer(), nil);
+	local chapter_body = {};
+	table.insert(chapter_body, sImpact);
+	table.insert(chapter_body, sToolTip);
+	local sName:string = Locale.Lookup(GameInfo.Traits[sTraitType].Name);
+	if GameInfo.Traits[sTraitType].InternalOnly then sName = "[COLOR_Red]"..sTraitType.."[ENDCOLOR]"; end
+	if sUniqueName then sName = sUniqueName; end
+	if bOptionModifiers then AddChapter(sName, chapter_body); end
+end
+
 PageLayouts["Civilization"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
@@ -254,15 +267,14 @@ PageLayouts["Civilization"] = function(page)
 	-- iterate through Traits that are not Uniques
 	for row in GameInfo.CivilizationTraits() do
 		if row.CivilizationType == page.PageId and not tAllUniques[row.TraitType] then
-			local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", row.TraitType, Game.GetLocalPlayer(), nil);
-			local chapter_body = {};
-			table.insert(chapter_body, sImpact);
-			table.insert(chapter_body, sToolTip);
-			if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body); end
+			AddTrait(row.TraitType);
 		end
 	end
+	
 	ShowInternalPageInfo(page);
+	
 end
+
 
 PageLayouts["Leader"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
@@ -271,16 +283,23 @@ PageLayouts["Leader"] = function(page)
 	-- iterate through Traits
 	for row in GameInfo.LeaderTraits() do
 		if row.LeaderType == page.PageId then
-			local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", row.TraitType, Game.GetLocalPlayer(), nil);
-			local chapter_body = {};
-			table.insert(chapter_body, sImpact);
-			table.insert(chapter_body, sToolTip);
-			local sName:string = Locale.Lookup(GameInfo.Traits[row.TraitType].Name);
-			if GameInfo.Traits[row.TraitType].InternalOnly then sName = "[ICON_Capital]"..row.TraitType; end
-			if bOptionModifiers then AddChapter(sName, chapter_body); end
+			AddTrait(row.TraitType);
 		end
 	end
+	
+	-- iterate through Traits from Agendas
+	for agenda in GameInfo.HistoricalAgendas() do
+		if agenda.LeaderType == page.PageId then
+			for row in GameInfo.AgendaTraits() do
+				if row.AgendaType == agenda.AgendaType then
+					AddTrait(row.TraitType, Locale.Lookup(GameInfo.Agendas[agenda.AgendaType].Name));
+				end
+			end
+		end
+	end
+	
 	ShowInternalPageInfo(page);
+	
 end
 
 

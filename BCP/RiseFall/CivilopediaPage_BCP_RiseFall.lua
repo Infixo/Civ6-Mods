@@ -12,7 +12,7 @@ print("Loading CivilopediaPage_BCP_RiseFall.lua from Better Civilopedia version 
 -- ===========================================================================
 
 PageLayouts["Commemoration"] = function(page)
-	local sectionId = page.SectionId;
+	print("...showing page", page.PageLayoutId, page.PageId);
 	local pageId = page.PageId;
 
 	SetPageHeader(page.Title);
@@ -45,7 +45,7 @@ end
 -- ===========================================================================
 
 PageLayouts["Alliance"] = function(page)
-	local sectionId = page.SectionId;
+	print("...showing page", page.PageLayoutId, page.PageId);
 	local pageId = page.PageId;
 
 	SetPageHeader(page.Title);
@@ -84,7 +84,7 @@ end
 -- ===========================================================================
 
 PageLayouts["OverviewMoments"] = function(page)
-	local sectionId = page.SectionId;
+	print("...showing page", page.PageLayoutId, page.PageId);
 	local pageId = page.PageId;
 
 	SetPageHeader(page.Title);
