@@ -7,6 +7,7 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 -- 2018-03-07: Added Civs, Leaders, Units, Great People and reworked City-States
 -- 2018-03-14: Added page history
 -- 2018-03-23: Name changed into Better Civilopedia, table of units pages
+-- 2018-03-26: Sources of GPPs
 --------------------------------------------------------------
 
 -- exposed functions and variables
@@ -201,6 +202,64 @@ PageLayouts["GreatPerson"] = function(page)
 end
 
 
+-- show sources of GPP for GPs
+function AddSourcesOfGPPs(page)
+	
+	local gpclass = nil;
+	for row in GameInfo.GreatPersonClasses() do
+		if row.UnitType == page.PageId then gpclass = row; break; end
+	end
+	if gpclass == nil then return; end
+	
+	local gpclassType:string = gpclass.GreatPersonClassType;
+	local gpclassIcon:string = gpclass.IconString;
+	local chapter_body:table = {};
+	
+	-- districts
+	table.insert(chapter_body, Locale.Lookup("LOC_PEDIA_DISTRICTS_TITLE"));
+	for row in GameInfo.District_GreatPersonPoints() do
+		if row.GreatPersonClassType == gpclassType then
+			table.insert(chapter_body, string.format("%+d %s %s", row.PointsPerTurn, gpclassIcon, Locale.Lookup(GameInfo.Districts[row.DistrictType].Name)));
+		end
+	end
+	-- buildings
+	table.insert(chapter_body, Locale.Lookup("LOC_PEDIA_BUILDINGS_TITLE"));
+	for row in GameInfo.Building_GreatPersonPoints() do
+		if row.GreatPersonClassType == gpclassType and not GameInfo.Buildings[row.BuildingType].IsWonder then
+			table.insert(chapter_body, string.format("%+d %s %s", row.PointsPerTurn, gpclassIcon, Locale.Lookup(GameInfo.Buildings[row.BuildingType].Name)));
+		end
+	end
+	-- wonders
+	table.insert(chapter_body, Locale.Lookup("LOC_PEDIA_WONDERS_PAGEGROUP_WONDERS_NAME"));
+	for row in GameInfo.Building_GreatPersonPoints() do
+		if row.GreatPersonClassType == gpclassType and GameInfo.Buildings[row.BuildingType].IsWonder then
+			table.insert(chapter_body, string.format("%+d %s %s", row.PointsPerTurn, gpclassIcon, Locale.Lookup(GameInfo.Buildings[row.BuildingType].Name)));
+		end
+	end
+	-- citizens not used
+	-- District_CitizenGreatPersonPoints 
+	-- projects
+	table.insert(chapter_body, Locale.Lookup("LOC_PEDIA_WONDERS_PAGEGROUP_PROJECTS_NAME"));
+	for row in GameInfo.Project_GreatPersonPoints() do
+		if row.GreatPersonClassType == gpclassType then
+			table.insert(chapter_body, string.format("%d* %s %s", row.Points, gpclassIcon, Locale.Lookup(GameInfo.Projects[row.ProjectType].ShortName)));
+		end
+	end
+	
+	-- modifiers - need some more work to detect which one exactly it is
+	table.insert(chapter_body, Locale.Lookup("LOC_UI_PEDIA_UNIQUE_ABILITY"));
+	for row in GameInfo.ModifierArguments() do
+		if row.Name == "GreatPersonClassType" and row.Value == gpclassType then
+			-- detect if this is the right one
+			table.insert(chapter_body, string.format("%d %s %s", 0, gpclassIcon, row.ModifierId));
+		end
+	end
+	
+	AddChapter("LOC_CITY_STATES_OVERVIEW", chapter_body);
+	
+end
+
+
 -- exceptions Units
 -- Units.UnitType=UNIT_INDIAN_VARU
 -- TypeTags.Type=UNIT_INDIAN_VARU /.Tag=CLASS_VARU
@@ -210,6 +269,11 @@ end
 PageLayouts["Unit"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	-- show sources of GPP for GPs
+	for row in GameInfo.GreatPersonClasses() do
+		if row.UnitType == page.PageId then AddSourcesOfGPPs(page); end
+	end
 	
 	-- start with page.PageId, it contains UnitType
 	-- built ability list
