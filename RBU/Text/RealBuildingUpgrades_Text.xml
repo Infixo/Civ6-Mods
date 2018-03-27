@@ -206,13 +206,13 @@
 			<Text>Additional +1 air unit slot in Aerodrome district.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often. Increases [ICON_Science] Science per Population by +0.2.</Text>
+			<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Lighthouse allows Fishing Boats to sail further. Adds +1 [ICON_Food] to each {LOC_IMPROVEMENT_FISHING_BOATS_NAME} and Fishery.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women. Increases [ICON_Science] Science per Population by +0.3.</Text>
+			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Market hosts more traders and shopkeepers.</Text>
@@ -284,7 +284,7 @@
 			<Text>A renovation of the Temple is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION">
-			<Text>An upgraded University allows for researching non-technical sciences. Increases [ICON_Science] Science per Population by +0.2.</Text>
+			<Text>An upgraded University allows for researching non-technical sciences.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WALLS_UPGRADE_DESCRIPTION">
 			<Text>Increases the strength of your Walls by half.</Text>

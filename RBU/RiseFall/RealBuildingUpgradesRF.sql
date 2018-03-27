@@ -173,6 +173,89 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 
 
 --------------------------------------------------------------
+-- 2018-03-27 Changes to upgrades of Vanilla buildings made possible in R&F
+--------------------------------------------------------------
+
+INSERT INTO Types (Type, Kind) VALUES  -- hash value generated automatically
+('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 'KIND_MODIFIER');
+
+INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 'COLLECTION_OWNER', 'EFFECT_ADJUST_CITY_YIELD_PER_POPULATION');
+
+
+--------------------------------------------------------------
+-- 2018-03-26 Theater Square
+--------------------------------------------------------------
+
+-- important change here! you get back these per pop yields from upgrades!
+UPDATE GlobalParameters SET Value = '20' WHERE Name = 'CULTURE_PERCENTAGE_YIELD_PER_POP'; -- default is 30
+
+-------------------------------------------------------------
+-- AMPHITHEATER
+
+-- +0.2 Culture per population
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_AMPHITHEATER_UPGRADE', 'AMPHITHEATER_UPGRADE_ADJUST_CULTURE_PER_POP');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('AMPHITHEATER_UPGRADE_ADJUST_CULTURE_PER_POP', 'MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 0, 0, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('AMPHITHEATER_UPGRADE_ADJUST_CULTURE_PER_POP', 'YieldType', 'YIELD_CULTURE'),
+('AMPHITHEATER_UPGRADE_ADJUST_CULTURE_PER_POP', 'Amount',    '0.2');
+
+
+--------------------------------------------------------------
+-- 2018-03-26 Campus
+--------------------------------------------------------------
+
+-- important change here! you get back these per pop yields from upgrades!
+UPDATE GlobalParameters SET Value = '30' WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- default 50
+
+--------------------------------------------------------------
+-- LIBRARY
+
+-- +0.2 Science per population
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_LIBRARY_UPGRADE', 'LIBRARY_UPGRADE_ADJUST_SCIENCE_PER_POP');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('LIBRARY_UPGRADE_ADJUST_SCIENCE_PER_POP', 'MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 0, 0, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('LIBRARY_UPGRADE_ADJUST_SCIENCE_PER_POP', 'YieldType', 'YIELD_SCIENCE'),
+('LIBRARY_UPGRADE_ADJUST_SCIENCE_PER_POP', 'Amount',    '0.2');
+
+--------------------------------------------------------------
+-- UNIVERSITY
+
+-- +0.2 Science per population
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_UNIVERSITY_UPGRADE', 'UNIVERSITY_UPGRADE_ADJUST_SCIENCE_PER_POP');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('UNIVERSITY_UPGRADE_ADJUST_SCIENCE_PER_POP', 'MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 0, 0, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('UNIVERSITY_UPGRADE_ADJUST_SCIENCE_PER_POP', 'YieldType', 'YIELD_SCIENCE'),
+('UNIVERSITY_UPGRADE_ADJUST_SCIENCE_PER_POP', 'Amount',    '0.2');
+
+--------------------------------------------------------------
+-- MADRASA
+
+-- +0.3 Science per population
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_MADRASA_UPGRADE', 'MADRASA_UPGRADE_ADJUST_SCIENCE_PER_POP');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('MADRASA_UPGRADE_ADJUST_SCIENCE_PER_POP', 'MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 0, 0, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('MADRASA_UPGRADE_ADJUST_SCIENCE_PER_POP', 'YieldType', 'YIELD_SCIENCE'),
+('MADRASA_UPGRADE_ADJUST_SCIENCE_PER_POP', 'Amount',    '0.3');
+
+
+--------------------------------------------------------------
 -- AI
 -- System Buildings contains only Wonders
 -- Will use AiBuildSpecializations that contains only one list: DefaultCitySpecialization

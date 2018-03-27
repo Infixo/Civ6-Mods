@@ -112,4 +112,21 @@
 			<Text>A building upgrade unique to Georgia. It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [ICON_Housing] Housing, +1 [ICON_Amenities] Amenity and +1 [ICON_Faith] Faith.</Text>
 		</Row>
 	</BaseGameText>
+	
+<LocalizedText>
+	<!-- updates of vanilla building upgrades -->
+	<Replace Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Amphitheater is able to accommodate more spectators. Increases [ICON_Culture] Culture per Population by +0.2.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often. Increases [ICON_Science] Science per Population by +0.2.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women. Increases [ICON_Science] Science per Population by +0.3.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded University allows for researching non-technical sciences. Increases [ICON_Science] Science per Population by +0.2.</Text>
+	</Replace>
+</LocalizedText>
+	
 </GameData>
