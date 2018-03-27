@@ -7,9 +7,10 @@
     <ProjectGuid>1a3ca0a0-a62f-4f96-a7ad-dd9625927847</ProjectGuid>
     <ModVersion>1</ModVersion>
     <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
-    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 2.0.[NEWLINE]French localization only for vanilla buildings.</Description>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 3.0.</Description>
     <Authors>Infixo</Authors>
-    <SpecialThanks>Godzicraft (French tr.)</SpecialThanks>
+    <SpecialThanks>
+    </SpecialThanks>
     <AffectsSavedGames>true</AffectsSavedGames>
     <SupportsSinglePlayer>true</SupportsSinglePlayer>
     <SupportsMultiplayer>true</SupportsMultiplayer>
