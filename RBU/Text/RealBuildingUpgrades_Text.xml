@@ -170,7 +170,7 @@
 			<Text>An upgraded Armory allows for social activities other than wine drinking.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BANK_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Bank allows for funding scientific research.</Text>
+			<Text>Trade is booming in the city thanks to an upgraded Bank. International [ICON_TradeRoute] Trade Routes from this city gain +4 [ICON_Gold] Gold; domestic [ICON_TradeRoute] Trade Routes gain +2 [ICON_Gold] Gold.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BARRACKS_UPGRADE_DESCRIPTION">
 			<Text>+1 [ICON_Production] Production from Camps. May not be built in an Encampment district that already has a Stable.</Text>
@@ -272,7 +272,7 @@
 			<Text>A building upgrade unique to Norway. +1 [ICON_Faith] Faith from Lumber Mills.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_DESCRIPTION">
-			<Text>Bonus extends to each city center within 6 tiles.</Text>
+			<Text>An upgraded Stock Exchange is a true regional business hub. Bonus +2 [ICON_Gold] Gold extends to each city center within 9 tiles. Additional +2 Gold for each specialty district constructed in the city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STUPA_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -290,7 +290,7 @@
 			<Text>Increases the strength of your Walls by half.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WATER_MILL_UPGRADE_DESCRIPTION">
-			<Text>City must be adjacent to a River.</Text>
+			<Text>An upgraded Water Mill can also be used for a finishing process on woollen cloth. [ICON_Resource_Sheep] Sheep, [ICON_Resource_Furs] Furs and [ICON_Resource_Cotton] Cotton resources gain +1 [ICON_Production] Production each. City must be adjacent to a River.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WAT_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
