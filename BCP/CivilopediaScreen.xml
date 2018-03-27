@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
 				 Name="Civilopedia">
-	<Container Anchor="C,C" Size="1024,1050" ConsumeMouse="1">
+	<Container ID="Main" Anchor="C,C" Size="1024,765" ConsumeMouse="1">
 
 		<Image Size="parent,40" Texture="Controls_SubHeader2.dds" />
 		<Grid Size="parent+10,parent+10" Offset="-5,-5" Style="WindowFrameTitle"/>

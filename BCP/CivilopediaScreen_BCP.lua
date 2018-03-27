@@ -14,6 +14,9 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
 
+-- Rise & Fall check
+local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+
 -- configuration options
 local bOptionModifiers:boolean = ( GlobalParameters.BCP_OPTION_MODIFIERS == 1 );
 local bOptionInternal:boolean = ( GlobalParameters.BCP_OPTION_INTERNAL == 1 );
@@ -125,7 +128,21 @@ function OnNextPageButton()
 	RefreshHistoryButtons();
 end
 
+
+-- Code from ReportScreen.lua
+function Resize()
+	local topPanelSizeY:number = 30;
+
+	--if m_debugFullHeight then
+		x,y = UIManager:GetScreenSizeVal();
+		Controls.Main:SetSizeY( y - topPanelSizeY );
+		Controls.Main:SetOffsetY( topPanelSizeY * 0.5 );
+	--end
+end
+
+
 function Initialize_BCP()
+	Resize();
 	Controls.BackPageButton:RegisterCallback( Mouse.eLClick, OnBackPageButton );
 	Controls.BackPageButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.NextPageButton:RegisterCallback( Mouse.eLClick, OnNextPageButton );
@@ -151,6 +168,7 @@ function ShowInternalPageInfo(page)
 	AddChapter("Internal page info", chapter_body);
 end
 
+-- these layouts will not show modifiers
 local tPagesToSkip:table = {
 	FrontPage = true,
 	Simple = true,
@@ -163,21 +181,22 @@ local tPagesToSkip:table = {
 	TableUnits = true,
 	OverviewMoments = true,
 	RandAgenda = true,
-}
+};
 
--- add internal info to all pages at once
+function ShowModifiers(page)
+	if not bOptionModifiers or tPagesToSkip[page.PageLayoutId] then return; end
+	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
+	local chapter_body = {};
+	table.insert(chapter_body, sImpact);
+	table.insert(chapter_body, sToolTip);
+	AddChapter("Modifiers", chapter_body);
+end
+
+-- add internal info and modifiers to all pages at once
 function ShowPage(page)
 	--print("...showing page layout", page.PageLayoutId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
-	
-	if not tPagesToSkip[ page.PageLayoutId ] then
-		local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
-		local chapter_body = {};
-		table.insert(chapter_body, sImpact);
-		table.insert(chapter_body, sToolTip);
-		if bOptionModifiers then AddChapter("Modifiers", chapter_body); end
-	end
-	
+	ShowModifiers(page);
 	ShowInternalPageInfo(page);
 end
 
@@ -188,6 +207,29 @@ end
 
 --------------------------------------------------------------
 -- EXCEPTIONS
+
+PageLayouts["Building" ] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+
+	local building = GameInfo.Buildings[page.PageId];
+	if building == nil then return; end
+	local buildingType = building.BuildingType;
+
+	-- add Regional Range info
+	if building.RegionalRange > 0 then
+		AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
+			s:AddSeparator();
+			s:AddLabel(string.format("%s [ICON_Ranged] %d", Locale.Lookup("LOC_UI_PEDIA_RANGE"), building.RegionalRange));
+			s:AddSeparator();
+		end);
+	end
+	
+	ShowModifiers(page);
+	ShowInternalPageInfo(page);
+	
+end
+
 
 PageLayouts["GreatPerson"] = function(page)
 	print("...showing page layout", page.PageLayoutId);
@@ -203,7 +245,7 @@ end
 
 
 -- show sources of GPP for GPs
-function AddSourcesOfGPPs(page)
+function ShowSourcesOfGPPs(page)
 	
 	local gpclass = nil;
 	for row in GameInfo.GreatPersonClasses() do
@@ -250,8 +292,41 @@ function AddSourcesOfGPPs(page)
 	table.insert(chapter_body, Locale.Lookup("LOC_UI_PEDIA_UNIQUE_ABILITY"));
 	for row in GameInfo.ModifierArguments() do
 		if row.Name == "GreatPersonClassType" and row.Value == gpclassType then
+			local sModifierId:string = row.ModifierId;
+			-- check if attached (for CSs)
+			for arg in GameInfo.ModifierArguments() do
+				if arg.Name == "ModifierId" and arg.Value == row.ModifierId then sModifierId = arg.ModifierId; end
+			end
+			local sText:string = sModifierId;
 			-- detect if this is the right one
-			table.insert(chapter_body, string.format("%d %s %s", 0, gpclassIcon, row.ModifierId));
+			local function DetectAndShowModifier(sObjectType:string, sTableModifiers:string, sTableObjects:string, sLocText:string)
+				for mod in GameInfo[sTableModifiers]() do
+					if mod.ModifierId == sModifierId or mod.ModifierID == sModifierId then
+						local sLocName:string = GameInfo[sTableObjects][ mod[sObjectType] ].Name;
+						if sObjectType == "CommemorationType" then sLocName = GameInfo[sTableObjects][ mod[sObjectType] ].CategoryDescription; end -- ofc, why all are named Name except for Commemoration? it has to be something different, just for fun
+						sText = Locale.Lookup( sLocName );
+						if sLocText then sText = sText..string.format(" (%s)", Locale.Lookup(sLocText)); end
+						return true;
+					end
+				end
+				return false;
+			end
+			if     DetectAndShowModifier("PolicyType",   "PolicyModifiers",   "Policies",  "LOC_POLICY_NAME")     then -- empty
+			elseif DetectAndShowModifier("BuildingType", "BuildingModifiers", "Buildings", "LOC_BUILDING_NAME")   then -- empty
+			elseif DetectAndShowModifier("BeliefType",   "BeliefModifiers",   "Beliefs",   "LOC_BELIEF_NAME")     then -- empty
+			elseif DetectAndShowModifier("TraitType",    "TraitModifiers",    "Traits",    "LOC_UI_PEDIA_TRAITS") then -- empty
+			elseif DetectAndShowModifier("UnitAbilityType", "UnitAbilityModifiers", "UnitAbilities", "LOC_PEDIA_UNITPROMOTIONS_PAGEGROUP_UNIT_ABILITIES_NAME") then -- empty
+			elseif bIsRiseFall and DetectAndShowModifier("CommemorationType", "CommemorationModifiers", "CommemorationTypes", "LOC_PEDIA_CONCEPTS_PAGE_DEDICATIONS_CHAPTER_CONTENT_TITLE") then -- empty
+			end
+			-- get amount
+			local tMod:table = RMA.FetchAndCacheData(row.ModifierId);
+			local sPoints:string = "";
+			if tMod.EffectType == "EFFECT_ADJUST_DISTRICT_GREAT_PERSON_POINTS" or
+			   tMod.EffectType == "EFFECT_ADJUST_GREAT_PERSON_POINTS" or
+			   tMod.EffectType == "EFFECT_ADJUST_CITY_HAPPINESS_GREAT_PERSON" then sPoints = "+"..tMod.Arguments.Amount.." ";
+			elseif tMod.EffectType == "EFFECT_ADJUST_GREAT_PEOPLE_POINTS_PER_KILL" then sPoints = tMod.Arguments.Amount.." ";
+			elseif tMod.EffectType == "EFFECT_ADJUST_GREAT_PERSON_POINTS_PERCENT" then sPoints = "+"..tMod.Arguments.Amount.."% "; end
+			table.insert(chapter_body, sPoints..string.format("%s %s", gpclassIcon, sText));
 		end
 	end
 	
@@ -272,7 +347,7 @@ PageLayouts["Unit"] = function(page)
 	
 	-- show sources of GPP for GPs
 	for row in GameInfo.GreatPersonClasses() do
-		if row.UnitType == page.PageId then AddSourcesOfGPPs(page); end
+		if row.UnitType == page.PageId then ShowSourcesOfGPPs(page); end
 	end
 	
 	-- start with page.PageId, it contains UnitType
