@@ -94,7 +94,7 @@ VALUES  -- generated from Excel
 --('WAT',NULL,'REFORMED_CHURCH',150,'HOLY_SITE',0,NULL),
 ('WATER_MILL','ENGINEERING',NULL,50,'CITY_CENTER',1,'GENERIC'),
 ('WORKSHOP','EDUCATION',NULL,115,'INDUSTRIAL_ZONE',1,'GENERIC'),
-('ZOO',NULL,'CONSERVATION',355,'ENTERTAINMENT_COMPLEX',0,'GENERIC');
+('ZOO',NULL,'CONSERVATION',355,'ENTERTAINMENT_COMPLEX',3,'GENERIC');
 
 -- DLC: Poland - remove upgrade if base building is not there
 DELETE FROM RBUConfig
@@ -156,10 +156,7 @@ WHERE BuildingType IN (
 	-- standard building upgrades
 	'BUILDING_ELECTRONICS_FACTORY_UPGRADE',
 	'BUILDING_FACTORY_UPGRADE',
-	'BUILDING_POWER_PLANT_UPGRADE',
-	--'BUILDING_SHRINE_UPGRADE',
-	'BUILDING_STADIUM_UPGRADE',
-	'BUILDING_ZOO_UPGRADE');
+	'BUILDING_POWER_PLANT_UPGRADE');
 
 -- Buildings that add Housing
 UPDATE Buildings SET Housing = 1
@@ -175,10 +172,8 @@ WHERE BuildingType IN (
 -- Buildings that add Amenities
 UPDATE Buildings
 SET Entertainment = 1
-WHERE BuildingType IN (
-	'BUILDING_AIRPORT_UPGRADE',
-	'BUILDING_STADIUM_UPGRADE');
-	
+WHERE BuildingType = 'BUILDING_AIRPORT_UPGRADE';
+
 -- Buildings enabled by Religion - removed
 -- 2018-03-05 Game only allows for 1 such building, so Upgrades cannot be built :(
 
@@ -190,17 +185,7 @@ INSERT INTO Building_YieldDistrictCopies (BuildingType, OldYieldType, NewYieldTy
 -- Unique Buildings' Upgrades
 -- TraitType will be inserted separately, there are only 5 buildings
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_ELECTRONICS_FACTORY' WHERE BuildingType = 'BUILDING_ELECTRONICS_FACTORY_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_STAVE_CHURCH'        WHERE BuildingType = 'BUILDING_STAVE_CHURCH_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TLACHTLI'            WHERE BuildingType = 'BUILDING_TLACHTLI_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_SUKIENNICE'          WHERE BuildingType = 'BUILDING_SUKIENNICE_UPGRADE';
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_BASILIKOI_PAIDES'    WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_PRASAT'              WHERE BuildingType = 'BUILDING_PRASAT_UPGRADE';
-
--- DLC: Poland
-INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
-SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'GREAT_PERSON_CLASS_MERCHANT', 1
-FROM Buildings
-WHERE BuildingType = 'BUILDING_SUKIENNICE';
 
 -- DLC: Macedon
 INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
@@ -212,12 +197,8 @@ INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
 SELECT CivUniqueBuildingType||'_UPGRADE', ReplacesBuildingType||'_UPGRADE'
 FROM BuildingReplaces
 WHERE CivUniqueBuildingType IN (
-	'BUILDING_STAVE_CHURCH',
 	'BUILDING_ELECTRONICS_FACTORY',
-	'BUILDING_TLACHTLI',
-	'BUILDING_BASILIKOI_PAIDES',
-	'BUILDING_PRASAT',
-	'BUILDING_SUKIENNICE');
+	'BUILDING_BASILIKOI_PAIDES');
 
 -- Connect Upgrades to Base Buildings
 INSERT INTO BuildingPrereqs (Building, PrereqBuilding)
@@ -249,11 +230,9 @@ WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
 VALUES  -- generated from Excel
 ('BUILDING_AIRPORT_UPGRADE', 'YIELD_PRODUCTION', 2),
-('BUILDING_ARENA_UPGRADE', 'YIELD_CULTURE', 2),
 ('BUILDING_ARMORY_UPGRADE', 'YIELD_CULTURE', 1),
 ('BUILDING_ARMORY_UPGRADE', 'YIELD_PRODUCTION', 2),
 --('BUILDING_BARRACKS_UPGRADE', 'YIELD_PRODUCTION', 1),
-('BUILDING_BROADCAST_CENTER_UPGRADE', 'YIELD_CULTURE', 2),
 --('BUILDING_CATHEDRAL_UPGRADE', 'YIELD_FAITH', 2),
 --('BUILDING_CATHEDRAL_UPGRADE', 'YIELD_FOOD', 2),
 --('BUILDING_DAR_E_MEHR_UPGRADE', 'YIELD_FAITH', 2),
@@ -275,51 +254,18 @@ VALUES  -- generated from Excel
 --('BUILDING_PAGODA_UPGRADE', 'YIELD_FAITH', 2),
 ('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_FOOD', 2),
 ('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_PRODUCTION', 2),
-('BUILDING_SHRINE_UPGRADE', 'YIELD_FAITH', 1),
 --('BUILDING_STABLE_UPGRADE', 'YIELD_PRODUCTION', 1),
-('BUILDING_STAVE_CHURCH_UPGRADE', 'YIELD_FAITH', 1),
-('BUILDING_STAVE_CHURCH_UPGRADE', 'YIELD_FOOD', 1),
 --('BUILDING_STUPA_UPGRADE', 'YIELD_FAITH', 2),
 --('BUILDING_STUPA_UPGRADE', 'YIELD_CULTURE', 1),
 --('BUILDING_STUPA_UPGRADE', 'YIELD_FOOD', 1),
 --('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_FAITH', 2),
 --('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_PRODUCTION', 1),
 --('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_GOLD', 2),
-('BUILDING_TEMPLE_UPGRADE', 'YIELD_FAITH', 2),
-('BUILDING_TEMPLE_UPGRADE', 'YIELD_FOOD', 1),
 --('BUILDING_WAT_UPGRADE', 'YIELD_FAITH', 2),
 --('BUILDING_WAT_UPGRADE', 'YIELD_PRODUCTION', 1),
 --('BUILDING_WAT_UPGRADE', 'YIELD_SCIENCE', 1),
-('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1),
-('BUILDING_ZOO_UPGRADE', 'YIELD_GOLD', 1);
+('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1);
 
--- DLC: Poland
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
-SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'YIELD_GOLD', 2
-FROM Buildings
-WHERE BuildingType = 'BUILDING_SUKIENNICE';
-
--- DLC: Aztecs
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
-SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_FAITH', 1
-FROM Buildings
-WHERE BuildingType = 'BUILDING_TLACHTLI';
--- DLC: Aztecs
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
-SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_CULTURE', 1
-FROM Buildings
-WHERE BuildingType = 'BUILDING_TLACHTLI';
-
--- DLC: Khmer
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
-SELECT 'BUILDING_PRASAT_UPGRADE', 'YIELD_FAITH', 2
-FROM Buildings
-WHERE BuildingType = 'BUILDING_PRASAT';
--- DLC: Khmer
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
-SELECT 'BUILDING_PRASAT_UPGRADE', 'YIELD_FOOD', 1
-FROM Buildings
-WHERE BuildingType = 'BUILDING_PRASAT';
 
 
 --------------------------------------------------------------
@@ -331,9 +277,7 @@ INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 ('BUILDING_BARRACKS_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION'),
 ('BUILDING_STABLE_UPGRADE', 'STABLEUPGRADE_ADDPASTUREPRODUCTION'),
 --('BUILDING_WATER_MILL_UPGRADE', 'WATERMILLUPGRADE_ADDPLANTATIONFOOD'),
-('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDQUARRYPRODUCTION'),
-('BUILDING_STAVE_CHURCH_UPGRADE', 'STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH'),
-('BUILDING_STADIUM_UPGRADE', 'STADIUMUPGRADE_BOOST_ALL_TOURISM');
+('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDQUARRYPRODUCTION');
 
 --INSERT INTO Types (Type, Kind)  -- hash value generated automatically
 --VALUES ('MODIFIER_XXX_MODIFIER', 'KIND_MODIFIER');
@@ -343,18 +287,10 @@ INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 
 -- New requirements
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
-('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL'),
-('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
+('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 	
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIRES_PLOT_HAS_PLANTATION'),
-('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIRES_PLOT_HAS_LUMBER_MILL');
-
-INSERT INTO Requirements (RequirementId, RequirementType)
-VALUES ('REQUIRES_PLOT_HAS_LUMBER_MILL', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
-	
-INSERT INTO RequirementArguments (RequirementId, Name, Value)
-VALUES ('REQUIRES_PLOT_HAS_LUMBER_MILL', 'ImprovementType', 'IMPROVEMENT_LUMBER_MILL');
+('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIRES_PLOT_HAS_PLANTATION');
 
 INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
 ('ELECTRONICSFACTORYUPGRADE_CULTURE', 'MODIFIER_BUILDING_YIELD_CHANGE', 0, 1, 'PLAYER_HAS_ELECTRICITYTECHNOLOGY_REQUIREMENTS', NULL),
@@ -362,10 +298,8 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 ('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_PASTURE_REQUIREMENTS'),
 --('WATERMILLUPGRADE_ADDPLANTATIONFOOD', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_PLANTATION_REQUIREMENTS'),
 ('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_QUARRY_REQUIREMENTS'),
-('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_LUMBER_MILL_REQUIREMENTS'),
 ('HANGARUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL),
-('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL),
-('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'MODIFIER_PLAYER_ADJUST_TOURISM', 0, 0, NULL, NULL);
+('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL);
 	
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- Electronics Factory Upgrade +2 Culture
@@ -384,14 +318,9 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- Workshop Upgrade +1 Production from Quarries
 ('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'Amount', '1'),
 ('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
--- Stave Church Upgrade +1 Faith from Lumber Mills
-('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'Amount', '1'),
-('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'YieldType', 'YIELD_FAITH'),
 -- Hangar & Airport +1 Air Slot
 ('HANGARUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1'),
-('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1'),
--- Stadium Upgrade +10% to all Tourism
-('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
+('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1');
 
 -- DLC: Macedon
 INSERT INTO BuildingModifiers (BuildingType, ModifierId)
@@ -399,22 +328,6 @@ SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION' 
 FROM Buildings
 WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
 
--- DLC: Khmer
-INSERT INTO BuildingModifiers (BuildingType, ModifierId)
-SELECT 'BUILDING_PRASAT_UPGRADE', 'PRASAT_UPGRADE_TOURISM'
-FROM Buildings
-WHERE BuildingType = 'BUILDING_PRASAT';
--- DLC: Khmer
-INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId)
-SELECT 'PRASAT_UPGRADE_TOURISM', 'MODIFIER_PLAYER_DISTRICT_ADJUST_TOURISM_CHANGE', 0, 0, NULL, NULL
-FROM Buildings
-WHERE BuildingType = 'BUILDING_PRASAT';
--- DLC: Khmer
-INSERT INTO ModifierArguments (ModifierId, Name, Value)
--- Prasat Upgrade +2 Tourism
-SELECT 'PRASAT_UPGRADE_TOURISM', 'Amount', '2'
-FROM Buildings
-WHERE BuildingType = 'BUILDING_PRASAT';
 
 
 --------------------------------------------------------------
@@ -601,6 +514,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 UPDATE Buildings SET Entertainment = 1, RegionalRange = 6
 WHERE BuildingType = 'BUILDING_BROADCAST_CENTER_UPGRADE';
 
+-- +2 Culture
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_BROADCAST_CENTER_UPGRADE', 'YIELD_CULTURE', 2);
+
 -- +1 GMP
 INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
 ('BUILDING_BROADCAST_CENTER_UPGRADE', 'GREAT_PERSON_CLASS_MUSICIAN', 1);
@@ -629,6 +546,10 @@ WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE';
 -- +2 Amenity with RR=9 effect (wider and stronger)
 UPDATE Buildings SET Entertainment = 2, RegionalRange = 9
 WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE';
+
+-- +2 Culture
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_FILM_STUDIO_UPGRADE', 'YIELD_CULTURE', 2);
 
 -- +2 GMP
 INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
@@ -889,6 +810,26 @@ INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
 ('BUILDING_MARKET_UPGRADE', 'YIELD_GOLD', 2);
 
 --------------------------------------------------------------
+-- SUKIENNICE (Poland DLC)
+
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_SUKIENNICE' WHERE BuildingType = 'BUILDING_SUKIENNICE_UPGRADE';
+
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
+('BUILDING_SUKIENNICE_UPGRADE', 'BUILDING_MARKET_UPGRADE');
+
+-- +2 Gold
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'YIELD_GOLD', 2
+FROM Buildings
+WHERE BuildingType = 'BUILDING_SUKIENNICE';
+
+-- +1 GMP
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
+SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'GREAT_PERSON_CLASS_MERCHANT', 1
+FROM Buildings
+WHERE BuildingType = 'BUILDING_SUKIENNICE';
+
+--------------------------------------------------------------
 -- BANK
 
 -- +2 Gold
@@ -975,6 +916,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
 --REQUIRES_CITY_HAS_INDUSTRIAL_ZONE
 */
 
+
 --------------------------------------------------------------
 -- 2018-03-27 Holy Site
 --------------------------------------------------------------
@@ -982,8 +924,214 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
 --------------------------------------------------------------
 -- SHRINE
 
+-- +1 Faith
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_SHRINE_UPGRADE', 'YIELD_FAITH', 1);
+
+-- +1 GPP
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
+('BUILDING_SHRINE_UPGRADE', 'GREAT_PERSON_CLASS_PROPHET', 1);
+
 --------------------------------------------------------------
 -- TEMPLE
+
+-- +2 Faith, +1 Food
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_TEMPLE_UPGRADE', 'YIELD_FAITH', 2),
+('BUILDING_TEMPLE_UPGRADE', 'YIELD_FOOD', 1);
+
+-- +1 GWR slot to Temple (EFFECT_ADJUST_EXTRA_GREAT_WORK_SLOTS)
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_TEMPLE_UPGRADE', 'TEMPLE_UPGRADE_ADD_GREAT_WORK_SLOTS');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('TEMPLE_UPGRADE_ADD_GREAT_WORK_SLOTS', 'MODIFIER_SINGLE_CITY_ADJUST_EXTRA_GREAT_WORK_SLOTS', 1, 1, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('TEMPLE_UPGRADE_ADD_GREAT_WORK_SLOTS', 'BuildingType',      'BUILDING_TEMPLE'),
+('TEMPLE_UPGRADE_ADD_GREAT_WORK_SLOTS', 'GreatWorkSlotType', 'GREATWORKSLOT_RELIC'),
+('TEMPLE_UPGRADE_ADD_GREAT_WORK_SLOTS', 'Amount',            '1');
+
+--------------------------------------------------------------
+-- STAVE_CHURCH
+
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_STAVE_CHURCH' WHERE BuildingType = 'BUILDING_STAVE_CHURCH_UPGRADE';
+
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
+('BUILDING_STAVE_CHURCH_UPGRADE', 'BUILDING_TEMPLE_UPGRADE');
+
+-- +2 Faith, +1 Food
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_STAVE_CHURCH_UPGRADE', 'YIELD_FAITH', 2),
+('BUILDING_STAVE_CHURCH_UPGRADE', 'YIELD_FOOD', 1);
+
+-- +1 GWR slot to Stave Church (EFFECT_ADJUST_EXTRA_GREAT_WORK_SLOTS)
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_STAVE_CHURCH_UPGRADE', 'STAVE_CHURCH_UPGRADE_ADD_GREAT_WORK_SLOTS');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('STAVE_CHURCH_UPGRADE_ADD_GREAT_WORK_SLOTS', 'MODIFIER_SINGLE_CITY_ADJUST_EXTRA_GREAT_WORK_SLOTS', 1, 1, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('STAVE_CHURCH_UPGRADE_ADD_GREAT_WORK_SLOTS', 'BuildingType',      'BUILDING_STAVE_CHURCH'),
+('STAVE_CHURCH_UPGRADE_ADD_GREAT_WORK_SLOTS', 'GreatWorkSlotType', 'GREATWORKSLOT_RELIC'),
+('STAVE_CHURCH_UPGRADE_ADD_GREAT_WORK_SLOTS', 'Amount',            '1');
+
+-- +1 Faith from Lumber Mills
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_STAVE_CHURCH_UPGRADE', 'STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_LUMBER_MILL_REQUIREMENTS');
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'YieldType', 'YIELD_FAITH'),
+('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'Amount',    '1');
+
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
+	
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIRES_PLOT_HAS_LUMBER_MILL');
+
+INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+('REQUIRES_PLOT_HAS_LUMBER_MILL', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
+	
+INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+('REQUIRES_PLOT_HAS_LUMBER_MILL', 'ImprovementType', 'IMPROVEMENT_LUMBER_MILL');
+
+--------------------------------------------------------------
+-- PRASAT (Khmer DLC)
+
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_PRASAT' WHERE BuildingType = 'BUILDING_PRASAT_UPGRADE';
+
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'BUILDING_TEMPLE_UPGRADE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+-- +2 Faith
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'YIELD_FAITH', 2
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+-- +1 Food
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'YIELD_FOOD', 1
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+-- +1 GWR slot to Prasat (EFFECT_ADJUST_EXTRA_GREAT_WORK_SLOTS)
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) 
+SELECT 'BUILDING_PRASAT_UPGRADE', 'PRASAT_UPGRADE_ADD_GREAT_WORK_SLOTS'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) 
+SELECT 'PRASAT_UPGRADE_ADD_GREAT_WORK_SLOTS', 'MODIFIER_SINGLE_CITY_ADJUST_EXTRA_GREAT_WORK_SLOTS', 1, 1, NULL, NULL
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) 
+SELECT 'PRASAT_UPGRADE_ADD_GREAT_WORK_SLOTS', 'BuildingType', 'BUILDING_PRASAT'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) 
+SELECT 'PRASAT_UPGRADE_ADD_GREAT_WORK_SLOTS', 'GreatWorkSlotType', 'GREATWORKSLOT_RELIC'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) 
+SELECT 'PRASAT_UPGRADE_ADD_GREAT_WORK_SLOTS', 'Amount', '1'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+-- +2 Tourism
+INSERT INTO BuildingModifiers (BuildingType, ModifierId)
+SELECT 'BUILDING_PRASAT_UPGRADE', 'PRASAT_UPGRADE_TOURISM'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId)
+SELECT 'PRASAT_UPGRADE_TOURISM', 'MODIFIER_PLAYER_DISTRICT_ADJUST_TOURISM_CHANGE', 0, 0, NULL, NULL
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+SELECT 'PRASAT_UPGRADE_TOURISM', 'Amount', '2'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_PRASAT';
+
+
+--------------------------------------------------------------
+-- 2018-03-27 Entertainment Complex
+--------------------------------------------------------------
+
+--------------------------------------------------------------
+-- ARENA
+
+-- +2 Culture
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_ARENA_UPGRADE', 'YIELD_CULTURE', 2);
+
+--------------------------------------------------------------
+-- TLACHTLI (Aztecs DLC)
+
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TLACHTLI' WHERE BuildingType = 'BUILDING_TLACHTLI_UPGRADE';
+
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
+SELECT 'BUILDING_TLACHTLI_UPGRADE', 'BUILDING_ARENA_UPGRADE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_TLACHTLI';
+
+-- +1 Amenity
+UPDATE Buildings SET Entertainment = 1
+WHERE BuildingType = 'BUILDING_TLACHTLI_UPGRADE';
+
+-- +2 Culture
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_CULTURE', 2
+FROM Buildings
+WHERE BuildingType = 'BUILDING_TLACHTLI';
+
+-- +1 Faith
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
+SELECT 'BUILDING_TLACHTLI_UPGRADE', 'YIELD_FAITH', 1
+FROM Buildings
+WHERE BuildingType = 'BUILDING_TLACHTLI';
+
+--------------------------------------------------------------
+-- ZOO
+
+-- +3 Tourism
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_ZOO_UPGRADE', 'ZOO_UPGRADE_TOURISM');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('ZOO_UPGRADE_TOURISM', 'MODIFIER_PLAYER_DISTRICT_ADJUST_TOURISM_CHANGE', 0, 0, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('ZOO_UPGRADE_TOURISM', 'Amount', '3');
+
+--------------------------------------------------------------
+-- STADIUM
+
+-- +1 Amenity, RR=9
+UPDATE Buildings SET Entertainment = 1, RegionalRange = 9 
+WHERE BuildingType = 'BUILDING_STADIUM_UPGRADE';
+
+-- +10% to All Tourism
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_STADIUM_UPGRADE', 'STADIUMUPGRADE_BOOST_ALL_TOURISM');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'MODIFIER_PLAYER_ADJUST_TOURISM', 0, 0, NULL, NULL);
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
+
 
 --------------------------------------------------------------
 -- AI

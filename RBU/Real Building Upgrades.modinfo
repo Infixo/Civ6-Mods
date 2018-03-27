@@ -22,7 +22,6 @@
     </UpdateDatabase>
     <UpdateText id="RBU_Text">
       <File>Text/RealBuildingUpgrades_Text.xml</File>
-      <File>Text/RealBuildingUpgrades_Text_fr_FR.xml</File>
     </UpdateText>
     <ImportFiles id="RBU_Imports">
       <File>Icons/RBU_Buildings32.dds</File>
@@ -81,6 +80,5 @@
     <File>RiseFall/RealBuildingUpgradesRF.sql</File>
     <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
     <File>Text/RealBuildingUpgrades_Text.xml</File>
-    <File>Text/RealBuildingUpgrades_Text_fr_FR.xml</File>
   </Files>
 </Mod>
