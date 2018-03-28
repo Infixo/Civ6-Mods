@@ -183,9 +183,20 @@ local tPagesToSkip:table = {
 	RandAgenda = true,
 };
 
+-- we assume Player as the default modifier owner, the below with pass a Capital City to avoid warnings in the log file
+local tPagesWithCityOwner:table = {
+	District = true,
+	Building = true,
+}
+
 function ShowModifiers(page)
 	if not bOptionModifiers or tPagesToSkip[page.PageLayoutId] then return; end
-	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, Game.GetLocalPlayer(), nil);
+	-- to avoid warnings in the log I should pass either a Player ID or a city ID
+	local ePlayerID:number = Game.GetLocalPlayer();
+	local iCityID = Players[ePlayerID]:GetCities():GetCapitalCity();
+	if iCityID then iCityID = iCityID:GetID(); end -- trick to avoid double call
+	if tPagesWithCityOwner[page.PageLayoutId] == nil then iCityID = nil; end
+	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect(page.PageLayoutId, page.PageId, ePlayerID, iCityID);
 	local chapter_body = {};
 	table.insert(chapter_body, sImpact);
 	table.insert(chapter_body, sToolTip);
@@ -216,11 +227,41 @@ PageLayouts["Building" ] = function(page)
 	if building == nil then return; end
 	local buildingType = building.BuildingType;
 
-	-- add Regional Range info
+	-- additional info not shown in original pedia
+	local tMoreInfo:table = {};
+
+	-- Regional Range
 	if building.RegionalRange > 0 then
+		table.insert(tMoreInfo, string.format("%s [ICON_Ranged] %d", Locale.Lookup("LOC_UI_PEDIA_RANGE"), building.RegionalRange));
+	end
+	
+	-- Theming Bonus
+	for row in GameInfo.Building_GreatWorks() do
+		if row.BuildingType == buildingType and row.ThemingBonusDescription then
+			table.insert(tMoreInfo, Locale.Lookup(row.ThemingBonusDescription));
+		end
+	end
+	
+	-- Per Era yield change 
+	for row in GameInfo.Building_YieldsPerEra() do
+		if row.BuildingType == buildingType then
+			local yield:table = GameInfo.Yields[row.YieldType];
+			table.insert(tMoreInfo, string.format("%s: %+d %s %s", Locale.Lookup("LOC_ERA_NAME"), row.YieldChange, yield.IconString, Locale.Lookup(yield.Name)));
+		end
+	end
+	
+	-- R&F gov tier
+	if building.GovernmentTierRequirement then
+		for row in GameInfo.Governments() do
+			if row.Tier == building.GovernmentTierRequirement then table.insert(tMoreInfo, Locale.Lookup("LOC_TOOLTIP_UNLOCKS_GOVERNMENT", row.Name)); end
+		end
+	end
+
+	-- Right Column
+	if #tMoreInfo > 0 then
 		AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
 			s:AddSeparator();
-			s:AddLabel(string.format("%s [ICON_Ranged] %d", Locale.Lookup("LOC_UI_PEDIA_RANGE"), building.RegionalRange));
+			for _,label in ipairs(tMoreInfo) do s:AddLabel(label); end
 			s:AddSeparator();
 		end);
 	end
