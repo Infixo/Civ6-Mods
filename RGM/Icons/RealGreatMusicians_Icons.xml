@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RealGreatMusicians_Icons -->
+<!-- 2017-04-08: Created by Infixo, added Kraftwerk -->
+<!-- 2018-02-14: Added Louis Armstrong and The Beatles -->
+<!-- 2018-02-20: Added Depeche Mode, Michael Jackson and Nirvana -->
+<!-- 2018-03-09: Added Elvis Presley, John Williams, Led Zeppelin, Pink Floyd -->
+
+<GameData>
+
+<IconTextureAtlases>
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_KRAFTWERK"       IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMKraftwerk160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMLouisArmstrong160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_THE_BEATLES"     IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMTheBeatles160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE"    IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMDepecheMode160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMMichaelJackson160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NIRVANA"         IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMNirvana160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY"   IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMElvisPresley160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS"   IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMJohnWilliams160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN"    IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMLedZeppelin160.dds" />
+	<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD"      IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGMPinkFloyd160.dds" />
+</IconTextureAtlases>
+
+<IconDefinitions>
+	<!-- Kraftwerk -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_KRAFTWERK" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_KRAFTWERK" Index="0" />
+	<Row Name="ICON_GREATWORK_KRAFTWERK_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_KRAFTWERK_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Louis Armstrong -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" Index="0" />
+	<Row Name="ICON_GREATWORK_LOUIS_ARMSTRONG_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_LOUIS_ARMSTRONG_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- The Beatles -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_THE_BEATLES" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_THE_BEATLES" Index="0" />
+	<Row Name="ICON_GREATWORK_THE_BEATLES_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_THE_BEATLES_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Depeche Mode -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE" Index="0" />
+	<Row Name="ICON_GREATWORK_DEPECHE_MODE_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_DEPECHE_MODE_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Michael Jackson -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" Index="0" />
+	<Row Name="ICON_GREATWORK_MICHAEL_JACKSON_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_MICHAEL_JACKSON_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Nirvana -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_NIRVANA" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NIRVANA" Index="0" />
+	<Row Name="ICON_GREATWORK_NIRVANA_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_NIRVANA_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Elvis Presley -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY" Index="0" />
+	<Row Name="ICON_GREATWORK_ELVIS_PRESLEY_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_ELVIS_PRESLEY_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- John Williams -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS" Index="0" />
+	<Row Name="ICON_GREATWORK_JOHN_WILLIAMS_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_JOHN_WILLIAMS_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Led Zeppelin -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN" Index="0" />
+	<Row Name="ICON_GREATWORK_LED_ZEPPELIN_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_LED_ZEPPELIN_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<!-- Pink Floyd -->
+	<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD" Index="0" />
+	<Row Name="ICON_GREATWORK_PINK_FLOYD_1" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+	<Row Name="ICON_GREATWORK_PINK_FLOYD_2" Atlas="ICON_ATLAS_GREATWORKS" Index="1"/>
+</IconDefinitions>
+
+</GameData>

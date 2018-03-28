@@ -1,0 +1,19 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# ModBuddy Solution File, Format Version 12.00
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "Real Great Musicians", "Real Great Musicians.civ6proj", "{C1A328FF-3F59-4449-9712-AEE2885365D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Civ6 = Default|Civ6
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1A328FF-3F59-4449-9712-AEE2885365D4}.Default|Civ6.ActiveCfg = Default|Civ6
+		{C1A328FF-3F59-4449-9712-AEE2885365D4}.Default|Civ6.Build.0 = Default|Civ6
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

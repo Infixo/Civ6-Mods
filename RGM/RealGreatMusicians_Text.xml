@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RealGreatMusicians_Text -->
+<!-- 2017-04-08: Created by Infixo, added Kraftwerk -->
+<!-- 2018-02-14: Added Louis Armstrong and The Beatles -->
+<!-- 2018-02-20: Added Depeche Mode, Michael Jackson and Nirvana -->
+<!-- 2018-03-09: Added Elvis Presley, John Williams, Led Zeppelin, Pink Floyd -->
+<!-- Biographies are in Civilopedia: LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_name_of_person_CHAPTER_HISTORY_PARA_N, where N=1..9 -->
+
+<GameData>
+
+<BaseGameText>
+
+	<!-- Kraftwerk -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_KRAFTWERK_NAME">
+		<Text>Kraftwerk</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_KRAFTWERK_1_NAME">
+		<Text>Autobahn</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_KRAFTWERK_2_NAME">
+		<Text>Trans-Europe Express</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_KRAFTWERK_CHAPTER_HISTORY_PARA_1">
+		<Text>Kraftwerk (tr. "power station") is a German electronic music band formed by Ralf Hütter and Florian Schneider in 1969 in Düsseldorf. In the 1970s, they were among the first successful pop acts to popularize electronic music and are widely considered to be innovators and pioneers of the genre.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_KRAFTWERK_CHAPTER_HISTORY_PARA_2">
+		<Text>On commercially successful albums such as Autobahn (1974), Trans-Europe Express (1977), and The Man-Machine (1978), they developed a distinctive style of so-called "robot pop" that combined electronic music with pop melodies, sparse arrangements, and repetitive rhythms. They released their final album Tour de France Soundtracks in 2003. Founding member Schneider departed in 2008.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_KRAFTWERK_CHAPTER_HISTORY_PARA_3">
+		<Text>Kraftwerk have exerted a lasting and profound influence across many genres of modern music, including synthpop, hip hop, ambient, post-punk, techno, and club music, and have inspired a wide and diverse range of artists. According to The Observer, "no other band since the Beatles has given so much to pop culture." According to music journalist Neil McCormick, Kraftwerk might be "the most influential group in pop history." In January 2014, the Recording Academy honored Kraftwerk with a Grammy Lifetime Achievement Award.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_KRAFTWERK_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Louis Armstrong -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG_NAME">
+		<Text>Louis Armstrong</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_LOUIS_ARMSTRONG_1_NAME">
+		<Text>What a Wonderful World</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_LOUIS_ARMSTRONG_2_NAME">
+		<Text>When the Saints Go Marching In</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG_CHAPTER_HISTORY_PARA_1">
+		<Text>Louis Daniel Armstrong (1901-1971) was an American trumpeter, composer, singer and occasional actor who was one of the most influential figures in jazz. His career spanned five decades, from the 1920s to the 1960s, and different eras in the history of jazz. In 2017, he was inducted into the Rhythm & Blues Hall of Fame.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG_CHAPTER_HISTORY_PARA_2">
+		<Text>Armstrong was born and raised in New Orleans. Coming to prominence in the 1920s as an "inventive" trumpet and cornet player, Armstrong was a foundational influence in jazz, shifting the focus of the music from collective improvisation to solo performance. With his instantly recognizable gravelly voice, Armstrong was also an influential singer, demonstrating great dexterity as an improviser, bending the lyrics and melody of a song for expressive purposes.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG_CHAPTER_HISTORY_PARA_3">
+		<Text>Armstrong's influence extends well beyond jazz, and by the end of his career in the 1960s, he was widely regarded as a profound influence on popular music in general. Armstrong was one of the first truly popular African-American entertainers to "cross over", whose skin color was secondary to his music in an America that was extremely racially divided at the time. His artistry and personality allowed him access to the upper echelons of American society, then highly restricted for black men.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- The Beatles  -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_THE_BEATLES_NAME">
+		<Text>The Beatles</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_THE_BEATLES_1_NAME">
+		<Text>Hey Jude</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_THE_BEATLES_2_NAME">
+		<Text>Let It Be</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_THE_BEATLES_CHAPTER_HISTORY_PARA_1">
+		<Text>The Beatles were an English rock band formed in Liverpool in 1960. With members John Lennon, Paul McCartney, George Harrison and Ringo Starr, they became widely regarded as the foremost and most influential music band. Rooted in skiffle, beat and 1950s rock and roll, the Beatles later experimented with several musical styles, ranging from pop ballads and Indian music to psychedelia and hard rock, often incorporating classical elements and unconventional recording techniques in innovative ways.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_THE_BEATLES_CHAPTER_HISTORY_PARA_2">
+		<Text>In 1963 their enormous popularity first emerged as "Beatlemania"; as the group's music grew in sophistication, led by primary songwriters Lennon and McCartney, the band were integral to pop music's evolution into an art form and to the development of the counterculture of the 1960s.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_THE_BEATLES_CHAPTER_HISTORY_PARA_3">
+		<Text>The Beatles are the best-selling band in history, with estimated sales of over 800 million physical and digital albums worldwide. They have had more number-one albums on the British charts and sold more singles in the UK than any other act. They are also the best-selling music artists in the United States, with 178 million certified units. The group was inducted into the Rock and Roll Hall of Fame in 1988, and all four main members were inducted individually from 1994 to 2015.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_THE_BEATLES_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Depeche Mode -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE_NAME">
+		<Text>Depeche Mode</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_DEPECHE_MODE_1_NAME">
+		<Text>Enjoy the Silence</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_DEPECHE_MODE_2_NAME">
+		<Text>Personal Jesus</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE_CHAPTER_HISTORY_PARA_1">
+		<Text>Depeche Mode are an English electronic band formed in Basildon, Essex in 1980. The group consists of founders Dave Gahan, Martin Gore, and Andy Fletcher. In 1982, Alan Wilder officially joined the band establishing a line up that would continue for the next 13 years.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE_CHAPTER_HISTORY_PARA_2">
+		<Text>Depeche Mode released their debut album Speak & Spell in 1981, bringing the band onto the British new wave scene. The band's last albums of the 1980s, Black Celebration and Music for the Masses, established them as a dominant force within the electronic music scene. A highlight of this era was the band's June 1988 concert at the Pasadena Rose Bowl, where they drew a crowd in excess of 60,000 people. In the new decade, Depeche Mode released Violator, an international mainstream success.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE_CHAPTER_HISTORY_PARA_3">
+		<Text>Depeche Mode have been recognised as making a significant impact on the development of various popular music genres, leading to many artists citing them as an inspiration, and are frequently praised by the music press. They became "the quintessential eighties techno-pop band" according to Rolling Stone and AllMusic. Depeche Mode were ranked No. 2 on Electronic Music Realm's list of The 100 Greatest Artists of Electronic Music.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Michael Jackson -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON_NAME">
+		<Text>Michael Jackson</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_MICHAEL_JACKSON_1_NAME">
+		<Text>Billie Jean</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_MICHAEL_JACKSON_2_NAME">
+		<Text>Smooth Criminal</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON_CHAPTER_HISTORY_PARA_1">
+		<Text>Michael Joseph Jackson (1958–2009) was an American singer, songwriter, and dancer. Dubbed the "King of Pop", he was one of the most popular entertainers in the world, and was the best-selling music artist during the year of his death. Jackson's contributions to music, dance, and fashion along with his publicized personal life made him a global figure in popular culture for over four decades.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON_CHAPTER_HISTORY_PARA_2">
+		<Text>Michael made his professional debut in 1964 with his elder brothers as a member of the Jackson 5. He began his solo career in 1971 while at Motown Records. In the early 1980s, Jackson became a dominant figure in popular music. Jackson's 1987 album Bad became the first album to have five number-one singles in the nation. Thriller is the best-selling album of all time, with estimated sales of over 66 million copies worldwide.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON_CHAPTER_HISTORY_PARA_3">
+		<Text>He is one of the few artists to have been inducted into the Rock and Roll Hall of Fame twice, and was also inducted into the Songwriters Hall of Fame and the Dance Hall of Fame as the only dancer from pop and rock music. His other achievements include multiple Guinness World Records including the Most Successful Entertainer of All Time. Jackson won hundreds of awards, making him the most awarded recording artist in the history of popular music.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Nirvana -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_NIRVANA_NAME">
+		<Text>Nirvana</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_NIRVANA_1_NAME">
+		<Text>Smells Like Teen Spirit</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_NIRVANA_2_NAME">
+		<Text>Heart-Shaped Box</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_NIRVANA_CHAPTER_HISTORY_PARA_1">
+		<Text>Nirvana was an American rock band formed by singer and guitarist Kurt Cobain and bassist Krist Novoselic in Aberdeen, Washington, in 1987. Nirvana went through a succession of drummers, the longest-lasting being Dave Grohl, who joined in 1990. Despite releasing only three full-length studio albums in their seven-year career, Nirvana has come to be regarded as one of the most influential and important alternative bands in history.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_NIRVANA_CHAPTER_HISTORY_PARA_2">
+		<Text>In the late 1980s, Nirvana established itself as part of the Seattle grunge scene, releasing its first album, Bleach. They developed a sound that relied on dynamic contrasts, often between quiet verses and loud, heavy choruses. After signing to DGC Records, Nirvana found unexpected success with "Smells Like Teen Spirit", the first single from the band's second album Nevermind (1991). Nirvana's sudden success widely popularized alternative rock, and Cobain found himself referred to in the media as the "spokesman of a generation".</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_NIRVANA_CHAPTER_HISTORY_PARA_3">
+		<Text>Nirvana's active career ended following the death of Cobain in 1994. Since its debut, the band has sold over 75 million records worldwide, making them one of the best-selling bands of all time. Nirvana was inducted into the Rock and Roll Hall of Fame in 2014, in its first year of eligibility. Nirvana's contributions to music have also received recognition, with Nevermind and "Smells Like Teen Spirit" consistently being ranked as one of the greatest albums and songs of all time, respectively.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_NIRVANA_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Elvis Presley -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY_NAME">
+		<Text>Elvis Presley</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_ELVIS_PRESLEY_1_NAME">
+		<Text>Jailhouse Rock</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_ELVIS_PRESLEY_2_NAME">
+		<Text>Can't Help Falling In Love</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY_CHAPTER_HISTORY_PARA_1">
+		<Text>Elvis Aaron Presley (1935-1977) was an American singer, musician, and actor. Regarded as one of the most significant cultural icons of the 20th century, he is often referred to as the "King of Rock and Roll" or simply "the King". His name, image, and voice are instantly recognizable around the globe. In polls and surveys, he is recognized as one of the most important popular music artists and influential Americans.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY_CHAPTER_HISTORY_PARA_2">
+		<Text>Presley's music career began in 1954. Accompanied by guitarist Scotty Moore and bassist Bill Black, Presley was a pioneer of rockabilly, an uptempo, backbeat-driven fusion of country music and rhythm and blues. In 1955, drummer D.J. Fontana joined to complete the lineup of Presley's classic quartet. His single, "Heartbreak Hotel", was released in January 1956 and became a number one hit in the United States. He quickly became the leading figure of the newly popular sound of rock and roll.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY_CHAPTER_HISTORY_PARA_3">
+		<Text>Presley is one of the most celebrated and influential musicians of the 20th century. Commercially successful in many genres, including pop, country, blues, and gospel, he is the best-selling solo artist in the history of recorded music (sales estimates ranging from 600 million to 1 billion). He won three competitive Grammys, received the Grammy Lifetime Achievement Award at age 36, and has been inducted into multiple music halls of fame. His total of 197 album certification awards (including one diamond award), far outpaces the Beatles' second-best 122.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- John Williams -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS_NAME">
+		<Text>John Williams</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_JOHN_WILLIAMS_1_NAME">
+		<Text>Star Wars Main Theme</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_JOHN_WILLIAMS_2_NAME">
+		<Text>The Raiders March</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS_CHAPTER_HISTORY_PARA_1">
+		<Text>John Towner Williams (1932-) is an American composer, conductor, and pianist. With a career spanning over six decades, he has composed some of the most popular and recognizable film scores in cinematic history, including the Star Wars series, Jaws, Close Encounters of the Third Kind, Superman, E.T. the Extra-Terrestrial, the Indiana Jones series, the first two Home Alone films, the first two Jurassic Park films, Schindler's List, and the first three Harry Potter films.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS_CHAPTER_HISTORY_PARA_2">
+		<Text>While skilled in a variety of 20th century compositional idioms, Williams's most familiar style may be described as a form of neoromanticism, inspired by the late 19th century's large-scale orchestral music — in the style of Tchaikovsky or Richard Wagner's compositions and their concept of leitmotif — that inspired his film music predecessors.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS_CHAPTER_HISTORY_PARA_3">
+		<Text>Williams has won 24 Grammy Awards, seven British Academy Film Awards, five Academy Awards, and four Golden Globe Awards. With 51 Academy Award nominations, Williams is the second most-nominated individual, after Walt Disney. In 2005, the American Film Institute selected Williams's score to 1977's Star Wars as the greatest American film score of all time. The soundtrack to Star Wars was additionally preserved by the Library of Congress into the National Recording Registry, for being "culturally, historically, or aesthetically significant".</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Led Zeppelin -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN_NAME">
+		<Text>Led Zeppelin</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_LED_ZEPPELIN_1_NAME">
+		<Text>Whole Lotta Love</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_LED_ZEPPELIN_2_NAME">
+		<Text>Kashmir</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN_CHAPTER_HISTORY_PARA_1">
+		<Text>Led Zeppelin were an English rock band formed in London in 1968. The group consisted of guitarist Jimmy Page, singer Robert Plant, bassist and keyboardist John Paul Jones, and drummer John Bonham. The band's heavy, guitar-driven sound has led them to be cited as one of the progenitors of heavy metal. Their style drew from a wide variety of influences, including blues, psychedelia, and folk music.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN_CHAPTER_HISTORY_PARA_2">
+		<Text>Although the group was initially unpopular with critics, they achieved significant commercial success with albums such as Led Zeppelin (1969), Led Zeppelin II (1969), Led Zeppelin III (1970), Led Zeppelin IV (1971), Houses of the Holy (1973), Physical Graffiti (1975), Presence (1976) and In Through the Out Door (1979). Their fourth album, which features the song "Stairway to Heaven", is among the most popular and influential works in rock music, and it helped to secure the group's popularity.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN_CHAPTER_HISTORY_PARA_3">
+		<Text>Led Zeppelin are widely considered one of the most successful, innovative, and influential rock groups in history. They are one of the best-selling music artists in the history of audio recording; various sources estimate the group's record sales at 200 to 300 million units worldwide. Each of their nine studio albums placed in the top 10 of the Billboard album chart and six reached the number-one spot. They achieved eight consecutive UK number-one albums. They were inducted into the Rock and Roll Hall of Fame in 1995; the museum's biography of the band states that they were "as influential" during the 1970s as the Beatles were during the 1960s.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+	<!-- Pink Floyd -->
+	<Row Tag="LOC_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD_NAME">
+		<Text>Pink Floyd</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_PINK_FLOYD_1_NAME">
+		<Text>Time</Text>
+	</Row>
+	<Row Tag="LOC_GREATWORK_PINK_FLOYD_2_NAME">
+		<Text>Wish You Were Here</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD_CHAPTER_HISTORY_PARA_1">
+		<Text>Pink Floyd were an English rock band formed in London in 1965. They achieved international acclaim with their progressive and psychedelic music. Distinguished by their use of philosophical lyrics, sonic experimentation, extended compositions, and elaborate live shows, they are one of the most commercially successful and influential groups in popular music history. They were inducted into the American Rock and Roll Hall of Fame in 1996 and the UK Music Hall of Fame in 2005.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD_CHAPTER_HISTORY_PARA_2">
+		<Text>Pink Floyd were founded by students Syd Barrett on guitar and lead vocals, Nick Mason on drums, Roger Waters on bass and vocals, and Richard Wright on keyboards and vocals. Under Barrett's leadership they released two charting singles and a successful debut album, The Piper at the Gates of Dawn (1967). Guitarist and vocalist David Gilmour joined in December 1967; Barrett left in April 1968 due to deteriorating mental health. Waters became the band's primary lyricist and conceptual leader, devising the concepts behind their albums. The Dark Side of the Moon (1973) and The Wall (1979) became two of the best-selling albums of all time.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD_CHAPTER_HISTORY_PARA_3">
+		<Text>The music of Pink Floyd influenced numerous artists; David Bowie called Barrett a significant inspiration, and The Edge of U2 bought his first delay pedal after hearing the opening guitar chords to "Dogs" from Animals. Other bands and artists who cite them as an influence include Queen, Tool, Radiohead, Steven Wilson, Kraftwerk, Marillion, Queensrÿche, Nine Inch Nails, the Orb and the Smashing Pumpkins. Pink Floyd were an influence on the neo-progressive rock subgenre which emerged in the 1980s.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_GREATPEOPLE_PAGE_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD_CHAPTER_HISTORY_PARA_4">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+</BaseGameText>
+
+</GameData>

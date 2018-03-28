@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Real Great Musicians -->
+<!-- 2017-04-08: Created by Infixo, added Kraftwerk -->
+<!-- 2018-02-14: Added Louis Armstrong and The Beatles -->
+<!-- 2018-02-20: Added Depeche Mode, Michael Jackson and Nirvana -->
+<!-- 2018-03-09: Added Elvis Presley, John Williams, Led Zeppelin, Pink Floyd -->
+
+<GameInfo>
+
+<Types>
+	<!-- Great Person Individuals -->
+	<Row Type="GREAT_PERSON_INDIVIDUAL_KRAFTWERK"       Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_THE_BEATLES"     Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE"    Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_NIRVANA"         Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY"   Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS"   Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN"    Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<Row Type="GREAT_PERSON_INDIVIDUAL_PINK_FLOYD"      Kind="KIND_GREAT_PERSON_INDIVIDUAL"/>
+	<!-- Great Works -->
+	<Row Type="GREATWORK_KRAFTWERK_1"       Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_KRAFTWERK_2"       Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_LOUIS_ARMSTRONG_1" Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_LOUIS_ARMSTRONG_2" Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_THE_BEATLES_1"     Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_THE_BEATLES_2"     Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_DEPECHE_MODE_1"    Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_DEPECHE_MODE_2"    Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_MICHAEL_JACKSON_1" Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_MICHAEL_JACKSON_2" Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_NIRVANA_1"         Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_NIRVANA_2"         Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_ELVIS_PRESLEY_1"   Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_ELVIS_PRESLEY_2"   Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_JOHN_WILLIAMS_1"   Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_JOHN_WILLIAMS_2"   Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_LED_ZEPPELIN_1"    Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_LED_ZEPPELIN_2"    Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_PINK_FLOYD_1"      Kind="KIND_GREATWORK"/>
+	<Row Type="GREATWORK_PINK_FLOYD_2"      Kind="KIND_GREATWORK"/>
+</Types>
+
+<GreatPersonIndividuals>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_KRAFTWERK"       Name="LOC_GREAT_PERSON_INDIVIDUAL_KRAFTWERK_NAME"       GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_ATOMIC" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" Name="LOC_GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG_NAME" GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_ATOMIC" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_THE_BEATLES"     Name="LOC_GREAT_PERSON_INDIVIDUAL_THE_BEATLES_NAME"     GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_ATOMIC" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY"   Name="LOC_GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY_NAME"   GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_ATOMIC" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN"    Name="LOC_GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN_NAME"    GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_ATOMIC" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE"    Name="LOC_GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE_NAME"    GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_INFORMATION" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" Name="LOC_GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON_NAME" GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_INFORMATION" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_NIRVANA"         Name="LOC_GREAT_PERSON_INDIVIDUAL_NIRVANA_NAME"         GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_INFORMATION" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS"   Name="LOC_GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS_NAME"   GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_INFORMATION" ActionCharges="0" Gender="M"/>
+	<Row GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_PINK_FLOYD"      Name="LOC_GREAT_PERSON_INDIVIDUAL_PINK_FLOYD_NAME"      GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" EraType="ERA_INFORMATION" ActionCharges="0" Gender="M"/>
+</GreatPersonIndividuals>
+	
+<GreatWorks>
+	<Row GreatWorkType="GREATWORK_KRAFTWERK_1"       GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_KRAFTWERK"       Name="LOC_GREATWORK_KRAFTWERK_1_NAME"       Tourism="4" Audio="GMKraftwerkAutobahn"/>
+	<Row GreatWorkType="GREATWORK_KRAFTWERK_2"       GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_KRAFTWERK"       Name="LOC_GREATWORK_KRAFTWERK_2_NAME"       Tourism="4" Audio="GMKraftwerkTransEuropeExpress"/>
+	<Row GreatWorkType="GREATWORK_LOUIS_ARMSTRONG_1" GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" Name="LOC_GREATWORK_LOUIS_ARMSTRONG_1_NAME" Tourism="4" Audio="GMLouisArmstrongWhatAWonderfulWorld"/>
+	<Row GreatWorkType="GREATWORK_LOUIS_ARMSTRONG_2" GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_LOUIS_ARMSTRONG" Name="LOC_GREATWORK_LOUIS_ARMSTRONG_2_NAME" Tourism="4" Audio="GMLouisArmstrongWhenTheSaintsGoMarchingIn"/>
+	<Row GreatWorkType="GREATWORK_THE_BEATLES_1"     GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_THE_BEATLES"     Name="LOC_GREATWORK_THE_BEATLES_1_NAME"     Tourism="4" Audio="GMTheBeatlesHeyJude"/>
+	<Row GreatWorkType="GREATWORK_THE_BEATLES_2"     GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_THE_BEATLES"     Name="LOC_GREATWORK_THE_BEATLES_2_NAME"     Tourism="4" Audio="GMTheBeatlesLetItBe"/>
+	<Row GreatWorkType="GREATWORK_DEPECHE_MODE_1"    GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE"    Name="LOC_GREATWORK_DEPECHE_MODE_1_NAME"    Tourism="4" Audio="GMDepecheModeEnjoyTheSilence"/>
+	<Row GreatWorkType="GREATWORK_DEPECHE_MODE_2"    GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_DEPECHE_MODE"    Name="LOC_GREATWORK_DEPECHE_MODE_2_NAME"    Tourism="4" Audio="GMDepecheModePersonalJesus"/>
+	<Row GreatWorkType="GREATWORK_MICHAEL_JACKSON_1" GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" Name="LOC_GREATWORK_MICHAEL_JACKSON_1_NAME" Tourism="4" Audio="GMMichaelJacksonBillieJean"/>
+	<Row GreatWorkType="GREATWORK_MICHAEL_JACKSON_2" GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_MICHAEL_JACKSON" Name="LOC_GREATWORK_MICHAEL_JACKSON_2_NAME" Tourism="4" Audio="GMMichaelJacksonSmoothCriminal"/>
+	<Row GreatWorkType="GREATWORK_NIRVANA_1"         GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_NIRVANA"         Name="LOC_GREATWORK_NIRVANA_1_NAME"         Tourism="4" Audio="GMNirvanaSmellsLikeTeenSpirit"/>
+	<Row GreatWorkType="GREATWORK_NIRVANA_2"         GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_NIRVANA"         Name="LOC_GREATWORK_NIRVANA_2_NAME"         Tourism="4" Audio="GMNirvanaHeartShapedBox"/>
+	<Row GreatWorkType="GREATWORK_ELVIS_PRESLEY_1"   GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY"   Name="LOC_GREATWORK_ELVIS_PRESLEY_1_NAME"   Tourism="4" Audio="GMElvisPresleyJailhouseRock"/>
+	<Row GreatWorkType="GREATWORK_ELVIS_PRESLEY_2"   GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_ELVIS_PRESLEY"   Name="LOC_GREATWORK_ELVIS_PRESLEY_2_NAME"   Tourism="4" Audio="GMElvisPresleyCantHelpFallingInLove"/>
+	<Row GreatWorkType="GREATWORK_JOHN_WILLIAMS_1"   GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS"   Name="LOC_GREATWORK_JOHN_WILLIAMS_1_NAME"   Tourism="4" Audio="GMJohnWilliamsStarWars"/>
+	<Row GreatWorkType="GREATWORK_JOHN_WILLIAMS_2"   GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_JOHN_WILLIAMS"   Name="LOC_GREATWORK_JOHN_WILLIAMS_2_NAME"   Tourism="4" Audio="GMJohnWilliamsTheRaidersMarch"/>
+	<Row GreatWorkType="GREATWORK_LED_ZEPPELIN_1"    GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN"    Name="LOC_GREATWORK_LED_ZEPPELIN_1_NAME"    Tourism="4" Audio="GMLedZeppelinWholeLottaLove"/>
+	<Row GreatWorkType="GREATWORK_LED_ZEPPELIN_2"    GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_LED_ZEPPELIN"    Name="LOC_GREATWORK_LED_ZEPPELIN_2_NAME"    Tourism="4" Audio="GMLedZeppelinKashmir"/>
+	<Row GreatWorkType="GREATWORK_PINK_FLOYD_1"      GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_PINK_FLOYD"      Name="LOC_GREATWORK_PINK_FLOYD_1_NAME"      Tourism="4" Audio="GMPinkFloydTime"/>
+	<Row GreatWorkType="GREATWORK_PINK_FLOYD_2"      GreatWorkObjectType="GREATWORKOBJECT_MUSIC" GreatPersonIndividualType="GREAT_PERSON_INDIVIDUAL_PINK_FLOYD"      Name="LOC_GREATWORK_PINK_FLOYD_2_NAME"      Tourism="4" Audio="GMPinkFloydWishYouWereHere"/>
+</GreatWorks>
+	
+<GreatWork_YieldChanges>
+	<Row GreatWorkType="GREATWORK_KRAFTWERK_1"       YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_KRAFTWERK_2"       YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_LOUIS_ARMSTRONG_1" YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_LOUIS_ARMSTRONG_2" YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_THE_BEATLES_1"     YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_THE_BEATLES_2"     YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_DEPECHE_MODE_1"    YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_DEPECHE_MODE_2"    YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_MICHAEL_JACKSON_1" YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_MICHAEL_JACKSON_2" YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_NIRVANA_1"         YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_NIRVANA_2"         YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_ELVIS_PRESLEY_1"   YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_ELVIS_PRESLEY_2"   YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_JOHN_WILLIAMS_1"   YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_JOHN_WILLIAMS_2"   YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_LED_ZEPPELIN_1"    YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_LED_ZEPPELIN_2"    YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_PINK_FLOYD_1"      YieldType="YIELD_CULTURE" YieldChange="4"/>
+	<Row GreatWorkType="GREATWORK_PINK_FLOYD_2"      YieldType="YIELD_CULTURE" YieldChange="4"/>
+</GreatWork_YieldChanges>
+
+</GameInfo>

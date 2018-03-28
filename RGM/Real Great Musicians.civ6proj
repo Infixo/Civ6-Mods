@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Name>Real Great Musicians</Name>
+    <Guid>5d8cfe2e-7635-434a-88d9-f709a55b7544</Guid>
+    <ProjectGuid>c1a328ff-3f59-4449-9712-aee2885365d4</ProjectGuid>
+    <ModVersion>1</ModVersion>
+    <Teaser>New Great Musicians with pictures and samples of their music.</Teaser>
+    <Description>New Great Musicians with pictures and samples of their music.[NEWLINE][NEWLINE]Atomic Era:[NEWLINE][ICON_Bullet]Elvis Presley - Jailhouse Rock, Can't Help Falling In Love[NEWLINE][ICON_Bullet]Kraftwerk - Autobahn, Trans-Europe Express[NEWLINE][ICON_Bullet]Led Zeppelin - Whole Lotta Love, Kashmir[NEWLINE][ICON_Bullet]Louis Armstrong - What a Wonderful World, When the Saints Go Marching In[NEWLINE][ICON_Bullet]The Beatles - Hey Jude, Let It Be[NEWLINE][NEWLINE]Information Era:[NEWLINE][ICON_Bullet]Depeche Mode - Enjoy the Silence, Personal Jesus[NEWLINE][ICON_Bullet]John Williams - Star Wars Main Theme, The Raiders March[NEWLINE][ICON_Bullet]Michael Jackson - Billie Jean, Smooth Criminal[NEWLINE][ICON_Bullet]Nirvana - Smells Like Teen Spirit, Heart-Shaped Box[NEWLINE][ICON_Bullet]Pink Floyd - Time, Wish You Were Here[NEWLINE][NEWLINE]Version 1.0</Description>
+    <Authors>Infixo</Authors>
+    <SpecialThanks>
+    </SpecialThanks>
+    <AffectsSavedGames>true</AffectsSavedGames>
+    <SupportsSinglePlayer>true</SupportsSinglePlayer>
+    <SupportsMultiplayer>true</SupportsMultiplayer>
+    <SupportsHotSeat>true</SupportsHotSeat>
+    <AssemblyName>Real Great Musicians</AssemblyName>
+    <RootNamespace>Real Great Musicians</RootNamespace>
+    <InGameActionData><![CDATA[<InGameActions><UpdateAudio id="RGM_Audio"><File>Audio/RGM_Banks.ini</File><File>Audio/RGM_Soundbank.bnk</File><File>Audio/RGM_Soundbank.txt</File><File>Audio/SoundbanksInfo.xml</File></UpdateAudio><UpdateIcons id="RGM_Icons"><File>Icons/RealGreatMusicians_Icons.xml</File></UpdateIcons><ImportFiles id="RGM_Imports"><File>Icons/RGMKraftwerk160.dds</File><File>Icons/RGMLouisArmstrong160.dds</File><File>Icons/RGMTheBeatles160.dds</File><File>Icons/RGMDepecheMode160.dds</File><File>Icons/RGMMichaelJackson160.dds</File><File>Icons/RGMNirvana160.dds</File><File>Icons/RGMElvisPresley160.dds</File><File>Icons/RGMJohnWilliams160.dds</File><File>Icons/RGMLedZeppelin160.dds</File><File>Icons/RGMPinkFloyd160.dds</File></ImportFiles><UpdateDatabase id="RGM_Database"><File>RealGreatMusicians.xml</File></UpdateDatabase><UpdateText id="RGM_Text"><File>RealGreatMusicians_Text.xml</File></UpdateText></InGameActions>]]></InGameActionData>
+    <Homepage>http://forums.civfanatics.com/resources/real-great-musicians-vanilla-r-f.26706/</Homepage>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Mod.Art.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Audio" />
+    <Folder Include="Icons" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Audio\RGM_Soundbank.bnk">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Audio\RGM_Soundbank.txt">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Audio\RGM_Banks.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Audio\SoundbanksInfo.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMDepecheMode160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMElvisPresley160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMJohnWilliams160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMKraftwerk160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RealGreatMusicians_Icons.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMLedZeppelin160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMLouisArmstrong160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMMichaelJackson160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMNirvana160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMPinkFloyd160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Icons\RGMTheBeatles160.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="RealGreatMusicians.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="RealGreatMusicians_Text.xml">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)Civ6.targets" />
+</Project>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="10" SoundbankVersion="113">
+	<RootPaths>
+		<ProjectRoot>C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\GeneratedSoundBanks\Windows\</SoundBanksRoot>
+		<ExternalSourcesInputFile></ExternalSourcesInputFile>
+		<ExternalSourcesOutputRoot>C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\GeneratedSoundBanks\Windows\</ExternalSourcesOutputRoot>
+	</RootPaths>
+	<DialogueEvents/>
+	<StreamedFiles/>
+	<MediaFilesNotInAnyBank/>
+	<SoundBanks>
+		<SoundBank Id="1556783031" Language="SFX">
+			<ShortName>RGM_Soundbank</ShortName>
+			<Path>RGM_Soundbank.bnk</Path>
+			<IncludedEvents>
+				<Event Id="3528306256" Name="Play_GMDepecheModeEnjoyTheSilence"/>
+				<Event Id="4279953817" Name="Play_GMDepecheModePersonalJesus"/>
+				<Event Id="3295998288" Name="Play_GMElvisPresleyCantHelpFallingInLove"/>
+				<Event Id="1647902326" Name="Play_GMElvisPresleyJailhouseRock"/>
+				<Event Id="3657722106" Name="Play_GMJohnWilliamsStarWars"/>
+				<Event Id="2932020857" Name="Play_GMJohnWilliamsTheRaidersMarch"/>
+				<Event Id="1459178049" Name="Play_GMKraftwerkAutobahn"/>
+				<Event Id="3911066025" Name="Play_GMKraftwerkTransEuropeExpress"/>
+				<Event Id="1992287835" Name="Play_GMLedZeppelinKashmir"/>
+				<Event Id="767563011" Name="Play_GMLedZeppelinWholeLottaLove"/>
+				<Event Id="2836017566" Name="Play_GMLouisArmstrongWhatAWonderfulWorld"/>
+				<Event Id="2516217132" Name="Play_GMLouisArmstrongWhenTheSaintsGoMarchingIn"/>
+				<Event Id="2953833103" Name="Play_GMMichaelJacksonBillieJean"/>
+				<Event Id="1069991617" Name="Play_GMMichaelJacksonSmoothCriminal"/>
+				<Event Id="1874207133" Name="Play_GMNirvanaHeartShapedBox"/>
+				<Event Id="2811561595" Name="Play_GMNirvanaSmellsLikeTeenSpirit"/>
+				<Event Id="2698161167" Name="Play_GMPinkFloydTime"/>
+				<Event Id="3542099719" Name="Play_GMPinkFloydWishYouWereHere"/>
+				<Event Id="1842552223" Name="Play_GMTheBeatlesHeyJude"/>
+				<Event Id="3040932304" Name="Play_GMTheBeatlesLetItBe"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="19506667" Language="SFX">
+					<ShortName>Led Zeppelin Kashmir.wav</ShortName>
+					<Path>SFX\Led Zeppelin Kashmir_E843A46D.wem</Path>
+				</File>
+				<File Id="32202700" Language="SFX">
+					<ShortName>The Beatles Hey Jude 44khz.wav</ShortName>
+					<Path>SFX\The Beatles Hey Jude 44khz_E843A46D.wem</Path>
+				</File>
+				<File Id="58002862" Language="SFX">
+					<ShortName>John Williams Star Wars.wav</ShortName>
+					<Path>SFX\John Williams Star Wars_E843A46D.wem</Path>
+				</File>
+				<File Id="83759018" Language="SFX">
+					<ShortName>Led Zeppelin Whole Lotta Love.wav</ShortName>
+					<Path>SFX\Led Zeppelin Whole Lotta Love_E843A46D.wem</Path>
+				</File>
+				<File Id="103137147" Language="SFX">
+					<ShortName>Kraftwerk Autobahn.wav</ShortName>
+					<Path>SFX\Kraftwerk Autobahn_E843A46D.wem</Path>
+				</File>
+				<File Id="137546578" Language="SFX">
+					<ShortName>Depeche Mode Personal Jesus.wav</ShortName>
+					<Path>SFX\Depeche Mode Personal Jesus_E843A46D.wem</Path>
+				</File>
+				<File Id="236113300" Language="SFX">
+					<ShortName>Kraftwerk Trans-Europe Express.wav</ShortName>
+					<Path>SFX\Kraftwerk Trans-Europe Express_E843A46D.wem</Path>
+				</File>
+				<File Id="416381696" Language="SFX">
+					<ShortName>Elvis Presley Cant Help Falling In Love.wav</ShortName>
+					<Path>SFX\Elvis Presley Cant Help Falling In Love_E843A46D.wem</Path>
+				</File>
+				<File Id="493489276" Language="SFX">
+					<ShortName>Michael Jackson Smooth Criminal.wav</ShortName>
+					<Path>SFX\Michael Jackson Smooth Criminal_E843A46D.wem</Path>
+				</File>
+				<File Id="498371196" Language="SFX">
+					<ShortName>Nirvana Heart-Shaped Box.wav</ShortName>
+					<Path>SFX\Nirvana Heart-Shaped Box_E843A46D.wem</Path>
+				</File>
+				<File Id="561799932" Language="SFX">
+					<ShortName>Depeche Mode Enjoy the Silence.wav</ShortName>
+					<Path>SFX\Depeche Mode Enjoy the Silence_E843A46D.wem</Path>
+				</File>
+				<File Id="619819418" Language="SFX">
+					<ShortName>The Beatles Let It Be 44khz.wav</ShortName>
+					<Path>SFX\The Beatles Let It Be 44khz_E843A46D.wem</Path>
+				</File>
+				<File Id="653400065" Language="SFX">
+					<ShortName>Louis Armstrong What a Wonderful World 44khz.wav</ShortName>
+					<Path>SFX\Louis Armstrong What a Wonderful World 44khz_E843A46D.wem</Path>
+				</File>
+				<File Id="671321073" Language="SFX">
+					<ShortName>Elvis Presley Jailhouse Rock.wav</ShortName>
+					<Path>SFX\Elvis Presley Jailhouse Rock_E843A46D.wem</Path>
+				</File>
+				<File Id="751498798" Language="SFX">
+					<ShortName>Louis Armstrong When the Saints Go Marching In 44khz.wav</ShortName>
+					<Path>SFX\Louis Armstrong When the Saints Go Marching In 44khz_E843A46D.wem</Path>
+				</File>
+				<File Id="881856103" Language="SFX">
+					<ShortName>John Williams The Raiders March.wav</ShortName>
+					<Path>SFX\John Williams The Raiders March_E843A46D.wem</Path>
+				</File>
+				<File Id="893605982" Language="SFX">
+					<ShortName>Michael Jackson Billie Jean.wav</ShortName>
+					<Path>SFX\Michael Jackson Billie Jean_E843A46D.wem</Path>
+				</File>
+				<File Id="967081222" Language="SFX">
+					<ShortName>Pink Floyd Time.wav</ShortName>
+					<Path>SFX\Pink Floyd Time_E843A46D.wem</Path>
+				</File>
+				<File Id="1034976249" Language="SFX">
+					<ShortName>Nirvana Smells Like Teen Spirit.wav</ShortName>
+					<Path>SFX\Nirvana Smells Like Teen Spirit_E843A46D.wem</Path>
+				</File>
+				<File Id="1045333586" Language="SFX">
+					<ShortName>Pink Floyd Wish You Were Here.wav</ShortName>
+					<Path>SFX\Pink Floyd Wish You Were Here_E843A46D.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+	</SoundBanks>
+</SoundBanksInfo>
