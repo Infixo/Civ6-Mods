@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<AssetObjects..ArtDefSet>
+	<m_Version>
+		<major>4</major>
+		<minor>0</minor>
+		<build>315</build>
+		<revision>805</revision>
+	</m_Version>
+	<m_TemplateName text="Landmarks"/>
+	<m_RootCollections>
+		<Element>
+			<m_CollectionName text="Districts"/>
+			<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+			<Element>
+				<m_Fields>
+					<m_Values>
+						<Element class="AssetObjects..ArtDefReferenceValue">
+							<m_ElementName text="Gen_GenericDistrict"/>
+							<m_RootCollectionName text="Generator"/>
+							<m_ArtDefPath text="CityGenerators.artdef"/>
+							<m_CollectionIsLocked>true</m_CollectionIsLocked>
+							<m_TemplateName text="CityGenerators"/>
+							<m_ParamName text="DistrictGenerator"/>
+						</Element>
+						<Element class="AssetObjects..RGBValue">
+							<m_r>207.000000</m_r>
+							<m_g>61.000000</m_g>
+							<m_b>75.000000</m_b>
+							<m_ParamName text="TintColor"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>false</m_bValue>
+							<m_ParamName text="IsAlignedToCoast"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>true</m_bValue>
+							<m_ParamName text="FlattenTerrain"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>false</m_bValue>
+							<m_ParamName text="bUseCityScale"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>false</m_bValue>
+							<m_ParamName text="DistrictDamagePillagesBuildings"/>
+						</Element>
+					</m_Values>
+				</m_Fields>
+				<m_ChildCollections>
+					<Element>
+						<m_CollectionName text="BaseVariants"/>
+						<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text=""/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_REN_Base03ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="02CRenaissance, w/Amphitheater, ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text=""/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ARTERA_MODERN"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_MOD_Base03ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="04AModern, w/Amphitheater, ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL, BROADCAST_CENTER"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text=""/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ARTERA_MODERN"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_MOD_Base04ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="04AModern, w/Amphitheater, ConcertHall, Broadcast Center"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL, FILM_STUDIO"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text=""/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Cultures"/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_MOD_America04ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="America-04AModern, w/Amphitheater, ConcertHall, Film Studio"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text=""/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ARTERA_INDUSTRIAL"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_IND_Base03ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="03Industrial, w/Amphitheater, ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+					</Element>
+					<Element>
+						<m_CollectionName text="BuildingVariants"/>
+						<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="BUILDING_CONCERT_HALL"/>
+										<m_RootCollectionName text="Building"/>
+										<m_ArtDefPath text="Buildings.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Buildings"/>
+										<m_ParamName text="Tag_HeroBuilding"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Cultures"/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Appeal"/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_REN_Base03Museum"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="hero_buildings.xlp"/>
+										<m_BLPPackage text="landmarks/hero_buildings"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="02CRenaissance ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+					</Element>
+					<Element>
+						<m_CollectionName text="BuildingSets"/>
+						<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..CollectionValue">
+										<m_eObjectType>INVALID</m_eObjectType>
+										<m_eValueType>ARTDEF_REF</m_eValueType>
+										<m_Values>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_AMPHITHEATER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_CONCERT_HALL"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_1"/>
+											</Element>
+										</m_Values>
+										<m_ParamName text="Set"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="AMPHITHEATER, CONCERT_HALL"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..CollectionValue">
+										<m_eObjectType>INVALID</m_eObjectType>
+										<m_eValueType>ARTDEF_REF</m_eValueType>
+										<m_Values>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_AMPHITHEATER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_CONCERT_HALL"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_1"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_BROADCAST_CENTER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_2"/>
+											</Element>
+										</m_Values>
+										<m_ParamName text="Set"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="AMPHITHEATER, CONCERT_HALL, BROADCAST_CENTER"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..CollectionValue">
+										<m_eObjectType>INVALID</m_eObjectType>
+										<m_eValueType>ARTDEF_REF</m_eValueType>
+										<m_Values>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_AMPHITHEATER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_CONCERT_HALL"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_1"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_FILM_STUDIO"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_2"/>
+											</Element>
+										</m_Values>
+										<m_ParamName text="Set"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="AMPHITHEATER, CONCERT_HALL, FILM_STUDIO"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+					</Element>
+				</m_ChildCollections>
+				<m_Name text="DISTRICT_THEATER"/>
+				<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+			</Element>
+			<Element>
+				<m_Fields>
+					<m_Values>
+						<Element class="AssetObjects..ArtDefReferenceValue">
+							<m_ElementName text="Gen_GenericDistrict"/>
+							<m_RootCollectionName text="Generator"/>
+							<m_ArtDefPath text="CityGenerators.artdef"/>
+							<m_CollectionIsLocked>true</m_CollectionIsLocked>
+							<m_TemplateName text="CityGenerators"/>
+							<m_ParamName text="DistrictGenerator"/>
+						</Element>
+						<Element class="AssetObjects..RGBValue">
+							<m_r>207.000000</m_r>
+							<m_g>61.000000</m_g>
+							<m_b>75.000000</m_b>
+							<m_ParamName text="TintColor"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>false</m_bValue>
+							<m_ParamName text="DistrictDamagePillagesBuildings"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>false</m_bValue>
+							<m_ParamName text="IsAlignedToCoast"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>false</m_bValue>
+							<m_ParamName text="bUseCityScale"/>
+						</Element>
+						<Element class="AssetObjects..BoolValue">
+							<m_bValue>true</m_bValue>
+							<m_ParamName text="FlattenTerrain"/>
+						</Element>
+					</m_Values>
+				</m_Fields>
+				<m_ChildCollections>
+					<Element>
+						<m_CollectionName text="BaseVariants"/>
+						<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text="Landmarks.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Cultures"/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_REN_Greece03ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="Greece-02CRenaissance,w/Amphitheater,ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text="Landmarks.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ARTERA_INDUSTRIAL"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Cultures"/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_IND_Greece03ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="Greece-03Industrial,w/Amphitheater,ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL, BROADCAST CENTER"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text=""/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Cultures"/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_MOD_Greece04ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="Greece-04AModern,w/Amphitheater,ConcertHall,Broadcast Center"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="AMPHITHEATER, CONCERT_HALL"/>
+										<m_RootCollectionName text="BuildingSets"/>
+										<m_ArtDefPath text="Landmarks.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Landmarks"/>
+										<m_ParamName text="Set_HeroBuildings"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ARTERA_MODERN"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Cultures"/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_MOD_Greece03ART"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="tilebases.xlp"/>
+										<m_BLPPackage text="landmarks/tilebases"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="Greece-04AModern,w/Amphitheater,ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+					</Element>
+					<Element>
+						<m_CollectionName text="BuildingVariants"/>
+						<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="BUILDING_CONCERT_HALL"/>
+										<m_RootCollectionName text="Building"/>
+										<m_ArtDefPath text="Buildings.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Buildings"/>
+										<m_ParamName text="Tag_HeroBuilding"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="ArtEra"/>
+										<m_ArtDefPath text="Eras.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text="Eras"/>
+										<m_ParamName text="Tag_Era"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="DEFAULT"/>
+										<m_RootCollectionName text="Culture"/>
+										<m_ArtDefPath text="Cultures.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Culture"/>
+									</Element>
+									<Element class="AssetObjects..BLPEntryValue">
+										<m_EntryName text="DIS_THR_REN_Base03Museum"/>
+										<m_XLPClass text="TileBase"/>
+										<m_XLPPath text="hero_buildings.xlp"/>
+										<m_BLPPackage text="landmarks/hero_buildings"/>
+										<m_LibraryName text="TileBase"/>
+										<m_ParamName text="Asset"/>
+									</Element>
+									<Element class="AssetObjects..ArtDefReferenceValue">
+										<m_ElementName text="ANY"/>
+										<m_RootCollectionName text="AppealTags"/>
+										<m_ArtDefPath text="Appeal.artdef"/>
+										<m_CollectionIsLocked>true</m_CollectionIsLocked>
+										<m_TemplateName text=""/>
+										<m_ParamName text="Tag_Appeal"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="02CRenaissance ConcertHall"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+					</Element>
+					<Element>
+						<m_CollectionName text="BuildingSets"/>
+						<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..CollectionValue">
+										<m_eObjectType>INVALID</m_eObjectType>
+										<m_eValueType>ARTDEF_REF</m_eValueType>
+										<m_Values>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_AMPHITHEATER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_CONCERT_HALL"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_1"/>
+											</Element>
+										</m_Values>
+										<m_ParamName text="Set"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="AMPHITHEATER, CONCERT_HALL"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+						<Element>
+							<m_Fields>
+								<m_Values>
+									<Element class="AssetObjects..CollectionValue">
+										<m_eObjectType>INVALID</m_eObjectType>
+										<m_eValueType>ARTDEF_REF</m_eValueType>
+										<m_Values>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_AMPHITHEATER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_CONCERT_HALL"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_1"/>
+											</Element>
+											<Element class="AssetObjects..ArtDefReferenceValue">
+												<m_ElementName text="BUILDING_BROADCAST_CENTER"/>
+												<m_RootCollectionName text="Building"/>
+												<m_ArtDefPath text="Buildings.artdef"/>
+												<m_CollectionIsLocked>true</m_CollectionIsLocked>
+												<m_TemplateName text="Buildings"/>
+												<m_ParamName text="Set_2"/>
+											</Element>
+										</m_Values>
+										<m_ParamName text="Set"/>
+									</Element>
+								</m_Values>
+							</m_Fields>
+							<m_ChildCollections/>
+							<m_Name text="AMPHITHEATER, CONCERT_HALL, BROADCAST CENTER"/>
+							<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+						</Element>
+					</Element>
+				</m_ChildCollections>
+				<m_Name text="DISTRICT_ACROPOLIS"/>
+				<m_AppendMergedParameterCollections>false</m_AppendMergedParameterCollections>
+			</Element>
+		</Element>
+		<Element>
+			<m_CollectionName text="Landmarks"/>
+			<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+		</Element>
+		<Element>
+			<m_CollectionName text="ResourceTags"/>
+			<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+		</Element>
+		<Element>
+			<m_CollectionName text="Globals"/>
+			<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+		</Element>
+		<Element>
+			<m_CollectionName text="TerrainTags"/>
+			<m_ReplaceMergedCollectionElements>false</m_ReplaceMergedCollectionElements>
+		</Element>
+	</m_RootCollections>
+</AssetObjects..ArtDefSet>
+

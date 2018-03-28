@@ -29,6 +29,8 @@
 		<Element>
 			<consumerName text="Landmarks"/>
 			<relativeArtDefPaths>
+				<Element text="Landmarks.artdef"/>
+				<Element text="Buildings.artdef"/>
 			</relativeArtDefPaths>
 			<libraryDependencies>
 				<Element text="CityBuildings"/>
@@ -67,6 +69,8 @@
 		<Element>
 			<consumerName text="StrategicView_Sprite"/>
 			<relativeArtDefPaths>
+				<Element text="Landmarks.artdef"/>
+				<Element text="Buildings.artdef"/>
 			</relativeArtDefPaths>
 			<libraryDependencies>
 				<Element text="StrategicView_Sprite"/>
@@ -277,6 +281,8 @@
 		<Element>
 			<consumerName text="WorldView_Translate"/>
 			<relativeArtDefPaths>
+				<Element text="Landmarks.artdef"/>
+				<Element text="Buildings.artdef"/>
 			</relativeArtDefPaths>
 			<libraryDependencies/>
 			<loadsLibraries>false</loadsLibraries>
@@ -284,6 +290,8 @@
 		<Element>
 			<consumerName text="StrategicView_Translate"/>
 			<relativeArtDefPaths>
+				<Element text="Landmarks.artdef"/>
+				<Element text="Buildings.artdef"/>
 			</relativeArtDefPaths>
 			<libraryDependencies/>
 			<loadsLibraries>false</loadsLibraries>

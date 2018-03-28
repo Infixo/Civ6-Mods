@@ -1,0 +1,12 @@
+Starting AssetCooker...
+Opened output file: C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Mods\Real Great Musicians\ArtDefs/Landmarks.artdef
+Cooking ArtDef: (Eras.artdef).
+Cooking ArtDef: (Cultures.artdef).
+Cooking ArtDef: (CityGenerators.artdef).
+Cooking ArtDef: (Appeal.artdef).
+Cooking ArtDef: (StrategicView.artdef).
+Cooking ArtDef: (Buildings.artdef).
+Cooking ArtDef: (Landmarks.artdef).
+Cook finished for ArtDef at Path: 'Landmarks.artdef' with Template: 'Landmarks'
+ArtDef cook completed.
+Cook completed in 0.340 seconds

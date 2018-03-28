@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+
+<IconTextureAtlases>
+	<Row Name="ICON_ATLAS_CONCERT_HALL" IconSize="32"  IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall32.dds"/>
+	<Row Name="ICON_ATLAS_CONCERT_HALL" IconSize="38"  IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall38.dds"/>
+	<Row Name="ICON_ATLAS_CONCERT_HALL" IconSize="50"  IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall50.dds"/>
+	<Row Name="ICON_ATLAS_CONCERT_HALL" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall80.dds"/>
+	<Row Name="ICON_ATLAS_CONCERT_HALL" IconSize="128" IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall128.dds"/>
+	<Row Name="ICON_ATLAS_CONCERT_HALL" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall256.dds"/>
+	<Row Name="ICON_ATLAS_CONCERT_HALL_FOW" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="RGMConcertHall256.dds"/>
+</IconTextureAtlases>
+
+<IconDefinitions>
+	<Row Name="ICON_BUILDING_CONCERT_HALL"     Atlas="ICON_ATLAS_CONCERT_HALL"     Index="0"/>
+	<Row Name="ICON_BUILDING_CONCERT_HALL_FOW" Atlas="ICON_ATLAS_CONCERT_HALL_FOW" Index="0"/>
+</IconDefinitions>
+
+</GameInfo>

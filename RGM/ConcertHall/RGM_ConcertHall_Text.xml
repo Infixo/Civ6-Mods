@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+-- RGM_ConcertHall_Text
+-- Author: Infixo
+-- 2017-04-08: Created
+-->
+
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_BUILDING_CONCERT_HALL_NAME">
+		<Text>Concert Hall</Text>
+	</Row>
+	<Row Tag="LOC_BUILDING_CONCERT_HALL_DESCRIPTION">
+		<Text>Holds [ICON_GreatWork_Music] Great Works of Music. May not be built in a Theater Square district that already has an Art Museum or an Archaeological Museum.</Text>
+	</Row>
+	<Row Tag="LOC_BUILDING_CONCERT_HALL_THEMINGBONUS">
+		<Text>Theming bonus doubling output when performing music from different artists.</Text>
+	</Row>
+	<!-- Civilopedia -->
+	<Row Tag="LOC_PEDIA_BUILDINGS_PAGE_BUILDING_CONCERT_HALL_CHAPTER_HISTORY_PARA_1">
+		<Text>A concert hall is a cultural building with a stage that serves as a performance venue and an auditorium filled with seats. While early halls built in the 18th and 19th century were designed for classical orchestra, concerto and opera concerts and ballet performances, halls built in the 20th and 21st century were often built to accommodate a wider range of performance types, including musicals.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_BUILDINGS_PAGE_BUILDING_CONCERT_HALL_CHAPTER_HISTORY_PARA_2">
+		<Text>Many concert halls exist as one of several halls or performance spaces within a larger performing arts center. In many towns, the concert hall is combined with a convention center. Concert halls typically also contain orchestral rehearsal rooms.</Text>
+	</Row>
+	<Row Tag="LOC_PEDIA_BUILDINGS_PAGE_BUILDING_CONCERT_HALL_CHAPTER_HISTORY_PARA_3">
+		<Text>Source: Wikipedia</Text>
+	</Row>
+
+</BaseGameText>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_BUILDING_MUSEUM_ART_DESCRIPTION" Language="en_US">
+		<Text>Holds [ICON_GreatWork_Landscape] Great Works of Art. May not be built in a Theater Square district that already has an Archaeological Museum or a Concert Hall.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_MUSEUM_ARTIFACT_DESCRIPTION" Language="en_US">
+		<Text>Holds [ICON_GreatWork_Artifact] Artifacts. May not be built in a Theater Square district that already has an Art Museum or a Concert Hall.</Text>
+	</Replace>
+	
+</LocalizedText>
+
+</GameData>
