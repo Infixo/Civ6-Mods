@@ -16,6 +16,7 @@
     </UpdateAudio>
     <UpdateIcons id="RGM_Icons">
       <File>Icons/RealGreatMusicians_Icons.xml</File>
+      <File>ConcertHall/Icons/RGM_ConcertHall_Icon.xml</File>
     </UpdateIcons>
     <ImportFiles id="RGM_Imports">
       <File>Icons/RGMKraftwerk160.dds</File>
@@ -28,19 +29,58 @@
       <File>Icons/RGMJohnWilliams160.dds</File>
       <File>Icons/RGMLedZeppelin160.dds</File>
       <File>Icons/RGMPinkFloyd160.dds</File>
+      <File>ConcertHall/Icons/RGMConcertHall32.dds</File>
+      <File>ConcertHall/Icons/RGMConcertHall38.dds</File>
+      <File>ConcertHall/Icons/RGMConcertHall50.dds</File>
+      <File>ConcertHall/Icons/RGMConcertHall80.dds</File>
+      <File>ConcertHall/Icons/RGMConcertHall128.dds</File>
+      <File>ConcertHall/Icons/RGMConcertHall256.dds</File>
     </ImportFiles>
     <UpdateDatabase id="RGM_Database">
       <File>RealGreatMusicians.xml</File>
     </UpdateDatabase>
     <UpdateText id="RGM_Text">
       <File>RealGreatMusicians_Text.xml</File>
+      <File>ConcertHall/RGM_ConcertHall_Text.xml</File>
     </UpdateText>
+    <UpdateDatabase id="RGM_Options_Database">
+      <Properties>
+        <LoadOrder>0</LoadOrder>
+      </Properties>
+      <File>RGM_Options.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RGM_UpdateEras_Database">
+      <Properties>
+        <LoadOrder>1</LoadOrder>
+      </Properties>
+      <File>RGM_UpdateEras.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RGM_ConcertHall_Database">
+      <Properties>
+        <LoadOrder>1</LoadOrder>
+      </Properties>
+      <File>ConcertHall/RGM_ConcertHall.sql</File>
+    </UpdateDatabase>
+    <UpdateArt id="RGM_ConcertHall_Art">
+      <File>Real Great Musicians.dep</File>
+    </UpdateArt>
   </InGameActions>
   <Files>
+    <File>ArtDefs/Buildings.artdef</File>
+    <File>ArtDefs/Landmarks.artdef</File>
     <File>Audio/RGM_Banks.ini</File>
     <File>Audio/RGM_Soundbank.bnk</File>
     <File>Audio/RGM_Soundbank.txt</File>
     <File>Audio/SoundbanksInfo.xml</File>
+    <File>ConcertHall/Icons/RGMConcertHall128.dds</File>
+    <File>ConcertHall/Icons/RGMConcertHall256.dds</File>
+    <File>ConcertHall/Icons/RGMConcertHall32.dds</File>
+    <File>ConcertHall/Icons/RGMConcertHall38.dds</File>
+    <File>ConcertHall/Icons/RGMConcertHall50.dds</File>
+    <File>ConcertHall/Icons/RGMConcertHall80.dds</File>
+    <File>ConcertHall/Icons/RGM_ConcertHall_Icon.xml</File>
+    <File>ConcertHall/RGM_ConcertHall.sql</File>
+    <File>ConcertHall/RGM_ConcertHall_Text.xml</File>
     <File>Icons/RealGreatMusicians_Icons.xml</File>
     <File>Icons/RGMDepecheMode160.dds</File>
     <File>Icons/RGMElvisPresley160.dds</File>
@@ -52,7 +92,10 @@
     <File>Icons/RGMNirvana160.dds</File>
     <File>Icons/RGMPinkFloyd160.dds</File>
     <File>Icons/RGMTheBeatles160.dds</File>
+    <File>Real Great Musicians.dep</File>
     <File>RealGreatMusicians.xml</File>
     <File>RealGreatMusicians_Text.xml</File>
+    <File>RGM_Options.sql</File>
+    <File>RGM_UpdateEras.sql</File>
   </Files>
 </Mod>
