@@ -2,11 +2,16 @@
 <Mod id="5d8cfe2e-7635-434a-88d9-f709a55b7544" version="1">
   <Properties>
     <Name>Real Great Musicians</Name>
-    <Description>New Great Musicians with pictures and samples of their music.[NEWLINE][NEWLINE]Atomic Era:[NEWLINE][ICON_Bullet]Elvis Presley - Jailhouse Rock, Can't Help Falling In Love[NEWLINE][ICON_Bullet]Kraftwerk - Autobahn, Trans-Europe Express[NEWLINE][ICON_Bullet]Led Zeppelin - Whole Lotta Love, Kashmir[NEWLINE][ICON_Bullet]Louis Armstrong - What a Wonderful World, When the Saints Go Marching In[NEWLINE][ICON_Bullet]The Beatles - Hey Jude, Let It Be[NEWLINE][NEWLINE]Information Era:[NEWLINE][ICON_Bullet]Depeche Mode - Enjoy the Silence, Personal Jesus[NEWLINE][ICON_Bullet]John Williams - Star Wars Main Theme, The Raiders March[NEWLINE][ICON_Bullet]Michael Jackson - Billie Jean, Smooth Criminal[NEWLINE][ICON_Bullet]Nirvana - Smells Like Teen Spirit, Heart-Shaped Box[NEWLINE][ICON_Bullet]Pink Floyd - Time, Wish You Were Here[NEWLINE][NEWLINE]Version 1.0</Description>
+    <Description>New Great Musicians with pictures and samples of their music. New building - Concert Hall (optional). Great Musicians are available from Renaissance era (optional).[NEWLINE][NEWLINE]Atomic Era:[NEWLINE][ICON_Bullet]Elvis Presley - Jailhouse Rock, Can't Help Falling In Love[NEWLINE][ICON_Bullet]Kraftwerk - Autobahn, Trans-Europe Express[NEWLINE][ICON_Bullet]Led Zeppelin - Whole Lotta Love, Kashmir[NEWLINE][ICON_Bullet]Louis Armstrong - What a Wonderful World, When the Saints Go Marching In[NEWLINE][ICON_Bullet]The Beatles - Hey Jude, Let It Be[NEWLINE][NEWLINE]Information Era:[NEWLINE][ICON_Bullet]Depeche Mode - Enjoy the Silence, Personal Jesus[NEWLINE][ICON_Bullet]John Williams - Star Wars Main Theme, The Raiders March[NEWLINE][ICON_Bullet]Michael Jackson - Billie Jean, Smooth Criminal[NEWLINE][ICON_Bullet]Nirvana - Smells Like Teen Spirit, Heart-Shaped Box[NEWLINE][ICON_Bullet]Pink Floyd - Time, Wish You Were Here[NEWLINE][NEWLINE]Version 2.0</Description>
     <Teaser>New Great Musicians with pictures and samples of their music.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-great-musicians-vanilla-r-f.26706/</Homepage>
   </Properties>
+  <ActionCriteria>
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+  </ActionCriteria>
   <InGameActions>
     <UpdateAudio id="RGM_Audio">
       <File>Audio/RGM_Banks.ini</File>
@@ -55,15 +60,27 @@
       </Properties>
       <File>RGM_UpdateEras.sql</File>
     </UpdateDatabase>
-    <UpdateDatabase id="RGM_ConcertHall_Database">
+    <UpdateDatabase id="RGM_CH_Database">
       <Properties>
         <LoadOrder>1</LoadOrder>
       </Properties>
       <File>ConcertHall/RGM_ConcertHall.sql</File>
     </UpdateDatabase>
-    <UpdateArt id="RGM_ConcertHall_Art">
+    <UpdateArt id="RGM_CH_Art">
       <File>Real Great Musicians.dep</File>
     </UpdateArt>
+    <UpdateDatabase id="RGM_CH_RF_Database" criteria="Expansion1">
+      <Properties>
+        <LoadOrder>2</LoadOrder>
+      </Properties>
+      <File>ConcertHall/RGM_ConcertHall_RiseFall.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RGM_RF_Text" criteria="Expansion1">
+      <Properties>
+        <LoadOrder>2</LoadOrder>
+      </Properties>
+      <File>ConcertHall/RGM_ConcertHall_RiseFall_Text.xml</File>
+    </UpdateText>
   </InGameActions>
   <Files>
     <File>ArtDefs/Buildings.artdef</File>
@@ -80,6 +97,8 @@
     <File>ConcertHall/Icons/RGMConcertHall80.dds</File>
     <File>ConcertHall/Icons/RGM_ConcertHall_Icon.xml</File>
     <File>ConcertHall/RGM_ConcertHall.sql</File>
+    <File>ConcertHall/RGM_ConcertHall_RiseFall.sql</File>
+    <File>ConcertHall/RGM_ConcertHall_RiseFall_Text.xml</File>
     <File>ConcertHall/RGM_ConcertHall_Text.xml</File>
     <File>Icons/RealGreatMusicians_Icons.xml</File>
     <File>Icons/RGMDepecheMode160.dds</File>
