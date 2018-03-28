@@ -17,20 +17,29 @@
     <SupportsHotSeat>true</SupportsHotSeat>
     <AssemblyName>Real Great Musicians</AssemblyName>
     <RootNamespace>Real Great Musicians</RootNamespace>
-    <InGameActionData><![CDATA[<InGameActions><UpdateAudio id="RGM_Audio"><File>Audio/RGM_Banks.ini</File><File>Audio/RGM_Soundbank.bnk</File><File>Audio/RGM_Soundbank.txt</File><File>Audio/SoundbanksInfo.xml</File></UpdateAudio><UpdateIcons id="RGM_Icons"><File>Icons/RealGreatMusicians_Icons.xml</File></UpdateIcons><ImportFiles id="RGM_Imports"><File>Icons/RGMKraftwerk160.dds</File><File>Icons/RGMLouisArmstrong160.dds</File><File>Icons/RGMTheBeatles160.dds</File><File>Icons/RGMDepecheMode160.dds</File><File>Icons/RGMMichaelJackson160.dds</File><File>Icons/RGMNirvana160.dds</File><File>Icons/RGMElvisPresley160.dds</File><File>Icons/RGMJohnWilliams160.dds</File><File>Icons/RGMLedZeppelin160.dds</File><File>Icons/RGMPinkFloyd160.dds</File></ImportFiles><UpdateDatabase id="RGM_Database"><File>RealGreatMusicians.xml</File></UpdateDatabase><UpdateText id="RGM_Text"><File>RealGreatMusicians_Text.xml</File></UpdateText></InGameActions>]]></InGameActionData>
+    <InGameActionData><![CDATA[<InGameActions><UpdateAudio id="RGM_Audio"><File>Audio/RGM_Banks.ini</File><File>Audio/RGM_Soundbank.bnk</File><File>Audio/RGM_Soundbank.txt</File><File>Audio/SoundbanksInfo.xml</File></UpdateAudio><UpdateIcons id="RGM_Icons"><File>Icons/RealGreatMusicians_Icons.xml</File><File>ConcertHall/Icons/RGM_ConcertHall_Icon.xml</File></UpdateIcons><ImportFiles id="RGM_Imports"><File>Icons/RGMKraftwerk160.dds</File><File>Icons/RGMLouisArmstrong160.dds</File><File>Icons/RGMTheBeatles160.dds</File><File>Icons/RGMDepecheMode160.dds</File><File>Icons/RGMMichaelJackson160.dds</File><File>Icons/RGMNirvana160.dds</File><File>Icons/RGMElvisPresley160.dds</File><File>Icons/RGMJohnWilliams160.dds</File><File>Icons/RGMLedZeppelin160.dds</File><File>Icons/RGMPinkFloyd160.dds</File><File>ConcertHall/Icons/RGMConcertHall32.dds</File><File>ConcertHall/Icons/RGMConcertHall38.dds</File><File>ConcertHall/Icons/RGMConcertHall50.dds</File><File>ConcertHall/Icons/RGMConcertHall80.dds</File><File>ConcertHall/Icons/RGMConcertHall128.dds</File><File>ConcertHall/Icons/RGMConcertHall256.dds</File></ImportFiles><UpdateDatabase id="RGM_Database"><File>RealGreatMusicians.xml</File></UpdateDatabase><UpdateText id="RGM_Text"><File>RealGreatMusicians_Text.xml</File><File>ConcertHall/RGM_ConcertHall_Text.xml</File></UpdateText><UpdateDatabase id="RGM_Options_Database"><Properties><LoadOrder>0</LoadOrder></Properties><File>RGM_Options.sql</File></UpdateDatabase><UpdateDatabase id="RGM_UpdateEras_Database"><Properties><LoadOrder>1</LoadOrder></Properties><File>RGM_UpdateEras.sql</File></UpdateDatabase><UpdateDatabase id="RGM_ConcertHall_Database"><Properties><LoadOrder>1</LoadOrder></Properties><File>ConcertHall/RGM_ConcertHall.sql</File></UpdateDatabase><UpdateArt id="RGM_ConcertHall_Art"><File>(Mod Art Dependency File)</File></UpdateArt></InGameActions>]]></InGameActionData>
     <Homepage>http://forums.civfanatics.com/resources/real-great-musicians-vanilla-r-f.26706/</Homepage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
     <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Mod.Art.xml" />
+    <XLP Include="Mod.Art.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ArtDefs" />
     <Folder Include="Audio" />
+    <Folder Include="ConcertHall" />
+    <Folder Include="ConcertHall\Icons\" />
     <Folder Include="Icons" />
   </ItemGroup>
   <ItemGroup>
+    <ArtDef Include="ArtDefs\Buildings.artdef">
+      <SubType>Content</SubType>
+    </ArtDef>
+    <ArtDef Include="ArtDefs\Landmarks.artdef">
+      <SubType>Content</SubType>
+    </ArtDef>
     <Content Include="Audio\RGM_Soundbank.bnk">
       <SubType>Content</SubType>
     </Content>
@@ -41,6 +50,33 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Audio\SoundbanksInfo.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGM_ConcertHall_Icon.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGMConcertHall128.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGMConcertHall256.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGMConcertHall32.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGMConcertHall38.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGMConcertHall50.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\Icons\RGMConcertHall80.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\RGM_ConcertHall.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConcertHall\RGM_ConcertHall_Text.xml">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Icons\RGMDepecheMode160.dds">
@@ -80,6 +116,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="RealGreatMusicians_Text.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="RGM_Options.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="RGM_UpdateEras.sql">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
