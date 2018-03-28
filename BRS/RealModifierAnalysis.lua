@@ -1301,7 +1301,8 @@ function DecodeReq(tOut:table, sReqId:string)
 	--dprint("FUNCAL DecodeReq(req)",sReqId);
 	local tReq:table = FetchAndCacheDataReq(sReqId);
 	if not tReq then return "ERROR: "..sReqId.." not defined!"; end
-	table.insert(tOut, INDENT2..Capitalize(tReq.ReqType));
+	table.insert(tOut, INDENT2..Capitalize(sReqId));
+	table.insert(tOut, INDENT2.."Type: "..Capitalize(tReq.ReqType));
 	for name,value in pairs(tReq.Arguments) do table.insert(tOut, INDENT2..name.." = "..value); end
 	if tReq.Inverse then table.insert(tOut, INDENT2.."Inverse"); end
 	if tReq.Persistent then table.insert(tOut, INDENT2.."Persistent"); end
@@ -1334,6 +1335,10 @@ function FetchAndCacheDataReqSet(sReqSetId:string)
 	for req in GameInfo.RequirementSetRequirements() do
 		if req.RequirementSetId == sReqSetId then
 			table.insert(tReqSet.Reqs, FetchAndCacheDataReq(req.RequirementId));
+			-- it is possible that there will a call to another requirement via Type = REQUIREMENT_REQUIREMENTSET_IS_MET
+			--if tReq.ReqType == "REQUIREMENT_REQUIREMENTSET_IS_MET" and tReq.Arguments.RequirementSetId then
+				--DecodeReqSet(tOut, tReq.Arguments.RequirementSetId);
+			--end
 		end
 	end
 	-- done!
@@ -1426,6 +1431,7 @@ function DecodeModifier(sModifierId:string, ePlayerID:number, iCityID:number, tM
 	if not tMod then return "ERROR: "..sModifierId.." not defined!"; end
 	local tOut = {};
 	table.insert(tOut, "Modifier: "..Capitalize(tMod.ModifierId));
+	table.insert(tOut, "Type: "..Capitalize(tMod.ModifierType));
 	if tMod.OwnerReqSetId then
 		table.insert(tOut, "Owner: "..Capitalize(tMod.OwnerReqSetId));
 		DecodeReqSet(tOut, tMod.OwnerReqSetId);
@@ -1445,7 +1451,12 @@ function DecodeModifier(sModifierId:string, ePlayerID:number, iCityID:number, tM
 	if bBaseDataDirty then RefreshBaseData(); end -- make sure we have current data
 	-- TODO: ASSUMPTION Owner will be Player, this is true for Policies and many other modifiers
 	-- TODO: add support for other owners later, if necessary
-	local tOwner:table, sOwnerType:string = Players[ Game:GetLocalPlayer() ], SubjectTypes.Player;
+	local tOwner:table, sOwnerType:string = tPlayer, SubjectTypes.Player; -- Players[ Game:GetLocalPlayer() ]
+	-- 2018-03-27 added City support
+	if ePlayerID and iCityID then
+		local pCity:table = Players[ePlayerID]:GetCities():FindID(iCityID);
+		if pCity then tOwner, sOwnerType = tCities[ pCity:GetName()], SubjectTypes.City; end
+	end
 	-- build a collection of subjects
 	local tSubjects:table, sSubjectType:string = tMainSubjects, sMainSubjectType; -- let's start with passed args, will be nils most of the time
 	if tMainSubjects == nil or sMainSubjectType == nil then 
@@ -1748,7 +1759,7 @@ end
 --  table - of subjects - these are objects from tCities (cities, districts or buildings), TODO: filtered using SubReqs
 --  string - type of the subject
 function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
-	--dprint("FUN BuildCollectionOfSubjects(sub,owner)",tMod.SubjectReqSetId,sOwnerType);
+	--dprint("FUN BuildCollectionOfSubjects(subreq,ownname,owntype,passed)",tMod.SubjectReqSetId,tOwner.Name,tOwner.SubjectType,sOwnerType);
 	local tSubjects:table, sSubjectType:string = {}, "([COLOR_Red]unknown[ENDCOLOR])";
 	local tReqSet:table = tMod.SubjectReqSet; -- speed up some checking
 	--dprint("  Subject requirement set is (id)", tMod.SubjectReqSetId);
@@ -1757,24 +1768,38 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 		-- most difficult one... not yet...
 		-- for a start - we assume Player is the owner
 		-- we'll need some exception handling here if this is not true
-		sSubjectType = SubjectTypes.Player;
-		table.insert(tSubjects, tPlayer); -- there's only one
+		if sOwnerType == SubjectTypes.City and tOwner.SubjectType == SubjectTypes.City then
+			sSubjectType = SubjectTypes.City;
+			table.insert(tSubjects, tOwner);
+		else
+			-- all other will get the player
+			sSubjectType = SubjectTypes.Player;
+			table.insert(tSubjects, tPlayer); -- there's only one
+		end
 
 	elseif tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
-		-- need City here as owner
-		sSubjectType = SubjectTypes.District;
-		if sOwnerType == SubjectTypes.City then
-			for cityname,citydata in pairs(tOwner) do
-				for _,district in ipairs(citydata.Districts) do
-					if district.isBuilt then
-						--print("working on district",district.Name)
-						if tReqSet then  
-							if CheckAllRequirements(tReqSet, district, sSubjectType) then table.insert(tSubjects, district); end
-						else
-							table.insert(tSubjects, district);
-						end
+		local function AddDistrictsFromCity(tSubject:table)
+			if tSubject.SubjectType ~= SubjectTypes.City then
+				print("ERROR: BuildCollectionOfSubjects: Mismatch type for COLLECTION_CITY_DISTRICTS", sOwnerType); dshowtable(tMod); dshowrectable(tSubject); return
+			end
+			for _,district in ipairs(tSubject.Districts) do
+				if district.isBuilt then
+					--print("working on district",district.Name)
+					if tReqSet then  
+						if CheckAllRequirements(tReqSet, district, sSubjectType) then table.insert(tSubjects, district); end
+					else
+						table.insert(tSubjects, district);
 					end
 				end
+			end
+		end
+		-- need City here as owner
+		sSubjectType = SubjectTypes.District;
+		if tOwner.SubjectType == SubjectTypes.City then -- single city
+			AddDistrictsFromCity(tOwner);
+		elseif sOwnerType == SubjectTypes.City then -- player's cities
+			for cityname,citydata in pairs(tOwner) do
+				AddDistrictsFromCity(citydata);
 			end
 		else
 			print("ERROR: BuildCollectionOfSubjects: Mismatch type for COLLECTION_CITY_DISTRICTS", sOwnerType); dshowtable(tMod);
