@@ -55,3 +55,26 @@ FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
 INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding) 
 SELECT 'BUILDING_MUSEUM_ARTIFACT', 'BUILDING_CONCERT_HALL'
 FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
+
+
+-- Policy Grand Opera +100% yields to Theater buildings
+
+INSERT INTO PolicyModifiers (PolicyType, ModifierId)
+SELECT 'POLICY_GRAND_OPERA', 'GRANDOPERA_DOUBLECONCERTHALL'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
+
+INSERT INTO Modifiers (ModifierId, ModifierType)
+SELECT 'GRANDOPERA_DOUBLECONCERTHALL', 'MODIFIER_PLAYER_CITIES_ADJUST_BUILDING_YIELD_MODIFIER'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+SELECT 'GRANDOPERA_DOUBLECONCERTHALL', 'BuildingType', 'BUILDING_CONCERT_HALL'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+SELECT 'GRANDOPERA_DOUBLECONCERTHALL', 'YieldType', 'YIELD_CULTURE'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+SELECT 'GRANDOPERA_DOUBLECONCERTHALL', 'Amount', '100'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';

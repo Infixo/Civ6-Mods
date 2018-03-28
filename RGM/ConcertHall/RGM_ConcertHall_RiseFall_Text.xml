@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+-- RGM_ConcertHall_RiseFall_Text
+-- Author: Infixo
+-- 2018-03-28: Created
+-->
+
+<GameData>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_MINOR_CIV_CULTURAL_TRAIT_LARGE_INFLUENCE_BONUS" Language="en_US">
+		<Text>+2 [ICON_Culture] Culture in every Art Museum, Archeological Museum and Concert Hall building.</Text>
+	</Replace>
+	
+</LocalizedText>
+
+</GameData>

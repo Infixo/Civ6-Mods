@@ -2,7 +2,7 @@
 <!--
 -- RGM_ConcertHall_Text
 -- Author: Infixo
--- 2017-04-08: Created
+-- 2018-03-28: Created
 -->
 
 <GameData>
@@ -16,7 +16,7 @@
 		<Text>Holds [ICON_GreatWork_Music] Great Works of Music. May not be built in a Theater Square district that already has an Art Museum or an Archaeological Museum.</Text>
 	</Row>
 	<Row Tag="LOC_BUILDING_CONCERT_HALL_THEMINGBONUS">
-		<Text>Theming bonus doubling output when performing music from different artists.</Text>
+		<Text>Theming bonus doubling output when performing [ICON_GreatWork_Music] Music from different artists.</Text>
 	</Row>
 	<!-- Civilopedia -->
 	<Row Tag="LOC_PEDIA_BUILDINGS_PAGE_BUILDING_CONCERT_HALL_CHAPTER_HISTORY_PARA_1">
