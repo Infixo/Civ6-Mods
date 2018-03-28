@@ -169,7 +169,13 @@ INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_LUXURY_RESOURCE', 'REQUIREMENTSET_TEST_ALL');
 
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('PLOT_HAS_LUXURY_RESOURCE', 'REQUIRES_PLOT_HAS_LUXURY');
+('PLOT_HAS_LUXURY_RESOURCE', 'REQUIRES_PLOT_HAS_LUXURY'); -- already exists
+
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
+	
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIRES_PLOT_HAS_PLANTATION'); -- already exists
 
 
 --------------------------------------------------------------

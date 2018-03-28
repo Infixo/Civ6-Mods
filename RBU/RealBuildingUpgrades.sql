@@ -27,6 +27,7 @@ SET Cost = (SELECT Cost FROM Buildings WHERE BuildingType = 'BUILDING_STABLE'),
 	PrereqTech = 'TECH_IRON_WORKING'
 WHERE BuildingType = 'BUILDING_BARRACKS';
 
+
 --------------------------------------------------------------
 -- Table with new parameters for buildings - the rest will be default
 --------------------------------------------------------------
@@ -112,6 +113,7 @@ WHERE BType = 'BASILIKOI_PAIDES' AND NOT EXISTS (SELECT * FROM Buildings WHERE B
 DELETE FROM RBUConfig
 WHERE BType = 'PRASAT' AND NOT EXISTS (SELECT * FROM Buildings WHERE BuildingType = 'BUILDING_PRASAT');
 
+
 --------------------------------------------------------------
 -- BUILDINGS
 --------------------------------------------------------------
@@ -148,191 +150,11 @@ SELECT
 FROM RBUConfig;
 
 
-
--- Buildings with Regional Effects
-UPDATE Buildings
-SET RegionalRange = 6
-WHERE BuildingType IN (
-	-- standard building upgrades
-	'BUILDING_ELECTRONICS_FACTORY_UPGRADE',
-	'BUILDING_FACTORY_UPGRADE',
-	'BUILDING_POWER_PLANT_UPGRADE');
-
--- Buildings that add Housing
-UPDATE Buildings SET Housing = 1
-WHERE BuildingType IN (
-	'BUILDING_ELECTRONICS_FACTORY_UPGRADE',
-	'BUILDING_FACTORY_UPGRADE',
-	'BUILDING_MILITARY_ACADEMY_UPGRADE',
-	'BUILDING_WORKSHOP_UPGRADE');
-UPDATE Buildings SET Housing = 2
-WHERE BuildingType IN (
-	'BUILDING_AIRPORT_UPGRADE');
-
--- Buildings that add Amenities
-UPDATE Buildings
-SET Entertainment = 1
-WHERE BuildingType = 'BUILDING_AIRPORT_UPGRADE';
-
--- Buildings enabled by Religion - removed
--- 2018-03-05 Game only allows for 1 such building, so Upgrades cannot be built :(
-
--- Additonal Food same as Adjacency Bonuses
-INSERT INTO Building_YieldDistrictCopies (BuildingType, OldYieldType, NewYieldType) VALUES
-('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_PRODUCTION', 'YIELD_GOLD');
---('BUILDING_SEAPORT_UPGRADE', 'YIELD_GOLD', 'YIELD_FOOD');
-
--- Unique Buildings' Upgrades
--- TraitType will be inserted separately, there are only 5 buildings
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_ELECTRONICS_FACTORY' WHERE BuildingType = 'BUILDING_ELECTRONICS_FACTORY_UPGRADE';
-UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_BASILIKOI_PAIDES'    WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES_UPGRADE';
-
--- DLC: Macedon
-INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
-SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'GREAT_PERSON_CLASS_SCIENTIST', 1
-FROM Buildings
-WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
-
-INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
-SELECT CivUniqueBuildingType||'_UPGRADE', ReplacesBuildingType||'_UPGRADE'
-FROM BuildingReplaces
-WHERE CivUniqueBuildingType IN (
-	'BUILDING_ELECTRONICS_FACTORY',
-	'BUILDING_BASILIKOI_PAIDES');
-
 -- Connect Upgrades to Base Buildings
 INSERT INTO BuildingPrereqs (Building, PrereqBuilding)
 SELECT 'BUILDING_'||BType||'_UPGRADE', 'BUILDING_'||BType
 FROM RBUConfig;
 
--- 2018-03-05 Mutually exclusive buildings (so they won't appear in production list)
-INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding) VALUES
-('BUILDING_STABLE_UPGRADE', 'BUILDING_BARRACKS'),
-('BUILDING_STABLE_UPGRADE', 'BUILDING_BARRACKS_UPGRADE'),
-('BUILDING_BARRACKS_UPGRADE', 'BUILDING_STABLE'),
-('BUILDING_BARRACKS_UPGRADE', 'BUILDING_STABLE_UPGRADE');
-
--- DLC: Macedon
-INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
-SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE'
-FROM Buildings
-WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
-INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
-SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE_UPGRADE'
-FROM Buildings
-WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
-
-
---------------------------------------------------------------
--- Populate basic parameters (i.e. Yields)
---------------------------------------------------------------
-
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
-VALUES  -- generated from Excel
-('BUILDING_AIRPORT_UPGRADE', 'YIELD_PRODUCTION', 2),
-('BUILDING_ARMORY_UPGRADE', 'YIELD_CULTURE', 1),
-('BUILDING_ARMORY_UPGRADE', 'YIELD_PRODUCTION', 2),
---('BUILDING_BARRACKS_UPGRADE', 'YIELD_PRODUCTION', 1),
---('BUILDING_CATHEDRAL_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_CATHEDRAL_UPGRADE', 'YIELD_FOOD', 2),
---('BUILDING_DAR_E_MEHR_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_DAR_E_MEHR_UPGRADE', 'YIELD_SCIENCE', 2),
-('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'YIELD_PRODUCTION', 2),
-('BUILDING_FACTORY_UPGRADE', 'YIELD_PRODUCTION', 1),
---('BUILDING_GURDWARA_UPGRADE', 'YIELD_CULTURE', 1),
---('BUILDING_GURDWARA_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_GURDWARA_UPGRADE', 'YIELD_FOOD', 1),
-('BUILDING_HANGAR_UPGRADE', 'YIELD_PRODUCTION', 2),
---('BUILDING_MEETING_HOUSE_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_MEETING_HOUSE_UPGRADE', 'YIELD_PRODUCTION', 1),
---('BUILDING_MEETING_HOUSE_UPGRADE', 'YIELD_SCIENCE', 1),
-('BUILDING_MILITARY_ACADEMY_UPGRADE', 'YIELD_CULTURE', 2),
-('BUILDING_MILITARY_ACADEMY_UPGRADE', 'YIELD_PRODUCTION', 2),
---('BUILDING_MOSQUE_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_MOSQUE_UPGRADE', 'YIELD_GOLD', 3),
---('BUILDING_PAGODA_UPGRADE', 'YIELD_CULTURE', 2),
---('BUILDING_PAGODA_UPGRADE', 'YIELD_FAITH', 2),
-('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_FOOD', 2),
-('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_PRODUCTION', 2),
---('BUILDING_STABLE_UPGRADE', 'YIELD_PRODUCTION', 1),
---('BUILDING_STUPA_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_STUPA_UPGRADE', 'YIELD_CULTURE', 1),
---('BUILDING_STUPA_UPGRADE', 'YIELD_FOOD', 1),
---('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_PRODUCTION', 1),
---('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_GOLD', 2),
---('BUILDING_WAT_UPGRADE', 'YIELD_FAITH', 2),
---('BUILDING_WAT_UPGRADE', 'YIELD_PRODUCTION', 1),
---('BUILDING_WAT_UPGRADE', 'YIELD_SCIENCE', 1),
-('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1);
-
-
-
---------------------------------------------------------------
--- MODIFIERS
---------------------------------------------------------------
-
-INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
-('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'ELECTRONICSFACTORYUPGRADE_CULTURE'),
-('BUILDING_BARRACKS_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION'),
-('BUILDING_STABLE_UPGRADE', 'STABLEUPGRADE_ADDPASTUREPRODUCTION'),
---('BUILDING_WATER_MILL_UPGRADE', 'WATERMILLUPGRADE_ADDPLANTATIONFOOD'),
-('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDQUARRYPRODUCTION');
-
---INSERT INTO Types (Type, Kind)  -- hash value generated automatically
---VALUES ('MODIFIER_XXX_MODIFIER', 'KIND_MODIFIER');
-
---INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
---VALUES ('MODIFIER_XXX_MODIFIER', 'COLLECTION_OWNER', 'EFFECT_ADJUST_BUILDING_YIELD_MODIFIER');
-
--- New requirements
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
-('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
-	
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIRES_PLOT_HAS_PLANTATION');
-
-INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
-('ELECTRONICSFACTORYUPGRADE_CULTURE', 'MODIFIER_BUILDING_YIELD_CHANGE', 0, 1, 'PLAYER_HAS_ELECTRICITYTECHNOLOGY_REQUIREMENTS', NULL),
-('BARRACKSUPGRADE_ADDCAMPPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_CAMP_REQUIREMENTS'),
-('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_PASTURE_REQUIREMENTS'),
---('WATERMILLUPGRADE_ADDPLANTATIONFOOD', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_PLANTATION_REQUIREMENTS'),
-('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_QUARRY_REQUIREMENTS'),
-('HANGARUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL),
-('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL);
-	
-INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
--- Electronics Factory Upgrade +2 Culture
-('ELECTRONICSFACTORYUPGRADE_CULTURE', 'BuildingType', 'BUILDING_ELECTRONICS_FACTORY_UPGRADE'),
-('ELECTRONICSFACTORYUPGRADE_CULTURE', 'Amount', '2'),
-('ELECTRONICSFACTORYUPGRADE_CULTURE', 'YieldType', 'YIELD_CULTURE'),
--- Barracks Upgrade +1 Production from Camps
-('BARRACKSUPGRADE_ADDCAMPPRODUCTION', 'Amount', '1'),
-('BARRACKSUPGRADE_ADDCAMPPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
--- Stable Upgrade +1 Production from Pastures
-('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'Amount', '1'),
-('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
--- Water Mill Upgrade +1 Food from Plantations
---('WATERMILLUPGRADE_ADDPLANTATIONFOOD', 'Amount', '1'),
---('WATERMILLUPGRADE_ADDPLANTATIONFOOD',	'YieldType', 'YIELD_FOOD'),
--- Workshop Upgrade +1 Production from Quarries
-('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'Amount', '1'),
-('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
--- Hangar & Airport +1 Air Slot
-('HANGARUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1'),
-('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1');
-
--- DLC: Macedon
-INSERT INTO BuildingModifiers (BuildingType, ModifierId)
-SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION' -- Barracks' replacement
-FROM Buildings
-WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
-
-
-
---------------------------------------------------------------
--- 2018-03-26 Generic
---------------------------------------------------------------
 
 --------------------------------------------------------------
 -- 2018-03-27 City Center
@@ -834,12 +656,11 @@ WHERE BuildingType = 'BUILDING_SUKIENNICE';
 
 -- +2 Gold
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
-('BUILDING_BANK_UPGRADE', 'YIELD_GOLD', 2),
-('BUILDING_BANK_UPGRADE', 'YIELD_SCIENCE', 1);
+('BUILDING_BANK_UPGRADE', 'YIELD_GOLD', 2);
 
 -- +1 GMP
 INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
-('BUILDING_UNIVERSITY_UPGRADE', 'GREAT_PERSON_CLASS_MERCHANT', 1);
+('BUILDING_BANK_UPGRADE', 'GREAT_PERSON_CLASS_MERCHANT', 1);
 
 -- +2/+4 to outgoing domestic/international TR in the City
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
@@ -1064,6 +885,36 @@ SELECT 'PRASAT_UPGRADE_TOURISM', 'Amount', '2'
 FROM Buildings
 WHERE BuildingType = 'BUILDING_PRASAT';
 
+--------------------------------------------------------------
+-- Buildings enabled by Religion - removed
+-- 2018-03-05 Game only allows for 1 such building, so Upgrades cannot be built :(
+
+--INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES -- generated from Excel
+--('BUILDING_CATHEDRAL_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_CATHEDRAL_UPGRADE', 'YIELD_FOOD', 2),
+--('BUILDING_DAR_E_MEHR_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_DAR_E_MEHR_UPGRADE', 'YIELD_SCIENCE', 2),
+--('BUILDING_GURDWARA_UPGRADE', 'YIELD_CULTURE', 1),
+--('BUILDING_GURDWARA_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_GURDWARA_UPGRADE', 'YIELD_FOOD', 1),
+--('BUILDING_MEETING_HOUSE_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_MEETING_HOUSE_UPGRADE', 'YIELD_PRODUCTION', 1),
+--('BUILDING_MEETING_HOUSE_UPGRADE', 'YIELD_SCIENCE', 1),
+--('BUILDING_MOSQUE_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_MOSQUE_UPGRADE', 'YIELD_GOLD', 3),
+--('BUILDING_PAGODA_UPGRADE', 'YIELD_CULTURE', 2),
+--('BUILDING_PAGODA_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_STABLE_UPGRADE', 'YIELD_PRODUCTION', 1),
+--('BUILDING_STUPA_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_STUPA_UPGRADE', 'YIELD_CULTURE', 1),
+--('BUILDING_STUPA_UPGRADE', 'YIELD_FOOD', 1),
+--('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_PRODUCTION', 1),
+--('BUILDING_SYNAGOGUE_UPGRADE', 'YIELD_GOLD', 2),
+--('BUILDING_WAT_UPGRADE', 'YIELD_FAITH', 2),
+--('BUILDING_WAT_UPGRADE', 'YIELD_PRODUCTION', 1),
+--('BUILDING_WAT_UPGRADE', 'YIELD_SCIENCE', 1);
+
 
 --------------------------------------------------------------
 -- 2018-03-27 Entertainment Complex
@@ -1131,6 +982,246 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 	
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('STADIUMUPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
+
+
+--------------------------------------------------------------
+-- 2018-03-28 Aerodrome
+--------------------------------------------------------------
+
+--------------------------------------------------------------
+-- HANGAR
+
+-- +2 Production
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_HANGAR_UPGRADE', 'YIELD_PRODUCTION', 2);
+
+-- +1 Air Slot
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_HANGAR_UPGRADE', 'HANGARUPGRADE_BONUS_AIR_SLOTS');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('HANGARUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL);
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('HANGARUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1');
+
+--------------------------------------------------------------
+-- AIRPORT
+
+-- +2 Housing, +1 Amenity
+UPDATE Buildings SET Housing = 2, Entertainment = 1
+WHERE BuildingType = 'BUILDING_AIRPORT_UPGRADE';
+
+-- +2 Production
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_AIRPORT_UPGRADE', 'YIELD_PRODUCTION', 2);
+
+-- +1 Air Slot
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_AIRPORT_UPGRADE', 'AIRPORTUPGRADE_BONUS_AIR_SLOTS');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'MODIFIER_PLAYER_DISTRICT_GRANT_AIR_SLOTS', 0, 1, NULL, NULL);
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('AIRPORTUPGRADE_BONUS_AIR_SLOTS', 'Amount', '1');
+
+
+--------------------------------------------------------------
+-- 2018-03-28 Encampment
+--------------------------------------------------------------
+
+-- 2018-03-05 Mutually exclusive buildings (so they won't appear in production list)
+INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding) VALUES
+('BUILDING_STABLE_UPGRADE', 'BUILDING_BARRACKS'),
+('BUILDING_STABLE_UPGRADE', 'BUILDING_BARRACKS_UPGRADE'),
+('BUILDING_BARRACKS_UPGRADE', 'BUILDING_STABLE'),
+('BUILDING_BARRACKS_UPGRADE', 'BUILDING_STABLE_UPGRADE');
+
+--------------------------------------------------------------
+-- BARRACKS
+
+-- +1 Production from Camps
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_BARRACKS_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('BARRACKSUPGRADE_ADDCAMPPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_CAMP_REQUIREMENTS');
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('BARRACKSUPGRADE_ADDCAMPPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
+('BARRACKSUPGRADE_ADDCAMPPRODUCTION', 'Amount',    '1');
+
+--------------------------------------------------------------
+-- BASILIKOI_PAIDES (Macedon DLC)
+
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_BASILIKOI_PAIDES'    WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES_UPGRADE';
+
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
+('BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_BARRACKS_UPGRADE');
+
+INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
+
+INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE_UPGRADE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
+
+-- +1 GSP
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'GREAT_PERSON_CLASS_SCIENTIST', 1
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
+
+-- +1 Production from Camps
+INSERT INTO BuildingModifiers (BuildingType, ModifierId)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BARRACKSUPGRADE_ADDCAMPPRODUCTION' -- Barracks' replacement
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
+
+--------------------------------------------------------------
+-- STABLE
+
+-- +1 Production from Pastures
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_STABLE_UPGRADE', 'STABLEUPGRADE_ADDPASTUREPRODUCTION');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_PASTURE_REQUIREMENTS');
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
+('STABLEUPGRADE_ADDPASTUREPRODUCTION', 'Amount',    '1');
+
+--------------------------------------------------------------
+-- ARMORY
+
+-- +2 Production, +1 Culture
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_ARMORY_UPGRADE', 'YIELD_PRODUCTION', 2),
+('BUILDING_ARMORY_UPGRADE', 'YIELD_CULTURE', 1);
+
+-- +1 GGP
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
+('BUILDING_ARMORY_UPGRADE', 'GREAT_PERSON_CLASS_GENERAL', 1);
+
+--------------------------------------------------------------
+-- MILITARY_ACADEMY
+
+-- +1 Housing
+UPDATE Buildings SET Housing = 1
+WHERE BuildingType = 'BUILDING_MILITARY_ACADEMY_UPGRADE';
+
+-- +2 Production, +2 Culture
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_MILITARY_ACADEMY_UPGRADE', 'YIELD_PRODUCTION', 2),
+('BUILDING_MILITARY_ACADEMY_UPGRADE', 'YIELD_CULTURE', 2);
+
+
+--------------------------------------------------------------
+-- 2018-03-28 Industrial Zone
+--------------------------------------------------------------
+
+--------------------------------------------------------------
+-- WORKSHOP
+
+-- +1 Housing
+UPDATE Buildings SET Housing = 1
+WHERE BuildingType = 'BUILDING_WORKSHOP_UPGRADE';
+
+-- +1 Production
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1);
+
+-- +1 Production from Quarries
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDQUARRYPRODUCTION');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_QUARRY_REQUIREMENTS');
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
+('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'Amount',    '1');
+
+--------------------------------------------------------------
+-- FACTORY
+
+-- +1 Housing, RR=6
+UPDATE Buildings SET RegionalRange = 6, Housing = 1
+WHERE BuildingType = 'BUILDING_FACTORY_UPGRADE';
+
+-- +1 Production
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_FACTORY_UPGRADE', 'YIELD_PRODUCTION', 1);
+
+-- +1 Production for each Era since constructed!
+INSERT INTO Building_YieldsPerEra (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_FACTORY_UPGRADE', 'YIELD_PRODUCTION', 1);
+
+-- +1 GEP
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
+('BUILDING_FACTORY_UPGRADE', 'GREAT_PERSON_CLASS_ENGINEER', 1);
+
+--------------------------------------------------------------
+-- ELECTRONICS_FACTORY
+
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_ELECTRONICS_FACTORY' WHERE BuildingType = 'BUILDING_ELECTRONICS_FACTORY_UPGRADE';
+
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
+('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'BUILDING_FACTORY_UPGRADE');
+
+-- +1 Housing, RR=9
+UPDATE Buildings SET RegionalRange = 9, Housing = 1
+WHERE BuildingType = 'BUILDING_ELECTRONICS_FACTORY_UPGRADE';
+
+-- +2 Production
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'YIELD_PRODUCTION', 2);
+
+-- +2 Production for each Era since constructed!
+INSERT INTO Building_YieldsPerEra (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'YIELD_PRODUCTION', 2);
+
+-- +1 GEP
+INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
+('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'GREAT_PERSON_CLASS_ENGINEER', 1);
+
+-- Electronics Factory Upgrade +2 Culture with Electricity
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_ELECTRONICS_FACTORY_UPGRADE', 'ELECTRONICSFACTORYUPGRADE_CULTURE');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('ELECTRONICSFACTORYUPGRADE_CULTURE', 'MODIFIER_BUILDING_YIELD_CHANGE', 0, 1, 'PLAYER_HAS_ELECTRICITYTECHNOLOGY_REQUIREMENTS', NULL);
+	
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('ELECTRONICSFACTORYUPGRADE_CULTURE', 'BuildingType', 'BUILDING_ELECTRONICS_FACTORY_UPGRADE'),
+('ELECTRONICSFACTORYUPGRADE_CULTURE', 'YieldType',    'YIELD_CULTURE'),
+('ELECTRONICSFACTORYUPGRADE_CULTURE', 'Amount',       '2');
+
+--------------------------------------------------------------
+-- POWER_PLANT
+
+-- Buildings with Regional Effects
+UPDATE Buildings SET RegionalRange = 6
+WHERE BuildingType = 'BUILDING_POWER_PLANT_UPGRADE';
+
+INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+('BUILDING_POWER_PLANT_UPGRADE', 'YIELD_PRODUCTION', 2);
+
+-- +2 Production for each specialty district constructed
+INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_POWER_PLANT_UPGRADE', 'POWER_PLANT_UPGRADE_PRODUCTION_PER_DISTRICT');
+
+INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
+('POWER_PLANT_UPGRADE_PRODUCTION_PER_DISTRICT', 'MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_DISTRICT', 0, 0, NULL, NULL);
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('POWER_PLANT_UPGRADE_PRODUCTION_PER_DISTRICT', 'YieldType', 'YIELD_PRODUCTION'),
+('POWER_PLANT_UPGRADE_PRODUCTION_PER_DISTRICT', 'Amount',    '2');
 
 
 --------------------------------------------------------------
