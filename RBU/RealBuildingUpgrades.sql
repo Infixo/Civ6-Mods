@@ -183,12 +183,20 @@ INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
 -------------------------------------------------------------
 -- GRANARY
 
--- +2 Food
+-- +1 Housing
+UPDATE Buildings SET Housing = 1
+WHERE BuildingType = 'BUILDING_GRANARY_UPGRADE';
+
+-- +1 Food
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
-('BUILDING_GRANARY_UPGRADE', 'YIELD_FOOD', 2);
+('BUILDING_GRANARY_UPGRADE', 'YIELD_FOOD', 1);
 
 -------------------------------------------------------------
 -- WATER_MILL
+
+-- River
+UPDATE Buildings SET RequiresAdjacentRiver = 1
+WHERE BuildingType = 'BUILDING_WATER_MILL_UPGRADE';
 
 -- + 1 Production
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
