@@ -5,17 +5,22 @@
 -- Author: Infixo
 -- 2018-03-23: Created, Tables of Units
 -- 2018-03-25: Added Random Agendas
+-- 2018-03-30: Added Unit Abilities
 --------------------------------------------------------------
 -->
 <GameInfo>
-	<!-- Random Agendas will be addedd as another PageGroup in CIVILIZATIONS section -->
+	<!-- Random Agendas will be addedd as another PageGroup in CIVILIZATIONS section, Unit Abilities into UNITPROMOTIONS -->
 	<CivilopediaPageGroups>
-		<Row SectionID="CIVILIZATIONS" PageGroupId="RANDAGENDAS" Name="LOC_DIPLOMACY_INTEL_RANDOM_AGENDA" Tooltip="" VisibleIfEmpty="false" SortIndex="30"/>
+		<Row SectionID="CIVILIZATIONS"  PageGroupId="RANDAGENDAS"   Name="LOC_DIPLOMACY_INTEL_RANDOM_AGENDA"                      Tooltip="" VisibleIfEmpty="false" SortIndex="30"/>
+		<Row SectionID="UNITPROMOTIONS" PageGroupId="UNITABILITIES" Name="LOC_PEDIA_UNITPROMOTIONS_PAGEGROUP_UNIT_ABILITIES_NAME" Tooltip="" VisibleIfEmpty="false" SortIndex="100"/>
 	</CivilopediaPageGroups>
-	<!-- A query to select dedications into a PageGroup -->
+	<!-- Queries to select pages into a PageGroup -->
 	<CivilopediaPageQueries>
 		<Row SectionId="CIVILIZATIONS" PageGroupIdColumn="PageGroupId" TooltipColumn="Tooltip" SortIndex="10">
 			<SQL>SELECT AgendaType as PageId, "RANDAGENDAS" as PageGroupId, "RandAgenda" as PageLayoutId, Name, NULL as Tooltip FROM Agendas WHERE AgendaType IN (SELECT AgendaType FROM RandomAgendas)</SQL>
+		</Row>
+		<Row SectionId="UNITPROMOTIONS" PageGroupIdColumn="PageGroupId" TooltipColumn="Tooltip" SortIndex="10">
+			<SQL>SELECT UnitAbilityType as PageId, "UNITABILITIES" as PageGroupId, "UnitAbility" as PageLayoutId, Name, NULL as Tooltip FROM UnitAbilities</SQL>
 		</Row>
 	</CivilopediaPageQueries>
 	<!-- Each page will be added separately as there's no simple query to select the groups from DB -->
@@ -29,10 +34,8 @@
 	</CivilopediaPages>
 	<!-- new layout -->
 	<CivilopediaPageLayouts>
-		<Row PageLayoutId="TableUnits" ScriptTemplate="TableUnits"/>
-		<Row PageLayoutId="RandAgenda" ScriptTemplate="RandAgenda"/>
+		<Row PageLayoutId="TableUnits"  ScriptTemplate="TableUnits"/>
+		<Row PageLayoutId="RandAgenda"  ScriptTemplate="RandAgenda"/>
+		<Row PageLayoutId="UnitAbility" ScriptTemplate="UnitAbility"/>
 	</CivilopediaPageLayouts>
-	<!-- no special chapters -->
-	<CivilopediaPageLayoutChapters>
-	</CivilopediaPageLayoutChapters>
 </GameInfo>

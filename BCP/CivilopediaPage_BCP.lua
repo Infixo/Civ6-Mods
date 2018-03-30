@@ -5,6 +5,9 @@ print("Loading CivilopediaPage_BCP.lua from Better Civilopedia version "..Global
 -- 2018-03-23: Created
 --------------------------------------------------------------
 
+-- Rise & Fall check
+local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+
 
 -- ===========================================================================
 --	Civilopedia - Table of Units Page Layout
@@ -127,7 +130,7 @@ Initialize_TableUnits();
 
 local COLOR_RED   = "[COLOR:255,40,50,160]";
 local COLOR_GREEN = "[COLOR:80,255,90,160]";
-
+local COLOR_GREY  = "[COLOR:0,0,0,112]";
 
 PageLayouts["TableUnits"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
@@ -162,7 +165,7 @@ PageLayouts["TableUnits"] = function(page)
 			local eraLine = _LeftColumnUnitStatsManager:GetInstance();
 			eraLine.SpaceLeft:SetHide(true);
 			eraLine.Icon:SetHide(true);
-			eraLine.StatName:SetText("[COLOR:0,0,0,128]"..Locale.Lookup(GameInfo.Eras[iCurrentEra].Name).."[ENDCOLOR]");
+			eraLine.StatName:SetText(COLOR_GREY..Locale.Lookup(GameInfo.Eras[iCurrentEra].Name).."[ENDCOLOR]");
 			eraLine.SpaceRight:SetHide(false);
 			eraLine.StatPromo:SetText("");
 			eraLine.StatBaseMoves:SetText("");
@@ -246,7 +249,86 @@ PageLayouts["RandAgenda"] = function(page)
 			AddTrait(row.TraitType, Locale.Lookup(GameInfo.Agendas[agendaType].Name));
 		end
 	end
-	ShowInternalPageInfo(page);
+	
+end
+
+
+-- ===========================================================================
+--	Civilopedia - Unit Ability Page Layout
+-- ===========================================================================
+
+PageLayouts["UnitAbility"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	local pageId = page.PageId;
+
+	SetPageHeader(page.Title);
+	SetPageSubHeader(page.Subtitle);
+
+	local unitAbility = GameInfo.UnitAbilities[page.PageId];
+	if unitAbility == nil then return; end
+	local unitAbilityType = unitAbility.UnitAbilityType;
+
+	-- Right Column!
+	
+	-- Left Column!
+	
+	-- Inactive flag, Description
+	local chapter_body:table = {};
+	table.insert(chapter_body, COLOR_GREY..unitAbilityType.."[ENDCOLOR]");
+	table.insert(chapter_body, Locale.Lookup("LOC_UI_PEDIA_ABILITY_INACTIVE")..": "..Locale.Lookup(unitAbility.Inactive and "LOC_YES" or "LOC_NO"));
+	table.insert(chapter_body, Locale.Lookup(unitAbility.Description));
+	AddChapter(Locale.Lookup("LOC_UI_PEDIA_DESCRIPTION"), chapter_body);
+
+	-- Granted by?
+	-- every modifier with AbilityType arg has EffectType EFFECT_GRANT_ABILITY
+	-- need to decode where from
+	chapter_body = {};
+	for arg in GameInfo.ModifierArguments() do
+		if arg.Name == "AbilityType" and arg.Value == unitAbilityType then
+			local sModifierId:string = arg.ModifierId;
+			local sText:string = "";
+			-- decode where used
+			local function DetectAndShowModifier(sObjectType:string, sTableModifiers:string, sTableObjects:string, sLocText:string)
+				for mod in GameInfo[sTableModifiers]() do
+					if mod.ModifierId == sModifierId or mod.ModifierID == sModifierId then
+						local sLocName:string = GameInfo[sTableObjects][ mod[sObjectType] ].Name;
+						if sObjectType == "CommemorationType" then sLocName = GameInfo[sTableObjects][ mod[sObjectType] ].CategoryDescription; end -- ofc, why all are named Name except for Commemoration? it has to be something different, just for fun
+						sText = Locale.Lookup( sLocName );
+						if sLocText then sText = sText..string.format(" (%s)", Locale.Lookup(sLocText)); end
+						return true;
+					end
+				end
+				return false;
+			end
+			if     DetectAndShowModifier("PolicyType",   "PolicyModifiers",   "Policies",  "LOC_POLICY_NAME")     then -- empty
+			elseif DetectAndShowModifier("BuildingType", "BuildingModifiers", "Buildings", "LOC_BUILDING_NAME")   then -- empty
+			elseif DetectAndShowModifier("BeliefType",   "BeliefModifiers",   "Beliefs",   "LOC_BELIEF_NAME")     then -- empty
+			elseif DetectAndShowModifier("TraitType",    "TraitModifiers",    "Traits",    "LOC_UI_PEDIA_TRAITS") then -- empty
+			elseif DetectAndShowModifier("GovernmentType", "GovernmentModifiers", "Governments", "LOC_GOVERNMENT_NAME") then -- empty
+			elseif bIsRiseFall and DetectAndShowModifier("CommemorationType", "CommemorationModifiers", "CommemorationTypes", "LOC_PEDIA_CONCEPTS_PAGE_DEDICATIONS_CHAPTER_CONTENT_TITLE") then -- empty
+			end
+			table.insert(chapter_body, sText.."  "..COLOR_GREY..sModifierId.."[ENDCOLOR]");
+		end
+	end
+	if #chapter_body > 0 then AddChapter(Locale.Lookup("LOC_UI_PEDIA_USAGE"), chapter_body); end
+	
+	-- Units
+	chapter_body = {};
+	for row in GameInfo.TypeTags() do
+		if row.Type == unitAbilityType then
+			table.insert(chapter_body, COLOR_GREY..row.Tag.."[ENDCOLOR]");
+			-- now list units if applicable
+			local tUnitNames:table = {};
+			for unit in GameInfo.TypeTags() do
+				if unit.Tag == row.Tag and GameInfo.Units[unit.Type] then
+					table.insert(tUnitNames, Locale.Lookup(GameInfo.Units[unit.Type].Name));
+				end
+			end
+			if #tUnitNames == 0 then table.insert(tUnitNames, unit.Type); end
+			table.insert(chapter_body, table.concat(tUnitNames, ", "));
+		end
+	end
+	AddChapter(Locale.Lookup("LOC_PEDIA_UNITS_TITLE"), chapter_body);
 	
 end
 

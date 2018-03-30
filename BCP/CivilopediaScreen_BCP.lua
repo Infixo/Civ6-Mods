@@ -46,7 +46,7 @@ function OnOpenCivilopedia(sectionId_or_search, pageId)
 	if sectionId_or_search == nil and _LastPageId then
 		print("Received a request to open the Civilopedia - last section and page", _LastSectionId, _LastPageId);
 		NavigateTo(_LastSectionId, _LastPageId, true); -- should already be in history, so don't store again
-		UIManager:QueuePopup(ContextPtr, PopupPriority.Current);	
+		UIManager:QueuePopup(ContextPtr, PopupPriority.Current);
 		UI.PlaySound("Civilopedia_Open");
 	else
 		print("Received a request to open the Civilopedia");
