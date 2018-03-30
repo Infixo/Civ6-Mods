@@ -197,7 +197,7 @@
 			<Text>A building upgrade unique to America. Grants +2 [ICON_GreatWork_Music] Great Work of Music slots to the Film Studio and +2 [ICON_Amenities] Amenities to each city center within 9 tiles.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_GRANARY_UPGRADE_DESCRIPTION">
-			<Text>An upgrade for Granary increases storage space. [ICON_Resource_Olives] Olives, [ICON_Resource_Sugar] Sugar, [ICON_Resource_Tea] Tea and [ICON_Resource_Wine] Wine resources gain +2 [ICON_Food] Food each.</Text>
+			<Text>An upgrade for Granary increases storage space. [ICON_Resource_Bananas] Bananas and [ICON_Resource_Wine] Wine resources gain +2 [ICON_Food] Food each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_GURDWARA_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -215,13 +215,13 @@
 			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Market hosts more traders and shopkeepers.</Text>
+			<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +2 [ICON_Gold] Gold each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MEETING_HOUSE_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MILITARY_ACADEMY_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Military Academy includes campus for more students.</Text>
+			<Text>An upgraded Military Academy includes campus for more students. All units trained in this city get double Flanking Bonus.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MONUMENT_UPGRADE_DESCRIPTION">
 			<Text>We can finally write down on the Monument the name of our magnificent leader - you! This increases morale of our soldiers. Units trained in this city receive +3 [ICON_Strength] Combat Strength when fighting Barbarians.</Text>
@@ -230,10 +230,10 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
+			<Text>An upgraded Art Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
 		</Row>
 		<Row Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
+			<Text>An upgraded Archaeological Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
 		</Row>
 		<Row Tag="LOC_BUILDING_PAGODA_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -299,7 +299,7 @@
 			<Text>An upgraded Workshop increases efficiency of nearby mining operations. +1 [ICON_Production] Production from Quarries and Mines over resources.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ZOO_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Zoo exhibits new animal species. +3 [ICON_Tourism] Tourism in this city. [ICON_Resource_Bananas] Bananas, [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa and [ICON_Resource_Spices] Spices resources gain +2 [ICON_Food] Food each.</Text>
+			<Text>An upgraded Zoo exhibits new animal species. +3 [ICON_Tourism] Tourism in this city.</Text>
 		</Row>
 		<!-- DLC: Aztecs -->
 		<Row Tag="LOC_BUILDING_TLACHTLI_UPGRADE_NAME">
@@ -313,7 +313,7 @@
 			<Text>Sukiennice Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Poland. Grants additional +1 [ICON_GreatMerchant] Great Merchant point per turn.</Text>
+			<Text>A building upgrade unique to Poland. Grants an additional +1 [ICON_GreatMerchant] Great Merchant point per turn. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +2 [ICON_Gold] Gold each.</Text>
 		</Row>
 		<!-- DLC: Macedon -->
 		<Row Tag="LOC_BUILDING_BASILIKOI_PAIDES_UPGRADE_NAME">
