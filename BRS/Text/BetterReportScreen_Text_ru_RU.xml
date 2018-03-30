@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-02-23: Created -->
+<!-- 2018-03-29: Translated by Zergus -->
+<GameData>
+
+<LocalizedText>
+	<!-- Tab names -->
+	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="ru_RU">
+		<Text>Текущие сделки</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="ru_RU">
+		<Text>Отряды</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="ru_RU">
+		<Text>Полит. курсы</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="ru_RU"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>Города-гос-ва</Text>
+	</Replace>
+	<!-- Column headers -->
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="ru_RU">
+		<Text>Строения/Районы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="ru_RU">
+		<Text>Количество Строений/Районов</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="ru_RU">
+		<Text>Рост</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="ru_RU">
+		<Text>Настроение</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="ru_RU">
+		<Text>Название курса</Text>
+	</Replace>
+	<!-- Resource checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="ru_RU">
+		<Text>Скрыть детали города</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="ru_RU">
+		<Text>Скрыть бесплатные здания</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="ru_RU">
+		<Text>Скрыть бесплатные отряды</Text>
+	</Replace>
+	<!-- UNITS -->
+	<!-- Unit groups -->
+	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="ru_RU">
+		<Text>Военно-воздушные силы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="ru_RU">
+		<Text>Военно-морской флот</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="ru_RU">
+		<Text>Наземные войска</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="ru_RU">
+		<Text>Гражданские отряды</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="ru_RU">
+		<Text>Вспомогательные отряды</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="ru_RU">
+		<Text>Шпионы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="ru_RU">
+		<Text>Торговцы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="ru_RU">
+		<Text>Великие Люди</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="ru_RU">
+		<Text>Религиозные деятели</Text>
+	</Replace>
+	<!-- Headers -->
+	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="ru_RU">
+	        <Text>Тип</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="ru_RU">
+	        <Text>Уровень</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="ru_RU">
+	        <Text>Здоровье</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="ru_RU">
+		<Text>Класс</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="ru_RU">
+	        <Text>Зарядов</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="ru_RU">
+	        <Text>Доходы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="ru_RU">
+	        <Text>Маршрут</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="ru_RU">
+		<Text>Задание</Text>
+	</Replace>
+	<!-- Tooltips -->
+	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="ru_RU">
+		<Text>Показать город</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="ru_RU">
+		<Text>Показать отряд на карте</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="ru_RU">
+		<Text>Гарнизон</Text>
+	</Replace>
+	<!-- POLICIES -->
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="ru_RU">
+		<Text>Военные курсы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="ru_RU">
+		<Text>Экономические курсы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="ru_RU">
+		<Text>Дипломатические курсы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="ru_RU">
+		<Text>Великие люди</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="ru_RU">
+		<Text>Наследие</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="ru_RU">
+		<Text>Темные века</Text>
+	</Replace>
+	<!-- Checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="ru_RU">
+		<Text>Скрыть неактивные полит. курсы</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="ru_RU">
+		<Text>Скрыть полит. курсы без воздействия</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="ru_RU">
+		<Text>Скрыть не встреченные города-гос-ва</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="ru_RU">
+		<Text>Скрыть города-гос-ва без воздействия</Text>
+	</Replace>
+	<!-- Deals -->
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="ru_RU">
+	        <Text>Расход</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="ru_RU">
+	        <Text>Приход</Text>
+    </Replace>
+	<!-- Other -->
+    <Replace Tag="LOC_BRS_SPECIALISTS" Language="ru_RU"> <!-- LOC_PEDIA_CONCEPTS_PAGE_CITIES_9_CHAPTER_CONTENT_TITLE -->
+		<Text>Специалисты</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="ru_RU">
+		<Text>От модификаторов</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="ru_RU">
+		<Text>От модификаторов [COLOR_White]%[ENDCOLOR]</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="ru_RU"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>К зданиям</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="ru_RU"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>К районам</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="ru_RU"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>К отрядам</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="ru_RU"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>Имеется {1_Num : plural 1?{1} район; other?{1} районов;}</Text>
+    </Replace>
+
+</LocalizedText>
+
+</GameData>
