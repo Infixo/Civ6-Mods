@@ -204,7 +204,7 @@ PageLayouts["TableUnits"] = function(page)
 		ShowStat("Bombard");
 		ShowStat("Cost", true); -- inverse colors!
 		-- click action
-		unitLine.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(sectionId, unit.UnitType); end);
+		unitLine.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(page.SectionId, unit.UnitType); end);
 	end
 	
 end
