@@ -161,22 +161,22 @@
 			<Text>An upgraded Amphitheater is able to accommodate more spectators.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_AIRPORT_UPGRADE_DESCRIPTION">
-			<Text>Additional +1 air unit slot in Aerodrome district.</Text>
+			<Text>An upgraded Airport receives more visitors from around the world. All [ICON_Tourism] Tourism yields are increased +10%. Additional +1 air unit slot in Aerodrome district.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ARENA_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Arena allows to host gladiator fights.</Text>
+			<Text>An upgraded Arena accommodates more viewers and hosts gladiator fights. [ICON_Resource_Coffee] Coffee, [ICON_Resource_Jade] Jade, [ICON_Resource_Marble] Marble and [ICON_Resource_Silk] Silk resources gain +2 [ICON_Culture] Culture each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ARMORY_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Armory allows for social activities other than wine drinking.</Text>
+			<Text>Our units are better equipped after an upgrade to the Armory. All land units trained in this city get +3 [ICON_Strength] Combat Strength when attacking.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BANK_UPGRADE_DESCRIPTION">
-			<Text>Trade is booming in the city thanks to an upgraded Bank. International [ICON_TradeRoute] Trade Routes from this city gain +4 [ICON_Gold] Gold; domestic [ICON_TradeRoute] Trade Routes gain +2 [ICON_Gold] Gold.</Text>
+			<Text>Trade is booming in the city thanks to an upgraded Bank. International [ICON_TradeRoute] Trade Routes from this city gain +4 [ICON_Gold] Gold; domestic [ICON_TradeRoute] Trade Routes gain +2 [ICON_Gold] Gold. [ICON_Resource_Diamonds] Diamonds, [ICON_Resource_Gold] Gold and [ICON_Resource_Silver] Silver resources gain +2 [ICON_Gold] Gold each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BARRACKS_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Production] Production from Camps. May not be built in an Encampment district that already has a Stable.</Text>
+			<Text>An upgraded Barracks increase efficiency of Camps. +2 [ICON_Production] Production from Camps. May not be built in an Encampment district that already has a Stable.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BROADCAST_CENTER_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Broadcast Center can store more music and allows for 24/7 transmissions. Grants +1 [ICON_GreatWork_Music] Great Work of Music slot to the {LOC_BUILDING_BROADCAST_CENTER_NAME} and +1 [ICON_Amenities] Amenity to each city center within 6 tiles.</Text>
+			<Text>An upgraded Broadcast Center can store more music and allows for 24/7 transmissions. Grants +1 [ICON_GreatWork_Music] Great Work of Music slot to the Broadcast Center and +1 [ICON_Amenities] Amenity to each city center within 6 tiles.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_CASTLE_UPGRADE_DESCRIPTION">
 			<Text>Further increases the strength of your outer defenses.</Text>
@@ -188,28 +188,28 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ELECTRONICS_FACTORY_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Japan. Bonus +2 [ICON_Production] Production to all cities within 6 tiles. Additional +2 [ICON_Production] Production for each era since constructed or last repaired. After researching the Electricity technology this upgrade provides an additional +2 [ICON_Culture] Culture to its city.</Text>
+			<Text>A building upgrade unique to Japan. Bonus +2 [ICON_Production] Production to all cities within 6 tiles. Additional +3 [ICON_Production] Production for each era since constructed or last repaired. After researching the Electricity technology this upgrade provides an additional +2 [ICON_Culture] Culture to its city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FACTORY_UPGRADE_DESCRIPTION">
-			<Text>Bonus +1 [ICON_Production] Production is extended to all cities within 6 tiles. Additional +1 [ICON_Production] Production for each era since constructed or last repaired.</Text>
+			<Text>Bonus +1 [ICON_Production] Production is extended to all cities within 6 tiles. Additional +2 [ICON_Production] Production for each era since constructed or last repaired.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FILM_STUDIO_UPGRADE_DESCRIPTION"> 
-			<Text>A building upgrade unique to America. Grants +2 [ICON_GreatWork_Music] Great Work of Music slots to the {LOC_BUILDING_FILM_STUDIO_NAME} and +2 [ICON_Amenities] Amenities to each city center within 9 tiles.</Text>
+			<Text>A building upgrade unique to America. Grants +2 [ICON_GreatWork_Music] Great Work of Music slots to the Film Studio and +2 [ICON_Amenities] Amenities to each city center within 9 tiles.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_GRANARY_UPGRADE_DESCRIPTION">
-			<Text>An upgrade for Granary increases storage space.</Text>
+			<Text>An upgrade for Granary increases storage space. [ICON_Resource_Olives] Olives, [ICON_Resource_Sugar] Sugar, [ICON_Resource_Tea] Tea and [ICON_Resource_Wine] Wine resources gain +2 [ICON_Food] Food each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_GURDWARA_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_HANGAR_UPGRADE_DESCRIPTION">
-			<Text>Additional +1 air unit slot in Aerodrome district.</Text>
+			<Text>An upgraded Hangar accomodates civilian planes and better equipment for air units. Additional +1 air unit slot in Aerodrome district and +2 [ICON_Tourism] Tourism in this city. All air units trained in this city get +3 [ICON_Strength] Combat Strength when attacking.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Lighthouse allows Fishing Boats to sail further. Adds +1 [ICON_Food] to each {LOC_IMPROVEMENT_FISHING_BOATS_NAME} and Fishery.</Text>
+			<Text>An upgraded Lighthouse allows Fishing Boats to sail further. Adds +1 [ICON_Food] to each Fishing Boats and Fishery in this city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION">
 			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women.</Text>
@@ -224,7 +224,7 @@
 			<Text>An upgraded Military Academy includes campus for more students.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MONUMENT_UPGRADE_DESCRIPTION">
-			<Text>We can finally write down on the Monument the name of our magnificent leader - you!</Text>
+			<Text>We can finally write down on the Monument the name of our magnificent leader - you! This increases morale of our soldiers. Units trained in this city receive +3 [ICON_Strength] Combat Strength when fighting Barbarians.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MOSQUE_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -242,13 +242,13 @@
 			<Text>The improved Palace is finally worthy of its main resident - you!</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Power Plant is a true regional industry hub. Bonus +2 [ICON_Production] Production extends to each city center within 6 tiles. Additional +2 [ICON_Production] Production for each specialty district constructed in this city.</Text>
+			<Text>An upgraded Power Plant is a true regional industry hub. Bonus +2 [ICON_Production] Production extends to each city center within 6 tiles. Additional +2 [ICON_Production] Production for each specialty district constructed in this city. Adds +3 [ICON_Production] Production to each Oil Well in this city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_RESEARCH_LAB_UPGRADE_DESCRIPTION">
-			<Text>Bonus +2 [ICON_Science] Science extends to each city center within 9 tiles. Grants +1 [ICON_Science] Science to Amber [ICON_Resource_Amber] and Oil [ICON_Resource_Oil], +2 [ICON_Science] Science to Aluminum [ICON_Resource_Aluminum] and Copper [ICON_Resource_Copper] and +3 [ICON_Science] Science to Uranium [ICON_Resource_Uranium] within city borders.</Text>
+			<Text>Bonus +2 [ICON_Science] Science extends to each city center within 9 tiles. Grants +2 [ICON_Science] Science to [ICON_Resource_Oil] Oil, +3 [ICON_Science] Science to [ICON_Resource_Aluminum] Aluminum and [ICON_Resource_Copper] Copper and +4 [ICON_Science] Science to [ICON_Resource_Uranium] Uranium.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SEAPORT_UPGRADE_DESCRIPTION">
-			<Text>Recent upgrades in Seaport infrastructure increased its capacity allowing the City to grow. +1 [ICON_TradeRoute] Trade Route capacity. Bonus [ICON_Production] Production equal to the adjacency bonus of the {LOC_DISTRICT_HARBOR_NAME} district. +1 [ICON_Gold] Gold from each {LOC_IMPROVEMENT_FISHING_BOATS_NAME} and Fishery. +2 [ICON_Production] Production from each {LOC_IMPROVEMENT_OFFSHORE_OIL_RIG_NAME}.</Text>
+			<Text>Recent upgrades in Seaport infrastructure increased its capacity allowing the City to grow. +1 [ICON_TradeRoute] Trade Route capacity. Bonus [ICON_Production] Production equal to the adjacency bonus of the Harbor district. +1 [ICON_Gold] Gold from each Fishing Boats and Fishery. Adds +3 [ICON_Production] Production to each Offshore Oil Rig in this city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SEWER_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Sewer serves more citizens.</Text>
@@ -257,19 +257,19 @@
 			<Text>A renovated Shrine has attracted additional followers from distant corners of the empire.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STABLE_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
+			<Text>An upgraded Stable increases efficiency of Pastures. +2 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SHIPYARD_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Shipyard allows for future enhancements. Additional +1 [ICON_Production] Production for each era since constructed or last repaired.</Text>
+			<Text>An upgraded Shipyard allows for future enhancements and better equipment for naval units. Additional +1 [ICON_Production] Production for each era since constructed or last repaired. All naval units trained in this city get +3 [ICON_Strength] Combat Strength when attacking.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STADIUM_UPGRADE_DESCRIPTION">
-			<Text>All [ICON_Tourism] Tourism yields are increased +10%. Bonus Amenity extends to each city center within 9 tiles.</Text>
+			<Text>All [ICON_Tourism] Tourism yields are increased +10%. Bonus +1 [ICON_Amenities] Amenity extends to each city center within 9 tiles.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STAR_FORT_UPGRADE_DESCRIPTION">
 			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STAVE_CHURCH_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Norway. +1 [ICON_Faith] Faith from Lumber Mills. The {LOC_BUILDING_STAVE_CHURCH_NAME} can now hold an additional +1 [ICON_GreatWork_Relic] Relic.</Text>
+			<Text>A building upgrade unique to Norway. +1 [ICON_Faith] Faith from Lumber Mills. The Stave Church can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +2 [ICON_Faith] Faith each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Stock Exchange is a true regional business hub. Bonus +2 [ICON_Gold] Gold extends to each city center within 9 tiles. Additional +2 [ICON_Gold] Gold for each specialty district constructed in this city.</Text>
@@ -281,7 +281,7 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TEMPLE_UPGRADE_DESCRIPTION">
-			<Text>A renovation of the Temple is most welcomed by our religious community. The {LOC_BUILDING_TEMPLE_NAME} can now hold an additional +1 [ICON_GreatWork_Relic] Relic.</Text>
+			<Text>A renovation of the Temple is most welcomed by our religious community. The Temple can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +2 [ICON_Faith] Faith each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION">
 			<Text>An upgraded University allows for researching non-technical sciences.</Text>
@@ -296,17 +296,17 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WORKSHOP_UPGRADE_DESCRIPTION">
-			<Text>+1 [ICON_Production] Production from Quarries.</Text>
+			<Text>An upgraded Workshop increases efficiency of nearby mining operations. +1 [ICON_Production] Production from Quarries and Mines over resources.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ZOO_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Zoo exhibits new animal species. +3 [ICON_Tourism] Tourism in this city.</Text>
+			<Text>An upgraded Zoo exhibits new animal species. +3 [ICON_Tourism] Tourism in this city. [ICON_Resource_Bananas] Bananas, [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa and [ICON_Resource_Spices] Spices resources gain +2 [ICON_Food] Food each.</Text>
 		</Row>
 		<!-- DLC: Aztecs -->
 		<Row Tag="LOC_BUILDING_TLACHTLI_UPGRADE_NAME">
 			<Text>Tlachtli Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TLACHTLI_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to the Aztecs.</Text>
+			<Text>A building upgrade unique to the Aztecs. [ICON_Resource_Coffee] Coffee, [ICON_Resource_Jade] Jade, [ICON_Resource_Marble] Marble and [ICON_Resource_Silk] Silk resources gain +2 [ICON_Culture] Culture each.</Text>
 		</Row>
 		<!-- DLC: Poland -->
 		<Row Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_NAME">
@@ -320,14 +320,33 @@
 			<Text>Basilikoi Paides Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BASILIKOI_PAIDES_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Macedon. +1 [ICON_Production] Production from Camps. Grants additional +1 [ICON_GreatScientist] Great Scientist point per turn. May not be built in an Encampment district that already has a Stable.</Text>
+			<Text>A building upgrade unique to Macedon. +2 [ICON_Production] Production from Camps. Grants additional +1 [ICON_GreatScientist] Great Scientist point per turn. May not be built in an Encampment district that already has a Stable.</Text>
 		</Row>
 		<!-- DLC: Khmer -->
 		<Row Tag="LOC_BUILDING_PRASAT_UPGRADE_NAME">
 			<Text>Prasat Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_PRASAT_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Khmer. +2 [ICON_Tourism] Tourism. The {LOC_BUILDING_PRASAT_NAME} can now hold an additional +1 [ICON_GreatWork_Relic] Relic.</Text>
+			<Text>A building upgrade unique to Khmer. +2 [ICON_Tourism] Tourism. The Prasat can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +2 [ICON_Faith] Faith each.</Text>
+		</Row>
+		<!-- Abilities -->
+		<Row Tag="LOC_ABILITY_ARMORY_UPGRADE_ATTACK_BUFF_NAME">
+			<Text>Upgraded Armory</Text>
+		</Row>
+		<Row Tag="LOC_ABILITY_ARMORY_UPGRADE_ATTACK_BUFF_DESCRIPTION">
+			<Text>Land units +3 [ICON_Strength] Combat Strength when attacking.</Text>
+		</Row>
+		<Row Tag="LOC_ABILITY_SHIPYARD_UPGRADE_ATTACK_BUFF_NAME">
+			<Text>Upgraded Shipyard</Text>
+		</Row>
+		<Row Tag="LOC_ABILITY_SHIPYARD_UPGRADE_ATTACK_BUFF_DESCRIPTION">
+			<Text>Naval units +3 [ICON_Strength] Combat Strength when attacking.</Text>
+		</Row>
+		<Row Tag="LOC_ABILITY_HANGAR_UPGRADE_ATTACK_BUFF_NAME">
+			<Text>Upgraded Hangar</Text>
+		</Row>
+		<Row Tag="LOC_ABILITY_HANGAR_UPGRADE_ATTACK_BUFF_DESCRIPTION">
+			<Text>Air units +3 [ICON_Strength] Combat Strength when attacking.</Text>
 		</Row>
 	</BaseGameText>
 </GameData>

@@ -90,20 +90,20 @@
 			<Text>Food Market Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FOOD_MARKET_UPGRADE_DESCRIPTION">
-			<Text>Bigger market can service more food providers. +1 [ICON_Food] Food from Plantations, Pastures and Camps. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+			<Text>Bigger market can service more food providers. Plantations and Pastures in this city gain +2 [ICON_Food] Food each. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_NAME">
 			<Text>Shopping Mall Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SHOPPING_MALL_UPGRADE_DESCRIPTION">
-			<Text>Luxury goods bring more tourists and improve revenues. +2 [ICON_Tourism] Tourism in the City. +2 [ICON_Gold] from Luxury Resources. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+			<Text>Luxury goods bring more tourists and improve revenues. Increases +2 [ICON_Tourism] Tourism in this city. Luxury Resources in this city gain +2 [ICON_Gold] Gold each. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
 		</Row>
 		<!-- Uniques -->
 		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_NAME">
 			<Text>Ordu Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ORDU_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Mongolia. Grants +1 [ICON_GreatGeneral] Great General point and +1 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
+			<Text>A building upgrade unique to Mongolia. Grants +1 [ICON_GreatGeneral] Great General point and +2 [ICON_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TSIKHE_UPGRADE_NAME">
 			<Text>Tsikhe Upgrade</Text>
@@ -116,16 +116,16 @@
 <LocalizedText>
 	<!-- updates of vanilla building upgrades -->
 	<Replace Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_DESCRIPTION" Language="en_US">
-		<Text>An upgraded Amphitheater is able to accommodate more spectators. Increases [ICON_Culture] Culture per Population by +0.2.</Text>
+		<Text>An upgraded Amphitheater is able to accommodate more spectators. Increases by +0.2 [ICON_Culture] Culture per [ICON_Citizen] Citizen in this city.</Text>
 	</Replace>
 	<Replace Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION" Language="en_US">
-		<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often. Increases [ICON_Science] Science per Population by +0.2.</Text>
+		<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often. Increases by +0.2 [ICON_Science] Science per [ICON_Citizen] Citizen in this city.</Text>
 	</Replace>
 	<Replace Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION" Language="en_US">
-		<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women. Increases [ICON_Science] Science per Population by +0.3.</Text>
+		<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women. Increases by +0.3 [ICON_Science] Science per [ICON_Citizen] Citizen in this city.</Text>
 	</Replace>
 	<Replace Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION" Language="en_US">
-		<Text>An upgraded University allows for researching non-technical sciences. Increases [ICON_Science] Science per Population by +0.2.</Text>
+		<Text>An upgraded University allows for researching non-technical sciences. Increases by +0.2 [ICON_Science] Science per [ICON_Citizen] Citizen in this city.</Text>
 	</Replace>
 </LocalizedText>
 	
