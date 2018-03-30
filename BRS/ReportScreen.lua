@@ -2886,6 +2886,8 @@ function group_military( unit, unitInstance, group, parent, type )
 			end
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_EXPERIENCE_MODIFIER" then
 			AddExtraPromoText( string.format("%+d%% ", tonumber(tMod.Arguments.Amount))..Locale.Lookup("LOC_HUD_UNIT_PANEL_XP")); -- +x%
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_FLANKING_BONUS_MODIFIER" then
+			AddExtraPromoText( Locale.Lookup("LOC_COMBAT_PREVIEW_FLANKING_BONUS_DESC", tMod.Arguments.Percent.."%") ); -- +x%
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_SEA_MOVEMENT" or tMod.EffectType == "EFFECT_ADJUST_UNIT_MOVEMENT" then
 			AddExtraPromoText( string.format("%+d [ICON_Movement]", tonumber(tMod.Arguments.Amount))); -- Movement
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_VALID_TERRAIN" then

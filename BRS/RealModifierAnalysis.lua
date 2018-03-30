@@ -2230,6 +2230,12 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
 
 	------------------------------ GREAT WORK and TOURISM ------------------------------------------------
+
+	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_TOURISM_CHANGE" then
+		if not( tSubject.SubjectType == SubjectTypes.City or tSubject.SubjectType == SubjectTypes.District ) then
+			print("ERROR: ApplyEffectAndCalculateImpact mismatch for subject", tSubject.SubjectType); dshowtable(tMod); return nil;
+		end
+		tImpact.TOURISM = tonumber(tMod.Arguments.Amount);
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_TOURISM" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
