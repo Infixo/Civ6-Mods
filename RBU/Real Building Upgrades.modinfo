@@ -60,6 +60,9 @@
       <File>RiseFall/Icons/RBU_RF_Buildings128.dds</File>
       <File>RiseFall/Icons/RBU_RF_Buildings256.dds</File>
     </ImportFiles>
+    <AddGameplayScripts id="RBU_Scripts">
+      <File>Lua/RBU_Main.lua</File>
+    </AddGameplayScripts>
   </InGameActions>
   <Files>
     <File>Icons/RBU_Buildings128.dds</File>
@@ -80,5 +83,6 @@
     <File>RiseFall/RealBuildingUpgradesRF.sql</File>
     <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
     <File>Text/RealBuildingUpgrades_Text.xml</File>
+    <File>Lua/RBU_Main.lua</File>
   </Files>
 </Mod>

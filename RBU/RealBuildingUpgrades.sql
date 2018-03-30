@@ -12,6 +12,10 @@
 -- 2018-03-26: Version 3.0, major updates to many upgrades, new file format (each building is changed separately)
 --------------------------------------------------------------
 
+-- just to make versioning easier
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MAJOR', '3');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '0');
+
 -- Version 1.5 Fix for Apadana crash; 2018-03-05 no longer necessary (tested)
 --UPDATE Buildings SET AdjacentCapital = 0 WHERE BuildingType = 'BUILDING_APADANA';
 
