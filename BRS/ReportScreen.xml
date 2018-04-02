@@ -728,7 +728,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="200,parent">
+				<Container																										Size="180,parent">
 					<GridButton		ID="CityNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
 					</GridButton>
@@ -741,14 +741,14 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="75,parent">
 					<GridButton		ID="CityLoyaltyButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_REPORTS_LOYALTY" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				-->
-				<Container																										Size="90,parent">
+				<Container																										Size="80,parent">
 					<GridButton		ID="CityPopulationButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_POPULATION" />
 					</GridButton>
@@ -774,7 +774,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="95,parent">
+				<Container																										Size="80,parent">
 					<GridButton		ID="CityHappinessButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_HAPPINESS" />
 					</GridButton>
@@ -795,7 +795,19 @@
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="53,parent">
 					<GridButton		ID="CityDamageButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_DAMAGE" />
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_DAMAGE" ToolTip="{LOC_HUD_REPORTS_HEADER_DAMAGE} / {LOC_HUD_REPORTS_HEADER_WAR_WEARINESS}" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<GridButton		ID="CityTradingPostButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_TradingPost]" ToolTip="LOC_TRADE_OVERVIEW_TOOLTIP_TRADE_POST_ESTABLISHED" /> <!-- LOC_HUD_CITY_TRADING_POSTS -->
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<GridButton		ID="CityTradeRoutesButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_TradeRoute]" ToolTip="LOC_TOP_PANEL_TRADE_ROUTES" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -823,23 +835,23 @@
 					<Image ID="ReligionIcon" Anchor="C,C" Size="22,22" Texture="Religions22"/>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="200,parent">
+				<Container																										Size="180,parent">
 					<GridButton ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
 						<Label ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<!-- VANILLA
+				<!-- VANILA
 				<Container																										Size="30,parent">
 					<Label				ID="Governor"	Offset="0,3"																Style="ReportValueText"	String="$Housing$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="75,parent">
 					<Label				ID="Loyalty"																		Style="ReportValueText"	String="$Status$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				-->
-				<Container																										Size="90,parent">
+				<Container																										Size="80,parent">
 					<Label				ID="Population"																Style="ReportValueText"	String="$Population$" />
 				</Container>
 				<!-- Infixo: in R&F housing is shown together with population
@@ -857,7 +869,7 @@
 					<Label				ID="Amenities"																Style="ReportValueText"	String="$Amenities$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="95,parent">
+				<Container																										Size="80,parent">
 					<Label				ID="CitizenHappiness"													Style="ReportValueText"	String="$CitizenHappiness$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -872,6 +884,14 @@
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="53,parent">
 					<Label				ID="Damage"																		Style="ReportValueText"	String="$Damage$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<Label				ID="TradingPost"																	Style="ReportValueText"	String="[ICON_TradingPost]" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<Label				ID="TradeRoutes"																	Style="ReportValueText"	String="$0$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				<Container																										Size="265,parent">

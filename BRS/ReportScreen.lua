@@ -602,6 +602,7 @@ function GetData()
 
 		-- Add outgoing route data
 		data.OutgoingRoutes = pCity:GetTrade():GetOutgoingRoutes();
+		data.IncomingRoutes = pCity:GetTrade():GetIncomingRoutes();
 
 		-- Add resources
 		if m_debugNumResourcesStrategic > 0 or m_debugNumResourcesLuxuries > 0 or m_debugNumBonuses > 0 then
@@ -2279,6 +2280,18 @@ function city_fields( kCityData, pCityInstance )
 	local eCityReligion:number = kCityData.City:GetReligion():GetMajorityReligion();
 	local eCityPantheon:number = kCityData.City:GetReligion():GetActivePantheon();
 	
+	local function ShowReligionTooltip(sHeader:string)
+		local tTT:table = {};
+		table.insert(tTT, "[ICON_Religion]"..sHeader);
+		table.sort(kCityData.Religions, function(a,b) return a.Followers > b.Followers; end);
+		for _,rel in ipairs(kCityData.Religions) do
+			--print(rel.ID, rel.ReligionType, rel.Followers);
+			--table.insert(tTT, string.format("%s: %d", Game.GetReligion():GetName( math.max(0, rel.ID) ), rel.Followers)); -- LOC_UI_RELIGION_NUM_FOLLOWERS_TT
+			table.insert(tTT, Locale.Lookup("LOC_UI_RELIGION_NUM_FOLLOWERS_TT", Game.GetReligion():GetName( math.max(0, rel.ID) ), rel.Followers));
+		end
+		pCityInstance.ReligionIcon:SetToolTipString(table.concat(tTT, "[NEWLINE]"));
+	end
+	
 	if eCityReligion > 0 then
 		local iconName : string = "ICON_" .. GameInfo.Religions[eCityReligion].ReligionType;
 		local majorityReligionColor : number = UI.GetColorValue(GameInfo.Religions[eCityReligion].Color);
@@ -2290,22 +2303,31 @@ function city_fields( kCityData, pCityInstance )
 			pCityInstance.ReligionIcon:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
 		end
 		pCityInstance.ReligionIcon:SetHide(false);
-		pCityInstance.ReligionIcon:SetToolTipString(Game.GetReligion():GetName(eCityReligion));
+		--pCityInstance.ReligionIcon:SetToolTipString(Game.GetReligion():GetName(eCityReligion));
+		ShowReligionTooltip( Game.GetReligion():GetName(eCityReligion) );
+		
 	elseif eCityPantheon >= 0 then
 		local iconName : string = "ICON_" .. GameInfo.Religions[0].ReligionType;
+		local majorityReligionColor : number = UI.GetColorValue(GameInfo.Religions.RELIGION_PANTHEON.Color);
+		if (majorityReligionColor ~= nil) then
+			pCityInstance.ReligionIcon:SetColor(majorityReligionColor);
+		end
 		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName,22);
 		if (textureOffsetX ~= nil) then
 			pCityInstance.ReligionIcon:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
 		end
 		pCityInstance.ReligionIcon:SetHide(false);
-		pCityInstance.ReligionIcon:SetToolTipString(Locale.Lookup("LOC_HUD_CITY_PANTHEON_TT", GameInfo.Beliefs[eCityPantheon].Name));
+		--pCityInstance.ReligionIcon:SetToolTipString(Locale.Lookup("LOC_HUD_CITY_PANTHEON_TT", GameInfo.Beliefs[eCityPantheon].Name));
+		ShowReligionTooltip( Locale.Lookup("LOC_HUD_CITY_PANTHEON_TT", GameInfo.Beliefs[eCityPantheon].Name) );
+
 	else
 		pCityInstance.ReligionIcon:SetHide(true);
+		pCityInstance.ReligionIcon:SetToolTipString("");
 	end
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
-	TruncateStringWithTooltip(pCityInstance.CityName, 138, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
+	TruncateStringWithTooltip(pCityInstance.CityName, 178, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
 	
 	-- Population and Housing
 	-- a bit more complicated due to real housing from improvements
@@ -2385,8 +2407,27 @@ function city_fields( kCityData, pCityInstance )
 	if kCityData.HitpointsTotal > kCityData.HitpointsCurrent then sDamageWWText = ColorRed(kCityData.HitpointsTotal - kCityData.HitpointsCurrent); end
 	sDamageWWText = sDamageWWText.." / "..( (warWearyValue==0) and "0" or ColorRed("-"..tostring(warWearyValue)) );
 	pCityInstance.Damage:SetText( sDamageWWText );
-	pCityInstance.Damage:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_HEADER_DAMAGE").." / "..Locale.Lookup("LOC_HUD_REPORTS_HEADER_WAR_WEARINESS") );
-
+	--pCityInstance.Damage:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_HEADER_DAMAGE").." / "..Locale.Lookup("LOC_HUD_REPORTS_HEADER_WAR_WEARINESS") );
+	
+	-- Trading Posts
+	kCityData.IsTradingPost = false;
+	for _,tpPlayer in ipairs(kCityData.TradingPosts) do
+		if tpPlayer == Game.GetLocalPlayer() then kCityData.IsTradingPost = true; break; end
+	end
+	pCityInstance.TradingPost:SetHide(not kCityData.IsTradingPost);
+	
+	-- Trading Routes
+	local tTRTT:table = {};
+	pCityInstance.TradeRoutes:SetText("[COLOR_White]"..( #kCityData.OutgoingRoutes > 0 and tostring(#kCityData.OutgoingRoutes) or "" ).."[ENDCOLOR]");
+	for i,route in ipairs(kCityData.OutgoingRoutes) do
+		-- Find destination city
+		local pDestPlayer:table = Players[route.DestinationCityPlayer];
+		local pDestPlayerCities:table = pDestPlayer:GetCities();
+		local pDestCity:table = pDestPlayerCities:FindID(route.DestinationCityID);
+		table.insert(tTRTT, Locale.Lookup(pDestCity:GetName()));
+	end
+	pCityInstance.TradeRoutes:SetToolTipString( table.concat(tTRTT, ", ") );
+	
 	-- Districts
 	pCityInstance.Districts:SetText( GetDistrictsForCity(kCityData) );
 	
@@ -2510,6 +2551,12 @@ function city_sortFunction( descend, type, t, a, b )
 	elseif type == "dam" then
 		aCity = t[a].Damage
 		bCity = t[b].Damage
+	elseif type == "trpost" then
+		aCity = ( t[a].IsTradingPost and 1 or 0 );
+		bCity = ( t[b].IsTradingPost and 1 or 0 );
+	elseif type == "numtr" then
+		aCity = #t[a].OutgoingRoutes;
+		bCity = #t[b].OutgoingRoutes;
 	elseif type == "districts" then
 		aCity = t[a].NumDistricts
 		bCity = t[b].NumDistricts
@@ -2574,6 +2621,8 @@ function ViewCityStatusPage()
 	pHeaderInstance.CityStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "status", instance ) end )
 	pHeaderInstance.CityStrengthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "str", instance ) end )
 	pHeaderInstance.CityDamageButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "dam", instance ) end )
+	pHeaderInstance.CityTradingPostButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "trpost", instance ) end );
+	pHeaderInstance.CityTradeRoutesButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "numtr", instance ) end );
 
 	-- 
 	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
