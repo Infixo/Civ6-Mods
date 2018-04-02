@@ -44,6 +44,49 @@ PageLayouts["Technology" ] = function(page)
 		end
 	end
 
+		local stats = {};
+
+	local envoys = 0;
+	local spies = 0;
+
+	for row in GameInfo.TechnologyModifiers() do
+		if(row.TechnologyType == techType) then
+			-- Extract information from Modifiers to append to stats.
+			-- NOTE: This is a pretty naive implementation as it only looks at the effect and arguments and not the requirements.
+			local modifier = GameInfo.Modifiers[row.ModifierId];
+			if(modifier) then
+				local dynamicModifier = GameInfo.DynamicModifiers[modifier.ModifierType];
+				local effect = dynamicModifier and dynamicModifier.EffectType;
+
+				if(effect == "EFFECT_GRANT_INFLUENCE_TOKEN") then
+					-- TODO: Is there any way we can hash these arguments to speed up the lookup?
+					for argument in GameInfo.ModifierArguments() do
+						if(argument.ModifierId == row.ModifierId and argument.Name == "Amount") then
+							envoys = envoys + tonumber(argument.Value);
+
+
+						end 
+					end
+				elseif(effect == "EFFECT_GRANT_SPY") then
+					-- TODO: Is there any way we can hash these arguments to speed up the lookup?
+					for argument in GameInfo.ModifierArguments() do
+						if(argument.ModifierId == row.ModifierId and argument.Name == "Amount") then
+							spies = spies + tonumber(argument.Value);
+						end 
+					end
+				end
+			end
+		end
+	end
+
+	if(spies > 0) then
+		table.insert(stats, Locale.Lookup("LOC_TYPE_TRAIT_SPIES", spies)); 
+	end
+
+	if(envoys > 0) then
+		table.insert(stats, Locale.Lookup("LOC_TYPE_TRAIT_ENVOYS", envoys)); 
+	end
+
 	local unlockables = GetUnlockablesForTech(techType);
 
 	local unlocks = {};
@@ -75,6 +118,17 @@ PageLayouts["Technology" ] = function(page)
 			AddQuote(row.Quote, row.QuoteAudio);
 		end
 	end
+
+	AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
+		s:AddSeparator();
+
+		if(#stats > 0) then
+			for _, v in ipairs(stats) do
+				s:AddLabel(v);
+			end
+			s:AddSeparator();
+		end
+	end);
 
 	AddRightColumnStatBox("LOC_UI_PEDIA_UNLOCKS", function(s)
 		s:AddSeparator();

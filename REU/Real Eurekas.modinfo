@@ -40,7 +40,15 @@
   <Files>
     <File>Config/RealEurekas_Config.xml</File>
     <File>Config/RealEurekas_Config_Text.xml</File>
+    <File>CQUI Fall 2017/civicstree.lua</File>
+    <File>CQUI Fall 2017/techandcivicsupport.lua</File>
+    <File>CQUI Fall 2017/techtree.lua</File>
     <File>Lua/RealEurekas.lua</File>
+    <File>Originals Patch Fall 2017/CivicsTree.lua</File>
+    <File>Originals Patch Fall 2017/CivilopediaPage_Civic.lua</File>
+    <File>Originals Patch Fall 2017/CivilopediaPage_Technology.lua</File>
+    <File>Originals Patch Fall 2017/TechAndCivicSupport.lua</File>
+    <File>Originals Patch Fall 2017/TechTree.lua</File>
     <File>RealEurekas_1_Init.sql</File>
     <File>RealEurekas_2_Rand.sql</File>
     <File>RealEurekas_Text.sql</File>

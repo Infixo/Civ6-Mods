@@ -1,4 +1,4 @@
-﻿print("Loading CivicsTree.lua from Real Eurekas mod");
+print("Loading CivicsTree.lua from Real Eurekas mod");
 -- ===========================================================================
 --  CivicsTree
 --  Tabs set to 4 spaces retaining tab.
@@ -16,19 +16,25 @@
 --  3
 --
 -- ===========================================================================
+
+-- Include self contained additional tabs
+g_ExtraIconData = {};
+include("CivicsTreeIconLoader_", true);
+
 include( "InstanceManager" );
 include( "SupportFunctions" );
 include( "Civ6Common" );      -- Tutorial check support
 include( "TechAndCivicSupport" );
 include( "TechFilterFunctions" );
 include( "ModalScreen_PlayerYieldsHelper" );
+include( "GameCapabilities" );
 
 -- ===========================================================================
 --  DEBUG
 --  Toggle these for temporary debugging help.
 -- ===========================================================================
 local m_debugFilterEraMaxIndex  :number = -1;   -- (-1 default) Only load up to a specific ERA (Value less than 1 to disable)
-local m_debugOutputTechInfo   :boolean= false;  -- (false default) Send to console detailed information on tech?
+local m_debugOutputCivicInfo		:boolean= false;	-- (false default) Send to console detailed information on tech? 
 local m_debugShowIDWithName   :boolean= false;  -- (false default) Show the ID before the name in each node.
 local m_debugShowAllMarkers   :boolean= false;  -- (false default) Show all player markers in the timline; even if they haven't been met.
 
@@ -36,6 +42,12 @@ local m_debugShowAllMarkers   :boolean= false;  -- (false default) Show all play
 -- ===========================================================================
 --  CONSTANTS
 -- ===========================================================================
+
+-- Spacing / Positioning Constants
+local COLUMN_WIDTH					:number = 250;			-- Space of node and line(s) after it to the next node
+local COLUMNS_NODES_SPAN			:number = 2;			-- How many colunms do the nodes span
+local PADDING_TIMELINE_LEFT			:number = 225;
+local PADDING_FIRST_ERA_INDICATOR	:number = 60;
 
 -- Graphic constants
 local PIC_BOLT_OFF        :string = "Controls_BoltOff";
@@ -54,7 +66,7 @@ local SIZE_MARKER_PLAYER_X    :number = 122;      -- Marker of player
 local SIZE_MARKER_PLAYER_Y    :number = 42;     -- "
 local SIZE_MARKER_OTHER_X   :number = 34;     -- Marker of other players
 local SIZE_MARKER_OTHER_Y   :number = 37;     -- "
-local SIZE_NODE_X       :number = 460;      -- Item node dimensions
+local SIZE_NODE_X				:number = 420;			-- Item node dimensions
 local SIZE_NODE_Y       :number = 84;
 local SIZE_NODE_LARGE_Y     :number = 140;        -- "
 local SIZE_OPTIONS_X      :number = 200;
@@ -71,8 +83,6 @@ local PATH_MARKER_NUMBER_0_9_OFFSET :number = 20;
 local PATH_MARKER_NUMBER_10_OFFSET  :number = 15;
 
 -- Other constants
-local COLUMN_WIDTH        :number = 250;      -- Space of node and line(s) after it to the next node
-local COLUMNS_NODES_SPAN    :number = 2;      -- How many colunms do the nodes span
 local DATA_FIELD_GOVERNMENT     :string = "_GOVERNMENT"; --holds players govt and policies
 local DATA_FIELD_LIVEDATA   :string = "_LIVEDATA";  -- The current status of an item.
 local DATA_FIELD_PLAYERINFO   :string = "_PLAYERINFO";-- Holds a table with summary information on that player.
@@ -87,7 +97,6 @@ local ITEM_STATUS       :table  = {
                 };
 local LINE_LENGTH_BEFORE_CURVE    :number = 20;     -- How long to make a line before a node before it curves
 local LINE_VERTICAL_OFFSET      :number = 0;
-local PADDING_TIMELINE_LEFT     :number = 250;
 local PADDING_NODE_STACK_Y      :number = 20;
 local PARALLAX_SPEED        :number = 1.1;      -- Speed for how much slower background moves (1.0=regular speed, 0.5=half speed)
 local PARALLAX_ART_SPEED      :number = 1.2;      -- Speed for how much slower background moves (1.0=regular speed, 0.5=half speed)
@@ -103,7 +112,7 @@ local TXT_BOOSTED         :string = Locale.Lookup("LOC_BOOST_BOOSTED");
 local TXT_TO_BOOST          :string = Locale.Lookup("LOC_BOOST_TO_BOOST");
 local VERTICAL_CENTER       :number = (SIZE_NODE_Y) / 2;
 local MAX_BEFORE_TRUNC_GOV_TITLE  :number = 165;
-local MAX_BEFORE_TRUNC_TO_BOOST   :number = 385;
+local MAX_BEFORE_TRUNC_TO_BOOST   :number = 335;
 
 -- CQUI CONSTANTS
 local CQUI_STATUS_MESSAGE_CIVIC          :number = 3;    -- Number to distinguish civic messages
@@ -162,7 +171,13 @@ local m_shiftDown     :boolean = false;
 
 -- CQUI variables
 local CQUI_halfwayNotified  :table = {};
+local CQUI_ShowTechCivicRecommendations = false;
 
+function CQUI_OnSettingsUpdate()
+  CQUI_ShowTechCivicRecommendations = GameConfiguration.GetValue("CQUI_ShowTechCivicRecommendations") == 1
+end
+LuaEvents.CQUI_SettingsUpdate.Add(CQUI_OnSettingsUpdate);
+LuaEvents.CQUI_SettingsInitialized.Add(CQUI_OnSettingsUpdate);
 
 -- ===========================================================================
 -- Return string respresenation of a prereq table
@@ -384,6 +399,7 @@ function AllocateUI()
     local instArt :table = m_kEraArtIM:GetInstance();
     if eraData.BGTexture ~= nil then
       instArt.BG:SetTexture( eraData.BGTexture );
+			instArt.BG:SetOffsetX( eraData.BGTextureOffsetX );
     else
       UI.DataError("Civic tree is unable to find an EraCivicBackgroundTexture entry for era '"..eraData.Description.."'; using a default.");
       instArt.BG:SetTexture(PIC_DEFAULT_ERA_BACKGROUND);
@@ -396,6 +412,9 @@ function AllocateUI()
 
     local inst:table = m_kEraLabelIM:GetInstance();
     local eraMarkerx, _ = ColumnRowToPixelXY( eraData.PriorColumns + 1, 0);
+		if m_kEraLabelIM.m_iAllocatedInstances == 1 then
+			eraMarkerx = eraMarkerx + PADDING_FIRST_ERA_INDICATOR;
+		end
     inst.Top:SetOffsetX( (eraMarkerx - (SIZE_NODE_X*0.5)) * (1/PARALLAX_SPEED) );
     inst.EraTitle:SetText( Locale.Lookup("LOC_GAME_ERA_DESC",eraData.Description) );
 
@@ -412,14 +431,22 @@ function AllocateUI()
     return;
   end
 
+	local extraIconDataCache:table = {};
+  -- Reset extra icon instances
+  for _,iconData in pairs(g_ExtraIconData) do
+    iconData:Reset();
+  end
+
   -- Actually build UI nodes
   for _,item in pairs(m_kItemDefaults) do
-    local civic   = GameInfo.Civics[item.Index];
-    local civicType = civic and civic.CivicType;
+		local civic:table		= GameInfo.Civics[item.Type];
+		local civicType:string	= civic and civic.CivicType;
 
     local unlockableTypes     = GetUnlockablesForCivic_Cached(civicType, playerId);
     local node        :table;
     local numUnlocks    :number = 0;
+		local extraUnlocks		:table = {};
+		local hideDescriptionIcon:boolean = false;
 
     if unlockableTypes ~= nil then
       for _, unlockItem in ipairs(unlockableTypes) do
@@ -433,10 +460,19 @@ function AllocateUI()
       end
     end
 
-    -- Determine if we award envoys and add to numUnlocks to ensure proper sizing
-    if item.ModifierType == "MODIFIER_PLAYER_GRANT_INFLUENCE_TOKEN" then
-      numUnlocks = numUnlocks + 1;
-    end
+    -- -- Determine if we award envoys and add to numUnlocks to ensure proper sizing
+    -- if item.ModifierType == "MODIFIER_PLAYER_GRANT_INFLUENCE_TOKEN" then
+      -- numUnlocks = numUnlocks + 1;
+    -- end
+
+		-- Include extra icons in total unlocks
+		for _,iconData in pairs(g_ExtraIconData) do
+			if iconData.ModifierType == item.ModifierType then
+				numUnlocks = numUnlocks + 1;
+				hideDescriptionIcon = hideDescriptionIcon or iconData.HideDescriptionIcon;
+				table.insert(extraUnlocks, iconData);
+			end
+		end
 
     -- Create node based on # of unlocks for this civic.
     if numUnlocks <= 8 then
@@ -457,30 +493,40 @@ function AllocateUI()
     node.x    = horizontal; -- Granted x,y can be looked up via GetOffset() but caching the values here for
     node.y    = vertical - VERTICAL_CENTER;   -- other LUA functions to use removes the necessity of a slow C++ roundtrip.
 
-    if node["unlockIM"] ~= nil then
+		if node["unlockIM"] == nil then
+			node["unlockIM"] = InstanceManager:new( "UnlockInstance", "UnlockIcon", node.UnlockStack );
+		else
       node["unlockIM"]:DestroyInstances()
     end
-    node["unlockIM"] = InstanceManager:new( "UnlockInstance", "UnlockIcon", node.UnlockStack );
 
-    if node["unlockGOV"] ~= nil then
+		if node["unlockGOV"] == nil then
+			node["unlockGOV"] = InstanceManager:new( "GovernmentIcon", "GovernmentInstanceGrid", node.UnlockStack );
       node["unlockGOV"]:DestroyInstances()
     end
-    node["unlockGOV"] = InstanceManager:new( "GovernmentIcon", "GovernmentInstanceGrid", node.UnlockStack );
 
-    PopulateUnlockablesForCivic(playerId, item.Index, node["unlockIM"], node["unlockGOV"], function() SetCurrentNode(item.Hash); end);
+		item.Callback = function()
+			SetCurrentNode(item.Hash);
+		end
+		PopulateUnlockablesForCivic(playerId, civic.Index, node["unlockIM"], node["unlockGOV"], item.Callback, hideDescriptionIcon);
 
-    -- Create or clear envoy unlocked instance manager
-    if node["unlockEnvoy"] == nil then
-      node["unlockEnvoy"] = InstanceManager:new( "EnvoyAwardedInstance", "EnvoyAwardedGrid", node.UnlockStack );
-    else
-      node["unlockEnvoy"]:DestroyInstances()
-    end
+    -- if node["unlockEnvoy"] == nil then
+      -- node["unlockEnvoy"] = InstanceManager:new( "EnvoyAwardedInstance", "EnvoyAwardedGrid", node.UnlockStack );
+    -- else
+      -- node["unlockEnvoy"]:DestroyInstances()
+    -- end
 
-    -- Create envoy unlocked instnace if this civic awards it
-    if item.ModifierType == "MODIFIER_PLAYER_GRANT_INFLUENCE_TOKEN" then
-      local envoyInstance:table = node["unlockEnvoy"]:GetInstance();
-      envoyInstance.EnvoyAwardedLabel:SetText(item.ModifierValue);
-      envoyInstance.EnvoyAwardedGrid:SetToolTipString(Locale.Lookup("LOC_CIVIC_ENVOY_AWARDED_TOOLTIP", tonumber(item.ModifierValue)));
+    -- -- Create envoy unlocked instnace if this civic awards it
+    -- if item.ModifierType == "MODIFIER_PLAYER_GRANT_INFLUENCE_TOKEN" then
+      -- local envoyInstance:table = node["unlockEnvoy"]:GetInstance();
+      -- envoyInstance.EnvoyAwardedLabel:SetText(item.ModifierValue);
+      -- envoyInstance.EnvoyAwardedGrid:SetToolTipString(Locale.Lookup("LOC_CIVIC_ENVOY_AWARDED_TOOLTIP", tonumber(item.ModifierValue)));
+			-- envoyInstance.EnvoyAwardedGrid:RegisterCallback(Mouse.eLClick, item.Callback);
+		-- end
+
+		-- Initialize extra icons
+		for _,iconData in pairs(extraUnlocks) do
+			iconData:Initialize(node.UnlockStack, item);
+			-- extraIconDataCache[iconData.Context.CData] = item;
     end
 
     -- What happens when clicked
@@ -488,8 +534,8 @@ function AllocateUI()
       LuaEvents.OpenCivilopedia(civicType);
     end
 
-    node.NodeButton:RegisterCallback( Mouse.eLClick, function() SetCurrentNode(item.Hash); end);
-    node.OtherStates:RegisterCallback( Mouse.eLClick, function() SetCurrentNode(item.Hash); end);
+		node.NodeButton:RegisterCallback( Mouse.eLClick, item.Callback);
+		node.OtherStates:RegisterCallback( Mouse.eLClick, item.Callback);
 
     -- Only wire up Civilopedia handlers if not in a on-rails tutorial.
     if IsTutorialRunning()==false then
@@ -497,10 +543,13 @@ function AllocateUI()
       node.OtherStates:RegisterCallback( Mouse.eRClick, OpenPedia);
     end
 
-    -- Set position and save.
+    -- Set position and save
     node.Top:SetOffsetVal( horizontal, vertical);
     m_uiNodes[item.Type] = node;
   end
+
+	-- -- Refresh extra icons
+	-- LuaEvents.CivicsTreeIconRefresh(extraIconDataCache);
 
   if Controls.TreeStart ~= nil then
     local h,v = ColumnRowToPixelXY( TREE_START_COLUMN, TREE_START_ROW );
@@ -731,6 +780,7 @@ function View( playerTechData:table )
         boostText = TXT_BOOSTED.." "..item.BoostText;
         node.BoostIcon:SetTexture( PIC_BOOST_ON );
         node.BoostMeter:SetHide( false );
+				node.BoostedBack:SetHide( false );
       else
 	    -- Infixo: start
         --boostText = TXT_TO_BOOST.." "..item.BoostText;
@@ -817,7 +867,8 @@ function View( playerTechData:table )
     end
 
     -- Show/Hide Recommended Icon
-    if live.IsRecommended and live.AdvisorType ~= nil then
+    -- CQUI : only if show tech civ enabled in settings
+    if live.IsRecommended and live.AdvisorType ~= nil and CQUI_ShowTechCivicRecommendations then
       node.RecommendedIcon:SetIcon(live.AdvisorType);
       node.RecommendedIcon:SetHide(false);
     else
@@ -854,7 +905,12 @@ function View( playerTechData:table )
       end
 
       -- Different content in marker based on if there is just 1 player in the column, or more than 1
-      local tooltipString       :string = Locale.Lookup("LOC_TREE_ERA", Locale.Lookup(GameInfo.Eras[markerStat.HighestEra].Name) ).."[NEWLINE]";
+      local higestEraName = "";
+      if markerStat.HighestEra ~= nil and GameInfo.Eras[markerStat.HighestEra] ~= nil then
+        higestEraName = GameInfo.Eras[markerStat.HighestEra].Name;
+      end
+
+      local tooltipString				:string = Locale.Lookup("LOC_TREE_ERA", Locale.Lookup(higestEraName) ).."[NEWLINE]";
       local numOfPlayersAtThisColumn  :number = table.count(markerStat.PlayerNums);
       if numOfPlayersAtThisColumn < 2 then
         instance.Num:SetHide( true );
@@ -903,18 +959,15 @@ function View( playerTechData:table )
   RealizeGovernmentPanel();
 end
 
---
---
---
 function GetPlayerGovernment(ePlayer:number)
   local kPlayer   :table  = Players[ePlayer];
   local playerCulture :table  = kPlayer:GetCulture();
   local kCurrentGovernment:table;
   local kGovernmentInfo:table = {};
 
-  local governmentRowId :number = playerCulture:GetCurrentGovernment();
-  if governmentRowId ~= -1 then
-    kCurrentGovernment = GameInfo.Governments[governmentRowId];
+	local governmentId :number = playerCulture:GetCurrentGovernment();
+	if governmentId ~= -1 then
+		kCurrentGovernment = GameInfo.Governments[governmentId];
     kGovernmentInfo["NAMES"] = Locale.Lookup(kCurrentGovernment.Name);
   end
 
@@ -956,7 +1009,7 @@ end
 -- ===========================================================================
 --  Load all the 'live' data for a player.
 -- ===========================================================================
-function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
+function GetLivePlayerData( ePlayer:number )
 
   -- If first time, initialize player data tables.
   local data  :table = m_kAllPlayersTechData[ePlayer];
@@ -976,41 +1029,59 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
 
   local kPlayer   :table  = Players[ePlayer];
   local playerCulture :table  = kPlayer:GetCulture();
-  local currentTechID :number = playerCulture:GetProgressingCivic();
+	local currentCivicID:number = playerCulture:GetProgressingCivic();
 
   -- DEBUG: Output header to console.
-  if m_debugOutputTechInfo then
+	if m_debugOutputCivicInfo then
     print("                          Item Id  Status      Progress   $ Era              Prereqs");
     print("------------------------------ --- ---------- --------- --- ---------------- --------------------------");
+  end
+
+  -- Get recommendations
+  local civicRecommendations:table = {};
+  local kGrandAI:table = kPlayer:GetGrandStrategicAI();
+  if kGrandAI then
+    for i,recommendation in pairs(kGrandAI:GetCivicsRecommendations()) do
+      civicRecommendations[recommendation.CivicHash] = recommendation.CivicScore;
+    end
   end
 
   -- Loop through all items and place in appropriate buckets as well
   -- read in the associated information for it.
   for type,item in pairs(m_kItemDefaults) do
+		local civicID	:number = GameInfo.Civics[item.Type].Index;
     local status  :number = ITEM_STATUS.BLOCKED;
     local turnsLeft :number = 0;
-    if eCompletedCivic == item.Index or playerCulture:HasCivic(item.Index) then
+		if playerCulture:HasCivic(civicID) then
       status = ITEM_STATUS.RESEARCHED;
-    elseif item.Index == currentTechID then
+		elseif civicID == currentCivicID then
       status = ITEM_STATUS.CURRENT;
       turnsLeft = playerCulture:GetTurnsLeft();
-    elseif playerCulture:CanProgress(item.Index) then
+		elseif playerCulture:CanProgress(civicID) then
       status = ITEM_STATUS.READY;
-      turnsLeft = playerCulture:GetTurnsToProgressCivic(item.Index);
+			turnsLeft = playerCulture:GetTurnsToProgressCivic(civicID);
     else
-      turnsLeft = playerCulture:GetTurnsToProgressCivic(item.Index);
+			turnsLeft = playerCulture:GetTurnsToProgressCivic(civicID);
     end
 
     data[DATA_FIELD_LIVEDATA][type] = {
-      Cost    = playerCulture:GetCultureCost(item.Index),
-      IsBoosted = playerCulture:HasBoostBeenTriggered(item.Index),
-      Progress  = playerCulture:GetCulturalProgress(item.Index),
+			Cost		= playerCulture:GetCultureCost(civicID),
+			IsBoosted	= playerCulture:HasBoostBeenTriggered(civicID),
+			Progress	= playerCulture:GetCulturalProgress(civicID),
       Status    = status,
       Turns   = turnsLeft
     }
 
+    -- Determine if tech is recommended
+    if civicRecommendations[item.Hash] then
+      data[DATA_FIELD_LIVEDATA][type].AdvisorType = GameInfo.Civics[item.Type].AdvisorType;
+      data[DATA_FIELD_LIVEDATA][type].IsRecommended = true;
+    else
+      data[DATA_FIELD_LIVEDATA][type].IsRecommended = false;
+    end
+
     -- DEBUG: Output to console detailed information about the tech.
-    if m_debugOutputTechInfo then
+		if m_debugOutputCivicInfo then
       local this:table = data[DATA_FIELD_LIVEDATA][type];
       print( string.format("%30s %-3d %-10s %4d/%-4d %3d %-16s %s",
         type,item.Index,
@@ -1047,7 +1118,8 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
       local highestColumn :number = -1;
       local highestEra  :string = "";
       for _,item in pairs(m_kItemDefaults) do
-        if playerCulture:HasCivic(item.Index) then
+				local civicID:number = GameInfo.Civics[item.Type].Index;
+				if playerCulture:HasCivic(civicID) then
           local column:number = item.Column + m_kEras[item.EraType].PriorColumns;
           if column > highestColumn then
             highestColumn = column;
@@ -1091,7 +1163,9 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
             firstEra = era;
           end
         end
-        markerData.HighestEra = firstEra.Index;
+        if firstEra ~= nil then
+          markerData.HighestEra = firstEra.Index;
+        end
       end
 
       -- Traverse all the IDs and merge them with this one.
@@ -1128,38 +1202,40 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
   return data;
 end
 
+-- Optional parameter
+function RefreshDataIfNeeded( )
+  if ContextPtr:IsVisible() then
+    m_kCurrentData = GetLivePlayerData( m_ePlayer );
+    View( m_kCurrentData );
+  end
+end
+
+function UpdateLocalPlayer()
+  local ePlayer :number = Game.GetLocalPlayer();
+  if ePlayer ~= -1 and m_ePlayer ~= ePlayer then
+    m_ePlayer = ePlayer;
+    RefreshDataIfNeeded( );
+  end
+end
+
 -- ===========================================================================
 function OnGovernmentChanged()
-  local ePlayer :number = Game.GetLocalPlayer();
-  if ePlayer ~= -1 then
-      if m_ePlayer ~= ePlayer then
-        m_ePlayer = ePlayer;
-        m_kCurrentData = GetLivePlayerData( ePlayer, -1 );
-      end
-    end
+  UpdateLocalPlayer()
 end
 
 -- ===========================================================================
 function OnGovernmentPolicyChanged()
-  local ePlayer :number = Game.GetLocalPlayer();
-  if ePlayer ~= -1 then
-      if m_ePlayer ~= ePlayer then
-        m_ePlayer = ePlayer;
-        m_kCurrentData = GetLivePlayerData( ePlayer, -1 );
-      end
-    end
+  UpdateLocalPlayer()
 end
 
 -- ===========================================================================
 function OnLocalPlayerTurnBegin()
-	local ePlayer :number = Game.GetLocalPlayer();
-	if ePlayer ~= -1 then
-	    if m_ePlayer ~= ePlayer then
-		    m_ePlayer = ePlayer;
-		    m_kCurrentData = GetLivePlayerData( ePlayer, -1 );
-	    end
-    end
-	
+  -- CQUI comment: We do not use UpdateLocalPlayer() here, because of Check for Civic Progress
+  local ePlayer :number = Game.GetLocalPlayer();
+  if ePlayer ~= -1 and m_ePlayer ~= ePlayer then
+    m_ePlayer = ePlayer;
+    RefreshDataIfNeeded( );
+
 	-- Infixo
 	if ePlayer == -1 or GameConfiguration.GetValue("CQUI_TechPopupVisual") == nil then return; end
     --------------------------------------------------------------------------
@@ -1177,7 +1253,6 @@ function OnLocalPlayerTurnBegin()
 	  -- Infixo
       --local civicType = GameInfo.Civics[currentCivicID].Type;
       local civicType = GameInfo.Civics[currentCivicID].CivicType;
-
       local currentCost         = playerCivics:GetCultureCost(currentCivicID);
       local currentProgress     = playerCivics:GetCulturalProgress(currentCivicID);
       local currentYield          = playerCivics:GetCultureYield();
@@ -1208,10 +1283,9 @@ function OnLocalPlayerTurnBegin()
       end
 
     end -- end of if currentCivivID ~= -1
-
     --------------------------------------------------------------------------
 
-  --end -- end of ePlayer ~= -1
+  end -- end of ePlayer ~= -1
 end
 
 -- ===========================================================================
@@ -1237,10 +1311,7 @@ end
 function OnCivicChanged( ePlayer:number, eTech:number )
   if ePlayer == Game.GetLocalPlayer() then
     m_ePlayer = ePlayer;
-    m_kCurrentData = GetLivePlayerData( m_ePlayer, -1 );
-    if not ContextPtr:IsHidden() then
-      View( m_kCurrentData );
-    end
+    RefreshDataIfNeeded( );
   end
 end
 
@@ -1248,10 +1319,7 @@ end
 function OnCivicComplete( ePlayer:number, eTech:number)
   if ePlayer == Game.GetLocalPlayer() then
     m_ePlayer = ePlayer;
-    m_kCurrentData = GetLivePlayerData( m_ePlayer, eTech );
-    if not ContextPtr:IsHidden() then
-      View( m_kCurrentData );
-    end
+    RefreshDataIfNeeded( );
 
     --------------------------------------------------------------------------
     -- CQUI Civic Complete
@@ -1263,7 +1331,7 @@ function OnCivicComplete( ePlayer:number, eTech:number)
     -- Make sure there is a civic selected before continuing with checks
     if currentCivicID ~= -1 then
       local civicName = GameInfo.Civics[currentCivicID].Name;
-	  LuaEvents.CQUI_AddStatusMessage(Locale.Lookup("LOC_CIVIC_BOOST_COMPLETE", civicName), 10, CQUI_STATUS_MESSAGE_CIVIC);
+    LuaEvents.CQUI_AddStatusMessage(Locale.Lookup("LOC_CIVIC_BOOST_COMPLETE", civicName), 10, CQUI_STATUS_MESSAGE_CIVIC);
     end -- end of if currentCivivID ~= -1
 
     --------------------------------------------------------------------------
@@ -1298,7 +1366,7 @@ function Resize()
   -- First obtain the size of the tree by taking the visible size and multiplying it by the ratio of the full content
   local scrollPanelX:number = (Controls.NodeScroller:GetSizeX() / Controls.NodeScroller:GetRatio());
 
-  local artAndEraScrollWidth:number = scrollPanelX * (1/PARALLAX_SPEED);
+  local artAndEraScrollWidth:number = math.max(scrollPanelX * (1/PARALLAX_SPEED), m_width);
   Controls.ArtParchmentDecoTop:SetSizeX( artAndEraScrollWidth );
   Controls.ArtParchmentDecoBottom:SetSizeX( artAndEraScrollWidth );
   Controls.ArtParchmentRippleTop:SetSizeX( artAndEraScrollWidth );
@@ -1309,7 +1377,7 @@ function Resize()
   Controls.ArtCornerGrungeBR:ReprocessAnchoring();
 
 
-  Controls.Background:SetSizeX( artAndEraScrollWidth + 100 );
+  Controls.Background:SetSizeX( math.max(artAndEraScrollWidth + 100, m_width) );
   Controls.Background:SetSizeY( SIZE_WIDESCREEN_HEIGHT - (SIZE_TIMELINE_AREA_Y - 8) );
   Controls.FarBackArtScroller:CalculateSize();
 
@@ -1363,6 +1431,7 @@ function PopulateItemData( tableName:string, tableColumn:string, prereqTableName
       if (entry.Type == civicModifier.CivicType) then
         for modifierType in GameInfo.Modifiers() do
           if civicModifier.ModifierId == modifierType.ModifierId then
+						entry.ModifierId	= modifierType.ModifierId;
             entry.ModifierType  = modifierType.ModifierType;
           end
         end
@@ -1422,6 +1491,7 @@ function PopulateEraData()
     if m_kEraCounter[row.EraType] and m_kEraCounter[row.EraType] > 0 and m_debugFilterEraMaxIndex < 1 or row.ChronologyIndex <= m_debugFilterEraMaxIndex then
       m_kEras[row.EraType] = {
         BGTexture = row.EraCivicBackgroundTexture,
+				BGTextureOffsetX = row.EraCivicBackgroundTextureOffsetX,
         NumColumns  = 0,
         Description = Locale.Lookup(row.Name),
         Index   = row.ChronologyIndex,
@@ -1480,44 +1550,114 @@ end
 function PopulateSearchData()
   local searchContext = "Civics";
   if(Search.CreateContext(searchContext, "[COLOR_LIGHTBLUE]", "[ENDCOLOR]", "...")) then
+			
+		-- Hash modifier types that grant envoys or spies.
+		local envoyModifierTypes = {};
+		local spyModifierTypes = {};
+
+		for row in GameInfo.DynamicModifiers() do
+			local effect = row.EffectType;
+			if(effect == "EFFECT_GRANT_INFLUENCE_TOKEN") then
+				envoyModifierTypes[row.ModifierType] = true;
+			elseif(effect == "EFFECT_GRANT_SPY") then
+				spyModifierTypes[row.ModifierType] = true;
+			end
+		end
+
+		-- Hash civic types that grant envoys or spies via modifiers.
+		local envoyCivics = {};
+		local spyCivics = {};
+		for row in GameInfo.CivicModifiers() do			
+			local modifier = GameInfo.Modifiers[row.ModifierId];
+			if(modifier) then
+				local modifierType = modifier.ModifierType;
+				if(envoyModifierTypes[modifierType]) then
+					envoyCivics[row.CivicType] = true;
+				end
+
+				if(spyModifierTypes[modifierType]) then
+					spyCivics[row.CivicType] = true;
+				end
+			end
+		end
+
+		local envoyTypeName = Locale.Lookup("LOC_ENVOY_NAME");
+		local spyTypeName = Locale.Lookup("LOC_SPY_NAME");
+
     for row in GameInfo.Civics() do
+			local civicType = row.CivicType;
       local description = row.Description and Locale.Lookup(row.Description) or "";
-      Search.AddData(searchContext, row.CivicType, Locale.Lookup(row.Name), description);
+			local tags = {};
+			if(envoyCivics[civicType]) then
+				table.insert(tags, envoyTypeName);
+			end
+
+			if(spyCivics[civicType]) then
+				table.insert(tags, spyTypeName);
+			end
+
+			Search.AddData(searchContext, civicType, Locale.Lookup(row.Name), description, tags);
+		end
+
+		local buildingTypeName = Locale.Lookup("LOC_BUILDING_NAME");
+		local wonderTypeName = Locale.Lookup("LOC_WONDER_NAME");
+		for row in GameInfo.Buildings() do
+			if(row.PrereqCivic) then
+				local tags = {buildingTypeName};
+				if(row.IsWonder) then
+					table.insert(tags, wonderTypeName);
+				end
+
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), tags);
+			end
+		end
+
+		local districtTypeName = Locale.Lookup("LOC_DISTRICT_NAME");
+		for row in GameInfo.Districts() do
+			if(row.PrereqCivic) then
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { districtTypeName });
+			end
     end
 
-    for row in GameInfo.Improvements() do
+		local governmentTypeName = Locale.Lookup("LOC_GOVERNMENT_NAME");
+		for row in GameInfo.Governments() do
       if(row.PrereqCivic) then
-        Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { governmentTypeName });
       end
     end
 
-    for row in GameInfo.Units() do
+		local improvementTypeName = Locale.Lookup("LOC_IMPROVEMENT_NAME");
+		for row in GameInfo.Improvements() do
       if(row.PrereqCivic) then
-        Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { improvementTypeName });
       end
     end
 
-    for row in GameInfo.Buildings() do
+		local policyTypeName = Locale.Lookup("LOC_POLICY_NAME");
+		for row in GameInfo.Policies() do
       if(row.PrereqCivic) then
-        Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { policyTypeName });
       end
     end
 
-    for row in GameInfo.Districts() do
+		local projectTypeName = Locale.Lookup("LOC_PROJECT_NAME");
+		for row in GameInfo.Projects() do
       if(row.PrereqCivic) then
-        Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { projectTypeName });
       end
     end
 
+		local resourceTypeName = Locale.Lookup("LOC_RESOURCE_NAME");
     for row in GameInfo.Resources() do
       if(row.PrereqCivic) then
-        Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { resourceTypeName });
       end
     end
 
-    for row in GameInfo.Policies() do
+		local unitTypeName = Locale.Lookup("LOC_UNIT_NAME");
+		for row in GameInfo.Units() do
       if(row.PrereqCivic) then
-        Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqCivic, Locale.Lookup(GameInfo.Civics[row.PrereqCivic].Name), Locale.Lookup(row.Name), { unitTypeName });
       end
     end
 
@@ -1555,6 +1695,7 @@ function OnOpen()
   end
 
   UI.PlaySound("UI_Screen_Open");
+  m_kCurrentData = GetLivePlayerData( m_ePlayer );
   View( m_kCurrentData );
   ContextPtr:SetHide(false);
 
@@ -1605,15 +1746,14 @@ end
 --  Show the Key panel based on the state
 -- ===========================================================================
 function RealizeGovernmentPanel()
-
   m_kDiplomaticPolicyIM:DestroyInstances();
   m_kEconomicPolicyIM:DestroyInstances();
   m_kMilitaryPolicyIM:DestroyInstances();
   m_kWildcardPolicyIM:DestroyInstances();
-  m_kDiplomaticPolicyIM = InstanceManager:new( "DiplomaticPolicyInstance",  "DiplomaticPolicy",   Controls.DiplomaticStack );
-  m_kEconomicPolicyIM = InstanceManager:new( "EconomicPolicyInstance",  "EconomicPolicy",   Controls.EconomicStack );
-  m_kMilitaryPolicyIM = InstanceManager:new( "MilitaryPolicyInstance",  "MilitaryPolicy",   Controls.MilitaryStack );
-  m_kWildcardPolicyIM = InstanceManager:new( "WildcardPolicyInstance",  "WildcardPolicy",   Controls.WildcardStack );
+  -- m_kDiplomaticPolicyIM = InstanceManager:new( "DiplomaticPolicyInstance",  "DiplomaticPolicy",   Controls.DiplomaticStack );
+  -- m_kEconomicPolicyIM = InstanceManager:new( "EconomicPolicyInstance",  "EconomicPolicy",   Controls.EconomicStack );
+  -- m_kMilitaryPolicyIM = InstanceManager:new( "MilitaryPolicyInstance",  "MilitaryPolicy",   Controls.MilitaryStack );
+  -- m_kWildcardPolicyIM = InstanceManager:new( "WildcardPolicyInstance",  "WildcardPolicy",   Controls.WildcardStack );
 
   if UserConfiguration.GetShowCivicsTreeGovernment() then
     Controls.GovernmentPanel:SetHide( false );
@@ -1685,9 +1825,6 @@ function RealizeGovernmentPanel()
       local wildInst:table = m_kWildcardPolicyIM:GetInstance();
       local policyType:string = GameInfo.Policies[policy].Name;
       local slotType:string =  GameInfo.Policies[policy].GovernmentSlotType;
-      if numWildResults > 3 then
-        wildInst.WildcardPolicy:SetSizeVal(111/numWildResults, 44 * (3/numWildResults));
-      end
       if slotType == "SLOT_DIPLOMATIC" then
         wildInst.WildcardPolicy:SetTexture("Governments_DiplomacyCard_Small");
       else
@@ -1698,6 +1835,9 @@ function RealizeGovernmentPanel()
             wildInst.WildcardPolicy:SetTexture("Governments_MilitaryCard_Small");
           end
         end
+      end
+      if numWildResults > 3 then
+        wildInst.WildcardPolicy:SetSizeVal(111/numWildResults, 44 * (3/numWildResults));
       end
       wildInst.WildcardPolicy:SetToolTipString(m_kPolicyCatalogData[policyType].Name .. ": " .. m_kPolicyCatalogData[policyType].Description);
       wildInst.WildcardPolicy:RegisterCallback( Mouse.eLClick, function() OnClickCurrentPolicy(policy) end );
@@ -1805,7 +1945,9 @@ end
 --  Main close function all exit points should call.
 -- ===========================================================================
 function Close()
+	if not ContextPtr:IsHidden() then
   UI.PlaySound("UI_Screen_Close");
+	end
   ContextPtr:SetHide(true);
   LuaEvents.CivicsTree_CloseCivicsTree();
   Controls.SearchResultsPanelContainer:SetHide(true);
@@ -1851,13 +1993,7 @@ function OnInputHandler( pInputStruct:table )
   return false;
 end
 
-function OnSearchBarGainFocus()
-  Controls.SearchEditBox:ClearString();
-end
 
-function OnSearchBarLoseFocus()
-  Controls.SearchEditBox:SetText(Locale.Lookup("LOC_TREE_SEARCH_W_DOTS"));
-end
 
 -- ===========================================================================
 --  UI Event Handler
@@ -1908,64 +2044,126 @@ function OnInputActionTriggered( actionId )
 end
 
 -- ===========================================================================
---  UI Callback
+--	Searching
 -- ===========================================================================
 function OnSearchCharCallback()
-  local has_found = {};
   local str = Controls.SearchEditBox:GetText();
 
-  if str ~= nil and str ~= Locale.Lookup("LOC_TREE_SEARCH_W_DOTS") then
-    local results = Search.Search("Civics", str);
-    if (results and #results > 0) then
-      m_kSearchResultIM:DestroyInstances();
-      for i, v in ipairs(results) do
-        -- v[1]chnologyType
-        -- v[2] == Name of Technology w/ search term highlighted.
-        -- v[3] == Snippet of Technology description w/ search term highlighted.
-        if has_found[v[1]] == nil then
-          local instance = m_kSearchResultIM:GetInstance();
-          local civicID:number;
-          local i:number = 0;
-          for row in GameInfo.Civics() do
-            if row.CivicType == v[1] then
-              civicID = i;
-            end
-            i = i + 1;
-          end
+	local defaultText = Locale.Lookup("LOC_TREE_SEARCH_W_DOTS")
+	if(str == defaultText) then
+		-- We cannot immediately clear the results..
+		-- When the edit box loses focus, it resets the text which triggers this call back.
+		-- if the user is in the process of clicking a result, wiping the results in this callback will make the user
+		-- click whatever was underneath.
+		-- Instead, trigger a timer will wipe the results.
+		Controls.SearchResultsTimer:SetToBeginning();
+		Controls.SearchResultsTimer:Play();
 
-          local iconName :string = DATA_ICON_PREFIX .. v[1];
+	elseif(str == nil or #str == 0) then
+		-- Clear results.
+		m_kSearchResultIM:DestroyInstances();
+		Controls.SearchResultsStack:CalculateSize();
+		Controls.SearchResultsStack:ReprocessAnchoring();
+		Controls.SearchResultsPanel:CalculateSize();
+		Controls.SearchResultsPanelContainer:SetHide(true);
+
+	elseif(str and #str > 0) then
+		local hasResults = false;
+		m_kSearchResultIM:DestroyInstances();
+		local results = Search.Search("Civics", str, 100);
+    if (results and #results > 0) then
+			hasResults = true;
+			local has_found = {};
+      for i, v in ipairs(results) do
+        if has_found[v[1]] == nil then
+					-- v[1] == Type
+					-- v[2] == Name w/ search term highlighted.
+					-- v[3] == Snippet description w/ search term highlighted.
+          local instance = m_kSearchResultIM:GetInstance();
+
+					-- Search results already localized.
+					local name = v[2];
+					instance.Name:SetText(name);
+					local iconName = DATA_ICON_PREFIX .. v[1];
           instance.SearchIcon:SetIcon(iconName);
 
-          -- Search results already localized.
-          instance.Name:SetText(v[2]);
+					instance.Button:RegisterCallback(Mouse.eLClick, function() 
+						Controls.SearchEditBox:SetText(defaultText);
+						ScrollToNode(v[1]); 
+					end);
 
-          instance.Button:RegisterCallback(Mouse.eLClick, function() ScrollToNode(v[1]); end );
+
+
+
           instance.Button:SetToolTipString(ToolTipHelper.GetToolTip(v[1], Game.GetLocalPlayer()));
           has_found[v[1]] = true;
         end
       end
+		end
+		
+		Controls.SearchResultsStack:CalculateSize();
+		Controls.SearchResultsStack:ReprocessAnchoring();
+		Controls.SearchResultsPanel:CalculateSize();
+		Controls.SearchResultsPanelContainer:SetHide(not hasResults);
+	end
+end
 
+function OnSearchCommitCallback()
+	local str = Controls.SearchEditBox:GetText();
+
+	local defaultText = Locale.Lookup("LOC_TREE_SEARCH_W_DOTS")
+	if(str and #str > 0 and str ~= defaultText) then
+		local results = Search.Search("Civics", str, 1);
+		if (results and #results > 0) then
+			local result = results[1];
+			if(result) then
+				ScrollToNode(result[1]); 
+			end
+		end
+
+		Controls.SearchEditBox:SetText(defaultText);
+	end
+end
+
+function OnSearchBarGainFocus()
+	Controls.SearchResultsTimer:Stop();
+	Controls.SearchEditBox:ClearString();
+end
+
+function OnSearchBarLoseFocus()
+	Controls.SearchEditBox:SetText(Locale.Lookup("LOC_TREE_SEARCH_W_DOTS"));
+end
+
+function OnSearchResultsTimerEnd()
+	m_kSearchResultIM:DestroyInstances();
       Controls.SearchResultsStack:CalculateSize();
       Controls.SearchResultsStack:ReprocessAnchoring();
       Controls.SearchResultsPanel:CalculateSize();
-      Controls.SearchResultsPanelContainer:SetHide(false);
-    else
       Controls.SearchResultsPanelContainer:SetHide(true);
-    end
+end
+
+function OnSearchResultsPanelContainerMouseEnter()
+	Controls.SearchResultsTimer:Stop();
+end
+
+function OnSearchResultsPanelContainerMouseExit()
+	if(not Controls.SearchEditBox:HasFocus()) then
+		Controls.SearchResultsTimer:SetToBeginning();
+		Controls.SearchResultsTimer:Play();
   end
 end
 
 -- ===========================================================================
 function OnCityInitialized(owner, ID)
   if (owner == m_ePlayer) then
-    m_kCurrentData = GetLivePlayerData( m_ePlayer, -1 );
+    RefreshDataIfNeeded( );
   end
 end
 
 -- ===========================================================================
 function OnBuildingChanged( plotX:number, plotY:number, buildingIndex:number, playerID:number, iPercentComplete:number )
   if playerID == m_ePlayer then
-    m_kCurrentData = GetLivePlayerData( m_ePlayer, -1 ); -- Buildings can change culture/science yield which can effect "turns to complete" values
+    RefreshDataIfNeeded( ); -- Buildings can change culture/science yield which can effect "turns to complete" values
   end
 end
 
@@ -1992,7 +2190,7 @@ function Initialize()
 
   Resize(); -- Now that view has been called once, size of tree is known.
 
-  m_kCurrentData = GetLivePlayerData( m_ePlayer, -1 );
+  m_kCurrentData = GetLivePlayerData( m_ePlayer );
   View( m_kCurrentData );
 
 
@@ -2003,6 +2201,9 @@ function Initialize()
   Controls.SearchEditBox:RegisterStringChangedCallback(OnSearchCharCallback);
   Controls.SearchEditBox:RegisterHasFocusCallback( OnSearchBarGainFocus);
   Controls.SearchEditBox:RegisterCommitCallback( OnSearchBarLoseFocus);
+	Controls.SearchResultsTimer:RegisterEndCallback(OnSearchResultsTimerEnd);
+	Controls.SearchResultsPanelContainer:RegisterMouseEnterCallback(OnSearchResultsPanelContainerMouseEnter);
+	Controls.SearchResultsPanelContainer:RegisterMouseExitCallback(OnSearchResultsPanelContainerMouseExit);
 
   local pullDownButton = Controls.FilterPulldown:GetButton();
   pullDownButton:RegisterCallback(Mouse.eLClick, OnClickToggleFilter);
@@ -2029,8 +2230,10 @@ function Initialize()
   -- CQUI add exceptions to the 50% notifications by putting civics into the CQUI_halfwayNotified table
   -- Infixo
   --CQUI_halfwayNotified["LOC_CIVIC_CODE_OF_LAWS_NAME"] = true;
-
 end
-Initialize();
+
+if HasCapability("CAPABILITY_CIVICS_CHOOSER") then
+  Initialize();
+end
 
 print("Finished loading CivicsTree.lua from Real Eurekas mod");

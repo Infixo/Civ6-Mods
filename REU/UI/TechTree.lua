@@ -1,4 +1,4 @@
-﻿print("Loading TechTree.lua from Real Eurekas mod");
+print("Loading TechTree.lua from Real Eurekas mod");
 -- ===========================================================================
 --  TechTree
 --  Tabs set to 4 spaces retaining tab.
@@ -27,6 +27,7 @@ include( "Civ6Common" );      -- Tutorial check support
 include( "TechAndCivicSupport");  -- (Already includes Civ6Common and InstanceManager) PopulateUnlockablesForTech
 include( "TechFilterFunctions" );
 include( "ModalScreen_PlayerYieldsHelper" );
+include( "GameCapabilities" );
 
 -- ===========================================================================
 --  DEBUG
@@ -41,6 +42,13 @@ local m_debugShowAllMarkers   :boolean= false;  -- (false default) Show all play
 -- ===========================================================================
 --  CONSTANTS
 -- ===========================================================================
+
+-- Spacing / Positioning Constants
+local COLUMN_WIDTH					:number = 220;			-- Space of node and line(s) after it to the next node
+local COLUMNS_NODES_SPAN			:number = 2;			-- How many colunms do the nodes span
+local PADDING_TIMELINE_LEFT			:number = 275;
+local PADDING_PAST_ERA_LEFT			:number = 30;
+local PADDING_FIRST_ERA_INDICATOR	:number = -35;
 
 -- Graphic constants
 local PIC_BOLT_OFF        :string = "Controls_BoltOff";
@@ -75,8 +83,6 @@ local PATH_MARKER_NUMBER_0_9_OFFSET :number = 20;
 local PATH_MARKER_NUMBER_10_OFFSET  :number = 15;
 
 -- Other constants
-local COLUMN_WIDTH          :number = 250;      -- Space of node and line(s) after it to the next node
-local COLUMNS_NODES_SPAN      :number = 2;      -- How many colunms do the nodes span
 local DATA_FIELD_LIVEDATA     :string = "_LIVEDATA";  -- The current status of an item.
 local DATA_FIELD_PLAYERINFO     :string = "_PLAYERINFO";-- Holds a table with summary information on that player.
 local DATA_FIELD_UIOPTIONS      :string = "_UIOPTIONS"; -- What options the player has selected for this screen.
@@ -89,16 +95,13 @@ local ITEM_STATUS         :table  = {
                   RESEARCHED  = 4,
                 };
 local LINE_LENGTH_BEFORE_CURVE    :number = 20;     -- How long to make a line before a node before it curves
-local PADDING_TIMELINE_LEFT     :number = 250;
 local PADDING_NODE_STACK_Y      :number = 0;
-local PADDING_PAST_ERA_LEFT     :number = 90;
 local PARALLAX_SPEED        :number = 1.1;      -- Speed for how much slower background moves (1.0=regular speed, 0.5=half speed)
 local PARALLAX_ART_SPEED      :number = 1.2;      -- Speed for how much slower background moves (1.0=regular speed, 0.5=half speed)
 local PREREQ_ID_TREE_START      :string = "_TREESTART"; -- Made up, unique value, to mark a non-node tree start
 local ROW_MAX           :number = 4;      -- Highest level row above 0
 local ROW_MIN           :number = -3;     -- Lowest level row below 0
 local STATUS_ART          :table  = {};
-local TIMELINE_LEFT_PADDING     :number = 320;
 local TREE_START_ROW        :number = 0;      -- Which virtual "row" does tree start on?
 local TREE_START_COLUMN       :number = 0;      -- Which virtual "column" does tree start on? (Can be negative!)
 local TREE_START_NONE_ID      :number = -999;     -- Special, unique value, to mark no special tree start node.
@@ -153,7 +156,13 @@ local m_ToggleTechTreeId;
 
 -- CQUI variables
 local CQUI_halfwayNotified  :table = {};
+local CQUI_ShowTechCivicRecommendations = false;
 
+function CQUI_OnSettingsUpdate()
+  CQUI_ShowTechCivicRecommendations = GameConfiguration.GetValue("CQUI_ShowTechCivicRecommendations") == 1
+end
+LuaEvents.CQUI_SettingsUpdate.Add(CQUI_OnSettingsUpdate);
+LuaEvents.CQUI_SettingsInitialized.Add(CQUI_OnSettingsUpdate);
 
 -- ===========================================================================
 -- Return string respresenation of a prereq table
@@ -240,7 +249,7 @@ end
 --  Get the width of the scroll panel
 -- ===========================================================================
 function GetMaxScrollWidth()
-  return m_maxColumns + (m_maxColumns * COLUMN_WIDTH) + TIMELINE_LEFT_PADDING;
+	return m_maxColumns + (m_maxColumns * COLUMN_WIDTH) + PADDING_TIMELINE_LEFT + PADDING_PAST_ERA_LEFT;
 end
 
 -- ===========================================================================
@@ -308,7 +317,7 @@ function AllocateUI()
   m_maxColumns = 0;
   for row:table in GameInfo.Eras() do
     for era,eraData in pairs(m_kEras) do
-      if eraData.Index == index then
+			if eraData.Index == index then									-- Ensure indexed order
         eraData.PriorColumns = priorColumns;
         priorColumns = priorColumns + eraData.NumColumns + 1; -- Add one for era art between
         break;
@@ -345,15 +354,18 @@ function AllocateUI()
       instArt.BG:SetTexture(PIC_DEFAULT_ERA_BACKGROUND);
     end
 
-    local startx, _ = ColumnRowToPixelXY( eraData.PriorColumns + 1, 0);
-    instArt.Top:SetOffsetX( (startx ) * (1/PARALLAX_ART_SPEED) );
-    instArt.Top:SetOffsetY( (SIZE_WIDESCREEN_HEIGHT * 0.5) - (instArt.BG:GetSizeY()*0.5) );
-    instArt.Top:SetSizeVal(eraData.NumColumns*SIZE_NODE_X, 600);
+		local startx, _	= ColumnRowToPixelXY(eraData.PriorColumns + 1, 0);
+		instArt.Top:SetOffsetX((startx ) * (1/PARALLAX_ART_SPEED));
+		instArt.Top:SetOffsetY((SIZE_WIDESCREEN_HEIGHT * 0.5) - (instArt.BG:GetSizeY() * 0.5));	
+		instArt.Top:SetSizeVal(eraData.NumColumns * SIZE_NODE_X, 600);
 
     local inst:table = m_kEraLabelIM:GetInstance();
     local eraMarkerx, _ = ColumnRowToPixelXY( eraData.PriorColumns + 1, 0) - PADDING_PAST_ERA_LEFT; -- Need to undo the padding in place that nodes use to get past the era marker column
-    inst.Top:SetOffsetX( (eraMarkerx - (SIZE_NODE_X*0.5)) * (1/PARALLAX_SPEED) );
-    inst.EraTitle:SetText( Locale.Lookup("LOC_GAME_ERA_DESC",eraData.Description) );
+		if m_kEraLabelIM.m_iAllocatedInstances == 1 then
+			eraMarkerx = eraMarkerx + PADDING_FIRST_ERA_INDICATOR;
+		end
+		inst.Top:SetOffsetX((eraMarkerx - (SIZE_NODE_X * 0.5)) * (1 / PARALLAX_SPEED));
+		inst.EraTitle:SetText(Locale.Lookup("LOC_GAME_ERA_DESC",eraData.Description));
 
     -- Dots on scrollbar
     local markerx:number = (eraData.PriorColumns / m_maxColumns) * Controls.ScrollbarBackgroundArt:GetSizeX();
@@ -371,8 +383,8 @@ function AllocateUI()
   -- Actually build UI nodes
   for _,item in pairs(m_kItemDefaults) do
 
-    local tech    = GameInfo.Technologies[item.Index];
-    local techType  = tech and tech.TechnologyType;
+		local tech:table		= GameInfo.Technologies[item.Type];
+		local techType:string	= tech and tech.TechnologyType;
 
     local unlockableTypes = GetUnlockablesForTech_Cached(techType, playerId);
     local node        :table;
@@ -408,7 +420,7 @@ function AllocateUI()
     end
     node["unlockGOV"] = InstanceManager:new( "GovernmentIcon", "GovernmentInstanceGrid", node.UnlockStack );
 
-    PopulateUnlockablesForTech(playerId, item.Index, node["unlockIM"], function() SetCurrentNode(item.Hash); end);
+		PopulateUnlockablesForTech(playerId, tech.Index, node["unlockIM"], function() SetCurrentNode(item.Hash); end);
 
     -- What happens when clicked
     function OpenPedia()
@@ -680,6 +692,7 @@ function View( playerTechData:table )
         boostText = TXT_BOOSTED.." "..item.BoostText;
         node.BoostIcon:SetTexture( PIC_BOOST_ON );
         node.BoostMeter:SetHide( true );
+		node.BoostedBack:SetHide( false );
       else
 	    -- Infixo: start
         --boostText = TXT_TO_BOOST.." "..item.BoostText;
@@ -714,7 +727,8 @@ function View( playerTechData:table )
     end
 
     -- Show/Hide Recommended Icon
-    if live.IsRecommended and live.AdvisorType ~= nil then
+    -- CQUI : only if show tech civ enabled in settings
+    if live.IsRecommended and live.AdvisorType ~= nil and CQUI_ShowTechCivicRecommendations then
       node.RecommendedIcon:SetIcon(live.AdvisorType);
       node.RecommendedIcon:SetHide(false);
     else
@@ -883,6 +897,15 @@ function GetLivePlayerData( ePlayer:number, eCompletedTech:number )
   local playerTechs :table  = kPlayer:GetTechs();
   local currentTechID :number = playerTechs:GetResearchingTech();
 
+	-- Get recommendations
+	local techRecommendations:table = {};
+	local kGrandAI:table = kPlayer:GetGrandStrategicAI();
+	if kGrandAI then
+		for i,recommendation in pairs(kGrandAI:GetTechRecommendations()) do
+			techRecommendations[recommendation.TechHash] = recommendation.TechScore;
+		end
+	end
+
   -- DEBUG: Output header to console.
   if m_debugOutputTechInfo then
     print("                          Item Id  Status      Progress   $ Era              Prereqs");
@@ -892,25 +915,34 @@ function GetLivePlayerData( ePlayer:number, eCompletedTech:number )
   -- Loop through all items and place in appropriate buckets as well
   -- read in the associated information for it.
   for type,item in pairs(m_kItemDefaults) do
+		local techID	:number = GameInfo.Technologies[item.Type].Index;
     local status  :number = ITEM_STATUS.BLOCKED;
-    local turnsLeft :number = playerTechs:GetTurnsToResearch(item.Index);
-    if playerTechs:HasTech(item.Index) or item.Index == eCompletedTech then
+		local turnsLeft	:number = playerTechs:GetTurnsToResearch(techID);
+		if playerTechs:HasTech(techID) or techID == eCompletedTech then
       status = ITEM_STATUS.RESEARCHED;
       turnsLeft = 0;
-    elseif item.Index == currentTechID then
+		elseif techID == currentTechID then
       status = ITEM_STATUS.CURRENT;
       turnsLeft = playerTechs:GetTurnsLeft();
-    elseif playerTechs:CanResearch(item.Index) then
+		elseif playerTechs:CanResearch(techID) then
       status = ITEM_STATUS.READY;
     end
 
     data[DATA_FIELD_LIVEDATA][type] = {
-      Cost    = playerTechs:GetResearchCost(item.Index),
-      IsBoosted = playerTechs:HasBoostBeenTriggered(item.Index),
-      Progress  = playerTechs:GetResearchProgress(item.Index),
+			Cost		= playerTechs:GetResearchCost(techID),
+			IsBoosted	= playerTechs:HasBoostBeenTriggered(techID),
+			Progress	= playerTechs:GetResearchProgress(techID),
       Status    = status,
       Turns   = turnsLeft
     }
+
+		-- Determine if tech is recommended
+		if techRecommendations[item.Hash] then
+			data[DATA_FIELD_LIVEDATA][type].AdvisorType = GameInfo.Technologies[item.Type].AdvisorType;
+			data[DATA_FIELD_LIVEDATA][type].IsRecommended = true;
+		else
+			data[DATA_FIELD_LIVEDATA][type].IsRecommended = false;
+		end
 
     -- DEBUG: Output to console detailed information about the tech.
     if m_debugOutputTechInfo then
@@ -949,7 +981,8 @@ function GetLivePlayerData( ePlayer:number, eCompletedTech:number )
       local highestColumn :number = -1;
       local highestEra  :string = "";
       for _,item in pairs(m_kItemDefaults) do
-        if playerTech:HasTech(item.Index) then
+				local techID:number = GameInfo.Technologies[item.Type].Index;
+				if playerTech:HasTech(techID) then
           local column:number = item.Column + m_kEras[item.EraType].PriorColumns;
           if column > highestColumn then
             highestColumn = column;
@@ -1030,14 +1063,14 @@ end
 
 -- ===========================================================================
 function OnLocalPlayerTurnBegin()
-	local ePlayer :number = Game.GetLocalPlayer();
-	if ePlayer ~= -1 then
-	    --local kPlayer :table = Players[ePlayer];
-	    if m_ePlayer ~= ePlayer then
-		    m_ePlayer = ePlayer;
-		    m_kCurrentData = GetLivePlayerData( ePlayer );		    
-	    end
-    end
+  local ePlayer :number = Game.GetLocalPlayer();
+  if ePlayer ~= -1 then
+      --local kPlayer :table = Players[ePlayer];
+      if m_ePlayer ~= ePlayer then
+        m_ePlayer = ePlayer;
+        m_kCurrentData = GetLivePlayerData( ePlayer );
+      end
+
 
 	-- Infixo
 	if ePlayer == -1 or GameConfiguration.GetValue("CQUI_TechPopupVisual") == nil then return; end
@@ -1056,7 +1089,6 @@ function OnLocalPlayerTurnBegin()
 		  -- Infixo
           --local techType = GameInfo.Technologies[currentTechID].Type;
           local techType = GameInfo.Technologies[currentTechID].TechnologyType;
-
           local currentCost         = playerTechs:GetResearchCost(currentTechID);
           local currentProgress     = playerTechs:GetResearchProgress(currentTechID);
           local currentYield          = playerTechs:GetScienceYield();
@@ -1066,8 +1098,7 @@ function OnLocalPlayerTurnBegin()
 
           -- Finds boost amount, always 50 in base game, China's +10% modifier is not applied here
           for row in GameInfo.Boosts() do
-            --if(row.ResearchType == techType) then
-            if(row.TechnologyType == techType) then
+            if(row.ResearchType == techType) then
               CQUI_halfway = (100 - row.Boost) / 100;
               break;
             end
@@ -1091,7 +1122,7 @@ function OnLocalPlayerTurnBegin()
 
         --------------------------------------------------------------------------
 
-    --end -- end of playerID check
+    end -- end of playerID check
 
 end
 
@@ -1151,6 +1182,13 @@ function OnResearchComplete( ePlayer:number, eTech:number)
         end -- end of techID check
 
         --------------------------------------------------------------------------
+
+    -- CQUI update all cities real housing when play as India and researched sanitation
+    if eTech == 40 then    -- Sanitation (Index == 40)
+      if(PlayerConfigurations[ePlayer]:GetCivilizationTypeName() == "CIVILIZATION_INDIA") then
+        LuaEvents.CQUI_IndiaPlayerResearchedSanitation();
+      end
+    end
 
   end
 end
@@ -1351,38 +1389,99 @@ function PopulateSearchData()
   -- Populate Full Text Search
   local searchContext = "Technologies";
   if(Search.CreateContext(searchContext, "[COLOR_LIGHTBLUE]", "[ENDCOLOR]", "...")) then
+
+		-- Hash modifier types that grant envoys or spies.
+		local envoyModifierTypes = {};
+		local spyModifierTypes = {};
+
+		for row in GameInfo.DynamicModifiers() do
+			local effect = row.EffectType;
+			if(effect == "EFFECT_GRANT_INFLUENCE_TOKEN") then
+				envoyModifierTypes[row.ModifierType] = true;
+			elseif(effect == "EFFECT_GRANT_SPY") then
+				spyModifierTypes[row.ModifierType] = true;
+			end
+		end
+
+		-- Hash tech types that grant envoys or spies via modifiers.
+		local envoyTechs = {};
+		local spyTechs = {};
+		for row in GameInfo.TechnologyModifiers() do			
+			local modifier = GameInfo.Modifiers[row.ModifierId];
+			if(modifier) then
+				local modifierType = modifier.ModifierType;
+				if(envoyModifierTypes[modifierType]) then
+					envoyTechs[row.TechnologyType] = true;
+				end
+
+				if(spyModifierTypes[modifierType]) then
+					spyTechs[row.TechnologyType] = true;
+				end
+			end
+		end
+
+		local envoyTypeName = Locale.Lookup("LOC_ENVOY_NAME");
+		local spyTypeName = Locale.Lookup("LOC_SPY_NAME");
+
     for row in GameInfo.Technologies() do
+			local techType = row.TechnologyType;
       local description = row.Description and Locale.Lookup(row.Description) or "";
-      Search.AddData(searchContext, row.TechnologyType, Locale.Lookup(row.Name), description);
+			local tags = {};
+			if(envoyTechs[techType]) then
+				table.insert(tags, envoyTypeName);
     end
 
-    for row in GameInfo.Improvements() do
+			if(spyTechs[techType]) then
+				table.insert(tags, spyTypeName);
+			end
+
+			Search.AddData(searchContext, row.TechnologyType, Locale.Lookup(row.Name), description, tags);
+		end
+	
+		local buildingType = Locale.Lookup("LOC_BUILDING_NAME");
+		local wonderTypeName = Locale.Lookup("LOC_WONDER_NAME");
+		for row in GameInfo.Buildings() do
       if(row.PrereqTech) then
-        Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name));
+				local tags = {buildingTypeName};
+				if(row.IsWonder) then
+					table.insert(tags, wonderTypeName);
+				end
+				Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name), tags);
       end
     end
 
-    for row in GameInfo.Units() do
+		local districtType = Locale.Lookup("LOC_DISTRICT_NAME");
+		for row in GameInfo.Districts() do
       if(row.PrereqTech) then
-        Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name), { districtType });
       end
     end
 
-    for row in GameInfo.Buildings() do
+		local improvementType = Locale.Lookup("LOC_IMPROVEMENT_NAME");
+		for row in GameInfo.Improvements() do
       if(row.PrereqTech) then
-        Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name), { improvementType });
       end
     end
 
-    for row in GameInfo.Districts() do
+		local projectType = Locale.Lookup("LOC_PROJECT_NAME");
+		for row in GameInfo.Projects() do
       if(row.PrereqTech) then
-        Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name), { projectType });
       end
     end
 
+		local resourceType = Locale.Lookup("LOC_RESOURCE_NAME");
     for row in GameInfo.Resources() do
       if(row.PrereqTech) then
-        Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name));
+				Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name), { resourceType });
+			end
+		end
+
+		local unitType = Locale.Lookup("LOC_UNIT_NAME");
+		for row in GameInfo.Units() do
+			if(row.PrereqTech) then
+				Search.AddData(searchContext, row.PrereqTech, Locale.Lookup(GameInfo.Technologies[row.PrereqTech].Name), Locale.Lookup(row.Name), { unitType });
       end
     end
 
@@ -1431,7 +1530,6 @@ function OnOpen()
   Controls.ScreenAnimIn:Play();
 
   LuaEvents.TechTree_OpenTechTree();
-  Controls.SearchEditBox:TakeFocus();
 end
 
 -- ===========================================================================
@@ -1495,7 +1593,10 @@ end
 --  Main close function all exit points should call.
 -- ===========================================================================
 function Close()
+	if not ContextPtr:IsHidden() then
   UI.PlaySound("UI_Screen_Close");
+	end
+
   ContextPtr:SetHide(true);
   LuaEvents.TechTree_CloseTechTree();
   Controls.SearchResultsPanelContainer:SetHide(true);
@@ -1560,15 +1661,6 @@ function OnShutdown()
   Search.DestroyContext("Technologies");
 end
 
-function OnSearchBarGainFocus()
-  Controls.SearchEditBox:ClearString();
-  Controls.SearchResultsPanelContainer:SetHide(true);
-end
-
-function OnSearchBarLoseFocus()
-  Controls.SearchEditBox:SetText(Locale.Lookup("LOC_TREE_SEARCH_W_DOTS"));
-end
-
 -- ===========================================================================
 --  Centers scroll panel (if possible) on a specfic type.
 -- ===========================================================================
@@ -1603,66 +1695,120 @@ function OnInputActionTriggered( actionId )
   end
 end
 
+-- ===========================================================================
+--	Searching
+-- ===========================================================================
 function OnSearchCharCallback()
+	local str = Controls.SearchEditBox:GetText();
 
-  local str = Controls.SearchEditBox:GetText();
-  local has_found = {};
-  if str ~= nil and str ~= Locale.Lookup("LOC_TREE_SEARCH_W_DOTS") then
-    local results = Search.Search("Technologies", str);
+	local defaultText = Locale.Lookup("LOC_TREE_SEARCH_W_DOTS")
+	if(str == defaultText) then
+		-- We cannot immediately clear the results..
+		-- When the edit box loses focus, it resets the text which triggers this call back.
+		-- if the user is in the process of clicking a result, wiping the results in this callback will make the user
+		-- click whatever was underneath.
+		-- Instead, trigger a timer will wipe the results.
+		Controls.SearchResultsTimer:SetToBeginning();
+		Controls.SearchResultsTimer:Play();
+
+	elseif(str == nil or #str == 0) then
+		-- Clear results.
+		m_kSearchResultIM:DestroyInstances();
+		Controls.SearchResultsStack:CalculateSize();
+		Controls.SearchResultsStack:ReprocessAnchoring();
+		Controls.SearchResultsPanel:CalculateSize();
+		Controls.SearchResultsPanelContainer:SetHide(true);
+
+	elseif(str and #str > 0) then
+		local hasResults = false;
     m_kSearchResultIM:DestroyInstances();
+		local results = Search.Search("Technologies", str, 100);
     if (results and #results > 0) then
+			hasResults = true;
+			local has_found = {};
       for i, v in ipairs(results) do
         if has_found[v[1]] == nil then
-          -- v[1]chnologyType
-          -- v[2] == Name of Technology w/ search term highlighted.
-          -- v[3] == Snippet of Technology description w/ search term highlighted.
+					-- v[1] == Type
+					-- v[2] == Name w/ search term highlighted.
+					-- v[3] == Snippet description w/ search term highlighted.
           local instance = m_kSearchResultIM:GetInstance();
-          local techType:number;
-          for row in GameInfo.Technologies() do
-            if row.TechnologyType == v[1] then
-              techType = row.Index;
-            end
-          end
 
-          -- Going to take this out right now... we may decide we want this back.
-          --if instance["unlockIM"] ~= nil then
-          --  instance["unlockIM"]:DestroyInstances()
-          --end
-          --instance["unlockIM"] = InstanceManager:new( "UnlockInstance", "UnlockIcon", instance.SearchUnlockStack );
-          --PopulateUnlockablesForTech(Players[Game.GetLocalPlayer()]:GetID(), techType, instance["unlockIM"], function() ScrollToNode(v[1]); end);
 
           -- Search results already localized.
-          local techName:string = v[2];
-          instance.Name:SetText(Locale.ToUpper(techName));
-          local iconName :string = DATA_ICON_PREFIX .. v[1];
+					local name = v[2];
+					instance.Name:SetText(name);
+					local iconName = DATA_ICON_PREFIX .. v[1];
           instance.SearchIcon:SetIcon(iconName);
 
+					instance.Button:RegisterCallback(Mouse.eLClick, function() 
+						Controls.SearchEditBox:SetText(defaultText);
+						ScrollToNode(v[1]); 
+					end);
 
-
-          instance.Button:RegisterCallback(Mouse.eLClick, function() ScrollToNode(v[1]); end );
           instance.Button:SetToolTipString(ToolTipHelper.GetToolTip(v[1], Game.GetLocalPlayer()));
 
           has_found[v[1]] = true;
         end
       end
+		end
 
       Controls.SearchResultsStack:CalculateSize();
       Controls.SearchResultsStack:ReprocessAnchoring();
       Controls.SearchResultsPanel:CalculateSize();
-      Controls.SearchResultsPanelContainer:SetHide(false);
-    else
-      Controls.SearchResultsPanelContainer:SetHide(true);
-    end
-  end
+		Controls.SearchResultsPanelContainer:SetHide(not hasResults);
+	end
 end
 
+function OnSearchCommitCallback()
+	local str = Controls.SearchEditBox:GetText();
+
+	local defaultText = Locale.Lookup("LOC_TREE_SEARCH_W_DOTS")
+	if(str and #str > 0 and str ~= defaultText) then
+		local results = Search.Search("Technologies", str, 1);
+		if (results and #results > 0) then
+			local result = results[1];
+			if(result) then
+				ScrollToNode(result[1]); 
+    end
+  end
+
+		Controls.SearchEditBox:SetText(defaultText);
+	end
+end
+
+function OnSearchBarGainFocus()
+	Controls.SearchResultsTimer:Stop();
+	Controls.SearchEditBox:ClearString();
+end
+
+function OnSearchBarLoseFocus()
+	Controls.SearchEditBox:SetText(Locale.Lookup("LOC_TREE_SEARCH_W_DOTS"));
+end
+
+function OnSearchResultsTimerEnd()
+	m_kSearchResultIM:DestroyInstances();
+	Controls.SearchResultsStack:CalculateSize();
+	Controls.SearchResultsStack:ReprocessAnchoring();
+	Controls.SearchResultsPanel:CalculateSize();
+	Controls.SearchResultsPanelContainer:SetHide(true);
+end
+
+function OnSearchResultsPanelContainerMouseEnter()
+	Controls.SearchResultsTimer:Stop();
+end
+
+function OnSearchResultsPanelContainerMouseExit()
+	if(not Controls.SearchEditBox:HasFocus()) then
+		Controls.SearchResultsTimer:SetToBeginning();
+		Controls.SearchResultsTimer:Play();
+	end
+end
 
 -- ===========================================================================
 --  Load all static information as well as display information for the
 --  current local player.
 -- ===========================================================================
 function Initialize()
-
   --profile.runtime("start");
 
   PopulateItemData("Technologies","TechnologyType","TechnologyPrereqs","Technology","PrereqTech");
@@ -1692,13 +1838,17 @@ function Initialize()
   Controls.SearchEditBox:RegisterStringChangedCallback(OnSearchCharCallback);
   Controls.SearchEditBox:RegisterHasFocusCallback( OnSearchBarGainFocus);
   Controls.SearchEditBox:RegisterCommitCallback( OnSearchBarLoseFocus);
+	Controls.SearchResultsTimer:RegisterEndCallback(OnSearchResultsTimerEnd);
+	Controls.SearchResultsPanelContainer:RegisterMouseEnterCallback(OnSearchResultsPanelContainerMouseEnter);
+	Controls.SearchResultsPanelContainer:RegisterMouseExitCallback(OnSearchResultsPanelContainerMouseExit);
   Controls.ToggleKeyButton:RegisterCallback(Mouse.eLClick, OnClickToggleKey);
 
 
   -- LUA Events
-  LuaEvents.LaunchBar_CloseTechTree.Add( OnClose );
   LuaEvents.LaunchBar_RaiseTechTree.Add( OnOpen );
   LuaEvents.ResearchChooser_RaiseTechTree.Add( OnOpen );
+
+  LuaEvents.LaunchBar_CloseTechTree.Add( OnClose );
   LuaEvents.Tutorial_TechTreeScrollToNode.Add( OnTutorialScrollToNode );
 
   -- Game engine Event
@@ -1712,7 +1862,7 @@ function Initialize()
 
   --  Hot Key Handling
   m_ToggleTechTreeId = Input.GetActionId("ToggleTechTree");
-  if m_ToggleTechTreeId ~= nil then
+  if (m_ToggleTechTreeId ~= nil) then
     Events.InputActionTriggered.Add( OnInputActionTriggered );
   end
 
@@ -1723,12 +1873,15 @@ function Initialize()
   TruncateStringWithTooltip(Controls.CompletedLabelKey, MAX_BEFORE_TRUNC_KEY_LABEL, Controls.CompletedLabelKey:GetText());
 
   -- CQUI add exceptions to the 50% notifications by putting techs into the CQUI_halfwayNotified table
-  -- Infox: no exceptions, all techs can be boosted
+  -- Infixo: no exceptions, all techs can be boosted
   --CQUI_halfwayNotified["LOC_TECH_POTTERY_NAME"] = true;
   --CQUI_halfwayNotified["LOC_TECH_MINING_NAME"] = true;
   --CQUI_halfwayNotified["LOC_TECH_ANIMAL_HUSBANDRY_NAME"] = true;
-
 end
-Initialize();
+
+if HasCapability("CAPABILITY_TECH_TREE") then
+  Initialize();
+end
+
 
 print("Finished loading TechTree.lua from Real Eurekas mod");
