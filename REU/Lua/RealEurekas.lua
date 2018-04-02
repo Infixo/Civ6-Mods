@@ -1,8 +1,8 @@
-print("Loading RealEurekas.lua from Real Eurekas mod");
+print("Loading RealEurekas.lua from Real Eurekas mod, version 2.3");
 -- ===========================================================================
--- RealEurekas
--- Author: Grzegorz
--- DateCreated: 4/11/2017 8:09:37 PM
+-- Real Eurekas
+-- 2017-11-04: Created by Infixo
+-- 2018-02-13: Version 2.3, Hills
 -- ===========================================================================
 
 
@@ -336,6 +336,27 @@ function CountCityTilesImprovableRes(tPlots:table, sImprovementType:string)
 	return iNum;
 end
 
+-- added 2018-02-13
+function CountCityTilesHills(tPlots:table)
+	dprint("FUNSTA CountCityTilesHills()");
+	local iNum = 0;
+	for _,plot in pairs(tPlots) do
+		if plot:IsHills() then iNum = iNum + 1; end
+	end
+	dprint("  ...found", iNum);
+	return iNum;
+end
+
+-- added 2018-02-13
+function CountCityTilesLake(tPlots:table)
+	dprint("FUNSTA CountCityTilesLake()");
+	local iNum = 0;
+	for _,plot in pairs(tPlots) do
+		if plot:IsLake() then iNum = iNum + 1; end
+	end
+	dprint("  ...found", iNum);
+	return iNum;
+end
 
 function ProcessBoostsSettledCities(sClassFix:string, ePlayerID:number, iCityID:number)
 	dprint("FUNCAL ProcessBoostsSettledCities() (fix,player,city)",sClassFix,ePlayerID,iCityID);
@@ -388,9 +409,31 @@ function ProcessBoostsSettledCities(sClassFix:string, ePlayerID:number, iCityID:
 		end
 	end
 	
+	-- BOOST: SETTLE_CITY1_HILLS_X, added 2018-02-13
+	tBoostClass = tBoostClasses["SETTLE_CITY"..sClassFix.."_HILLS_X"];
+	if tBoostClass ~= nil then 
+		for id,boost in pairs(tBoostClass.Boosts) do
+			dprint("  ...processing (class)", "SETTLE_CITY"..sClassFix.."_HILLS_X");
+			local iNumItems:number = CountCityTilesHills(tPlots);
+			dprint("     ...for boost (id,items2,num)", id, boost.NumItems2, iNumItems);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and iNumItems >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+
+	-- BOOST: SETTLE_CITY1_LAKE_X, added 2018-02-13
+	tBoostClass = tBoostClasses["SETTLE_CITY"..sClassFix.."_LAKE_X"];
+	if tBoostClass ~= nil then 
+		for id,boost in pairs(tBoostClass.Boosts) do
+			dprint("  ...processing (class)", "SETTLE_CITY"..sClassFix.."_LAKE_X");
+			local iNumItems:number = CountCityTilesLake(tPlots);
+			dprint("     ...for boost (id,items2,num)", id, boost.NumItems2, iNumItems);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and iNumItems >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	
 end
 
--- BOOST: SETTLE_CAPITAL_COAST, SETTLE_CAPITAL_LAKE, SETTLE_CAPITAL_RIVER, SETTLE_CAPITAL_MOUNTAIN
+-- BOOST: SETTLE_CAPITAL_COAST, SETTLE_CAPITAL_LAKE, SETTLE_CAPITAL_RIVER, SETTLE_CAPITAL_MOUNTAIN, SETTLE_CAPITAL_HILLS
 function ProcessBoostsCapitalLocation(ePlayerID:number, iCityID:number, iX:number, iY:number)
 	dprint("FUNSTA ProcessBoostsCapitalLocation() (player,city,x,y)",ePlayerID,iCityID,iX,iY);
 	
@@ -436,6 +479,14 @@ function ProcessBoostsCapitalLocation(ePlayerID:number, iCityID:number, iX:numbe
 		for id,boost in pairs(tBoostClass.Boosts) do
 			dprint("  ...processing boost (class,id,mountain)", "SETTLE_CAPITAL_MOUNTAIN", id, bIsMountain);
 			if not HasBoostBeenTriggered(ePlayerID, boost) and bIsMountain then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	-- BOOST: SETTLE_CAPITAL_HILLS
+	tBoostClass = tBoostClasses["SETTLE_CAPITAL_HILLS"];
+	if tBoostClass ~= nil then
+		for id,boost in pairs(tBoostClass.Boosts) do
+			dprint("  ...processing boost (class,id,hills)", "SETTLE_CAPITAL_HILLS", id);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and pPlot:IsHills() then TriggerBoost(ePlayerID, boost); end
 		end
 	end
 end

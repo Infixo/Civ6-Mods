@@ -1,4 +1,4 @@
-print("Loading TechAndCivicSupport.lua from Real Eurekas mod, version 2.2");
+print("Loading TechAndCivicSupport.lua from Real Eurekas mod, version 2.3");
 -- ===========================================================================
 --	Support functions for formatting of Tech and Civic areas which are used
 --	within their "Choosers" and their panel version within the "World Tracker"
@@ -229,11 +229,19 @@ function CanShowTrigger(iTechID:number, bCivic:boolean)
 	if eTVP == 0 then return true; end  
 	local pPlayerTechs = Players[Game.GetLocalPlayer()]:GetTechs();
 	if bCivic then pPlayerTechs = Players[Game.GetLocalPlayer()]:GetCulture(); end
+	-- only for techs and civics that can be researched (default)
+	if eTVP == 1 then
+		if bCivic then 
+			return pPlayerTechs:CanProgress(iTechID);
+		else
+			return pPlayerTechs:CanResearch(iTechID);
+		end
+	end
 	-- only after triggering
-	if eTVP == 2 then  
+	if eTVP == 3 then  
 		return pPlayerTechs:HasBoostBeenTriggered(iTechID);  -- same name for both Techs and Civics
 	end
-	-- only after some progress has been made (last option remaining)
+	-- eTVP == 2, only after some progress has been made (last option remaining)
 	if bCivic then
 		return pPlayerTechs:GetCulturalProgress(iTechID) > 0;
 	else

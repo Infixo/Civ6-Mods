@@ -1,4 +1,4 @@
-print("Loading CivicsTree.lua from Real Eurekas mod, version 2.2");
+print("Loading CivicsTree.lua from Real Eurekas mod, version 2.3");
 -- ===========================================================================
 --	CivicsTree
 --	Tabs set to 4 spaces retaining tab.

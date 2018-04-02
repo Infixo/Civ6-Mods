@@ -1,4 +1,4 @@
-print("Loading TechTree.lua from Real Eurekas mod, version 2.2");
+print("Loading TechTree.lua from Real Eurekas mod, version 2.3");
 -- ===========================================================================
 --	TechTree
 --	Tabs set to 4 spaces retaining tab.

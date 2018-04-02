@@ -2,6 +2,7 @@
 <!-- Real Natural Disasters Config -->
 <!-- Author: Infixo -->
 <!-- Apr 5th, 2017: Created -->
+<!-- Feb 13th, 2018: Added parameter for Researchable -->
 <GameData>
 	
 	<Parameters>
@@ -9,9 +10,10 @@
     </Parameters>
 	
     <DomainValues>
-        <Row Domain="TriggerVisibilityDomain" Value= "0" SortIndex="10" Name="LOC_REUR_CONFIG_DEFAULT_NAME" Description="LOC_REUR_CONFIG_DEFAULT_DESC" />
-        <Row Domain="TriggerVisibilityDomain" Value= "1" SortIndex="20" Name="LOC_REUR_CONFIG_HINT_NAME"    Description="LOC_REUR_CONFIG_HINT_DESC" />
-        <Row Domain="TriggerVisibilityDomain" Value= "2" SortIndex="30" Name="LOC_REUR_CONFIG_HIDDEN_NAME"  Description="LOC_REUR_CONFIG_HIDDEN_DESC" />
+        <Row Domain="TriggerVisibilityDomain" Value= "0" SortIndex="10" Name="LOC_REUR_CONFIG_DEFAULT_NAME"  Description="LOC_REUR_CONFIG_DEFAULT_DESC" />
+        <Row Domain="TriggerVisibilityDomain" Value= "1" SortIndex="20" Name="LOC_REUR_CONFIG_RESEARCH_NAME" Description="LOC_REUR_CONFIG_RESEARCH_DESC" />
+        <Row Domain="TriggerVisibilityDomain" Value= "2" SortIndex="30" Name="LOC_REUR_CONFIG_HINT_NAME"     Description="LOC_REUR_CONFIG_HINT_DESC" />
+        <Row Domain="TriggerVisibilityDomain" Value= "3" SortIndex="40" Name="LOC_REUR_CONFIG_HIDDEN_NAME"   Description="LOC_REUR_CONFIG_HIDDEN_DESC" />
     </DomainValues>
 	
 </GameData>

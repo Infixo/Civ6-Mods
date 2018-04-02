@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- RealEurekas_Config_Text -->
 <!-- Author: Infixo -->
-<!-- Created: Apr 10th, 2017 -->
+<!-- Apr 10th, 2017: Created -->
+<!-- Feb 13th, 2018: Added parameter for Researchable -->
 <GameData>
 
 <BaseGameText>
@@ -18,11 +19,17 @@
 	<Row Tag="LOC_REUR_CONFIG_DEFAULT_DESC">
 		<Text>The trigger is visible always (same as vanilla game)</Text>
 	</Row>
+	<Row Tag="LOC_REUR_CONFIG_RESEARCH_NAME">
+		<Text>Visible for researchable</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_RESEARCH_DESC">
+		<Text>The trigger is visible only for techs and civics that can be researched (default option)</Text>
+	</Row>
 	<Row Tag="LOC_REUR_CONFIG_HINT_NAME">
 		<Text>Visible when progressing</Text>
 	</Row>
 	<Row Tag="LOC_REUR_CONFIG_HINT_DESC">
-		<Text>The trigger will be visible when you start progressing the tech or the civic (default option)</Text>
+		<Text>The trigger will be visible when you start progressing the tech or the civic</Text>
 	</Row>
 	<Row Tag="LOC_REUR_CONFIG_HIDDEN_NAME">
 		<Text>Visible after activation</Text>
