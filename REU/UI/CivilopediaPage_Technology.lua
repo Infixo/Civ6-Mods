@@ -1,3 +1,4 @@
+print("Loading CivilopediaPage_Technology.lua from Real Eurekas version  "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 --	Civilopedia - Technology Page Layout
 -- ===========================================================================
@@ -215,3 +216,4 @@ PageLayouts["Technology" ] = function(page)
 		AddChapter(chapter_header, chapter_body);
 	end
 end
+print("OK loaded CivilopediaPage_Technology.lua from Real Eurekas");

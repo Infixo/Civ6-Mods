@@ -1,3 +1,4 @@
+print("Loading CivilopediaPage_Civic.lua from Real Eurekas version  "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 --	Civilopedia - Civic Page Layout
 -- ===========================================================================
@@ -227,3 +228,5 @@ PageLayouts["Civic" ] = function(page)
 		AddChapter(chapter_header, chapter_body);
 	end
 end
+
+print("OK loaded CivilopediaPage_Civic.lua from Real Eurekas");

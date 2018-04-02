@@ -1,4 +1,4 @@
-print("Loading CivicsTree.lua from Real Eurekas mod, version 2.3");
+print("Loading CivicsTree.lua from Real Eurekas version "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 --	CivicsTree
 --	Tabs set to 4 spaces retaining tab.
@@ -2092,4 +2092,4 @@ if HasCapability("CAPABILITY_CIVICS_CHOOSER") then
 	Initialize();
 end
 
-print("OK loaded CivicsTree.lua from Real Eurekas mod");
+print("OK loaded CivicsTree.lua from Real Eurekas");

@@ -1,4 +1,4 @@
-print("Loading TechAndCivicSupport.lua from Real Eurekas mod, version 2.3.1");
+print("Loading TechAndCivicSupport.lua from Real Eurekas version "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 --	Support functions for formatting of Tech and Civic areas which are used
 --	within their "Choosers" and their panel version within the "World Tracker"
@@ -222,8 +222,10 @@ end
 -- ===========================================================================
 -- Infixo: function to check if trigger description can be shown
 -- ===========================================================================
+
+local eTVP:number = GameConfiguration.GetValue("TriggerVisibilityParam");
+
 function CanShowTrigger(iTechID:number, bCivic:boolean)
-	local eTVP:number = GameConfiguration.GetValue("TriggerVisibilityParam");
 	if eTVP == nil then eTVP = 0; end
 	-- alway visible, nothing more to check
 	if eTVP == 0 then return true; end
@@ -845,4 +847,4 @@ function TechAndCivicSupport_BuildCivicModifierCache()
 
 	return tCache;
 end
-print("OK loaded TechAndCivicSupport.lua from Real Eurekas mod");
+print("OK loaded TechAndCivicSupport.lua from Real Eurekas");

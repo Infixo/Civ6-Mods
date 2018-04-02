@@ -1,4 +1,4 @@
-print("Loading TechTree.lua from Real Eurekas mod, version 2.3");
+print("Loading TechTree.lua from Real Eurekas version "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 --	TechTree
 --	Tabs set to 4 spaces retaining tab.
@@ -1768,4 +1768,4 @@ if HasCapability("CAPABILITY_TECH_TREE") then
 	Initialize();
 end
 
-print("OK loaded TechTree.lua from Real Eurekas mod");
+print("OK loaded TechTree.lua from Real Eurekas");

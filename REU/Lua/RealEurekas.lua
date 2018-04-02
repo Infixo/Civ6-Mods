@@ -1,4 +1,4 @@
-print("Loading RealEurekas.lua from Real Eurekas mod, version 2.4");
+print("Loading RealEurekas.lua from Real Eurekas version "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 -- Real Eurekas
 -- 2017-11-04: Created by Infixo
@@ -786,4 +786,4 @@ function Initialize()
 end	
 Initialize();
 
-print("OK loaded RealEurekas.lua from Real Eurekas mod");
+print("OK loaded RealEurekas.lua from Real Eurekas");
