@@ -747,8 +747,10 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
 
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_SUKIENNICE' WHERE BuildingType = 'BUILDING_SUKIENNICE_UPGRADE';
 
-INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
-('BUILDING_SUKIENNICE_UPGRADE', 'BUILDING_MARKET_UPGRADE');
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
+SELECT 'BUILDING_SUKIENNICE_UPGRADE', 'BUILDING_MARKET_UPGRADE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_SUKIENNICE';
 
 -- +2 Gold
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange)
@@ -1332,8 +1334,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_BASILIKOI_PAIDES'    WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES_UPGRADE';
 
-INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
-('BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_BARRACKS_UPGRADE');
+INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType)
+SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_BARRACKS_UPGRADE'
+FROM Buildings
+WHERE BuildingType = 'BUILDING_BASILIKOI_PAIDES';
 
 INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
 SELECT 'BUILDING_BASILIKOI_PAIDES_UPGRADE', 'BUILDING_STABLE'

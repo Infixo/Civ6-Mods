@@ -230,10 +230,10 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Art Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
+			<Text>An upgraded Art Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Artifact][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
 		</Row>
 		<Row Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Archaeological Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
+			<Text>An upgraded Archaeological Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Artifact][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
 		</Row>
 		<Row Tag="LOC_BUILDING_PAGODA_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
