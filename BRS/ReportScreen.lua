@@ -1591,16 +1591,15 @@ function ViewYieldsPage()
 		-- Main loop for all districts and buildings
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
 			--District line item
-			--BRS The only yields are from Adjacency, so this will duplicate them
-			--BRS show this line only for an icon and a name
+			--BRS GetYield() includes also GetAdjacencyYield(), so must subtract to not duplicate them
 			local districtInstance = CreatLineItemInstance(	pCityInstance, 
 															(kDistrict.isBuilt and kDistrict.Name) or Locale.Lookup("LOC_CITY_BANNER_PRODUCING", kDistrict.Name),
-															0,--kDistrict.Production,
-															0,--kDistrict.Gold,
-															0,--kDistrict.Food,
-															0,--kDistrict.Science,
-															0,--kDistrict.Culture,
-															0);--kDistrict.Faith);
+															kDistrict.Production - kDistrict.AdjacencyBonus.Production,
+															kDistrict.Gold       - kDistrict.AdjacencyBonus.Gold,
+															kDistrict.Food       - kDistrict.AdjacencyBonus.Food,
+															kDistrict.Science    - kDistrict.AdjacencyBonus.Science,
+															kDistrict.Culture    - kDistrict.AdjacencyBonus.Culture,
+															kDistrict.Faith      - kDistrict.AdjacencyBonus.Faith);
 			districtInstance.DistrictIcon:SetHide(false);
 			districtInstance.DistrictIcon:SetIcon(kDistrict.Icon);
 
