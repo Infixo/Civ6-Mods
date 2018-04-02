@@ -1,4 +1,4 @@
-print("Loading TechAndCivicSupport.lua from Real Eurekas mod, version 2.3");
+print("Loading TechAndCivicSupport.lua from Real Eurekas mod, version 2.3.1");
 -- ===========================================================================
 --	Support functions for formatting of Tech and Civic areas which are used
 --	within their "Choosers" and their panel version within the "World Tracker"
@@ -226,9 +226,11 @@ function CanShowTrigger(iTechID:number, bCivic:boolean)
 	local eTVP:number = GameConfiguration.GetValue("TriggerVisibilityParam");
 	if eTVP == nil then eTVP = 0; end
 	-- alway visible, nothing more to check
-	if eTVP == 0 then return true; end  
+	if eTVP == 0 then return true; end
 	local pPlayerTechs = Players[Game.GetLocalPlayer()]:GetTechs();
 	if bCivic then pPlayerTechs = Players[Game.GetLocalPlayer()]:GetCulture(); end
+	-- already triggered, no point hiding it
+	if pPlayerTechs:HasBoostBeenTriggered(iTechID) then return true; end
 	-- only for techs and civics that can be researched (default)
 	if eTVP == 1 then
 		if bCivic then 
