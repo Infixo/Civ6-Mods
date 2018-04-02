@@ -608,10 +608,12 @@ end
 
 local COLOR_GREY  = "[COLOR:0,0,0,112]";
 
-local tPlotModifiers:table = {};
+local tPlotModifiers:table = nil;
 
 function Initialize_PlotYields()
 
+	tPlotModifiers = {};
+	
 	-- select modifier types to detect
 	local tTrackedModifierTypes:table = {};
 	for row in GameInfo.DynamicModifiers() do
@@ -644,9 +646,10 @@ function Initialize_PlotYields()
 	end
 	--print("Tracked modifiers:"); for _,mod in ipairs(tPlotModifiers) do print("  ", mod.Type, mod.Object, mod.Mod.ModifierId); end
 end
-Initialize_PlotYields();
 
 function ShowPlotYields(page, sTable:string)
+
+	if tPlotModifiers == nil then Initialize_PlotYields(); end -- delayed init
 
 	local objectInfo:table = GameInfo[sTable][page.PageId];
 	if objectInfo == nil then return; end
