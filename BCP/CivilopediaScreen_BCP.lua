@@ -257,11 +257,51 @@ PageLayouts["Building" ] = function(page)
 		end
 	end
 
+	-- buildings
+	local buildings:table = {};
+	for row in GameInfo.BuildingPrereqs() do
+		if row.PrereqBuilding == buildingType then
+			table.insert(buildings, { "ICON_"..row.Building, GameInfo.Buildings[row.Building].Name, row.Building });
+		end
+	end
+	table.sort(buildings, function(a, b) return Locale.Compare(a[2], b[2]) == -1; end);
+
+	-- buildings
+	local units:table = {};
+	for row in GameInfo.Unit_BuildingPrereqs() do
+		if row.PrereqBuilding == buildingType then
+			table.insert(units, { "ICON_"..row.Unit, GameInfo.Units[row.Unit].Name, row.Unit });
+		end
+	end
+	table.sort(units, function(a, b) return Locale.Compare(a[2], b[2]) == -1; end);
+	
 	-- Right Column
-	if #tMoreInfo > 0 then
-		AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
-			s:AddSeparator();
-			for _,label in ipairs(tMoreInfo) do s:AddLabel(label); end
+	if #tMoreInfo > 0 or #buildings > 0 or #units > 0 then
+		AddRightColumnStatBox("[ICON_Bullet][ICON_Bullet][ICON_Bullet]", function(s) -- LOC_UI_PEDIA_USAGE
+			-- more building info
+			if #tMoreInfo > 0 then
+				s:AddSeparator();
+				s:AddHeader("LOC_UI_PEDIA_TRAITS");
+				for _,label in ipairs(tMoreInfo) do
+					s:AddLabel(label);
+				end
+			end
+			-- unlocks buildings
+			if #buildings > 0 then
+				s:AddSeparator();
+				s:AddHeader("LOC_UI_PEDIA_USAGE_UNLOCKS_BUILDINGS");
+				for _,icon in ipairs(buildings) do
+					s:AddIconLabel(icon, icon[2]);
+				end
+			end
+			-- unlocks units
+			if #units > 0 then
+				s:AddSeparator();
+				s:AddHeader("LOC_UI_PEDIA_USAGE_UNLOCKS_UNITS");
+				for _,icon in ipairs(units) do
+					s:AddIconLabel(icon, icon[2]);
+				end
+			end
 			s:AddSeparator();
 		end);
 	end
@@ -560,5 +600,123 @@ PageLayouts["CityState"] = function(page)
 
 	ShowInternalPageInfo(page);
 end
+
+
+--------------------------------------------------------------
+-- Changes to Plot Yields
+--------------------------------------------------------------
+
+local COLOR_GREY  = "[COLOR:0,0,0,112]";
+
+local tPlotModifiers:table = {};
+
+function Initialize_PlotYields()
+
+	-- select modifier types to detect
+	local tTrackedModifierTypes:table = {};
+	for row in GameInfo.DynamicModifiers() do
+		if row.EffectType == "EFFECT_ADJUST_PLOT_YIELD" then tTrackedModifierTypes[row.ModifierType] = true; end
+	end
+	--print("Tracked modifier types:"); for mod,_ in pairs(tTrackedModifierTypes) do print("  "..mod); end
+
+	-- select actual modifiers
+	for row in GameInfo.Modifiers() do
+		if tTrackedModifierTypes[row.ModifierType] and row.SubjectRequirementSetId then
+			local tMod:table = RMA.FetchAndCacheData(row.ModifierId);
+			--print("..fetched", tMod.ModifierId, tMod.ModifierType, tMod.EffectType);
+			-- iterate through reqs and see if they match one of tracked ones
+			local function AddPlotModifier(req:table, sType:string, bIsTag:boolean)
+				if bIsTag then table.insert(tPlotModifiers, { Type = sType, Object = req.Arguments.Tag,    Mod = tMod });
+				else           table.insert(tPlotModifiers, { Type = sType, Object = req.Arguments[sType], Mod = tMod }); end
+			end
+			for _,req in ipairs(tMod.SubjectReqSet.Reqs) do
+				if     req.ReqType == "REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES"        then AddPlotModifier(req, "TerrainType");
+				elseif req.ReqType == "REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES"        then AddPlotModifier(req, "FeatureType");
+				elseif req.ReqType == "REQUIREMENT_PLOT_FEATURE_TAG_MATCHES"         then AddPlotModifier(req, "FeatureTag", true); -- (not used)
+				elseif req.ReqType == "REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES"       then AddPlotModifier(req, "ResourceType");
+				elseif req.ReqType == "REQUIREMENT_PLOT_RESOURCE_CLASS_TYPE_MATCHES" then AddPlotModifier(req, "ResourceClassType");
+				elseif req.ReqType == "REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES"        then AddPlotModifier(req, "ResourceTag", true); -- (Vocabulary=RESOURCE_CLASS)
+				elseif req.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES"    then AddPlotModifier(req, "ImprovementType");
+				elseif req.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TAG_MATCHES"     then AddPlotModifier(req, "ImprovementTag", true); -- (not used)
+				end
+			end
+		end
+	end
+	--print("Tracked modifiers:"); for _,mod in ipairs(tPlotModifiers) do print("  ", mod.Type, mod.Object, mod.Mod.ModifierId); end
+end
+Initialize_PlotYields();
+
+function ShowPlotYields(page, sTable:string)
+
+	local objectInfo:table = GameInfo[sTable][page.PageId];
+	if objectInfo == nil then return; end
+
+	local sObjectClassType:string = page.PageLayoutId.."ClassType"; -- used only by resources
+	local sObjectType:string      = page.PageLayoutId.."Type";
+	local sObjectTag:string       = page.PageLayoutId.."Tag";
+	local chapter_body:table = {};
+
+	for _,mod in ipairs(tPlotModifiers) do
+		local function AddYieldChange(sPrefix:string)
+			table.insert(chapter_body, string.format(COLOR_GREY.."%s[ENDCOLOR]%+d %s "..COLOR_GREY.."(%s)", sPrefix, mod.Mod.Arguments.Amount, GameInfo.Yields[mod.Mod.Arguments.YieldType].IconString, mod.Mod.ModifierId));
+		end
+		if mod.Type == sObjectType and mod.Object == page.PageId then
+			AddYieldChange("");
+		elseif mod.Type == sObjectClassType and mod.Object == objectInfo[sObjectClassType] then
+			AddYieldChange(Locale.Lookup("LOC_"..mod.Object.."_NAME")..": ");
+		elseif mod.Type == sObjectTag then
+			-- check Tag
+			for row in GameInfo.TypeTags() do
+				if row.Tag == mod.Object and row.Type == page.PageId then
+					AddYieldChange(Locale.Lookup("LOC_MODS_DETAILS_TAGS").." "); break;
+				end
+			end
+		end
+	end
+	
+	if #chapter_body > 0 then AddChapter("LOC_CITY_STATES_OVERVIEW", chapter_body); end
+
+end
+
+PageLayouts["Terrain"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	ShowPlotYields(page, "Terrains");
+	ShowInternalPageInfo(page);
+
+end
+
+
+PageLayouts["Feature"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	ShowPlotYields(page, "Features");
+	ShowInternalPageInfo(page);
+
+end
+
+
+PageLayouts["Resource"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	ShowPlotYields(page, "Resources");
+	ShowInternalPageInfo(page);
+
+end
+
+
+PageLayouts["Improvement"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+
+	ShowPlotYields(page, "Improvements");
+	ShowModifiers(page);
+	ShowInternalPageInfo(page);
+
+end
+
 
 print("OK loaded CivilopediaScreen_BCP.lua from Better Civilopedia");
