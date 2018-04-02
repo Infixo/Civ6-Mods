@@ -23,15 +23,16 @@ PageLayouts["Commemoration"] = function(page)
 	local dedicationType = dedication.CommemorationType;
 
 	-- Right Column!
-	AddRightColumnStatBox("LOC_UI_PEDIA_APPLIES_TO", function(s)
-		s:AddSeparator();
-		if dedication.MinimumGameEra then s:AddLabel(Locale.Lookup("LOC_UI_PEDIA_MIN_ERA", GameInfo.Eras[dedication.MinimumGameEra].Name)); end
-		if dedication.MaximumGameEra then s:AddLabel(Locale.Lookup("LOC_UI_PEDIA_MAX_ERA", GameInfo.Eras[dedication.MaximumGameEra].Name)); end
-		s:AddSeparator();
-	end);
 	
 	-- Left Column!
 	local chapter_body:table = {};
+	if dedication.MinimumGameEra or dedication.MaximumGameEra then
+		local sText:string = Locale.Lookup("LOC_UI_PEDIA_APPLIES_TO")..": ";
+		if dedication.MinimumGameEra then sText = sText..Locale.Lookup(GameInfo.Eras[dedication.MinimumGameEra].Name); end
+		sText = sText.." [ICON_GoingTo] ";
+		if dedication.MaximumGameEra then sText = sText..Locale.Lookup(GameInfo.Eras[dedication.MaximumGameEra].Name); end
+		table.insert(chapter_body, sText);
+	end
 	table.insert(chapter_body, Locale.Lookup(dedication.GoldenAgeBonusDescription));
 	table.insert(chapter_body, Locale.Lookup(dedication.NormalAgeBonusDescription));
 	table.insert(chapter_body, Locale.Lookup(dedication.DarkAgeBonusDescription));

@@ -8,6 +8,7 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 -- 2018-03-14: Added page history
 -- 2018-03-23: Name changed into Better Civilopedia, table of units pages
 -- 2018-03-26: Sources of GPPs
+-- 2018-04-01: PlotYields modifiers
 --------------------------------------------------------------
 
 -- exposed functions and variables
