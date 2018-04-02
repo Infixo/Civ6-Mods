@@ -6,18 +6,45 @@
     <Teaser>Make Eurekas a real surprise! 150+ new ones, randomly assigned to Techs and Civics.</Teaser>
     <Authors>Infixo</Authors>
   </Properties>
+  <FrontEndActions>
+    <UpdateDatabase id="REur_Config_Database">
+      <File>Config/RealEurekas_Config.xml</File>
+    </UpdateDatabase>
+    <UpdateText id="REur_Config_Text">
+      <File>Config/RealEurekas_Config_Text.xml</File>
+    </UpdateText>
+  </FrontEndActions>
   <InGameActions>
-    <UpdateDatabase id="RealEurekas_Database">
+    <UpdateDatabase id="REur_Database">
       <File>RealEurekas_1_Init.sql</File>
       <File>RealEurekas_2_Rand.sql</File>
     </UpdateDatabase>
-    <UpdateText id="RealEurekas_Text">
+    <UpdateText id="REur_Text">
       <File>RealEurekas_Text.sql</File>
+      <File>RealEurekas_Text_Quotes.xml</File>
     </UpdateText>
+    <ImportFiles id="REur_Imports">
+      <Properties>
+        <LoadOrder>10000</LoadOrder>
+      </Properties>
+      <File>UI/CivicsTree.lua</File>
+      <File>UI/TechTree.lua</File>
+      <File>UI/TechAndCivicSupport.lua</File>
+      <File>UI/CivilopediaPage_Civic.lua</File>
+      <File>UI/CivilopediaPage_Technology.lua</File>
+    </ImportFiles>
   </InGameActions>
   <Files>
+    <File>Config/RealEurekas_Config.xml</File>
+    <File>Config/RealEurekas_Config_Text.xml</File>
     <File>RealEurekas_1_Init.sql</File>
     <File>RealEurekas_2_Rand.sql</File>
     <File>RealEurekas_Text.sql</File>
+    <File>RealEurekas_Text_Quotes.xml</File>
+    <File>UI/CivicsTree.lua</File>
+    <File>UI/CivilopediaPage_Civic.lua</File>
+    <File>UI/CivilopediaPage_Technology.lua</File>
+    <File>UI/TechAndCivicSupport.lua</File>
+    <File>UI/TechTree.lua</File>
   </Files>
 </Mod>

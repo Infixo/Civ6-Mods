@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RealEurekas_Text_Quotes -->
+<!-- Author: Infixo -->
+<!-- Created: Apr 10th, 2017 -->
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_REUR_QUOTE_1">
+		<Text>Life is like a box of chocolates.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_2">
+		<Text>When fate hands you a lemon, make lemonade.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_3">
+		<Text>Fate doesn't want you to be too famous too young.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_4">
+		<Text>Kisses are a better fate than wisdom.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_5">
+		<Text>The true adventurer goes forth aimless and uncalculating to meet and greet unknown fate.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_6">
+		<Text>Fate loves the fearless.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_7">
+		<Text>Fate loves the fearless.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_8">
+		<Text>Fate pulls you in different directions.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_9">
+		<Text>Fate will find a way.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_10">
+		<Text>Fate keeps on happening.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_11">
+		<Text>Shallow men believe in luck. Strong men believe in cause and effect.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_12">
+		<Text>In short, Luck's always to blame.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_13">
+		<Text>When it comes to luck, you make your own.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_14">
+		<Text>The best luck of all is the luck you make for yourself.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_15">
+		<Text>Luck is always the last refuge of laziness and incompetence.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_16">
+		<Text>Good luck has its storms.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_17">
+		<Text>Luck is great, but most of life is hard work.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_18">
+		<Text>Few people realize that luck is created.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_19">
+		<Text>One cannot plan for the unexpected.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_20">
+		<Text>I'm not a big fan of patterns. I like the unexpected.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_21">
+		<Text>All creative people want to do the unexpected.</Text>
+	</Row>
+	<Row Tag="LOC_REUR_QUOTE_22">
+		<Text>I like when life is sort of spontaneous.</Text>
+	</Row>
+	
+</BaseGameText>
+
+</GameData>

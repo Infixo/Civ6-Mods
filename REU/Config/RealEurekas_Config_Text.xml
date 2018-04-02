@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RealEurekas_Config_Text -->
+<!-- Author: Infixo -->
+<!-- Created: Apr 10th, 2017 -->
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_REUR_CONFIG_TRIGVIS_NAME">
+		<Text>Trigger Visibility</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_TRIGVIS_DESC">
+		<Text>When the boost trigger should be visible</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_DEFAULT_NAME">
+		<Text>Visible always</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_DEFAULT_DESC">
+		<Text>The trigger is visible always (same as vanilla game)</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_HINT_NAME">
+		<Text>Visible when progressing</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_HINT_DESC">
+		<Text>The trigger will be visible when you start progressing the tech or the civic (default option)</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_HIDDEN_NAME">
+		<Text>Visible after activation</Text>
+	</Row>
+	<Row Tag="LOC_REUR_CONFIG_HIDDEN_DESC">
+		<Text>The trigger will be visible after activating the boost</Text>
+	</Row>
+	
+</BaseGameText>
+
+</GameData>

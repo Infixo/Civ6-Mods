@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Real Natural Disasters Config -->
+<!-- Author: Infixo -->
+<!-- Apr 5th, 2017: Created -->
+<GameData>
+	
+	<Parameters>
+		<Row ParameterId="TriggerVisibilityParam" ConfigurationId="TriggerVisibilityParam" Name="LOC_REUR_CONFIG_TRIGVIS_NAME" Description="LOC_REUR_CONFIG_TRIGVIS_DESC" Domain="TriggerVisibilityDomain" DefaultValue="1" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="310" />
+    </Parameters>
+	
+    <DomainValues>
+        <Row Domain="TriggerVisibilityDomain" Value= "0" SortIndex="10" Name="LOC_REUR_CONFIG_DEFAULT_NAME" Description="LOC_REUR_CONFIG_DEFAULT_DESC" />
+        <Row Domain="TriggerVisibilityDomain" Value= "1" SortIndex="20" Name="LOC_REUR_CONFIG_HINT_NAME"    Description="LOC_REUR_CONFIG_HINT_DESC" />
+        <Row Domain="TriggerVisibilityDomain" Value= "2" SortIndex="30" Name="LOC_REUR_CONFIG_HIDDEN_NAME"  Description="LOC_REUR_CONFIG_HIDDEN_DESC" />
+    </DomainValues>
+	
+</GameData>
