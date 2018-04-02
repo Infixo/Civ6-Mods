@@ -33,10 +33,14 @@
       <File>UI/CivilopediaPage_Civic.lua</File>
       <File>UI/CivilopediaPage_Technology.lua</File>
     </ImportFiles>
+    <AddGameplayScripts id="REur_Scripts">
+      <File>Lua/RealEurekas.lua</File>
+    </AddGameplayScripts>
   </InGameActions>
   <Files>
     <File>Config/RealEurekas_Config.xml</File>
     <File>Config/RealEurekas_Config_Text.xml</File>
+    <File>Lua/RealEurekas.lua</File>
     <File>RealEurekas_1_Init.sql</File>
     <File>RealEurekas_2_Rand.sql</File>
     <File>RealEurekas_Text.sql</File>
