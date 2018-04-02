@@ -814,3 +814,18 @@ VALUES  -- below part is generated from Excel - should not be changed manually
 ('en_US','LOC_BOOST_TRIGGER_LONGDESC_TRAIN_UNIT_SCOUT','Your scout is ready to explore lands, but what about seas?'),
 ('en_US','LOC_BOOST_TRIGGER_LONGDESC_TRAIN_UNIT_SETTLER','You are ready to start building your empire.'),
 ('en_US','LOC_BOOST_TRIGGER_LONGDESC_TRAIN_UNIT_TRADER','(not used)');
+
+
+--------------------------------------------------------------
+-- Rise & Fall additions
+--------------------------------------------------------------
+
+INSERT OR REPLACE INTO LocalizedText(Language, Tag, Text) VALUES
+('en_US','LOC_BOOST_TRIGGER_HAVE_ALLIANCE_L2_CH','Have a level 2 Alliance.'),
+('en_US','LOC_BOOST_TRIGGER_HAVE_ALLIANCE_L2_EL','Have a level 2 Alliance.'),
+('en_US','LOC_BOOST_TRIGGER_HAVE_ALLIANCE_L2_ST','Have a level 2 Alliance.');
+
+INSERT OR REPLACE INTO LocalizedText(Language, Tag, Text) VALUES
+('en_US','LOC_BOOST_TRIGGER_LONGDESC_HAVE_ALLIANCE_L2_CH','Joining forces with other nations has started a chain reaction of scientific advances. Will the next push be in chemistry?'),
+('en_US','LOC_BOOST_TRIGGER_LONGDESC_HAVE_ALLIANCE_L2_EL','Joining forces with other nations has started a chain reaction of scientific advances. Will the next push be in physics?'),
+('en_US','LOC_BOOST_TRIGGER_LONGDESC_HAVE_ALLIANCE_L2_ST','Joining forces with other nations has started a chain reaction of scientific advances. Will the next push be in materials?');

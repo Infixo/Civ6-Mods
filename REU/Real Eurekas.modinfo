@@ -6,6 +6,11 @@
     <Teaser>Make Eurekas a real surprise! 150+ new ones, randomly assigned to Techs and Civics.</Teaser>
     <Authors>Infixo</Authors>
   </Properties>
+  <ActionCriteria>
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+  </ActionCriteria>
   <FrontEndActions>
     <UpdateDatabase id="REur_Config_Database">
       <File>Config/RealEurekas_Config.xml</File>
@@ -15,9 +20,17 @@
     </UpdateText>
   </FrontEndActions>
   <InGameActions>
-    <UpdateDatabase id="REur_Database">
+    <UpdateDatabase id="REur_Database_Init">
+      <Properties><LoadOrder>1</LoadOrder></Properties>		
       <File>RealEurekas_1_Init.sql</File>
-      <File>RealEurekas_2_Rand.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="REur_Database_RF" criteria="Expansion1">
+      <Properties><LoadOrder>2</LoadOrder></Properties>		
+      <File>RealEurekas_2_RiseFall.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="REur_Database_Rand">
+      <Properties><LoadOrder>3</LoadOrder></Properties>		
+      <File>RealEurekas_3_Rand.sql</File>
     </UpdateDatabase>
     <UpdateText id="REur_Text">
       <File>RealEurekas_Text.sql</File>
@@ -42,7 +55,8 @@
     <File>Config/RealEurekas_Config_Text.xml</File>
     <File>Lua/RealEurekas.lua</File>
     <File>RealEurekas_1_Init.sql</File>
-    <File>RealEurekas_2_Rand.sql</File>
+    <File>RealEurekas_2_RiseFall.sql</File>
+    <File>RealEurekas_3_Rand.sql</File>
     <File>RealEurekas_Text.sql</File>
     <File>RealEurekas_Text_Quotes.xml</File>
     <File>UI/CivicsTree.lua</File>

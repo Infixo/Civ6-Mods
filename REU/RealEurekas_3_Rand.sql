@@ -10,7 +10,8 @@
 CREATE TABLE REurFinalMapping (
     BoostID		INTEGER NOT NULL, -- each Tech and Civic has a unique BoostID assigned
 	BoostTypeID	INTEGER NOT NULL DEFAULT 0, -- final Boost to use
-	BoostSeq	INTEGER NOT NULL DEFAULT 0, -- randomly generated number 0..4
+	BoostSeq	INTEGER NOT NULL DEFAULT 0, -- randomly generated number 0..BoostSeqMax-1
+	BoostSeqMax INTEGER NOT NULL DEFAULT 1, -- number of available boosts for a given Tech/Civic
 	FOREIGN KEY (BoostID) REFERENCES Boosts(BoostID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (BoostTypeID) REFERENCES REurBoostDefs(BoostTypeID) ON DELETE CASCADE ON UPDATE CASCADE);
 	
@@ -28,11 +29,14 @@ ON REurFinalMapping.BoostTypeID = REurBoostDefs.BoostTypeID;
 -- RANDOMIZE BOOSTS
 --------------------------------------------------------------
 -- 1. get all IDs from Boosts
-INSERT INTO REurFinalMapping (BoostID)
-SELECT BoostID FROM Boosts;
--- 2. assign random seq nums
-UPDATE REurFinalMapping SET BoostSeq = ABS(RANDOM()%5);
--- 3. get BoostTypeIDs from mapping table
+INSERT INTO REurFinalMapping (BoostID, BoostSeqMax)
+--SELECT BoostID FROM Boosts;
+SELECT BoostID, COUNT(*)
+FROM REurMapping
+GROUP BY BoostID;
+-- 2. assign random seq nums based on actual number of possible boosts
+UPDATE REurFinalMapping SET BoostSeq = ABS( RANDOM() % BoostSeqMax );
+-- 3. get BoostTypeIDs from the mapping table
 UPDATE REurFinalMapping
 SET BoostTypeID = (
 	SELECT BoostTypeID FROM REurMapping
@@ -64,8 +68,9 @@ UPDATE Boosts SET Helper = 			(SELECT Hlpr FROM REurBoostsView WHERE Boosts.Boos
 --------------------------------------------------------------
 -- CLEAN-UP
 --------------------------------------------------------------
-
+/*
 DROP VIEW REurBoostsView;
 DROP TABLE REurFinalMapping;
 DROP TABLE REurMapping;
 DROP TABLE REurBoostDefs;
+*/

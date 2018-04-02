@@ -81,7 +81,7 @@ CREATE TABLE REurBoostDefs (
 -- Boost mappings to techs and civics
 CREATE TABLE REurMapping (
     BoostID		INTEGER NOT NULL, -- each Tech and Civic has a unique BoostID assigned
-	BoostSeq	INTEGER NOT NULL CHECK (BoostSeq IN (0,1,2,3,4)) DEFAULT 0, -- will be chosen randomly using Modulo 5 operation
+	BoostSeq	INTEGER NOT NULL, -- will be chosen randomly using Modulo operation
 	BoostTypeID	INTEGER NOT NULL, -- possible to use Boost Types
 	FOREIGN KEY (BoostID) REFERENCES Boosts(BoostID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (BoostTypeID) REFERENCES REurBoostDefs(BoostTypeID) ON DELETE CASCADE ON UPDATE CASCADE);
