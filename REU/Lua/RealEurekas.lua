@@ -4,6 +4,7 @@ print("Loading RealEurekas.lua from Real Eurekas version "..GlobalParameters.REU
 -- 2017-11-04: Created by Infixo
 -- 2018-02-13: Version 2.3, Hills
 -- 2018-02-21: Version 2.4, Meet CS, Meet-X-CS, Train Unit, Great Person, Suzerain a City-State
+-- 2018-04-04: Version 2.5, Projects, Great Works, Governments
 -- ===========================================================================
 
 
@@ -13,7 +14,7 @@ print("Loading RealEurekas.lua from Real Eurekas version "..GlobalParameters.REU
 
 -- debug output routine
 function dprint(sStr,p1,p2,p3,p4,p5,p6)
-	if true then return; end
+	--if true then return; end
 	local sOutStr = sStr;
 	if p1 ~= nil then sOutStr = sOutStr.." [1] "..tostring(p1); end
 	if p2 ~= nil then sOutStr = sOutStr.." [2] "..tostring(p2); end
@@ -21,7 +22,7 @@ function dprint(sStr,p1,p2,p3,p4,p5,p6)
 	if p4 ~= nil then sOutStr = sOutStr.." [4] "..tostring(p4); end
 	if p5 ~= nil then sOutStr = sOutStr.." [5] "..tostring(p5); end
 	if p6 ~= nil then sOutStr = sOutStr.." [6] "..tostring(p6); end
-	print(sOutStr);
+	print(Game.GetCurrentGameTurn(), sOutStr);
 end
 
 -- debug routine - print contents of a table of numbers
@@ -174,7 +175,7 @@ local tBoostClasses:table = {};  -- indexed using code (cc, ccc or 99999); holds
 
 -- traverse through Boosts, find custom ones and initialize tBoostTypes table accordingly
 function InitializeBoosts()
-	dprint("FUNCAL InitializeBoosts()");
+	dprint("FUN InitializeBoosts()");
 	
 	for boost in GameInfo.Boosts() do
 		-- detect custom boost
@@ -226,7 +227,7 @@ end
 
 -- helper - check if we need to proces a specific boost (an object from Boosts table)
 function HasBoostBeenTriggered(ePlayerID:number, pBoost:table)
-	--dprint("FUNCAL HasBoostBeenTriggered() (player,id,tech,civic)",ePlayerID,pBoost.BoostID,pBoost.TechnologyType,pBoost.CivicType);
+	dprint("FUN HasBoostBeenTriggered() (player,id,tech,civic)",ePlayerID,pBoost.BoostID,pBoost.TechnologyType,pBoost.CivicType);
 	if pBoost.TechnologyType ~= nil then 
 		--dprint("  ...checking (tech)", pBoost.TechnologyReference.Index);
 		return Players[ePlayerID]:GetTechs():HasBoostBeenTriggered( pBoost.TechnologyReference.Index );
@@ -241,7 +242,7 @@ end
 
 -- main function to actually trigger a boost
 function TriggerBoost(ePlayerID:number, pBoost:table)
-	dprint("FUNCAL () TriggerBoost(player,id,tech,civic)",ePlayerID,pBoost.BoostID,pBoost.TechnologyType,pBoost.CivicType);
+	dprint("FUN TriggerBoost(player,id,tech,civic)",ePlayerID,pBoost.BoostID,pBoost.TechnologyType,pBoost.CivicType);
 	if pBoost.TechnologyType ~= nil then 
 		dprint("  ...triggering (tech)", pBoost.TechnologyReference.Index);
 		Players[ePlayerID]:GetTechs():TriggerBoost( pBoost.TechnologyReference.Index );
@@ -279,7 +280,7 @@ function GetCityPlots(tPlots:table, ePlayerID:number, iCityID:number)
 end
 
 function CountCityTilesTerrain(tPlots:table, sTerrainType:string)
-	dprint("FUNSTA CountCityTilesTerrain()",sTerrainType);
+	dprint("FUN CountCityTilesTerrain()",sTerrainType);
 	local iNum = 0;
 	for _,plot in pairs(tPlots) do
 		local pTerrain = GameInfo.Terrains[plot:GetTerrainType()];
@@ -291,7 +292,7 @@ function CountCityTilesTerrain(tPlots:table, sTerrainType:string)
 end
 
 function CountCityTilesFeature(tPlots:table, sFeatureType:string)
-	dprint("FUNSTA CountCityTilesFeature()",sFeatureType);
+	dprint("FUN CountCityTilesFeature()",sFeatureType);
 	local iNum = 0;
 	for _,plot in pairs(tPlots) do
 		local pFeature = GameInfo.Features[plot:GetFeatureType()];
@@ -323,7 +324,7 @@ end
 
 
 function CountCityTilesImprovableRes(tPlots:table, sImprovementType:string)
-	dprint("FUNSTA CountCityTilesImprovableRes()",sImprovementType);
+	dprint("FUN CountCityTilesImprovableRes()",sImprovementType);
 	-- first prepare a table of valid resources (just Indices)
 	local tResourceValid:table = {};
 	for _,vres in pairs(GameInfo.Improvements[sImprovementType].ValidResources) do
@@ -346,7 +347,7 @@ end
 
 -- added 2018-02-13
 function CountCityTilesHills(tPlots:table)
-	dprint("FUNSTA CountCityTilesHills()");
+	dprint("FUN CountCityTilesHills()");
 	local iNum = 0;
 	for _,plot in pairs(tPlots) do
 		if plot:IsHills() then iNum = iNum + 1; end
@@ -357,7 +358,7 @@ end
 
 -- added 2018-02-13
 function CountCityTilesLake(tPlots:table)
-	dprint("FUNSTA CountCityTilesLake()");
+	dprint("FUN CountCityTilesLake()");
 	local iNum = 0;
 	for _,plot in pairs(tPlots) do
 		if plot:IsLake() then iNum = iNum + 1; end
@@ -367,7 +368,7 @@ function CountCityTilesLake(tPlots:table)
 end
 
 function ProcessBoostsSettledCities(sClassFix:string, ePlayerID:number, iCityID:number)
-	dprint("FUNCAL ProcessBoostsSettledCities() (fix,player,city)",sClassFix,ePlayerID,iCityID);
+	dprint("FUN ProcessBoostsSettledCities() (fix,player,city)",sClassFix,ePlayerID,iCityID);
 
 	-- we always have to count all plots from all cities (no matter if 1 or 2 or more)
 	local tPlots = {};
@@ -443,7 +444,7 @@ end
 
 -- BOOST: SETTLE_CAPITAL_COAST, SETTLE_CAPITAL_LAKE, SETTLE_CAPITAL_RIVER, SETTLE_CAPITAL_MOUNTAIN, SETTLE_CAPITAL_HILLS
 function ProcessBoostsCapitalLocation(ePlayerID:number, iCityID:number, iX:number, iY:number)
-	dprint("FUNSTA ProcessBoostsCapitalLocation() (player,city,x,y)",ePlayerID,iCityID,iX,iY);
+	dprint("FUN ProcessBoostsCapitalLocation() (player,city,x,y)",ePlayerID,iCityID,iX,iY);
 	
 	local pPlot = Map.GetPlot(iX, iY);
 	
@@ -545,7 +546,7 @@ end
 
 
 function ProcessBoostMeetCityState(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUNCAL ProcessBoostMeetCityState", ePlayerID, eMetPlayerID);
+	dprint("FUN ProcessBoostMeetCityState", ePlayerID, eMetPlayerID);
 	-- BOOST: MEET_CITY_STATE
 	tBoostClass = tBoostClasses["MEET_CITY_STATE"];
 	if tBoostClass ~= nil then 
@@ -557,7 +558,7 @@ function ProcessBoostMeetCityState(ePlayerID:number, eMetPlayerID:number)
 end
 
 function ProcessBoostMeetXCityStates(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUNCAL ProcessBoostMeetXCityStates", ePlayerID, eMetPlayerID);
+	dprint("FUN ProcessBoostMeetXCityStates", ePlayerID, eMetPlayerID);
 	-- BOOST: MEET_X_CITY_STATES
 	tBoostClass = tBoostClasses["MEET_X_CITY_STATES"];
 	if tBoostClass ~= nil then 
@@ -569,7 +570,7 @@ function ProcessBoostMeetXCityStates(ePlayerID:number, eMetPlayerID:number)
 end
 
 function ProcessBoostSuzerainCityState(ePlayerID:number, eMinorID:number)
-	dprint("FUNCAL ProcessBoostSuzerainCityState", ePlayerID, eMinorID);
+	dprint("FUN ProcessBoostSuzerainCityState", ePlayerID, eMinorID);
 	-- BOOST: SUZERAIN_CITY_STATE
 	tBoostClass = tBoostClasses["SUZERAIN_CITY_STATE"];
 	if tBoostClass ~= nil then 
@@ -582,7 +583,7 @@ function ProcessBoostSuzerainCityState(ePlayerID:number, eMinorID:number)
 end
 
 function ProcessBoostSuzerainXCityStates(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUNCAL ProcessBoostSuzerainXCityStates", ePlayerID, eMetPlayerID);
+	dprint("FUN ProcessBoostSuzerainXCityStates", ePlayerID, eMetPlayerID);
 	-- BOOST: SUZERAIN_X_CITY_STATES
 	tBoostClass = tBoostClasses["SUZERAIN_X_CITY_STATES"];
 	if tBoostClass ~= nil then 
@@ -595,7 +596,7 @@ end
 
 
 function ProcessBoostTrainUnit(ePlayerID:number, eUnitType:number)
-	dprint("FUNCAL ProcessBoostTrainUnit", ePlayerID, eUnitType);
+	dprint("FUN ProcessBoostTrainUnit", ePlayerID, eUnitType);
 	-- BOOST: TRAIN_UNIT
 	tBoostClass = tBoostClasses["TRAIN_UNIT"];
 	if tBoostClass ~= nil then 
@@ -607,7 +608,7 @@ function ProcessBoostTrainUnit(ePlayerID:number, eUnitType:number)
 end
 
 function ProcessBooostGreatPerson(ePlayerID:number, eGreatPersonClass:number)
-	dprint("FUNCAL ProcessBoostGreatPerson", ePlayerID, eGreatPersonClass);
+	dprint("FUN ProcessBoostGreatPerson", ePlayerID, eGreatPersonClass);
 	-- BOOST: GREAT_PERSON
 	tBoostClass = tBoostClasses["GREAT_PERSON"];
 	if tBoostClass ~= nil then 
@@ -630,7 +631,7 @@ end
 -- ===========================================================================
 -- only 4 params, checked
 function OnCityAddedToMap(ePlayerID:number, iCityID:number, iX:number, iY:number)
-	dprint("FUNCAL OnCityAddedToMap() (player,city,x,y,a,b)",ePlayerID,iCityID,iX,iY);
+	dprint("FUN OnCityAddedToMap() (player,city,x,y,a,b)",ePlayerID,iCityID,iX,iY);
 	if not IsPlayerBoostable(ePlayerID) then return; end
 	dprint("Player is boostable (id)", ePlayerID);
 	-- BOOST CLASS DISPATCHER
@@ -647,7 +648,7 @@ end
 -- Units: called only when actual training, e.g. NOT called for gold purchased units.
 --        TypeModifier in CPC event is for Normal=0/Corps=1/Army=2
 function OnCityProductionCompleted(ePlayerID:number, iCityID:number, eOrderType:number, eObjectType:number, bCanceled:boolean, typeModifier:number)
-	dprint("FUNSTA OnCityProductionCompleted(ePlayerID,iCity,eOrderType,eObjectType,bCanceled,typeModifier)",ePlayerID,iCityID,eOrderType,eObjectType,bCanceled,typeModifier);
+	dprint("FUN OnCityProductionCompleted(ePlayerID,iCity,eOrderType,eObjectType,bCanceled,typeModifier)",ePlayerID,iCityID,eOrderType,eObjectType,bCanceled,typeModifier);
 	if not IsPlayerBoostable(ePlayerID) then return; end
 	-- BOOST CLASS DISPATCHER
 	if eOrderType == 0 then  -- OrderTypes.ORDER_TRAIN
@@ -669,13 +670,67 @@ end
 
 
 -- ===========================================================================
+-- CityProjectCompleted = { "player", "iCityID", "Project", "Building", "iX", "iY", "bCanceled" },
+function OnCityProjectCompleted(ePlayerID:number, iCityID:number, eProjectIndex:number, eBuildingIndex:number, iLocX:number, iLocY:number, bCanceled:boolean)
+	dprint("FUN OnCityProjectCompleted(ePlayerID,iCityID,eProjectIndex,eBuildingIndex,iLocX,iLocY,bCanceled)",ePlayerID, iCityID, eProjectIndex, eBuildingIndex, iLocX, iLocY, bCanceled);
+
+	local projectInfo:table = GameInfo.Projects[eProjectIndex];
+	if projectInfo == nil or bCanceled then return; end -- assert
+	local sProjectType:string = projectInfo.ProjectType;
+	-- do stuff here
+	dprint("Project:", sProjectType);
+end
+
+
+-- ===========================================================================
+-- CityReligionFollowersChanged = { "player", "iCityID", "eRevealedState", "x" }, -- last param is 'city'; careful, this event fires insanely often!
+function OnCityReligionFollowersChanged( ePlayerID:number, iCityID:number, eVisibility:number, city)
+	dprint("OnCityReligionFollowersChanged(ePlayerID,iCityID,eVisibility,city)", ePlayerID, iCityID, eVisibility, city);
+end
+
+
+-- ===========================================================================
+-- PlayerTurnActivated = { "player", "bIsFirstTime" },
+function OnPlayerTurnActivated( ePlayerID:number, bIsFirstTime:boolean)
+	dprint("FUN OnPlayerTurnActivated(ePlayerID,bIsFirstTime)", ePlayerID, bIsFirstTime);
+end
+
+
+-- ===========================================================================
+function OnGreatWorkCreated(ePlayerID:number, iCreatorID:number, iCityX:number, iCityY:number, eBuildingID:number, iGreatWorkIndex:number)
+	dprint("FUN OnGreatWorkCreated(ePlayerID,iCreatorID,iCityX,iCityY,eBuildingID,iGreatWorkIndex)", ePlayerID, iCreatorID, iCityX, iCityY, eBuildingID, iGreatWorkIndex);
+
+	m_City = Cities.GetCityInPlot(Map.GetPlot(iCityX, iCityY));
+	if m_City ~= nil then
+		m_CityBldgs = m_City:GetBuildings();
+		--m_GreatWorkType = m_CityBldgs:GetGreatWorkTypeFromIndex(m_GreatWorkIndex); -- this function is only in UI context
+	end
+
+end
+
+
+-- ===========================================================================
+function OnGovernmentChanged(ePlayerID:number, eGovernmentIndex:number)
+	dprint("FUN OnGovernmentChanged(ePlayerID,eGovernmentIndex)", ePlayerID, eGovernmentIndex);
+	
+	-- Player:GetCulture:GetCurrentGovernment -- only UI context
+	local governmentInfo:table = GameInfo.Governments[eGovernmentIndex];
+	if governmentInfo == nil then return; end
+	
+	dprint("Government changed to", governmentInfo.GovernmentType);
+
+end
+
+
+-- ===========================================================================
 -- UnitGreatPersonCreated =	{ "player", "iUnitID", "GreatPersonClass", "GreatPersonIndividual" },
 function OnUnitGreatPersonCreated(ePlayerID:number, iUnitID:number, eGreatPersonClass:number, eGreatPersonIndividual:number)
-	dprint("FUNSTA OnUnitGreatPersonCreated(ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual)",ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual);
+	dprint("FUN OnUnitGreatPersonCreated(ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual)",ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual);
 	if not IsPlayerBoostable(ePlayerID) then return; end
 	-- BOOST CLASS DISPATCHER
 	ProcessBooostGreatPerson(ePlayerID, eGreatPersonClass);
 end
+
 
 -- ===========================================================================
 function OnDistrictAddedToMap( playerID: number, districtID : number, cityID :number, districtX : number, districtY : number, districtType:number, percentComplete:number )
@@ -683,31 +738,33 @@ function OnDistrictAddedToMap( playerID: number, districtID : number, cityID :nu
 -- 1400916610=ERA_CLASSICAL (I was in Medieval)
 -- 848543945=ERA_RENAISSANCE (I was in Industrial)
 -- 1948543980=ERA_ATOMIC (I was in Information)
-	dprint("FUNCAL OnDistrictAddedToMap() (did,cid,x,y,type,perc)",districtID,cityID,districtX,districtY,districtType,percentComplete);
+	dprint("FUN OnDistrictAddedToMap() (did,cid,x,y,type,perc)",districtID,cityID,districtX,districtY,districtType,percentComplete);
 end
 
 -- ===========================================================================
 function OnImprovementAddedToMap(locX, locY, eImprType, eOwner, resource, isPillaged, isWorked)
-	dprint("FUNCAL OnImprovementAddedToMap() (x,y,type,owner,resource)",locX,locY,eImprType,eOwner,resource);
+	dprint("FUN OnImprovementAddedToMap() (x,y,type,owner,resource)",locX,locY,eImprType,eOwner,resource);
 end
 
 -- ===========================================================================
 -- This event is called for any unit, no matter how created. So, purchasing with gold and faith, earning GPs, etc.
 -- Also: this event is called BEFORE CityProductionCompleted!
 function OnUnitAddedToMap( playerID: number, unitID : number, unitX : number, unitY : number )
-	dprint("FUNCAL OnUnitAddedToMap() (player,unit,x,y)",playerID,unitID,unitX,unitY);
+	dprint("FUN OnUnitAddedToMap() (player,unit,x,y)",playerID,unitID,unitX,unitY);
 end
+
 
 -- ===========================================================================
 -- it's call for each plot that unit is traversing
 function OnUnitMoved(ePlayerID:number, iUnitID:number, x, y, locallyVisible, stateChange)
-	dprint("FUNCAL OnUnitMoved (player,unit,x,y,visible,state)",ePlayerID, iUnitID,x,y,locallyVisible,stateChange);
+	dprint("FUN OnUnitMoved (player,unit,x,y,visible,state)",ePlayerID, iUnitID,x,y,locallyVisible,stateChange);
 end
+
 
 -- ===========================================================================
 -- only 4 params, checked
 function OnUnitMoveComplete(playerID, unitID, x, y)
-	dprint("FUNCAL OnUnitMoveComplete() (player,unit,x,y,visible,state)",playerID,unitID,x,y);
+	dprint("FUN OnUnitMoveComplete() (player,unit,x,y,visible,state)",playerID,unitID,x,y);
 end
 
 -- ===========================================================================
@@ -716,7 +773,7 @@ end
 -- DiplomacyMeetMajorMinor = 	{ "player", "player" },
 -- DiplomacyMeetMajors =		{ "player", "player" },
 function OnDiplomacyMeet(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUNCAL OnDiplomacyMeet", ePlayerID, eMetPlayerID);
+	dprint("FUN OnDiplomacyMeet", ePlayerID, eMetPlayerID);
 	if not IsPlayerBoostable(ePlayerID) then return; end
 	-- BOOST CLASS DISPATCHER
 	if PlayerIsMinor(eMetPlayerID) then
@@ -750,19 +807,19 @@ end
 
 -- ===========================================================================
 function OnLoadScreenClose()
-	dprint("FUNCAL OnLoadScreenClose");
+	dprint("FUN OnLoadScreenClose");
 end
 
 -- ===========================================================================
 function Initialize()
-	dprint("FUNSTA Initialize()");
+	dprint("FUN Initialize()");
 
 	Events.LoadScreenClose.Add ( OnLoadScreenClose );   -- fires when Game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete
-	--Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
+	Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
 	-- these events fire AFTER custom PlayerTurnActivated()
 	Events.CityProductionCompleted.Add( OnCityProductionCompleted );
+	Events.CityProjectCompleted.Add( OnCityProjectCompleted );
 	Events.UnitGreatPersonCreated.Add( OnUnitGreatPersonCreated );
-	--Events.CityProjectCompleted.Add( OnCityProjectComplete );	
 	--Events.TechBoostTriggered.Add( OnTechBoostTriggered );
 	--Events.CivicBoostTriggered.Add( OnCivicBoostTriggered );
 	--Events.ResearchCompleted.Add( OnResearchComplete );
@@ -777,12 +834,13 @@ function Initialize()
 	--Events.DiplomacyRelationshipChanged.Add( OnDiplomacyMeet );
 	--Events.InfluenceChanged.Add( OnDiplomacyMeet );
 	Events.InfluenceGiven.Add( OnInfluenceGiven );
+	Events.CityReligionFollowersChanged.Add( OnCityReligionFollowersChanged );
+	Events.GreatWorkCreated.Add( OnGreatWorkCreated );
+	Events.GovernmentChanged.Add( OnGovernmentChanged );
 	
 	InitializeBoosts();
 	--dprint("List of BoostClasses");
 	--dshowtable(tBoostClasses, 0);
-	
-	dprint("FUNEND Initialize()");
 end	
 Initialize();
 

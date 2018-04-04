@@ -1,16 +1,12 @@
 --------------------------------------------------------------
 -- Real Eurekas
 -- Author: Infixo
--- Mar 15, 2017: Version 0.1
---			Init module - initialize new boosts and create temp objects
--- Mar 17, 2017: Version 0.2
---			First complete set of Boost Definitions
--- Apr 12, 2017: Version 2.0
--- 			First custom Boosts
--- Feb 13, 2018: Version 2.3
---			8 new boosts, 5 new custom boosts
--- Feb 21, 2018: Version 2.4
---			New boosts related to: meet city-state type, train unit
+-- 2017-03-15: Version 0.1, Init module - initialize new boosts and create temp objects
+-- 2017-03-17: Version 0.2, First complete set of Boost Definitions
+-- 2017-04-12: Version 2.0, First custom Boosts
+-- 2018-02-13: Version 2.3, 8 new boosts, 5 new custom boosts
+-- 2018-02-21: Version 2.4, New boosts related to: meet city-state type, train unit
+-- 2018-04-04: Version 2.5, New boosts related to: projects, great works, followers, governments
 --------------------------------------------------------------
 
 -- just to make versioning easier
@@ -37,6 +33,12 @@ INSERT INTO REurBoostCodes (BoostClass, BoostCode) VALUES
 ('DIPLO_FRIEND_X',			10500),
 ('SUZERAIN_CITY_STATE',		10600),
 ('SUZERAIN_X_CITY_STATES',	10700),
+('PROJECT_COMPLETE', 		10800),
+('PROJECT_HAVE_X',			10801),
+('PROJECT_ENHANCE',			10802),
+('RELIGION_X_FOLLOWERS',	10900),
+('HAVE_X_GREAT_WORKS',		11000),
+('HAVE_GOVERNMENT',			11100),
 ('SETTLE_CITY1_DESERT_X',	12600),
 ('SETTLE_CITY1_FEATURE_X',	12700),
 ('SETTLE_CITY1_IMPR_X',		12800),
