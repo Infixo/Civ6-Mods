@@ -50,6 +50,7 @@ function dshowtable(pTable:table, iLevel:number)
 	end
 end
 
+
 -- ===========================================================================
 -- HELPFUL ENUMS
 -- ===========================================================================
@@ -839,7 +840,7 @@ function Initialize()
 	Events.GovernmentChanged.Add( OnGovernmentChanged );
 	
 	InitializeBoosts();
-	--dprint("List of BoostClasses");
+	--dprint("List of BoostClasses:");
 	--dshowtable(tBoostClasses, 0);
 end	
 Initialize();
