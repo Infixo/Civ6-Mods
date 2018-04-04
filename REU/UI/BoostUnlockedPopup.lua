@@ -1,3 +1,4 @@
+print("Loading BoostUnlockedPopup.lua from Real Eurekas version "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
 --
 --	Popup when a Tech/Civic Boost unlock occurs.
@@ -67,6 +68,7 @@ function ShowTechBoost(techIndex, iTechProgress, eSource)
 	end
 
 	-- Update Cause Label
+	Controls.BoostCauseString:SetToolTipString(""); -- Infixo
 	local msgString :string;
 	if eSource == BoostSources.BOOST_SOURCE_GOODYHUT then
 		msgString = Locale.Lookup("LOC_TECH_BOOST_GOODYHUT");
@@ -93,6 +95,7 @@ function ShowTechBoost(techIndex, iTechProgress, eSource)
 		for row in GameInfo.Boosts() do
 			if(row.TechnologyType == currentTech.TechnologyType) then
 				msgString = Locale.Lookup(row.TriggerLongDescription);
+				Controls.BoostCauseString:SetToolTipString( Locale.Lookup("LOC_TECH_KEY_COMPLETED")..": "..Locale.Lookup(row.TriggerDescription) ); -- Infixo
 				break;
 			end
 		end
@@ -177,6 +180,7 @@ function ShowCivicBoost(civicIndex, iCivicProgress, eSource)
 	end
 
 	-- Update Cause Label
+	Controls.BoostCauseString:SetToolTipString(""); -- Infixo
 	local msgString :string;
 	if eSource == BoostSources.BOOST_SOURCE_GOODYHUT then
 		msgString = Locale.Lookup("LOC_CIVIC_BOOST_GOODYHUT");
@@ -198,6 +202,7 @@ function ShowCivicBoost(civicIndex, iCivicProgress, eSource)
 		for row in GameInfo.Boosts() do
 			if(row.CivicType == currentCivic.CivicType) then
 				msgString = Locale.Lookup(row.TriggerLongDescription);
+				Controls.BoostCauseString:SetToolTipString( Locale.Lookup("LOC_TECH_KEY_COMPLETED")..": "..Locale.Lookup(row.TriggerDescription) ); -- Infixo
 				break;
 			end
 		end
@@ -410,3 +415,5 @@ function Initialize()
 	Events.UIIdle.Add( OnUIIdle );
 end
 Initialize();
+
+print("OK loaded BoostUnlockedPopup.lua from Real Eurekas");
