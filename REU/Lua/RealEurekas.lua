@@ -8,6 +8,10 @@ print("Loading RealEurekas.lua from Real Eurekas version "..GlobalParameters.REU
 -- ===========================================================================
 
 
+-- InGame functions exposed here
+if not ExposedMembers.REU then ExposedMembers.REU = {} end;
+
+
 -- ===========================================================================
 -- DEBUG ROUTINES
 -- ===========================================================================
@@ -667,17 +671,11 @@ function ProcessBoostsProjectCompleted(ePlayerID:number, eProjectIndex:number)
 	tBoostClass = tBoostClasses["PROJECT_HAVE_X"];
 	if tBoostClass ~= nil and ( projectInfo.ProjectType == "PROJECT_BUILD_NUCLEAR_DEVICE" or projectInfo.ProjectType == "PROJECT_BUILD_THERMONUCLEAR_DEVICE" ) then
 		for id,boost in pairs(tBoostClass.Boosts) do
-			if boost.Helper == "BUILD_NUCLEAR_DEVICE" then
-				-- Player:GetWMDs - only UI context
-				--	for row in GameInfo.WMDs() do
-				--local iNum:number = pPlayer:GetWMDs():GetWeaponCount(row.Index)
-			end
-			if boost.Helper == "BUILD_THERMONUCLEAR_DEVICE" then
-				-- Player:GetWMDs - only UI context
-			end
-			--local sGovernmentType:string = "GOVERNMENT_"..boost.Helper;
-			--dprint("  ...processing boost (class,id,helper,project)", "PROJECT_HAVE_X", id, sGovernmentType, GameInfo.Governments[eGovernmentIndex].GovernmentType);
-			--if not HasBoostBeenTriggered(ePlayerID, boost) and GameInfo.Governments[eGovernmentIndex].GovernmentType == sGovernmentType then TriggerBoost(ePlayerID, boost); end
+			local iNumWMDs:number = 0;
+			if boost.Helper == "BUILD_NUCLEAR_DEVICE"       then iNumWMDs = ExposedMembers.REU.GetWMDWeaponCount(ePlayerID, "WMD_NUCLEAR_DEVICE");       end
+			if boost.Helper == "BUILD_THERMONUCLEAR_DEVICE" then iNumWMDs = ExposedMembers.REU.GetWMDWeaponCount(ePlayerID, "WMD_THERMONUCLEAR_DEVICE"); end
+			dprint("  ...processing boost (class,id,helper,helpnum,num)", "PROJECT_HAVE_X", id, boost.Helper, boost.NumItems2, iNumWMDs);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and iNumWMDs >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
 		end
 	end
 	
@@ -719,6 +717,29 @@ end
 
 
 --HAVE_X_GREAT_WORKS
+
+function ProcessBoostHaveGreatWorks(ePlayerID:number, iCityX:number, iCityY:number, iGreatWorkIndex:number)
+	dprint("FUN ProcessBoostHaveGreatWorks", ePlayerID, iCityX, iCityY, iGreatWorkIndex)
+	
+	-- BOOST: HAVE_X_GREAT_WORKS
+	tBoostClass = tBoostClasses["HAVE_X_GREAT_WORKS"];
+	if tBoostClass == nil then return; end -- no boost like this at all
+	
+	-- first, find out what kind of GW has just been created
+	local sGreatWorkCreated:string = ExposedMembers.REU.GetGreatWorkObjectType(iCityX, iCityY, iGreatWorkIndex);
+	if sGreatWorkCreated == nil then return; end -- assert
+	
+	-- BOOST: HAVE_X_GREAT_WORKS
+	for id,boost in pairs(tBoostClass.Boosts) do
+		local sHelperType:string = "GREATWORKOBJECT_"..boost.Helper;
+		if sGreatWorkCreated == sHelperType then
+			local iNumGWs:number = ExposedMembers.REU.GetGreatWorkCount(ePlayerID, sHelperType);
+			dprint("  ...processing boost (class,id,helper,helpnum,created)", "HAVE_X_GREAT_WORKS", id, sHelperType, boost.NumItems2, iNumGWs);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and iNumGWs >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	
+end
 
 
 -- ===========================================================================
@@ -802,14 +823,7 @@ function OnGreatWorkCreated(ePlayerID:number, iCreatorID:number, iCityX:number, 
 	dprint("FUN OnGreatWorkCreated(ePlayerID,iCreatorID,iCityX,iCityY,eBuildingID,iGreatWorkIndex)", ePlayerID, iCreatorID, iCityX, iCityY, eBuildingID, iGreatWorkIndex);
 	if not IsPlayerBoostable(ePlayerID) then return; end
 	-- BOOST CLASS DISPATCHER
-	--ProcessBoostGreatPerson(ePlayerID, );
-
-	m_City = Cities.GetCityInPlot(Map.GetPlot(iCityX, iCityY));
-	if m_City ~= nil then
-		m_CityBldgs = m_City:GetBuildings();
-		--m_GreatWorkType = m_CityBldgs:GetGreatWorkTypeFromIndex(m_GreatWorkIndex); -- this function is only in UI context
-	end
-
+	ProcessBoostHaveGreatWorks(ePlayerID, iCityX, iCityY, iGreatWorkIndex);
 end
 
 

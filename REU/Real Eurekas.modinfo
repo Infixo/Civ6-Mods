@@ -50,6 +50,12 @@
     <AddGameplayScripts id="REur_Scripts">
       <File>Lua/RealEurekas.lua</File>
     </AddGameplayScripts>
+    <AddUserInterfaces id="REur_UI_Utils">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>Utils/RealEurekas_InGameExp.xml</File>
+    </AddUserInterfaces>
   </InGameActions>
   <Files>
     <File>Config/RealEurekas_Config.xml</File>
@@ -66,5 +72,7 @@
     <File>UI/CivilopediaPage_Technology.lua</File>
     <File>UI/TechAndCivicSupport.lua</File>
     <File>UI/TechTree.lua</File>
+    <File>Utils/RealEurekas_InGameExp.lua</File>
+    <File>Utils/RealEurekas_InGameExp.xml</File>
   </Files>
 </Mod>
