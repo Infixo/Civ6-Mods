@@ -18,7 +18,7 @@ if not ExposedMembers.REU then ExposedMembers.REU = {} end;
 
 -- debug output routine
 function dprint(sStr,p1,p2,p3,p4,p5,p6)
-	--if true then return; end
+	if true then return; end
 	local sOutStr = sStr;
 	if p1 ~= nil then sOutStr = sOutStr.." [1] "..tostring(p1); end
 	if p2 ~= nil then sOutStr = sOutStr.." [2] "..tostring(p2); end
@@ -672,8 +672,9 @@ function ProcessBoostsProjectCompleted(ePlayerID:number, eProjectIndex:number)
 	if tBoostClass ~= nil and ( projectInfo.ProjectType == "PROJECT_BUILD_NUCLEAR_DEVICE" or projectInfo.ProjectType == "PROJECT_BUILD_THERMONUCLEAR_DEVICE" ) then
 		for id,boost in pairs(tBoostClass.Boosts) do
 			local iNumWMDs:number = 0;
-			if boost.Helper == "BUILD_NUCLEAR_DEVICE"       then iNumWMDs = ExposedMembers.REU.GetWMDWeaponCount(ePlayerID, "WMD_NUCLEAR_DEVICE");       end
-			if boost.Helper == "BUILD_THERMONUCLEAR_DEVICE" then iNumWMDs = ExposedMembers.REU.GetWMDWeaponCount(ePlayerID, "WMD_THERMONUCLEAR_DEVICE"); end
+			-- this is the first case where UI is actually NOT UPDATED with game core changes - GetWMDWeaponCount does not count the one that has just been built!
+			if boost.Helper == "BUILD_NUCLEAR_DEVICE"       then iNumWMDs = 1 + ExposedMembers.REU.GetWMDWeaponCount(ePlayerID, "WMD_NUCLEAR_DEVICE");       end
+			if boost.Helper == "BUILD_THERMONUCLEAR_DEVICE" then iNumWMDs = 1 + ExposedMembers.REU.GetWMDWeaponCount(ePlayerID, "WMD_THERMONUCLEAR_DEVICE"); end
 			dprint("  ...processing boost (class,id,helper,helpnum,num)", "PROJECT_HAVE_X", id, boost.Helper, boost.NumItems2, iNumWMDs);
 			if not HasBoostBeenTriggered(ePlayerID, boost) and iNumWMDs >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
 		end
@@ -716,8 +717,6 @@ function ProcessBoostReligionFollowers(ePlayerID:number)
 end
 
 
---HAVE_X_GREAT_WORKS
-
 function ProcessBoostHaveGreatWorks(ePlayerID:number, iCityX:number, iCityY:number, iGreatWorkIndex:number)
 	dprint("FUN ProcessBoostHaveGreatWorks", ePlayerID, iCityX, iCityY, iGreatWorkIndex)
 	
@@ -728,12 +727,12 @@ function ProcessBoostHaveGreatWorks(ePlayerID:number, iCityX:number, iCityY:numb
 	-- first, find out what kind of GW has just been created
 	local sGreatWorkCreated:string = ExposedMembers.REU.GetGreatWorkObjectType(iCityX, iCityY, iGreatWorkIndex);
 	if sGreatWorkCreated == nil then return; end -- assert
+	local iNumGWs:number = ExposedMembers.REU.GetGreatWorkCount(ePlayerID, sGreatWorkCreated); -- count once the type's just created
 	
 	-- BOOST: HAVE_X_GREAT_WORKS
 	for id,boost in pairs(tBoostClass.Boosts) do
 		local sHelperType:string = "GREATWORKOBJECT_"..boost.Helper;
 		if sGreatWorkCreated == sHelperType then
-			local iNumGWs:number = ExposedMembers.REU.GetGreatWorkCount(ePlayerID, sHelperType);
 			dprint("  ...processing boost (class,id,helper,helpnum,created)", "HAVE_X_GREAT_WORKS", id, sHelperType, boost.NumItems2, iNumGWs);
 			if not HasBoostBeenTriggered(ePlayerID, boost) and iNumGWs >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
 		end
