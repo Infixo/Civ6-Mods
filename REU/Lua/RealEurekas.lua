@@ -608,7 +608,8 @@ function ProcessBoostTrainUnit(ePlayerID:number, eUnitType:number)
 	end
 end
 
-function ProcessBooostGreatPerson(ePlayerID:number, eGreatPersonClass:number)
+
+function ProcessBoostGreatPerson(ePlayerID:number, eGreatPersonClass:number)
 	dprint("FUN ProcessBoostGreatPerson", ePlayerID, eGreatPersonClass);
 	-- BOOST: GREAT_PERSON
 	tBoostClass = tBoostClasses["GREAT_PERSON"];
@@ -622,6 +623,102 @@ function ProcessBooostGreatPerson(ePlayerID:number, eGreatPersonClass:number)
 end
 
 
+function ProcessBoostHaveGovernment(ePlayerID:number, eGovernmentIndex:number)
+	dprint("FUN ProcessBoostHaveGovernment", ePlayerID, eGovernmentIndex);
+	-- BOOST: HAVE_GOVERNMENT
+	tBoostClass = tBoostClasses["HAVE_GOVERNMENT"];
+	if tBoostClass ~= nil then
+		for id,boost in pairs(tBoostClass.Boosts) do
+			local sHelperType:string = "GOVERNMENT_"..boost.Helper;
+			dprint("  ...processing boost (class,id,helper,established)", "HAVE_GOVERNMENT", id, sHelperType, GameInfo.Governments[eGovernmentIndex].GovernmentType);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and GameInfo.Governments[eGovernmentIndex].GovernmentType == sHelperType then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+end
+
+
+function ProcessBoostsProjectCompleted(ePlayerID:number, eProjectIndex:number)
+	dprint("FUN ProcessBoostsProjectCompleted", ePlayerID, eProjectIndex);
+	
+	local projectInfo:table = GameInfo.Projects[eProjectIndex];
+	if projectInfo == nil then return; end -- assert
+
+	-- BOOST: PROJECT_COMPLETE
+	tBoostClass = tBoostClasses["PROJECT_COMPLETE"];
+	if tBoostClass ~= nil then
+		for id,boost in pairs(tBoostClass.Boosts) do
+			local sHelperType:string = "PROJECT_"..boost.Helper;
+			dprint("  ...processing boost (class,id,helper,project)", "PROJECT_COMPLETE", id, sHelperType, projectInfo.ProjectType);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and projectInfo.ProjectType == sHelperType then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	
+	-- BOOST: PROJECT_ENHANCE
+	tBoostClass = tBoostClasses["PROJECT_ENHANCE"];
+	if tBoostClass ~= nil then
+		for id,boost in pairs(tBoostClass.Boosts) do
+			local sHelperType:string = boost.DistrictType;
+			dprint("  ...processing boost (class,id,helper,district)", "PROJECT_ENHANCE", id, sHelperType, projectInfo.PrereqDistrict);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and projectInfo.PrereqDistrict == sHelperType then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	
+	-- BOOST: PROJECT_HAVE_X
+	tBoostClass = tBoostClasses["PROJECT_HAVE_X"];
+	if tBoostClass ~= nil and ( projectInfo.ProjectType == "PROJECT_BUILD_NUCLEAR_DEVICE" or projectInfo.ProjectType == "PROJECT_BUILD_THERMONUCLEAR_DEVICE" ) then
+		for id,boost in pairs(tBoostClass.Boosts) do
+			if boost.Helper == "BUILD_NUCLEAR_DEVICE" then
+				-- Player:GetWMDs - only UI context
+				--	for row in GameInfo.WMDs() do
+				--local iNum:number = pPlayer:GetWMDs():GetWeaponCount(row.Index)
+			end
+			if boost.Helper == "BUILD_THERMONUCLEAR_DEVICE" then
+				-- Player:GetWMDs - only UI context
+			end
+			--local sGovernmentType:string = "GOVERNMENT_"..boost.Helper;
+			--dprint("  ...processing boost (class,id,helper,project)", "PROJECT_HAVE_X", id, sGovernmentType, GameInfo.Governments[eGovernmentIndex].GovernmentType);
+			--if not HasBoostBeenTriggered(ePlayerID, boost) and GameInfo.Governments[eGovernmentIndex].GovernmentType == sGovernmentType then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	
+end
+
+
+function ProcessBoostReligionFollowers(ePlayerID:number)
+	dprint("FUN ProcessBoostReligionFollowers", ePlayerID);
+
+	-- BOOST: RELIGION_X_FOLLOWERS
+	tBoostClass = tBoostClasses["RELIGION_X_FOLLOWERS"];
+	if tBoostClass == nil then return; end -- no boost like this at all
+	
+	--local iNumFollowers:number = Players[ePlayerID]:GetStats():GetNumFollowers(); -- weird, but this function is not reliable...
+	
+	-- check if player has religion
+	if Players[ePlayerID] == nil then return; end
+	local eReligionID:number = Players[ePlayerID]:GetReligion():GetReligionTypeCreated();
+	if GameInfo.Religions[eReligionID] == nil or GameInfo.Religions[eReligionID].Pantheon then return; end
+	dprint("...player has religion (id,rel)", eReligionID, GameInfo.Religions[eReligionID].ReligionType);
+	
+	-- iterate through all cities
+	local iNumFollowers:number = 0;
+	for _,player in ipairs(PlayerManager.GetAlive()) do
+		for _,city in player:GetCities():Members() do
+			--local iCityFollowers:number = city:GetReligion():GetNumFollowers(eReligionID);
+			--if iCityFollowers > 0 then dprint("...adding followers from city (name,num)", city:GetName(), iCityFollowers); end
+			iNumFollowers = iNumFollowers + city:GetReligion():GetNumFollowers(eReligionID);
+		end
+	end
+	
+	-- BOOST: RELIGION_X_FOLLOWERS
+	for id,boost in pairs(tBoostClass.Boosts) do
+		dprint("  ...processing boost (class,id,helper,followers)", "RELIGION_X_FOLLOWERS", id, boost.NumItems2, iNumFollowers);
+		if not HasBoostBeenTriggered(ePlayerID, boost) and iNumFollowers >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
+	end
+	
+end
+
+
+--HAVE_X_GREAT_WORKS
 
 
 -- ===========================================================================
@@ -674,19 +771,19 @@ end
 -- CityProjectCompleted = { "player", "iCityID", "Project", "Building", "iX", "iY", "bCanceled" },
 function OnCityProjectCompleted(ePlayerID:number, iCityID:number, eProjectIndex:number, eBuildingIndex:number, iLocX:number, iLocY:number, bCanceled:boolean)
 	dprint("FUN OnCityProjectCompleted(ePlayerID,iCityID,eProjectIndex,eBuildingIndex,iLocX,iLocY,bCanceled)",ePlayerID, iCityID, eProjectIndex, eBuildingIndex, iLocX, iLocY, bCanceled);
-
-	local projectInfo:table = GameInfo.Projects[eProjectIndex];
-	if projectInfo == nil or bCanceled then return; end -- assert
-	local sProjectType:string = projectInfo.ProjectType;
-	-- do stuff here
-	dprint("Project:", sProjectType);
+	if not IsPlayerBoostable(ePlayerID) or bCanceled then return; end
+	-- BOOST CLASS DISPATCHER
+	ProcessBoostsProjectCompleted(ePlayerID, eProjectIndex);
 end
 
 
 -- ===========================================================================
 -- CityReligionFollowersChanged = { "player", "iCityID", "eRevealedState", "x" }, -- last param is 'city'; careful, this event fires insanely often!
-function OnCityReligionFollowersChanged( ePlayerID:number, iCityID:number, eVisibility:number, city)
+function OnCityReligionFollowersChanged(ePlayerID:number, iCityID:number, eVisibility:number, city)
 	dprint("OnCityReligionFollowersChanged(ePlayerID,iCityID,eVisibility,city)", ePlayerID, iCityID, eVisibility, city);
+	if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	ProcessBoostReligionFollowers(ePlayerID);
 end
 
 
@@ -694,12 +791,18 @@ end
 -- PlayerTurnActivated = { "player", "bIsFirstTime" },
 function OnPlayerTurnActivated( ePlayerID:number, bIsFirstTime:boolean)
 	dprint("FUN OnPlayerTurnActivated(ePlayerID,bIsFirstTime)", ePlayerID, bIsFirstTime);
+	if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	ProcessBoostReligionFollowers(ePlayerID); -- do it here so we will count only once!
 end
 
 
 -- ===========================================================================
 function OnGreatWorkCreated(ePlayerID:number, iCreatorID:number, iCityX:number, iCityY:number, eBuildingID:number, iGreatWorkIndex:number)
 	dprint("FUN OnGreatWorkCreated(ePlayerID,iCreatorID,iCityX,iCityY,eBuildingID,iGreatWorkIndex)", ePlayerID, iCreatorID, iCityX, iCityY, eBuildingID, iGreatWorkIndex);
+	if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	--ProcessBoostGreatPerson(ePlayerID, );
 
 	m_City = Cities.GetCityInPlot(Map.GetPlot(iCityX, iCityY));
 	if m_City ~= nil then
@@ -711,15 +814,12 @@ end
 
 
 -- ===========================================================================
+-- Player:GetCulture:GetCurrentGovernment -- only UI context
 function OnGovernmentChanged(ePlayerID:number, eGovernmentIndex:number)
 	dprint("FUN OnGovernmentChanged(ePlayerID,eGovernmentIndex)", ePlayerID, eGovernmentIndex);
-	
-	-- Player:GetCulture:GetCurrentGovernment -- only UI context
-	local governmentInfo:table = GameInfo.Governments[eGovernmentIndex];
-	if governmentInfo == nil then return; end
-	
-	dprint("Government changed to", governmentInfo.GovernmentType);
-
+	if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	ProcessBoostHaveGovernment(ePlayerID, eGovernmentIndex); -- HAVE_GOVERNMENT
 end
 
 
@@ -729,7 +829,7 @@ function OnUnitGreatPersonCreated(ePlayerID:number, iUnitID:number, eGreatPerson
 	dprint("FUN OnUnitGreatPersonCreated(ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual)",ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual);
 	if not IsPlayerBoostable(ePlayerID) then return; end
 	-- BOOST CLASS DISPATCHER
-	ProcessBooostGreatPerson(ePlayerID, eGreatPersonClass);
+	ProcessBoostGreatPerson(ePlayerID, eGreatPersonClass);
 end
 
 
@@ -835,7 +935,7 @@ function Initialize()
 	--Events.DiplomacyRelationshipChanged.Add( OnDiplomacyMeet );
 	--Events.InfluenceChanged.Add( OnDiplomacyMeet );
 	Events.InfluenceGiven.Add( OnInfluenceGiven );
-	Events.CityReligionFollowersChanged.Add( OnCityReligionFollowersChanged );
+	--Events.CityReligionFollowersChanged.Add( OnCityReligionFollowersChanged ); -- this event fires every turn, for each city, very often!
 	Events.GreatWorkCreated.Add( OnGreatWorkCreated );
 	Events.GovernmentChanged.Add( OnGovernmentChanged );
 	
