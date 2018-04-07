@@ -1389,6 +1389,7 @@ function FetchAndCacheData(sModifierId:string)
 			break;
 		end
 	end
+	if tModifier.CollectionType == nil or tModifier.EffectType == nil then print("WARNING! FetchAndCacheData: No dynamic modifier definition for Modifier", sModifierId); return nil; end
 	-- ModifierStrings - this one must be searched entirely
 	-- WARNING! There are 4 modifiers with 2 strings, but 99% of them has only 1 - we'll get only 1 here!
 	for row in GameInfo.ModifierStrings() do

@@ -123,6 +123,7 @@ end
 
 -- debug routine - prints a table (no recursion)
 function dshowtable(tTable:table)
+	if tTable == nil then print("dshowtable: table is nil"); return; end
 	for k,v in pairs(tTable) do
 		print(k, type(v), tostring(v));
 	end
@@ -3261,32 +3262,61 @@ end
 -- POLICY PAGE
 -- ===========================================================================
 
+local tPolicyOrder:table = {
+	SLOT_MILITARY = 1,
+	SLOT_ECONOMIC = 2,
+	SLOT_DIPLOMATIC = 3,
+	SLOT_GREAT_PERSON = 4,
+	SLOT_WILDCARD = 5,
+	SLOT_DARKAGE = 6,
+	SLOT_PANTHEON = 7,
+	SLOT_FOLLOWER = 8,
+};
+
+local tPolicyGroupNames:table = {};
+
+function InitializePolicyData()
+	-- Compatbility tweak for mods adding new slot types (e.g. Rule with Faith)
+	for row in GameInfo.GovernmentSlots() do
+		if tPolicyOrder[row.GovernmentSlotType] == nil and row.GovernmentSlotType ~= "SLOT_WILDCARD" then
+			tPolicyOrder[row.GovernmentSlotType] = table.count(tPolicyOrder) + 1;
+		end
+	end
+	-- init group names
+	for slot,_ in pairs(tPolicyOrder) do
+		tPolicyGroupNames[ slot ] = Locale.Lookup( string.gsub(slot, "SLOT_", "LOC_GOVT_POLICY_TYPE_") );
+	end
+	-- exceptions
+	tPolicyGroupNames.SLOT_GREAT_PERSON = Locale.Lookup("LOC_PEDIA_GOVERNMENTS_PAGEGROUP_GREATPEOPLE_POLICIES_NAME");
+	tPolicyGroupNames.SLOT_PANTHEON     = Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_PANTHEON_BELIEFS_NAME");
+	tPolicyGroupNames.SLOT_FOLLOWER     = Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_FOLLOWER_BELIEFS_NAME");
+	-- Rise & Fall
+	if not bIsRiseFall then
+		tPolicyOrder.SLOT_WILDCARD = nil;
+		tPolicyOrder.SLOT_DARKAGE = nil;
+	end
+	--print("*** POLICY ORDER ***"); dshowtable(tPolicyOrder);
+	--print("*** POLICY GROUP NAMES ***"); dshowtable(tPolicyGroupNames);
+end
+
+
 function UpdatePolicyData()
 	--print("*** UPDATE POLICY DATA ***");
-	-- prepare data
-	-- this will be moved outside to be only calculated once
-	m_kPolicyData = {
-		SLOT_MILITARY = {},
-		SLOT_ECONOMIC = {},
-		SLOT_DIPLOMATIC = {},
-		SLOT_GREAT_PERSON = {},
-		SLOT_PANTHEON = {},
-		SLOT_FOLLOWER = {},
-	};
-	if bIsRiseFall then
-		m_kPolicyData.SLOT_LEGACY = {};
-		m_kPolicyData.SLOT_DARKAGE = {};
-	end
 	Timer1Start();
+	m_kPolicyData = {}; for slot,_ in pairs(tPolicyOrder) do m_kPolicyData[slot] = {}; end -- reset all data
 	local ePlayerID:number = Game.GetLocalPlayer();
 	local pPlayer:table = Players[ePlayerID];
 	if not pPlayer then return; end -- assert
 	local pPlayerCulture:table = pPlayer:GetCulture();
 	-- find out which polices are slotted now
 	local tSlottedPolicies:table = {};
-	for i = 0, pPlayerCulture:GetNumPolicySlots()-1 do tSlottedPolicies[ pPlayerCulture:GetSlotPolicy(i) ] = true; end
+	for i = 0, pPlayerCulture:GetNumPolicySlots()-1 do
+		if pPlayerCulture:GetSlotPolicy(i) ~= -1 then tSlottedPolicies[ pPlayerCulture:GetSlotPolicy(i) ] = true; end
+	end
+	--print("...Slotted policies"); dshowtable(tSlottedPolicies);
 	-- iterate through all policies
 	for policy in GameInfo.Policies() do
+		--print("Policy:", policy.Index, policy.PolicyType, policy.GovernmentSlotType);
 		local policyData:table = {
 			Index = policy.Index,
 			Name = Locale.Lookup(policy.Name),
@@ -3296,8 +3326,10 @@ function UpdatePolicyData()
 			IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
 			IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
 		};
+		--dshowtable(policyData); -- !!!BUG HERE with Aesthetics CTD!!!
 		local sSlotType:string = policy.GovernmentSlotType;
-		if sSlotType == "SLOT_WILDCARD" then sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_LEGACY") or "SLOT_DARKAGE"); end
+		if sSlotType == "SLOT_WILDCARD" then sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_WILDCARD") or "SLOT_DARKAGE"); end
+		--print("...inserting policy", policyData.Name, "into", sSlotType);
 		table.insert(m_kPolicyData[sSlotType], policyData);
 		-- policy impact from modifiers
 		policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Policy", policy.PolicyType, ePlayerID, nil);
@@ -3325,18 +3357,9 @@ function UpdatePolicyData()
 		end -- pantheons
 	end -- all beliefs
 	Timer1Tick("--- ALL POLICY DATA ---");
+	--for policyGroup,policies in pairs(m_kPolicyData) do print(policyGroup, table.count(policies)); end
 end
 
-local tPolicyOrder:table = {
-	SLOT_MILITARY = 1,
-	SLOT_ECONOMIC = 2,
-	SLOT_DIPLOMATIC = 3,
-	SLOT_GREAT_PERSON = 4,
-	SLOT_LEGACY = 5,
-	SLOT_DARKAGE = 6,
-	SLOT_PANTHEON = 7,
-	SLOT_FOLLOWER = 8,
-}
 
 function ViewPolicyPage()
 
@@ -3348,9 +3371,7 @@ function ViewPolicyPage()
 	for policyGroup,policies in spairs( m_kPolicyData, function(t,a,b) return tPolicyOrder[a] < tPolicyOrder[b]; end ) do -- simple sort by group code name
 		local instance : table = NewCollapsibleGroupInstance()
 		
-		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_BRS_POLICY_GROUP_"..policyGroup) );
-		if policyGroup == "SLOT_PANTHEON" then instance.RowHeaderButton:SetText( Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_PANTHEON_BELIEFS_NAME") ); end
-		if policyGroup == "SLOT_FOLLOWER" then instance.RowHeaderButton:SetText( Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_FOLLOWER_BELIEFS_NAME") ); end
+		instance.RowHeaderButton:SetText( tPolicyGroupNames[policyGroup] );
 		instance.RowHeaderLabel:SetHide( false );
 		instance.AmenitiesContainer:SetHide(true);
 		
@@ -3838,6 +3859,8 @@ end
 -- ===========================================================================
 function Initialize()
 
+	InitializePolicyData();
+	
 	Resize();	
 
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
