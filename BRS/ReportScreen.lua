@@ -293,6 +293,8 @@ end
 
 
 function GetData()
+	--print("FUN GetData() - start");
+	
 	local kResources	:table = {};
 	local kCityData		:table = {};
 	local kCityTotalData:table = {
@@ -331,6 +333,8 @@ function GetData()
 	-- ==========================
 	-- BRS !! this will use the m_kUnitDataReport to fill out player's unit info
 	-- ==========================
+	--print("FUN GetData() - unit data report");
+	local tSupportedFormationClasses:table = { FORMATION_CLASS_CIVILIAN = true, FORMATION_CLASS_LAND_COMBAT = true, FORMATION_CLASS_NAVAL = true, FORMATION_CLASS_SUPPORT = true, FORMATION_CLASS_AIR = true };
 	local kUnitDataReport:table = {};
 	local group_name:string;
 	local tUnitsDist:table = {}; -- temp table for calculating units' distance from cities
@@ -348,12 +352,16 @@ function GetData()
 			elseif unit:GetReligiousStrength() > 0 then group_name = "RELIGIOUS";
 			end
 		end
+		-- tweak to handle new, unknown formation classes
+		if not tSupportedFormationClasses[formationClass] then
+			print("WARNING: GetData Unknown formation class", formationClass, "for unit", unitInfo.UnitType);
+			group_name = "SUPPORT";
+		end
 		-- store for Units tab report
 		if kUnitDataReport[group_name] == nil then
 			if     group_name == "LAND_COMBAT" then  kUnitDataReport[group_name] = { ID= 1, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
 			elseif group_name == "NAVAL" then        kUnitDataReport[group_name] = { ID= 2, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
 			elseif group_name == "AIR" then          kUnitDataReport[group_name] = { ID= 3, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
-			--elseif group_name == "SUPPORT" then      kUnitDataReport[group_name] = { ID= 4, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
 			elseif group_name == "SUPPORT" then      kUnitDataReport[group_name] = { ID= 4, func= group_military, Header= "UnitsMilitaryHeaderInstance",   Entry= "UnitsMilitaryEntryInstance" };
 			elseif group_name == "CIVILIAN" then     kUnitDataReport[group_name] = { ID= 5, func= group_civilian, Header= "UnitsCivilianHeaderInstance",   Entry= "UnitsCivilianEntryInstance" };
 			elseif group_name == "RELIGIOUS" then    kUnitDataReport[group_name] = { ID= 6, func= group_religious,Header= "UnitsReligiousHeaderInstance",  Entry= "UnitsReligiousEntryInstance" };
@@ -361,6 +369,7 @@ function GetData()
 			elseif group_name == "SPY" then          kUnitDataReport[group_name] = { ID= 8, func= group_spy,      Header= "UnitsSpyHeaderInstance",        Entry= "UnitsSpyEntryInstance" };
 			elseif group_name == "TRADER" then       kUnitDataReport[group_name] = { ID= 9, func= group_trader,   Header= "UnitsTraderHeaderInstance",     Entry= "UnitsTraderEntryInstance" };
 			end
+			--print("...creating a new unit group", formationClass, group_name);
 			kUnitDataReport[group_name].Name = "LOC_BRS_UNITS_GROUP_"..group_name;
 			kUnitDataReport[group_name].units = {};
 		end
@@ -411,6 +420,7 @@ function GetData()
 	-- .OwnerType, .OwnerName - strings, as returned by GameEffects.GetObjectType and GetObjectName - for debug
 	-- .Modifier - static as returned by RMA.FetchAndCacheData
 	-----------------------------------
+	--print("FUN GetData() - modifiers");
 	m_kModifiers = {}; -- clear main table
 	m_kModifiersUnits ={}; -- clear main table
 	local sTrackedPlayer:string = PlayerConfigurations[playerID]:GetLeaderName(); -- LOC_LEADER_xxx_NAME
@@ -581,6 +591,7 @@ function GetData()
 	--print("--------------"); print("FOUND MODIFIERS FOR CITIES"); for k,v in pairs(m_kModifiers) do print(k, #v); end
 	--print("--------------"); print("FOUND MODIFIERS FOR UNITS"); for k,v in pairs(m_kModifiersUnits) do print(k, #v); end
 
+	--print("FUN GetData() - cities");
 	local pCities = player:GetCities();
 	for i, pCity in pCities:Members() do	
 		local cityName	:string = pCity:GetName();
@@ -787,6 +798,7 @@ function GetData()
 
 
 	-- Units (TODO: Group units by promotion class and determine total maintenance cost)
+	--print("FUN GetData() - units");
 	--local MaintenanceDiscountPerUnit:number = pTreasury:GetMaintDiscountPerUnit(); -- used also for Units tab, so defined earlier
 	local pUnits :table = player:GetUnits();
 	for i, pUnit in pUnits:Members() do
@@ -819,6 +831,7 @@ function GetData()
 	-- BRS Current Deals Info (didn't wanna mess with diplomatic deal data
 	-- below, maybe later
 	-- =================================================================
+	--print("FUN GetData() - deals");
 	local kCurrentDeals : table = {}
 	local kPlayers : table = PlayerManager.GetAliveMajors()
 	local iTotal = 0
