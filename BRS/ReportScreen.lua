@@ -1458,7 +1458,7 @@ function ViewYieldsPage()
 	function CreatLineItemInstance(cityInstance:table, name:string, production:number, gold:number, food:number, science:number, culture:number, faith:number, bDontStore:boolean)
 		local lineInstance:table = {};
 		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", lineInstance, cityInstance.LineItemStack );
-		TruncateStringWithTooltipClean(lineInstance.LineItemName, 200, name);
+		TruncateStringWithTooltipClean(lineInstance.LineItemName, 345, name);
 		lineInstance.Production:SetText( toPlusMinusNoneString(production));
 		lineInstance.Food:SetText( toPlusMinusNoneString(food));
 		lineInstance.Gold:SetText( toPlusMinusNoneString(gold));
@@ -2988,34 +2988,31 @@ function group_military( unit, unitInstance, group, parent, type )
 	
 	-- upgrade flag
 	unitInstance.Upgrade:SetHide( true )
-	local bCanStart, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.UPGRADE, false, true);
+	--ARISTOS: a "looser" test for the Upgrade action, to be able to show the disabled arrow if Upgrade is not possible
+	local bCanStart = UnitManager.CanStartCommand( unit, UnitCommandTypes.UPGRADE, true);
 	if ( bCanStart ) then
 		unitInstance.Upgrade:SetHide( false )
+		--ARISTOS: Now we "really" test if we can Upgrade the unit!
+		local bCanStartNow, tResults = UnitManager.CanStartCommand( unit, UnitCommandTypes.UPGRADE, false, true);
+		unitInstance.Upgrade:SetDisabled(not bCanStartNow);
+		unitInstance.Upgrade:SetAlpha((not bCanStartNow and 0.5) or 1 ); --ARISTOS: dim if not upgradeable
+		-- upgrade callback
 		unitInstance.Upgrade:RegisterCallback( Mouse.eLClick, function()
 			-- the only case where we need to re-sort units preserving current order
 			-- actual re-sort must be done in Event, otherwise unit info is not refreshed (ui cache?)
 			tUnitSort.type = type; tUnitSort.group = group; tUnitSort.parent = parent;
 			UnitManager.RequestCommand( unit, UnitCommandTypes.UPGRADE );
 		end )
+		-- tooltip
 		local upgradeUnitName = GameInfo.Units[tResults[UnitOperationResults.UNIT_TYPE]].Name;
-		local toolTipString	= Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_DESCRIPTION" );
-		toolTipString = toolTipString .. " " .. Locale.Lookup(upgradeUnitName);
-		local upgradeCost = unit:GetUpgradeCost();
-					
-		if (upgradeCost ~= nil) then
-			toolTipString = toolTipString .. ": " .. upgradeCost .. " " .. Locale.Lookup("LOC_TOP_PANEL_GOLD");
-		end
-
-		toolTipString = Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_INFO", upgradeUnitName, upgradeCost );
-					
-		if (tResults[UnitOperationResults.FAILURE_REASONS] ~= nil) then
+		local toolTipString:string = Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_INFO", Locale.Lookup(upgradeUnitName), unit:GetUpgradeCost() ); -- Upgrade to {1_Unit}: {2_Amount} [ICON_Gold]Gold
+		if tResults[UnitOperationResults.FAILURE_REASONS] then
 			-- Add the reason(s) to the tool tip
 			for i,v in ipairs(tResults[UnitOperationResults.FAILURE_REASONS]) do
 				toolTipString = toolTipString .. "[NEWLINE]" .. "[COLOR:Red]" .. Locale.Lookup(v) .. "[ENDCOLOR]";
 			end
 		end
-						
-		unitInstance.Upgrade:SetToolTipString( toolTipString )
+		unitInstance.Upgrade:SetToolTipString( toolTipString );
 	end
 	
 end
@@ -3081,6 +3078,7 @@ function group_trader( unit, unitInstance, group, parent, type )
 
 	local owningPlayer:table = Players[unit:GetOwner()];
 	local cities:table = owningPlayer:GetCities();
+	--[[
 	local yieldtype: table = {
 		YIELD_FOOD = "[ICON_Food]",
 		YIELD_PRODUCTION = "[ICON_Production]",
@@ -3089,6 +3087,7 @@ function group_trader( unit, unitInstance, group, parent, type )
 		YIELD_CULTURE = "[ICON_Culture]",
 		YIELD_FAITH = "[ICON_Faith]",
 	};
+	--]]
 	local yields : string = ""
 	
 	unitInstance.UnitYields:SetText( "" );
@@ -3117,8 +3116,7 @@ function group_trader( unit, unitInstance, group, parent, type )
 
 				for j, yieldInfo in pairs( route.OriginYields ) do
 					if yieldInfo.Amount > 0 then
-						local yieldDetails:table = GameInfo.Yields[yieldInfo.YieldIndex];
-						yields = yields .. yieldtype[yieldDetails.YieldType] .. "+" .. yieldInfo.Amount
+						yields = yields .. GameInfo.Yields[yieldInfo.YieldIndex].IconString .. "+" .. yieldInfo.Amount
 						unitInstance.UnitYields:SetText( yields )
 						unit.yields = yields
 					end
@@ -3887,8 +3885,8 @@ function Initialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_MINORS",		ViewMinorPage );
 
-	m_tabs.SameSizedTabs(40);
-	m_tabs.CenterAlignTabs(-10);		
+	m_tabs.SameSizedTabs(20);
+	m_tabs.CenterAlignTabs(-10);
 
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );

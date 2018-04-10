@@ -18,12 +18,20 @@
 
 <LocalizedText>
 
+	<!-- Polish -->
+	<Replace Tag="LOC_OPTIONS_HOTKEY_UI_REPORTS" Language="pl_PL">
+		<Text>Ekran raportów</Text>
+	</Replace>
+	<Replace Tag="LOC_OPTIONS_HOTKEY_UI_REPORTS_HELP" Language="pl_PL">
+		<Text>Włącza/wyłącza widoczność ekranu raportów.</Text>
+	</Replace>
+
 	<!-- Russian -->
 	<Replace Tag="LOC_OPTIONS_HOTKEY_UI_REPORTS" Language="ru_RU">
 		<Text>Переключить экран отчетов</Text>
 	</Replace>
 	<Replace Tag="LOC_OPTIONS_HOTKEY_UI_REPORTS_HELP" Language="ru_RU">
-		<Text>Переключает отображение экрана отчетов</Text>
+		<Text>Переключает отображение экрана отчетов.</Text>
 	</Replace>
 
 	<!-- Portugues do Brasil -->
