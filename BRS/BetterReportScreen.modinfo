@@ -18,7 +18,7 @@
 			<File>Config/BRS_Config.xml</File>
 		</UpdateDatabase>
 		<UpdateText id="BRS_FrontEnd_Text">
-			<File>Config/BRS_ConfigText.xml</File>
+			<File>Config/BRS_Config_Text.xml</File>
 		</UpdateText>
 	</FrontEndActions>
 	<InGameActions>
@@ -89,7 +89,7 @@
     <Files>
 		<!-- Config files -->
 		<File>Config/BRS_Config.xml</File>
-		<File>Config/BRS_ConfigText.xml</File>
+		<File>Config/BRS_Config_Text.xml</File>
 		<!-- Shared files -->
 		<File>BetterReportScreen_Database.sql</File>
         <File>ReportScreen.lua</File>
