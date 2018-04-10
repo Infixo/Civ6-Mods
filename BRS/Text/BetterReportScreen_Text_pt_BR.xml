@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2018-04-10: Translated by Rac -->
+<GameData>
+
+<LocalizedText>
+
+	<!-- Tab names -->
+	<Replace Tag="LOC_HUD_REPORTS_TAB_DEALS" Language="pt_BR"> <!-- LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS -->
+		<Text>Acordos Atuais</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_UNITS" Language="pt_BR"> <!-- LOC_PEDIA_UNITS_TITLE -->
+		<Text>Unidades</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_POLICIES" Language="pt_BR"> <!-- LOC_PEDIA_CONCEPTS_PAGE_GOVT_2_CHAPTER_CONTENT_TITLE -->
+		<Text>Políticas</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="pt_BR"> <!-- LOC_CITY_STATES_CITY_STATES -->
+		<Text>Cidades-Estados</Text>
+	</Replace>
+	<!-- Column headers -->
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="pt_BR">
+		<Text>Nome do Edifício/Distrito</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_BUILDINGCOUNT" Language="pt_BR">
+		<Text>Número de Edifícios/Distritos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_GROWTH" Language="pt_BR">
+		<Text>Crescimento</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HAPPINESS" Language="pt_BR">
+		<Text>Felicidade</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_POLICY_NAME" Language="pt_BR">
+		<Text>Nome da Política</Text>
+	</Replace>
+	<!-- Resource checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="pt_BR">
+		<Text>Ocultar os Detalhes da Cidade</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="pt_BR">
+		<Text>Ocultar Edifícios Gratuitos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="pt_BR">
+		<Text>Ocultar Unidades Gratuitas</Text>
+	</Replace>
+	<!-- UNITS -->
+	<!-- Unit groups -->
+	<Replace Tag="LOC_BRS_UNITS_GROUP_AIR" Language="pt_BR">
+		<Text>Militares - Aéreo</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_NAVAL" Language="pt_BR">
+		<Text>Militares - Naval</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_LAND_COMBAT" Language="pt_BR">
+		<Text>Militares - Terrestre</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_CIVILIAN" Language="pt_BR">
+		<Text>Civis</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SUPPORT" Language="pt_BR">
+		<Text>Suporte</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_SPY" Language="pt_BR">
+		<Text>Espiões</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_TRADER" Language="pt_BR">
+		<Text>Comerciantes</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_GREAT_PERSON" Language="pt_BR">
+		<Text>Grandes Personalidades</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_UNITS_GROUP_RELIGIOUS" Language="pt_BR">
+		<Text>Religiosas</Text>
+	</Replace>
+	<!-- Headers -->
+	<Replace Tag="LOC_BRS_HEADER_TYPE" Language="pt_BR">
+		<Text>Tipo</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_LEVEL" Language="pt_BR">
+		<Text>Nível</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_HEALTH" Language="pt_BR">
+		<Text>Saúde</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_CLASS" Language="pt_BR">
+		<Text>Classe</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_NUM_CHARGES" Language="pt_BR">
+		<Text>Cargas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_YIELDS" Language="pt_BR">
+		<Text>Ganhos</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_ROUTE" Language="pt_BR">
+		<Text>Rotas comerciais</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_HEADER_MISSION" Language="pt_BR">
+		<Text>Missões</Text>
+	</Replace>
+	<!-- Tooltips -->
+	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="pt_BR">
+		<Text>Vá para esta cidade</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="pt_BR">
+		<Text>Visualizar esta unidade no mapa</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="pt_BR">
+		<Text>Guarnição</Text>
+	</Replace>
+	<!-- POLICIES -->
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_MILITARY" Language="pt_BR">
+		<Text>Políticas Militares</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_ECONOMIC" Language="pt_BR">
+		<Text>Políticas Econômicas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DIPLOMATIC" Language="pt_BR">
+		<Text>Políticas Diplomáticas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_GREAT_PERSON" Language="pt_BR">
+		<Text>Políticas de Grandes Personalidades</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_LEGACY" Language="pt_BR">
+		<Text>Políticas de Legado</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_POLICY_GROUP_SLOT_DARKAGE" Language="pt_BR">
+		<Text>Políticas da Idade das Trevas</Text>
+	</Replace>
+	<!-- Checkboxes -->
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="pt_BR">
+		<Text>Ocultar Políticas Inativas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="pt_BR">
+		<Text>Ocultar Políticas sem Impacto</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="pt_BR">
+		<Text>Ocultar Cidades-estados não Conhecidas</Text>
+	</Replace>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="pt_BR">
+		<Text>Ocultar Cidades-estados sem Impacto</Text>
+	</Replace>
+	<!-- Deals -->
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="pt_BR">
+		<Text>Exportação</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_CURRENT_DEALS_INCOMING" Language="pt_BR">
+		<Text>Importação</Text>
+    </Replace>
+	<!-- Other -->
+    <Replace Tag="LOC_BRS_SPECIALISTS" Language="pt_BR"> <!-- LOC_PEDIA_CONCEPTS_PAGE_CITIES_9_CHAPTER_CONTENT_TITLE -->
+		<Text>Especialistas</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS" Language="pt_BR">
+		<Text>Dos modificadores</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_FROM_MODIFIERS_PERCENT" Language="pt_BR">
+		<Text>Dos modificadores [COLOR_White]%[ENDCOLOR]</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_BUILDINGS" Language="pt_BR"> <!-- LOC_CITY_YIELD_FROM_BUILDING_PRODUCTION_BONUS -->
+		<Text>Dos edifícios</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_DISTRICTS" Language="pt_BR"> <!-- LOC_CITY_YIELD_FROM_DISTRICT_PRODUCTION_BONUS -->
+		<Text>Dos distritos</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_PROD_UNITS" Language="pt_BR"> <!-- LOC_CITY_YIELD_FROM_UNIT_PRODUCTION_BONUS -->
+		<Text>Das unidades</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="pt_BR"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
+		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
+		<Text>Por ter {1_Num : plural 1?{1} distrito; other?{1} distritos;}</Text>
+    </Replace>
+
+</LocalizedText>
+
+</GameData>
