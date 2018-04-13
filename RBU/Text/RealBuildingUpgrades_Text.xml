@@ -224,7 +224,7 @@
 			<Text>An upgraded Military Academy includes campus for more students. All units trained in this city get double Flanking Bonus.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MONUMENT_UPGRADE_DESCRIPTION">
-			<Text>We can finally write down on the Monument the name of our magnificent leader - you! This increases morale of our soldiers. Units trained in this city receive +3 [ICON_Strength] Combat Strength when fighting Barbarians.</Text>
+			<Text>We can finally write down on the Monument the name of our magnificent leader - you! People rejoyce and it increases morale of our soldiers. Units trained in this city receive +3 [ICON_Strength] Combat Strength when fighting Barbarians.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MOSQUE_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -239,7 +239,7 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_PALACE_UPGRADE_DESCRIPTION">
-			<Text>The improved Palace is finally worthy of its main resident - you!</Text>
+			<Text>The improved Palace is finally worthy of its main resident - you! Provides +1 of each yield (except Food).</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Power Plant is a true regional industry hub. Bonus +2 [ICON_Production] Production extends to each city center within 6 tiles. Additional +2 [ICON_Production] Production for each specialty district constructed in this city. Adds +3 [ICON_Production] Production to each Oil Well in this city.</Text>
@@ -296,7 +296,7 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WORKSHOP_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Workshop increases efficiency of nearby mining operations. +1 [ICON_Production] Production from Quarries and Mines over resources.</Text>
+			<Text>An upgraded Workshop increases efficiency of nearby operations. +1 [ICON_Production] Production from Lumber Mills, Quarries and Mines with resources.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ZOO_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Zoo exhibits new animal species. +3 [ICON_Tourism] Tourism in this city.</Text>

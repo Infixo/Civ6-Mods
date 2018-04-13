@@ -14,7 +14,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MAJOR', '3');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '0');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '1');
 
 -- Version 1.5 Fix for Apadana crash; 2018-03-05 no longer necessary (tested)
 --UPDATE Buildings SET AdjacentCapital = 0 WHERE BuildingType = 'BUILDING_APADANA';
@@ -167,23 +167,29 @@ FROM RBUConfig;
 -------------------------------------------------------------
 -- PALACE
 
--- +1 Housing
 UPDATE Buildings
-SET MaxPlayerInstances = 1, PurchaseYield = NULL, Housing = 1  --, Capital = 1
+SET MaxPlayerInstances = 1, PurchaseYield = NULL --, Housing = 1  --, Capital = 1
 WHERE BuildingType = 'BUILDING_PALACE_UPGRADE';
 
--- +2 Gold, +1 Production, +1 Science
+-- +1 of each yield
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
-('BUILDING_PALACE_UPGRADE', 'YIELD_GOLD', 2),
+('BUILDING_PALACE_UPGRADE', 'YIELD_CULTURE', 1),
+('BUILDING_PALACE_UPGRADE', 'YIELD_FAITH', 1),
+('BUILDING_PALACE_UPGRADE', 'YIELD_GOLD', 1),
 ('BUILDING_PALACE_UPGRADE', 'YIELD_PRODUCTION', 1),
 ('BUILDING_PALACE_UPGRADE', 'YIELD_SCIENCE', 1);
 
 -------------------------------------------------------------
 -- MONUMENT
 
+-- +1 Amenity
+UPDATE Buildings
+SET Entertainment = 1
+WHERE BuildingType = 'BUILDING_MONUMENT_UPGRADE';
+
 -- +1 Culture
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
-('BUILDING_MONUMENT_UPGRADE', 'YIELD_CULTURE', 1);
+--INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
+--('BUILDING_MONUMENT_UPGRADE', 'YIELD_CULTURE', 1);
 
 -- +3 Strength when fighting Barbs
 INSERT INTO Types (Type, Kind) VALUES  -- hash value generated automatically
@@ -1474,23 +1480,27 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- WORKSHOP
 
 -- +1 Housing
-UPDATE Buildings SET Housing = 1
-WHERE BuildingType = 'BUILDING_WORKSHOP_UPGRADE';
+--UPDATE Buildings SET Housing = 1
+--WHERE BuildingType = 'BUILDING_WORKSHOP_UPGRADE';
 
 -- +1 Production
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
 ('BUILDING_WORKSHOP_UPGRADE', 'YIELD_PRODUCTION', 1);
 
--- +1 Production from Quarries and Mines with Visible Resources
+-- +1 Production from Quarries, Lumber Mills and Mines on Visible Resources
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
+('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDLUMBERMILLPRODUCTION'),
 ('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDMINEPRODUCTION'),
 ('BUILDING_WORKSHOP_UPGRADE', 'WORKSHOPUPGRADE_ADDQUARRYPRODUCTION');
 
 INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
-('WORKSHOPUPGRADE_ADDMINEPRODUCTION',   'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_RESOURCE_MINE_REQUIREMENTS'),
-('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_QUARRY_REQUIREMENTS');
-	
+('WORKSHOPUPGRADE_ADDLUMBERMILLPRODUCTION', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_LUMBER_MILL_REQUIREMENTS'),
+('WORKSHOPUPGRADE_ADDMINEPRODUCTION',       'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_RESOURCE_MINE_REQUIREMENTS'),
+('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION',     'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_QUARRY_REQUIREMENTS');
+
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('WORKSHOPUPGRADE_ADDLUMBERMILLPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
+('WORKSHOPUPGRADE_ADDLUMBERMILLPRODUCTION', 'Amount',    '1'),
 ('WORKSHOPUPGRADE_ADDMINEPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('WORKSHOPUPGRADE_ADDMINEPRODUCTION', 'Amount',    '1'),
 ('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
