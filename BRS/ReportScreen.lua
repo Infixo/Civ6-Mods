@@ -139,6 +139,21 @@ function dshowrectable(tTable:table, iLevel:number)
 	end
 end
 
+
+-- ===========================================================================
+-- Updated functions from Civ6Common, to include rounding to 1 decimal digit
+-- ===========================================================================
+function toPlusMinusString( value:number )
+	if value == 0 then return "0"; end
+	return Locale.ToNumber(math.floor((value*10)+0.5)/10, "+#,###.#;-#,###.#");  
+end
+
+function toPlusMinusNoneString( value:number )
+	if value == 0 then return " "; end
+	return Locale.ToNumber(math.floor((value*10)+0.5)/10, "+#,###.#;-#,###.#");
+end
+
+
 -- ===========================================================================
 --	Single exit point for display
 -- ===========================================================================
@@ -1848,20 +1863,27 @@ function ViewYieldsPage()
 
 		-- Yields from Amenities -- Infixo TOTALLY WRONG amenities are applied to all yields, not only Worked Tiles; also must be the LAST calculated entry
 		--local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1); -- Infixo Buggy formula
-		local iYieldPercent:number = kCityData.HappinessNonFoodYieldModifier/100;
+		local fYieldPercent:number = kCityData.HappinessNonFoodYieldModifier/100.0;
 		local sModifierColor:string;
 		if     kCityData.HappinessNonFoodYieldModifier == 0 then sModifierColor = "COLOR_White";
 		elseif kCityData.HappinessNonFoodYieldModifier  > 0 then sModifierColor = "COLOR_Green";
 		else                                                     sModifierColor = "COLOR_Red"; -- <0
 		end
-		CreatLineItemInstance(	pCityInstance,
+		local lineInstance:table = CreatLineItemInstance(	pCityInstance,
 								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES")..string.format("  ["..sModifierColor.."]%+d%%[ENDCOLOR]", kCityData.HappinessNonFoodYieldModifier),
-								kBaseYields.YIELD_PRODUCTION * iYieldPercent,
-								kBaseYields.YIELD_GOLD * iYieldPercent,
+								kBaseYields.YIELD_PRODUCTION * fYieldPercent,
+								kBaseYields.YIELD_GOLD * fYieldPercent,
 								0,
-								kBaseYields.YIELD_SCIENCE * iYieldPercent,
-								kBaseYields.YIELD_CULTURE * iYieldPercent,
-								kBaseYields.YIELD_FAITH * iYieldPercent);
+								kBaseYields.YIELD_SCIENCE * fYieldPercent,
+								kBaseYields.YIELD_CULTURE * fYieldPercent,
+								kBaseYields.YIELD_FAITH * fYieldPercent,
+								true); -- don't store in base yields, we'll need it for other rows
+		-- show base yields in the tooltips
+		lineInstance.Production:SetToolTipString( kBaseYields.YIELD_PRODUCTION );
+		lineInstance.Gold:SetToolTipString( kBaseYields.YIELD_GOLD );
+		lineInstance.Science:SetToolTipString( kBaseYields.YIELD_SCIENCE );
+		lineInstance.Culture:SetToolTipString( kBaseYields.YIELD_CULTURE );
+		lineInstance.Faith:SetToolTipString( kBaseYields.YIELD_FAITH );
 
 		pCityInstance.LineItemStack:CalculateSize();
 		pCityInstance.Darken:SetSizeY( pCityInstance.LineItemStack:GetSizeY() + DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y );
