@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="38C7FAFB-58EB-0C14-7377-92A810E9860B" version="1">
+	<Properties>
+		<Name>Better Load Screen</Name>
+		<Description>Better Load Screen</Description>
+		<Teaser>Better Load Screen</Teaser>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<FrontEndActions>
+		<ImportFiles id="BLS_ImportFiles">
+			<File>UI/FrontEnd/LoadScreen.lua</File>
+			<File>UI/FrontEnd/LoadScreen.xml</File>
+		</ImportFiles>
+	</FrontEndActions>
+	<Files>
+		<File>UI/FrontEnd/LoadScreen.lua</File>
+		<File>UI/FrontEnd/LoadScreen.xml</File>
+	</Files>
+</Mod>
