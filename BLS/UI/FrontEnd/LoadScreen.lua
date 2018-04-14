@@ -1,3 +1,4 @@
+print("Loading LoadScreen.lua from Better Load Screen");
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.
@@ -318,11 +319,8 @@ function OnLoadScreenContentReady()
 		end
 
 		-- Obtain "uniques" from Civilization and for the chosen leader
-		local uniqueAbilities;
-		local uniqueUnits;
-		local uniqueBuildings;
-		uniqueAbilities, uniqueUnits, uniqueBuildings = GetLeaderUniqueTraits( leaderType );
-		local CivUniqueAbilities, CivUniqueUnits, CivUniqueBuildings = GetCivilizationUniqueTraits( civType );
+		local uniqueAbilities, uniqueUnits, uniqueBuildings = GetLeaderUniqueTraits( leaderType, true );
+		local CivUniqueAbilities, CivUniqueUnits, CivUniqueBuildings = GetCivilizationUniqueTraits( civType, true );
 	
 		-- Merge tables
 		for i,v in ipairs(CivUniqueAbilities)	do table.insert(uniqueAbilities, v) end
@@ -333,13 +331,15 @@ function OnLoadScreenContentReady()
 		for _, item in ipairs(uniqueAbilities) do
 			--print( "ua:", item.TraitType, item.Name, item.Description, Locale.Lookup(item.Description));	--debug
 			local instance:table = {};
-			ContextPtr:BuildInstanceForControl("TextInfoInstance", instance, Controls.FeaturesStack );
+			ContextPtr:BuildInstanceForControl("IconInfoInstance", instance, Controls.FeaturesStack );
+			iconAtlas = "ICON_"..civType;
+			instance.Icon:SetIcon(iconAtlas);
+			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
 			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name )); 
 			instance.Header:SetText( headerText );
 			instance.Description:SetText( Locale.Lookup( item.Description ) );
+			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
 		end
-
-		local size:number = SIZE_BUILDING_ICON;
 
 		for _, item in ipairs(uniqueUnits) do
 			--print( "uu:", item.TraitType, item.Name, item.Description, Locale.Lookup(item.Description));	--debug
@@ -347,12 +347,12 @@ function OnLoadScreenContentReady()
 			ContextPtr:BuildInstanceForControl("IconInfoInstance", instance, Controls.FeaturesStack );
 			iconAtlas = "ICON_"..item.Type;
 			instance.Icon:SetIcon(iconAtlas);
-			instance.TextStack:SetOffsetX( size + 4 );
+			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
 			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name ));
 			instance.Header:SetText( headerText );
 			instance.Description:SetText(Locale.Lookup(item.Description));
+			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
 		end
-
 
 		for _, item in ipairs(uniqueBuildings) do
 			--print( "ub:", item.TraitType, item.Name, item.Description, Locale.Lookup(item.Description));	--debug
@@ -361,10 +361,11 @@ function OnLoadScreenContentReady()
 			instance.Icon:SetSizeVal(38,38);
 			iconAtlas = "ICON_"..item.Type;
 			instance.Icon:SetIcon(iconAtlas);
-			instance.TextStack:SetOffsetX( size + 4 );
+			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
 			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name ));
 			instance.Header:SetText( headerText );
 			instance.Description:SetText(Locale.Lookup(item.Description));
+			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
 		end
 	end
 end
@@ -383,7 +384,7 @@ end
 function OnLoadGameViewStateDone()
 	
 	m_isLoadComplete = true;	
-	print("OnLoadGameViewStateDone");
+	--print("OnLoadGameViewStateDone");
 	
 	UIManager:SetUICursor( 0 );	
 	
@@ -445,3 +446,5 @@ function Initialize()
 	Controls.Portrait:ReprocessAnchoring();
 end
 Initialize();
+
+print("OK loaded LoadScreen.lua from Better Load Screen");

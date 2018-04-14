@@ -8,36 +8,37 @@
 
 		<Image	ID="BackgroundImage"	Anchor="C,C"	Texture="LEADER_T_ROOSEVELT_BACKGROUND"		StretchMode="Auto">
 			<Group Size="parent,parent" Clip="1">
-				<Image						ID="Banner"						Anchor="C,C" Offset="-260,0"	Size="514,987"				Texture="Controls_BannerWideTint" >
+				<Image						ID="Banner"						Anchor="C,C" Offset="-300,0"	Size="560,987"				Texture="Controls_BannerWideTint" >
 					<Image																															Size="parent,parent" 	Texture="Loading_Map" Alpha="0.2"/>
 					<Image					ID="BannerBarLeft"		Anchor="L,C" Offset="5,0"			Size="5,987"					Texture="Controls_BannerWideTint" TextureOffset="5,0" Color="255,255,255,50" />
 					<Image					ID="BannerBarRight"		Anchor="R,C" Offset="5,0"			Size="5,987"					Texture="Controls_BannerWideTint" TextureOffset="5,0" Color="255,255,255,50" />
 					<Image																Anchor="C,C"									Size="parent,parent"	Texture="Controls_Gradient" Color="0,0,0,100"/>
 					<Image																Anchor="C,C"									Size="parent,parent"	Texture="Controls_Gradient" Color="0,0,0,255"/>
-					<Container														Anchor="C,C"									Size="parent,765">
+					<Container														Anchor="C,C"									Size="parent,800">
 						<Image				ID="LogoContainer"		Anchor="C,C"									Size="256,256"				Texture="CircleBacking256" Alpha="0.4" >
 							<Image			ID="Logo"							Anchor="C,C"									Size="200,200"				Texture="CivSymbols200"		 Alpha="0.3" />
 						</Image>
 						<Stack				ID="MainStack"				Anchor="C,T" StackGrowth="Down" StackPadding="10">
-							<Line															Start="0,0"	 End="470,0"			Width="2"							Color="200,200,200,100" />
-							<Label			ID="CivName"					Anchor="C,T"									Style="FontFlair22"		String="$Civ" SmallCapsType="EveryWord" SmallCaps="30" />
-							<Label														Anchor="C,T"									Style="FontFlair14"		String="{LOC_LOADING_JOIN_THE_WORLD_STAGE:upper}" SmallCapsType="EveryWord" SmallCaps="20" />
-							<Line															Start="0,0"	 End="470,0"			Width="2"							Color="200,200,200,100" />
-							<Label			ID="EraInfo"					Anchor="L,T" Offset="10,0"		WrapWidth="460"				Style="DawnText" String="$EraInfo$"  />
-							<Label			ID="LeaderName"				Anchor="C,T" Offset="0,10"		Style="FontFlair22"		String="$LeaderName" SmallCapsType="EveryWord" SmallCaps="30" />
-							<Label			ID="LeaderInfo"				Anchor="L,T" Offset="10,0"		WrapWidth="460"				Style="DawnText" String="$LeaderInfo$"  />
+							<!--<Line															Start="0,0"	 End="470,0"			Width="2"							Color="200,200,200,100" />-->
+							<Label			ID="CivName"					Anchor="C,T"									Style="FontFlair18"		String="$Civ" SmallCapsType="EveryWord" SmallCaps="24" />
+							<!--<Label														Anchor="C,T"									Style="FontFlair14"		String="{LOC_LOADING_JOIN_THE_WORLD_STAGE:upper}" SmallCapsType="EveryWord" SmallCaps="20" />-->
+							<Line															Start="0,0"	 End="510,0"			Width="2"							Color="200,200,200,100" />
+							<Label			ID="EraInfo"					Anchor="L,T" Offset="10,0"		WrapWidth="500"				Style="DawnText" String="$EraInfo$"  />
+							<Label			ID="LeaderName"				Anchor="C,T" Offset="0,10"		Style="FontFlair18"		String="$LeaderName" SmallCapsType="EveryWord" SmallCaps="24" />
+							<Line															Start="0,0"	 End="510,0"			Width="2"							Color="200,200,200,100" />
+							<Label			ID="LeaderInfo"				Anchor="L,T" Offset="10,0"		WrapWidth="500"				Style="DawnText" String="$LeaderInfo$"  />
 							<Label														Anchor="C,T" Offset="0,10"		Style="FontFlair14"		String="{LOC_LOADING_FEATURES_ABILITIES:upper}" SmallCapsType="EveryWord" SmallCaps="20" />
-							<Line															Start="0,0"	 End="470,0"			Width="2"							Color="200,200,200,100" />
-							<Stack			ID="FeaturesStack"		Anchor="L,T" Offset="10,0"		WrapWidth="500"				StackGrowth="Right" WrapGrowth="Down" Padding="10" WrapPadding="14" />
+							<Line															Start="0,0"	 End="510,0"			Width="2"							Color="200,200,200,100" />
+							<Stack			ID="FeaturesStack"		Anchor="L,T" Offset="10,0"		StackGrowth="Down" Padding="15"/>
 						</Stack>
 					</Container>
 
-					<Container			ID="LoadingContainer"	Anchor="C,C" Offset="0,0"			Size="parent,parent">
-						<Label																Anchor="C,B" Offset="0,124"			Align="center" Style="FontFlair18"	SmallCapsType="EveryWord" SmallCaps="24" 	String="{LOC_LOADING_PLEASE_WAIT:upper}" Color="200,200,200,255"/>
+					<Container			ID="LoadingContainer"	Anchor="C,B" Offset="0,30"			Size="parent,parent">
+						<Label																Anchor="C,B" Offset="0,8"			Align="center" Style="FontFlair18"	SmallCapsType="EveryWord" SmallCaps="24" 	String="{LOC_LOADING_PLEASE_WAIT:upper}" Color="200,200,200,255"/>
 					</Container>
 
 					<AlphaAnim			ID="FadeAnim"						Anchor="C,C"								Size="parent,parent"	AlphaBegin="0" AlphaEnd="1" Cycle="Once" Speed=".5" Stopped="0" Pause="1" Function="Root">
-						<Container														Anchor="C,B" Offset="0,110"	Size="300,130">
+						<Container														Anchor="C,B" Offset="0,30"	Size="300,130">
 							<Image															Anchor="C,B" Offset="0,22"	Size="130,23"					Texture="Diplomacy_PortraitBacking" />
 							<Image															Anchor="C,B" Offset="0,0"		Size="305,58"					Texture="Controls_BannerBlueSmall">
 								<TextButton	ID="StartLabelButton"	Anchor="C,C" Offset="0,8"		Align="Center"				String="{LOC_START:upper}" SmallCapsType="Every" SmallCaps="24" Style="FontFlair18" Color="20,20,20,255" />
@@ -71,8 +72,8 @@
 		<Container	ID="Top"				 Size="230,auto">
 			<Image		ID="Icon"					Size="32,32" Offset="-5,-2" />
 			<Stack		ID="TextStack"		Offset="36,0"		StackGrowth="Bottom" StackPadding="4">
-				<Label	ID="Header"				WrapWidth="195" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$"/>
-				<Label	ID="Description"	WrapWidth="195"	Style="DawnText"	String="$Description$"/>
+				<Label	ID="Header"				WrapWidth="460" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$"/>
+				<Label	ID="Description"	WrapWidth="460"	Style="DawnText"	String="$Description$"/>
 			</Stack>
 		</Container>
 	</Instance>
