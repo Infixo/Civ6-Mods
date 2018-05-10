@@ -11,7 +11,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('REU_VERSION_MAJOR', '2');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('REU_VERSION_MINOR', '5');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('REU_VERSION_MINOR', '6');
 
 
 --------------------------------------------------------------
