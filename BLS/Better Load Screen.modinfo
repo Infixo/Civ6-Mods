@@ -9,6 +9,9 @@
 	</Properties>
 	<FrontEndActions>
 		<ImportFiles id="BLS_ImportFiles">
+			<Properties>
+				<LoadOrder>2</LoadOrder>
+			</Properties>
 			<File>UI/FrontEnd/LoadScreen.lua</File>
 			<File>UI/FrontEnd/LoadScreen.xml</File>
 		</ImportFiles>
