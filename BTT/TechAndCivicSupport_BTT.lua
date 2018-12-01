@@ -1,13 +1,17 @@
-print("Loading TechAndCivicSupport_BTT.lua from Better Tech Tree version 1.0");
+print("Loading TechAndCivicSupport_BTT.lua from Better Tech Tree version "..GlobalParameters.BTT_VERSION_MAJOR.."."..GlobalParameters.BTT_VERSION_MINOR);
 -- ===========================================================================
 -- Better Tech Tree
 -- Author: Infixo
 -- 2018-03-19: Created
+-- 2018-12-01: Version 1.1, added option to switch off the harvest icons
 -- ===========================================================================
 
 -- Rise & Fall check
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
+
+-- configuration options
+local bOptionHarvests:boolean = ( GlobalParameters.BTT_OPTION_HARVESTS == 1 );
 
 
 -- ===========================================================================
@@ -330,9 +334,23 @@ end
 
 function PopulateHarvests()
 	local sDesc:string;
+	local tHarvests:table = {}; 
+	-- first, collate harvests of the same resource into 1 string
 	for row in GameInfo.Resource_Harvests() do
-		sDesc = Locale.Lookup("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION")..": "..Locale.Lookup(GameInfo.Resources[row.ResourceType].Name)..string.format("[ICON_%s] %+d ", row.ResourceType, row.Amount)..GameInfo.Yields[row.YieldType].IconString;
-		AddExtraUnlockable(row.PrereqTech, "HARVEST", row.ResourceType, sDesc, row.ResourceType);
+		local tTechHarvests:table = tHarvests[ row.PrereqTech ]
+		if tTechHarvests == nil then tTechHarvests = {}; tHarvests[ row.PrereqTech ] = tTechHarvests; end
+		sDesc = tTechHarvests[ row.ResourceType ];
+		if sDesc == nil then -- insert name as initial insert
+			sDesc = Locale.Lookup("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION")..": "..Locale.Lookup(GameInfo.Resources[row.ResourceType].Name); --  don't put resource font icon, modded ones usually don't have it
+		end
+		sDesc = sDesc..string.format(" %+d", row.Amount)..GameInfo.Yields[row.YieldType].IconString;
+		tTechHarvests[ row.ResourceType ] = sDesc;
+	end
+	-- second, add to the proper techs
+	for tech,harvests in pairs(tHarvests) do
+		for restype,desc in pairs(harvests) do
+			AddExtraUnlockable(tech, "HARVEST", restype, desc, restype);
+		end
 	end
 end
 
@@ -400,7 +418,7 @@ function Initialize_BTT_TechTree()
 	--dprint("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
-	PopulateHarvests();
+	if bOptionHarvests then PopulateHarvests(); end
 	PopulateImprovementBonus();
 	PopulateFromModifiers("Technology");
 	print("Extra unlockables found:", #m_kExtraUnlockables);

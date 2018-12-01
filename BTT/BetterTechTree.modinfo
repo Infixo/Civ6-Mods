@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Tech Tree</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supports all languages. Version 1.0.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supports all languages. Version 1.1.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
@@ -13,6 +13,9 @@
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
+		<UpdateDatabase id="BTT_UpdateDatabase">
+			<File>BetterTechTree_Database.sql</File>
+		</UpdateDatabase>
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
             <Items>
@@ -59,6 +62,7 @@
     </InGameActions>
     <Files>
 		<!-- Shared files -->
+		<File>BetterTechTree_Database.sql</File>
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
 		<File>Icons/BTT_Icons.xml</File>

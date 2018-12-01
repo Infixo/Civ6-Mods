@@ -1,4 +1,4 @@
-print("Loading TechTree_BTT_RiseFall.lua from Better Tech Tree version 1.0");
+print("Loading TechTree_BTT_RiseFall.lua from Better Tech Tree version "..GlobalParameters.BTT_VERSION_MAJOR.."."..GlobalParameters.BTT_VERSION_MINOR);
 -- ===========================================================================
 -- Better Tech Tree
 -- Author: Infixo
