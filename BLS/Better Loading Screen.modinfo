@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mod id="38C7FAFB-58EB-0C14-7377-92A810E9860B" version="1">
 	<Properties>
-		<Name>Better Load Screen</Name>
-		<Description>Better Load Screen</Description>
-		<Teaser>Better Load Screen</Teaser>
+		<Name>Better Loading Screen</Name>
+		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.0.</Description>
+		<Teaser>Displays detailed information about uniques.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
