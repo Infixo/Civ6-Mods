@@ -2,7 +2,7 @@
 <Mod id="a768ead1-32b9-4da5-9b05-eb966364670b" version="1">
   <Properties>
     <Name>Real Building Upgrades</Name>
-    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 3.0.</Description>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 3.1.</Description>
     <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
@@ -18,6 +18,9 @@
       <File>Icons/RealBuildingUpgrades_Icons.xml</File>
     </UpdateIcons>
     <UpdateDatabase id="RBU_Database">
+      <Properties>
+        <LoadOrder>10</LoadOrder> <!-- needed for Gold Resource mod -->
+      </Properties>
       <File>RealBuildingUpgrades.sql</File>
     </UpdateDatabase>
     <UpdateText id="RBU_Text">
@@ -33,25 +36,25 @@
     </ImportFiles>
     <UpdateIcons id="RBU_RF_Icons" criteria="Expansion1">
       <Properties>
-        <LoadOrder>2</LoadOrder>
+        <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
     </UpdateIcons>
     <UpdateDatabase id="RBU_RF_Database" criteria="Expansion1">
       <Properties>
-        <LoadOrder>2</LoadOrder>
+        <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/RealBuildingUpgradesRF.sql</File>
     </UpdateDatabase>
     <UpdateText id="RBU_RF_Text" criteria="Expansion1">
       <Properties>
-        <LoadOrder>2</LoadOrder>
+        <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
     </UpdateText>
     <ImportFiles id="RBU_RF_Imports" criteria="Expansion1">
       <Properties>
-        <LoadOrder>2</LoadOrder>
+        <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/Icons/RBU_RF_Buildings32.dds</File>
       <File>RiseFall/Icons/RBU_RF_Buildings38.dds</File>

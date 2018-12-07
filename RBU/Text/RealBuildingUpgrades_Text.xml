@@ -170,7 +170,7 @@
 			<Text>Our units are better equipped after an upgrade to the Armory. All land units trained in this city get +3 [ICON_Strength] Combat Strength when attacking.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BANK_UPGRADE_DESCRIPTION">
-			<Text>Trade is booming in the city thanks to an upgraded Bank. International [ICON_TradeRoute] Trade Routes from this city gain +4 [ICON_Gold] Gold; domestic [ICON_TradeRoute] Trade Routes gain +2 [ICON_Gold] Gold. [ICON_Resource_Diamonds] Diamonds, [ICON_Resource_Gold] Gold and [ICON_Resource_Silver] Silver resources gain +2 [ICON_Gold] Gold each.</Text>
+			<Text>Trade is booming in the city thanks to an upgraded Bank. International [ICON_TradeRoute] Trade Routes from this city gain +4 [ICON_Gold] Gold; domestic [ICON_TradeRoute] Trade Routes gain +2 [ICON_Gold] Gold. [ICON_Resource_Diamonds] Diamonds, [ICON_Resource_Gold] Gold and [ICON_Resource_Silver] Silver resources gain +3 [ICON_Gold] Gold each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_BARRACKS_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Barracks increase efficiency of Camps. +2 [ICON_Production] Production from Camps. May not be built in an Encampment district that already has a Stable.</Text>
@@ -188,7 +188,7 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ELECTRONICS_FACTORY_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Japan. Bonus +2 [ICON_Production] Production to all cities within 6 tiles. Additional +3 [ICON_Production] Production for each era since constructed or last repaired. After researching the Electricity technology this upgrade provides an additional +2 [ICON_Culture] Culture to its city.</Text>
+			<Text>A building upgrade unique to Japan. Bonus +2 [ICON_Production] Production to all cities within 9 tiles. Additional +3 [ICON_Production] Production for each era since constructed or last repaired. After researching the Electricity technology this upgrade provides an additional +3 [ICON_Culture] Culture to its city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_FACTORY_UPGRADE_DESCRIPTION">
 			<Text>Bonus +1 [ICON_Production] Production is extended to all cities within 6 tiles. Additional +2 [ICON_Production] Production for each era since constructed or last repaired.</Text>
@@ -215,7 +215,7 @@
 			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +2 [ICON_Gold] Gold each.</Text>
+			<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MEETING_HOUSE_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -224,25 +224,25 @@
 			<Text>An upgraded Military Academy includes campus for more students. All units trained in this city get double Flanking Bonus.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MONUMENT_UPGRADE_DESCRIPTION">
-			<Text>We can finally write down on the Monument the name of our magnificent leader - you! People rejoyce and it increases morale of our soldiers. Units trained in this city receive +3 [ICON_Strength] Combat Strength when fighting Barbarians.</Text>
+			<Text>We can finally write down on the Monument the name of our magnificent leader - you! People rejoyce and it increases morale of our soldiers. Units trained in this city receive +2 [ICON_Strength] Combat Strength when fighting Barbarians.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MOSQUE_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MUSEUM_ART_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Art Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Artifact][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
+			<Text>An upgraded Art Museum hosts commercial exhibits. +2 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Artifact][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
 		</Row>
 		<Row Tag="LOC_BUILDING_MUSEUM_ARTIFACT_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Archaeological Museum hosts commercial exhibits. +1 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Artifact][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
+			<Text>An upgraded Archaeological Museum hosts commercial exhibits. +2 [ICON_Gold] Gold for each non-religious [ICON_GreatWork_Writing][ICON_GreatWork_Artifact][ICON_GreatWork_Portrait][ICON_GreatWork_Landscape][ICON_GreatWork_Sculpture][ICON_GreatWork_Music] Great Work in the City.</Text> 
 		</Row>
 		<Row Tag="LOC_BUILDING_PAGODA_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_PALACE_UPGRADE_DESCRIPTION">
-			<Text>The improved Palace is finally worthy of its main resident - you! Provides +1 of each yield (except Food).</Text>
+			<Text>The improved Palace is finally worthy of its main resident - you!</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_POWER_PLANT_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Power Plant is a true regional industry hub. Bonus +2 [ICON_Production] Production extends to each city center within 6 tiles. Additional +2 [ICON_Production] Production for each specialty district constructed in this city. Adds +3 [ICON_Production] Production to each Oil Well in this city.</Text>
+			<Text>An upgraded Power Plant is a true regional industry hub. Bonus +2 [ICON_Production] Production extends to each city center within 9 tiles. Additional +2 [ICON_Production] Production for each specialty district constructed in this city. Adds +3 [ICON_Production] Production to each Oil Well in this city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_RESEARCH_LAB_UPGRADE_DESCRIPTION">
 			<Text>Bonus +2 [ICON_Science] Science extends to each city center within 9 tiles. Grants +2 [ICON_Science] Science to [ICON_Resource_Oil] Oil, +3 [ICON_Science] Science to [ICON_Resource_Aluminum] Aluminum and [ICON_Resource_Copper] Copper and +4 [ICON_Science] Science to [ICON_Resource_Uranium] Uranium.</Text>
@@ -269,7 +269,7 @@
 			<Text>It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STAVE_CHURCH_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Norway. +1 [ICON_Faith] Faith from Lumber Mills. The Stave Church can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +2 [ICON_Faith] Faith each.</Text>
+			<Text>A building upgrade unique to Norway. +3 [ICON_Faith] Faith from Lumber Mills. The Stave Church can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +3 [ICON_Faith] Faith each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_STOCK_EXCHANGE_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Stock Exchange is a true regional business hub. Bonus +2 [ICON_Gold] Gold extends to each city center within 9 tiles. Additional +2 [ICON_Gold] Gold for each specialty district constructed in this city.</Text>
@@ -281,7 +281,7 @@
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_TEMPLE_UPGRADE_DESCRIPTION">
-			<Text>A renovation of the Temple is most welcomed by our religious community. The Temple can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +2 [ICON_Faith] Faith each.</Text>
+			<Text>A renovation of the Temple is most welcomed by our religious community. The Temple can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +3 [ICON_Faith] Faith each.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION">
 			<Text>An upgraded University allows for researching non-technical sciences.</Text>
@@ -290,7 +290,7 @@
 			<Text>Increases the strength of your Walls by half.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WATER_MILL_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Water Mill can also be used for a finishing process on woollen cloth. [ICON_Resource_Sheep] Sheep, [ICON_Resource_Furs] Furs and [ICON_Resource_Cotton] Cotton resources gain +1 [ICON_Production] Production each. City must be adjacent to a River.</Text>
+			<Text>An upgraded Water Mill can also be used for a finishing process on woollen cloth. [ICON_Resource_Sheep] Sheep, [ICON_Resource_Furs] Furs and [ICON_Resource_Cotton] Cotton resources gain +2 [ICON_Production] Production each. City must be adjacent to a River.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_WAT_UPGRADE_DESCRIPTION">
 			<Text>A renovation of this place of worship is most welcomed by our religious community.</Text>
@@ -299,7 +299,7 @@
 			<Text>An upgraded Workshop increases efficiency of nearby operations. +1 [ICON_Production] Production from Lumber Mills, Quarries and Mines with resources.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_ZOO_UPGRADE_DESCRIPTION">
-			<Text>An upgraded Zoo exhibits new animal species. +3 [ICON_Tourism] Tourism in this city.</Text>
+			<Text>An upgraded Zoo exhibits new animal species. +4 [ICON_Tourism] Tourism in this city.</Text>
 		</Row>
 		<!-- DLC: Aztecs -->
 		<Row Tag="LOC_BUILDING_TLACHTLI_UPGRADE_NAME">
@@ -313,7 +313,7 @@
 			<Text>Sukiennice Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Poland. Grants an additional +1 [ICON_GreatMerchant] Great Merchant point per turn. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +2 [ICON_Gold] Gold each.</Text>
+			<Text>A building upgrade unique to Poland. Grants an additional +1 [ICON_GreatMerchant] Great Merchant point per turn. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>
 		</Row>
 		<!-- DLC: Macedon -->
 		<Row Tag="LOC_BUILDING_BASILIKOI_PAIDES_UPGRADE_NAME">
@@ -327,7 +327,7 @@
 			<Text>Prasat Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_PRASAT_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Khmer. +2 [ICON_Tourism] Tourism. The Prasat can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +2 [ICON_Faith] Faith each.</Text>
+			<Text>A building upgrade unique to Khmer. +3 [ICON_Tourism] Tourism. The Prasat can now hold an additional +1 [ICON_GreatWork_Relic] Relic. [ICON_Resource_Dyes] Dyes, [ICON_Resource_Incense] Incense, and [ICON_Resource_Tobacco] Tobacco resources gain +3 [ICON_Faith] Faith each.</Text>
 		</Row>
 		<!-- Abilities -->
 		<Row Tag="LOC_ABILITY_ARMORY_UPGRADE_ATTACK_BUFF_NAME">

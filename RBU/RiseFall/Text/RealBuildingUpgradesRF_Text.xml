@@ -115,6 +115,9 @@
 	
 <LocalizedText>
 	<!-- updates of vanilla building upgrades -->
+	<Replace Tag="LOC_BUILDING_PALACE_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>The improved Palace is finally worthy of its main resident - you! Increases [ICON_PressureUp]+1 Loyalty pressure in this city.</Text>
+	</Replace>
 	<Replace Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_DESCRIPTION" Language="en_US">
 		<Text>An upgraded Amphitheater is able to accommodate more spectators. Increases by +0.2 [ICON_Culture] Culture per [ICON_Citizen] Citizen in this city.</Text>
 	</Replace>
@@ -128,11 +131,11 @@
 		<Text>An upgraded University allows for researching non-technical sciences. Increases by +0.2 [ICON_Science] Science per [ICON_Citizen] Citizen in this city.</Text>
 	</Replace>
 	<Replace Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION" Language="en_US">
-		<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Olives] Olives, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +2 [ICON_Gold] Gold each.</Text>
+		<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Olives] Olives, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>
 	</Replace>
 	<!-- DLC: Poland -->
 	<Replace Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_DESCRIPTION" Language="en_US">
-		<Text>A building upgrade unique to Poland. Grants an additional +1 [ICON_GreatMerchant] Great Merchant point per turn. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Olives] Olives, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +2 [ICON_Gold] Gold each.</Text>
+		<Text>A building upgrade unique to Poland. Grants an additional +1 [ICON_GreatMerchant] Great Merchant point per turn. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Olives] Olives, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>
 	</Replace>
 </LocalizedText>
 	
