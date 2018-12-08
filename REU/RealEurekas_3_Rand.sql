@@ -24,6 +24,7 @@ ON Boosts.BoostID = REurFinalMapping.BoostID
 LEFT JOIN REurBoostDefs
 ON REurFinalMapping.BoostTypeID = REurBoostDefs.BoostTypeID;
 
+
 --------------------------------------------------------------
 -- RANDOMIZE BOOSTS
 --------------------------------------------------------------
