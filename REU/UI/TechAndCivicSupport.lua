@@ -26,6 +26,15 @@ local m_kGovernmentData		:table; -- Used to cache government info.
 local m_kCivicsData			:table; -- Used to cache civics info.
 local m_kTechsData			:table; -- Used to cache tech info.
 
+-- CQUI variables
+local CQUI_ShowTechCivicRecommendations = true; -- if CQUI is not present then the default is to show recommendations! the update function should never be called
+
+function CQUI_OnSettingsUpdate()
+  CQUI_ShowTechCivicRecommendations = GameConfiguration.GetValue("CQUI_ShowTechCivicRecommendations") == 1
+end
+LuaEvents.CQUI_SettingsUpdate.Add(CQUI_OnSettingsUpdate);
+LuaEvents.CQUI_SettingsInitialized.Add(CQUI_OnSettingsUpdate);
+
 -- Utility Methods
 
 function GetUnlockablesForCivic_Cached(civicType, playerId)
@@ -645,8 +654,9 @@ function RealizeCurrentResearch( playerID:number, kData:table, kControl:table )
 		end
 
 		-- Show/Hide Recommended Icon
+		-- CQUI : only if show tech civ enabled in settings
 		if kControl.RecommendedIcon then
-			if kData.IsRecommended and kData.AdvisorType then
+			if kData.IsRecommended and kData.AdvisorType and CQUI_ShowTechCivicRecommendations then
 				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
 				kControl.RecommendedIcon:SetHide(false);
 				kControl.TitleStack:ReprocessAnchoring();
@@ -787,8 +797,9 @@ function RealizeCurrentCivic( playerID:number, kData:table, kControl:table, cach
 		HandleOverflow(numUnlockables, kControl, MAX_ICONS_BEFORE_OVERFLOW, MAX_ICONS_BEFORE_OVERFLOW-1);
 
 		-- Show/Hide Recommended Icon
+		-- CQUI : only if show tech civ enabled in settings
 		if kControl.RecommendedIcon then
-			if kData.IsRecommended and kData.AdvisorType then
+			if kData.IsRecommended and kData.AdvisorType and CQUI_ShowTechCivicRecommendations then
 				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
 				kControl.RecommendedIcon:SetHide(false);
 				kControl.TitleStack:ReprocessAnchoring();

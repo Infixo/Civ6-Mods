@@ -22,7 +22,11 @@ function ShowBoost(queueEntry:table)
 	end
 
 	-- Queue Popup through UI Manager
-	UIManager:QueuePopup( ContextPtr, PopupPriority.Normal);
+	--UIManager:QueuePopup( ContextPtr, PopupPriority.Normal);
+
+	-- CQUI : changing the priority to High, so that it always show before tech/civic completed if it's the case
+	-- We should check next patch if it's stil necessary
+	UIManager:QueuePopup( ContextPtr, PopupPriority.High);
 
 	PlayAnimations();
 end

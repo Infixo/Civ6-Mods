@@ -112,6 +112,8 @@ local VERTICAL_CENTER				:number = (SIZE_NODE_Y) / 2;
 local MAX_BEFORE_TRUNC_TO_BOOST		:number = 310;
 local MAX_BEFORE_TRUNC_KEY_LABEL:number = 100;
 
+-- CQUI CONSTANTS
+local CQUI_STATUS_MESSAGE_TECHS          :number = 4;    -- Number to distinguish tech messages
 
 STATUS_ART[ITEM_STATUS.BLOCKED]		= { Name="BLOCKED",		TextColor0=0xff202726, TextColor1=0x00000000, FillTexture="TechTree_GearButtonTile_Disabled.dds",BGU=0,BGV=(SIZE_NODE_Y*3),	IsButton=false,	BoltOn=false,	IconBacking=PIC_METER_BACK };
 STATUS_ART[ITEM_STATUS.READY]		= { Name="READY",		TextColor0=0xaaffffff, TextColor1=0x88000000, FillTexture=nil,									BGU=0,BGV=0,				IsButton=true,	BoltOn=false,	IconBacking=PIC_METER_BACK  };
@@ -153,6 +155,18 @@ local m_shiftDown			:boolean = false;
 
 local m_lastPercent         :number = 0.1;
 local m_FirstEraIndex = -1;
+
+-- CQUI variables
+local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01"); -- CQUI
+print("CQUI", (bIsCQUI and "YES" or "no"));
+local CQUI_halfwayNotified  :table = {};
+local CQUI_ShowTechCivicRecommendations = true; -- if CQUI is not present then the default is to show recommendations! the update function should never be called
+
+function CQUI_OnSettingsUpdate()
+  CQUI_ShowTechCivicRecommendations = GameConfiguration.GetValue("CQUI_ShowTechCivicRecommendations") == 1
+end
+LuaEvents.CQUI_SettingsUpdate.Add(CQUI_OnSettingsUpdate);
+LuaEvents.CQUI_SettingsInitialized.Add(CQUI_OnSettingsUpdate);
 
 -- ===========================================================================
 -- Return string respresenation of a prereq table
@@ -727,7 +741,8 @@ function PopulateNode(node, playerTechData)
 	end
 
 	-- Show/Hide Recommended Icon
-	if live.IsRecommended and live.AdvisorType ~= nil then
+	-- CQUI : only if show tech civ enabled in settings
+	if live.IsRecommended and live.AdvisorType ~= nil and CQUI_ShowTechCivicRecommendations then
 		node.RecommendedIcon:SetIcon(live.AdvisorType);
 		node.RecommendedIcon:SetHide(false);
 	else
@@ -1079,7 +1094,54 @@ function OnLocalPlayerTurnBegin()
 		    m_ePlayer = ePlayer;
 		    m_kCurrentData = GetLivePlayerData( ePlayer );		    
 	    end
-    end
+		
+		if bIsCQUI then
+        --------------------------------------------------------------------------
+        -- CQUI Check for Tech Progress
+
+        -- Get the current tech
+        local kPlayer   :table  = Players[ePlayer];
+        local playerTechs :table  = kPlayer:GetTechs();
+        local currentTechID :number = playerTechs:GetResearchingTech();
+        local isCurrentBoosted :boolean = playerTechs:HasBoostBeenTriggered(currentTechID);
+
+        -- Make sure there is a technology selected before continuing with checks
+        if currentTechID ~= -1 then
+          local techName = GameInfo.Technologies[currentTechID].Name;
+          local techType = GameInfo.Technologies[currentTechID].Type;
+
+          local currentCost         = playerTechs:GetResearchCost(currentTechID);
+          local currentProgress     = playerTechs:GetResearchProgress(currentTechID);
+          local currentYield          = playerTechs:GetScienceYield();
+          local percentageToBeDone    = (currentProgress + currentYield) / currentCost;
+          local percentageNextTurn    = (currentProgress + currentYield*2) / currentCost;
+          local CQUI_halfway:number = 0.5;
+
+          -- Finds boost amount, always 50 in base game, China's +10% modifier is not applied here
+          for row in GameInfo.Boosts() do
+            if(row.ResearchType == techType) then
+              CQUI_halfway = (100 - row.Boost) / 100;
+              break;
+            end
+          end
+          --If playing as china, apply boost modifier. Not sure where I can query this value...
+          if(PlayerConfigurations[Game.GetLocalPlayer()]:GetCivilizationTypeName() == "CIVILIZATION_CHINA") then
+            CQUI_halfway = CQUI_halfway - .1;
+          end
+          -- Is it greater than 50% and has yet to be displayed?
+          if isCurrentBoosted then
+            CQUI_halfwayNotified[techName] = true;
+          elseif percentageNextTurn >= CQUI_halfway and isCurrentBoosted == false and CQUI_halfwayNotified[techName] ~= true then
+              LuaEvents.CQUI_AddStatusMessage(Locale.Lookup("LOC_CQUI_TECH_MESSAGE_S") .. " " .. Locale.Lookup( techName ) .. " " .. Locale.Lookup("LOC_CQUI_HALF_MESSAGE_E"), 10, CQUI_STATUS_MESSAGE_TECHS);
+              CQUI_halfwayNotified[techName] = true;
+          end
+
+        end -- end of techID check
+
+        --------------------------------------------------------------------------
+		end -- bIsCQUI
+		
+    end -- ePlayer ~= -1
 end
 
 -- ===========================================================================
@@ -1127,7 +1189,40 @@ function OnResearchComplete( ePlayer:number, eTech:number)
 		if not ContextPtr:IsHidden() then
 			View( m_kCurrentData );
 		end
-	end
+		
+		if bIsCQUI then
+		--------------------------------------------------------------------------
+        -- CQUI Completion Notification
+
+        -- Get the current tech
+        local kPlayer   :table      = Players[ePlayer];
+        local currentTechID :number = eTech;
+
+        -- Make sure there is a technology selected before continuing with checks
+        if currentTechID ~= -1 then
+          local techName = GameInfo.Technologies[currentTechID].Name;
+
+          LuaEvents.CQUI_AddStatusMessage(Locale.Lookup("LOC_TECH_BOOST_COMPLETE", techName), 10, CQUI_STATUS_MESSAGE_TECHS);
+
+        end -- end of techID check
+
+        --------------------------------------------------------------------------
+
+    -- CQUI update all cities real housing when play as India and researched Sanitation
+    if eTech == GameInfo.Technologies["TECH_SANITATION"].Index then    -- Sanitation
+      if (PlayerConfigurations[ePlayer]:GetCivilizationTypeName() == "CIVILIZATION_INDIA") then
+        LuaEvents.CQUI_AllCitiesInfoUpdated(ePlayer);
+      end
+    -- CQUI update all cities real housing when play as Indonesia and researched Mass Production
+    elseif eTech == GameInfo.Technologies["TECH_MASS_PRODUCTION"].Index then    -- Mass Production
+      if (PlayerConfigurations[ePlayer]:GetCivilizationTypeName() == "CIVILIZATION_INDONESIA") then
+        LuaEvents.CQUI_AllCitiesInfoUpdated(ePlayer);
+      end
+    end
+
+		end -- bIsCQUI
+
+	end -- ePlayer is local player
 end
 
 -- ===========================================================================
@@ -1785,6 +1880,16 @@ function Initialize()
 	TruncateStringWithTooltip(Controls.UnavailableLabelKey, MAX_BEFORE_TRUNC_KEY_LABEL, Controls.UnavailableLabelKey:GetText());
 	TruncateStringWithTooltip(Controls.ResearchingLabelKey, MAX_BEFORE_TRUNC_KEY_LABEL, Controls.ResearchingLabelKey:GetText());
 	TruncateStringWithTooltip(Controls.CompletedLabelKey, MAX_BEFORE_TRUNC_KEY_LABEL, Controls.CompletedLabelKey:GetText());
+	
+	-- CQUI add exceptions to the 50% notifications by putting techs into the CQUI_halfwayNotified table
+	-- Infixo: we have boosts here too
+	--[[
+	if bIsCQUI then
+		CQUI_halfwayNotified["LOC_TECH_POTTERY_NAME"] = true;
+		CQUI_halfwayNotified["LOC_TECH_MINING_NAME"] = true;
+		CQUI_halfwayNotified["LOC_TECH_ANIMAL_HUSBANDRY_NAME"] = true;
+	end
+	--]]
 end
 
 if HasCapability("CAPABILITY_TECH_TREE") then

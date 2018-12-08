@@ -114,6 +114,9 @@ local VERTICAL_CENTER				:number = (SIZE_NODE_Y) / 2;
 local MAX_BEFORE_TRUNC_GOV_TITLE	:number = 165;
 local MAX_BEFORE_TRUNC_TO_BOOST		:number = 335;
 
+-- CQUI CONSTANTS
+local CQUI_STATUS_MESSAGE_CIVIC          :number = 3;    -- Number to distinguish civic messages
+
 STATUS_ART[ITEM_STATUS.BLOCKED]		= { Name="BLOCKED",		TextColor0=0xff202726, TextColor1=0x00000000, FillTexture="CivicsTree_GearButtonTile_Disabled.dds",BGU=0,BGV=(SIZE_NODE_Y*3),	HideIcon=true,  IsButton=false,	BoltOn=false,	IconBacking=PIC_METER_BACK };
 STATUS_ART[ITEM_STATUS.READY]		= { Name="READY",		TextColor0=0xaaffffff, TextColor1=0x88000000, FillTexture=nil,									BGU=0,BGV=0,					HideIcon=true,  IsButton=true,	BoltOn=false,	IconBacking=PIC_METER_BACK  };
 STATUS_ART[ITEM_STATUS.CURRENT]		= { Name="CURRENT",		TextColor0=0xaaffffff, TextColor1=0x88000000, FillTexture=nil,									BGU=0,BGV=(SIZE_NODE_Y*4),		HideIcon=false,  IsButton=false,	BoltOn=true,	IconBacking=PIC_METER_BACK };
@@ -166,6 +169,18 @@ local m_kPolicyCatalogData	:table;
 local m_shiftDown			:boolean = false;
 
 local m_lastPercent         :number = 0.1;
+
+-- CQUI variables
+local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01"); -- CQUI
+print("CQUI", (bIsCQUI and "YES" or "no"));
+local CQUI_halfwayNotified  :table = {};
+local CQUI_ShowTechCivicRecommendations = true; -- if CQUI is not present then the default is to show recommendations! the update function should never be called
+
+function CQUI_OnSettingsUpdate()
+  CQUI_ShowTechCivicRecommendations = GameConfiguration.GetValue("CQUI_ShowTechCivicRecommendations") == 1
+end
+LuaEvents.CQUI_SettingsUpdate.Add(CQUI_OnSettingsUpdate);
+LuaEvents.CQUI_SettingsInitialized.Add(CQUI_OnSettingsUpdate);
 
 -- ===========================================================================
 -- Return string respresenation of a prereq table
@@ -830,7 +845,8 @@ function View( playerTechData:table )
 		end
 
 		-- Show/Hide Recommended Icon
-		if live.IsRecommended and live.AdvisorType ~= nil then
+		-- CQUI : only if show tech civ enabled in settings
+		if live.IsRecommended and live.AdvisorType ~= nil and CQUI_ShowTechCivicRecommendations then
 			node.RecommendedIcon:SetIcon(live.AdvisorType);
 			node.RecommendedIcon:SetHide(false);
 		else
@@ -1195,7 +1211,61 @@ end
 
 -- ===========================================================================
 function OnLocalPlayerTurnBegin()
-	UpdateLocalPlayer()
+	if not bIsCQUI then
+		UpdateLocalPlayer(); -- Infixo: original code is just this single line
+		return;
+	end
+  -- CQUI comment: We do not use UpdateLocalPlayer() here, because of Check for Civic Progress
+  local ePlayer :number = Game.GetLocalPlayer();
+  if ePlayer ~= -1 then
+    m_ePlayer = ePlayer;
+    RefreshDataIfNeeded( );
+	
+    --------------------------------------------------------------------------
+    -- CQUI Check for Civic Progress
+
+    -- Get the current tech
+    local kPlayer       :table  = Players[ePlayer];
+    local playerCivics      :table  = kPlayer:GetCulture();
+    local currentCivicID  :number = playerCivics:GetProgressingCivic();
+    local isCurrentBoosted  :boolean = playerCivics:HasBoostBeenTriggered(currentCivicID);
+
+    -- Make sure there is a civic selected before continuing with checks
+    if currentCivicID ~= -1 then
+      local civicName = GameInfo.Civics[currentCivicID].Name;
+      local civicType = GameInfo.Civics[currentCivicID].Type;
+
+      local currentCost         = playerCivics:GetCultureCost(currentCivicID);
+      local currentProgress     = playerCivics:GetCulturalProgress(currentCivicID);
+      local currentYield          = playerCivics:GetCultureYield();
+      local percentageToBeDone    = (currentProgress + currentYield) / currentCost;
+      local percentageNextTurn    = (currentProgress + currentYield*2) / currentCost;
+      local CQUI_halfway:number = .5;
+
+      -- Finds boost amount, always 50 in base game, China's +10% modifier is not applied here
+      for row in GameInfo.Boosts() do
+        if(row.CivicType == civicType) then
+          CQUI_halfway = (100 - row.Boost) / 100;
+          break;
+        end
+      end
+      --If playing as china, apply boost modifier. Not sure where I can query this value...
+      if(PlayerConfigurations[Game.GetLocalPlayer()]:GetCivilizationTypeName() == "CIVILIZATION_CHINA") then
+        CQUI_halfway = CQUI_halfway - .1;
+      end
+
+      -- Is it greater than 50% and has yet to be displayed?
+      if isCurrentBoosted then
+        CQUI_halfwayNotified[civicName] = true;
+      elseif percentageNextTurn >= CQUI_halfway and CQUI_halfwayNotified[civicName] ~= true then
+          LuaEvents.CQUI_AddStatusMessage(Locale.Lookup("LOC_CQUI_CIVIC_MESSAGE_S") .. " " .. Locale.Lookup( civicName ) ..  " " .. Locale.Lookup("LOC_CQUI_HALF_MESSAGE_E"), 10, CQUI_STATUS_MESSAGE_CIVIC);
+          CQUI_halfwayNotified[civicName] = true;
+      end
+
+    end -- end of if currentCivivID ~= -1
+    --------------------------------------------------------------------------
+
+  end -- end of ePlayer ~= -1
 end
 
 -- ===========================================================================
@@ -1230,7 +1300,38 @@ function OnCivicComplete( ePlayer:number, eTech:number)
 	if ePlayer == Game.GetLocalPlayer() then
 		m_ePlayer = ePlayer;
 		RefreshDataIfNeeded( );
-	end
+
+		if bIsCQUI then
+    --------------------------------------------------------------------------
+    -- CQUI Civic Complete
+
+    -- Get the current tech
+    local kPlayer       :table  = Players[ePlayer];
+    local currentCivicID  :number = eTech;
+
+    -- Make sure there is a civic selected before continuing with checks
+    if currentCivicID ~= -1 then
+      local civicName = GameInfo.Civics[currentCivicID].Name;
+    LuaEvents.CQUI_AddStatusMessage(Locale.Lookup("LOC_CIVIC_BOOST_COMPLETE", civicName), 10, CQUI_STATUS_MESSAGE_CIVIC);
+    end -- end of if currentCivivID ~= -1
+
+    --------------------------------------------------------------------------
+
+    -- CQUI update all cities real housing when play as Cree and researched Civil Service
+    if eTech == GameInfo.Civics["CIVIC_CIVIL_SERVICE"].Index then    -- Civil Service
+      if (PlayerConfigurations[ePlayer]:GetCivilizationTypeName() == "CIVILIZATION_CREE") then
+        LuaEvents.CQUI_AllCitiesInfoUpdated(ePlayer);
+      end
+    -- CQUI update all cities real housing when play as Scotland and researched Globalization
+    elseif eTech == GameInfo.Civics["CIVIC_GLOBALIZATION"].Index then    -- Globalization
+      if (PlayerConfigurations[ePlayer]:GetCivilizationTypeName() == "CIVILIZATION_SCOTLAND") then
+        LuaEvents.CQUI_AllCitiesInfoUpdated(ePlayer);
+      end
+    end
+
+		end -- bIsCQUI
+
+	end -- ePlayer == local player
 end
 
 -- ===========================================================================
@@ -2086,6 +2187,12 @@ function Initialize()
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
 	Events.LocalPlayerChanged.Add(AllocateUI);
 	Events.SystemUpdateUI.Add( OnUpdateUI );
+	
+	-- CQUI add exceptions to the 50% notifications by putting civics into the CQUI_halfwayNotified table
+	--if bIsCQUI then
+		--CQUI_halfwayNotified["LOC_CIVIC_CODE_OF_LAWS_NAME"] = true; -- Infixo: there is a boost for that!
+	--end
+
 end
 
 if HasCapability("CAPABILITY_CIVICS_CHOOSER") then
