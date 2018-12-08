@@ -1,0 +1,383 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Real Great People
+ Author: Infixo
+ Mar 23th, 2017 - Apr, 13th: Version 1 created
+ Feb 9th, 2018: Updated for Rise&Fall - Timur and Magellan added, R&F changes to UI
+-->
+<GameInfo>
+<IconTextureAtlases>
+<!-- Smaller Class icons so they will not cover Portraits -->
+<Row Name="ICON_ATLAS_GREAT_PERSON_CLASS" IconSize="50" IconsPerRow="8" IconsPerColumn="2" Filename="GreatPeopleClass50.dds"/>
+<!-- Each Individual has its own Atlas with 1 Portrait in it -->
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ARTEMISIA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Artemisia.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GAIUS_DUILIUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Gaius_Duilius.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_THEMISTOCLES" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Themistocles.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEIF_ERIKSON" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Leif_Erikson.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RAJENDRA_CHOLA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Rajendra_Chola.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ZHENG_HE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Zheng_He.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FERDINAND_MAGELLAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ferdinand_Magellan.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANCIS_DRAKE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Francis_Drake.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SANTA_CRUZ" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Santa_Cruz.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_YI_SUN_SIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Yi_Sun_Sin.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHING_SHIH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ching_Shih.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HORATIO_NELSON" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Horatio_Nelson.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LASKARINA_BOUBOULINA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Laskarina_Bouboulina.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANZ_VON_HIPPER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Franz_Von_Hipper.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOAQUIM_MARQUES_LISBOA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Joaquim_Marques_Lisboa.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_TOGO_HEIHACHIRO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Togo_Heihachiro.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHESTER_NIMITZ" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Chester_Nimitz.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GRACE_HOPPER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Grace_Hopper.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SERGEY_GORSHKOV" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Sergey_Gorshkov.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CLANCY_FERNANDO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Clancy_Fernando.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANDREY_RUBLEV" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Andrey_Rublev.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HIERONYMUS_BOSCH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Hieronymus_Bosch.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DONATELLO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Donatello.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MICHELANGELO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Michelangelo.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_QIU_YING" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Qiu_Ying.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_TITIAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Titian.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EL_GRECO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_El_Greco.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_REMBRANDT_VAN_RIJN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Rembrandt_Van_Rijn.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SOFONISBA_ANGUISSOLA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Sofonisba_Anguissola.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANGELICA_KAUFFMAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Angelica_Kauffman.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANG_SEUNG_EOP" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Jang_Seung_Eop.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_KATSUSHIKA_HOKUSAI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Katsushika_Hokusai.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_VINCENT_VAN_GOGH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Vincent_Van_Gogh.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EDMONIA_LEWIS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Edmonia_Lewis.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARIE_ANNE_COLLOT" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Marie_Anne_Collot.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CLAUDE_MONET" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Claude_Monet.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BORIS_ORLOVSKY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Boris_Orlovsky.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GUSTAV_KLIMT" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Gustav_Klimt.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_AMRITA_SHER_GIL" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Amrita_Sher_Gil.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_CASSATT" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mary_Cassatt.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BI_SHENG" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Bi_Sheng.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ISIDORE_OF_MILETUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Isidore_Of_Miletus.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_OF_ST_GEORGE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_James_Of_St_George.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FILIPPO_BRUNELLESCHI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Filippo_Brunelleschi.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEONARDO_DA_VINCI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Leonardo_Da_Vinci.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MIMAR_SINAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mimar_Sinan.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ADA_LOVELACE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ada_Lovelace.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GUSTAVE_EIFFEL" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Gustave_Eiffel.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_WATT" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_James_Watt.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALVAR_AALTO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Alvar_Aalto.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NIKOLA_TESLA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Nikola_Tesla.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ROBERT_GODDARD" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Robert_Goddard.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_A_ROEBLING" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_John_A_Roebling.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANE_DREW" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Jane_Drew.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SERGEI_KOROLEV" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Sergei_Korolev.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHARLES_CORREA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Charles_Correa.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOSEPH_PAXTON" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Joseph_Paxton.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_WERNHER_VON_BRAUN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Wernher_Von_Braun.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BOUDICA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Boudica.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HANNIBAL_BARCA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Hannibal_Barca.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SUN_TZU" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Sun_Tzu.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_TIMUR" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Timur.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_AETHELFLAED" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Aethelflaed.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EL_CID" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_El_Cid.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GENGHIS_KHAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Genghis_Khan.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GUSTAVUS_ADOLPHUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Gustavus_Adolphus.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOAN_OF_ARC" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Joan_Of_Arc.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANA_NZINGA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ana_Nzinga.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NAPOLEON_BONAPARTE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Napoleon_Bonaparte.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RANI_LAKSHMIBAI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Rani_Lakshmibai.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SIMON_BOLIVAR" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Simon_Bolivar.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_MONASH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_John_Monash.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARINA_RASKOVA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Marina_Raskova.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SAMORI_TURE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Samori_Ture.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DWIGHT_EISENHOWER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Dwight_Eisenhower.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GEORGY_ZHUKOV" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Georgy_Zhukov.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DOUGLAS_MACARTHUR" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Douglas_Macarthur.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SUDIRMAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Sudirman.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_AHMAD_SHAH_MASSOUD" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ahmad_Shah_Massoud.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_VIJAYA_WIMALARATNE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Vijaya_Wimalaratne.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_COLAEUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Colaeus.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARCUS_LICINIUS_CRASSUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Marcus_Licinius_Crassus.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ZHANG_QIAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Zhang_Qian.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARCO_POLO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Marco_Polo.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_PIERO_DE_BARDI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Piero_De_Bardi.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_IRENE_OF_ATHENS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Irene_Of_Athens.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GIOVANNI_DE_MEDICI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Giovanni_De_Medici.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAKOB_FUGGER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Jakob_Fugger.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RAJA_TODAR_MAL" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Raja_Todar_Mal.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ADAM_SMITH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Adam_Smith.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_SPILSBURY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_John_Spilsbury.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_JACOB_ASTOR" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_John_Jacob_Astor.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_KATHERINE_GODDARD" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mary_Katherine_Goddard.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_ROCKEFELLER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_John_Rockefeller.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SARAH_BREEDLOVE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Sarah_Breedlove.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HELENA_RUBINSTEIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Helena_Rubinstein.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MELITTA_BENTZ" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Melitta_Bentz.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEVI_STRAUSS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Levi_Strauss.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ESTEE_LAUDER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Estee_Lauder.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MASARU_IBUKA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Masaru_Ibuka.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMSETJI_TATA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Jamsetji_Tata.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANTONIO_VIVALDI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Antonio_Vivaldi.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHANN_SEBASTIAN_BACH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Johann_Sebastian_Bach.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LUDWIG_VAN_BEETHOVEN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ludwig_Van_Beethoven.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_WOLFGANG_AMADEUS_MOZART" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Wolfgang_Amadeus_Mozart.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_YATSUHASHI_KENGYO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Yatsuhashi_Kengyo.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANTONIO_CARLOS_GOMEZ" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Antonio_Carlos_Gomez.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANZ_LISZT" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Franz_Liszt.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FREDERIC_CHOPIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Frederic_Chopin.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_PETER_ILYICH_TCHAIKOVSKY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Peter_Ilyich_Tchaikovsky.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LIU_TIANHUA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Liu_Tianhua.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANTONIN_DVORAK" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Antonin_Dvorak.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CLARA_SCHUMANN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Clara_Schumann.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JUVENTINO_ROSAS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Juventino_Rosas.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LILIUOKALANI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Liliuokalani.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GAUHAR_JAAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Gauhar_Jaan.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MYKOLA_LEONTOVYCH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mykola_Leontovych.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_THE_BAPTIST" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_John_The_Baptist.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CONFUCIUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Confucius.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ZOROASTER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Zoroaster.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SIDDHARTHA_GAUTAMA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Siddhartha_Gautama.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LAOZI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Laozi.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SIMON_PETER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Simon_Peter.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BODHIDHARMA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Bodhidharma.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ADI_SHANKARA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Adi_Shankara.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SONGTSAN_GAMPO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Songtsan_Gampo.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_O_NO_YASUMARO" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_O_No_Yasumaro.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_IRENAEUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Irenaeus.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARTIN_LUTHER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Martin_Luther.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANCIS_OF_ASSISI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Francis_Of_Assisi.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MADHVA_ACHARYA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Madhva_Acharya.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_THOMAS_AQUINAS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Thomas_Aquinas.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HAJI_HUUD" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Haji_Huud.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ARYABHATA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Aryabhata.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EUCLID" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Euclid.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HYPATIA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Hypatia.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ABU_AL_QASIM_AL_ZAHRAWI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Abu_Al_Qasim_Al_Zahrawi.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HILDEGARD_OF_BINGEN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Hildegard_Of_Bingen.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_OMAR_KHAYYAM" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Omar_Khayyam.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GALILEO_GALILEI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Galileo_Galilei.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ISAAC_NEWTON" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Isaac_Newton.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EMILIE_DU_CHATELET" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Emilie_Du_Chatelet.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_YOUNG" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_James_Young.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHARLES_DARWIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Charles_Darwin.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DMITRI_MENDELEEV" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Dmitri_Mendeleev.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALAN_TURING" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Alan_Turing.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALBERT_EINSTEIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Albert_Einstein.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALFRED_NOBEL" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Alfred_Nobel.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANAKI_AMMAL" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Janaki_Ammal.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_LEAKEY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mary_Leakey.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ERWIN_SCHRODINGER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Erwin_Schrodinger.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ABDUS_SALAM" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Abdus_Salam.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CARL_SAGAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Carl_Sagan.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_STEPHANIE_KWOLEK" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Stephanie_Kwolek.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BHASA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Bhasa.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HOMER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Homer.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_OVID" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Ovid.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_QU_YUAN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Qu_Yuan.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GEOFFREY_CHAUCER" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Geoffrey_Chaucer.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LI_BAI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Li_Bai.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MURASAKI_SHIKIBU" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Murasaki_Shikibu.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARGARET_CAVENDISH" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Margaret_Cavendish.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MIGUEL_DE_CERVANTES" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Miguel_De_Cervantes.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NICCOLO_MACHIAVELLI" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Niccolo_Machiavelli.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_WILLIAM_SHAKESPEARE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_William_Shakespeare.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARIE_CATHERINE_D_AULNOY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Marie_Catherine_D_Aulnoy.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALEXANDER_PUSHKIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Alexander_Pushkin.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EDGAR_ALLEN_POE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Edgar_Allen_Poe.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANE_AUSTEN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Jane_Austen.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHANN_WOLFGANG_VON_GOETHE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Johann_Wolfgang_Von_Goethe.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_SHELLEY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mary_Shelley.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_JOYCE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_James_Joyce.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EMILY_DICKINSON" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Emily_Dickinson.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEO_TOLSTOY" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Leo_Tolstoy.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARK_TWAIN" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Mark_Twain.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_F_SCOTT_FITZGERALD" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_F_Scott_Fitzgerald.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HG_WELLS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Hg_Wells.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RABINDRANATH_TAGORE" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Rabindranath_Tagore.dds" />
+<Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_KAREL_CAPEK" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Karel_Capek.dds" />
+</IconTextureAtlases>
+<IconDefinitions>
+<!-- Admirals -->
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_ARTEMISIA" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ARTEMISIA" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_CHESTER_NIMITZ" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHESTER_NIMITZ" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_CHING_SHIH" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHING_SHIH" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_CLANCY_FERNANDO" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CLANCY_FERNANDO" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_FERDINAND_MAGELLAN"		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FERDINAND_MAGELLAN" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_FRANCIS_DRAKE" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANCIS_DRAKE" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_FRANZ_VON_HIPPER" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANZ_VON_HIPPER" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_GAIUS_DUILIUS" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GAIUS_DUILIUS" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_GRACE_HOPPER" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GRACE_HOPPER" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_HORATIO_NELSON" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HORATIO_NELSON" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_JOAQUIM_MARQUES_LISBOA" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOAQUIM_MARQUES_LISBOA" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_LASKARINA_BOUBOULINA" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LASKARINA_BOUBOULINA" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_LEIF_ERIKSON" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEIF_ERIKSON" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_RAJENDRA_CHOLA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RAJENDRA_CHOLA" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_SANTA_CRUZ" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SANTA_CRUZ" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_SERGEY_GORSHKOV" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SERGEY_GORSHKOV" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_THEMISTOCLES" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_THEMISTOCLES" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_TOGO_HEIHACHIRO" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_TOGO_HEIHACHIRO" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_YI_SUN_SIN"			 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_YI_SUN_SIN" Index="0" />
+<Replace Name="ICON_GREAT_PERSON_INDIVIDUAL_ZHENG_HE" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ZHENG_HE" Index="0" />
+<!-- Artists -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_AMRITA_SHER_GIL" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_AMRITA_SHER_GIL" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ANDREY_RUBLEV" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANDREY_RUBLEV" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ANGELICA_KAUFFMAN" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANGELICA_KAUFFMAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_BORIS_ORLOVSKY" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BORIS_ORLOVSKY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_CLAUDE_MONET" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CLAUDE_MONET" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_DONATELLO" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DONATELLO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EDMONIA_LEWIS" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EDMONIA_LEWIS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EL_GRECO" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EL_GRECO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GUSTAV_KLIMT" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GUSTAV_KLIMT" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HIERONYMUS_BOSCH" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HIERONYMUS_BOSCH" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JANG_SEUNG_EOP" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANG_SEUNG_EOP" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_KATSUSHIKA_HOKUSAI" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_KATSUSHIKA_HOKUSAI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARIE_ANNE_COLLOT" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARIE_ANNE_COLLOT" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARY_CASSATT" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_CASSATT" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MICHELANGELO" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MICHELANGELO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_QIU_YING" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_QIU_YING" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_REMBRANDT_VAN_RIJN" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_REMBRANDT_VAN_RIJN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SOFONISBA_ANGUISSOLA" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SOFONISBA_ANGUISSOLA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_TITIAN" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_TITIAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_VINCENT_VAN_GOGH" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_VINCENT_VAN_GOGH" Index="0" />
+<!-- Engineers -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ADA_LOVELACE" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ADA_LOVELACE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ALVAR_AALTO" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALVAR_AALTO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_BI_SHENG" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BI_SHENG" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_CHARLES_CORREA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHARLES_CORREA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_FILIPPO_BRUNELLESCHI" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FILIPPO_BRUNELLESCHI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GUSTAVE_EIFFEL" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GUSTAVE_EIFFEL" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ISIDORE_OF_MILETUS" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ISIDORE_OF_MILETUS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JAMES_OF_ST_GEORGE" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_OF_ST_GEORGE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JAMES_WATT" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_WATT" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JANE_DREW" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANE_DREW" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_A_ROEBLING" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_A_ROEBLING" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOSEPH_PAXTON" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOSEPH_PAXTON" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LEONARDO_DA_VINCI" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEONARDO_DA_VINCI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MIMAR_SINAN" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MIMAR_SINAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_NIKOLA_TESLA" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NIKOLA_TESLA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ROBERT_GODDARD" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ROBERT_GODDARD" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SERGEI_KOROLEV" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SERGEI_KOROLEV" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_WERNHER_VON_BRAUN" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_WERNHER_VON_BRAUN" Index="0" />
+<!-- Generals -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_AETHELFLAED" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_AETHELFLAED" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_AHMAD_SHAH_MASSOUD" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_AHMAD_SHAH_MASSOUD" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ANA_NZINGA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANA_NZINGA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_BOUDICA"			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BOUDICA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_DOUGLAS_MACARTHUR" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DOUGLAS_MACARTHUR" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_DWIGHT_EISENHOWER" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DWIGHT_EISENHOWER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EL_CID" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EL_CID" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GENGHIS_KHAN" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GENGHIS_KHAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GEORGY_ZHUKOV" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GEORGY_ZHUKOV" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GUSTAVUS_ADOLPHUS" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GUSTAVUS_ADOLPHUS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HANNIBAL_BARCA" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HANNIBAL_BARCA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOAN_OF_ARC" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOAN_OF_ARC" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_MONASH" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_MONASH" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARINA_RASKOVA" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARINA_RASKOVA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_NAPOLEON_BONAPARTE" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NAPOLEON_BONAPARTE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_RANI_LAKSHMIBAI" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RANI_LAKSHMIBAI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SAMORI_TURE" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SAMORI_TURE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SIMON_BOLIVAR" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SIMON_BOLIVAR" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SUDIRMAN" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SUDIRMAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SUN_TZU" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SUN_TZU" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_TIMUR"				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_TIMUR" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_VIJAYA_WIMALARATNE" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_VIJAYA_WIMALARATNE" Index="0" />
+<!-- Merchants -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ADAM_SMITH" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ADAM_SMITH" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_COLAEUS" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_COLAEUS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ESTEE_LAUDER" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ESTEE_LAUDER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GIOVANNI_DE_MEDICI" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GIOVANNI_DE_MEDICI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HELENA_RUBINSTEIN" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HELENA_RUBINSTEIN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_IRENE_OF_ATHENS" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_IRENE_OF_ATHENS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JAKOB_FUGGER" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAKOB_FUGGER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JAMSETJI_TATA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMSETJI_TATA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_JACOB_ASTOR" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_JACOB_ASTOR" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_ROCKEFELLER" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_ROCKEFELLER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_SPILSBURY" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_SPILSBURY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LEVI_STRAUSS" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEVI_STRAUSS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARCO_POLO" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARCO_POLO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARCUS_LICINIUS_CRASSUS" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARCUS_LICINIUS_CRASSUS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARY_KATHERINE_GODDARD" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_KATHERINE_GODDARD" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MASARU_IBUKA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MASARU_IBUKA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MELITTA_BENTZ" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MELITTA_BENTZ" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_PIERO_DE_BARDI" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_PIERO_DE_BARDI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_RAJA_TODAR_MAL" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RAJA_TODAR_MAL" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SARAH_BREEDLOVE" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SARAH_BREEDLOVE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ZHANG_QIAN" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ZHANG_QIAN" Index="0" />
+<!-- Musicians -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ANTONIN_DVORAK" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANTONIN_DVORAK" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ANTONIO_CARLOS_GOMEZ"	  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANTONIO_CARLOS_GOMEZ" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ANTONIO_VIVALDI" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ANTONIO_VIVALDI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_CLARA_SCHUMANN" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CLARA_SCHUMANN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_FRANZ_LISZT" 			  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANZ_LISZT" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_FREDERIC_CHOPIN" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FREDERIC_CHOPIN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GAUHAR_JAAN" 			  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GAUHAR_JAAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHANN_SEBASTIAN_BACH"	  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHANN_SEBASTIAN_BACH" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JUVENTINO_ROSAS" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JUVENTINO_ROSAS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LILIUOKALANI" 			  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LILIUOKALANI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LIU_TIANHUA" 			  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LIU_TIANHUA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LUDWIG_VAN_BEETHOVEN" 	  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LUDWIG_VAN_BEETHOVEN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MYKOLA_LEONTOVYCH" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MYKOLA_LEONTOVYCH" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_PETER_ILYICH_TCHAIKOVSKY" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_PETER_ILYICH_TCHAIKOVSKY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_WOLFGANG_AMADEUS_MOZART"  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_WOLFGANG_AMADEUS_MOZART" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_YATSUHASHI_KENGYO" 		  Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_YATSUHASHI_KENGYO" Index="0" />
+<!-- Prophets -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHN_THE_BAPTIST" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHN_THE_BAPTIST" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_CONFUCIUS" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CONFUCIUS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ZOROASTER" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ZOROASTER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SIDDHARTHA_GAUTAMA" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SIDDHARTHA_GAUTAMA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LAOZI" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LAOZI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SIMON_PETER" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SIMON_PETER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_BODHIDHARMA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BODHIDHARMA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ADI_SHANKARA" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ADI_SHANKARA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_SONGTSAN_GAMPO" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_SONGTSAN_GAMPO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_O_NO_YASUMARO" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_O_NO_YASUMARO" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_IRENAEUS" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_IRENAEUS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARTIN_LUTHER" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARTIN_LUTHER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_FRANCIS_OF_ASSISI" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_FRANCIS_OF_ASSISI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MADHVA_ACHARYA" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MADHVA_ACHARYA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_THOMAS_AQUINAS" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_THOMAS_AQUINAS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HAJI_HUUD" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HAJI_HUUD" Index="0" />
+<!-- Scientists -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ABDUS_SALAM" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ABDUS_SALAM" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ABU_AL_QASIM_AL_ZAHRAWI" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ABU_AL_QASIM_AL_ZAHRAWI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ALAN_TURING" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALAN_TURING" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ALBERT_EINSTEIN" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALBERT_EINSTEIN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ALFRED_NOBEL" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALFRED_NOBEL" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ARYABHATA" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ARYABHATA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_CARL_SAGAN" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CARL_SAGAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_CHARLES_DARWIN" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_CHARLES_DARWIN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_DMITRI_MENDELEEV" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_DMITRI_MENDELEEV" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EMILIE_DU_CHATELET" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EMILIE_DU_CHATELET" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ERWIN_SCHRODINGER" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ERWIN_SCHRODINGER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EUCLID" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EUCLID" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GALILEO_GALILEI" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GALILEO_GALILEI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HILDEGARD_OF_BINGEN" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HILDEGARD_OF_BINGEN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HYPATIA" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HYPATIA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ISAAC_NEWTON" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ISAAC_NEWTON" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JAMES_YOUNG" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_YOUNG" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JANAKI_AMMAL" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANAKI_AMMAL" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARY_LEAKEY" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_LEAKEY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_OMAR_KHAYYAM" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_OMAR_KHAYYAM" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_STEPHANIE_KWOLEK" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_STEPHANIE_KWOLEK" Index="0" />
+<!-- Writers -->
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_ALEXANDER_PUSHKIN" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ALEXANDER_PUSHKIN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_BHASA" 					Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_BHASA" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EDGAR_ALLEN_POE" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EDGAR_ALLEN_POE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_EMILY_DICKINSON" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_EMILY_DICKINSON" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_F_SCOTT_FITZGERALD" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_F_SCOTT_FITZGERALD" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_GEOFFREY_CHAUCER" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GEOFFREY_CHAUCER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HG_WELLS" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HG_WELLS" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_HOMER" 					Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_HOMER" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JAMES_JOYCE" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JAMES_JOYCE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JANE_AUSTEN" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JANE_AUSTEN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_JOHANN_WOLFGANG_VON_GOETHE" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_JOHANN_WOLFGANG_VON_GOETHE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_KAREL_CAPEK" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_KAREL_CAPEK" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LEO_TOLSTOY" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LEO_TOLSTOY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_LI_BAI" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_LI_BAI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARGARET_CAVENDISH" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARGARET_CAVENDISH" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARIE_CATHERINE_D_AULNOY" Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARIE_CATHERINE_D_AULNOY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARK_TWAIN" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARK_TWAIN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MARY_SHELLEY" 			Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MARY_SHELLEY" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MIGUEL_DE_CERVANTES" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MIGUEL_DE_CERVANTES" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_MURASAKI_SHIKIBU" 		Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_MURASAKI_SHIKIBU" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_NICCOLO_MACHIAVELLI" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_NICCOLO_MACHIAVELLI" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_OVID" 					Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_OVID" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_QU_YUAN" 				Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_QU_YUAN" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_RABINDRANATH_TAGORE" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_RABINDRANATH_TAGORE" Index="0" />
+<Row Name="ICON_GREAT_PERSON_INDIVIDUAL_WILLIAM_SHAKESPEARE" 	Atlas="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_WILLIAM_SHAKESPEARE" Index="0" />
+</IconDefinitions>
+</GameInfo>
