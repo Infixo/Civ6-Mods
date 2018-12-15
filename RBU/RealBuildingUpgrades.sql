@@ -14,7 +14,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MAJOR', '3');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '2');
 
 -- Version 1.5 Fix for Apadana crash; 2018-03-05 no longer necessary (tested)
 --UPDATE Buildings SET AdjacentCapital = 0 WHERE BuildingType = 'BUILDING_APADANA';
@@ -152,7 +152,6 @@ SELECT
 	CASE WHEN Advis IS NULL THEN NULL ELSE 'ADVISOR_'||Advis END, 0, NULL,  -- AdvisorType, AdjacentCapital, AdjacentImprovement
 	NULL  -- CityAdjacentTerrain [Version 1.1, fix for summer patch]
 FROM RBUConfig;
-
 
 -- Connect Upgrades to Base Buildings
 INSERT INTO BuildingPrereqs (Building, PrereqBuilding)
@@ -446,37 +445,23 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 --------------------------------------------------------------
 -- LIGHTHOUSE
+-- R&F: +1 Food from IMPROVEMENT_FISHERY
 
 -- +1 Housing
 UPDATE Buildings SET Housing = 1
 WHERE BuildingType = 'BUILDING_LIGHTHOUSE_UPGRADE';
 
--- Add +1 Food from IMPROVEMENT_FISHING_BOATS and IMPROVEMENT_FISHERY
+-- Add +1 Food from IMPROVEMENT_FISHING_BOATS
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
-('BUILDING_LIGHTHOUSE_UPGRADE', 'LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD'),
-('BUILDING_LIGHTHOUSE_UPGRADE', 'LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD');
+('BUILDING_LIGHTHOUSE_UPGRADE', 'LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD');
 
 INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
-('LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHINGBOATS_REQUIREMENTS'),
-('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD',       'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHERY_REQUIREMENTS');
+('LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHINGBOATS_REQUIREMENTS');
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD', 'YieldType', 'YIELD_FOOD'),
-('LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD', 'Amount',    '1'),
-('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD', 'YieldType', 'YIELD_FOOD'),
-('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD', 'Amount',    '1');
+('LIGHTHOUSE_UPGRADE_ADD_FISHING_BOATS_FOOD', 'Amount',    '1');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
-('PLOT_HAS_FISHERY_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
-	
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('PLOT_HAS_FISHERY_REQUIREMENTS', 'REQUIRES_PLOT_HAS_FISHERY');
-
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
-('REQUIRES_PLOT_HAS_FISHERY', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
-	
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
-('REQUIRES_PLOT_HAS_FISHERY', 'ImprovementType', 'IMPROVEMENT_FISHERY');
 
 --------------------------------------------------------------
 -- SHIPYARD
@@ -530,6 +515,7 @@ INSERT INTO TypeTags (Type, Tag) VALUES
 
 --------------------------------------------------------------
 -- SEAPORT
+-- R&F: Add +1 Gold from IMPROVEMENT_FISHERY
 
 -- +2 Gold
 INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
@@ -549,22 +535,18 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('SEAPORT_UPGRADE_TRADE_ROUTE_CAPACITY', 'Amount', '1');
 
--- +1 gold from Fishing Boats and Fishery, +3 prod from Oil Rigs
+-- Add +1 gold from Fishing Boats, +3 prod from Oil Rigs
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 ('BUILDING_SEAPORT_UPGRADE', 'SEAPORT_UPGRADE_ADD_FISHING_BOATS_GOLD'),
-('BUILDING_SEAPORT_UPGRADE', 'SEAPORT_UPGRADE_ADD_FISHERY_GOLD'),
 ('BUILDING_SEAPORT_UPGRADE', 'SEAPORT_UPGRADE_ADD_OILRIG_PRODUCTION');
 
 INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
 ('SEAPORT_UPGRADE_ADD_FISHING_BOATS_GOLD', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHINGBOATS_REQUIREMENTS'),
-('SEAPORT_UPGRADE_ADD_FISHERY_GOLD',       'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHERY_REQUIREMENTS'),
 ('SEAPORT_UPGRADE_ADD_OILRIG_PRODUCTION',  'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_OILRIG_REQUIREMENTS');
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('SEAPORT_UPGRADE_ADD_FISHING_BOATS_GOLD', 'YieldType', 'YIELD_GOLD'),
 ('SEAPORT_UPGRADE_ADD_FISHING_BOATS_GOLD', 'Amount',    '1'),
-('SEAPORT_UPGRADE_ADD_FISHERY_GOLD', 'YieldType', 'YIELD_GOLD'),
-('SEAPORT_UPGRADE_ADD_FISHERY_GOLD', 'Amount',    '1'),
 ('SEAPORT_UPGRADE_ADD_OILRIG_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('SEAPORT_UPGRADE_ADD_OILRIG_PRODUCTION', 'Amount',    '3');
 
@@ -1214,7 +1196,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 UPDATE Buildings SET Entertainment = 1, RegionalRange = 9 
 WHERE BuildingType = 'BUILDING_STADIUM_UPGRADE';
 
--- +10% to All Tourism
+-- +5% to All Tourism
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 ('BUILDING_STADIUM_UPGRADE', 'STADIUM_UPGRADE_BOOST_ALL_TOURISM');
 
@@ -1222,7 +1204,7 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 ('STADIUM_UPGRADE_BOOST_ALL_TOURISM', 'MODIFIER_PLAYER_ADJUST_TOURISM', 0, 0, NULL, NULL);
 	
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
-('STADIUM_UPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
+('STADIUM_UPGRADE_BOOST_ALL_TOURISM', 'Amount', '5');
 
 
 --------------------------------------------------------------
@@ -1305,7 +1287,7 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('AIRPORT_UPGRADE_BONUS_AIR_SLOTS', 'Amount', '1');
 
--- +10% to All Tourism
+-- +5% to All Tourism
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 ('BUILDING_AIRPORT_UPGRADE', 'AIRPORT_UPGRADE_BOOST_ALL_TOURISM');
 
@@ -1313,7 +1295,7 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 ('AIRPORT_UPGRADE_BOOST_ALL_TOURISM', 'MODIFIER_PLAYER_ADJUST_TOURISM', 0, 0, NULL, NULL);
 	
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
-('AIRPORT_UPGRADE_BOOST_ALL_TOURISM', 'Amount', '10');
+('AIRPORT_UPGRADE_BOOST_ALL_TOURISM', 'Amount', '5');
 
 
 --------------------------------------------------------------

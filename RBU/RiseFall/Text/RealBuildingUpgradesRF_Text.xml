@@ -133,6 +133,12 @@
 	<Replace Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION" Language="en_US">
 		<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Olives] Olives, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>
 	</Replace>
+	<Replace Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Lighthouse allows Fishing Boats to sail further. Adds +1 [ICON_Food] Food to all Fishing Boats and Fisheries in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_SEAPORT_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>Recent upgrades in Seaport infrastructure increased its capacity allowing the City to grow. +1 [ICON_TradeRoute] Trade Route capacity. Bonus [ICON_Production] Production equal to the adjacency bonus of the Harbor district. +1 [ICON_Gold] Gold from all Fishing Boats and Fisheries in this city. Adds +3 [ICON_Production] Production to each Offshore Oil Rig in this city.</Text>
+	</Replace>
 	<!-- DLC: Poland -->
 	<Replace Tag="LOC_BUILDING_SUKIENNICE_UPGRADE_DESCRIPTION" Language="en_US">
 		<Text>A building upgrade unique to Poland. Grants an additional +1 [ICON_GreatMerchant] Great Merchant point per turn. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Olives] Olives, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>
