@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Created by Infixo (Feb 26, 2017) -->
+<!-- Version 2.3 Oct 20, 2017 - Updated for Fall 2017 Patch -->
+
+<GameInfo>
+
+	<Civics>
+	
+		<!-- Ancient 3 -->
+		<Update> <Where CivicType="CIVIC_STATE_WORKFORCE"/>		<Set UITreeRow="-1"/> </Update>
+		
+		<!-- Medieval 1 -->
+		<Update> <Where CivicType="CIVIC_FEUDALISM"/>			<Set UITreeRow="0"/> </Update>
+		<Update> <Where CivicType="CIVIC_CIVIL_SERVICE"/>		<Set UITreeRow="2"/> </Update>
+		
+		<!-- Renaissance 1 -->
+		<Update> <Where CivicType="CIVIC_DIPLOMATIC_SERVICE"/>	<Set UITreeRow="-1"/> </Update>
+		<Update> <Where CivicType="CIVIC_HUMANISM"/>			<Set UITreeRow="1"/> </Update>
+
+		<!-- Industrial 1 -->
+		<Update> <Where CivicType="CIVIC_NATIONALISM"/>			<Set UITreeRow="1"/> </Update>
+		<Update> <Where CivicType="CIVIC_OPERA_BALLET"/>		<Set UITreeRow="3"/> </Update>
+		<!-- Industrial 2 -->
+		<Update> <Where CivicType="CIVIC_NATURAL_HISTORY"/>		<Set UITreeRow="-2"/> </Update>
+		<Update> <Where CivicType="CIVIC_URBANIZATION"/>		<Set UITreeRow="0"/> </Update>
+
+		<!-- Modern 1 -->
+		<!--
+		<Update> <Where CivicType="CIVIC_CONSERVATION"/>		<Set UITreeRow="-2"/> </Update>
+		<Update> <Where CivicType="CIVIC_MASS_MEDIA"/>			<Set UITreeRow="0"/> </Update>
+		<Update> <Where CivicType="CIVIC_MOBILIZATION"/>		<Set UITreeRow="2"/> </Update>
+		-->
+		<!-- Modern 2 -->
+		<Update> <Where CivicType="CIVIC_CAPITALISM"/>			<Set UITreeRow="3"/> </Update>
+		<!-- Modern 3 -->
+		<!-- <Update> <Where CivicType="CIVIC_SUFFRAGE"/>		<Set UITreeRow="1"/> </Update> -->
+		<Update> <Where CivicType="CIVIC_TOTALITARIANISM"/>		<Set UITreeRow="1"/> </Update>
+		<Update> <Where CivicType="CIVIC_CLASS_STRUGGLE"/>		<Set UITreeRow="2"/> </Update>
+
+		<!-- Industrial 1 -->
+		<Update> <Where CivicType="CIVIC_CIVIL_ENGINEERING"/>	<Set UITreeRow="-2"/> </Update>
+		<Update> <Where CivicType="CIVIC_NATIONALISM"/>			<Set UITreeRow="2"/> </Update>
+		
+		<!-- Atomic 1 -->
+		<Update> <Where CivicType="CIVIC_COLD_WAR"/>			<Set UITreeRow="0"/> </Update>
+		<Update> <Where CivicType="CIVIC_PROFESSIONAL_SPORTS"/>	<Set UITreeRow="3"/> </Update>
+
+		<!-- Information 1 -->
+		<Update> <Where CivicType="CIVIC_GLOBALIZATION"/>		<Set UITreeRow="-1"/> </Update>
+		<Update> <Where CivicType="CIVIC_SOCIAL_MEDIA"/>		<Set UITreeRow="1"/> </Update>
+		<!-- Information 2 -->
+		<Update> <Where CivicType="CIVIC_FUTURE_CIVIC"/>		<Set UITreeRow="0"/> </Update>
+
+	</Civics>
+	
+	<CivicPrereqs>
+	
+		<!-- Ancient Era 1 -->
+		<!-- Ancient Era 2 -->
+		
+		<!-- Classical Era 1 -->
+		<Row Civic="CIVIC_GAMES_RECREATION"		PrereqCivic="CIVIC_MILITARY_TRADITION"/>
+		<Row Civic="CIVIC_DRAMA_POETRY"			PrereqCivic="CIVIC_MYSTICISM"/>
+		<!-- Classical Era 2 -->
+		
+		<!-- Medieval Era 1 -->
+		<Delete Civic="CIVIC_CIVIL_SERVICE" PrereqCivic="CIVIC_DEFENSIVE_TACTICS"/>
+		<Row Civic="CIVIC_FEUDALISM" PrereqCivic="CIVIC_RECORDED_HISTORY"/>
+		<!-- Medieval Era 2 -->
+		<Delete Civic="CIVIC_MERCENARIES" PrereqCivic="CIVIC_FEUDALISM"/>
+		<Row Civic="CIVIC_MERCENARIES" PrereqCivic="CIVIC_NAVAL_TRADITION"/>
+		<Row Civic="CIVIC_MEDIEVAL_FAIRES" PrereqCivic="CIVIC_NAVAL_TRADITION"/>
+	
+		<!--Renaissance Era 1 -->
+		<Delete Civic="CIVIC_DIPLOMATIC_SERVICE" PrereqCivic="CIVIC_GUILDS"/>
+		<Row Civic="CIVIC_DIPLOMATIC_SERVICE" PrereqCivic="CIVIC_MEDIEVAL_FAIRES"/>
+		<Delete Civic="CIVIC_HUMANISM" PrereqCivic="CIVIC_MEDIEVAL_FAIRES"/>
+		<!-- Fall Patch <Row Civic="CIVIC_HUMANISM" PrereqCivic="CIVIC_GUILDS"/> -->
+		
+		<!--Renaissance Era 2 -->
+		<Row Civic="CIVIC_MERCANTILISM" PrereqCivic="CIVIC_EXPLORATION"/>
+		<Delete Civic="CIVIC_MERCANTILISM" PrereqCivic="CIVIC_HUMANISM"/>
+		<Row Civic="CIVIC_MERCANTILISM" PrereqCivic="CIVIC_DIPLOMATIC_SERVICE"/>
+		<Delete Civic="CIVIC_THE_ENLIGHTENMENT" PrereqCivic="CIVIC_DIPLOMATIC_SERVICE"/>
+		<Row Civic="CIVIC_THE_ENLIGHTENMENT" PrereqCivic="CIVIC_REFORMED_CHURCH"/>
+		
+		<!--Industrial Era 1 -->
+		<!--Industrial Era 2 -->
+		<Row Civic="CIVIC_NATURAL_HISTORY" PrereqCivic="CIVIC_CIVIL_ENGINEERING"/>
+		<Row Civic="CIVIC_NATURAL_HISTORY" PrereqCivic="CIVIC_THE_ENLIGHTENMENT"/>
+		<Row Civic="CIVIC_SCORCHED_EARTH" PrereqCivic="CIVIC_OPERA_BALLET"/>
+		<Row Civic="CIVIC_SCORCHED_EARTH" PrereqCivic="CIVIC_MERCANTILISM"/>
+		
+		<!--Modern Era 1 -->
+		<Row Civic="CIVIC_MOBILIZATION" PrereqCivic="CIVIC_SCORCHED_EARTH"/>
+		<!--Modern Era 2 -->
+		
+		<!--Atomic Era 1 -->
+		<Delete Civic="CIVIC_PROFESSIONAL_SPORTS" PrereqCivic="CIVIC_IDEOLOGY"/>
+		<Row Civic="CIVIC_PROFESSIONAL_SPORTS" PrereqCivic="CIVIC_CAPITALISM"/>
+		<Row Civic="CIVIC_COLD_WAR" PrereqCivic="CIVIC_NUCLEAR_PROGRAM"/>
+		
+		<!-- Information Era -->
+		<Row Civic="CIVIC_GLOBALIZATION" PrereqCivic="CIVIC_CULTURAL_HERITAGE"/>
+		<Row Civic="CIVIC_SOCIAL_MEDIA" PrereqCivic="CIVIC_RAPID_DEPLOYMENT"/>
+		
+	</CivicPrereqs>
+	
+</GameInfo>

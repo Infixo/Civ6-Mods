@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Created by Infixo (Jan 24, 2017) -->
+<!-- Feb 25th, 2017: Updated for Summer 2017 patch by Infixo -->
+<!-- Apr 11th, 2017: Barbarians get free techs again -->
+
+<GameInfo>
+
+<!--
+General rules for technology progress per era (number of techs required to discover to beeline to individual techs in the era):
+- Ancient      1- 3  [total 11]
+- Classical    5- 8  [total 19]
+- Medieval    15-18  [total 26]
+- Renaissance 22-24  [total 35]
+- Industrial  28-31  [total 43]
+- Modern      37-40  [total 50]
+- Atomic      45-48 (50-NF) [58]
+- Information 53-60 (62-NF) [68]
+Total 148 dependencies 2.2 (up from 89 originally / 1.3 )
+-->
+<!-- TECH TREE REDESIGN QUICK GUIDE
+TECH PLACEMENT ON SCREEN
+Tree Column is automatically assigned based on Era and cost.
+Tree Rows are a -3 to 4 index with -3 at the top of the screen, 0 in the middle, and 4 at the bottom.
+The Rows can be modified in the <Technologies> section.
+	<Update> <Where TechnologyType="TECH_NAME"/> <Set UITreeRow="0"/> </Update>
+CONNECTIONS - ADD	
+	<Row Technology="TECH_NAME" PrereqTech="TECH_NEW_PREREQ" />
+CONNECTIONS	- UPDATE
+	<Update>
+		<Where Technology="TECH_NAME" PrereqTech="TECH_OLD_PREREQ"/>
+		<Set PrereqTech="TECH_NEW_PREREQ"/>
+	</Update>
+Warning! For some reasons this doesn't always work. The safe method is to delete and add a new one.
+CONNECTIONS - DELETE
+	<Delete Technology="TECH_NAME" PrereqTech="TECH_PREREQ_NAME"/>
+-->
+	<Technologies>
+	
+		<!-- BARBARIANS: If you UNCOMMENT the below 3 (three) lines, the barbarians will not get any free techs -->
+		<!--
+		<Update> <Where TechnologyType="TECH_SAILING"/>			<Set BarbarianFree="false"/> </Update>
+		<Update> <Where TechnologyType="TECH_BRONZE_WORKING"/>	<Set BarbarianFree="false"/> </Update>
+		<Update> <Where TechnologyType="TECH_SHIPBUILDING"/>	<Set BarbarianFree="false"/> </Update>
+		-->
+
+		<!-- Ancient 1st -->
+		<Update> <Where TechnologyType="TECH_ANIMAL_HUSBANDRY"/>	<Set UITreeRow="2"/> </Update>
+		<Update> <Where TechnologyType="TECH_MINING"/>				<Set UITreeRow="4"/> </Update>
+		<!-- Ancient 2nd -->
+		<Update> <Where TechnologyType="TECH_WRITING"/>				<Set UITreeRow="-1"/> </Update>
+		<Update> <Where TechnologyType="TECH_IRRIGATION"/>			<Set UITreeRow="0"/> </Update>
+		<Update> <Where TechnologyType="TECH_ARCHERY"/>				<Set UITreeRow="1"/> </Update>
+		<!-- Ancient 3rd -->
+		<Update> <Where TechnologyType="TECH_THE_WHEEL"/>			<Set UITreeRow="2"/> </Update>
+		<Update> <Where TechnologyType="TECH_MASONRY"/>				<Set UITreeRow="3"/> </Update>
+		<Update> <Where TechnologyType="TECH_BRONZE_WORKING"/>		<Set UITreeRow="4"/> </Update>
+		
+		<!-- Medieval 1st -->
+		<Update> <Where TechnologyType="TECH_APPRENTICESHIP"/>		<Set UITreeRow="-2"/> </Update>
+		<Update> <Where TechnologyType="TECH_MILITARY_TACTICS"/>	<Set UITreeRow="0"/> </Update>
+		<Update> <Where TechnologyType="TECH_MACHINERY"/>			<Set UITreeRow="3"/> </Update>
+		<!-- Medieval 2nd -->
+		<Update> <Where TechnologyType="TECH_CASTLES"/>				<Set UITreeRow="4"/> </Update>
+		
+		<!-- Classical 1st -->
+		<Update> <Where TechnologyType="TECH_HORSEBACK_RIDING"/>	<Set UITreeRow="2"/> </Update>
+		<Update> <Where TechnologyType="TECH_IRON_WORKING"/>		<Set UITreeRow="4"/> </Update>
+		<!-- Classical 2nd -->
+		<Update> <Where TechnologyType="TECH_ENGINEERING"/>			<Set UITreeRow="1"/> </Update>
+		<Update> <Where TechnologyType="TECH_CONSTRUCTION"/>		<Set UITreeRow="3"/> </Update>
+		
+		<!-- Renaissance 1st -->
+		<Update> <Where TechnologyType="TECH_BANKING"/>				<Set UITreeRow="-1"/> </Update>
+		<Update> <Where TechnologyType="TECH_GUNPOWDER"/>			<Set UITreeRow="1"/> </Update>
+		<Update> <Where TechnologyType="TECH_PRINTING"/>			<Set UITreeRow="2"/> </Update>
+		<!-- Renaissance 2nd -->
+		<Update> <Where TechnologyType="TECH_ASTRONOMY"/>			<Set UITreeRow="0"/> </Update>
+		<Update> <Where TechnologyType="TECH_METAL_CASTING"/>		<Set UITreeRow="1"/> </Update>
+		<Update> <Where TechnologyType="TECH_SIEGE_TACTICS"/>		<Set UITreeRow="4"/> </Update>
+		
+		<!-- Industrial 1st -->
+		<Update> <Where TechnologyType="TECH_SCIENTIFIC_THEORY"/>	<Set UITreeRow="1"/> </Update>
+		<Update> <Where TechnologyType="TECH_BALLISTICS"/>			<Set UITreeRow="2"/> </Update>
+		
+		<!-- Modern 1st -->
+		<Update> <Where TechnologyType="TECH_STEEL"/>				<Set UITreeRow="3"/> </Update>
+		<!-- Modern 2nd -->
+		<Update> <Where TechnologyType="TECH_COMBUSTION"/>			<Set UITreeRow="4"/> </Update>
+		
+		<!-- Atomic 1st -->
+		<Update> <Where TechnologyType="TECH_ROCKETRY"/>			<Set UITreeRow="1"/> </Update>
+		<Update> <Where TechnologyType="TECH_ADVANCED_BALLISTICS"/>	<Set UITreeRow="2"/> </Update>
+		<Update> <Where TechnologyType="TECH_COMBINED_ARMS"/>		<Set UITreeRow="3"/> </Update>
+		<Update> <Where TechnologyType="TECH_PLASTICS"/>			<Set UITreeRow="4"/> </Update>
+		<!-- Atomic 2nd -->
+		<Update> <Where TechnologyType="TECH_NUCLEAR_FISSION"/>		<Set UITreeRow="2"/> </Update>
+		<Update> <Where TechnologyType="TECH_SYNTHETIC_MATERIALS"/>	<Set UITreeRow="3"/> </Update>
+
+	</Technologies>
+	
+	<TechnologyPrereqs>
+		<!-- Ancient Era-->
+		<!-- Where horses for Horsemen come from? -->
+		<Row Technology="TECH_THE_WHEEL" PrereqTech="TECH_ANIMAL_HUSBANDRY" />
+		
+		<!-- Classical Era (min. 5 techs to enter) -->
+		<!-- Cannot built Great Lighthouse without Masonry -->
+		<Row Technology="TECH_CELESTIAL_NAVIGATION" PrereqTech="TECH_MASONRY"/>
+		<!-- And need some Iron for Harbors -->
+		<Row Technology="TECH_CELESTIAL_NAVIGATION" PrereqTech="TECH_BRONZE_WORKING"/>
+		<!-- Need some kind of furnace to create iron -->
+		<Row Technology="TECH_IRON_WORKING" PrereqTech="TECH_MASONRY" />
+		<Row Technology="TECH_IRON_WORKING" PrereqTech="TECH_THE_WHEEL" />
+		<!-- What kind of weapon use Horsemen to get 27 strength - comparable to Spearmen and historically they sometimes used bows -->
+		<Row Technology="TECH_HORSEBACK_RIDING" PrereqTech="TECH_BRONZE_WORKING" />
+		<!-- Summer2017 added this <Row Technology="TECH_HORSEBACK_RIDING" PrereqTech="TECH_ARCHERY" /> -->
+		<!-- Need knowledge about horse-based weapons i.e. Chariots; also cannot get them easier than Swordsmen -->
+		<Delete Technology="TECH_HORSEBACK_RIDING" PrereqTech="TECH_ANIMAL_HUSBANDRY"/>
+		<Row Technology="TECH_HORSEBACK_RIDING" PrereqTech="TECH_THE_WHEEL" />
+		<!-- Need to understand how to sail using stars -->
+		<Row Technology="TECH_SHIPBUILDING" PrereqTech="TECH_CELESTIAL_NAVIGATION" />
+		<!-- Need some kind of knowledge accumulated -->
+		<Row Technology="TECH_MATHEMATICS" PrereqTech="TECH_ASTROLOGY" />
+		<!-- Wheel is not enough for Engineering, Aqueducts use similar technology as walls, need Iron and Archery for Catapults -->
+		<Delete Technology="TECH_ENGINEERING" PrereqTech="TECH_THE_WHEEL"/>
+		<Row Technology="TECH_ENGINEERING" PrereqTech="TECH_IRON_WORKING" />
+		<!-- Catapults are ranged weapons -->
+		<Row Technology="TECH_ENGINEERING" PrereqTech="TECH_ARCHERY" />
+		<!-- Have to get irrigation somehow and it fits to currency as trade of luxury goods from plantations -->
+		<Row Technology="TECH_CURRENCY" PrereqTech="TECH_IRRIGATION" />
+		<!-- Religion and money were always close -->
+		<Row Technology="TECH_CURRENCY" PrereqTech="TECH_ASTROLOGY" />
+		<!-- Connecting Construction to Wheel and Iron makes more sense - need them for Siege Towers -->
+		<Delete Technology="TECH_CONSTRUCTION" PrereqTech="TECH_HORSEBACK_RIDING"/>
+		<Row Technology="TECH_CONSTRUCTION" PrereqTech="TECH_IRON_WORKING"/>
+				
+		<!-- Medieval Era -->
+		<!-- Summer2017 moved Stirrups to late Medieval -->
+		<!-- Knights need iron armor and swords also need to somehow manufacture them -->
+		<Row Technology="TECH_STIRRUPS" PrereqTech="TECH_ENGINEERING" />
+		<Row Technology="TECH_STIRRUPS" PrereqTech="TECH_CONSTRUCTION" />
+		<!-- Added so one cannot get them too fast - they are most powerful unit in Medieval era -->
+		<Delete Technology="TECH_STIRRUPS" PrereqTech="TECH_HORSEBACK_RIDING" />
+		<Row Technology="TECH_STIRRUPS" PrereqTech="TECH_MILITARY_TACTICS" />
+		<!-- Workshops need rather Iron and various Constructions to operate than Horses (and Stables are in Encampments anyway) -->
+		<Delete Technology="TECH_APPRENTICESHIP" PrereqTech="TECH_HORSEBACK_RIDING" />
+		<Delete Technology="TECH_APPRENTICESHIP" PrereqTech="TECH_CURRENCY"/>
+		<Row Technology="TECH_APPRENTICESHIP" PrereqTech="TECH_MATHEMATICS" />
+		<Row Technology="TECH_APPRENTICESHIP" PrereqTech="TECH_ENGINEERING" />
+		<!-- Pikemen come from spearmen and need to include Horsemen and Swordsmen in battles -->
+		<Row Technology="TECH_MILITARY_TACTICS" PrereqTech="TECH_HORSEBACK_RIDING" />
+		<Row Technology="TECH_MILITARY_TACTICS" PrereqTech="TECH_IRON_WORKING" />
+		<!-- Logical to include civil engineering and machines -->
+		<Row Technology="TECH_MILITARY_ENGINEERING" PrereqTech="TECH_MACHINERY" />
+		<!-- Medieval walls and castles were quite complex engineering works and those Knights have to park somewhere-->
+		<!-- Summer2017 moved Stirrups to late Medieval, so can't connect to Castles, instead back to Construction -->
+		<!-- <Delete Technology="TECH_CASTLES" PrereqTech="TECH_CONSTRUCTION"/> -->
+		<!-- <Row Technology="TECH_CASTLES" PrereqTech="TECH_STIRRUPS" /> -->
+		<Row Technology="TECH_CASTLES" PrereqTech="TECH_MACHINERY" />
+		<!-- Machinery needs calculations -->
+		<Delete Technology="TECH_MACHINERY" PrereqTech="TECH_IRON_WORKING"/>
+		<Row Technology="TECH_MACHINERY" PrereqTech="TECH_MATHEMATICS"/>
+		<!-- We gather knowledge from military appilcations mostly -->
+		<Delete Technology="TECH_EDUCATION" PrereqTech="TECH_MATHEMATICS"/>
+		<Row Technology="TECH_EDUCATION" PrereqTech="TECH_MILITARY_TACTICS"/>
+		
+		<!--Renaissance Era -->
+		<!-- Knowledge based tech -->
+		<Row Technology="TECH_CARTOGRAPHY" PrereqTech="TECH_EDUCATION" />
+		<!-- Natural development of military science -->
+		<Row Technology="TECH_SIEGE_TACTICS" PrereqTech="TECH_STIRRUPS" />
+		<!-- Need some siege weapons in place eg. catapults -->
+		<Row Technology="TECH_SIEGE_TACTICS" PrereqTech="TECH_MILITARY_ENGINEERING" />
+		<!-- Need more knowledge to handle gunpowder -->
+		<Delete Technology="TECH_GUNPOWDER" PrereqTech="TECH_APPRENTICESHIP"/>
+		<Delete Technology="TECH_GUNPOWDER" PrereqTech="TECH_STIRRUPS"/>
+		<Row Technology="TECH_GUNPOWDER" PrereqTech="TECH_EDUCATION" />
+		<!-- Logical connection -->
+		<Row Technology="TECH_PRINTING" PrereqTech="TECH_EDUCATION" />
+		<!-- Links bottom part of the tree -->
+		<Delete Technology="TECH_PRINTING" PrereqTech="TECH_MACHINERY"/>
+		<Row Technology="TECH_PRINTING" PrereqTech="TECH_CASTLES" />
+		<!-- Bombards too fast to get, cannot produce them without machinery -->
+		<Row Technology="TECH_METAL_CASTING" PrereqTech="TECH_MACHINERY" />
+		<!-- Frigates were mass produced -->
+		<Row Technology="TECH_SQUARE_RIGGING" PrereqTech="TECH_MASS_PRODUCTION" />
+		<!-- Need to accumulate some knowledge about stars and sky first, also includes Education -->
+		<Delete Technology="TECH_ASTRONOMY" PrereqTech="TECH_EDUCATION"/>
+		<Row Technology="TECH_ASTRONOMY" PrereqTech="TECH_CARTOGRAPHY" />
+		<!-- Ships and trade were more important for Banking than Stirrups -->
+		<Delete Technology="TECH_BANKING" PrereqTech="TECH_STIRRUPS"/>
+		<Row Technology="TECH_BANKING" PrereqTech="TECH_SHIPBUILDING"/>
+		
+		<!--Industrial Era-->
+		<!-- Cannot get cannons too fast -->
+		<Row Technology="TECH_BALLISTICS" PrereqTech="TECH_SIEGE_TACTICS" />
+		<Row Technology="TECH_BALLISTICS" PrereqTech="TECH_PRINTING" />
+		<!-- No adv science without printing -->
+		<Row Technology="TECH_SCIENTIFIC_THEORY" PrereqTech="TECH_PRINTING" /> <!-- Summer2017 Scientific Theory now requires Banking, ok -->
+		<!-- Factories need lots of metal works -->
+		<Row Technology="TECH_INDUSTRIALIZATION" PrereqTech="TECH_METAL_CASTING" />
+		<!-- Summer2017 Industrialization now requires Square Rigging, so Mass Production is not required -->
+		<Delete Technology="TECH_INDUSTRIALIZATION" PrereqTech="TECH_MASS_PRODUCTION" />
+		<!-- Cavalry this strong used gunpowder-type weapons -->
+		<Row Technology="TECH_MILITARY_SCIENCE" PrereqTech="TECH_METAL_CASTING" />
+		<!-- This connection doesn't make sense -->
+		<Delete Technology="TECH_ECONOMICS" PrereqTech="TECH_METAL_CASTING"/>
+		<!-- Rangers cannot be more expensive than Field Cannons -->
+		<!-- <Delete Technology="TECH_RIFLING" PrereqTech="TECH_BALLISTICS"/> Must include for Information Era techs to also have Ballistics as prereq -->
+		
+		<!--Modern Era-->
+		<!-- Need well developed gun-science to create Artillery and Battleships -->
+		<!-- Summer2017 added this <Row Technology="TECH_STEEL" PrereqTech="TECH_RIFLING" /> -->
+		<!-- Coal is crucial for steel production -->
+		<Row Technology="TECH_STEEL" PrereqTech="TECH_STEAM_POWER" />
+		<!-- Need to have well developed engines (but combustion is somwhere else in the tree)-->
+		<Row Technology="TECH_FLIGHT" PrereqTech="TECH_STEAM_POWER" />
+		<!-- Flight too easy to get, Economics required for techs with lots of production -->
+		<Row Technology="TECH_FLIGHT" PrereqTech="TECH_ECONOMICS" />
+		<!-- Not too fast to get, related to Coal-->
+		<Row Technology="TECH_CHEMISTRY" PrereqTech="TECH_STEAM_POWER" />
+		<!-- Replaceable parts need developed machines -->
+		<Row Technology="TECH_REPLACEABLE_PARTS" PrereqTech="TECH_INDUSTRIALIZATION" />
+		<!-- Medic for Infantry -->
+		<Row Technology="TECH_REPLACEABLE_PARTS" PrereqTech="TECH_SANITATION" />
+		<!-- Could get Electricity very fast, need more science behind it -->
+		<Row Technology="TECH_ELECTRICITY" PrereqTech="TECH_SCIENTIFIC_THEORY" />
+		
+		<!--Atomic Era-->
+		<!-- Research Labs as a sign of well developed science -->
+		<Row Technology="TECH_COMPUTERS" PrereqTech="TECH_CHEMISTRY" />
+		<!-- Computers require electronic parts which were developed along with i.e. radio -->
+		<!-- Summer2017 added this <Row Technology="TECH_COMPUTERS" PrereqTech="TECH_RADIO" /> -->
+		<!-- Comps are entirely made of replaceable parts -->
+		<Row Technology="TECH_COMPUTERS" PrereqTech="TECH_REPLACEABLE_PARTS" />
+		<!-- No modern planes and airports without electricity -->
+		<Row Technology="TECH_ADVANCED_FLIGHT" PrereqTech="TECH_ELECTRICITY" />
+		<!-- Oil engines are required for planes -->
+		<Row Technology="TECH_ADVANCED_FLIGHT" PrereqTech="TECH_COMBUSTION" />
+		<!-- Oil engines are required for planes -->
+		<Row Technology="TECH_ADVANCED_BALLISTICS" PrereqTech="TECH_RIFLING" />
+		<!-- We're building advanced ships like carriers -->
+		<Row Technology="TECH_COMBINED_ARMS" PrereqTech="TECH_REPLACEABLE_PARTS" />
+		<!-- Plastics without Chemistry is not possible!!! -->
+		<Row Technology="TECH_PLASTICS" PrereqTech="TECH_CHEMISTRY" />
+		<!-- Ballistics is crucial for launching rockets -->
+		<Row Technology="TECH_ROCKETRY" PrereqTech="TECH_BALLISTICS" />
+		<!-- Launching a satellite without Electricity not possible -->
+		<Row Technology="TECH_ROCKETRY" PrereqTech="TECH_ELECTRICITY" />
+		<!-- The NF should not be easy 'beelineable' -->
+		<Row Technology="TECH_NUCLEAR_FISSION" PrereqTech="TECH_CHEMISTRY" />
+		
+		<!--Information Era-->
+		<!-- Telecoms need satellites -->
+		<Row Technology="TECH_TELECOMMUNICATIONS" PrereqTech="TECH_ROCKETRY" /> 	
+		<!-- And Aluminium -->
+		<Row Technology="TECH_TELECOMMUNICATIONS" PrereqTech="TECH_ADVANCED_FLIGHT" /> 		
+		<!-- Modern satellites need computers -->
+		<Row Technology="TECH_SATELLITES" PrereqTech="TECH_COMPUTERS" /> 
+		<!-- Satellites more need Ballistics than airports and planes -->
+		<Delete Technology="TECH_SATELLITES" PrereqTech="TECH_ADVANCED_FLIGHT"/>
+		<Row Technology="TECH_SATELLITES" PrereqTech="TECH_ADVANCED_BALLISTICS"/>
+		<!-- Computers are at the heart of Guidance Systems -->
+		<Row Technology="TECH_GUIDANCE_SYSTEMS" PrereqTech="TECH_COMPUTERS" /> 
+		<!-- Lasers need special materials; also prevents from getting Nuclear Fusion too fast if one tries to beeline -->
+		<Row Technology="TECH_LASERS" PrereqTech="TECH_SYNTHETIC_MATERIALS" />
+		<!-- Have to go through normal Fighters to get to Jet Fighters -->
+		<Row Technology="TECH_LASERS" PrereqTech="TECH_ADVANCED_FLIGHT" />
+		<!-- Modern Armor needs Uranium; also its very powerful unit so should not be easy to beeline -->
+		<Row Technology="TECH_COMPOSITES" PrereqTech="TECH_NUCLEAR_FISSION" />
+		<!-- Modern planes cannot operate without computers -->
+		<Row Technology="TECH_STEALTH_TECHNOLOGY" PrereqTech="TECH_COMPUTERS" />
+		<!-- Have to go through normal Bombers to get to Jet Bombers -->
+		<Row Technology="TECH_STEALTH_TECHNOLOGY" PrereqTech="TECH_ADVANCED_FLIGHT" />
+		<!-- Must complete entire tree to proceed with Future Tech -->
+		<Delete Technology="TECH_FUTURE_TECH" PrereqTech="TECH_SATELLITES"/>
+		<Row Technology="TECH_FUTURE_TECH" PrereqTech="TECH_STEALTH_TECHNOLOGY" />
+		<Row Technology="TECH_FUTURE_TECH" PrereqTech="TECH_TELECOMMUNICATIONS" />
+		<!-- Space Race technologies - each one requires Satellites - cannot send anything to Mars without moon landing first -->
+		<Row Technology="TECH_ROBOTICS" PrereqTech="TECH_SATELLITES" /> 
+		<Row Technology="TECH_NUCLEAR_FUSION" PrereqTech="TECH_SATELLITES" /> 
+		<Row Technology="TECH_NANOTECHNOLOGY" PrereqTech="TECH_SATELLITES" /> 
+		<!-- Robots need Aluminium -->
+		<Delete Technology="TECH_ROBOTICS" PrereqTech="TECH_COMPUTERS"/>
+		<Row Technology="TECH_ROBOTICS" PrereqTech="TECH_ADVANCED_FLIGHT" /> 
+		<!-- Proper Guidance for Thermonuclear devices, also cannot beeline them too easy -->
+		<Row Technology="TECH_NUCLEAR_FUSION" PrereqTech="TECH_GUIDANCE_SYSTEMS" /> 
+			
+	</TechnologyPrereqs>
+	
+</GameInfo>
