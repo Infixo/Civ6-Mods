@@ -2367,11 +2367,16 @@ function city_fields( kCityData, pCityInstance )
 	-- Population and Housing
 	-- a bit more complicated due to real housing from improvements
 	local fRealHousing:number = kCityData.Housing - kCityData.HousingFromImprovements + kCityData.RealHousingFromImprovements;
-	if kCityData.Population >= fRealHousing then
-		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..ColorRed(fRealHousing) );
-	else
-		pCityInstance.Population:SetText( "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / "..tostring(fRealHousing) );
+	local sPopulationText:string = "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / ";
+	if kCityData.Population >= fRealHousing then sPopulationText = sPopulationText..ColorRed(fRealHousing);
+	else                                         sPopulationText = sPopulationText..tostring(fRealHousing); end
+	-- check for Sewer
+	pCityInstance.Population:SetToolTipString("");
+	if kCityData.City:GetBuildings():HasBuilding( GameInfo.Buildings[ "BUILDING_SEWER" ].Index ) then
+		sPopulationText = sPopulationText..ColorGreen("!");
+		pCityInstance.Population:SetToolTipString( Locale.Lookup("LOC_BUILDING_SEWER_NAME") );
 	end
+	pCityInstance.Population:SetText(sPopulationText);
 	--[[ debug
 	local tTT:table = {};
 	table.insert(tTT, "Housing : "..kCityData.Housing);
