@@ -26,13 +26,15 @@
 		<AddUserInterfaces id="RST_UI_Utils">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Utils/RealStrategy_InGameExp.xml</File>
+			<File>RealStrategy.xml</File>
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
-			<File>RealStrategy.lua</File>
+			<!--<File>RealStrategy.lua</File>-->
 		</AddGameplayScripts>
 	</InGameActions>
 	<Files>
 		<File>RealStrategy.lua</File>
+		<File>RealStrategy.xml</File>
 		<File>RealStrategy_Database.sql</File>
 		<File>Utils/RealStrategy_InGameExp.lua</File>
 		<File>Utils/RealStrategy_InGameExp.xml</File>

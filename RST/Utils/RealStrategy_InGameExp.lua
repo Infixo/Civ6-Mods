@@ -130,19 +130,38 @@ function PlayerHasOriginalCapital(ePlayerID:number)
 	return pCapital:IsOriginalCapital();
 end
 
+-- Returns the Average num of Techs researched for all known Players in the game
+function GameGetAverageNumTechsResearched(ePlayerID:number, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
+	print("FUN GameGetAverageNumTechsResearched", ePlayerID, bIncludeMe, bIncludeOnlyKnown);
+	local iTotalTechs:number = 0;
+	local iNumAlivePlayers:number = 0;
+	-- Sum up the num of techs of all known majors
+	for _,otherID in ipairs(PlayerManager.GetAliveMajorIDs()) do
+		--if bIncludeMe or otherID ~= ePlayerID then
+			--if not bIncludeOnlyKnown or Players[ePlayerID]:GetDiplomacy():HasMet(otherID) then
+			if otherID == ePlayerID or Players[ePlayerID]:GetDiplomacy():HasMet(otherID) then -- HasMet returns false for ourselves, so must add ourselves separately
+				iNumAlivePlayers = iNumAlivePlayers + 1;
+				iTotalTechs = iTotalTechs + Players[otherID]:GetStats():GetNumTechsResearched();
+			end
+		--end
+	end
+	return iNumAlivePlayers == 0 and 0 or iTotalTechs/iNumAlivePlayers;
+end
+
 -- Returns the Average Military Might of all Players in the game
-function GameGetAverageMilitaryStrength(ePlayerID:number, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
-	print("FUN GameGetAverageMilitaryStrength", ePlayerID, bIncludeMe, bIncludeOnlyKnown);
+function GameGetAverageMilitaryStrength(ePlayerID:number) --, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
+	print("FUN GameGetAverageMilitaryStrength", ePlayerID); --, bIncludeMe, bIncludeOnlyKnown);
 	local iWorldMilitaryStrength:number = 0;
 	local iNumAlivePlayers:number = 0;
-	-- Look at our military strength relative to everyone else in the world
-	for _,playerID in ipairs(PlayerManager.GetAliveMajorIDs()) do
-		if bIncludeMe or playerID ~= ePlayerID then
-			if not bIncludeOnlyKnown or Players[ePlayerID]:GetDiplomacy():HasMet(playerID) then
+	-- Sum up the military strength of all known majors
+	for _,otherID in ipairs(PlayerManager.GetAliveMajorIDs()) do
+		--if bIncludeMe or otherID ~= ePlayerID then
+			--if not bIncludeOnlyKnown or Players[ePlayerID]:GetDiplomacy():HasMet(otherID) then
+			if otherID == ePlayerID or Players[ePlayerID]:GetDiplomacy():HasMet(otherID) then -- HasMet returns false for ourselves, so must add ourselves separately
 				iNumAlivePlayers = iNumAlivePlayers + 1;
-				iWorldMilitaryStrength = iWorldMilitaryStrength + Players[playerID]:GetStats():GetMilitaryStrengthWithoutTreasury();
+				iWorldMilitaryStrength = iWorldMilitaryStrength + Players[otherID]:GetStats():GetMilitaryStrengthWithoutTreasury();
 			end
-		end
+		--end
 	end
 	return iNumAlivePlayers == 0 and 0 or iWorldMilitaryStrength/iNumAlivePlayers;
 end
@@ -170,12 +189,25 @@ function PlayerGetNumProjectsAdvanced(ePlayerID:number, eProjectID:number)
 	return Players[ePlayerID]:GetStats():GetNumProjectsAdvanced(eProjectID);
 end
 
+-- check if player has a spaceport
+local eDistrictSpaceportIndex:number = GameInfo.Districts["DISTRICT_SPACEPORT"].Index;
+function PlayerHasSpaceport(ePlayerID:number)
+	print("PlayerHasSpaceport", ePlayerID);
+	for _,district in Players[ePlayerID]:GetDistricts():Members() do
+		if district ~= nil and district:GetType() == eDistrictSpaceportIndex and district:IsComplete() then
+			return true;
+		end
+	end
+	return false;
+end
+
 
 function Initialize()
 	-- functions: Game
 	ExposedMembers.RST.GameIsVictoryEnabled         = GameIsVictoryEnabled;
 	ExposedMembers.RST.GameGetMaxGameTurns          = GameGetMaxGameTurns;
 	ExposedMembers.RST.GameGetAverageMilitaryStrength = GameGetAverageMilitaryStrength;
+	ExposedMembers.RST.GameGetAverageNumTechsResearched = GameGetAverageNumTechsResearched;
 	-- functions: City
 	ExposedMembers.RST.CityGetGreatWorkObjectType   = CityGetGreatWorkObjectType;
 	-- functions: Player
@@ -190,6 +222,7 @@ function Initialize()
 	ExposedMembers.RST.PlayerHasOriginalCapital     = PlayerHasOriginalCapital;
 	ExposedMembers.RST.PlayerGetCultureVictoryProgress  = PlayerGetCultureVictoryProgress;
 	ExposedMembers.RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
+	ExposedMembers.RST.PlayerHasSpaceport           = PlayerHasSpaceport;
 	
 	-- objects
 	--ExposedMembers.RND.Calendar				= Calendar;

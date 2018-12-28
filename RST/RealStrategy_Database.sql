@@ -10,24 +10,31 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '1');
 
 -- Parameters
 INSERT INTO GlobalParameters (Name, Value) VALUES
-('RST_WEIGHT_POLICY', 2), -- how much each slotted policy weights
+('RST_WEIGHT_POLICY', 3), -- how much each slotted policy weights
 ('RST_WEIGHT_WONDER', 3), -- how much each wonder weights
 ('RST_WEIGHT_GOVERNMENT', 5), -- how much each government weights
+('RST_WEIGHT_MINOR', 3), -- how much each suzerained city state weights
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 5), -- how many turns a strategy must be active before checking for new priorities, def. 10
-('RST_STRATEGY_MINIMUM_PRIORITY', 50), -- minimum priority to activate a strategy
+('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
 ('RST_STRATEGY_BETTER_THAN_US_NERF', 33), -- each player better than us decreases our priority by this percent
+('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 30), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -100), -- if nobody met, then decrease the priority, def. -100
 ('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 50), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
-('RST_CONQUEST_POWER_FIRST_TURN', 20), -- check for military strength only after this many turns, def. 60
+--('RST_CONQUEST_POWER_FIRST_TURN', 20), -- check for military strength only after this many turns, def. 60
 ('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 100), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 ('RST_CONQUEST_AT_WAR_PRIORITY', 10), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 20), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
 ('RST_CONQUEST_LESS_CITIES_WEIGHT', 15), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
-('RST_CONQUEST_NUKE_THREAT', -50); -- others have WMDs, but we don't, counted only once?
+('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
+('RST_SCIENCE_ERA_BIAS', 150), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 21 / 53 / 86
+('RST_SCIENCE_YIELD_WEIGHT', 15), -- [x100] how much each beaker weights
+('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+('RST_SCIENCE_PROJECT_WEIGHT', 75), -- each completed space race project
+('RST_SCIENCE_HAS_SPACEPORT', 40); -- adds if player has a spaceport
 
 /*
 INSERT INTO Types (Type, Kind) VALUES
@@ -183,7 +190,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 			('POLICY_FEUDAL_CONTRACT', 'POLICY', 'MILITARY', 'CONQUEST', 6),
 			('POLICY_FINEST_HOUR', 'POLICY', 'MILITARY', 'CONQUEST', 7),
 ('POLICY_FIVE_YEAR_PLAN', 'POLICY', 'ECONOMIC', 'SCIENCE', 6),			('POLICY_FIVE_YEAR_PLAN', 'POLICY', 'ECONOMIC', 'CONQUEST', 3),
-			
+('POLICY_FREE_MARKET', 'POLICY', 'ECONOMIC', 'SCIENCE', 1),	('POLICY_FREE_MARKET', 'POLICY', 'ECONOMIC', 'CULTURE', 1),	('POLICY_FREE_MARKET', 'POLICY', 'ECONOMIC', 'RELIGION', 1),	('POLICY_FREE_MARKET', 'POLICY', 'ECONOMIC', 'CONQUEST', 1),
 	('POLICY_FRESCOES', 'POLICY', 'GREAT_PERSON', 'CULTURE', 5),		
 		('POLICY_GOD_KING', 'POLICY', 'ECONOMIC', 'RELIGION', 4),	
 ('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'SCIENCE', 2),	('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'CULTURE', 3),	('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'RELIGION', 3),	('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'CONQUEST', 2),
@@ -212,7 +219,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 			
 			
 			('POLICY_LETTERS_OF_MARQUE', 'POLICY', 'DARKAGE', 'CONQUEST', 5),
-			
+			('POLICY_LEVEE_EN_MASSE', 'POLICY', 'MILITARY', 'CONQUEST', 4),
 			
 			('POLICY_LIGHTNING_WARFARE', 'POLICY', 'MILITARY', 'CONQUEST', 7),
 			
@@ -286,7 +293,8 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('INDUSTRIAL', 'CityState', '', 'SCIENCE', 4),	('INDUSTRIAL', 'CityState', '', 'CULTURE', 2),	('INDUSTRIAL', 'CityState', '', 'RELIGION', 2),	('INDUSTRIAL', 'CityState', '', 'CONQUEST', 3),
 			('MILITARISTIC', 'CityState', '', 'CONQUEST', 7),
 		('RELIGIOUS', 'CityState', '', 'RELIGION', 7),	
-('SCIENTIFIC', 'CityState', '', 'SCIENCE', 7);
+('SCIENTIFIC', 'CityState', '', 'SCIENCE', 7),
+('TRADE', 'CityState', '', 'SCIENCE', 1),	('TRADE', 'CityState', '', 'CULTURE', 1),	('TRADE', 'CityState', '', 'RELIGION', 1),	('TRADE', 'CityState', '', 'CONQUEST', 1);
 			
 -- BELIEFS
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
