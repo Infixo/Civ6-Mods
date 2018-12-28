@@ -95,7 +95,7 @@ end
 
 --  get a list of slotted (active) policies
 function PlayerGetSlottedPolicies(ePlayerID:number)
-	print("FUN GetSlottedPolicies", ePlayerID);
+	--print("FUN GetSlottedPolicies", ePlayerID);
 	local pPlayer:table = Players[ePlayerID];
 	local pPlayerCulture:table = pPlayer:GetCulture();
 	local tPolicies:table = {};
@@ -112,7 +112,7 @@ end
 
 -- get number of captured capitals
 function PlayerGetNumCapturedCapitals(ePlayerID:number)
-	print("FUN PlayerGetNumCapturedCapitals", ePlayerID);
+	--print("FUN PlayerGetNumCapturedCapitals", ePlayerID);
 	local iNum:number = 0;
 	for _,city in Players[ePlayerID]:GetCities():Members() do
 		if city:IsOriginalCapital() then
@@ -132,7 +132,7 @@ end
 
 -- Returns the Average num of Techs researched for all known Players in the game
 function GameGetAverageNumTechsResearched(ePlayerID:number, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
-	print("FUN GameGetAverageNumTechsResearched", ePlayerID, bIncludeMe, bIncludeOnlyKnown);
+	--print("FUN GameGetAverageNumTechsResearched", ePlayerID, bIncludeMe, bIncludeOnlyKnown);
 	local iTotalTechs:number = 0;
 	local iNumAlivePlayers:number = 0;
 	-- Sum up the num of techs of all known majors
@@ -150,7 +150,7 @@ end
 
 -- Returns the Average Military Might of all Players in the game
 function GameGetAverageMilitaryStrength(ePlayerID:number) --, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
-	print("FUN GameGetAverageMilitaryStrength", ePlayerID); --, bIncludeMe, bIncludeOnlyKnown);
+	--print("FUN GameGetAverageMilitaryStrength", ePlayerID); --, bIncludeMe, bIncludeOnlyKnown);
 	local iWorldMilitaryStrength:number = 0;
 	local iNumAlivePlayers:number = 0;
 	-- Sum up the military strength of all known majors
@@ -171,7 +171,7 @@ end
 -- Determine number of tourist needed for victory
 -- Has to be one more than every other players number of domestic tourists
 function PlayerGetCultureVictoryProgress(ePlayerID:number)
-	print("FUN PlayerGetCultureVictoryProgress", ePlayerID);
+	--print("FUN PlayerGetCultureVictoryProgress", ePlayerID);
 	local iNumVisitingUs:number = Players[ePlayerID]:GetCulture():GetTouristsTo();
 	local iNumRequiredTourists:number = 0;
 	for _,playerID in ipairs(PlayerManager.GetAliveMajorIDs()) do
@@ -192,13 +192,36 @@ end
 -- check if player has a spaceport
 local eDistrictSpaceportIndex:number = GameInfo.Districts["DISTRICT_SPACEPORT"].Index;
 function PlayerHasSpaceport(ePlayerID:number)
-	print("PlayerHasSpaceport", ePlayerID);
+	--print("FUN PlayerHasSpaceport", ePlayerID);
 	for _,district in Players[ePlayerID]:GetDistricts():Members() do
 		if district ~= nil and district:GetType() == eDistrictSpaceportIndex and district:IsComplete() then
 			return true;
 		end
 	end
 	return false;
+end
+
+-- wrapper
+function PlayerGetTourism(ePlayerID:number)
+	return Players[ePlayerID]:GetStats():GetTourism();
+end
+
+-- wrapper
+function PlayerGetReligionTypeCreated(ePlayerID:number)
+	return Players[ePlayerID]:GetReligion():GetReligionTypeCreated();
+end
+
+-- wrapper
+function PlayerGetNumBeliefsEarned(ePlayerID:number)
+	return Players[ePlayerID]:GetReligion():GetNumBeliefsEarned();
+end
+
+-- get a table with Belief IDs
+function PlayerGetBeliefs(ePlayerID:number)
+	for _,religion in ipairs(Game.GetReligion():GetReligions()) do
+		if religion.Founder == ePlayerID then return religion.Beliefs; end
+	end
+	return {};
 end
 
 
@@ -220,9 +243,13 @@ function Initialize()
 	ExposedMembers.RST.PlayerGetCurrentGovernment   = PlayerGetCurrentGovernment;
 	ExposedMembers.RST.PlayerGetNumCapturedCapitals = PlayerGetNumCapturedCapitals;
 	ExposedMembers.RST.PlayerHasOriginalCapital     = PlayerHasOriginalCapital;
-	ExposedMembers.RST.PlayerGetCultureVictoryProgress  = PlayerGetCultureVictoryProgress;
+	ExposedMembers.RST.PlayerGetCultureVictoryProgress = PlayerGetCultureVictoryProgress;
 	ExposedMembers.RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
 	ExposedMembers.RST.PlayerHasSpaceport           = PlayerHasSpaceport;
+	ExposedMembers.RST.PlayerGetTourism             = PlayerGetTourism;
+	ExposedMembers.RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;
+	ExposedMembers.RST.PlayerGetNumBeliefsEarned    = PlayerGetNumBeliefsEarned;
+	ExposedMembers.RST.PlayerGetBeliefs             = PlayerGetBeliefs;
 	
 	-- objects
 	--ExposedMembers.RND.Calendar				= Calendar;
