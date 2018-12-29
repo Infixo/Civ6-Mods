@@ -82,11 +82,11 @@ table.insert(tShowStrat, "CONQUEST");
 table.insert(tShowStrat, "SCIENCE");
 table.insert(tShowStrat, "CULTURE");
 table.insert(tShowStrat, "RELIGION");
-function dshowpriorities(pTable:table)
-	local tOut:table = {}; table.insert(tOut, "  priorities :");
+function dshowpriorities(pTable:table, sComment:string)
+	local tOut:table = {};
 	--for strat,value in pairs(pTable) do table.insert(tOut, string.format("%s %4.1f :", strat, value)); end
-	for _,strat in ipairs(tShowStrat) do table.insert(tOut, string.format("%s %4.1f :", strat, pTable[strat])); end
-	print(Game.GetCurrentGameTurn(), table.concat(tOut, " "));
+	for _,strat in ipairs(tShowStrat) do table.insert(tOut, string.format(" : %s %4.1f", strat, pTable[strat])); end
+	print(Game.GetCurrentGameTurn(), string.format("%40s", sComment), table.concat(tOut, " "));
 end
 
 
@@ -595,95 +595,7 @@ function GetNumCityStatesPlayerIsSuzerain(ePlayerID:number)
 end
 
 
-function ProcessBoostMeetCityState(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUN ProcessBoostMeetCityState", ePlayerID, eMetPlayerID);
-	-- BOOST: MEET_CITY_STATE
-	tBoostClass = tBoostClasses["MEET_CITY_STATE"];
-	if tBoostClass ~= nil then 
-		for id,boost in pairs(tBoostClass.Boosts) do
-			dprint("  ...processing boost (class,id,helper,cs-cat)", "MEET_CITY_STATE", id, boost.Helper, GetCityStateCategory(eMetPlayerID));
-			if not HasBoostBeenTriggered(ePlayerID, boost) and GetCityStateCategory(eMetPlayerID) == boost.Helper then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
 
-function ProcessBoostMeetXCityStates(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUN ProcessBoostMeetXCityStates", ePlayerID, eMetPlayerID);
-	-- BOOST: MEET_X_CITY_STATES
-	tBoostClass = tBoostClasses["MEET_X_CITY_STATES"];
-	if tBoostClass ~= nil then 
-		for id,boost in pairs(tBoostClass.Boosts) do
-			dprint("  ...processing boost (class,id,num2,cs-num)", "MEET_X_CITY_STATES", id, boost.NumItems2, GetNumCityStatesPlayerHasMet(ePlayerID));
-			if not HasBoostBeenTriggered(ePlayerID, boost) and GetNumCityStatesPlayerHasMet(ePlayerID) >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
-
-function ProcessBoostSuzerainCityState(ePlayerID:number, eMinorID:number)
-	dprint("FUN ProcessBoostSuzerainCityState", ePlayerID, eMinorID);
-	-- BOOST: SUZERAIN_CITY_STATE
-	tBoostClass = tBoostClasses["SUZERAIN_CITY_STATE"];
-	if tBoostClass ~= nil then 
-		for id,boost in pairs(tBoostClass.Boosts) do
-			dprint("  ...processing boost (class,id,helper,cs-cat)", "SUZERAIN_CITY_STATE", id, boost.Helper, GetCityStateCategory(eMinorID));
-			if not HasBoostBeenTriggered(ePlayerID, boost) and 
-				GetCityStateCategory(eMinorID) == boost.Helper and Players[eMinorID]:GetInfluence():GetSuzerain() == ePlayerID then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
-
-function ProcessBoostSuzerainXCityStates(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUN ProcessBoostSuzerainXCityStates", ePlayerID, eMetPlayerID);
-	-- BOOST: SUZERAIN_X_CITY_STATES
-	tBoostClass = tBoostClasses["SUZERAIN_X_CITY_STATES"];
-	if tBoostClass ~= nil then 
-		for id,boost in pairs(tBoostClass.Boosts) do
-			dprint("  ...processing boost (class,id,num2,cs-num)", "SUZERAIN_X_CITY_STATES", id, boost.NumItems2, GetNumCityStatesPlayerIsSuzerain(ePlayerID));
-			if not HasBoostBeenTriggered(ePlayerID, boost) and GetNumCityStatesPlayerIsSuzerain(ePlayerID) >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
-
-
-function ProcessBoostTrainUnit(ePlayerID:number, eUnitType:number)
-	dprint("FUN ProcessBoostTrainUnit", ePlayerID, eUnitType);
-	-- BOOST: TRAIN_UNIT
-	tBoostClass = tBoostClasses["TRAIN_UNIT"];
-	if tBoostClass ~= nil then 
-		for id,boost in pairs(tBoostClass.Boosts) do
-			dprint("  ...processing boost (class,id,unittype,trained)", "TRAIN_UNIT", id, boost.Unit1Type, GameInfo.Units[eUnitType].UnitType);
-			if not HasBoostBeenTriggered(ePlayerID, boost) and GameInfo.Units[eUnitType].UnitType == boost.Unit1Type then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
-
-
-function ProcessBoostGreatPerson(ePlayerID:number, eGreatPersonClass:number)
-	dprint("FUN ProcessBoostGreatPerson", ePlayerID, eGreatPersonClass);
-	-- BOOST: GREAT_PERSON
-	tBoostClass = tBoostClasses["GREAT_PERSON"];
-	if tBoostClass ~= nil then 
-		for id,boost in pairs(tBoostClass.Boosts) do
-			local sGPClass:string = "GREAT_PERSON_CLASS_"..boost.Helper;
-			dprint("  ...processing boost (class,id,unittype,trained)", "GREAT_PERSON", id, sGPClass, GameInfo.GreatPersonClasses[eGreatPersonClass].GreatPersonClassType);
-			if not HasBoostBeenTriggered(ePlayerID, boost) and GameInfo.GreatPersonClasses[eGreatPersonClass].GreatPersonClassType == sGPClass then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
-
-
-function ProcessBoostHaveGovernment(ePlayerID:number, eGovernmentIndex:number)
-	dprint("FUN ProcessBoostHaveGovernment", ePlayerID, eGovernmentIndex);
-	-- BOOST: HAVE_GOVERNMENT
-	tBoostClass = tBoostClasses["HAVE_GOVERNMENT"];
-	if tBoostClass ~= nil then
-		for id,boost in pairs(tBoostClass.Boosts) do
-			local sHelperType:string = "GOVERNMENT_"..boost.Helper;
-			dprint("  ...processing boost (class,id,helper,established)", "HAVE_GOVERNMENT", id, sHelperType, GameInfo.Governments[eGovernmentIndex].GovernmentType);
-			if not HasBoostBeenTriggered(ePlayerID, boost) and GameInfo.Governments[eGovernmentIndex].GovernmentType == sHelperType then TriggerBoost(ePlayerID, boost); end
-		end
-	end
-end
 
 
 function ProcessBoostsProjectCompleted(ePlayerID:number, eProjectIndex:number)
@@ -728,41 +640,6 @@ function ProcessBoostsProjectCompleted(ePlayerID:number, eProjectIndex:number)
 end
 
 
-function ProcessBoostReligionFollowers(ePlayerID:number)
-	dprint("FUN ProcessBoostReligionFollowers", ePlayerID);
-
-	-- BOOST: RELIGION_X_FOLLOWERS
-	tBoostClass = tBoostClasses["RELIGION_X_FOLLOWERS"];
-	if tBoostClass == nil then return; end -- no boost like this at all
-	
-	--local iNumFollowers:number = Players[ePlayerID]:GetStats():GetNumFollowers(); -- weird, but this function is not reliable...
-	
-	-- check if player has religion
-	if Players[ePlayerID] == nil then return; end
-	local eReligionID:number = Players[ePlayerID]:GetReligion():GetReligionTypeCreated();
-	if GameInfo.Religions[eReligionID] == nil or GameInfo.Religions[eReligionID].Pantheon then return; end
-	dprint("...player has religion (id,rel)", eReligionID, GameInfo.Religions[eReligionID].ReligionType);
-	
-	-- iterate through all cities
-	local iNumFollowers:number = 0;
-	for _,player in ipairs(PlayerManager.GetAlive()) do
-		for _,city in player:GetCities():Members() do
-			--local iCityFollowers:number = city:GetReligion():GetNumFollowers(eReligionID);
-			--if iCityFollowers > 0 then dprint("...adding followers from city (name,num)", city:GetName(), iCityFollowers); end
-			iNumFollowers = iNumFollowers + city:GetReligion():GetNumFollowers(eReligionID);
-		end
-	end
-	
-	-- BOOST: RELIGION_X_FOLLOWERS
-	for id,boost in pairs(tBoostClass.Boosts) do
-		dprint("  ...processing boost (class,id,helper,followers)", "RELIGION_X_FOLLOWERS", id, boost.NumItems2, iNumFollowers);
-		if not HasBoostBeenTriggered(ePlayerID, boost) and iNumFollowers >= boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
-	end
-	
-end
-
-
-
 
 -- ===========================================================================
 -- HELPERS
@@ -797,7 +674,7 @@ end
 
 -- religion helper
 function PlayerGetNumCivsConverted(ePlayerID:number)
-	print("FUN PlayerGetNumCivsConverted", ePlayerID);
+	--print("FUN PlayerGetNumCivsConverted", ePlayerID);
 	local iNumCivsConverted = 0;
 	local pPlayerReligion:table = Players[ePlayerID]:GetReligion();
 	local eReligionID:number = pPlayerReligion:GetReligionTypeCreated();
@@ -870,8 +747,8 @@ function InitializeData()
 	--[[
 	print("Table of priorities:"); -- debug
 	for objType,data in pairs(tPriorities) do
-		dprint("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
-		dshowpriorities(data.Priorities);
+		--dprint("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
+		dshowpriorities(data.Priorities, data.ObjectType);
 	end
 	--]]
 end
@@ -905,13 +782,14 @@ Event functions
 -- This function gathers data specific for a player that can be reused in many places, like Military Strength, Science Positions, Tourism, etc.
 -- all data is stored in tData[player].Data
 function RefreshPlayerData(data:table)
-	print("FUN RefreshPlayerData", data.PlayerID);
+	print("FUN RefreshPlayerData", data.PlayerID, data.LeaderType);
 	
 	local ePlayerID:number = data.PlayerID;
 	local pPlayer:table = Players[ePlayerID];
 	local tOut:table = {}; -- debug
 	
 	local tNewData:table = {
+		Era = pPlayer:GetEra(), -- simple
 		ElapsedTurns = 0, -- with game speed scaling
 		NumMajorsAliveAndMet = 0, -- number of alive major civs that we've met
 		MajorIDsAliveAndMet = {}, -- and their IDs
@@ -934,8 +812,8 @@ function RefreshPlayerData(data:table)
 
 	-- replace the data
 	data.Data = tNewData;
-	print("RefreshPlayerData:", ePlayerID)
-	dshowrectable(data.Data);
+	--print("RefreshPlayerData:", ePlayerID)
+	--dshowrectable(data.Data);
 end	
 
 	--[[
@@ -972,14 +850,14 @@ end
 ------------------------------------------------------------------------------
 -- Gather generic data like Leader, Policies, Beliefs, etc
 function GetGenericPriorities(data:table)
-	print("FUN GetGenericPriorities", data.PlayerID);
+	print("FUN GetGenericPriorities", data.PlayerID, data.LeaderType);
 	
 	local ePlayerID:number = data.PlayerID;
 	local pPlayer:table = Players[ePlayerID];
 	
 	-- POLICIES
 	-- Add priority value based on flavors of policies we've acquired.
-	print("...generic: policies", data.LeaderName);
+	--print("...generic: policies", data.LeaderName);
 	local tPolicies:table = RST.PlayerGetSlottedPolicies(ePlayerID);
 	local tPolicyPriorities:table = PriorityTableNew();
 	for _,policy in ipairs(tPolicies) do
@@ -987,20 +865,20 @@ function GetGenericPriorities(data:table)
 		else                        print("WARNING: policy", policy, "not defined in Priorities"); end
 	end
 	PriorityTableMultiply(tPolicyPriorities, GlobalParameters.RST_WEIGHT_POLICY);
-	dshowpriorities(tPolicyPriorities); -- debug
+	dshowpriorities(tPolicyPriorities, "generic policies");
 	
 	-- GOVERNMENT
-	print("...generic: government", data.LeaderName);
+	--print("...generic: government", data.LeaderName);
 	local sGovType:string = GameInfo.Governments[ RST.PlayerGetCurrentGovernment(ePlayerID) ].GovernmentType;
 	local tGovPriorities:table = PriorityTableNew();
 	if tPriorities[sGovType] then PriorityTableAdd(tGovPriorities, tPriorities[sGovType].Priorities);
 	else                          print("WARNING: government", sGovType, "not defined in Priorities"); end
 	PriorityTableMultiply(tGovPriorities, GlobalParameters.RST_WEIGHT_GOVERNMENT);
-	dshowpriorities(tGovPriorities); -- debug
+	dshowpriorities(tGovPriorities, "generic government "..string.gsub(sGovType, "GOVERNMENT_", ""));
 	
 	-- WONDERS
 	-- probably the fastest way is to iterate through Flavors?
-	print("...generic: wonders", data.LeaderName);
+	--print("...generic: wonders", data.LeaderName);
 	local tWonderPriorities:table = PriorityTableNew();
 	for object,data in pairs(tPriorities) do
 		if data.Type == "Wonder" and GameInfo.Buildings[data.ObjectType] ~= nil then -- make sure this Wonder is actually in-game
@@ -1008,50 +886,51 @@ function GetGenericPriorities(data:table)
 			for _,city in pPlayer:GetCities():Members() do
 				--print("...checking", data.ObjectType, "in", city:GetName());
 				if city:GetBuildings():HasBuilding( GameInfo.Buildings[data.ObjectType].Index ) then
-					print("......player has", object);
+					--print("...player has", object);
 					PriorityTableAdd(tWonderPriorities, data.Priorities);
 				end
 			end
 		end
 	end
 	PriorityTableMultiply(tWonderPriorities, GlobalParameters.RST_WEIGHT_WONDER);
-	dshowpriorities(tWonderPriorities); -- debug
+	dshowpriorities(tWonderPriorities, "generic wonders");
 	
 	-- CITY STATES
-	print("...generic: city states", data.LeaderName);
+	--print("...generic: city states", data.LeaderName);
 	local tMinorPriorities:table = PriorityTableNew();
 	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
 		if minor:GetInfluence():GetSuzerain() == ePlayerID then
 			local sCategory:string = GetCityStateCategory(minor:GetID());
-			print("......suzerain of", sCategory);
+			--print("...suzerain of", sCategory);
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
 	PriorityTableMultiply(tMinorPriorities, GlobalParameters.RST_WEIGHT_MINOR);
-	dshowpriorities(tMinorPriorities); -- debug
+	dshowpriorities(tMinorPriorities, "generic city states");
 
 	-- BELIEFS
 	-- Add priority value based on flavors of beliefs we've acquired.
-	print("...generic: beliefs", data.LeaderName);
+	--print("...generic: beliefs", data.LeaderName);
 	local tBeliefs:table = RST.PlayerGetBeliefs(ePlayerID);
 	local tBeliefPriorities:table = PriorityTableNew();
 	for _,beliefID in pairs(tBeliefs) do
 		if GameInfo.Beliefs[beliefID] then
 			local sBelief:string = GameInfo.Beliefs[beliefID].BeliefType;
+			--print("..earned", sBelief);
 			if tPriorities[sBelief] then PriorityTableAdd(tBeliefPriorities, tPriorities[sBelief].Priorities);
 			else                         print("WARNING: belief", sBelief, "not defined in Priorities"); end
 		end
 	end
 	PriorityTableMultiply(tBeliefPriorities, GlobalParameters.RST_WEIGHT_BELIEF);
-	dshowpriorities(tBeliefPriorities); -- debug
+	dshowpriorities(tBeliefPriorities, "generic beliefs");
 	
-	print("...generic priorities for leader", data.LeaderName);
+	--print("...generic priorities for leader", data.LeaderName);
 	local tGenericPriorities:table = PriorityTableNew();
 	PriorityTableAdd(tGenericPriorities, tPolicyPriorities);
 	PriorityTableAdd(tGenericPriorities, tGovPriorities);
 	PriorityTableAdd(tGenericPriorities, tWonderPriorities);
 	PriorityTableAdd(tGenericPriorities, tMinorPriorities);
-	dshowpriorities(tGenericPriorities);
+	dshowpriorities(tGenericPriorities, "*** generic priorities "..data.LeaderType);
 	return tGenericPriorities;
 end
 
@@ -1093,7 +972,7 @@ end
 -- TODO
 function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:string)
 	print("FUN OtherPlayerDoingBetterThanUs", data.PlayerID, eOtherID, sStrategy);
-	local bBetter:boolean = math.random(0,1) == 1;
+	local bBetter:boolean = math.random(0,100) < 40;
 	print("...", bBetter and "YES" or "no");
 	return bBetter
 end
@@ -1112,7 +991,7 @@ end
 
 -- return the number of completed space race projects
 function PlayerGetNumProjectsSpaceRace(ePlayerID:number)
-	print("FUN PlayerGetNumProjectsSpaceRace", ePlayerID);
+	--print("FUN PlayerGetNumProjectsSpaceRace", ePlayerID);
 	-- count space race projects
 	local iTot:number, iNum:number = 0, 0;
 	for row in GameInfo.Projects() do
@@ -1121,7 +1000,7 @@ function PlayerGetNumProjectsSpaceRace(ePlayerID:number)
 			iNum = iNum + RST.PlayerGetNumProjectsAdvanced(ePlayerID, row.Index);
 		end
 	end
-	print("space race num/tot", iNum, iTot);
+	print("space race player, num/tot", ePlayerID, iNum, iTot);
 	return iNum;
 end
 
@@ -1137,9 +1016,9 @@ function PlayerIsCloseToCultureVictory(ePlayerID:number)
 end
 
 function PlayerIsCloseToReligionVictory(ePlayerID:number)
-	print("FUN PlayerIsCloseToReligionVictory", ePlayerID);
+	--print("FUN PlayerIsCloseToReligionVictory", ePlayerID);
 	-- similar condition as for conquest
-	print("close to religion? player", ePlayerID, "converted, all civs", PlayerGetNumCivsConverted(ePlayerID) / PlayerManager.GetWasEverAliveMajorsCount());
+	print("close to religion? player", ePlayerID, "converted, all civs", PlayerGetNumCivsConverted(ePlayerID), PlayerManager.GetWasEverAliveMajorsCount());
 	return PlayerGetNumCivsConverted(ePlayerID) / PlayerManager.GetWasEverAliveMajorsCount() > 0.6 -- size 4 after 3, size 6 after 4, size 8 after 5, size 10 after 7, size 12 after 8
 end
 
@@ -1156,7 +1035,7 @@ end
 ------------------------------------------------------------------------------
 -- Specific: CONQUEST
 function GetPriorityConquest(data:table)
-	print("FUN GetPriorityConquest", data.LeaderName);
+	--print("FUN GetPriorityConquest", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
 	if not RST.GameIsVictoryEnabled("VICTORY_CONQUEST") then return -1000; end
 	
@@ -1169,9 +1048,10 @@ function GetPriorityConquest(data:table)
 	-- iPriority += ((GetPlayer()->GetDiplomacy()->GetBoldness() + iGeneralApproachModifier + GetPlayer()->GetDiplomacy()->GetMeanness()) * (10 - iEra)); // make a little less likely as time goes on
 	-- try to use generic Flavor?
 	--if tPriorities[data.LeaderType] then
-		iPriority = tPriorities[data.LeaderType].Priorities.CONQUEST;
-		iPriority = iPriority * 2 * (1.0 - pPlayer:GetEra()/#GameInfo.Eras); -- PARAMETER???
-		dprint("...era adjusted extra conquest, priority=", iPriority);
+	-- ???????? There is already Era Bias factor for each victory - is this really needed?
+	iPriority = tPriorities[data.LeaderType].Priorities.CONQUEST;
+	iPriority = iPriority * 2 * (1.0 - data.Data.Era/#GameInfo.Eras); -- PARAMETER???
+	dprint("...era adjusted extra conquest, priority=", iPriority);
 	--end
 
 	-- early game, if we haven't met any Major Civs yet, then we probably shouldn't be planning on conquering the world
@@ -1208,15 +1088,17 @@ function GetPriorityConquest(data:table)
 			local iMilitaryRatio:number = (RST.PlayerGetMilitaryStrength(ePlayerID) - iWorldMilitaryStrength) * GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER / iWorldMilitaryStrength; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			-- Make the likelihood of BECOMING a warmonger lower than dropping the bad behavior
 			iMilitaryRatio = math.floor(iMilitaryRatio / 2); -- should be the same as setting param to 50
-			iPriority = iPriority + iMilitaryRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-			print("...adding", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(ePlayerID), iWorldMilitaryStrength, "priority=", iPriority);
+			if iMilitaryRatio > 0 then -- let's not use negative priorities as for now
+				iPriority = iPriority + iMilitaryRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
+			end
+			print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(ePlayerID), iWorldMilitaryStrength, "priority=", iPriority);
 		end
 	end
 	
 	-- Desperate factor
-	local iEra:number = pPlayer:GetEra();
+	--local iEra:number = pPlayer:GetEra();
 	local bDesperate:boolean = not PlayerIsCloseToAnyVictory(ePlayerID);
-	print("era, desperate", iEra, bDesperate);
+	print("era, desperate", data.Data.Era, bDesperate);
 	local iPriorityDangerPlayers:number = 0;
 	local iNumCities:number = 0;
 	for _,otherID in ipairs(data.Data.MajorIDsAliveAndMet) do
@@ -1227,10 +1109,11 @@ function GetPriorityConquest(data:table)
 		iNumCities = iNumCities + Players[otherID]:GetCities():GetCount();
 	end
 	-- increase priority by desperate factor
-	iPriority = iPriority + iPriorityDangerPlayers * iEra;
+	iPriority = iPriority + iPriorityDangerPlayers * data.Data.Era;
 	print("iPriorityDangerPlayers", iPriorityDangerPlayers, "priority=", iPriority);
 	
 	-- cramped factor - checks for all plots' ownership but it is cheating - use cities instead (available in deal screen)
+	-- HNT: this can be used for Defense also - if we lack with cities, we need better defense
 	-- but first it checks our current land and nearby plots - if there are any usable?
 	local iOurCities:number = pPlayer:GetCities():GetCount();
 	if data.Data.ElapsedTurns >= GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then
@@ -1260,7 +1143,7 @@ end
 ------------------------------------------------------------------------------
 -- Specific: SCIENCE
 function GetPriorityScience(data:table)
-	print("FUN GetPriorityScience", data.LeaderName);
+	--print("FUN GetPriorityScience", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
 	if not RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then return -1000; end
 	
@@ -1284,9 +1167,12 @@ function GetPriorityScience(data:table)
 		-- Compare our num techs to the rest of the world
 		local iWorldNumTechs:number = RST.GameGetAverageNumTechsResearched(ePlayerID, true, true); -- include us and only known
 		if iWorldNumTechs > 0 then
+			-- the PICKLE here: when we are behind, we get a negative value - it is not the case with Culture nor Religion
 			local iTechBoost:number = (RST.PlayerGetNumTechsResearched(ePlayerID) - iWorldNumTechs) * GlobalParameters.RST_SCIENCE_TECH_WEIGHT;
-			iPriority = iPriority + iTechBoost;
-			print("...adding tech boost", iTechBoost, "player/world", RST.PlayerGetNumTechsResearched(ePlayerID), iWorldNumTechs, "priority=", iPriority);
+			if iTechBoost > 0 then -- let's not use negatives yet
+				iPriority = iPriority + iTechBoost;
+			end
+			print("...tech boost", iTechBoost, "player/world", RST.PlayerGetNumTechsResearched(ePlayerID), iWorldNumTechs, "priority=", iPriority);
 		end
 	end
 	
@@ -1309,7 +1195,7 @@ end
 ------------------------------------------------------------------------------
 -- Specific: CULTURE
 function GetPriorityCulture(data:table)
-	print("FUN GetPriorityCulture", data.LeaderName);
+	--print("FUN GetPriorityCulture", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
 	if not RST.GameIsVictoryEnabled("VICTORY_CULTURE") then return -1000; end
 	
@@ -1336,6 +1222,8 @@ function GetPriorityCulture(data:table)
 	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(ePlayerID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 100.0) - 1.0);
 	print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(ePlayerID), "priority=", iPriority);
 	
+	-- PICKLE here: no holding back! what could be the negative?
+	
 	print("GetPriorityCulture:", iPriority);
 	return iPriority;
 end
@@ -1345,7 +1233,7 @@ end
 -- Specific: RELIGION
 
 function GetPriorityReligion(data:table)
-	print("FUN GetPriorityReligion", data.LeaderName);
+	--print("FUN GetPriorityReligion", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
 	if not RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS") then return -1000; end
 	
@@ -1381,6 +1269,15 @@ function GetPriorityReligion(data:table)
 	-- faith yield
 	iPriority = iPriority + pPlayer:GetReligion():GetFaithYield() * GlobalParameters.RST_RELIGION_FAITH_YIELD_WEIGHT / 100.0;
 	print("...added faith yield, yield", pPlayer:GetReligion():GetFaithYield(), "priority=", iPriority);
+
+	-- early game, if we haven't met any Major Civs yet, then we probably shouldn't be planning on conquering the world with our religion - see also Conquest
+	if data.Data.ElapsedTurns >= GlobalParameters.RST_RELIGION_NOBODY_MET_NUM_TURNS then
+		if data.Data.NumMajorsAliveAndMet == 0 then 
+			iPriority = iPriority + GlobalParameters.RST_RELIGION_NOBODY_MET_PRIORITY;
+			print("...turn", Game.GetCurrentGameTurn(), "no majors met, priority=", iPriority);
+		end
+	end
+
 	
 	-- WorldRankings displays how many civs were converted
 	if data.Data.NumCivsConverted > 1 then
@@ -1389,6 +1286,9 @@ function GetPriorityReligion(data:table)
 	end
 
 	-- each inqusition launched decreases the priority [cheating?] - REMOVE????
+	-- there is another way - since religious units may enter, then just OBSERVE if there are Inqusitors!
+	-- need 2 checks, one on TurnBegin and then TurnEnd and this flag goes to Stored! once detected, there is no need to do so anymore
+	-- HINT: this is like being at war with conquest??? - maybe we should boost it actually?
 	for _,otherID in ipairs(data.Data.MajorIDsAliveAndMet) do
 		if Players[otherID]:GetReligion():HasLaunchedInquisition() then
 			print("...player", otherID, "has launched inqusition");
@@ -1429,7 +1329,7 @@ end
 -- Base Priority looks at Personality Flavors (0 - 10) and multiplies * the Flavors attached to a Grand Strategy (0-10),
 -- so expect a number between 0 and 100 back from this
 function EstablishStrategyBasePriority(data:table)
-	print("FUN EstablishStrategyBasePriority", data.PlayerID);
+	--print("FUN EstablishStrategyBasePriority", data.PlayerID, data.LeaderType);
 	data.Priorities = PriorityTableNew();
 	if tPriorities["BasePriority"] == nil then
 		print("WARNING: BasePriority table not defined."); return;
@@ -1440,19 +1340,19 @@ function EstablishStrategyBasePriority(data:table)
 	-- multiply Leader flavors by Strategy flavors
 	PriorityTableAdd(data.Priorities, tPriorities[data.LeaderType].Priorities);
 	PriorityTableMultiplyByTable(data.Priorities, tPriorities["BasePriority"].Priorities);
-	print("...base priorities for leader", data.LeaderName);
-	dshowpriorities(data.Priorities);
+	--print("...base priorities for leader", data.LeaderName);
+	dshowpriorities(data.Priorities, "*** base priorities "..data.LeaderType);
 	
 	-- the later the game the greater the chance
 	local tEraBiasPriorities:table = PriorityTableNew();
 	PriorityTableAdd(tEraBiasPriorities, tPriorities[data.LeaderType].Priorities);
-	PriorityTableMultiply(tEraBiasPriorities, Players[data.PlayerID]:GetEra() * GlobalParameters.RST_STRATEGY_LEADER_ERA_BIAS / 100.0);
-	print("...era bias for era", Players[data.PlayerID]:GetEra());
-	dshowpriorities(data.Priorities);
+	PriorityTableMultiply(tEraBiasPriorities, data.Data.Era * GlobalParameters.RST_STRATEGY_LEADER_ERA_BIAS / 100.0);
+	--print("...era bias for era", data.Data.Era); --Players[data.PlayerID]:GetEra());
+	dshowpriorities(tEraBiasPriorities, "era bias for era "..tostring(data.Data.Era));
 	
-	print("EstablishStrategyBasePriority:");
+	--print("EstablishStrategyBasePriority:");
 	PriorityTableAdd(data.Priorities, tEraBiasPriorities);
-	dshowpriorities(data.Priorities);
+	dshowpriorities(data.Priorities, "EstablishStrategyBasePriority");
 end
 
 
@@ -1469,10 +1369,10 @@ function RefreshAndProcessData(ePlayerID:number)
 	-- Only run this on turns we need it
 	if data.ActiveStrategy ~= "NONE" and data.NumTurnsActive > 0 then
 		data.NumTurnsActive = data.NumTurnsActive + 1;
-		print("...current strategy", data.ActiveStrategy, "active for", data.NumTurnsActive, "turns");
-		if data.NumTurnsActive > GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE then -- AI_GRAND_STRATEGY_NUM_TURNS_STRATEGY_MUST_BE_ACTIVE -- note to self: it must scaled by GameSpeed
+		print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "active for", data.NumTurnsActive, "turns");
+		if data.NumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE then -- AI_GRAND_STRATEGY_NUM_TURNS_STRATEGY_MUST_BE_ACTIVE -- note to self: it must scaled by GameSpeed
 			data.NumTurnsActive = 0;
-			print("......RESET");
+			print(Game.GetCurrentGameTurn(), data.LeaderType, "...strategy RESET");
 		end
 		return;
 	end
@@ -1500,12 +1400,10 @@ function RefreshAndProcessData(ePlayerID:number)
 	tSpecificPriorities.DEFENSE  = GetPriorityDefense(data);
 	--tSpecificPriorities.NAVAL  = GetPriorityNaval(data);
 	--tSpecificPriorities.TRADE  = GetPriorityTrade(data);
-	print("...specific priorities for leader", data.LeaderName);
-	dshowpriorities(tSpecificPriorities);
-	--print("...applying specific priorities");
-	--dshowpriorities(data.Priorities);
-
-	--local tGenericPriorities:table = GetGenericPriorities(data);
+	--print("...specific priorities for leader", data.LeaderName);
+	dshowpriorities(tSpecificPriorities, "*** specific priorities "..data.LeaderType);
+	
+	-- add generic to specific priorities
 	PriorityTableAdd(tSpecificPriorities, GetGenericPriorities(data));
 	
 	-- reduce the potency of these until the mid game.
@@ -1515,25 +1413,25 @@ function RefreshAndProcessData(ePlayerID:number)
 	local iCurrentTurn:number = Game.GetCurrentGameTurn();
 	dprint("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, iCurrentTurn * 2 / iMaxTurn);
 	PriorityTableMultiply(tSpecificPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
-	print("...specific and generic priorities after turn adjustment for leader", data.LeaderName);
-	dshowpriorities(tSpecificPriorities);
+	--print("...specific and generic priorities after turn adjustment for leader", data.LeaderName);
+	dshowpriorities(tSpecificPriorities, "specific & generic after turn adjust");
 	
-	print("...applying specific priorities", data.LeaderName);
+	--print("...applying specific priorities", data.LeaderName);
 	PriorityTableAdd(data.Priorities, tSpecificPriorities);
-	dshowpriorities(data.Priorities);
+	dshowpriorities(data.Priorities, "applying specific priorities");
 	
 	-- random element
 	for strat,value in pairs(data.Priorities) do
 		data.Priorities[strat] = value + math.random(0,GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY); -- AI_GS_RAND_ROLL
 	end
-	print("...applying a bit of randomization", data.LeaderName);
-	dshowpriorities(data.Priorities);
+	--print("...applying a bit of randomization", data.LeaderName);
+	dshowpriorities(data.Priorities, "applying a bit of randomization");
 	
 	-- Give a boost to the current strategy so that small fluctuation doesn't cause a big change
 	if data.ActiveStrategy ~= "NONE" then
-		print("...boosting current strategy", data.ActiveStrategy);
+		--print("...boosting current strategy", data.ActiveStrategy);
 		data.Priorities[data.ActiveStrategy] = data.Priorities[data.ActiveStrategy] + GlobalParameters.RST_STRATEGY_CURRENT_PRIORITY; -- AI_GRAND_STRATEGY_CURRENT_STRATEGY_WEIGHT
-		dshowpriorities(data.Priorities);
+		dshowpriorities(data.Priorities, "boosting current strategy "..data.ActiveStrategy);
 	end
 			
 	-- Tally up how many players we think are pursuing each Grand Strategy
@@ -1565,8 +1463,8 @@ function RefreshAndProcessData(ePlayerID:number)
 	end
 	print("...players met and alive", iNumPlayersAliveAndMet);
 	--]]
-	print("...number of players better than us in specific strategies");
-	dshowpriorities(tAdoptedNum);
+	--print("...number of players better than us in specific strategies");
+	dshowpriorities(tAdoptedNum, "num players better than us");
 	
 	
 	-- Now modify our preferences based on how many people are going for stuff
@@ -1579,11 +1477,11 @@ function RefreshAndProcessData(ePlayerID:number)
 	--for strat,value in pairs(data.Priorities) do
 		--tNerfFactor[strat] = tNerfFactor[strat] * tAdoptedNum[strat] * (-1);
 	--end
-	print("...nerf factors", data.LeaderName);
-	dshowpriorities(tNerfFactor);
-	print("...final priorities", data.LeaderName);
+	--print("...nerf factors", data.LeaderName);
+	dshowpriorities(tNerfFactor, "nerf factors");
+	--print("...final priorities", data.LeaderName);
 	PriorityTableAdd(data.Priorities, tNerfFactor);
-	dshowpriorities(data.Priorities);
+	dshowpriorities(data.Priorities, "*** final priorities "..data.LeaderType);
 	
 	-- Now see which Grand Strategy should be active, based on who has the highest Priority right now
 	local iBestPriority:number = GlobalParameters.RST_STRATEGY_MINIMUM_PRIORITY; -- minimum score to activate a strategy
@@ -1591,17 +1489,17 @@ function RefreshAndProcessData(ePlayerID:number)
 		if value > iBestPriority then
 			iBestPriority = value;
 			data.ActiveStrategy = strat;
-			data.NumTurnsActive = 1;
+			data.NumTurnsActive = 0;
 		end
 	end
-	print("...selected", data.ActiveStrategy, "priority", iBestPriority, "turns", data.NumTurnsActive);
 	
 	-- finish
 	if data.ActiveStrategy ~= "NONE" then
 		data.NumTurnsActive = data.NumTurnsActive + 1
 	end
 	data.Dirty = false; -- data is refreshed
-	dshowrectable(tData[ePlayerID]); -- show all info
+	print(Game.GetCurrentGameTurn(), data.LeaderType, "...selected", data.ActiveStrategy, "priority", iBestPriority, "turns", data.NumTurnsActive);
+	--dshowrectable(tData[ePlayerID]); -- show all info
 end
 
 
@@ -1626,152 +1524,6 @@ function OnCityAddedToMap(ePlayerID:number, iCityID:number, iX:number, iY:number
 	end
 end
 
--- ===========================================================================
--- Units: called only when actual training, e.g. NOT called for gold purchased units.
---        TypeModifier in CPC event is for Normal=0/Corps=1/Army=2
-function OnCityProductionCompleted(ePlayerID:number, iCityID:number, eOrderType:number, eObjectType:number, bCanceled:boolean, typeModifier:number)
-	dprint("FUN OnCityProductionCompleted(ePlayerID,iCity,eOrderType,eObjectType,bCanceled,typeModifier)",ePlayerID,iCityID,eOrderType,eObjectType,bCanceled,typeModifier);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	if eOrderType == 0 then  -- OrderTypes.ORDER_TRAIN
-		dprint("..trained", GameInfo.Units[eObjectType].UnitType);
-		ProcessBoostTrainUnit(ePlayerID, eObjectType); -- TRAIN_UNIT
-	elseif eOrderType == 1 then  -- OrderTypes.ORDER_CONSTRUCT
-		-- boosts for Buildings
-		--GameInfo.Buildings[eObjectType].BuildingType
-	elseif eOrderType == 2 then  -- OrderTypes.ORDER_ZONE
-		-- boosts for Districts
-		--GameInfo.Districts[eObjectType].DistrictType
-	elseif eOrderType == 3 then  -- PROJECTS!
-		-- boosts for Projects
-		--GameInfo.Projects[eObjectType].ProjectType
-	else  -- unknown order type
-		print("ERROR: unknown order type", eOrderType);
-	end
-end
-
-
--- ===========================================================================
--- CityProjectCompleted = { "player", "iCityID", "Project", "Building", "iX", "iY", "bCanceled" },
-function OnCityProjectCompleted(ePlayerID:number, iCityID:number, eProjectIndex:number, eBuildingIndex:number, iLocX:number, iLocY:number, bCanceled:boolean)
-	dprint("FUN OnCityProjectCompleted(ePlayerID,iCityID,eProjectIndex,eBuildingIndex,iLocX,iLocY,bCanceled)",ePlayerID, iCityID, eProjectIndex, eBuildingIndex, iLocX, iLocY, bCanceled);
-	if not IsPlayerBoostable(ePlayerID) or bCanceled then return; end
-	-- BOOST CLASS DISPATCHER
-	ProcessBoostsProjectCompleted(ePlayerID, eProjectIndex);
-end
-
-
--- ===========================================================================
--- CityReligionFollowersChanged = { "player", "iCityID", "eRevealedState", "x" }, -- last param is 'city'; careful, this event fires insanely often!
-function OnCityReligionFollowersChanged(ePlayerID:number, iCityID:number, eVisibility:number, city)
-	dprint("OnCityReligionFollowersChanged(ePlayerID,iCityID,eVisibility,city)", ePlayerID, iCityID, eVisibility, city);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	ProcessBoostReligionFollowers(ePlayerID);
-end
-
-
--- ===========================================================================
-function OnGreatWorkCreated(ePlayerID:number, iCreatorID:number, iCityX:number, iCityY:number, eBuildingID:number, iGreatWorkIndex:number)
-	dprint("FUN OnGreatWorkCreated(ePlayerID,iCreatorID,iCityX,iCityY,eBuildingID,iGreatWorkIndex)", ePlayerID, iCreatorID, iCityX, iCityY, eBuildingID, iGreatWorkIndex);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	ProcessBoostHaveGreatWorks(ePlayerID, iCityX, iCityY, iGreatWorkIndex);
-end
-
-
--- ===========================================================================
--- Player:GetCulture:GetCurrentGovernment -- only UI context
-function OnGovernmentChanged(ePlayerID:number, eGovernmentIndex:number)
-	dprint("FUN OnGovernmentChanged(ePlayerID,eGovernmentIndex)", ePlayerID, eGovernmentIndex);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	ProcessBoostHaveGovernment(ePlayerID, eGovernmentIndex); -- HAVE_GOVERNMENT
-end
-
-
--- ===========================================================================
--- UnitGreatPersonCreated =	{ "player", "iUnitID", "GreatPersonClass", "GreatPersonIndividual" },
-function OnUnitGreatPersonCreated(ePlayerID:number, iUnitID:number, eGreatPersonClass:number, eGreatPersonIndividual:number)
-	dprint("FUN OnUnitGreatPersonCreated(ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual)",ePlayerID,iUnitID,eGreatPersonClass,eGreatPersonIndividual);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	ProcessBoostGreatPerson(ePlayerID, eGreatPersonClass);
-end
-
-
--- ===========================================================================
-function OnDistrictAddedToMap( playerID: number, districtID : number, cityID :number, districtX : number, districtY : number, districtType:number, percentComplete:number )
--- percentComplete was ERA_ANCIENT=-1851407529
--- 1400916610=ERA_CLASSICAL (I was in Medieval)
--- 848543945=ERA_RENAISSANCE (I was in Industrial)
--- 1948543980=ERA_ATOMIC (I was in Information)
-	dprint("FUN OnDistrictAddedToMap() (did,cid,x,y,type,perc)",districtID,cityID,districtX,districtY,districtType,percentComplete);
-end
-
--- ===========================================================================
-function OnImprovementAddedToMap(locX, locY, eImprType, eOwner, resource, isPillaged, isWorked)
-	dprint("FUN OnImprovementAddedToMap() (x,y,type,owner,resource)",locX,locY,eImprType,eOwner,resource);
-end
-
--- ===========================================================================
--- This event is called for any unit, no matter how created. So, purchasing with gold and faith, earning GPs, etc.
--- Also: this event is called BEFORE CityProductionCompleted!
-function OnUnitAddedToMap( playerID: number, unitID : number, unitX : number, unitY : number )
-	dprint("FUN OnUnitAddedToMap() (player,unit,x,y)",playerID,unitID,unitX,unitY);
-end
-
-
--- ===========================================================================
--- it's call for each plot that unit is traversing
-function OnUnitMoved(ePlayerID:number, iUnitID:number, x, y, locallyVisible, stateChange)
-	dprint("FUN OnUnitMoved (player,unit,x,y,visible,state)",ePlayerID, iUnitID,x,y,locallyVisible,stateChange);
-end
-
-
--- ===========================================================================
--- only 4 params, checked
-function OnUnitMoveComplete(playerID, unitID, x, y)
-	dprint("FUN OnUnitMoveComplete() (player,unit,x,y,visible,state)",playerID,unitID,x,y);
-end
-
--- ===========================================================================
--- DiplomacyMeet is always called, then either MajorMinor or Majors.
--- DiplomacyMeet = 			{ "player", "player" },
--- DiplomacyMeetMajorMinor = 	{ "player", "player" },
--- DiplomacyMeetMajors =		{ "player", "player" },
-function OnDiplomacyMeet(ePlayerID:number, eMetPlayerID:number)
-	dprint("FUN OnDiplomacyMeet", ePlayerID, eMetPlayerID);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	if PlayerIsMinor(eMetPlayerID) then
-		ProcessBoostMeetCityState(ePlayerID, eMetPlayerID); -- MEET_CITY_STATE
-		ProcessBoostMeetXCityStates(ePlayerID, eMetPlayerID); -- MEET_X_CITY_STATES
-	end
-	-- add more conditions here
-end
-
--- ===========================================================================
--- Generic event called for all civs
-function OnInfluenceChanged(ePlayerID:number)
-end
-
--- ===========================================================================
--- Called for a City-State when a token is received
-function OnInfluenceGiven(eMinorID:number, iUnknown:number)
-	local ePlayerID:number = GetActivePlayer();
-	dprint("FUN OnInfluenceGiven(player,minor)",ePlayerID,eMinorID);
-	if not IsPlayerBoostable(ePlayerID) then return; end
-	-- BOOST CLASS DISPATCHER
-	ProcessBoostSuzerainCityState(ePlayerID, eMinorID);
-	ProcessBoostSuzerainXCityStates(ePlayerID, eMinorID);
-end
-
--- ===========================================================================
--- DiplomacyRelationshipTypes.ALLIED, .FRIENDSHIP, .DENOUNCED
--- Note: this has nothing to do with City-States
-function OnDiplomacyRelationshipChanged(ePlayerID:number, eToPlayerID:number, eDiploRelType:number, iXX:number)
-end
 
 -- ===========================================================================
 function OnLoadScreenClose()

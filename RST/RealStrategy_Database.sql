@@ -15,7 +15,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_WEIGHT_GOVERNMENT', 5), -- how much each government weights
 ('RST_WEIGHT_MINOR', 3), -- how much each suzerained city state weights
 ('RST_WEIGHT_BELIEF', 3), -- how much each earned belief weights
-('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 5), -- how many turns a strategy must be active before checking for new priorities, def. 10
+('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 3), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
@@ -33,7 +33,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_LESS_CITIES_WEIGHT', 15), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
 ('RST_SCIENCE_YIELD_WEIGHT', 15), -- [x100] how much each beaker weights
-('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+('RST_SCIENCE_TECH_WEIGHT', 15), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
 ('RST_SCIENCE_PROJECT_WEIGHT', 75), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
 ('RST_CULTURE_YIELD_WEIGHT', 10), -- [x100] how much culture yield is worth
@@ -42,11 +42,13 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 --('RST_CULTURE_MORE_TOURISTS_WEIGHT', 50), -- each civ we have surpassed in Tourists
 ('RST_CULTURE_PROGRESS_EXPONENT', 4), -- [x100], cultural progress formula, exponent => 0.04 speeds up after 60 and goes high after 80
 ('RST_CULTURE_PROGRESS_MULTIPLIER', 8), -- cultural progress formula, multiplier; 60 => 90, 70 => 130, 80 => 200, 90 => 300
-('RST_RELIGION_FAITH_YIELD_WEIGHT', 20), -- [x100] faith yield
-('RST_RELIGION_RELIGION_WEIGHT', 50), -- founded religion, pantheon gets half of it
-('RST_RELIGION_BELIEF_WEIGHT', 20), -- each belief earned increases the priority
-('RST_RELIGION_CONVERTED_WEIGHT', 50), -- each converted civ after 1 (I assume this is us)
-('RST_RELIGION_INQUISITION_WEIGHT', -30); -- each inquisition launched by others decreases the priority
+('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
+('RST_RELIGION_RELIGION_WEIGHT', 40), -- founded religion, pantheon gets half of it
+('RST_RELIGION_BELIEF_WEIGHT', 15), -- each belief earned increases the priority
+('RST_RELIGION_CONVERTED_WEIGHT', 50), -- each converted civ after 1 (I assume the 1st is us)
+('RST_RELIGION_INQUISITION_WEIGHT', -30), -- each inquisition launched by others decreases the priority
+('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
+('RST_RELIGION_NOBODY_MET_PRIORITY', -100); -- if nobody met, then decrease the priority, def. -100
 
 /*
 INSERT INTO Types (Type, Kind) VALUES

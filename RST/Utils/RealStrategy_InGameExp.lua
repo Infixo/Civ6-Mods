@@ -104,7 +104,7 @@ function PlayerGetSlottedPolicies(ePlayerID:number)
 		--print("...slot", i, "has policy", ePolicyID);
 		if ePolicyID > -1 then
 			table.insert(tPolicies, GameInfo.Policies[ePolicyID].PolicyType);
-			print("...slotted", GameInfo.Policies[ePolicyID].PolicyType);
+			--print("...slotted", GameInfo.Policies[ePolicyID].PolicyType);
 		end
 	end
 	return tPolicies;
