@@ -13,11 +13,11 @@ local RST = ExposedMembers.RST;
 --print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
 
 -- configuration options
---local bOptionHarvests:boolean = ( GlobalParameters.BTT_OPTION_HARVESTS == 1 );
---local bOptionModifiers:boolean = ( GlobalParameters.BCP_OPTION_MODIFIERS == 1 );
---local bOptionInternal:boolean = ( GlobalParameters.BCP_OPTION_INTERNAL == 1 );
+local bOptionLogStrat:boolean = ( GlobalParameters.RST_OPTION_LOG_STRAT == 1 );
+local bOptionLogGuess:boolean = ( GlobalParameters.RST_OPTION_LOG_GUESS == 1 );
 
 local LL = Locale.Lookup;
+
 
 
 -- ===========================================================================
@@ -36,6 +36,8 @@ local Strategies:table = {
 	TRADE    = 8, -- supporting
 };
 --dshowtable(Strategies);
+
+local tShowStrat:table = { "CONQUEST", "SCIENCE", "CULTURE", "RELIGION" }; -- only these will be shown in logs and debugs
 
 local tData:table = {}; -- a table of data sets, one for each player
 local tPriorities:table = {}; -- a table of Priorities tables (flavors); constructed from DB
@@ -77,11 +79,6 @@ function dshowrectable(tTable:table, iLevel:number)
 end
 
 -- debug routine - prints priorities table in a compacted form (1 line, formatted)
-local tShowStrat:table = {};
-table.insert(tShowStrat, "CONQUEST");
-table.insert(tShowStrat, "SCIENCE");
-table.insert(tShowStrat, "CULTURE");
-table.insert(tShowStrat, "RELIGION");
 function dshowpriorities(pTable:table, sComment:string)
 	local tOut:table = {};
 	--for strat,value in pairs(pTable) do table.insert(tOut, string.format("%s %4.1f :", strat, value)); end
@@ -216,96 +213,6 @@ end
 
 
 -- ===========================================================================
--- BOOST DATA AND HELPERS
--- ===========================================================================
-
-local sBoostClassCustom:string = "BOOST_TRIGGER_TURN_NUMBER";  -- the only one that doesn't crash the game
-
-local tBoostClasses:table = {};  -- indexed using code (cc, ccc or 99999); holds some specific type data and a table of active Boosts
-
--- traverse through Boosts, find custom ones and initialize tBoostTypes table accordingly
-function InitializeBoosts()
-	dprint("FUN InitializeBoosts()");
-	
-	for boost in GameInfo.Boosts() do
-		-- detect custom boost
-		if boost.BoostClass == sBoostClassCustom and boost.NumItems > 9999 and boost.NumItems < 100000 then  -- range is all 5-digits numbers
-			-- process custom boost
-			dprint("Found custom boost id", boost.NumItems);
-			-- find the class for code in boost.NumItems
-			local sBoostClass:string = "";
-			for class in GameInfo.REurBoostCodes() do
-				if class.BoostCode == boost.NumItems then sBoostClass = class.BoostClass; break; end
-			end
-			if sBoostClass == "" then
-				print("ERROR: cannot find class for boost code", boost.NumItems); return;
-			end
-			dprint("  ...its class is", sBoostClass);
-			-- get the class object; register if nil
-			local pBoostClass = tBoostClasses[sBoostClass];
-			if pBoostClass == nil then
-				-- first time encountered this class
-				dprint("  ...registering", boost.NumItems, sBoostClass);
-				pBoostClass = {};
-				pBoostClass.BoostClass = sBoostClass;
-				pBoostClass.BoostCode = boost.NumItems;
-				pBoostClass.Boosts = {};
-				tBoostClasses[sBoostClass] = pBoostClass;
-			end
-			-- register this specific boost
-			dprint("  ...adding boost (id,numitems2,tech,civic)", boost.BoostID, boost.NumItems2, boost.TechnologyType, boost.CivicType);
-			tBoostClasses[sBoostClass].Boosts[boost.BoostID] = boost;
-		end  -- custom boost
-	end  -- main loop
-end
-
--- helper - get currently active player ID (yeah, it's not there...)
-function GetActivePlayer()
-	for _,player in ipairs(Game.GetPlayers()) do
-		if player:IsTurnActive() then return player:GetID(); end
-	end
-	print("ERROR: no player is active");
-	return -1;
-end
-
--- helper - can this player receive a boost? must be Alive and Major
-function IsPlayerBoostable(ePlayerID:number)
-	local pPlayer = Players[ePlayerID];
-	if pPlayer == nil then return false; end
-	return pPlayer:IsAlive() and pPlayer:IsMajor();
-end
-
--- helper - check if we need to proces a specific boost (an object from Boosts table)
-function HasBoostBeenTriggered(ePlayerID:number, pBoost:table)
-	dprint("FUN HasBoostBeenTriggered() (player,id,tech,civic)",ePlayerID,pBoost.BoostID,pBoost.TechnologyType,pBoost.CivicType);
-	if pBoost.TechnologyType ~= nil then 
-		--dprint("  ...checking (tech)", pBoost.TechnologyReference.Index);
-		return Players[ePlayerID]:GetTechs():HasBoostBeenTriggered( pBoost.TechnologyReference.Index );
-	end
-	if pBoost.CivicType ~= nil then
-		--dprint("  ...checking (civic)", pBoost.CivicReference.Index);
-		return Players[ePlayerID]:GetCulture():HasBoostBeenTriggered( pBoost.CivicReference.Index );
-	end
-	print("ERROR: no tech nor civic attached to boost, no further processing required", pBoost.BoostID);
-	return true;  -- so we we won't run any further processing
-end
-
--- main function to actually trigger a boost
-function TriggerBoost(ePlayerID:number, pBoost:table)
-	dprint("FUN TriggerBoost(player,id,tech,civic)",ePlayerID,pBoost.BoostID,pBoost.TechnologyType,pBoost.CivicType);
-	if pBoost.TechnologyType ~= nil then 
-		dprint("  ...triggering (tech)", pBoost.TechnologyReference.Index);
-		Players[ePlayerID]:GetTechs():TriggerBoost( pBoost.TechnologyReference.Index );
-	end
-	if pBoost.CivicType ~= nil then
-		dprint("  ...triggering (civic)", pBoost.CivicReference.Index);
-		Players[ePlayerID]:GetCulture():TriggerBoost( pBoost.CivicReference.Index );
-	end
-	dprint("  ...checking results:", HasBoostBeenTriggered(ePlayerID, pBoost));
-end
-
-
--- ===========================================================================
 -- BOOST CLASS FUNCTIONS
 -- ===========================================================================
 
@@ -418,32 +325,6 @@ function CountCityTilesLake(tPlots:table)
 end
 
 
-
-------------------------------------------------------------------------------
--- Helpers for checking City States
-------------------------------------------------------------------------------
-
--- IsMinor() is not available in Gameplay context!
--- see also CivilizationLevels table
-function PlayerIsMinor(ePlayerID:number)
-	if PlayerConfigurations[ePlayerID] == nil then return false; end
-	return PlayerConfigurations[ePlayerID]:GetCivilizationLevelTypeName() == "CIVILIZATION_LEVEL_CITY_STATE";
-end
-
--- get City State category (cultural, industrial, etc.)
--- this is tricky - this info is in TypeProperties table attached to CIVILIZATION_ type
-function GetCityStateCategory(ePlayerID:number)
-	if PlayerConfigurations[ePlayerID] == nil then print("ERROR: GetCityStateCategory cannot get configuration for", ePlayerID); return "(error)"; end
-	local sCivilizationType:string = PlayerConfigurations[ePlayerID]:GetCivilizationTypeName();
-	for row in GameInfo.TypeProperties() do
-		if row.Type == sCivilizationType and row.Name == "CityStateCategory" then return row.Value; end
-	end
-	print("ERROR: GetCityStateCategory cannot find category for", sCivilizationType);
-	return "(error)";
-end
-
-
-
 -- ===========================================================================
 -- HELPERS
 -- ===========================================================================
@@ -495,6 +376,25 @@ function PlayerGetNumCivsConverted(ePlayerID:number)
 	return iNumCivsConverted;
 end
 
+-- IsMinor() is not available in Gameplay context!
+-- see also CivilizationLevels table
+function PlayerIsMinor(ePlayerID:number)
+	if PlayerConfigurations[ePlayerID] == nil then return false; end
+	return PlayerConfigurations[ePlayerID]:GetCivilizationLevelTypeName() == "CIVILIZATION_LEVEL_CITY_STATE";
+end
+
+-- get City State category (cultural, industrial, etc.)
+-- this is tricky - this info is in TypeProperties table attached to CIVILIZATION_ type
+function GetCityStateCategory(ePlayerID:number)
+	if PlayerConfigurations[ePlayerID] == nil then print("ERROR: GetCityStateCategory cannot get configuration for", ePlayerID); return "(error)"; end
+	local sCivilizationType:string = PlayerConfigurations[ePlayerID]:GetCivilizationTypeName();
+	for row in GameInfo.TypeProperties() do
+		if row.Type == sCivilizationType and row.Name == "CityStateCategory" then return row.Value; end
+	end
+	print("ERROR: GetCityStateCategory cannot find category for", sCivilizationType);
+	return "(error)";
+end
+
 
 -- ===========================================================================
 -- CORE FUNCTIONS
@@ -523,10 +423,11 @@ function InitializeData()
 			PlayerID = playerID,
 			LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName(),
 			LeaderName = Locale.Lookup(PlayerConfigurations[playerID]:GetLeaderName()),
-			Dirty = true,
+			--Dirty = true,
+			TurnRefresh = -1, -- turn number when was it refreshed last time
 			ActiveStrategy = "NONE",
-			NumTurnsActive = 0,
-			Data = {}, -- this will be refreshed whenever Dirty is true
+			--NumTurnsActive = 0,
+			Data = {}, -- this will be refreshed whenever needed, but only once per turn
 			Stored = {}, -- this will be stored between turns (persistent) and eventually perhaps in the save file
 		};
 		tData[playerID] = data;
@@ -585,7 +486,7 @@ Event functions
 -- This function gathers data specific for a player that can be reused in many places, like Military Strength, Science Positions, Tourism, etc.
 -- all data is stored in tData[player].Data
 function RefreshPlayerData(data:table)
-	print("FUN RefreshPlayerData", data.PlayerID, data.LeaderType);
+	print(Game.GetCurrentGameTurn(), "FUN RefreshPlayerData", data.PlayerID, data.LeaderType);
 	
 	local ePlayerID:number = data.PlayerID;
 	local pPlayer:table = Players[ePlayerID];
@@ -608,7 +509,7 @@ function RefreshPlayerData(data:table)
 	};
 	
 	-- elapsed turns with game speed scaling
-	tNewData.ElapsedTurns = (Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn()) * GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier / 100.0;
+	tNewData.ElapsedTurns = (Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn()) * 100 / GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
 	
 	-- gather IDs and infos of major civs met
 	local pPlayerDiplomacy:table = pPlayer:GetDiplomacy();
@@ -636,41 +537,11 @@ function RefreshPlayerData(data:table)
 	--dshowrectable(data.Data);
 end	
 
-	--[[
-	-- TESTING DISPLAY VARIOUS DATA AND COMPARE WITH OTHERS
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer ~= nil and pPlayer:IsAlive() and pPlayer:IsMajor()) then return; end
-	local iTurn:number = Game.GetCurrentGameTurn();
-	local sBegin:string = string.format("RST %3d %2d", iTurn, ePlayerID);
-	-- get us first
-	local sEra:string       = sBegin..string.format(" era  , %4d,", pPlayer:GetEra());
-	local sScore:string     = sBegin..string.format(" score, %4d,", pPlayer:GetScore());
-	local sTechNum:string   = sBegin..string.format(" techs, %4d,", RST.GetPlayerNumTechsResearched(ePlayerID));
-	local sTechYield:string = sBegin..string.format(" scien, %4.1f,", pPlayer:GetTechs():GetScienceYield());
-	local sMilStr:string    = sBegin..string.format(" milit, %4d,", RST.GetPlayerMilitaryStrength(ePlayerID));
-	local sMilStrNoT:string = sBegin..string.format(" milwt, %4d,", RST.GetPlayerMilitaryStrengthWithoutTreasury(ePlayerID));
-	-- now add all others for comparison
-	for _,player in pairs(PlayerManager.GetAlive()) do
-		sEra       = sEra..string.format(" %4d,", player:GetEra());
-		sScore     = sScore..string.format(" %4d,", player:GetScore());
-		sTechNum   = sTechNum..string.format(" %4d,", RST.GetPlayerNumTechsResearched(player:GetID()));
-		sTechYield = sTechYield..string.format(" %4.1f,", player:GetTechs():GetScienceYield());
-		sMilStr    = sMilStr..string.format(" %4d,", RST.GetPlayerMilitaryStrength(player:GetID()));
-		sMilStrNoT = sMilStrNoT..string.format(" %4d,", RST.GetPlayerMilitaryStrengthWithoutTreasury(player:GetID()));
-	end
-	print(sEra);
-	print(sScore);
-	print(sTechNum);
-	print(sTechYield);
-	print(sMilStr);
-	print(sMilStrNoT);
-	--]]
-
 
 ------------------------------------------------------------------------------
 -- Gather generic data like Leader, Policies, Beliefs, etc
 function GetGenericPriorities(data:table)
-	print("FUN GetGenericPriorities", data.PlayerID, data.LeaderType);
+	print(Game.GetCurrentGameTurn(), "FUN GetGenericPriorities", data.PlayerID, data.LeaderType);
 	
 	local ePlayerID:number = data.PlayerID;
 	local pPlayer:table = Players[ePlayerID];
@@ -761,29 +632,15 @@ function ProcessGeographicData(ePlayerID:number)
 	print("FUN ProcessGeographicData", ePlayerID);
 end
 
-------------------------------------------------------------------------------
--- Gather all data needed to guess what others are doing
-function RefreshGuessData(ePlayerID:number)
-	print("FUN RefreshGuessData", ePlayerID);
-end
-
 
 ------------------------------------------------------------------------------
--- Gather all data needed to guess what others are doing
-function GuessOtherPlayersActiveStrategy(data:table)
-end
-
-
-
-
-------------------------------------------------------------------------------
--- TODO functions to check if a player is close to a victory
+-- functions to check if a player is close to a victory
 -- check Game.GetVictoryProgressForPlayer - maybe it could be easier to use? - NOT EXISTS
 
 function PlayerIsCloseToConquestVictory(ePlayerID:number)
 	--print("FUN PlayerIsCloseToConquestVictory", ePlayerID);
 	-- check for number of all capitals taken vs. total major players
-	print( "close to conquest? player", ePlayerID, "capitals, all players", RST.PlayerGetNumCapturedCapitals(ePlayerID), PlayerManager.GetWasEverAliveMajorsCount());
+	--print( "close to conquest? player", ePlayerID, "capitals, all players", RST.PlayerGetNumCapturedCapitals(ePlayerID), PlayerManager.GetWasEverAliveMajorsCount());
 	return ( RST.PlayerGetNumCapturedCapitals(ePlayerID) / (PlayerManager.GetWasEverAliveMajorsCount()-1) ) > 0.6; -- size 4 after 2, size 6 after 3, size 8 after 5, size 10 after 6, size 12 after 7
 end
 
@@ -798,7 +655,7 @@ function PlayerGetNumProjectsSpaceRace(ePlayerID:number)
 			iNum = iNum + RST.PlayerGetNumProjectsAdvanced(ePlayerID, row.Index);
 		end
 	end
-	print("space race player, num/tot", ePlayerID, iNum, iTot);
+	--print("space race player, num/tot", ePlayerID, iNum, iTot);
 	return iNum;
 end
 
@@ -809,14 +666,14 @@ end
 
 function PlayerIsCloseToCultureVictory(ePlayerID:number)
 	--print("FUN PlayerIsCloseToCultureVictory", ePlayerID);
-	print("close to culture? player", ePlayerID, "cultural progress", RST.PlayerGetCultureVictoryProgress(ePlayerID));
+	--print("close to culture? player", ePlayerID, "cultural progress", RST.PlayerGetCultureVictoryProgress(ePlayerID));
 	return RST.PlayerGetCultureVictoryProgress(ePlayerID) > 60; -- it is in % (0..100)
 end
 
 function PlayerIsCloseToReligionVictory(ePlayerID:number)
 	--print("FUN PlayerIsCloseToReligionVictory", ePlayerID);
 	-- similar condition as for conquest
-	print("close to religion? player", ePlayerID, "converted, all civs", PlayerGetNumCivsConverted(ePlayerID), PlayerManager.GetWasEverAliveMajorsCount());
+	--print("close to religion? player", ePlayerID, "converted, all civs", PlayerGetNumCivsConverted(ePlayerID), PlayerManager.GetWasEverAliveMajorsCount());
 	return PlayerGetNumCivsConverted(ePlayerID) / PlayerManager.GetWasEverAliveMajorsCount() > 0.6 -- size 4 after 3, size 6 after 4, size 8 after 5, size 10 after 7, size 12 after 8
 end
 
@@ -908,7 +765,7 @@ function GetPriorityConquest(data:table)
 	end
 	-- increase priority by desperate factor
 	iPriority = iPriority + iPriorityDangerPlayers * data.Data.Era;
-	print("iPriorityDangerPlayers", iPriorityDangerPlayers, "priority=", iPriority);
+	if iPriorityDangerPlayers > 0 then print("iPriorityDangerPlayers", iPriorityDangerPlayers, "priority=", iPriority); end
 	
 	-- cramped factor - checks for all plots' ownership but it is cheating - use cities instead (available in deal screen)
 	-- HNT: this can be used for Defense also - if we lack with cities, we need better defense
@@ -933,7 +790,7 @@ function GetPriorityConquest(data:table)
 		end -- for
 	end -- 0 nukes
 	
-	print("GetPriorityConquest:", iPriority);
+	--print("GetPriorityConquest:", iPriority);
 	return iPriority;
 end
 
@@ -952,7 +809,7 @@ function GetPriorityScience(data:table)
 	-- if I already completed some projects I am very likely to follow through
 	local iSpaceRaceProjects:number = PlayerGetNumProjectsSpaceRace(ePlayerID);
 	iPriority = iPriority + iSpaceRaceProjects * GlobalParameters.RST_SCIENCE_PROJECT_WEIGHT;
-	print("...space race projects", iSpaceRaceProjects, "priority=", iPriority);
+	if iSpaceRaceProjects > 0 then print("...space race projects", iSpaceRaceProjects, "priority=", iPriority); end
 	
 	-- Add in our base science value.
 	--iPriority = iPriority + pPlayer:GetTechs():GetScienceYield() * GlobalParameters.RST_SCIENCE_YIELD_WEIGHT / 100.0;
@@ -999,7 +856,7 @@ function GetPriorityScience(data:table)
 	end
 	
 	
-	print("GetPriorityScience:", iPriority);
+	--print("GetPriorityScience:", iPriority);
 	return iPriority;
 end
 
@@ -1062,7 +919,7 @@ function GetPriorityCulture(data:table)
 	
 	-- PICKLE here: no holding back! what could be the negative?
 	
-	print("GetPriorityCulture:", iPriority);
+	--print("GetPriorityCulture:", iPriority);
 	return iPriority;
 end
 
@@ -1145,7 +1002,7 @@ function GetPriorityReligion(data:table)
 		end
 	end
 	
-	print("GetPriorityReligion:", iPriority);
+	--print("GetPriorityReligion:", iPriority);
 	return iPriority;
 end
 
@@ -1178,7 +1035,7 @@ end
 -- Base Priority looks at Personality Flavors (0 - 10) and multiplies * the Flavors attached to a Grand Strategy (0-10),
 -- so expect a number between 0 and 100 back from this
 function EstablishStrategyBasePriority(data:table)
-	--print("FUN EstablishStrategyBasePriority", data.PlayerID, data.LeaderType);
+	print(Game.GetCurrentGameTurn(), "FUN EstablishStrategyBasePriority", data.PlayerID, data.LeaderType);
 	data.Priorities = PriorityTableNew();
 	--if tPriorities["BasePriority"] == nil then
 		--print("WARNING: BasePriority table not defined."); return;
@@ -1188,7 +1045,7 @@ function EstablishStrategyBasePriority(data:table)
 	end
 	-- multiply Leader flavors by base priority weight
 	PriorityTableAdd(data.Priorities, tPriorities[data.LeaderType].Priorities);
-	PriorityTableMultiply(data.Priorities, GlobalParameters.RST_STRATEGY_LEADER_WEIGHT);
+	PriorityTableMultiply(data.Priorities, GlobalParameters.RST_WEIGHT_LEADER);
 	--print("...base priorities for leader", data.LeaderName);
 	dshowpriorities(data.Priorities, "*** base priorities "..data.LeaderType);
 	
@@ -1206,32 +1063,28 @@ end
 
 
 ------------------------------------------------------------------------------
--- Main function, do all pre-checks so others won't have to
+-- Main function
 function RefreshAndProcessData(ePlayerID:number)
-	print("FUN RefreshAndProcessData", ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "FUN RefreshAndProcessData", ePlayerID);
+	
+	-- do all pre-checks so others won't have to
 	local pPlayer:table = Players[ePlayerID];
 	if not (pPlayer ~= nil and pPlayer:IsAlive() and pPlayer:IsMajor()) then return; end
-	local data:table = tData[ePlayerID];
-	-- check if data needs to be refreshed
-	if not data.Dirty then return; end
 	
-	-- Only run this on turns we need it
-	if data.ActiveStrategy ~= "NONE" and data.NumTurnsActive > 0 then
-		data.NumTurnsActive = data.NumTurnsActive + 1;
-		print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "active for", data.NumTurnsActive, "turns");
-		if data.NumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE then -- AI_GRAND_STRATEGY_NUM_TURNS_STRATEGY_MUST_BE_ACTIVE -- note to self: it must scaled by GameSpeed
-			data.NumTurnsActive = 0;
-			print(Game.GetCurrentGameTurn(), data.LeaderType, "...strategy RESET");
-		end
-		return;
+	-- check if data needs to be refreshed
+	local data:table = tData[ePlayerID];
+	--if not data.Dirty then return; end
+	if data.TurnRefresh == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
+
+	-- active turns with game speed scaling
+	local iNumTurnsActive:number = (Game.GetCurrentGameTurn() - data.TurnRefresh) * 100 / GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
+	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "turn refresh", data.TurnRefresh, "active for", iNumTurnsActive, "turns");
+	if not( data.TurnRefresh == -1 or data.ActiveStrategy == "NONE" or iNumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE ) then
+		return
 	end
 	
+	-- we should go here if: TurnRefresh == -1, ActiveStrategy == "NONE", or current strategy needs to be refreshed after being active for X turns
 	RefreshPlayerData(data);
-	
-	GuessOtherPlayersActiveStrategy(data);
-	
-	-- reset priorities
-	--data.Priorities = PriorityTableNew();
 	
 	-- Base Priority looks at Personality Flavors (0 - 10) and multiplies * the Flavors attached to a Grand Strategy (0-10),
 	-- so expect a number between 0 and 100 back from this
@@ -1260,8 +1113,10 @@ function RefreshAndProcessData(ePlayerID:number)
 	-- int MaxTurn = GC.getGame().getEstimateEndTurn();
 	local iMaxTurn:number = RST.GameGetMaxGameTurns();
 	local iCurrentTurn:number = Game.GetCurrentGameTurn();
-	dprint("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, iCurrentTurn * 2 / iMaxTurn);
-	PriorityTableMultiply(tSpecificPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
+	local fTurnAdjust:number = GlobalParameters.RST_STRATEGY_TURN_ADJUST_START + (GlobalParameters.RST_STRATEGY_TURN_ADJUST_STOP - GlobalParameters.RST_STRATEGY_TURN_ADJUST_START) * iCurrentTurn / iMaxTurn;
+	dprint("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, fTurnAdjust);
+	--PriorityTableMultiply(tSpecificPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
+	PriorityTableMultiply(tSpecificPriorities, fTurnAdjust/100.0); -- it scales lineary from _START to _STOP value during the game
 	--print("...specific and generic priorities after turn adjustment for leader", data.LeaderName);
 	dshowpriorities(tSpecificPriorities, "specific & generic after turn adjust");
 	
@@ -1314,16 +1169,32 @@ function RefreshAndProcessData(ePlayerID:number)
 		if value > iBestPriority then
 			iBestPriority = value;
 			data.ActiveStrategy = strat;
-			data.NumTurnsActive = 0;
+			--data.NumTurnsActive = 0;
 		end
 	end
 	
 	-- finish
-	if data.ActiveStrategy ~= "NONE" then
-		data.NumTurnsActive = data.NumTurnsActive + 1
+	--if data.ActiveStrategy ~= "NONE" then
+		--data.NumTurnsActive = data.NumTurnsActive + 1
+	--end
+	--data.Dirty = false; -- data is refreshed
+	data.TurnRefresh = Game.GetCurrentGameTurn(); -- data is refreshed
+	print(Game.GetCurrentGameTurn(), data.LeaderType, "...selected", data.ActiveStrategy, "priority", iBestPriority);
+	
+	-- log strategy to Log.lua
+	if bOptionLogStrat then
+		local tLog:table = {"RSTSTRAT"};
+		table.insert(tLog, tostring(Game.GetCurrentGameTurn()));
+		table.insert(tLog, data.LeaderType);
+		table.insert(tLog, string.format("%s @ %4.1f", data.ActiveStrategy, iBestPriority)); -- guessed strategy
+		for _,strat in ipairs(tShowStrat) do -- others for reference, only ones defined in tShowStrat, also include nerfs!
+			local tStr:string = string.format("%s @ %4.1f", strat, data.Priorities[strat]);
+			if tNerfFactor[strat] ~= 0 then tStr = tStr..string.format(" (%4.1f)", tNerfFactor[strat]); end
+			table.insert(tLog, tStr);
+		end 
+		print(table.concat(tLog, ", "));
 	end
-	data.Dirty = false; -- data is refreshed
-	print(Game.GetCurrentGameTurn(), data.LeaderType, "...selected", data.ActiveStrategy, "priority", iBestPriority, "turns", data.NumTurnsActive);
+	
 	--dshowrectable(tData[ePlayerID]); -- show all info
 end
 
@@ -1504,7 +1375,7 @@ end
 
 ------------------------------------------------------------------------------
 function GuessOtherPlayerStrategy(data:table, eOtherID:number)
-	print("FUN GuessOtherPlayerStrategy", data.PlayerID, eOtherID);
+	print(Game.GetCurrentGameTurn(), "FUN GuessOtherPlayerStrategy", data.PlayerID, eOtherID);
 	
 	local sLeaderType:string = PlayerConfigurations[eOtherID]:GetLeaderTypeName();
 	-- get leader but with 66% factor
@@ -1516,7 +1387,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 		PriorityTableAdd(tLeaderPriorities, tPriorities[sLeaderType].Priorities);
 	end
 	-- multiply Leader flavors by base priority weight
-	PriorityTableMultiply(tLeaderPriorities, (2/3) * GlobalParameters.RST_STRATEGY_LEADER_WEIGHT);
+	PriorityTableMultiply(tLeaderPriorities, (2/3) * GlobalParameters.RST_WEIGHT_LEADER);
 	dshowpriorities(tLeaderPriorities, "*** leader priorities "..sLeaderType);
 	
 	-- the later the game the greater the chance
@@ -1597,6 +1468,18 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 		end
 	end
 	print(Game.GetCurrentGameTurn(), sLeaderType, "...guessed", sGuessStrategy, "priority", iBestPriority);
+	
+	-- log guesses to Log.lua
+	if bOptionLogGuess then
+		local tLog:table = {"RSTGUESS"};
+		table.insert(tLog, tostring(Game.GetCurrentGameTurn()));
+		table.insert(tLog, data.LeaderType); -- who is guessing
+		table.insert(tLog, sLeaderType); -- whom to guess
+		table.insert(tLog, string.format("%s @ %4.1f", sGuessStrategy, iBestPriority)); -- guessed strategy
+		for _,strat in ipairs(tShowStrat) do table.insert(tLog, string.format("%s @ %4.1f", strat, tSumPriorities[strat])); end -- others for reference, only ones defined in tShowStrat
+		print(table.concat(tLog, ", "));
+	end
+	
 	return sGuessStrategy;
 end
 
@@ -1702,41 +1585,85 @@ end
 -- PlayerTurnActivated = { "player", "bIsFirstTime" },
 -- TESTING MODE - it should be deactivated later, there is no need to call this here 
 function OnPlayerTurnActivated( ePlayerID:number, bIsFirstTime:boolean)
-	--print("FUN OnPlayerTurnActivated", ePlayerID, bIsFirstTime);
+	print("FUN OnPlayerTurnActivated", ePlayerID, bIsFirstTime);
 	RefreshAndProcessData(ePlayerID);
 end
 
 ------------------------------------------------------------------------------
 -- PlayerTurnDeactivated = { "player" },
 function OnPlayerTurnDeactivated(ePlayerID:number)
-	--print("FUN OnPlayerTurnDeactivated", ePlayerID);
+	print("FUN OnPlayerTurnDeactivated", ePlayerID);
 	local pPlayer:table = Players[ePlayerID];
 	if not (pPlayer ~= nil and pPlayer:IsAlive() and pPlayer:IsMajor()) then return; end
 	tData[ePlayerID].Dirty = true; -- default mode - later can be changed for specific events (e.g. Policy changed, gov changed, etc.)
 end
 
 
--- ===========================================================================
+------------------------------------------------------------------------------
+-- StrategyConditions calls via 'Call Lua Function'
 -- Called separately for each player, including Minors, Free Cities and Barbarians
 -- For player X it is called BEFORE PlayerTurnActivated(X)
 -- For a Human, it is called AFTER LocalPlayerTurnBegin, but before PlayerTurnActivated(0)
+------------------------------------------------------------------------------
+
+function ActiveStrategyConquest(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyConquest", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	RefreshAndProcessData(ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "CONQUEST");
+	return tData[ePlayerID].ActiveStrategy == "CONQUEST";
+end
+GameEvents.ActiveStrategyConquest.Add(ActiveStrategyConquest);
+
+function ActiveStrategyScience(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyScience", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	RefreshAndProcessData(ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "SCIENCE");
+	return tData[ePlayerID].ActiveStrategy == "SCIENCE";
+end
+GameEvents.ActiveStrategyScience.Add(ActiveStrategyScience);
+
+function ActiveStrategyCulture(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyCulture", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	RefreshAndProcessData(ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "CULTURE");
+	return tData[ePlayerID].ActiveStrategy == "CULTURE";
+end
+GameEvents.ActiveStrategyCulture.Add(ActiveStrategyCulture);
+
+function ActiveStrategyReligion(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyReligion", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	RefreshAndProcessData(ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "RELIGION");
+	return tData[ePlayerID].ActiveStrategy == "RELIGION";
+end
+GameEvents.ActiveStrategyReligion.Add(ActiveStrategyReligion);
+
 function CheckTurnNumber(iPlayerID:number, iThreshold:number)
-	print("FUN CheckTurnNumber", iPlayerID, iThreshold);
-	print("Turn number is", Game.GetCurrentGameTurn());
-	--RefreshAndProcessData(ePlayerID);
+	print(Game.GetCurrentGameTurn(), "FUN CheckTurnNumber", iPlayerID, iThreshold);
 	return Game.GetCurrentGameTurn() >= iThreshold;
 end
 GameEvents.CheckTurnNumber.Add(CheckTurnNumber);
 
 
--- ===========================================================================
+------------------------------------------------------------------------------
 function Initialize()
 	--print("FUN Initialize");
 	
 	InitializeData();
+	
+	-- disable - StrategyConditions are called every turn, so it will auto-refresh when needed
+	--Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
+	--Events.PlayerTurnDeactivated.Add( OnPlayerTurnDeactivated );  -- main event for any player end (including minors)
 
 	--Events.LoadScreenClose.Add ( OnLoadScreenClose );   -- fires when Game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete
-	Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
 	-- these events fire AFTER custom PlayerTurnActivated()
 	--Events.CityProductionCompleted.Add( OnCityProductionCompleted );
 	--Events.CityProjectCompleted.Add( OnCityProjectCompleted );
@@ -1789,7 +1716,6 @@ function Initialize()
 	-- HERE YOU PLAY GAME AS HUMAN
 	-- initialize events - finishing events
 	--Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );  -- fires only for HUMANS
-	Events.PlayerTurnDeactivated.Add( OnPlayerTurnDeactivated );  -- main event for any player end (including minors)
 	--Events.PhaseEnd.Add( OnPhaseEnd );  -- engine?
 	--Events.TurnEnd.Add( OnTurnEnd );  -- fires ONCE at end of turn
 	--Events.EndTurnDirty.Add( OnEndTurnDirty );  -- engine event, triggers very often

@@ -8,21 +8,34 @@
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '1');
 
+-- configuration
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
+
+
+-- ===========================================================================
 -- Parameters
+-- ===========================================================================
+
 INSERT INTO GlobalParameters (Name, Value) VALUES
+-- weights
+('RST_WEIGHT_LEADER', 20), -- weight of the leader's base priority
 ('RST_WEIGHT_POLICY', 2), -- how much each slotted policy weights
 ('RST_WEIGHT_WONDER', 2), -- how much each wonder weights
 ('RST_WEIGHT_GOVERNMENT', 4), -- how much each government weights
 ('RST_WEIGHT_MINOR', 3), -- how much each suzerained city state weights
 ('RST_WEIGHT_BELIEF', 2), -- how much each earned belief weights
-('RST_STRATEGY_LEADER_WEIGHT', 20), -- weight of the leader's base priority
+-- generic
 ('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
-('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 3), -- how many turns a strategy must be active before checking for new priorities, def. 10
+('RST_STRATEGY_TURN_ADJUST_START', 25), -- [x100] specific and generic priorities scale lineary, value at turn 0
+('RST_STRATEGY_TURN_ADJUST_STOP', 200), -- [x100] specific and generic priorities scale lineary, value at the last turn
+('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 5), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
 ('RST_STRATEGY_BETTER_THAN_US_NERF', -33), -- [x100] each player better than us decreases our priority by this percent
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 30), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
+-- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -100), -- if nobody met, then decrease the priority, def. -100
 ('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 50), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
@@ -32,17 +45,20 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
 ('RST_CONQUEST_LESS_CITIES_WEIGHT', 15), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
+-- science
 ('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
 ('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
 ('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
 ('RST_SCIENCE_PROJECT_WEIGHT', 60), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 30), -- adds if player has a spaceport
+-- culture
 ('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 ('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
 ('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
 ('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more
 ('RST_CULTURE_PROGRESS_EXPONENT', 4), -- [x100], cultural progress formula, exponent => 0.04 speeds up after 60 and goes high after 80
 ('RST_CULTURE_PROGRESS_MULTIPLIER', 8), -- cultural progress formula, multiplier; 60 => 90, 70 => 130, 80 => 200, 90 => 300
+-- religion
 ('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
 ('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 120), -- how does our situation compare to others, -100..100 and more
 ('RST_RELIGION_RELIGION_WEIGHT', 30), -- founded religion
@@ -51,6 +67,36 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', -100); -- if nobody met, then decrease the priority, def. -100
+
+
+-- ===========================================================================
+-- Strategies
+-- ===========================================================================
+
+INSERT INTO Types (Type, Kind) VALUES
+('RST_STRATEGY_CONQUEST', 'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_SCIENCE',  'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_CULTURE',  'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_RELIGION', 'KIND_VICTORY_STRATEGY');
+
+INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
+('RST_STRATEGY_CONQUEST', 'VICTORY_CONQUEST',   1),
+('RST_STRATEGY_SCIENCE',  'VICTORY_TECHNOLOGY', 1),
+('RST_STRATEGY_CULTURE',  'VICTORY_CULTURE',    1),
+('RST_STRATEGY_RELIGION', 'VICTORY_RELIGIOUS',  1);
+ 
+-- forbid non-majors first - thery are called in the order as registered in DB, so this prevents from unnecessary calls on the 1st turn
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, Disqualifier) VALUES
+('RST_STRATEGY_CONQUEST', 'Is Not Major', 1),
+('RST_STRATEGY_SCIENCE',  'Is Not Major', 1),
+('RST_STRATEGY_CULTURE',  'Is Not Major', 1),
+('RST_STRATEGY_RELIGION', 'Is Not Major', 1);
+
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue) VALUES
+('RST_STRATEGY_CONQUEST','Call Lua Function', 'ActiveStrategyConquest', 0),
+('RST_STRATEGY_SCIENCE', 'Call Lua Function', 'ActiveStrategyScience',  0),
+('RST_STRATEGY_CULTURE', 'Call Lua Function', 'ActiveStrategyCulture',  0),
+('RST_STRATEGY_RELIGION','Call Lua Function', 'ActiveStrategyReligion', 0);
 
 /*
 INSERT INTO Types (Type, Kind) VALUES
@@ -62,47 +108,16 @@ INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
 ('STRATEGY_TEST_TURN_3', NULL, 1),
 ('STRATEGY_TEST_TURN_5', NULL, 1),
 ('STRATEGY_TEST_TURN_7', NULL, 1);
- */
 
---INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue) VALUES
---('STRATTEST_TURN_3','Call Lua Function','CheckTurnNumber',3),
---('STRATTEST_TURN_5','Call Lua Function','CheckTurnNumber',5),
---('STRATTEST_TURN_7','Call Lua Function','CheckTurnNumber',7);
-
-
---Good Culture City
---Good Faith City
---Good Tech City
-/*
-INSERT INTO StrategyConditions (StrategyType, ConditionFunction, ThresholdValue) VALUES
-('STRATTEST_Has_Tech_Lead_15', 'Has Tech Lead', 15),
-('STRATTEST_Has_Tech_Lead_25', 'Has Tech Lead', 25),
-('STRATTEST_Has_Tech_Lead_50', 'Has Tech Lead', 50),
-('STRATTEST_Leads_Military_15', 'Leads Military', 15),
-('STRATTEST_Leads_Military_25', 'Leads Military', 25),
-('STRATTEST_Leads_Military_50', 'Leads Military', 50),
-('STRATTEST_Leads_Score_15', 'Leads Score', 15), -- 1/8
-('STRATTEST_Leads_Score_25', 'Leads Score', 25), -- 2/8
-('STRATTEST_Leads_Score_50', 'Leads Score', 50), -- 4/8
---('STRATTEST_Next_Lower_Score_20', 'Next Lower Score', 20),
---('STRATTEST_Next_Lower_Score_40', 'Next Lower Score', 40),
---('STRATTEST_Next_Lower_Score_60', 'Next Lower Score', 60);
-('STRATTEST_Is_Classical_0', 'Is Classical', 0),
-('STRATTEST_Is_Classical_1', 'Is Classical', 1),
-('STRATTEST_Is_Medieval_0', 'Is Medieval', 0),
-('STRATTEST_Is_Medieval_1', 'Is Medieval', 1);
-
-
-INSERT INTO Types (Type, Kind)
-SELECT StrategyType, 'KIND_VICTORY_STRATEGY'
-FROM StrategyConditions
-WHERE StrategyType LIKE 'STRATTEST%';
-
-INSERT INTO Strategies (StrategyType, NumConditionsNeeded)
-SELECT StrategyType, 1
-FROM StrategyConditions
-WHERE StrategyType LIKE 'STRATTEST%';
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue) VALUES
+('STRATEGY_TEST_TURN_3','Call Lua Function','CheckTurnNumber',3),
+('STRATEGY_TEST_TURN_5','Call Lua Function','CheckTurnNumber',5),
+('STRATEGY_TEST_TURN_7','Call Lua Function','CheckTurnNumber',7);
 */
+
+-- ===========================================================================
+-- Flavors
+-- ===========================================================================
 
 CREATE TABLE RSTFlavors (
 	ObjectType TEXT NOT NULL,
