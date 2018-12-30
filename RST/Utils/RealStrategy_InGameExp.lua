@@ -131,7 +131,7 @@ function PlayerHasOriginalCapital(ePlayerID:number)
 end
 
 -- Returns the Average num of Techs researched for all known Players in the game
-function GameGetAverageNumTechsResearched(ePlayerID:number, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
+function GameGetAverageNumTechsResearched(ePlayerID:number) --, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
 	--print("FUN GameGetAverageNumTechsResearched", ePlayerID, bIncludeMe, bIncludeOnlyKnown);
 	local iTotalTechs:number = 0;
 	local iNumAlivePlayers:number = 0;
@@ -148,7 +148,7 @@ function GameGetAverageNumTechsResearched(ePlayerID:number, bIncludeMe:boolean, 
 	return iNumAlivePlayers == 0 and 0 or iTotalTechs/iNumAlivePlayers;
 end
 
--- Returns the Average Military Might of all Players in the game
+-- Returns the Average Military Might of all known Players in the game
 function GameGetAverageMilitaryStrength(ePlayerID:number) --, bIncludeMe:boolean, bIncludeOnlyKnown:boolean)
 	--print("FUN GameGetAverageMilitaryStrength", ePlayerID); --, bIncludeMe, bIncludeOnlyKnown);
 	local iWorldMilitaryStrength:number = 0;
@@ -202,6 +202,11 @@ function PlayerHasSpaceport(ePlayerID:number)
 end
 
 -- wrapper
+function PlayerGetNumCitiesFollowingReligion(ePlayerID:number)
+	return Players[ePlayerID]:GetStats():GetNumCitiesFollowingReligion();
+end
+
+-- wrapper
 function PlayerGetTourism(ePlayerID:number)
 	return Players[ePlayerID]:GetStats():GetTourism();
 end
@@ -246,6 +251,7 @@ function Initialize()
 	ExposedMembers.RST.PlayerGetCultureVictoryProgress = PlayerGetCultureVictoryProgress;
 	ExposedMembers.RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
 	ExposedMembers.RST.PlayerHasSpaceport           = PlayerHasSpaceport;
+	ExposedMembers.RST.PlayerGetNumCitiesFollowingReligion = PlayerGetNumCitiesFollowingReligion;
 	ExposedMembers.RST.PlayerGetTourism             = PlayerGetTourism;
 	ExposedMembers.RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;
 	ExposedMembers.RST.PlayerGetNumBeliefsEarned    = PlayerGetNumBeliefsEarned;

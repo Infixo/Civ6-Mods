@@ -10,43 +10,45 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '1');
 
 -- Parameters
 INSERT INTO GlobalParameters (Name, Value) VALUES
-('RST_WEIGHT_POLICY', 3), -- how much each slotted policy weights
-('RST_WEIGHT_WONDER', 3), -- how much each wonder weights
-('RST_WEIGHT_GOVERNMENT', 5), -- how much each government weights
+('RST_WEIGHT_POLICY', 2), -- how much each slotted policy weights
+('RST_WEIGHT_WONDER', 2), -- how much each wonder weights
+('RST_WEIGHT_GOVERNMENT', 4), -- how much each government weights
 ('RST_WEIGHT_MINOR', 3), -- how much each suzerained city state weights
-('RST_WEIGHT_BELIEF', 3), -- how much each earned belief weights
+('RST_WEIGHT_BELIEF', 2), -- how much each earned belief weights
+('RST_STRATEGY_LEADER_WEIGHT', 20), -- weight of the leader's base priority
+('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 3), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
-('RST_STRATEGY_BETTER_THAN_US_NERF', 33), -- each player better than us decreases our priority by this percent
+('RST_STRATEGY_BETTER_THAN_US_NERF', -33), -- [x100] each player better than us decreases our priority by this percent
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 30), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
-('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -100), -- if nobody met, then decrease the priority, def. -100
 ('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 50), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
---('RST_CONQUEST_POWER_FIRST_TURN', 20), -- check for military strength only after this many turns, def. 60
 ('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 100), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 ('RST_CONQUEST_AT_WAR_PRIORITY', 20), -- conquest priority for each ongoing war with a major civ, def. 10
-('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 20), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
+('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
 ('RST_CONQUEST_LESS_CITIES_WEIGHT', 15), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
-('RST_SCIENCE_YIELD_WEIGHT', 15), -- [x100] how much each beaker weights
-('RST_SCIENCE_TECH_WEIGHT', 15), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
-('RST_SCIENCE_PROJECT_WEIGHT', 75), -- each completed space race project
-('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
-('RST_CULTURE_YIELD_WEIGHT', 10), -- [x100] how much culture yield is worth
+('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
+('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
+('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+('RST_SCIENCE_PROJECT_WEIGHT', 60), -- each completed space race project
+('RST_SCIENCE_HAS_SPACEPORT', 30), -- adds if player has a spaceport
+('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 ('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
---('RST_CULTURE_CIVIC_WEIGHT', 20), -- each civic we are ahead of average -- with civics it is difficult to be very ahead, and civics are limited, so each one is important - CAN'T USE - NOT AVAILABLE IN GAME
---('RST_CULTURE_MORE_TOURISTS_WEIGHT', 50), -- each civ we have surpassed in Tourists
+('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
+('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more
 ('RST_CULTURE_PROGRESS_EXPONENT', 4), -- [x100], cultural progress formula, exponent => 0.04 speeds up after 60 and goes high after 80
 ('RST_CULTURE_PROGRESS_MULTIPLIER', 8), -- cultural progress formula, multiplier; 60 => 90, 70 => 130, 80 => 200, 90 => 300
 ('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
-('RST_RELIGION_RELIGION_WEIGHT', 40), -- founded religion, pantheon gets half of it
-('RST_RELIGION_BELIEF_WEIGHT', 15), -- each belief earned increases the priority
-('RST_RELIGION_CONVERTED_WEIGHT', 50), -- each converted civ after 1 (I assume the 1st is us)
-('RST_RELIGION_INQUISITION_WEIGHT', -30), -- each inquisition launched by others decreases the priority
+('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 120), -- how does our situation compare to others, -100..100 and more
+('RST_RELIGION_RELIGION_WEIGHT', 30), -- founded religion
+--('RST_RELIGION_BELIEF_WEIGHT', 10), -- each belief earned increases the priority - they are already included in generic
+('RST_RELIGION_CONVERTED_WEIGHT', 60), -- each converted civ after 1 (I assume the 1st is us)
+('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', -100); -- if nobody met, then decrease the priority, def. -100
 
@@ -189,13 +191,13 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 			('POLICY_COLONIAL_TAXES', 'POLICY', 'ECONOMIC', 'CONQUEST', 4),
 ('POLICY_COLONIZATION', 'POLICY', 'ECONOMIC', 'SCIENCE', 2),	('POLICY_COLONIZATION', 'POLICY', 'ECONOMIC', 'CULTURE', 2),	('POLICY_COLONIZATION', 'POLICY', 'ECONOMIC', 'RELIGION', 2),	('POLICY_COLONIZATION', 'POLICY', 'ECONOMIC', 'CONQUEST', 2),
 			('POLICY_COMMUNICATIONS_OFFICE', 'POLICY', 'DIPLOMATIC', 'CONQUEST', 3),
-			
+			('POLICY_CONSCRIPTION', 'POLICY', 'MILITARY', 'CONQUEST', 3),
 			
 ('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'SCIENCE', 1),	('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'CULTURE', 2),	('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'RELIGION', 2),	('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'CONQUEST', 1),
 ('POLICY_CRAFTSMEN', 'POLICY', 'ECONOMIC', 'SCIENCE', 2),			('POLICY_CRAFTSMEN', 'POLICY', 'ECONOMIC', 'CONQUEST', 2),
 			('POLICY_CRYPTOGRAPHY', 'POLICY', 'DIPLOMATIC', 'CONQUEST', 1),
 			
-			
+			('POLICY_DISCIPLINE', 'POLICY', 'MILITARY', 'CONQUEST', 2),
 			
 ('POLICY_ECOMMERCE', 'POLICY', 'ECONOMIC', 'SCIENCE', 3),			
 			
@@ -274,7 +276,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 	('POLICY_RATIONALISM', 'POLICY', 'ECONOMIC', 'CULTURE', 7),		
 		('POLICY_RELIGIOUS_ORDERS', 'POLICY', 'ECONOMIC', 'RELIGION', 7),	
 			('POLICY_RESOURCE_MANAGEMENT', 'POLICY', 'ECONOMIC', 'CONQUEST', 6),
-			
+('POLICY_RETAINERS', 'POLICY', 'MILITARY', 'SCIENCE', 2),	('POLICY_RETAINERS', 'POLICY', 'MILITARY', 'CULTURE', 2),	('POLICY_RETAINERS', 'POLICY', 'MILITARY', 'RELIGION', 2),	
 		('POLICY_REVELATION', 'POLICY', 'GREAT_PERSON', 'RELIGION', 8),	
 ('POLICY_ROBBER_BARONS', 'POLICY', 'DARKAGE', 'SCIENCE', 4),			('POLICY_ROBBER_BARONS', 'POLICY', 'DARKAGE', 'CONQUEST', 4),
 			('POLICY_ROGUE_STATE', 'POLICY', 'DARKAGE', 'CONQUEST', 5),
