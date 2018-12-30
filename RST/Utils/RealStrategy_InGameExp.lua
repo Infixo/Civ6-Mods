@@ -217,6 +217,12 @@ function PlayerGetReligionTypeCreated(ePlayerID:number)
 end
 
 -- wrapper
+function PlayerHasReligion(ePlayerID:number)
+	local eReligionID:number = Players[ePlayerID]:GetReligion():GetReligionTypeCreated();
+	return eReligionID ~= -1 and eReligionID ~= GameInfo.Religions.RELIGION_PANTHEON.Index;
+end
+
+-- wrapper
 function PlayerGetNumBeliefsEarned(ePlayerID:number)
 	return Players[ePlayerID]:GetReligion():GetNumBeliefsEarned();
 end
@@ -251,6 +257,7 @@ function Initialize()
 	ExposedMembers.RST.PlayerGetCultureVictoryProgress = PlayerGetCultureVictoryProgress;
 	ExposedMembers.RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
 	ExposedMembers.RST.PlayerHasSpaceport           = PlayerHasSpaceport;
+	ExposedMembers.RST.PlayerHasReligion            = PlayerHasReligion;
 	ExposedMembers.RST.PlayerGetNumCitiesFollowingReligion = PlayerGetNumCitiesFollowingReligion;
 	ExposedMembers.RST.PlayerGetTourism             = PlayerGetTourism;
 	ExposedMembers.RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;

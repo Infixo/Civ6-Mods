@@ -20,18 +20,18 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1');
 INSERT INTO GlobalParameters (Name, Value) VALUES
 -- weights
 ('RST_WEIGHT_LEADER', 20), -- weight of the leader's base priority
-('RST_WEIGHT_POLICY', 2), -- how much each slotted policy weights
-('RST_WEIGHT_WONDER', 2), -- how much each wonder weights
-('RST_WEIGHT_GOVERNMENT', 4), -- how much each government weights
-('RST_WEIGHT_MINOR', 3), -- how much each suzerained city state weights
-('RST_WEIGHT_BELIEF', 2), -- how much each earned belief weights
+('RST_WEIGHT_POLICY', 3), -- how much each slotted policy weights
+('RST_WEIGHT_WONDER', 3), -- how much each wonder weights
+('RST_WEIGHT_GOVERNMENT', 6), -- how much each government weights
+('RST_WEIGHT_MINOR', 4), -- how much each suzerained city state weights
+('RST_WEIGHT_BELIEF', 3), -- how much each earned belief weights
 -- generic
 ('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
 ('RST_STRATEGY_TURN_ADJUST_START', 25), -- [x100] specific and generic priorities scale lineary, value at turn 0
 ('RST_STRATEGY_TURN_ADJUST_STOP', 200), -- [x100] specific and generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 5), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
-('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority
+('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority, random between 20..40
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
 ('RST_STRATEGY_BETTER_THAN_US_NERF', -33), -- [x100] each player better than us decreases our priority by this percent
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 30), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
@@ -46,23 +46,24 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_LESS_CITIES_WEIGHT', 15), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
 -- science
-('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
+--('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
 ('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
-('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+--('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
 ('RST_SCIENCE_PROJECT_WEIGHT', 60), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 30), -- adds if player has a spaceport
 -- culture
-('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
-('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
+--('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
+--('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
 ('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
 ('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more
 ('RST_CULTURE_PROGRESS_EXPONENT', 4), -- [x100], cultural progress formula, exponent => 0.04 speeds up after 60 and goes high after 80
 ('RST_CULTURE_PROGRESS_MULTIPLIER', 8), -- cultural progress formula, multiplier; 60 => 90, 70 => 130, 80 => 200, 90 => 300
 -- religion
-('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
-('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 120), -- how does our situation compare to others, -100..100 and more
+--('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
+('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
+('RST_RELIGION_CITIES_RATIO_MULTIPLIER', 50), -- number of cities following our religion, how does our situation compare to others, -100..100 and more
 ('RST_RELIGION_RELIGION_WEIGHT', 30), -- founded religion
---('RST_RELIGION_BELIEF_WEIGHT', 10), -- each belief earned increases the priority - they are already included in generic
 ('RST_RELIGION_CONVERTED_WEIGHT', 60), -- each converted civ after 1 (I assume the 1st is us)
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
@@ -73,6 +74,18 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- Strategies
 -- ===========================================================================
 
+-- remove old conditions, leave only relevant
+UPDATE Strategies SET NumConditionsNeeded = 1 WHERE StrategyType LIKE 'VICTORY_STRATEGY_%';
+DELETE FROM StrategyConditions WHERE StrategyType LIKE 'VICTORY_STRATEGY_%' AND ConditionFunction NOT IN ('Is Not Major'); --, 'Cannot Found Religion', 'Religion Destroyed');
+
+-- register new conditions
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue) VALUES
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'Call Lua Function', 'ActiveStrategyConquest', 0),
+('VICTORY_STRATEGY_SCIENCE_VICTORY',  'Call Lua Function', 'ActiveStrategyScience',  0),
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'Call Lua Function', 'ActiveStrategyCulture',  0),
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY','Call Lua Function', 'ActiveStrategyReligion', 0);
+
+/*
 INSERT INTO Types (Type, Kind) VALUES
 ('RST_STRATEGY_CONQUEST', 'KIND_VICTORY_STRATEGY'),
 ('RST_STRATEGY_SCIENCE',  'KIND_VICTORY_STRATEGY'),
@@ -97,7 +110,7 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 ('RST_STRATEGY_SCIENCE', 'Call Lua Function', 'ActiveStrategyScience',  0),
 ('RST_STRATEGY_CULTURE', 'Call Lua Function', 'ActiveStrategyCulture',  0),
 ('RST_STRATEGY_RELIGION','Call Lua Function', 'ActiveStrategyReligion', 0);
-
+*/
 /*
 INSERT INTO Types (Type, Kind) VALUES
 ('STRATEGY_TEST_TURN_3', 'KIND_VICTORY_STRATEGY'),
@@ -113,6 +126,41 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 ('STRATEGY_TEST_TURN_3','Call Lua Function','CheckTurnNumber',3),
 ('STRATEGY_TEST_TURN_5','Call Lua Function','CheckTurnNumber',5),
 ('STRATEGY_TEST_TURN_7','Call Lua Function','CheckTurnNumber',7);
+*/
+
+-- ===========================================================================
+-- AiLists
+-- ===========================================================================
+
+-- first, disconnect original strategies
+--DELETE FROM Strategy_Priorities WHERE StrategyType LIKE 'VICTORY_STRATEGY_%';
+
+-- first, reconnect original lists
+/*
+-- VICTORY_STRATEGY_CULTURAL_VICTORY
+CultureSensitivity
+CultureVictoryFavoredCommemorations
+CultureVictoryPseudoYields
+CultureVictoryYields
+-- VICTORY_STRATEGY_MILITARY_VICTORY
+MilitaryVictoryFavoredCommemorations
+MilitaryVictoryOperations
+MilitaryVictoryPseudoYields
+MilitaryVictoryYields
+-- VICTORY_STRATEGY_RELIGIOUS_VICTORY
+ReligiousVictoryBehaviors
+ReligiousVictoryDiplomacy
+ReligiousVictoryFavoredCommemorations
+ReligiousVictoryPseudoYields
+ReligiousVictoryYields
+-- VICTORY_STRATEGY_SCIENCE_VICTORY
+ScienceSensitivity
+ScienceVictoryDistricts
+ScienceVictoryFavoredCommemorations
+ScienceVictoryProjects
+ScienceVictoryPseudoYields
+ScienceVictoryTechs
+ScienceVictoryYields
 */
 
 -- ===========================================================================
