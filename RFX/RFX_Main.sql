@@ -82,6 +82,19 @@ DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_MONUMENT_TO_THE_GODS' AND
 DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_MONUMENT_TO_THE_GODS' AND ModifierId = 'MONUMENT_TO_THE_GODS_MAUSOLEUM';
 DELETE FROM PolicyModifiers WHERE PolicyType = 'POLICY_GOTHIC_ARCHITECTURE' AND ModifierId = 'GOTHICARCHITECTURE_HUEYPRODUCTION';
 
+-- 2018-12-25: Norwegian Longship has no PseudoYield assigned and Harald has a boost for that in his strategy!
+UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitType = 'UNIT_NORWEGIAN_LONGSHIP';
+
+-- 2018-12-25: Some items in AiFavoredItems have values 1 and -1, which doesn't have any effect; it should be 100 and -100
+UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND Item = 'PROMOTION_CLASS_INQUISITOR'; -- was -1
+UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
+UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
+UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1
+UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
+UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
+UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1
+
+
 
 --------------------------------------------------------------
 -- BALANCE SECTION
@@ -99,12 +112,14 @@ UPDATE Governments SET PrereqCivic = 'CIVIC_DIPLOMATIC_SERVICE' WHERE Government
 --UPDATE Government_SlotCounts SET NumSlots = 2 WHERE GovernmentType = 'GOVERNMENT_MONARCHY' AND GovernmentSlotType = 'SLOT_MILITARY';
 
 -- Rise & Fall changes
-UPDATE GlobalParameters SET Value = '50'  WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP';
-UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_AFTER_GAME_ERA';
-UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_BEFORE_GAME_ERA';
-UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'TECH_COST_PERCENT_CHANGE_AFTER_GAME_ERA';
-UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'TECH_COST_PERCENT_CHANGE_BEFORE_GAME_ERA';
-UPDATE GlobalParameters SET Value = '10'  WHERE Name = 'COMBAT_HEAL_CITY_OUTER_DEFENSES';
+UPDATE GlobalParameters SET Value = '10'  WHERE Name = 'COMBAT_HEAL_CITY_OUTER_DEFENSES'; -- def. 1
+UPDATE GlobalParameters SET Value = '50'  WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- def. 70
+UPDATE GlobalParameters SET Value = '200' WHERE Name = 'TOURISM_TOURISM_TO_MOVE_CITIZEN'; -- def. 150
+--UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_AFTER_GAME_ERA'; -- R&F only
+--UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_BEFORE_GAME_ERA'; -- R&F only
+--UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'TECH_COST_PERCENT_CHANGE_AFTER_GAME_ERA'; -- R&F only
+--UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'TECH_COST_PERCENT_CHANGE_BEFORE_GAME_ERA'; -- R&F only
+
 
 --------------------------------------------------------------
 -- MISC SECTION

@@ -44,50 +44,58 @@ FROM Features
 WHERE NaturalWonder = 1;
 
 
+--------------------------------------------------------------
+-- Settlement preferences
+
 UPDATE AiFavoredItems SET Favored = 0, Value = 20 WHERE ListType = 'LastVikingKingCoastSettlement' AND Item = 'Coastal'; -- Harald, -10
 UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'SettleAllContinents' AND Item = 'Foreign Continent'; -- Victoria, down from 120 (!)
 UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'PhilipForeignSettlement' AND Item = 'Foreign Continent'; -- Philip II, -20
 
+-- Temporary: AI Leader Victoria
+-- Remove drive to settle other continents to improve standard settling - see above
+--DELETE FROM AiLists WHERE ListType = 'SettleAllContinents' AND AgendaType = 'TRAIT_AGENDA_SUN_NEVER_SETS';
+
 
 --------------------------------------------------------------
--- Victories
+-- Victories - not sure what it does - could be a parameter saying when somebody enters "critical" stage (exclusive) or when the diplo "close to victory" starts working
+/*
 UPDATE Victories SET CriticalPercentage = 50 WHERE VictoryType = 'VICTORY_SCORE'; -- 110
 UPDATE Victories SET CriticalPercentage = 90 WHERE VictoryType = 'VICTORY_DEFAULT'; -- 110
 UPDATE Victories SET CriticalPercentage = 80 WHERE VictoryType = 'VICTORY_CONQUEST'; -- 50
 UPDATE Victories SET CriticalPercentage = 70 WHERE VictoryType = 'VICTORY_CULTURE'; -- 75
 UPDATE Victories SET CriticalPercentage = 60 WHERE VictoryType = 'VICTORY_RELIGIOUS'; -- 80
 UPDATE Victories SET CriticalPercentage = 90 WHERE VictoryType = 'VICTORY_TECHNOLOGY'; -- 60
+*/
 
 --------------------------------------------------------------
 -- Yield biases
+
 --UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_PRODUCTION'; -- 25
 UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_SCIENCE'; -- 10
 UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_CULTURE'; -- 10
 UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_GOLD';  -- 20
 --UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_FAITH'; -- -25
-UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'ScienceLoverSciencePreference' AND Item = 'YIELD_SCIENCE';  -- 20
+--UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'ScienceLoverSciencePreference' AND Item = 'YIELD_SCIENCE';  -- 20
 UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'GilgameshSciencePreference' AND Item = 'YIELD_SCIENCE';  -- 10
-UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'CultureLoverCulturePreference' AND Item = 'YIELD_CULTURE';  -- 20
+--UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'CultureLoverCulturePreference' AND Item = 'YIELD_CULTURE';  -- 20
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'GreeceYields' AND Item = 'YIELD_CULTURE';  -- 20
 UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'ClassicalYields' AND Item = 'YIELD_GOLD';  -- 20
 UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'MedievalYields' AND Item = 'YIELD_GOLD';  -- 15
 UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'RenaissanceYields' AND Item = 'YIELD_GOLD';  -- 15
 UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'IndustrialYields' AND Item = 'YIELD_GOLD';  -- 15
 
--- Temporary: AI Leader Victoria
--- Remove drive to settle other continents to improve standard settling
-DELETE FROM AiLists WHERE ListType = 'SettleAllContinents' AND AgendaType = 'TRAIT_AGENDA_SUN_NEVER_SETS';
 
 --------------------------------------------------------------
 -- Yields - default values are 1.0 except for Gold = 0.5
--- Slight change to see the effects
+-- Slight change to see the effects - I think it should be tuned by using AiLists
+/*
 UPDATE Yields SET DefaultValue = 0.8 WHERE YieldType = 'YIELD_FOOD';
 UPDATE Yields SET DefaultValue = 1.2 WHERE YieldType = 'YIELD_PRODUCTION';
 UPDATE Yields SET DefaultValue = 0.6 WHERE YieldType = 'YIELD_GOLD';
 UPDATE Yields SET DefaultValue = 1.1 WHERE YieldType = 'YIELD_SCIENCE';
 UPDATE Yields SET DefaultValue = 1.1 WHERE YieldType = 'YIELD_CULTURE';
 UPDATE Yields SET DefaultValue = 0.9 WHERE YieldType = 'YIELD_FAITH';
-
+*/
 
 --------------------------------------------------------------
 -- This part was originally taken from AI+ mod with the comment:
@@ -107,21 +115,21 @@ UPDATE Yields SET DefaultValue = 0.9 WHERE YieldType = 'YIELD_FAITH';
 
 UPDATE PseudoYields SET DefaultValue = 350   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450
 UPDATE PseudoYields SET DefaultValue = 90    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80
-UPDATE PseudoYields SET DefaultValue = 200   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400
-UPDATE PseudoYields SET DefaultValue = 100   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200
+UPDATE PseudoYields SET DefaultValue = 200   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 -- imho, this one doesn't work as expected
+--UPDATE PseudoYields SET DefaultValue = 100   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200 -- if this is used in Conquest, it should stay high
 UPDATE PseudoYields SET DefaultValue =  4    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50
 UPDATE PseudoYields SET DefaultValue =  3    WHERE PseudoYieldType = 'PSEUDOYIELD_CIVIC'; -- 	5, 1 too little
 UPDATE PseudoYields SET DefaultValue =  1.6  WHERE PseudoYieldType = 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.15 WHERE PseudoYieldType = 'PSEUDOYIELD_DIPLOMATIC_BONUS'; -- 	0.25
+--UPDATE PseudoYields SET DefaultValue =  0.15 WHERE PseudoYieldType = 'PSEUDOYIELD_DIPLOMATIC_BONUS'; -- 	0.25 -- let's not change diplomacy yet
 UPDATE PseudoYields SET DefaultValue =  6.7  WHERE PseudoYieldType = 'PSEUDOYIELD_DISTRICT'; -- 	3.5
 UPDATE PseudoYields SET DefaultValue =  0.75 WHERE PseudoYieldType = 'PSEUDOYIELD_ENVIRONMENT'; -- 	0.5
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_GOLDENAGE_POINT'; -- 	1
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_GOVERNOR'; -- 	2
-UPDATE PseudoYields SET DefaultValue =  0.6  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ADMIRAL'; -- 	0.5
+--UPDATE PseudoYields SET DefaultValue =  0.6  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ADMIRAL'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ARTIST'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  0.9 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ENGINEER'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_GENERAL'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  1.5  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MERCHANT'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  1.0  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MERCHANT'; -- 	0.5 -- 1.5 - why so high?
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MUSICIAN'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  1.0  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_PROPHET'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  1.2  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_SCIENTIST'; -- 	0.5, 1.6 vs. 0.75 disproportion Sci vs. Cul - not many Theater Districts
@@ -149,7 +157,7 @@ UPDATE PseudoYields SET DefaultValue =  1.4 WHERE PseudoYieldType = 'PSEUDOYIELD
 UPDATE PseudoYields SET DefaultValue =  0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_EXPLORER'; --	1
 UPDATE PseudoYields SET DefaultValue =  1.1 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; --	1
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_RELIGIOUS'; -- 1
-UPDATE PseudoYields SET DefaultValue =  1.4 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SETTLER'; -- 1
+UPDATE PseudoYields SET DefaultValue =  1.2 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SETTLER'; -- 1 -- 1.4 seems to much, they build Settlers even with 0 army and undeveloped cities
 UPDATE PseudoYields SET DefaultValue = 15   WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SPY'; -- 20
 UPDATE PseudoYields SET DefaultValue = 10   WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_TRADE'; -- 1
 UPDATE PseudoYields SET DefaultValue = 1.2 WHERE PseudoYieldType = 'PSEUDOYIELD_WONDER'; -- 2, 0.55 is too low, they don't build them!
