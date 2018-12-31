@@ -24,6 +24,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_WEIGHT_WONDER', 3), -- how much each wonder weights
 ('RST_WEIGHT_GOVERNMENT', 6), -- how much each government weights
 ('RST_WEIGHT_MINOR', 4), -- how much each suzerained city state weights
+('RST_WEIGHT_GREAT_PERSON', 1), -- how much each earned GP weights
 ('RST_WEIGHT_BELIEF', 3), -- how much each earned belief weights
 -- generic
 ('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
@@ -33,12 +34,12 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority, random between 20..40
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
-('RST_STRATEGY_BETTER_THAN_US_NERF', -33), -- [x100] each player better than us decreases our priority by this percent
+('RST_STRATEGY_BETTER_THAN_US_NERF', -25), -- [x100] each player better than us decreases our priority by this percent -- VP uses 33, seems a lot
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 40), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -200), -- if nobody met, then decrease the priority, def. -100 -> this is scaled in a moment by approx. 0.3, so -100 gives actually -30.
-('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 50), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
+('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 60), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
 ('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 100), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 ('RST_CONQUEST_AT_WAR_PRIORITY', 20), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
@@ -56,21 +57,23 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 --('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 --('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
 ('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
-('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more  -- USE +AVERAGE approach?
+--('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more  -- USE +AVERAGE approach?
 -- tourism is tough to measure! yields are very small at the begining
 -- try different approach - for Ancient & Classical use weight (like 1 Tourism = 2-3 pts.), after that use avg HOWEVER 
 -- also cannot use Tourism to Guess - too rare in early game
-('RST_CULTURE_PROGRESS_EXPONENT', 4), -- [x100], cultural progress formula, exponent => 0.04 speeds up after 60 and goes high after 80
-('RST_CULTURE_PROGRESS_MULTIPLIER', 8), -- cultural progress formula, multiplier; 60 => 90, 70 => 130, 80 => 200, 90 => 300
+('RST_CULTURE_PROGRESS_EXPONENT', 3), -- [x100], cultural progress formula, exponent => 0.03 speeds up after 50 and goes high after 80
+('RST_CULTURE_PROGRESS_MULTIPLIER', 22), -- cultural progress formula, multiplier; 50 => 80, 60 => 110, 70 => 160, 80 => 220, 90 => 300
 -- religion
 --('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
-('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
-('RST_RELIGION_CITIES_RATIO_MULTIPLIER', 50), -- number of cities following our religion, how does our situation compare to others, -100..100 and more
+('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more
+--('RST_RELIGION_CITIES_RATIO_MULTIPLIER', 40), -- number of cities following our religion, how does our situation compare to others, -100..100 and more - problem with early converts, gives huge negatives when working your own empire even
+('RST_RELIGION_CITIES_EXPONENT', 3), -- [x100], cultural progress formula used for cities converted, exponent => 0.03 speeds up after 50 and goes high after 80
+('RST_RELIGION_CITIES_MULTIPLIER', 25), -- cultural progress formula used for cities converted, multiplier; 50 => 90, 60 => 130, 70 => 180, 80 => 250, 90 => 350
 ('RST_RELIGION_RELIGION_WEIGHT', 30), -- founded religion
 ('RST_RELIGION_CONVERTED_WEIGHT', 60), -- each converted civ after 1 (I assume the 1st is us)
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
-('RST_RELIGION_NOBODY_MET_PRIORITY', -200); -- if nobody met, then decrease the priority, def. -100
+('RST_RELIGION_NOBODY_MET_PRIORITY', 0); -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
 
 
 -- ===========================================================================
@@ -87,6 +90,11 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 ('VICTORY_STRATEGY_SCIENCE_VICTORY',  'Call Lua Function', 'ActiveStrategyScience',  0),
 ('VICTORY_STRATEGY_CULTURAL_VICTORY', 'Call Lua Function', 'ActiveStrategyCulture',  0),
 ('VICTORY_STRATEGY_RELIGIOUS_VICTORY','Call Lua Function', 'ActiveStrategyReligion', 0);
+
+-- remove Strategies AiLists - they mess up the conditions badly!
+DELETE FROM AiFavoredItems WHERE ListType IN (SELECT ListType FROM AiLists WHERE System = 'Strategies');
+DELETE FROM AiListTypes    WHERE ListType IN (SELECT ListType FROM AiLists WHERE System = 'Strategies');
+DELETE FROM AiLists        WHERE System = 'Strategies';
 
 /*
 INSERT INTO Types (Type, Kind) VALUES
@@ -132,39 +140,221 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 */
 
 -- ===========================================================================
--- AiLists
+-- AiLists & AiFavoredItems
+-- Systems to use:
+-- YES Buildings (Wonders)
+-- YES Civics
+-- YES PseudoYields
+-- YES Technologies
+-- YES Yields
+-- (R&F Commemorations)
+-- (R&F YieldSensitivities - isn't it redundant?)
+-- System to use partially:
+-- AiBuildSpecializations
+-- ??? Alliances
+-- ??? DiplomaticActions
+-- ??? Districts
+-- ??? Projects
+-- ??? UnitPromotionClasses
+-- ??? Units
+-- Not needed?
+-- AiOperationTypes
+-- AiScoutUses
+-- CityEvents
+-- Homeland
+-- PerWarOperationTypes
+-- PlotEvaluations
+-- SavingTypes
+-- SettlementPreferences
+-- NO! Strategies - don't use it, messes up conditions
+-- Tactics
+-- TechBoosts
+-- TriggeredTrees
 -- ===========================================================================
 
--- first, disconnect original strategies
---DELETE FROM Strategy_Priorities WHERE StrategyType LIKE 'VICTORY_STRATEGY_%';
 
--- first, reconnect original lists
-/*
+-- ===========================================================================
 -- VICTORY_STRATEGY_CULTURAL_VICTORY
-CultureSensitivity
-CultureVictoryFavoredCommemorations
-CultureVictoryPseudoYields
-CultureVictoryYields
+--CultureSensitivity
+--CultureVictoryFavoredCommemorations
+
+UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'CultureVictoryYields'       AND Item = 'YIELD_CULTURE'; -- def. 25
+
+UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CultureVictoryPseudoYields' AND Item LIKE 'PSEUDOYIELD_GREATWORK_%'; -- def. 10
+UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'CultureVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TOURISM'; -- def. 25
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 50), -- base 3
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_WONDER', 1, 50), -- base 1.2
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 150); -- base 3
+
+INSERT INTO AiListTypes (ListType) VALUES
+--('CultureVictoryDistricts'),
+('CultureVictoryDiplomacy'),
+('CultureVictoryTechs'),
+('CultureVictoryCivics'),
+('CultureVictoryWonders');
+INSERT INTO AiLists (ListType) VALUES
+--('CultureVictoryDistricts', 'Districts'),
+('CultureVictoryDiplomacy', 'DiplomaticActions'),
+('CultureVictoryTechs',     'Technologies'),
+('CultureVictoryCivics',    'Civics'),
+('CultureVictoryWonders',   'Buildings');
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+--('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryDistricts'),
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryDiplomacy'),
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryTechs'),
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryCivics'),
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryWonders');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+--('CultureVictoryDistricts', 'DISTRICT_THEATER', 1, 0),
+('CultureVictoryDiplomacy', 'DIPLOACTION_ALLIANCE_CULTURAL', 1, 0),
+('CultureVictoryDiplomacy', 'DIPLOACTION_KEEP_PROMISE_DONT_DIG_ARTIFACTS', 0, 0), -- notice! it is FALSE!
+('CultureVictoryDiplomacy', 'DIPLOACTION_OPEN_BORDERS', 1, 0),
+('CultureVictoryTechs', 'TECH_PRINTING', 1, 0),
+('CultureVictoryTechs', 'TECH_RADIO', 1, 0),
+('CultureVictoryTechs', 'TECH_COMPUTERS', 1, 0),
+('CultureVictoryCivics', 'CIVIC_DRAMA_POETRY', 1, 0),
+('CultureVictoryCivics', 'CIVIC_HUMANISM', 1, 0),
+('CultureVictoryCivics', 'CIVIC_OPERA_BALLET', 1, 0),
+('CultureVictoryCivics', 'CIVIC_NATURAL_HISTORY', 1, 0),
+('CultureVictoryCivics', 'CIVIC_MASS_MEDIA', 1, 0),
+('CultureVictoryCivics', 'CIVIC_CULTURAL_HERITAGE', 1, 0),
+('CultureVictoryCivics', 'CIVIC_SOCIAL_MEDIA', 1, 0),
+('CultureVictoryWonders', 'BUILDING_BOLSHOI_THEATRE', 1, 0),
+('CultureVictoryWonders', 'BUILDING_BROADWAY', 1, 0),
+('CultureVictoryWonders', 'BUILDING_CRISTO_REDENTOR', 1, 0),
+('CultureVictoryWonders', 'BUILDING_HERMITAGE', 1, 0),
+('CultureVictoryWonders', 'BUILDING_SYDNEY_OPERA_HOUSE', 1, 0);
+
+
+-- ===========================================================================
+-- VICTORY_STRATEGY_SCIENCE_VICTORY
+--ScienceSensitivity
+--ScienceVictoryFavoredCommemorations
+--ScienceVictoryDistricts
+--ScienceVictoryProjects
+
+--UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ScienceVictoryYields' AND Item = 'YIELD_SCIENCE'; -- def. 50
+
+UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_SCIENTIST'; -- base 1.0
+UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TECHNOLOGY'; -- def 25
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -150); -- base 3
+('ScienceVictoryTechs', 'TECH_WRITING', 1, 0),
+('ScienceVictoryTechs', 'TECH_EDUCATION', 1, 0),
+('ScienceVictoryTechs', 'TECH_CHEMISTRY', 1, 0),
+
+INSERT INTO AiListTypes (ListType) VALUES
+('ScienceVictoryDiplomacy'),
+('ScienceVictoryCivics'),
+('ScienceVictoryWonders');
+INSERT INTO AiLists (ListType) VALUES
+('ScienceVictoryDiplomacy', 'DiplomaticActions'),
+('ScienceVictoryCivics',    'Civics'),
+('ScienceVictoryWonders',   'Buildings');
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('VICTORY_STRATEGY_SCIENCE_VICTORY', 'ScienceVictoryDiplomacy'),
+('VICTORY_STRATEGY_SCIENCE_VICTORY', 'ScienceVictoryCivics'),
+('VICTORY_STRATEGY_SCIENCE_VICTORY', 'ScienceVictoryWonders');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ScienceVictoryDiplomacy', 'DIPLOACTION_ALLIANCE_RESEARCH', 1, 0),
+('ScienceVictoryDiplomacy', 'DIPLOACTION_KEEP_PROMISE_DONT_DIG_ARTIFACTS', 1, 0),
+('ScienceVictoryCivics', 'CIVIC_RECORDED_HISTORY', 1, 0),
+('ScienceVictoryCivics', 'CIVIC_THE_ENLIGHTENMENT', 1, 0),
+('ScienceVictoryCivics', 'CIVIC_SPACE_RACE', 1, 0),
+('ScienceVictoryCivics', 'CIVIC_GLOBALIZATION', 1, 0),
+('ScienceVictoryWonders', 'BUILDING_AMUNDSEN_SCOTT_RESEARCH_STATION', 1, 0),
+('ScienceVictoryWonders', 'BUILDING_GREAT_LIBRARY', 1, 0),
+('ScienceVictoryWonders', 'BUILDING_OXFORD_UNIVERSITY', 1, 0),
+('ScienceVictoryWonders', 'BUILDING_RUHR_VALLEY', 1, 0);
+
+-- ===========================================================================
+-- VICTORY_STRATEGY_RELIGIOUS_VICTORY
+--ReligiousVictoryFavoredCommemorations
+--ReligiousVictoryBehaviors
+
+UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 75
+
+UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_PROPHET'; -- base 0.8
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ReligiousVictoryDiplomacy', 'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0);
+--('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 50); -- base 0.8 -- this includes Guru and Naturalist!
+
+
+INSERT INTO AiListTypes (ListType) VALUES
+('ReligiousVictoryTechs'),
+('ReligiousVictoryCivics'),
+('ReligiousVictoryWonders'),
+('ReligiousVictoryUnits');
+INSERT INTO AiLists (ListType) VALUES
+('ReligiousVictoryTechs',   'Technologies'),
+('ReligiousVictoryCivics',  'Civics'),
+('ReligiousVictoryWonders', 'Buildings')
+('ReligiousVictoryUnits',   'Units');
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('', ''),
+('', ''),
+('', ''),
+('', '');
+
+
+TECH_ASTROLOGY
+TECH_NUCLEAR_FISSION
+TECH_NUCLEAR_FUSION
+
+
+CIVIC_MYSTICISM
+CIVIC_THEOLOGY
+CIVIC_REFORMED_CHURCH
+
+
+BUILDING_HAGIA_SOPHIA
+BUILDING_STONEHENGE
+BUILDING_MAHABODHI_TEMPLE
+
+
+
+UNIT_MISSIONARY
+UNIT_APOSTLE
+UNIT_INQUISITOR
+
+/*
 -- VICTORY_STRATEGY_MILITARY_VICTORY
 MilitaryVictoryFavoredCommemorations
 MilitaryVictoryOperations
 MilitaryVictoryPseudoYields
 MilitaryVictoryYields
--- VICTORY_STRATEGY_RELIGIOUS_VICTORY
-ReligiousVictoryBehaviors
-ReligiousVictoryDiplomacy
-ReligiousVictoryFavoredCommemorations
-ReligiousVictoryPseudoYields
-ReligiousVictoryYields
--- VICTORY_STRATEGY_SCIENCE_VICTORY
-ScienceSensitivity
-ScienceVictoryDistricts
-ScienceVictoryFavoredCommemorations
-ScienceVictoryProjects
-ScienceVictoryPseudoYields
-ScienceVictoryTechs
-ScienceVictoryYields
+
 */
+
+-- ===========================================================================
+-- Changes to existing leaders and civs --> move to a separate file eventually
+-- ===========================================================================
+
+-- KHMER / JAYAVARMAN
+-- he doesn't build Holy Sites! -> can't get Prasat!
+
+INSERT INTO AiListTypes (ListType) VALUES
+('JayavarmanDistricts'),
+('JayavarmanYields'),
+('JayavarmanPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('JayavarmanDistricts', 'TRAIT_LEADER_MONASTERIES_KING', 'Districts'),
+('JayavarmanYields', 'TRAIT_LEADER_MONASTERIES_KING', 'Yields'),
+('JayavarmanPseudoYields', 'TRAIT_LEADER_MONASTERIES_KING', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('JayavarmanDistricts', 'DISTRICT_HOLY_SITE', 1, 0),
+('JayavarmanYields', 'YIELD_FAITH', 1, 20),
+--('JayavarmanYields', 'YIELD_SCIENCE', 1, -10),
+('JayavarmanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 25),
+('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -20),
+('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -20);
+
+
 
 -- ===========================================================================
 -- Flavors
@@ -172,13 +362,13 @@ ScienceVictoryYields
 
 CREATE TABLE RSTFlavors (
 	ObjectType TEXT NOT NULL,
-	Type TEXT NOT NULL CHECK (Type IN ('Parameter', 'STRATEGY', 'LEADER', 'POLICY', 'GOVERNMENT', 'Wonder', 'BELIEF', 'CityState')),
+	Type TEXT NOT NULL CHECK (Type IN ('Parameter', 'STRATEGY', 'LEADER', 'POLICY', 'GOVERNMENT', 'Wonder', 'BELIEF', 'CityState', 'GreatPerson')),
 	Subtype TEXT,
 	Strategy TEXT NOT NULL CHECK (Strategy IN ('CONQUEST', 'SCIENCE', 'CULTURE', 'RELIGION', 'DIPLO', 'DEFENCE', 'NAVAL', 'TRADE')),
 	Value INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY (ObjectType, Strategy)
 );
-
+/* not used
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 ('BasePriority', 'Parameter', 'STRATEGY', 'SCIENCE', 20),	('BasePriority', 'Parameter', 'STRATEGY', 'CULTURE', 20),	('BasePriority', 'Parameter', 'STRATEGY', 'RELIGION', 20),	('BasePriority', 'Parameter', 'STRATEGY', 'CONQUEST', 20),
 ('SCIENCE', 'Parameter', 'STRATEGY', 'SCIENCE', 2),	('SCIENCE', 'Parameter', 'STRATEGY', 'CULTURE', -2),	('SCIENCE', 'Parameter', 'STRATEGY', 'RELIGION', -2),	('SCIENCE', 'Parameter', 'STRATEGY', 'CONQUEST', 1),
@@ -186,7 +376,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('RELIGION', 'Parameter', 'STRATEGY', 'SCIENCE', -2),	('RELIGION', 'Parameter', 'STRATEGY', 'CULTURE', -1),	('RELIGION', 'Parameter', 'STRATEGY', 'RELIGION', 2),	
 ('CONQUEST', 'Parameter', 'STRATEGY', 'SCIENCE', 1),	('CONQUEST', 'Parameter', 'STRATEGY', 'CULTURE', -1),	('CONQUEST', 'Parameter', 'STRATEGY', 'RELIGION', -1),	('CONQUEST', 'Parameter', 'STRATEGY', 'CONQUEST', 3),
 ('DIPLO', 'Parameter', 'STRATEGY', 'CULTURE', 1),		('DIPLO', 'Parameter', 'STRATEGY', 'CONQUEST', -1);
-
+*/
 -- LEADERS
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 ('LEADER_ALEXANDER', 'LEADER', '', 'SCIENCE', 5),	('LEADER_ALEXANDER', 'LEADER', '', 'CULTURE', 4),	('LEADER_ALEXANDER', 'LEADER', '', 'RELIGION', 3),	('LEADER_ALEXANDER', 'LEADER', '', 'CONQUEST', 8),
@@ -231,7 +421,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('GOVERNMENT_CHIEFDOM', 'GOVERNMENT', 'TIER_0', 'SCIENCE', 2),	('GOVERNMENT_CHIEFDOM', 'GOVERNMENT', 'TIER_0', 'CULTURE', 2),	('GOVERNMENT_CHIEFDOM', 'GOVERNMENT', 'TIER_0', 'RELIGION', 2),	('GOVERNMENT_CHIEFDOM', 'GOVERNMENT', 'TIER_0', 'CONQUEST', 2),
 ('GOVERNMENT_AUTOCRACY', 'GOVERNMENT', 'TIER_1', 'SCIENCE', 2),	('GOVERNMENT_AUTOCRACY', 'GOVERNMENT', 'TIER_1', 'CULTURE', 4),	('GOVERNMENT_AUTOCRACY', 'GOVERNMENT', 'TIER_1', 'RELIGION', 2),	('GOVERNMENT_AUTOCRACY', 'GOVERNMENT', 'TIER_1', 'CONQUEST', 4),
 ('GOVERNMENT_OLIGARCHY', 'GOVERNMENT', 'TIER_1', 'SCIENCE', 2),	('GOVERNMENT_OLIGARCHY', 'GOVERNMENT', 'TIER_1', 'CULTURE', 2),	('GOVERNMENT_OLIGARCHY', 'GOVERNMENT', 'TIER_1', 'RELIGION', 2),	('GOVERNMENT_OLIGARCHY', 'GOVERNMENT', 'TIER_1', 'CONQUEST', 6),
-('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'SCIENCE', 3),	('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'CULTURE', 3),	('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'RELIGION', 2),	('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'CONQUEST', 1),
+('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'SCIENCE', 3),	('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'CULTURE', 3),	('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'RELIGION', 1),	('GOVERNMENT_CLASSICAL_REPUBLIC', 'GOVERNMENT', 'TIER_1', 'CONQUEST', 1),
 ('GOVERNMENT_MONARCHY', 'GOVERNMENT', 'TIER_2', 'SCIENCE', 2),	('GOVERNMENT_MONARCHY', 'GOVERNMENT', 'TIER_2', 'CULTURE', 2),	('GOVERNMENT_MONARCHY', 'GOVERNMENT', 'TIER_2', 'RELIGION', 2),	('GOVERNMENT_MONARCHY', 'GOVERNMENT', 'TIER_2', 'CONQUEST', 4),
 ('GOVERNMENT_THEOCRACY', 'GOVERNMENT', 'TIER_2', 'SCIENCE', 2),	('GOVERNMENT_THEOCRACY', 'GOVERNMENT', 'TIER_2', 'CULTURE', 2),	('GOVERNMENT_THEOCRACY', 'GOVERNMENT', 'TIER_2', 'RELIGION', 7),	('GOVERNMENT_THEOCRACY', 'GOVERNMENT', 'TIER_2', 'CONQUEST', 4),
 ('GOVERNMENT_MERCHANT_REPUBLIC', 'GOVERNMENT', 'TIER_2', 'SCIENCE', 4),	('GOVERNMENT_MERCHANT_REPUBLIC', 'GOVERNMENT', 'TIER_2', 'CULTURE', 4),	('GOVERNMENT_MERCHANT_REPUBLIC', 'GOVERNMENT', 'TIER_2', 'RELIGION', 3),	('GOVERNMENT_MERCHANT_REPUBLIC', 'GOVERNMENT', 'TIER_2', 'CONQUEST', 2),
@@ -276,15 +466,17 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 	('POLICY_FRESCOES', 'POLICY', 'GREAT_PERSON', 'CULTURE', 5),		
 		('POLICY_GOD_KING', 'POLICY', 'ECONOMIC', 'RELIGION', 4),	
 ('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'SCIENCE', 2),	('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'CULTURE', 3),	('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'RELIGION', 3),	('POLICY_GOTHIC_ARCHITECTURE', 'POLICY', 'ECONOMIC', 'CONQUEST', 2),
-('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'CULTURE', 4),	('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'CONQUEST', 4),
-('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'SCIENCE', 3),	('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'CULTURE', 3),	('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'CONQUEST', 1),
-('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'SCIENCE', 7),	('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'CULTURE', 3),	('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'RELIGION', 1),	('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'CONQUEST', 4),
-('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'SCIENCE', 5),	('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'CULTURE', 7),	('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'RELIGION', 3),	('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'CONQUEST', 1),
-('POLICY_GOV_FASCISM', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_FASCISM', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_FASCISM', 'POLICY', 'WILDCARD', 'RELIGION', 1),	('POLICY_GOV_FASCISM', 'POLICY', 'WILDCARD', 'CONQUEST', 9),
-('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'SCIENCE', 4),	('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'CULTURE', 4),	('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'RELIGION', 3),	('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'CONQUEST', 2),
-('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'CONQUEST', 4),
-('POLICY_GOV_OLIGARCHY', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_OLIGARCHY', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_OLIGARCHY', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_OLIGARCHY', 'POLICY', 'WILDCARD', 'CONQUEST', 6),
-('POLICY_GOV_THEOCRACY', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_THEOCRACY', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_THEOCRACY', 'POLICY', 'WILDCARD', 'RELIGION', 7),	('POLICY_GOV_THEOCRACY', 'POLICY', 'WILDCARD', 'CONQUEST', 4),
+
+('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_AUTOCRACY', 'POLICY', 'WILDCARD', 'CONQUEST', 2),
+('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_CLASSICAL_REPUBLIC', 'POLICY', 'WILDCARD', 'CONQUEST', 2),
+('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'SCIENCE', 3),	('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'CULTURE', 3),	('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'RELIGION', 1),	('POLICY_GOV_COMMUNISM', 'POLICY', 'WILDCARD', 'CONQUEST', 3),
+('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'SCIENCE', 3),	('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'CULTURE', 3),	('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'RELIGION', 1),	('POLICY_GOV_DEMOCRACY', 'POLICY', 'WILDCARD', 'CONQUEST', 3),
+			('POLICY_GOV_FASCISM', 'POLICY', 'WILDCARD', 'CONQUEST', 8),
+('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_MERCHANT_REPUBLIC', 'POLICY', 'WILDCARD', 'CONQUEST', 2),
+('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'SCIENCE', 2),	('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'CULTURE', 2),	('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'RELIGION', 2),	('POLICY_GOV_MONARCHY', 'POLICY', 'WILDCARD', 'CONQUEST', 2),
+			('POLICY_GOV_OLIGARCHY', 'POLICY', 'WILDCARD', 'CONQUEST', 6),
+		('POLICY_GOV_THEOCRACY', 'POLICY', 'WILDCARD', 'RELIGION', 7),	
+
 			('POLICY_GRANDE_ARMEE', 'POLICY', 'MILITARY', 'CONQUEST', 6),
 	('POLICY_GRAND_OPERA', 'POLICY', 'ECONOMIC', 'CULTURE', 7),		
 			
@@ -339,7 +531,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('POLICY_PUBLIC_WORKS', 'POLICY', 'ECONOMIC', 'SCIENCE', 2),	('POLICY_PUBLIC_WORKS', 'POLICY', 'ECONOMIC', 'CULTURE', 2),	('POLICY_PUBLIC_WORKS', 'POLICY', 'ECONOMIC', 'RELIGION', 2),	('POLICY_PUBLIC_WORKS', 'POLICY', 'ECONOMIC', 'CONQUEST', 2),
 ('POLICY_RAID', 'POLICY', 'MILITARY', 'SCIENCE', 2),	('POLICY_RAID', 'POLICY', 'MILITARY', 'CULTURE', 2),	('POLICY_RAID', 'POLICY', 'MILITARY', 'RELIGION', 2),	('POLICY_RAID', 'POLICY', 'MILITARY', 'CONQUEST', 6),
 ('POLICY_RAJ', 'POLICY', 'DIPLOMATIC', 'SCIENCE', 2),	('POLICY_RAJ', 'POLICY', 'DIPLOMATIC', 'CULTURE', 2),	('POLICY_RAJ', 'POLICY', 'DIPLOMATIC', 'RELIGION', 2),	
-	('POLICY_RATIONALISM', 'POLICY', 'ECONOMIC', 'CULTURE', 7),		
+	('POLICY_RATIONALISM', 'POLICY', 'ECONOMIC', 'SCIENCE', 7),		
 		('POLICY_RELIGIOUS_ORDERS', 'POLICY', 'ECONOMIC', 'RELIGION', 7),	
 			('POLICY_RESOURCE_MANAGEMENT', 'POLICY', 'ECONOMIC', 'CONQUEST', 6),
 ('POLICY_RETAINERS', 'POLICY', 'MILITARY', 'SCIENCE', 2),	('POLICY_RETAINERS', 'POLICY', 'MILITARY', 'CULTURE', 2),	('POLICY_RETAINERS', 'POLICY', 'MILITARY', 'RELIGION', 2),	
@@ -377,7 +569,19 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 		('RELIGIOUS', 'CityState', '', 'RELIGION', 7),	
 ('SCIENTIFIC', 'CityState', '', 'SCIENCE', 7),
 ('TRADE', 'CityState', '', 'SCIENCE', 1),	('TRADE', 'CityState', '', 'CULTURE', 1),	('TRADE', 'CityState', '', 'RELIGION', 1),	('TRADE', 'CityState', '', 'CONQUEST', 1);
-			
+
+-- GreatPeople
+INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
+			('GREAT_PERSON_CLASS_ADMIRAL', 'GreatPerson', '', 'CONQUEST', 3),
+	('GREAT_PERSON_CLASS_ARTIST', 'GreatPerson', '', 'CULTURE', 4),		
+('GREAT_PERSON_CLASS_ENGINEER', 'GreatPerson', '', 'SCIENCE', 1),	('GREAT_PERSON_CLASS_ENGINEER', 'GreatPerson', '', 'CULTURE', 1),		
+			('GREAT_PERSON_CLASS_GENERAL', 'GreatPerson', '', 'CONQUEST', 5),
+('GREAT_PERSON_CLASS_MERCHANT', 'GreatPerson', '', 'SCIENCE', 1),	('GREAT_PERSON_CLASS_MERCHANT', 'GreatPerson', '', 'CULTURE', 1),		
+	('GREAT_PERSON_CLASS_MUSICIAN', 'GreatPerson', '', 'CULTURE', 4),		
+		('GREAT_PERSON_CLASS_PROPHET', 'GreatPerson', '', 'RELIGION', 5),	
+('GREAT_PERSON_CLASS_SCIENTIST', 'GreatPerson', '', 'SCIENCE', 8),			
+	('GREAT_PERSON_CLASS_WRITER', 'GreatPerson', '', 'CULTURE', 3);
+
 -- BELIEFS
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 		('BELIEF_BURIAL_GROUNDS', 'BELIEF', 'ENHANCER', 'RELIGION', 3),	

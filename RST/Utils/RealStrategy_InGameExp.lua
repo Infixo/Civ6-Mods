@@ -110,6 +110,22 @@ function PlayerGetSlottedPolicies(ePlayerID:number)
 	return tPolicies;
 end
 
+-- get a list of recruited Great People
+-- returns a simple table with GreatPersonClassType
+function PlayerGetRecruitedGreatPeopleClasses(ePlayerID:number)
+	--print("FUN PlayerGetRecruitedGreatPeopleClasses", ePlayerID);
+	local tGPs:table = {};
+	for _,person in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
+		-- person.Claimant - player ID, person.Class - GP class ID
+		if person.Claimant == ePlayerID then
+			local sGPClass:string = GameInfo.GreatPersonClasses[person.Class].GreatPersonClassType;
+			--print("...recruited", sGPClass);
+			table.insert(tGPs, sGPClass);
+		end
+	end
+	return tGPs;
+end
+
 -- get number of captured capitals
 function PlayerGetNumCapturedCapitals(ePlayerID:number)
 	--print("FUN PlayerGetNumCapturedCapitals", ePlayerID);
@@ -251,6 +267,7 @@ function Initialize()
 	ExposedMembers.RST.PlayerGetNumTechsResearched  = PlayerGetNumTechsResearched;
 	ExposedMembers.RST.PlayerGetMilitaryStrength    = PlayerGetMilitaryStrength;
 	ExposedMembers.RST.PlayerGetSlottedPolicies     = PlayerGetSlottedPolicies;
+	ExposedMembers.RST.PlayerGetRecruitedGreatPeopleClasses = PlayerGetRecruitedGreatPeopleClasses;
 	ExposedMembers.RST.PlayerGetCurrentGovernment   = PlayerGetCurrentGovernment;
 	ExposedMembers.RST.PlayerGetNumCapturedCapitals = PlayerGetNumCapturedCapitals;
 	ExposedMembers.RST.PlayerHasOriginalCapital     = PlayerHasOriginalCapital;
