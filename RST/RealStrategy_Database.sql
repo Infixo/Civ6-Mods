@@ -184,8 +184,8 @@ UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CultureVictoryPseudoYield
 UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'CultureVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TOURISM'; -- def. 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 50), -- base 3
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 100), -- base 3
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -100), -- base 100, so it should be 100*100 by logic???
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_WONDER', 1, 50), -- base 1.2
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 150); -- base 3
 
@@ -195,7 +195,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('CultureVictoryTechs'),
 ('CultureVictoryCivics'),
 ('CultureVictoryWonders');
-INSERT INTO AiLists (ListType) VALUES
+INSERT INTO AiLists (ListType, System) VALUES
 --('CultureVictoryDistricts', 'Districts'),
 ('CultureVictoryDiplomacy', 'DiplomaticActions'),
 ('CultureVictoryTechs',     'Technologies'),
@@ -238,20 +238,22 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 --UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ScienceVictoryYields' AND Item = 'YIELD_SCIENCE'; -- def. 50
 
-UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_SCIENTIST'; -- base 1.0
-UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TECHNOLOGY'; -- def 25
+UPDATE AiFavoredItems SET Value =  40 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_SCIENTIST'; -- base 1.0
+UPDATE AiFavoredItems SET Value = 100 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TECHNOLOGY'; -- def 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ScienceVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -150); -- base 3
+('ScienceVictoryYields', 'YIELD_FAITH', 1, -15),
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -15), -- base 0.8
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -150), -- base 3
 ('ScienceVictoryTechs', 'TECH_WRITING', 1, 0),
 ('ScienceVictoryTechs', 'TECH_EDUCATION', 1, 0),
-('ScienceVictoryTechs', 'TECH_CHEMISTRY', 1, 0),
+('ScienceVictoryTechs', 'TECH_CHEMISTRY', 1, 0);
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('ScienceVictoryDiplomacy'),
 ('ScienceVictoryCivics'),
 ('ScienceVictoryWonders');
-INSERT INTO AiLists (ListType) VALUES
+INSERT INTO AiLists (ListType, System) VALUES
 ('ScienceVictoryDiplomacy', 'DiplomaticActions'),
 ('ScienceVictoryCivics',    'Civics'),
 ('ScienceVictoryWonders',   'Buildings');
@@ -271,6 +273,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ScienceVictoryWonders', 'BUILDING_OXFORD_UNIVERSITY', 1, 0),
 ('ScienceVictoryWonders', 'BUILDING_RUHR_VALLEY', 1, 0);
 
+
 -- ===========================================================================
 -- VICTORY_STRATEGY_RELIGIOUS_VICTORY
 --ReligiousVictoryFavoredCommemorations
@@ -281,7 +284,8 @@ UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryYields' A
 UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_PROPHET'; -- base 0.8
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ReligiousVictoryDiplomacy', 'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0);
+('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
+('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -100); -- base 100, so it should be 100*100 by logic???
 --('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 50); -- base 0.8 -- this includes Guru and Naturalist!
 
 
@@ -290,46 +294,108 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('ReligiousVictoryCivics'),
 ('ReligiousVictoryWonders'),
 ('ReligiousVictoryUnits');
-INSERT INTO AiLists (ListType) VALUES
+INSERT INTO AiLists (ListType, System) VALUES
 ('ReligiousVictoryTechs',   'Technologies'),
 ('ReligiousVictoryCivics',  'Civics'),
-('ReligiousVictoryWonders', 'Buildings')
+('ReligiousVictoryWonders', 'Buildings'),
 ('ReligiousVictoryUnits',   'Units');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
-('', ''),
-('', ''),
-('', ''),
-('', '');
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryTechs'),
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryCivics'),
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryWonders'),
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryUnits');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ReligiousVictoryTechs', 'TECH_ASTROLOGY', 1, 0),
+('ReligiousVictoryTechs', 'TECH_NUCLEAR_FISSION', 1, 0),
+('ReligiousVictoryTechs', 'TECH_NUCLEAR_FUSION', 1, 0),
+('ReligiousVictoryCivics', 'CIVIC_MYSTICISM', 1, 0),
+('ReligiousVictoryCivics', 'CIVIC_THEOLOGY', 1, 0),
+('ReligiousVictoryCivics', 'CIVIC_REFORMED_CHURCH', 1, 0),
+('ReligiousVictoryWonders', 'BUILDING_HAGIA_SOPHIA', 1, 0),
+('ReligiousVictoryWonders', 'BUILDING_STONEHENGE', 1, 0),
+('ReligiousVictoryWonders', 'BUILDING_MAHABODHI_TEMPLE', 1, 0),
+('ReligiousVictoryUnits', 'UNIT_MISSIONARY', 1, 100),
+('ReligiousVictoryUnits', 'UNIT_APOSTLE', 1, 100),
+('ReligiousVictoryUnits', 'UNIT_INQUISITOR', 1, 50);
 
 
-TECH_ASTROLOGY
-TECH_NUCLEAR_FISSION
-TECH_NUCLEAR_FUSION
-
-
-CIVIC_MYSTICISM
-CIVIC_THEOLOGY
-CIVIC_REFORMED_CHURCH
-
-
-BUILDING_HAGIA_SOPHIA
-BUILDING_STONEHENGE
-BUILDING_MAHABODHI_TEMPLE
-
-
-
-UNIT_MISSIONARY
-UNIT_APOSTLE
-UNIT_INQUISITOR
-
-/*
+-- ===========================================================================
 -- VICTORY_STRATEGY_MILITARY_VICTORY
-MilitaryVictoryFavoredCommemorations
-MilitaryVictoryOperations
-MilitaryVictoryPseudoYields
-MilitaryVictoryYields
+--MilitaryVictoryFavoredCommemorations
+--MilitaryVictoryOperations
 
-*/
+--UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'MilitaryVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 25
+
+UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- def. 25
+UPDATE AiFavoredItems SET Value = 100 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- def. 25
+UPDATE AiFavoredItems SET Value =  75 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. 25
+UPDATE AiFavoredItems SET Value =  15 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 25 -- leave it for Naval strategies
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('MilitaryVictoryYields', 'YIELD_SCIENCE', 1,  15),
+('MilitaryVictoryYields', 'YIELD_FAITH',   1, -25),
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- base 350 - or maybe 15000????
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -100), -- base 100, so it should be 100*100 by logic???
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 2), -- base 1.6, agenda lover uses 5
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- base 100
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15), -- base 1.0
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25), -- base 0.8
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 25), -- base 0.8
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 50), -- base 0.8
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -50), -- base 1
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_TECHNOLOGY', 1, 50); -- base 3
+
+INSERT INTO AiListTypes (ListType) VALUES
+('MilitaryVictoryDiplomacy'),
+('MilitaryVictoryTechs'),
+('MilitaryVictoryCivics'),
+('MilitaryVictoryWonders'),
+('MilitaryVictoryProjects');
+INSERT INTO AiLists (ListType, System) VALUES
+('MilitaryVictoryDiplomacy', 'DiplomaticActions'),
+('MilitaryVictoryTechs',     'Technologies'),
+('MilitaryVictoryCivics',    'Civics'),
+('MilitaryVictoryWonders',   'Buildings'),
+('MilitaryVictoryProjects',  'Projects');
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryDiplomacy'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryTechs'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryCivics'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryWonders'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryProjects');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+--('MilitaryVictoryDiplomacy', 'DIPLOACTION_MAKE_PEACE', 0, 0), -- notice! it is FALSE
+('MilitaryVictoryDiplomacy', 'DIPLOACTION_PROPOSE_PEACE_DEAL', 0, 0), -- notice! it is FALSE
+--('MilitaryVictoryDiplomacy', 'DIPLOACTION_ALLIANCE_MILITARY', 1, 0),
+('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_SURPRISE_WAR', 1, 0),
+('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_FORMAL_WAR', 1, 0),
+('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_TERRITORIAL_WAR', 1, 0),
+('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_GOLDEN_AGE_WAR', 1, 0),
+--('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_WAR_OF_RETRIBUTION', 1, 0),
+--('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_RECONQUEST_WAR', 1, 0),
+('MilitaryVictoryDiplomacy', 'DIPLOACTION_DECLARE_COLONIAL_WAR', 1, 0),
+('MilitaryVictoryTechs', 'TECH_BRONZE_WORKING', 1, 0),
+('MilitaryVictoryTechs', 'TECH_STIRRUPS', 1, 0),
+('MilitaryVictoryTechs', 'TECH_MILITARY_ENGINEERING', 1, 0),
+('MilitaryVictoryTechs', 'TECH_GUNPOWDER', 1, 0),
+('MilitaryVictoryTechs', 'TECH_MILITARY_SCIENCE', 1, 0),
+('MilitaryVictoryTechs', 'TECH_COMBUSTION', 1, 0),
+('MilitaryVictoryTechs', 'TECH_NUCLEAR_FISSION', 1, 0),
+('MilitaryVictoryTechs', 'TECH_NUCLEAR_FUSION', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_MILITARY_TRADITION', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_MILITARY_TRAINING', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_MERCENARIES', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_NATIONALISM', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_MOBILIZATION', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_TOTALITARIANISM', 1, 0),
+('MilitaryVictoryCivics', 'CIVIC_RAPID_DEPLOYMENT', 1, 0),
+('MilitaryVictoryWonders', 'BUILDING_TERRACOTTA_ARMY', 1, 0),
+('MilitaryVictoryWonders', 'BUILDING_ALHAMBRA', 1, 0),
+('MilitaryVictoryProjects', 'PROJECT_MANHATTAN_PROJECT', 1, 0),
+('MilitaryVictoryProjects', 'PROJECT_OPERATION_IVY', 1, 0),
+('MilitaryVictoryProjects', 'PROJECT_BUILD_NUCLEAR_DEVICE', 1, 0),
+('MilitaryVictoryProjects', 'PROJECT_BUILD_THERMONUCLEAR_DEVICE', 1, 0);
+
 
 -- ===========================================================================
 -- Changes to existing leaders and civs --> move to a separate file eventually
@@ -343,8 +409,8 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('JayavarmanYields'),
 ('JayavarmanPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
-('JayavarmanDistricts', 'TRAIT_LEADER_MONASTERIES_KING', 'Districts'),
-('JayavarmanYields', 'TRAIT_LEADER_MONASTERIES_KING', 'Yields'),
+('JayavarmanDistricts',    'TRAIT_LEADER_MONASTERIES_KING', 'Districts'),
+('JayavarmanYields',       'TRAIT_LEADER_MONASTERIES_KING', 'Yields'),
 ('JayavarmanPseudoYields', 'TRAIT_LEADER_MONASTERIES_KING', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JayavarmanDistricts', 'DISTRICT_HOLY_SITE', 1, 0),
