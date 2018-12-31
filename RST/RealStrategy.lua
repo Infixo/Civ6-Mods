@@ -1424,11 +1424,14 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 		iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
 		print("...faith ratio", iRatio, "player/world", pOther:GetReligion():GetFaithYield(), iWorld, "priority=", iPriority);
 	end
-	iWorld = data.Data.AvgCities;
-	if iWorld > 0 then
-		local iRatio:number = (RST.PlayerGetNumCitiesFollowingReligion(eOtherID) - iWorld) * GlobalParameters.RST_RELIGION_CITIES_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
-		iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-		print("...cities ratio", iRatio, "player/world", RST.PlayerGetNumCitiesFollowingReligion(eOtherID) , iWorld, "priority=", iPriority);
+	-- check only if he has a religion
+	if RST.PlayerHasReligion(eOtherID) then
+		iWorld = data.Data.AvgCities;
+		if iWorld > 0 then
+			local iRatio:number = (RST.PlayerGetNumCitiesFollowingReligion(eOtherID) - iWorld) * GlobalParameters.RST_RELIGION_CITIES_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+			iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
+			print("...cities ratio", iRatio, "player/world", RST.PlayerGetNumCitiesFollowingReligion(eOtherID) , iWorld, "priority=", iPriority);
+		end
 	end
 
 	--print("GetOtherPlayerPriorityReligion:", iPriority);
