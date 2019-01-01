@@ -1003,9 +1003,10 @@ function GetPriorityReligion(data:table)
 		-- Reduce world average if we're rocking multiple converts (VP specific) - not counting ourselves
 		local iWorld:number = data.Data.AvgFaith * 100 / (100 + math.max(0,(data.Data.NumCivsConverted-1)) * 10); -- ??????
 		if iWorld > 0 then
-			local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+			--local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+			local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * (GlobalParameters.RST_RELIGION_FAITH_FACTOR * (data.Data.Era+1)) / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-			print("...faith ratio", iRatio, "player/world", pPlayer:GetReligion():GetFaithYield(), iWorld, "priority=", iPriority);
+			print("...faith ratio", iRatio, "player/world/era", pPlayer:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority);
 		end
 	end
 		-- no, no... cities are limited, so it should be treated the same way as CultureProgress, expotential progress
@@ -1452,9 +1453,10 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 	-- Reduce world average if he's rocking multiple converts (VP specific) - not counting ourselves
 	local iWorld:number = data.Data.AvgFaith * 100 / (100 + math.max(0,(iNumCivsConverted-1)) * 10);
 	if iWorld > 0 then
-		local iRatio:number = (pOther:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+		--local iRatio:number = (pOther:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+		local iRatio:number = (pOther:GetReligion():GetFaithYield() - iWorld) * (GlobalParameters.RST_RELIGION_FAITH_FACTOR * (data.Data.Era+1)) / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 		iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-		print("...faith ratio", iRatio, "player/world", pOther:GetReligion():GetFaithYield(), iWorld, "priority=", iPriority);
+		print("...faith ratio", iRatio, "player/world/era", pOther:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority);
 	end
 	-- check only if he has a religion
 	--[[

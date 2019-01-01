@@ -65,11 +65,11 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CULTURE_PROGRESS_MULTIPLIER', 22), -- cultural progress formula, multiplier; 50 => 80, 60 => 110, 70 => 160, 80 => 220, 90 => 300
 -- religion
 --('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
-('RST_RELIGION_FAITH_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more
+('RST_RELIGION_FAITH_FACTOR', 10), -- how does our situation compare to others; uses typical formula but actual Multiplier = Factor * Era - this smoothes down early faith jumps
 --('RST_RELIGION_CITIES_RATIO_MULTIPLIER', 40), -- number of cities following our religion, how does our situation compare to others, -100..100 and more - problem with early converts, gives huge negatives when working your own empire even
 ('RST_RELIGION_CITIES_EXPONENT', 3), -- [x100], cultural progress formula used for cities converted, exponent => 0.03 speeds up after 50 and goes high after 80
 ('RST_RELIGION_CITIES_MULTIPLIER', 25), -- cultural progress formula used for cities converted, multiplier; 50 => 90, 60 => 130, 70 => 180, 80 => 250, 90 => 350
-('RST_RELIGION_RELIGION_WEIGHT', 30), -- founded religion
+('RST_RELIGION_RELIGION_WEIGHT', 40), -- founded religion
 ('RST_RELIGION_CONVERTED_WEIGHT', 60), -- each converted civ after 1 (I assume the 1st is us)
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
@@ -327,8 +327,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'MilitaryVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 25
 
 UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- def. 25
-UPDATE AiFavoredItems SET Value = 100 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- def. 25
-UPDATE AiFavoredItems SET Value =  75 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. 25
+UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- def. 25
+UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. 25
 UPDATE AiFavoredItems SET Value =  15 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 25 -- leave it for Naval strategies
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES

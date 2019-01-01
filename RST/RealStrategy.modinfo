@@ -14,7 +14,7 @@
 	</ActionCriteria>
 	<InGameActions>
 		<UpdateDatabase id="RST_Database">
-			<!--<Properties><LoadOrder>1</LoadOrder></Properties>-->
+			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
 			<File>RealStrategy_Database.sql</File>
 		</UpdateDatabase>
 		<!--
