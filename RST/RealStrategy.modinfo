@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Real Strategy. Testing. Version 0.1.</Description>
+		<Description>Real Strategy. Version 0.1.</Description>
 		<Teaser>Real Strategy</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -15,27 +15,23 @@
 	<InGameActions>
 		<UpdateDatabase id="RST_Database">
 			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
-			<File>RealStrategy_Database.sql</File>
+			<File>RealStrategy_Params.sql</File>
+			<File>RealStrategy_Main.sql</File>
 		</UpdateDatabase>
-		<!--
-		<UpdateDatabase id="REur_Database_RF" criteria="Expansion1">
-		<Properties><LoadOrder>2</LoadOrder></Properties>		
-		<File>RealEurekas_2_RiseFall.sql</File>
-		</UpdateDatabase>
-		-->
 		<AddUserInterfaces id="RST_UI_Utils">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Utils/RealStrategy_InGameExp.xml</File>
-			<File>RealStrategy.xml</File>
+			<!--<File>RealStrategy.xml</File>-->
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
-			<!--<File>RealStrategy.lua</File>-->
+			<File>RealStrategy.lua</File>
 		</AddGameplayScripts>
 	</InGameActions>
 	<Files>
 		<File>RealStrategy.lua</File>
 		<File>RealStrategy.xml</File>
-		<File>RealStrategy_Database.sql</File>
+		<File>RealStrategy_Params.sql</File>
+		<File>RealStrategy_Main.sql</File>
 		<File>Utils/RealStrategy_InGameExp.lua</File>
 		<File>Utils/RealStrategy_InGameExp.xml</File>
 	</Files>

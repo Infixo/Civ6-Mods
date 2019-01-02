@@ -4,6 +4,7 @@ print("Loading RealStrategy.lua from Real Strategy version "..GlobalParameters.R
 -- 2018-12-14: Created by Infixo
 -- ===========================================================================
 
+
 -- InGame functions exposed here
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
 local RST = ExposedMembers.RST;
@@ -15,9 +16,6 @@ local RST = ExposedMembers.RST;
 -- configuration options
 local bOptionLogStrat:boolean = ( GlobalParameters.RST_OPTION_LOG_STRAT == 1 );
 local bOptionLogGuess:boolean = ( GlobalParameters.RST_OPTION_LOG_GUESS == 1 );
-
-local LL = Locale.Lookup;
-
 
 
 -- ===========================================================================
@@ -40,8 +38,10 @@ local Strategies:table = {
 local tShowStrat:table = { "CONQUEST", "SCIENCE", "CULTURE", "RELIGION" }; -- only these will be shown in logs and debugs
 
 local tData:table = {}; -- a table of data sets, one for each player
-ExposedMembers.RST.Data = tData;
+ExposedMembers.RST.Data = tData; -- to access data in FireTuner
 local tPriorities:table = {}; -- a table of Priorities tables (flavors); constructed from DB
+
+local iMaxNumReligions:number = 0; -- maximum number of religions on this map
 
 
 -- ===========================================================================
@@ -148,7 +148,7 @@ g_FEATURE_MARSH				= GetGameInfoIndex("Features", "FEATURE_MARSH");
 --IMPROVEMENT_GOODY_HUT
 
 -- ===========================================================================
--- TABLE FUNCTIONS AND HELPERS (INC. TABLE OF PLOT INDICES)
+-- TABLE HELPERS
 -- ===========================================================================
 
 -- check if 'value' exists in table 'pTable'; should work for any type of 'value' and table indices
@@ -210,122 +210,6 @@ function GetAdjacentPlotIndex(iIndex:number, eDir:number)
 end
 
 
-
-
-
--- ===========================================================================
--- BOOST CLASS FUNCTIONS
--- ===========================================================================
-
-
--- helper - returns a table of Plot objects that are owned by a given city
-local iCitySettleRange:number = tonumber(GameInfo.GlobalParameters["CITY_MAX_BUY_PLOT_RANGE"].Value);
-function GetCityPlots(tPlots:table, ePlayerID:number, iCityID:number)
-	local pCity = Players[ePlayerID]:GetCities():FindID(iCityID);
-	if pCity == nil then return; end
-	local iX:number, iY:number = pCity:GetX(), pCity:GetY();
-	for dx = -iCitySettleRange, iCitySettleRange, 1 do
-		for dy = -iCitySettleRange, iCitySettleRange, 1 do
-			local pPlot = Map.GetPlotXY(iX, iY, dx, dy);
-			--dprint("  ...plot (id) owned by (owner)", pPlot:GetIndex(), pPlot:GetOwner());
-			local pPlotCity = Cities.GetPlotPurchaseCity(pPlot);
-			if pPlotCity ~= nil and pPlotCity:GetOwner() == ePlayerID and pPlotCity:GetID() == iCityID then
-				table.insert(tPlots, pPlot);
-			end
-		end
-	end
-	dprint("FUNEND GetCityPlots() found plots", table.count(tPlots));
-end
-
-function CountCityTilesTerrain(tPlots:table, sTerrainType:string)
-	dprint("FUN CountCityTilesTerrain()",sTerrainType);
-	local iNum = 0;
-	for _,plot in pairs(tPlots) do
-		local pTerrain = GameInfo.Terrains[plot:GetTerrainType()];
-		--dprint("  ...plot (id) is (terrain)", plot:GetIndex(), plot:GetTerrainType());
-		if pTerrain ~= nil and string.find(pTerrain.TerrainType, sTerrainType) ~= nil then iNum = iNum + 1; end
-	end
-	dprint("  ...found", iNum, sTerrainType);
-	return iNum;
-end
-
-function CountCityTilesFeature(tPlots:table, sFeatureType:string)
-	dprint("FUN CountCityTilesFeature()",sFeatureType);
-	local iNum = 0;
-	for _,plot in pairs(tPlots) do
-		local pFeature = GameInfo.Features[plot:GetFeatureType()];
-		--dprint("  ...plot (id) is (feature)", plot:GetIndex(), plot:GetFeatureType());
-		if pFeature ~= nil and pFeature.FeatureType == sFeatureType then iNum = iNum + 1; end
-	end
-	dprint("  ...found", iNum, sFeatureType);
-	return iNum;
-end
-
-
--- special additional resource visibility check is required
-local tResourceVisible:table = {};
-function UpdateResourceVisibility(ePlayerID:number)
-	for res in GameInfo.Resources() do
-		tResourceVisible[res.Index] = true;  -- most of them are visible from start
-		if res.PrereqTechReference ~= nil then 
-			tResourceVisible[res.Index] = Players[ePlayerID]:GetTechs():HasTech( res.PrereqTechReference.Index );
-		end
-		if res.PrereqCivicReference ~= nil then 
-			tResourceVisible[res.Index] = Players[ePlayerID]:GetCulture():HasCivic( res.PrereqCivicReference.Index );
-		end
-	end
-	--dprint("Resources NOT visible");
-	--for res in GameInfo.Resources() do
-		--if not tResourceVisible[res.Index] then dprint("  ... (type)", res.ResourceType); end
-	--end
-end
-
-
-function CountCityTilesImprovableRes(tPlots:table, sImprovementType:string)
-	dprint("FUN CountCityTilesImprovableRes()",sImprovementType);
-	-- first prepare a table of valid resources (just Indices)
-	local tResourceValid:table = {};
-	for _,vres in pairs(GameInfo.Improvements[sImprovementType].ValidResources) do
-		if tResourceVisible[vres.ResourceReference.Index] then
-			tResourceValid[vres.ResourceReference.Index] = true;
-		end
-	end
-	--dprint("Valid resources for improvement are", sImprovementType);
-	--for id,_ in pairs(tResourceValid) do dprint("  ... (id,type)", id, GameInfo.Resources[id].ResourceType); end
-	-- now check plots
-	local iNum = 0;
-	for _,plot in pairs(tPlots) do
-		local pResource = GameInfo.Resources[plot:GetResourceType()];
-		--dprint("  ...plot (id) is (res)", plot:GetIndex(), plot:GetResourceType());
-		if pResource ~= nil and tResourceValid[pResource.Index] then iNum = iNum + 1; end
-	end
-	dprint("  ...found", iNum, sImprovementType);
-	return iNum;
-end
-
--- added 2018-02-13
-function CountCityTilesHills(tPlots:table)
-	dprint("FUN CountCityTilesHills()");
-	local iNum = 0;
-	for _,plot in pairs(tPlots) do
-		if plot:IsHills() then iNum = iNum + 1; end
-	end
-	dprint("  ...found", iNum);
-	return iNum;
-end
-
--- added 2018-02-13
-function CountCityTilesLake(tPlots:table)
-	dprint("FUN CountCityTilesLake()");
-	local iNum = 0;
-	for _,plot in pairs(tPlots) do
-		if plot:IsLake() then iNum = iNum + 1; end
-	end
-	dprint("  ...found", iNum);
-	return iNum;
-end
-
-
 -- ===========================================================================
 -- HELPERS
 -- ===========================================================================
@@ -337,9 +221,21 @@ function PriorityTableNew()
 	return tNew;
 end
 
+-- get a new table with random integers in range -iRand..+iRand (both inclusive)
+function PriorityTableRandom(iRand:number)
+	local tNew:table = {};
+	for strat,_ in pairs(Strategies) do tNew[ strat ] = math.random(-iRand, iRand); end
+	return tNew;
+end
+
 -- set all values to 0
 function PriorityTableClear(pTable:table)
 	for strat,_ in pairs(Strategies) do pTable[ strat ] = 0; end
+end
+
+-- set all values to a range iMin..iMax, both nclusive
+function PriorityTableMinMax(pTable:table, iMin:number, iMax:number)
+	for strat,_ in pairs(Strategies) do pTable[ strat ] = math.min( math.max( pTable[strat], iMin ), iMax ); end
 end
 
 -- add two tables
@@ -401,8 +297,6 @@ end
 -- CORE FUNCTIONS
 -- ===========================================================================
 
-local iMaxNumReligions:number = 0; -- maximum number of religions on this map
-
 ------------------------------------------------------------------------------
 -- Read flavors and parameters, initialize players
 function InitializeData()
@@ -423,7 +317,6 @@ function InitializeData()
 		local data:table = {
 			PlayerID = playerID,
 			LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName(),
-			LeaderName = Locale.Lookup(PlayerConfigurations[playerID]:GetLeaderName()),
 			--Dirty = true,
 			TurnRefresh = -1, -- turn number when was it refreshed last time
 			ActiveStrategy = "NONE",
@@ -432,7 +325,7 @@ function InitializeData()
 			Stored = {}, -- this will be stored between turns (persistent) and eventually perhaps in the save file
 		};
 		tData[playerID] = data;
-		print("...registering player", data.PlayerID, data.LeaderType, data.LeaderName); -- debug
+		print("...registering player", data.PlayerID, data.LeaderType); -- debug
 	end
 	
 	-- initalize flavors
@@ -448,6 +341,17 @@ function InitializeData()
 			tPriorities[flavor.ObjectType] = data;
 		end
 		data.Priorities[flavor.Strategy] = flavor.Value;
+	end
+	
+	-- randomize a bit leaders
+	for _,data in pairs(tPriorities) do
+		if data.Type == "LEADER" then
+			local tRandom:table = PriorityTableRandom(GlobalParameters.RST_STRATEGY_LEADER_RANDOM);
+			--dshowpriorities(tRandom, "...randomizing "..data.ObjectType);
+			PriorityTableAdd(data.Priorities, tRandom);
+			PriorityTableMinMax(data.Priorities, 1, 9);
+			--dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
+		end
 	end
 	--[[
 	print("Table of priorities:"); -- debug
@@ -493,6 +397,7 @@ function RefreshPlayerData(data:table)
 	local pPlayer:table = Players[ePlayerID];
 	local tOut:table = {}; -- debug
 	
+	-- TODO: REMOVE a separate record, this can be a main record, easier access!
 	local tNewData:table = {
 		Era = pPlayer:GetEra(), -- simple
 		ElapsedTurns = 0, -- with game speed scaling
@@ -559,7 +464,7 @@ function GetGenericPriorities(data:table)
 	
 	-- POLICIES
 	-- Add priority value based on flavors of policies we've acquired.
-	--print("...generic: policies", data.LeaderName);
+	--print("...generic: policies", data.LeaderType);
 	local tPolicies:table = RST.PlayerGetSlottedPolicies(ePlayerID);
 	local tPolicyPriorities:table = PriorityTableNew();
 	for _,policy in ipairs(tPolicies) do
@@ -570,7 +475,7 @@ function GetGenericPriorities(data:table)
 	dshowpriorities(tPolicyPriorities, "generic policies");
 	
 	-- GOVERNMENT
-	--print("...generic: government", data.LeaderName);
+	--print("...generic: government", data.LeaderType);
 	local sGovType:string = GameInfo.Governments[ RST.PlayerGetCurrentGovernment(ePlayerID) ].GovernmentType;
 	local tGovPriorities:table = PriorityTableNew();
 	if tPriorities[sGovType] then PriorityTableAdd(tGovPriorities, tPriorities[sGovType].Priorities);
@@ -580,7 +485,7 @@ function GetGenericPriorities(data:table)
 	
 	-- WONDERS
 	-- probably the fastest way is to iterate through Flavors?
-	--print("...generic: wonders", data.LeaderName);
+	--print("...generic: wonders", data.LeaderType);
 	local tWonderPriorities:table = PriorityTableNew();
 	for object,data in pairs(tPriorities) do
 		if data.Type == "Wonder" and GameInfo.Buildings[data.ObjectType] ~= nil then -- make sure this Wonder is actually in-game
@@ -599,7 +504,7 @@ function GetGenericPriorities(data:table)
 	
 	-- GREAT PEOPLE
 	-- Add priority value based on flavors of great people we've acquired.
-	--print("...generic: great people", data.LeaderName);
+	--print("...generic: great people", data.LeaderType);
 	local tGPs:table = RST.PlayerGetRecruitedGreatPeopleClasses(ePlayerID);
 	local tGPPriorities:table = PriorityTableNew();
 	for _,class in ipairs(tGPs) do
@@ -610,7 +515,7 @@ function GetGenericPriorities(data:table)
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
-	--print("...generic: city states", data.LeaderName);
+	--print("...generic: city states", data.LeaderType);
 	local tMinorPriorities:table = PriorityTableNew();
 	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
 		if minor:GetInfluence():GetSuzerain() == ePlayerID then
@@ -624,7 +529,7 @@ function GetGenericPriorities(data:table)
 
 	-- BELIEFS
 	-- Add priority value based on flavors of beliefs we've acquired.
-	--print("...generic: beliefs", data.LeaderName);
+	--print("...generic: beliefs", data.LeaderType);
 	local tBeliefs:table = RST.PlayerGetBeliefs(ePlayerID);
 	local tBeliefPriorities:table = PriorityTableNew();
 	for _,beliefID in pairs(tBeliefs) do
@@ -639,7 +544,7 @@ function GetGenericPriorities(data:table)
 	dshowpriorities(tBeliefPriorities, "generic beliefs");
 
 	
-	--print("...generic priorities for leader", data.LeaderName);
+	--print("...generic priorities for leader", data.LeaderType);
 	local tGenericPriorities:table = PriorityTableNew();
 	PriorityTableAdd(tGenericPriorities, tPolicyPriorities);
 	PriorityTableAdd(tGenericPriorities, tGovPriorities);
@@ -1091,7 +996,7 @@ function EstablishStrategyBasePriority(data:table)
 	-- multiply Leader flavors by base priority weight
 	PriorityTableAdd(data.Priorities, tPriorities[data.LeaderType].Priorities);
 	PriorityTableMultiply(data.Priorities, GlobalParameters.RST_WEIGHT_LEADER);
-	--print("...base priorities for leader", data.LeaderName);
+	--print("...base priorities for leader", data.LeaderType);
 	dshowpriorities(data.Priorities, "*** base priorities "..data.LeaderType);
 	
 	-- the later the game the greater the chance
@@ -1147,7 +1052,7 @@ function RefreshAndProcessData(ePlayerID:number)
 	tSpecificPriorities.DEFENSE  = GetPriorityDefense(data);
 	--tSpecificPriorities.NAVAL  = GetPriorityNaval(data);
 	--tSpecificPriorities.TRADE  = GetPriorityTrade(data);
-	--print("...specific priorities for leader", data.LeaderName);
+	--print("...specific priorities for leader", data.LeaderType);
 	dshowpriorities(tSpecificPriorities, "*** specific priorities "..data.LeaderType);
 	
 	-- add generic to specific priorities
@@ -1162,10 +1067,10 @@ function RefreshAndProcessData(ePlayerID:number)
 	dprint("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, fTurnAdjust);
 	--PriorityTableMultiply(tSpecificPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
 	PriorityTableMultiply(tSpecificPriorities, fTurnAdjust/100.0); -- it scales lineary from _START to _STOP value during the game
-	--print("...specific and generic priorities after turn adjustment for leader", data.LeaderName);
+	--print("...specific and generic priorities after turn adjustment for leader", data.LeaderType);
 	dshowpriorities(tSpecificPriorities, "specific & generic after turn adjust");
 	
-	--print("...applying specific priorities", data.LeaderName);
+	--print("...applying specific priorities", data.LeaderType);
 	PriorityTableAdd(data.Priorities, tSpecificPriorities);
 	dshowpriorities(data.Priorities, "applying specific priorities");
 	
@@ -1173,7 +1078,7 @@ function RefreshAndProcessData(ePlayerID:number)
 	for strat,value in pairs(data.Priorities) do
 		data.Priorities[strat] = value + math.random(0,GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY); -- AI_GS_RAND_ROLL
 	end
-	--print("...applying a bit of randomization", data.LeaderName);
+	--print("...applying a bit of randomization", data.LeaderType);
 	dshowpriorities(data.Priorities, "applying a bit of randomization");
 	
 	-- Give a boost to the current strategy so that small fluctuation doesn't cause a big change
@@ -1204,7 +1109,7 @@ function RefreshAndProcessData(ePlayerID:number)
 	PriorityTableMultiplyByTable(tNerfFactor, tBetterNum);
 	dshowpriorities(tNerfFactor, "nerf factors");
 	
-	--print("...final priorities", data.LeaderName);
+	--print("...final priorities", data.LeaderType);
 	PriorityTableAdd(data.Priorities, tNerfFactor);
 	dshowpriorities(data.Priorities, "*** final priorities "..data.LeaderType);
 	
@@ -1760,6 +1665,10 @@ GameEvents.CheckTurnNumber.Add(CheckTurnNumber);
 ------------------------------------------------------------------------------
 function Initialize()
 	--print("FUN Initialize");
+	
+	-- for FireTuner
+	ExposedMembers.RST.PlayerGetNumProjectsSpaceRace = PlayerGetNumProjectsSpaceRace;
+	ExposedMembers.RST.PlayerGetNumCivsConverted = PlayerGetNumCivsConverted;
 	
 	InitializeData();
 	
