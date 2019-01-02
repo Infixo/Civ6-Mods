@@ -11,6 +11,12 @@ UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE_MILITARY' WHERE Item = 'D
 UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE' WHERE Item = 'DIPLOACTION_ALLIANCE_TEAMUP'; -- IronConfederacyDiplomacy, does not exists in Diplo Actions, REMOVE IF IMPLEMENTED PROPERLY!
 
 
+-- 2019-01-01: based on mod "Hill Start Bias for Georgia" (the mod uses Tier 3 however)
+INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_GEORGIA', TerrainType, 2
+FROM Terrains WHERE Hills = 1;
+
+
 --------------------------------------------------------------
 -- BALANCE SECTION
 

@@ -87,29 +87,28 @@ UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitTyp
 
 -- 2018-12-25: Some items in AiFavoredItems have values 1 and -1, which doesn't have any effect; it should be 100 and -100
 UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND Item = 'PROMOTION_CLASS_INQUISITOR'; -- was -1
-UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
-UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
-UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1
-UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
-UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
-UPDATE AiFavoredItems SET Value =  100 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1
+UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
+UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
+UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1
+UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
+UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
+UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1 [there is also PseudoYield for that, AI+ set it to 1.4, it is 40 here]
 
+-- 2019-01-01: "Make Military Formation" in AllowedMoves is set as IsHomeland, but used in Tactics lists for both Majors and Minors
+UPDATE AllowedMoves SET IsHomeland = 0, IsTactical = 1 WHERE AllowedMoveType = 'Make Military Formation';
+-- 2019-01-01: "Plunder Trader" is only used by Barbarians, Majors and Minors don't use it - not sure this is an error
+INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
+('Default Tactical', 'Plunder Trader', 1);
+--('Minor Civ Tactical', 'Plunder Trader', 1); -- later
+--('FreeCitiesTactics', 'Plunder Trader', 1); R&F
+
+-- 2019-01-01: AiOperationList Default_List is defined but never used
+UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DEFAULT';
 
 
 --------------------------------------------------------------
 -- BALANCE SECTION
 
--- 1st Tier Governments' placement
-UPDATE Governments SET PrereqCivic = 'CIVIC_GAMES_RECREATION' WHERE GovernmentType = 'GOVERNMENT_AUTOCRACY';
-UPDATE Governments SET PrereqCivic = 'CIVIC_DRAMA_POETRY'     WHERE GovernmentType = 'GOVERNMENT_CLASSICAL_REPUBLIC';
-INSERT INTO CivicPrereqs (Civic, PrereqCivic) VALUES
-('CIVIC_GAMES_RECREATION', 'CIVIC_FOREIGN_TRADE'),
-('CIVIC_DRAMA_POETRY',     'CIVIC_CRAFTSMANSHIP');
-
-
--- Monarchy
-UPDATE Governments SET PrereqCivic = 'CIVIC_DIPLOMATIC_SERVICE' WHERE GovernmentType = 'GOVERNMENT_MONARCHY';
---UPDATE Government_SlotCounts SET NumSlots = 2 WHERE GovernmentType = 'GOVERNMENT_MONARCHY' AND GovernmentSlotType = 'SLOT_MILITARY';
 
 -- Rise & Fall changes
 UPDATE GlobalParameters SET Value = '10'  WHERE Name = 'COMBAT_HEAL_CITY_OUTER_DEFENSES'; -- def. 1

@@ -14,8 +14,8 @@
 
 DELETE FROM AiFavoredItems WHERE ListType = 'StandardSettlePlot';
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
-('StandardSettlePlot', 'Foreign Continent', 0, -2, NULL), -- def
-('StandardSettlePlot', 'Nearest Friendly City', 0, -10, NULL), -- def
+('StandardSettlePlot', 'Foreign Continent', 0, -5, NULL), -- def
+('StandardSettlePlot', 'Nearest Friendly City', 0, -8, NULL), -- def
 ('StandardSettlePlot', 'Fresh Water', 0, 16, NULL), -- +3
 ('StandardSettlePlot', 'Coastal', 0, 7, NULL), -- -1
 ('StandardSettlePlot', 'Total Yield', 0, 1, 'YIELD_PRODUCTION'), -- def
@@ -115,25 +115,25 @@ UPDATE Yields SET DefaultValue = 0.9 WHERE YieldType = 'YIELD_FAITH';
 
 UPDATE PseudoYields SET DefaultValue = 350   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450
 UPDATE PseudoYields SET DefaultValue = 100    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80
-UPDATE PseudoYields SET DefaultValue = 200   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 -- imho, this one doesn't work as expected
---UPDATE PseudoYields SET DefaultValue = 100   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200 -- if this is used in Conquest, it should stay high
-UPDATE PseudoYields SET DefaultValue =  4    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50
+UPDATE PseudoYields SET DefaultValue = 300   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 -- imho, this one doesn't work as expected
+UPDATE PseudoYields SET DefaultValue = 100   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200 -- if this is used in Conquest, it should stay high
+--UPDATE PseudoYields SET DefaultValue =  50    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50
 UPDATE PseudoYields SET DefaultValue =  3    WHERE PseudoYieldType = 'PSEUDOYIELD_CIVIC'; -- 	5, 1 too little
-UPDATE PseudoYields SET DefaultValue =  1.6  WHERE PseudoYieldType = 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  1.5  WHERE PseudoYieldType = 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS'; -- 	0.5
 --UPDATE PseudoYields SET DefaultValue =  0.15 WHERE PseudoYieldType = 'PSEUDOYIELD_DIPLOMATIC_BONUS'; -- 	0.25 -- let's not change diplomacy yet
-UPDATE PseudoYields SET DefaultValue =  6.7  WHERE PseudoYieldType = 'PSEUDOYIELD_DISTRICT'; -- 	3.5
+UPDATE PseudoYields SET DefaultValue =  5.0  WHERE PseudoYieldType = 'PSEUDOYIELD_DISTRICT'; -- 	3.5
 UPDATE PseudoYields SET DefaultValue =  0.75 WHERE PseudoYieldType = 'PSEUDOYIELD_ENVIRONMENT'; -- 	0.5
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_GOLDENAGE_POINT'; -- 	1
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_GOVERNOR'; -- 	2
---UPDATE PseudoYields SET DefaultValue =  0.6  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ADMIRAL'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ARTIST'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.9 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ENGINEER'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_GENERAL'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  1.0  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MERCHANT'; -- 	0.5 -- 1.5 - why so high?
+UPDATE PseudoYields SET DefaultValue =  0.5  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ADMIRAL'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ARTIST'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ENGINEER'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_GENERAL'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MERCHANT'; -- 	0.5 -- 1.5 - why so high?
 UPDATE PseudoYields SET DefaultValue =  0.5 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MUSICIAN'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.8  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_PROPHET'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  1.0  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_SCIENTIST'; -- 	0.5, 1.6 vs. 0.75 disproportion Sci vs. Cul - not many Theater Districts
-UPDATE PseudoYields SET DefaultValue =  1.0 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_WRITER'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.9 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_PROPHET'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_SCIENTIST'; -- 	0.5, 1.6 vs. 0.75 disproportion Sci vs. Cul - not many Theater Districts
+UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_WRITER'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_ARTIFACT'; -- 	10
 UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_LANDSCAPE'; -- 	10
 UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_MUSIC'; -- 	10
@@ -157,7 +157,7 @@ UPDATE PseudoYields SET DefaultValue =  1.3 WHERE PseudoYieldType = 'PSEUDOYIELD
 UPDATE PseudoYields SET DefaultValue =  0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_EXPLORER'; --	1
 --UPDATE PseudoYields SET DefaultValue =  1.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; --	1 -- leave for naval strategies
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_RELIGIOUS'; -- 1
-UPDATE PseudoYields SET DefaultValue =  1.2 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SETTLER'; -- 1 -- 1.4 seems to much, they build Settlers even with 0 army and undeveloped cities
+--UPDATE PseudoYields SET DefaultValue =  1.2 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SETTLER'; -- 1 -- 1.4 seems to much, they build Settlers even with 0 army and undeveloped cities
 UPDATE PseudoYields SET DefaultValue = 15.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SPY'; -- 20
 UPDATE PseudoYields SET DefaultValue = 10.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_TRADE'; -- 1
-UPDATE PseudoYields SET DefaultValue =  1.2 WHERE PseudoYieldType = 'PSEUDOYIELD_WONDER'; -- 2, 0.55 is too low, they don't build them!
+UPDATE PseudoYields SET DefaultValue =  1.0 WHERE PseudoYieldType = 'PSEUDOYIELD_WONDER'; -- 2, 0.55 is too low, they don't build them!
