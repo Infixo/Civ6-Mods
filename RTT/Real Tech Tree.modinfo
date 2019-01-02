@@ -2,7 +2,7 @@
 <Mod id="08F3DDAD-42FF-3D72-2570-91D662B3326B" version="2">
   <Properties>
     <Name>Real Tech Tree</Name>
-    <Description>Improved Tech &amp; Civic Trees. More logical and based on reality connections.[NEWLINE][ICON_BULLET]Balanced beelining - techs and civics in the same Era have similar number of prereqs.[NEWLINE][ICON_BULLET]Eliminated dead-end techs which will cause AI to update its units.[NEWLINE][ICON_BULLET]Slightly decreased Eureka boosts for better game pace.[NEWLINE][NEWLINE]v2.3 is aligned with Fall 2017 Update</Description>
+    <Description>Improved Tech &amp; Civic Trees. More logical and based on reality connections.[NEWLINE][ICON_BULLET]Balanced beelining - techs and civics in the same Era have similar number of prereqs.[NEWLINE][ICON_BULLET]Eliminated dead-end techs which will cause AI to update its units.[NEWLINE][ICON_BULLET]Slightly decreased Eureka boosts for better game pace.[NEWLINE][NEWLINE]v2.4 is aligned with Fall 2017 Update</Description>
     <Teaser>Logical and based on reality connections. Balanced beelining.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-tech-tree.25911/</Homepage>
@@ -13,10 +13,12 @@
       <File>RTT_Technologies.xml</File>
       <File>RTT_Civics.xml</File>
       <File>RTT_Boosts.sql</File>
+      <File>RTT_Govs.sql</File>
     </UpdateDatabase>
   </InGameActions>
   <Files>
     <File>RTT_Boosts.sql</File>
+    <File>RTT_Govs.sql</File>
     <File>RTT_Civics.xml</File>
     <File>RTT_Technologies.xml</File>
   </Files>
