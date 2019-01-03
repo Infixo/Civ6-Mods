@@ -21,7 +21,7 @@ local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C5
 -- configuration options
 local bOptionModifiers:boolean = ( GlobalParameters.BCP_OPTION_MODIFIERS == 1 );
 local bOptionInternal:boolean = ( GlobalParameters.BCP_OPTION_INTERNAL == 1 );
-
+local bOptionAiLists:boolean = ( GlobalParameters.BCP_OPTION_AILISTS == 1 );
 
 -- Base File
 include("CivilopediaScreen");
@@ -220,7 +220,7 @@ end
 --------------------------------------------------------------
 -- EXCEPTIONS
 
-PageLayouts["Building" ] = function(page)
+PageLayouts["Building"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
 
@@ -469,6 +469,51 @@ AddUniques("Buildings");
 AddUniques("Districts");
 AddUniques("Improvements");
 
+
+-- AiLists
+-- display separately for Leaders and Civs
+-- CivilizationTrait
+--   ListType (System, Trait) [AiLists]
+--      row1 Item Favored Value (StringVal if  exists) [AiFavoredItems]
+--      row2 Item Favored Value (StringVal if  exists)
+-- LaderTrait & AgendaTrait
+--   same as above
+
+function ShowAiLists(tTraits:table)
+	if not bOptionAiLists then return; end
+
+	local chapter_body = {};
+	local tAiLists:table = {};
+	-- build a list of AiLists to display
+	for _,trait in ipairs(tTraits) do
+		for row in GameInfo.AiLists() do
+			if row.LeaderType == trait or row.AgendaType == trait then
+				table.insert(tAiLists, row);
+			end
+		end
+	end
+	-- show all lists
+	for _,ailist in ipairs(tAiLists) do
+		table.insert(chapter_body, string.format("%s (%s, %s)",
+			"[COLOR_Blue]"..ailist.ListType.."[ENDCOLOR]",
+			ailist.System,
+			ailist.LeaderType ~= nil and ailist.LeaderType or (ailist.AgendaType ~= nil and ailist.AgendaType or "[COLOR_Red]unknown[ENDCOLOR]"))); -- AiLists, header
+		-- find and display AiFavoredItems
+		for row in GameInfo.AiFavoredItems() do
+			if row.ListType == ailist.ListType then
+				table.insert(chapter_body, string.format("%s %s %d %s",
+					row.Item,
+					row.Favored and "YES" or "no",
+					row.Value,
+					row.StringVal ~= nil and row.StringVal or "")); -- AiFavoredItems, single record
+			end
+		end
+	end
+	if table.count(chapter_body) == 0 then table.insert(chapter_body, "No AI lists defined."); end
+	AddChapter("AI", chapter_body);
+end
+
+
 -- helper
 function AddTrait(sTraitType:string, sUniqueName:string)
 	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", sTraitType, Game.GetLocalPlayer(), nil);
@@ -485,13 +530,19 @@ PageLayouts["Civilization"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
 	
+	local tTraits:table = {};
+	
 	-- iterate through Traits that are not Uniques
 	for row in GameInfo.CivilizationTraits() do
 		if row.CivilizationType == page.PageId and not tAllUniques[row.TraitType] then
 			AddTrait(row.TraitType);
 		end
+		if row.CivilizationType == page.PageId then
+			table.insert(tTraits, row.TraitType);
+		end
 	end
 	
+	ShowAiLists(tTraits);
 	ShowInternalPageInfo(page);
 	
 end
@@ -500,11 +551,14 @@ end
 PageLayouts["Leader"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+
+	local tTraits:table = {};
 	
 	-- iterate through Traits
 	for row in GameInfo.LeaderTraits() do
 		if row.LeaderType == page.PageId then
 			AddTrait(row.TraitType);
+			table.insert(tTraits, row.TraitType);
 		end
 	end
 	
@@ -514,11 +568,13 @@ PageLayouts["Leader"] = function(page)
 			for row in GameInfo.AgendaTraits() do
 				if row.AgendaType == agenda.AgendaType then
 					AddTrait(row.TraitType, Locale.Lookup(GameInfo.Agendas[agenda.AgendaType].Name));
+					table.insert(tTraits, row.TraitType);
 				end
 			end
 		end
 	end
 	
+	ShowAiLists(tTraits);
 	ShowInternalPageInfo(page);
 	
 end
