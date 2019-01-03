@@ -108,6 +108,11 @@ UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DE
 -- 2019-01-02: Wrong assignment of PseudoYield to Wonders; remove, Pericles has Delian agenda which does that
 DELETE FROM AiFavoredItems WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
 
+-- 2019-01-03: Some AiLists are assigned to Agenda Traits but registered in AiLists in a wrong column
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_BACKSTABBER'      WHERE LeaderType = 'TRAIT_AGENDA_BACKSTABBER';
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_LAST_VIKING_KING' WHERE LeaderType = 'TRAIT_AGENDA_LAST_VIKING_KING';
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_WITH_SHIELD'      WHERE LeaderType = 'TRAIT_AGENDA_WITH_SHIELD';
+
 
 --------------------------------------------------------------
 -- BALANCE SECTION
