@@ -86,10 +86,10 @@ DELETE FROM PolicyModifiers WHERE PolicyType = 'POLICY_GOTHIC_ARCHITECTURE' AND 
 UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitType = 'UNIT_NORWEGIAN_LONGSHIP';
 
 -- 2018-12-25: Some items in AiFavoredItems have values 1 and -1, which doesn't have any effect; it should be 100 and -100
-UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND Item = 'PROMOTION_CLASS_INQUISITOR'; -- was -1
+UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND Item = 'PROMOTION_CLASS_INQUISITOR'; -- was -1 -- this should be India
 UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
-UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1
+UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
 UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1 [there is also PseudoYield for that, AI+ set it to 1.4, it is 40 here]
@@ -104,6 +104,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
 
 -- 2019-01-01: AiOperationList Default_List is defined but never used
 UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DEFAULT';
+
+-- 2019-01-02: Wrong assignment of PseudoYield to Wonders; remove, Pericles has Delian agenda which does that
+DELETE FROM AiFavoredItems WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
 
 
 --------------------------------------------------------------
