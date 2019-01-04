@@ -90,7 +90,7 @@ UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND I
 UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
 UPDATE AiFavoredItems SET Value =   20 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
-UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
+UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
 UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1 [there is also PseudoYield for that, AI+ set it to 1.4, it is 40 here]
 
@@ -106,7 +106,11 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
 UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DEFAULT';
 
 -- 2019-01-02: Wrong assignment of PseudoYield to Wonders; remove, Pericles has Delian agenda which does that
-DELETE FROM AiFavoredItems WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
+--		<Row ListType="PericlesWonders" Item="PSEUDOYIELD_INFLUENCE" Favored="true"/>
+--		<Row ListType="PericlesEnvoys" Item="BUILDING_POTALA_PALACE" Value="30"/>
+--DELETE FROM AiFavoredItems WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
+UPDATE AiFavoredItems SET Item = 'BUILDING_POTALA_PALACE' WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
+UPDATE AiFavoredItems SET Item = 'PSEUDOYIELD_INFLUENCE'  WHERE ListType = 'PericlesEnvoys'  AND Item = 'BUILDING_POTALA_PALACE';
 
 -- 2019-01-03: Some AiLists are assigned to Agenda Traits but registered in AiLists in a wrong column
 UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_BACKSTABBER'      WHERE LeaderType = 'TRAIT_AGENDA_BACKSTABBER';

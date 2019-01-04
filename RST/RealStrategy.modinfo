@@ -17,11 +17,11 @@
 			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
 			<File>RealStrategy_Params.sql</File>
 			<File>RealStrategy_Main.sql</File>
+			<File>RealStrategy_Leaders.sql</File>
 		</UpdateDatabase>
 		<AddUserInterfaces id="RST_UI_Utils">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Utils/RealStrategy_InGameExp.xml</File>
-			<!--<File>RealStrategy.xml</File>-->
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
 			<File>RealStrategy.lua</File>
@@ -32,6 +32,7 @@
 		<File>RealStrategy.xml</File>
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
+		<File>RealStrategy_Leaders.sql</File>
 		<File>Utils/RealStrategy_InGameExp.lua</File>
 		<File>Utils/RealStrategy_InGameExp.xml</File>
 	</Files>

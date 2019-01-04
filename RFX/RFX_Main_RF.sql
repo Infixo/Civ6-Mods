@@ -12,6 +12,7 @@ UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE' WHERE Item = 'DIPLOACTIO
 
 
 -- 2019-01-01: based on mod "Hill Start Bias for Georgia" (the mod uses Tier 3 however)
+DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
 INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
 SELECT 'CIVILIZATION_GEORGIA', TerrainType, 2
 FROM Terrains WHERE Hills = 1;
