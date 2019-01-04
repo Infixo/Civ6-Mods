@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Real Strategy. Version 0.1.</Description>
+		<Description>Real Strategy. Version 0.3.[NEWLINE]Includes: main strategies (0.1), leaders (0.2), tactics (0.3).</Description>
 		<Teaser>Real Strategy</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -18,6 +18,7 @@
 			<File>RealStrategy_Params.sql</File>
 			<File>RealStrategy_Main.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
+			<File>RealStrategy_Tactics.sql</File>
 		</UpdateDatabase>
 		<AddUserInterfaces id="RST_UI_Utils">
 			<Properties><Context>InGame</Context></Properties>
@@ -33,6 +34,7 @@
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
 		<File>RealStrategy_Leaders.sql</File>
+		<File>RealStrategy_Tactics.sql</File>
 		<File>Utils/RealStrategy_InGameExp.lua</File>
 		<File>Utils/RealStrategy_InGameExp.xml</File>
 	</Files>

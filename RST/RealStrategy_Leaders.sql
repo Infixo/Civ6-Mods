@@ -358,7 +358,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 DELETE FROM AiFavoredItems WHERE ListType = 'GenghisCivics' AND Item = 'CIVIC_DIVINE_RIGHT';
 
+INSERT INTO AiListTypes (ListType) VALUES
+('MongoliaDisfavorBarracks');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('MongoliaDisfavorBarracks', 'TRAIT_CIVILIZATION_BUILDING_ORDU', 'Buildings');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('MongoliaDisfavorBarracks', 'BUILDING_BARRACKS', 0, 0), -- let him not build Barracks, so he will build Ordu
 ('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0);
 
 

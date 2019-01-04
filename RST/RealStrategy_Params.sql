@@ -6,7 +6,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '3');
 
 -- configuration
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities

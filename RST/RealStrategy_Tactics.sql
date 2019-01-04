@@ -15,6 +15,9 @@ UPDATE TreeData SET DefaultData = 'UNITTYPE_RANGED' WHERE TreeName = 'Simple Cit
 -- UNIT TYPES
 -- ===========================================================================
 
+-- why is Scientist a Leader???
+DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_GREAT_SCIENTIST' AND AiType = 'UNITAI_LEADER';
+	
 -- why is UNIT_KOREAN_HWACHA siege?
 DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_KOREAN_HWACHA' AND (AiType = 'UNITTYPE_SIEGE' OR AiType = 'UNITTYPE_SIEGE_ALL');
 
@@ -28,12 +31,12 @@ FROM Units
 WHERE Domain = 'DOMAIN_AIR';
 
 -- UNITTYPE_SIEGE - core - used in Simple City Attack Force, City Attack Force, City Defense and Aid Ally Attack Force
+
 INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 ('UNIT_BATTERING_RAM', 'UNITTYPE_SIEGE'),
 ('UNIT_SIEGE_TOWER', 'UNITTYPE_SIEGE'),
 ('UNIT_BOMBER', 'UNITTYPE_SIEGE'),
-('UNIT_JET_BOMBER', 'UNITTYPE_SIEGE'),
-('UNIT_KHMER_DOMREY', 'UNITTYPE_SIEGE');
+('UNIT_JET_BOMBER', 'UNITTYPE_SIEGE');
 
 -- UNITTYPE_SIEGE_ALL - core + UNIT_BATTERING_RAM, UNIT_SIEGE_TOWER, UNIT_ANTIAIR_GUN, UNIT_MOBILE_SAM, UNIT_SUPPLY_CONVOY - used only ONCE in "City Attack Force" team def, min. 1
 
@@ -87,10 +90,10 @@ City Attack Force	UNITTYPE_SIEGE	0	3
 City Attack Force	UNITTYPE_SIEGE_ALL	1	
 City Attack Force	UNITTYPE_SIEGE_SUPPORT	0	2
 */
-UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 5 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_AIR';
-UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_AIR_SIEGE';
+UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 4 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_AIR';
+UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 4 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_AIR_SIEGE';
 UPDATE OpTeamRequirements SET MinNumber = 2                WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_RANGED';
-UPDATE OpTeamRequirements SET MinNumber = 1, MaxNumber = 3 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_SIEGE';
+UPDATE OpTeamRequirements SET MinNumber = 1, MaxNumber = 4 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_SIEGE';
 UPDATE OpTeamRequirements SET MinNumber = 1, MaxNumber = 3 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_SIEGE_SUPPORT';
 
 
@@ -140,7 +143,7 @@ Naval Superiority Force	UNITTYPE_RANGED	0
 Naval Superiority Force	UNITTYPE_CIVILIAN_LEADER		1
 */
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
-('Naval Superiority Force ', 'UNITAI_COMBAT',  2, 10); -- let's do this with at least 2 ships, later test for 3 ships
+('Naval Superiority Force', 'UNITAI_COMBAT',  2, 10); -- let's do this with at least 2 ships, later test for 3 ships
 
 
 /*	
