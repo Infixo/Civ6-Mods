@@ -733,12 +733,13 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
 
 
-
--- GORGO & PERICLES / GREECE
+-- LEADER_GORGO & LEADER_PERICLES / GREECE
 -- GREECE has an extra Wildcard slot & Acropolis, boosted Culture - nothing to add here
 -- GORGO seems OK
 -- PERICLES seems OK, CS ally, low faith
 
+-- 2019-01-02: Wrong assignment of PseudoYield to Wonders; remove, Pericles has Delian agenda which does that
+DELETE FROM AiFavoredItems WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
 
 
 -- HARDRADA / NORWAY
@@ -959,32 +960,76 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('KongoPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 50);
 
 
-
--- BRAZIL / PEDRO
+-- LEADER_PEDRO / BRAZIL
 -- lower a bit GP obsession, balance defense
 
+DELETE FROM AiFavoredItems WHERE ListType = 'PedroCivics' AND Item = 'CIVIC_CAPITALISM';
+DELETE FROM AiFavoredItems WHERE ListType = 'PedroCivics' AND Item = 'CIVIC_GUILDS';
+DELETE FROM AiFavoredItems WHERE ListType = 'PedroCivics' AND Item = 'CIVIC_NATIONALISM';
+
+DELETE FROM AiFavoredItems WHERE ListType = 'GreatPersonObsessedGreatPeople' AND Item = 'PSEUDOYIELD_GPP_PROPHET'; -- don't be obsessed with him - there is only one!
 UPDATE AiFavoredItems SET Value =  25 WHERE ListType = 'GreatPersonObsessedGreatPeople'; -- def. 50
 
+INSERT INTO AiListTypes (ListType) VALUES
+('PedroPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('PedroPseudoYields', 'TRAIT_LEADER_MAGNANIMOUS', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('GreatPersonObsessedGreatPeople', 'PSEUDOYIELD_CITY_DEFENSES', 1, 25);
+('PedroCivics', 'CIVIC_NATURAL_HISTORY', 1, 0),
+('PedroPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 100),
+('PedroPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- leave jungle
+('PedroPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 25), -- to build Theater Squares
+--('PedroPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
+('PedroPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -25), -- use faith for GP
+('PedroPseudoYields', 'PSEUDOYIELD_WONDER', 1, -25);
 
 
--- 2019-01-02: Wrong assignment of PseudoYield to Wonders; remove, Pericles has Delian agenda which does that
-DELETE FROM AiFavoredItems WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
+-- LEADER_PETER_GREAT
+-- almost empty...
+
+DELETE FROM AiFavoredItems WHERE ListType = 'PeterWonders' AND Item = 'BUILDING_COLOSSUS'; -- there are cheaper ways to get +1 TR
+
+INSERT INTO AiListTypes (ListType) VALUES
+('PeterPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('PeterPseudoYields', 'TRAIT_LEADER_GRAND_EMBASSY', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('PeterCivics', 'CIVIC_MYSTICISM', 1, 0),
+('PeterPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 20), -- try to get religion asap
+('PeterPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
+('PeterPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 25),
+('PeterPseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
+('PeterPseudoYields', 'PSEUDOYIELD_GPP_MUSICIAN', 1, 10),
+('PeterPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10),
+('PeterWonders', 'BUILDING_STONEHENGE', 0, 0), -- don't build it, build Lavra!
+('PeterWonders', 'BUILDING_ST_BASILS_CATHEDRAL', 1, 0),
+('PeterWonders', 'BUILDING_BOLSHOI_THEATRE', 1, 0),
+('PeterWonders', 'BUILDING_HERMITAGE', 1, 0);
+
+
+-- LEADER_PHILIP_II / SPAIN
+
+UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
+
+INSERT INTO AiListTypes (ListType) VALUES
+('PhilipDiplomacy'),
+('PhilipPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('PhilipDiplomacy',    'TRAIT_LEADER_EL_ESCORIAL', 'DiplomaticActions'),
+('PhilipPseudoYields', 'TRAIT_LEADER_EL_ESCORIAL', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('PhilipCivics', 'CIVIC_MERCANTILISM', 1, 0),
+('PhilipDiplomacy', 'DIPLOACTION_DECLARE_HOLY_WAR', 1, 0),
+('PhilipDiplomacy', 'DIPLOACTION_KEEP_PROMISE_DONT_CONVERT', 0, 0), -- NOT favored
+('PhilipPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 10),
+('PhilipPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
+('PhilipPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10),
+('PhilipPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
+
+
 
 /*
 
-
-
-
-
-LEADER_PEDRO
-LEADER_PERICLES
--- 2019-01-02: Wrong assignment of PseudoYield to Wonders
--- <Row ListType="PericlesWonders" Item="PSEUDOYIELD_INFLUENCE" Favored="true"/>
-
-LEADER_PETER_GREAT
-LEADER_PHILIP_II
 LEADER_POUNDMAKER
 LEADER_QIN
 LEADER_ROBERT_THE_BRUCE
@@ -1047,34 +1092,41 @@ DELETE FROM AiFavoredItems WHERE ListType IN (
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- CLASSICAL
 ('ClassicalSensitivity', 'YIELD_SCIENCE', 1, 10),
-('ClassicalYields', 'YIELD_FAITH', 1, 20),
+('ClassicalYields', 'YIELD_CULTURE',  1, 15),
+('ClassicalYields', 'YIELD_FAITH', 1, 10),
 ('ClassicalYields', 'YIELD_FOOD',  1, 15),
 ('ClassicalYields', 'YIELD_GOLD',  1, 10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 -- MEDIEVAL
-('MedievalSensitivity',	'YIELD_CULTURE', 1, 10),
-('MedievalYields', 'YIELD_FAITH', 1, -25),
+--('MedievalSensitivity',	'YIELD_CULTURE', 1, 10),
+('MedievalYields', 'YIELD_CULTURE', 1, -10),
+('MedievalYields', 'YIELD_FAITH', 1, 20),
 ('MedievalYields', 'YIELD_FOOD', 1, 25),
-('MedievalYields', 'YIELD_GOLD', 1, 10),
-('MedievalYields', 'YIELD_PRODUCTION', 1, 20),
+--('MedievalYields', 'YIELD_GOLD', 1, 10),
+('MedievalYields', 'YIELD_PRODUCTION', 1, 15),
+('MedievalYields', 'YIELD_SCIENCE', 1, -10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER',	1, 20),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT',	1, 20),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 30),
 -- RENAISSANCE
-('RenaissanceYields', 'YIELD_FOOD', 1, 10),
-('RenaissanceYields', 'YIELD_GOLD', 1, 10),
+--('RenaissanceYields', 'YIELD_FOOD', 1, 10),
+('RenaissanceYields', 'YIELD_CULTURE', 1, 15),
+--('RenaissanceYields', 'YIELD_GOLD', 1, 10),
+('RenaissanceYields', 'YIELD_FAITH', 1, -25),
+('RenaissanceYields', 'YIELD_SCIENCE', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -100),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 30),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10),
 -- INDUSTRIAL
-('IndustrialYields', 'YIELD_FAITH',	1, -40),
-('IndustrialYields', 'YIELD_GOLD',	1, 10),
+--('IndustrialYields', 'YIELD_FAITH',	1, -40),
+--('IndustrialYields', 'YIELD_GOLD',	1, 10),
+('IndustrialYields', 'YIELD_PRODUCTION',	1, 15),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 20),
 -- MODERN
 ('ModernSensitivity', 'YIELD_CULTURE', 1, 10),
 ('ModernSensitivity', 'YIELD_SCIENCE', 1, 10),
-('ModernYields', 'YIELD_FOOD', 1, 5),
-('ModernYields', 'YIELD_GOLD', 1, 10);
+('ModernYields', 'YIELD_FOOD', 1, 10),
+('ModernYields', 'YIELD_GOLD', 1, 15);
