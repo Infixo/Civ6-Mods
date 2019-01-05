@@ -7,10 +7,11 @@
 -- TODO: R&F usage - Commemorations, Gov Buildings!
 -- TODO: some ideas are common - thnk about making TRAITS, like "more TRs", "more wonders", etc.
 -- improvements are unique, so they SHOULD be built nonetheless - see Ziggurats!
--- TRAIT_RST_MORE_TRADE_ROUTES
--- TRAIT_RST_MORE_IMPROVEMENTS
+-- TRAIT_RST_MORE_TRADE_ROUTES (trade?/gold?)
+-- TRAIT_RST_MORE_IMPROVEMENTS (infra?)
 -- TRAIT_RST_MORE_WONDERS
--- TRAIT_RST_MORE_DISTRICTS
+-- TRAIT_RST_MORE_DISTRICTS (infra?)
+-- TRAIT_RST_NAVAL_CIV
 
 /* Comments and observations based on AI+
 
@@ -125,9 +126,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MinorCivUnitBuilds', 'PROMOTION_CLASS_RANGED', 1, 15),
 ('MinorCivUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, -50),
 ('MinorCivUnitBuilds', 'PROMOTION_CLASS_SUPPORT', 1, -25),
-('MinorCivPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 200),
-('MinorCivPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 50),
-('MinorCivPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 10);
+--('MinorCivPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 200),
+--('MinorCivPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 50),
+('MinorCivPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 25);
 
 /*
 INSERT INTO AiListTypes (ListType) VALUES
@@ -157,10 +158,10 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('AlexanderPseudoYields', 'TRAIT_LEADER_TO_WORLDS_END', 'PseudoYields'),
 ('AlexanderUnitBuilds', 'TRAIT_LEADER_TO_WORLDS_END', 'UnitPromotionClasses');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- because cities give boosts!
+('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- because cities give boosts!
 ('AlexanderPseudoYields', 'PSEUDOYIELD_WONDER', 1, 25), -- because he has a ton of Wonders as favored and heals when captures one
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
-('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 25), -- because he needs to know neighbors fast
+('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10), -- because he needs to know neighbors fast
 ('AlexanderPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15), -- obvious
 ('AlexanderUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, 15); -- for cities
 
@@ -173,16 +174,18 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
 
 INSERT INTO AiListTypes (ListType) VALUES
+('AmanitoreYields'),
 ('AmanitorePseudoYields'),
 ('AmanitoreUnits');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('AmanitoreYields', 'TRAIT_LEADER_KANDAKE_OF_MEROE', 'Yields'),
 ('AmanitorePseudoYields', 'TRAIT_LEADER_KANDAKE_OF_MEROE', 'PseudoYields'),
 ('AmanitoreUnits', 'TRAIT_LEADER_KANDAKE_OF_MEROE', 'Units');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AmanitorePseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15), -- more districts
+('AmanitoreYields', 'YIELD_FOOD', 1, 20),
 ('AmanitorePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
 ('AmanitorePseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
---('AmanitorePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 100), -- more improvements
+('AmanitorePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50), -- more improvements
 ('AmanitoreWonders', 'BUILDING_KOTOKU_IN', 1, 0),
 ('AmanitoreWonders', 'BUILDING_JEBEL_BARKAL', 1, 0), -- who else?
 ('AmanitoreUnits', 'UNIT_BUILDER', 1, 20); -- more improvements
@@ -206,7 +209,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('BarbarossaCivics', 'CIVIC_URBANIZATION', 1, 0),
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15), -- boost comm hubs
-('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 15); -- boost hansas
+('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20); -- boost hansas
 
 
 -- CATHERINE_DE_MEDICI / FRANCE
@@ -227,11 +230,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CatherineYields', 'YIELD_PRODUCTION', 1, 10),
 ('CatherineYields', 'YIELD_FAITH', 1, -15),
 ('CatherinePseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25),
---('CatherinePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 100),
+('CatherinePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50),
 ('CatherinePseudoYields', 'PSEUDOYIELD_TOURISM', 1, 25),
-('CatherinePseudoYields', 'PSEUDOYIELD_WONDER', 1, 25),
-('CatherinePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20),
-('CatherinePseudoYields', 'PSEUDOYIELD_UNIT_SPY', 1, 500); -- 5 or 500????
+('CatherinePseudoYields', 'PSEUDOYIELD_WONDER', 1, 25);
 
 
 -- CHANDRAGUPTA & GANDHI / INDIA
@@ -256,9 +257,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('IndiaTechs', 'TECH_IRRIGATION', 1, 0),
 ('IndiaYields', 'YIELD_FOOD', 1, 10),
 ('IndiaYields', 'YIELD_FAITH', 1, 10),
-('IndiaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25), -- more people!
-('IndiaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 15); -- holy sites
---('IndiaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 100); -- stepwells
+('IndiaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 15), -- holy sites
+('IndiaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50); -- stepwells
 
 -- CHANDRAGUPTA: does not like his neighbors :(
 -- TODO: similar expansionist trait to Trajan, to forward settle a bit more maybe?
@@ -267,7 +267,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('ChandraguptaPseudoYields', 'TRAIT_LEADER_ARTHASHASTRA', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- conquer neighbors
+('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- conquer neighbors
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -10),
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -15), -- to differ from Gandhi
@@ -289,7 +289,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PeacekeeperWarLimits', 'DIPLOACTION_DECLARE_FRIENDSHIP', 1, 0), -- peace!
 ('PeacekeeperWarLimits', 'DIPLOACTION_RENEW_ALLIANCE', 1, 0), -- peace!
 ('PeacekeeperWarLimits', 'DIPLOACTION_RESIDENT_EMBASSY', 1, 0), -- peace
-('GandhiPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- conquer neighbors
+('GandhiPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('GandhiPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
 ('GandhiPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
 ('GandhiPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -15), -- obvious
@@ -297,7 +297,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GandhiPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 15), -- peace!
 -- nukes, because... Gandhi
 ('PeacekeeperWarLimits', 'DIPLOACTION_USE_NUCLEAR_WEAPON', 1, 0),
-('GandhiPseudoYields', 'PSEUDOYIELD_NUCLEAR_WEAPON', 1, 20),
+('GandhiPseudoYields', 'PSEUDOYIELD_NUCLEAR_WEAPON', 1, 40),
 ('GandhiProjects', 'PROJECT_MANHATTAN_PROJECT', 1, 0),
 ('GandhiProjects', 'PROJECT_OPERATION_IVY', 1, 0),
 ('GandhiProjects', 'PROJECT_BUILD_NUCLEAR_DEVICE', 1, 0),
@@ -323,13 +323,14 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CleopatraYields', 'YIELD_GOLD', 1, 10),
 ('CleopatraYields', 'YIELD_PRODUCTION', 1, 10),
 ('CleopatraWonders', 'BUILDING_ORACLE', 1, 0),
+('CleopatraPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
-('CleopatraPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 500),
+('CleopatraPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 250),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_WONDER', 1, 25),
-('CleopatraPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),
---('CleopatraPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 100),
+('CleopatraPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15),
+('CleopatraPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50);
 
 
@@ -346,10 +347,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CyrusYields', 'YIELD_CULTURE', 1, 15),
 ('CyrusYields', 'YIELD_GOLD', 1, 10),
 ('CyrusPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
---('CyrusPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 100),
+('CyrusPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50),
 ('CyrusPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15),
 ('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
-('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 500);
+('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 250);
 
 
 -- GENGHIS_KHAN / MONGOLIA
@@ -359,11 +360,15 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 DELETE FROM AiFavoredItems WHERE ListType = 'GenghisCivics' AND Item = 'CIVIC_DIVINE_RIGHT';
 
 INSERT INTO AiListTypes (ListType) VALUES
+('GenghisPseudoYields'),
 ('MongoliaDisfavorBarracks');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('GenghisPseudoYields', 'TRAIT_LEADER_GENGHIS_KHAN_ABILITY', 'PseudoYields'),
 ('MongoliaDisfavorBarracks', 'TRAIT_CIVILIZATION_BUILDING_ORDU', 'Buildings');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MongoliaDisfavorBarracks', 'BUILDING_BARRACKS', 0, 0), -- let him not build Barracks, so he will build Ordu
+('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- DO conquer neighbors
+('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 250),
 ('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0);
 
 
@@ -392,7 +397,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GilgameshCivics', 'CIVIC_FOREIGN_TRADE' , 1, 0), -- joint war
 ('GilgameshCivics', 'CIVIC_CIVIL_SERVICE' , 1, 0), -- alliance
 ('GilgameshWonders', 'BUILDING_KILWA_KISIWANI' , 1, 0),
-('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 15), -- is it actually 0.25???
+('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 25), -- is it actually 0.25???
 ('GilgameshPseudoYields', 'PSEUDOYIELD_INFLUENCE' , 1, 15); -- friend of CS
 
 
@@ -410,10 +415,14 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('GitarjaPseudoYields', 'TRAIT_LEADER_EXALTED_GODDESS', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaSettlement', 'Coastal', 0, 10),
-('GitarjaYields', 'YIELD_FAITH', 1, 10),
-('GitarjaYields', 'YIELD_PRODUCTION', 1, 10),
+('GitarjaYields', 'YIELD_FAITH',      1, 10),
+('GitarjaYields', 'YIELD_FOOD',       1, 15),
+('GitarjaYields', 'YIELD_PRODUCTION', 1,  5),
+('GitarjaYields', 'YIELD_GOLD',       1,-10),
+('GitarjaYields', 'YIELD_CULTURE',    1, -5),
+('GitarjaYields', 'YIELD_SCIENCE',    1, -5),
 ('GitarjaWonders', 'BUILDING_ANGKOR_WAT', 1, 0),
-('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
+('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('GitarjaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
@@ -435,9 +444,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- HARDRADA / NORWAY
 -- high forest & coast, 
 
+-- 2018-12-25: Norwegian Longship has no PseudoYield assigned and Harald has a boost for that in his strategy!
+UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitType = 'UNIT_NORWEGIAN_LONGSHIP';
+
 DELETE FROM AiFavoredItems WHERE ListType = 'LastVikingKingCoastSettlement';
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
-('LastVikingKingCoastSettlement', 'Coastal',           0, 10,             NULL), -- vanilla def. 30
+('LastVikingKingCoastSettlement', 'Coastal',           0, 15,             NULL), -- vanilla def. 30
 ('LastVikingKingCoastSettlement', 'Foreign Continent', 0, 20,             NULL), -- try to settle other continents before others
 ('LastVikingKingCoastSettlement', 'Specific Feature',  0,  3, 'FEATURE_FOREST'); -- close to forests
 
@@ -452,13 +464,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HaraldCivics', 'CIVIC_MYSTICISM', 1, 0),
 ('HaraldCivics', 'CIVIC_FOREIGN_TRADE', 1, 0),
 ('HaraldYields', 'YIELD_FAITH', 1, 10),
-('LastVikingKingNavalPreference', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 15), -- get rid of barb ships asap
-('LastVikingKingNavalPreference', 'PSEUDOYIELD_GPP_PROPHET', 1, 15), -- get the Holy Site asap
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_GPP_PROPHET', 1, 10), -- get the Holy Site asap
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- don't chop forests
-('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_COMBAT', 1, -10), -- more ships, less land
-('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 20),
-('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_SETTLER', 1, 20); -- more cities
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_COMBAT', 1, -15), -- more ships, less land
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 10),
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10); -- more cities
 
 
 -- HOJO / JAPAN
@@ -480,14 +491,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HoJoSettlement', 'Coastal', 0, 20),
 ('HoJoTechs', 'TECH_APPRENTICESHIP', 1, 0),
 ('HoJoTechs', 'TECH_INDUSTRIALIZATION', 1, 0),
-('HoJoYields', 'YIELD_FAITH', 0, 10),
-('HoJoYields', 'YIELD_CULTURE', 0, 10),
-('HoJoYields', 'YIELD_PRODUCTION', 0, 10),
-('HoJoYields', 'YIELD_GOLD', 0, -10), -- balance
-('HoJoYields', 'YIELD_SCIENCE', 0, -10), -- balance
-('HoJoPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 0, 20),
-('HoJoPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 0, 50),
-('HoJoPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 0, 15),
+('HoJoYields', 'YIELD_FOOD',       1, 15),
+('HoJoYields', 'YIELD_FAITH',      1, 10),
+('HoJoYields', 'YIELD_CULTURE',    1,  5),
+('HoJoYields', 'YIELD_PRODUCTION', 1, 10),
+('HoJoYields', 'YIELD_GOLD',       1,-15), -- balance
+('HoJoYields', 'YIELD_SCIENCE',    1,-10), -- balance
 ('HoJoPseudoYields', 'PSEUDOYIELD_DISTRICT', 0, 50),
 ('HoJoPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 0, 20),
 ('HoJoPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
@@ -510,8 +519,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JadwigaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 5),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 15),
-('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 0),
-('JadwigaPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 1, 12),
+('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15),
+('JadwigaPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 1, 20),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 10);
 
 /*
@@ -542,11 +551,12 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('JayavarmanPseudoYields', 'TRAIT_LEADER_MONASTERIES_KING', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JayavarmanDistricts', 'DISTRICT_AQUEDUCT', 1, 0), -- risky???
-('JayavarmanYields', 'YIELD_FAITH', 1, 10),
-('JayavarmanYields', 'YIELD_FOOD', 1, 10),
+('JayavarmanYields', 'YIELD_FAITH',   1, 10),
+('JayavarmanYields', 'YIELD_FOOD',    1, 15),
+('JayavarmanYields', 'YIELD_SCIENCE', 1, -5),
+('JayavarmanYields', 'YIELD_GOLD',    1, -5),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 20),
-('JayavarmanPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 0, 8),
-('JayavarmanPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 0, 15),
+('JayavarmanPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 0, 20),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -10),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -10);
@@ -568,7 +578,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_PROTECTORATE_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_RECONQUEST_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_LIBERATE_CITY', 1, 0),
-('CurtinPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('CurtinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),
 ('CurtinPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20);
 
@@ -580,8 +589,8 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('LautaroPseudoYields', 'TRAIT_LEADER_LAUTARO_ABILITY', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('LautaroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
-('LautaroPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
+('LautaroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100),
+--('LautaroPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
 ('LautaroPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20),
 ('LautaroPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 10);
 
@@ -603,15 +612,16 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaTechs', 'TECH_MINING', 1, 0), -- most luxes are here
 ('MontezumaTechs', 'TECH_IRRIGATION', 1, 0), -- most luxes are here
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150),
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- this.. is.. MONTY!
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- we need those builders
+--('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
-('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 20), -- vanilla 1, RFX 1.2
+('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10), -- vanilla 1, RFX 1.2
 ('MontezumaWonders',      'BUILDING_HUEY_TEOCALLI', 1, 0), -- who else?
 ('MontezumaUnits',        'UNIT_BUILDER', 1, 20),
 ('MontezumaUnitBuilds',   'PROMOTION_CLASS_SIEGE', 1, 15); -- vanilla 2, RFX 3
@@ -635,19 +645,20 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('KongoPseudoYields', 'TRAIT_CIVILIZATION_NKISI', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('KongoYields',       'YIELD_CULTURE', 1, 10),
+('KongoYields',       'YIELD_FOOD',    1, 10),
+('KongoYields',       'YIELD_SCIENCE', 1, -5),
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10), -- to build Theater Squares
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_MUSICIAN', 1, 10),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_ARTIFACT', 1, 8),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_LANDSCAPE', 1, -2),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_MUSIC', 1, -2),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_PORTRAIT', 1, -2),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 1, 8),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIGIOUS', 1, -2),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_SCULPTURE', 1, 8),
-('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_WRITING', 1, -2),
-('KongoPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_ARTIFACT',  1, 10),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_LANDSCAPE', 1, -3),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_MUSIC',     1, -3),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_PORTRAIT',  1, -3),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC',     1, 10),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIGIOUS', 1, -3),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_SCULPTURE', 1, 10),
+('KongoPseudoYields', 'PSEUDOYIELD_GREATWORK_WRITING',   1, -3),
 ('KongoPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- leave jungle
 ('KongoPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 50);
 
@@ -669,10 +680,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('PedroPseudoYields', 'TRAIT_LEADER_MAGNANIMOUS', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PedroCivics', 'CIVIC_NATURAL_HISTORY', 1, 0),
-('PedroPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 100),
+('PedroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('PedroPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- leave jungle
-('PedroPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 25),
---('PedroPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
 ('PedroPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -25), -- use faith for GP
 ('PedroPseudoYields', 'PSEUDOYIELD_WONDER', 1, -25);
 
@@ -689,8 +698,6 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PeterCivics', 'CIVIC_MYSTICISM', 1, 0),
 ('PeterPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 20), -- try to get religion asap
-('PeterPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
-('PeterPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 25),
 ('PeterPseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
 ('PeterPseudoYields', 'PSEUDOYIELD_GPP_MUSICIAN', 1, 10),
 ('PeterPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10),
@@ -702,6 +709,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 -- LEADER_PHILIP_II / SPAIN
 
+UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'PhilipForeignSettlement' AND Item = 'Foreign Continent'; -- Philip II, def. 60
 UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 
 INSERT INTO AiListTypes (ListType) VALUES
@@ -724,14 +732,17 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_POUNDMAKER / CREE
 
 INSERT INTO AiListTypes (ListType) VALUES
+('PoundmakerYields'),
 ('PoundmakerPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('PoundmakerYields', 'TRAIT_LEADER_ALLIANCE_AND_TRADE', 'Yields'),
 ('PoundmakerPseudoYields', 'TRAIT_LEADER_ALLIANCE_AND_TRADE', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('PoundmakerYields', 'YIELD_FOOD', 1, 10),
 ('PoundmakerCivics', 'CIVIC_FOREIGN_TRADE', 1, 0),
 ('PoundmakerCivics', 'CIVIC_MERCENARIES', 1, 0),
+('PoundmakerPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10),
-('PoundmakerPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
 
 
@@ -743,8 +754,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('QinPseudoYields', 'FIRST_EMPEROR_TRAIT', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('QinCivics', 'CIVIC_CRAFTSMANSHIP', 1, 0),
-('QinPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
-('QinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10);
+--('QinPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
+('QinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15);
 
 
 -- LEADER_ROBERT_THE_BRUCE / SCOTLAND
@@ -828,9 +839,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TrajanSettlement', 'Nearest Friendly City', 0, -2),
 ('TrajanSettlement', 'Fresh Water', 0, -10),
 ('TrajanWonders', 'BUILDING_TEMPLE_ARTEMIS', 1, 0),
-('TrajanPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('TrajanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
-('TrajanPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 20); -- more crappy cities
+('TrajanPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10); -- more crappy cities
 
 
 -- LEADER_T_ROOSEVELT / AMERICA
@@ -858,16 +868,18 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RooseveltUnits', 'UNIT_NATURALIST', 1, 50),
 ('RooseveltWonders', 'BUILDING_STONEHENGE', 0, 0), -- low religion
 ('RooseveltWonders', 'BUILDING_STATUE_LIBERTY', 1, 0), -- who else if not him???
-('RooseveltPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20),
+--('RooseveltPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -50),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10),
-('RooseveltPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20),
-('RooseveltPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10), -- national parks?
-('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -20); -- get only Naturalists
+('RooseveltPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 30), -- national parks?
+('RooseveltPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15), -- national parks?
+('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -25); -- get only Naturalists
 
 
 -- LEADER_VICTORIA / ENGLAND
+
+UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'SettleAllContinents' AND Item = 'Foreign Continent'; -- Victoria, down from 120 (!)
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('EnglandPseudoYields');
@@ -876,23 +888,22 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('VictoriaWonders', 'BUILDING_BIG_BEN', 1, 0),
 ('VictoriaWonders', 'BUILDING_STATUE_LIBERTY', 1, 0),
-('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_ARTIFACT', 1, 12),
-('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_LANDSCAPE', 1, -2),
-('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_PORTRAIT', 1, -2),
-('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIGIOUS', 1, -2),
-('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_SCULPTURE', 1, -2),
+('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_ARTIFACT', 1, 20),
+('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_LANDSCAPE', 1, -5),
+('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_PORTRAIT', 1, -5),
+('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIGIOUS', 1, -5),
+('EnglandPseudoYields', 'PSEUDOYIELD_GREATWORK_SCULPTURE', 1, -5),
 ('EnglandPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 100);
 
 
 -- LEADER_WILHELMINA / NETHERLANDS
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('WilhelminaYields', 'YIELD_FOOD', 1, 10), -- TRAIT_AGENDA_BILLIONAIRE
 ('WilhelminaWonders', 'BUILDING_BIG_BEN', 1, 0),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15),
-('WilhelminaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
-('WilhelminaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
 
 

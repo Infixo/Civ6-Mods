@@ -2,23 +2,61 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Real Strategy. Version 0.3.[NEWLINE]Includes: main strategies (0.1), leaders (0.2), tactics (0.3).</Description>
+		<Description>Real Strategy. Version 0.4.[NEWLINE]Includes: main strategies (0.1), leaders (0.2), tactics (0.3), dlc support (0.4).</Description>
 		<Teaser>Real Strategy</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 	</Properties>
+	<References>
+		<Mod id="02A8BDDE-67EA-4D38-9540-26E685E3156E" title="DLC: Aztec Civilization Pack" /> 
+		<Mod id="3809975F-263F-40A2-A747-8BFB171D821A" title="DLC: Poland Civilization Pack" />
+		<Mod id="E3F53C61-371C-440B-96CE-077D318B36C0" title="DLC: Australia Civilization Pack" />
+		<Mod id="E2749E9A-8056-45CD-901B-C368C8E83DEB" title="DLC: Persia and Macedon Civilization Pack" />
+		<Mod id="643EA320-8E1A-4CF1-A01C-00D88DDD131A" title="DLC: Nubia Civilization Pack" />
+		<Mod id="1F367231-A040-4793-BDBB-088816853683" title="DLC: Khmer and Indonesia Civilization Pack" />
+	</References>
 	<ActionCriteria>
-		<Criteria id="Expansion1">
-			<GameCoreInUse>Expansion1</GameCoreInUse>
+		<Criteria id="Expansion1">			<!-- 2018-02-08 -->
+			<GameCoreInUse>Expansion1</GameCoreInUse> 
+		</Criteria>
+		<Criteria id="DLCAztec">			<!-- 2016-11-19 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_MONTEZUMA,StandardPlayers::LEADER_MONTEZUMA,Players:Expansion1_Players::LEADER_MONTEZUMA</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCPoland">			<!-- 2016-12-20 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_JADWIGA,StandardPlayers::LEADER_JADWIGA,Players:Expansion1_Players::LEADER_JADWIGA</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCAustralia">		<!-- 2017-02-23 -->
+  			<LeaderPlayable>Players:StandardPlayers::LEADER_JOHN_CURTIN,StandardPlayers::LEADER_JOHN_CURTIN,Players:Expansion1_Players::LEADER_JOHN_CURTIN</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCMacedoniaPersia">	<!-- 2017-03-28 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion1_Players::LEADER_CYRUS</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCNubia">			<!-- 2017-07-27 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_AMANITORE,StandardPlayers::LEADER_AMANITORE,Players:Expansion1_Players::LEADER_AMANITORE</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCIndonesiaKhmer">	<!-- 2017-10-19 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion1_Players::LEADER_JAYAVARMAN</LeaderPlayable>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
-		<UpdateDatabase id="RST_Database">
+		<UpdateDatabase id="RST_DB_Main">
 			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
 			<File>RealStrategy_Params.sql</File>
 			<File>RealStrategy_Main.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Tactics.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Poland" criteria="DLCPoland">
+			<Properties><LoadOrder>210</LoadOrder></Properties>
+			<!--<File>tdlc_poland.sql</File>-->
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCNubia">
+			<Properties><LoadOrder>210</LoadOrder></Properties>
+			<!--<File>tdlc_nubia.sql</File>-->
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Expansion1" criteria="Expansion1">
+			<Properties><LoadOrder>220</LoadOrder></Properties>
+			<!--<File>tdlc_nubia.sql</File>-->
 		</UpdateDatabase>
 		<AddUserInterfaces id="RST_UI_Utils">
 			<Properties><Context>InGame</Context></Properties>
@@ -30,7 +68,7 @@
 	</InGameActions>
 	<Files>
 		<File>RealStrategy.lua</File>
-		<File>RealStrategy.xml</File>
+		<!--<File>RealStrategy.xml</File>-->
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
 		<File>RealStrategy_Leaders.sql</File>

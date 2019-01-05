@@ -318,8 +318,18 @@ function InitializeData()
 			PlayerID = playerID,
 			LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName(),
 			--Dirty = true,
-			TurnRefresh = -1, -- turn number when was it refreshed last time
+			TurnRefreshStrategy = -1, -- turn number when Strategy was refreshed last time (used with the counter)
 			ActiveStrategy = "NONE",
+			TurnRefreshData = -1, -- turn number when various other data was refreshed last time  (basically used each turn)
+			ActiveDefense = false,
+			ActiveCatching = false,
+			ActiveEnough = false,
+			ActivePeace = false,
+			ActiveAtWar = false,
+			-- data refreshed every turn
+			OurMilitaryStrength = 0,
+			AvgMilitaryStrength = 0,
+			NumWars = 0,
 			--NumTurnsActive = 0,
 			Data = {}, -- this will be refreshed whenever needed, but only once per turn
 			Stored = {}, -- this will be stored between turns (persistent) and eventually perhaps in the save file
@@ -1024,16 +1034,16 @@ function RefreshAndProcessData(ePlayerID:number)
 	-- check if data needs to be refreshed
 	local data:table = tData[ePlayerID];
 	--if not data.Dirty then return; end
-	if data.TurnRefresh == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
+	if data.TurnRefreshStrategy == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
 
 	-- active turns with game speed scaling
-	local iNumTurnsActive:number = (Game.GetCurrentGameTurn() - data.TurnRefresh) * 100 / GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
-	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "turn refresh", data.TurnRefresh, "active for", iNumTurnsActive, "turns");
-	if not( data.TurnRefresh == -1 or data.ActiveStrategy == "NONE" or iNumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE ) then
+	local iNumTurnsActive:number = (Game.GetCurrentGameTurn() - data.TurnRefreshStrategy) * 100 / GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
+	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "turn refresh", data.TurnRefreshStrategy, "active for", iNumTurnsActive, "turns");
+	if not( data.TurnRefreshStrategy == -1 or data.ActiveStrategy == "NONE" or iNumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE ) then
 		return
 	end
 	
-	-- we should go here if: TurnRefresh == -1, ActiveStrategy == "NONE", or current strategy needs to be refreshed after being active for X turns
+	-- we should go here if: TurnRefreshStrategy == -1, ActiveStrategy == "NONE", or current strategy needs to be refreshed after being active for X turns
 	RefreshPlayerData(data);
 	
 	-- Base Priority looks at Personality Flavors (0 - 10) and multiplies * the Flavors attached to a Grand Strategy (0-10),
@@ -1128,7 +1138,7 @@ function RefreshAndProcessData(ePlayerID:number)
 		--data.NumTurnsActive = data.NumTurnsActive + 1
 	--end
 	--data.Dirty = false; -- data is refreshed
-	data.TurnRefresh = Game.GetCurrentGameTurn(); -- data is refreshed
+	data.TurnRefreshStrategy = Game.GetCurrentGameTurn(); -- data is refreshed
 	print(Game.GetCurrentGameTurn(), data.LeaderType, "...selected", data.ActiveStrategy, "priority", iBestPriority);
 	
 	-- log strategy to Log.lua
@@ -1662,6 +1672,19 @@ end
 GameEvents.CheckTurnNumber.Add(CheckTurnNumber);
 
 
+-- helper, get number of wars and opponents power
+function PlayerGetNumWars(ePlayerID:number)
+	local iNumWars:number, iOpponentPower:number = 0,0;
+	local pPlayerDiplomacy:table = Players[ePlayerID]:GetDiplomacy();
+	for _,otherID in ipairs(PlayerManager:GetAliveMajorIDs()) do
+		if pPlayerDiplomacy:IsAtWarWith(otherID) then
+			iNumWars = iNumWars + 1;
+			iOpponentPower = iOpponentPower + RST.PlayerGetMilitaryStrength(otherID);
+		end
+	end
+	return iNumWars, iOpponentPower;
+end
+
 -- DEFENSE
 -- Lua doesn't provide direct information on who has started the war.
 -- There is an event that can be used Events.DiplomacyDeclareWar.Add( OnDiplomacyDeclareWar(actingPlayer, reactingPlayer) );
@@ -1675,8 +1698,10 @@ function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
 	local pPlayer:table = Players[ePlayerID];
 	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
 	--RefreshAndProcessData(ePlayerID);
+	local data:table = tData[ePlayerID];
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
-	local iNumWars:number, iOpponentPower:number = 0,0;
+	local iNumWars:number, iOpponentPower:number = PlayerGetNumWars(ePlayerID);
+	--[[
 	local pPlayerDiplomacy:table = Players[ePlayerID]:GetDiplomacy();
 	for _,otherID in ipairs(PlayerManager:GetAliveMajorIDs()) do
 		if pPlayerDiplomacy:IsAtWarWith(otherID) then
@@ -1684,19 +1709,21 @@ function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
 			iOpponentPower = iOpponentPower + RST.PlayerGetMilitaryStrength(otherID);
 		end
 	end
-	--print(Game.GetCurrentGameTurn(), "...num wars, power our/theirs", iNumWars, iOurPower, iOpponentPower, "active?", iOurPower*100 < iOpponentPower*iThreshold);
-	if iNumWars == 0 then return false; end
+	--]]
+	data.ActiveDefense = iOurPower*100 < iOpponentPower*iThreshold;
+	if iNumWars == 0 then data.ActiveDefense = false; end
+	print(Game.GetCurrentGameTurn(),"RSTDEFEN", ePlayerID, iThreshold, "...power our/theirs", iOurPower, iOpponentPower, "wars", iNumWars, "active?", data.ActiveDefense);
 	-- must add some kind of momentum - game doesn't react so quickly?? or maybe not, this could be a nice counterattack
 	-- peace -> war: 50+10 i.e. 60% - must start faster?
 	-- war -> war: 50-10 - must stop a bit earlier, because cities will produce units from the queue - I could include units in production - need special function for that
 	-- for _,c in Players[1]:GetCities():Members() do print(c:GetName(),c:GetBuildQueue():CurrentlyBuilding()) end
 	-- war -> peace: stops immediately
-	return iOurPower*100 < iOpponentPower*iThreshold;
+	return data.ActiveDefense;
 end
 GameEvents.ActiveStrategyDefense.Add(ActiveStrategyDefense);
 
 
--- will activate if out power falls below iThreshold% of the World average (known civs)
+-- will activate if our power falls below iThreshold% of the World average (known civs)
 -- this should be approx. 40% because it includes also us and we are low
 -- use data.Data.AvgMilStr
 -- similar mechanism could be used also for Yields, like YIELD_SCIENCE, YIELD_CULTURE, etc.
@@ -1708,10 +1735,56 @@ function ActiveStrategyCatching(ePlayerID:number, iThreshold:number)
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
-	--print(Game.GetCurrentGameTurn(), "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", iOurPower*100 < data.Data.AvgMilStr*iThreshold);
-	return iOurPower*100 < data.Data.AvgMilStr*iThreshold;
+	data.ActiveCatching = iOurPower*100 < data.Data.AvgMilStr*iThreshold;
+	print(Game.GetCurrentGameTurn(), "RSTCATCH", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveCatching);
+	return data.ActiveCatching;
 end
 GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
+
+
+-- will activate if our power will rise above iThreshold% of the World average (known civs)
+-- this should be approx. 250% because it includes also us and we are high
+-- use data.Data.AvgMilStr
+-- similar mechanism could be used also for Yields, like YIELD_SCIENCE, YIELD_CULTURE, etc.
+function ActiveStrategyEnough(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyEnough", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
+	local data:table = tData[ePlayerID];
+	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
+	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
+	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
+	data.ActiveEnough = iOurPower*100 > data.Data.AvgMilStr*iThreshold;
+	print(Game.GetCurrentGameTurn(), "RSTENOUG", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveEnough);
+	return data.ActiveEnough;
+end
+GameEvents.ActiveStrategyEnough.Add(ActiveStrategyEnough);
+
+
+function ActiveStrategyPeace(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyPeace", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	local data:table = tData[ePlayerID];
+	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
+	data.ActivePeace = iNumWars == 0;
+	print(Game.GetCurrentGameTurn(),"RSTPEACE", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActivePeace);
+	return data.ActivePeace;
+end
+GameEvents.ActiveStrategyPeace.Add(ActiveStrategyPeace);
+
+
+function ActiveStrategyAtWar(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyAtWar", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	local data:table = tData[ePlayerID];
+	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
+	data.ActiveAtWar = iNumWars > 0;
+	print(Game.GetCurrentGameTurn(),"RSTATWAR", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActiveAtWar);
+	return data.ActiveAtWar;
+end
+GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
 
 
 ------------------------------------------------------------------------------

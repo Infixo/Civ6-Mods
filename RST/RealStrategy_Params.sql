@@ -29,7 +29,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- generic
 ('RST_STRATEGY_LEADER_RANDOM', 1), -- adds/subtracts a random number to a leader base flavor in a range +/- param
 ('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
-('RST_STRATEGY_TURN_ADJUST_START', 25), -- [x100] specific and generic priorities scale lineary, value at turn 0
+('RST_STRATEGY_TURN_ADJUST_START', 20), -- [x100] specific and generic priorities scale lineary, value at turn 0
 ('RST_STRATEGY_TURN_ADJUST_STOP', 200), -- [x100] specific and generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 5), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
@@ -259,7 +259,8 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 		('POLICY_REVELATION', 'POLICY', 'GREAT_PERSON', 'RELIGION', 8),	
 ('POLICY_ROBBER_BARONS', 'POLICY', 'DARKAGE', 'SCIENCE', 4),			('POLICY_ROBBER_BARONS', 'POLICY', 'DARKAGE', 'CONQUEST', 4),
 			('POLICY_ROGUE_STATE', 'POLICY', 'DARKAGE', 'CONQUEST', 5),
-	('POLICY_SATELLITE_BROADCASTS', 'POLICY', 'ECONOMIC', 'CULTURE', 8),		
+('POLICY_SACK', 'POLICY', 'MILITARY', 'CONQUEST', 6),	('POLICY_SACK', 'POLICY', 'MILITARY', 'SCIENCE', 2),	('POLICY_SACK', 'POLICY', 'MILITARY', 'CULTURE', 2),	('POLICY_SACK', 'POLICY', 'MILITARY', 'RELIGION', 2),
+			('POLICY_SATELLITE_BROADCASTS', 'POLICY', 'ECONOMIC', 'CULTURE', 8),		
 		('POLICY_SCRIPTURE', 'POLICY', 'ECONOMIC', 'RELIGION', 6),	
 			('POLICY_SECOND_STRIKE_CAPABILITY', 'POLICY', 'MILITARY', 'CONQUEST', 6),
 ('POLICY_SERFDOM', 'POLICY', 'ECONOMIC', 'SCIENCE', 1),	('POLICY_SERFDOM', 'POLICY', 'ECONOMIC', 'CULTURE', 1),	('POLICY_SERFDOM', 'POLICY', 'ECONOMIC', 'RELIGION', 1),	('POLICY_SERFDOM', 'POLICY', 'ECONOMIC', 'CONQUEST', 1),
