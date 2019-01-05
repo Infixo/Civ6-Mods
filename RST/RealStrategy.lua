@@ -1662,6 +1662,58 @@ end
 GameEvents.CheckTurnNumber.Add(CheckTurnNumber);
 
 
+-- DEFENSE
+-- Lua doesn't provide direct information on who has started the war.
+-- There is an event that can be used Events.DiplomacyDeclareWar.Add( OnDiplomacyDeclareWar(actingPlayer, reactingPlayer) );
+
+-- first version, simple - just check for War, Capital and MilitaryStrength
+-- can use later iThreshold for e.g. number of simultaneus wars
+-- or strength difference
+
+function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyDefense", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
+	--RefreshAndProcessData(ePlayerID);
+	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
+	local iNumWars:number, iOpponentPower:number = 0,0;
+	local pPlayerDiplomacy:table = Players[ePlayerID]:GetDiplomacy();
+	for _,otherID in ipairs(PlayerManager:GetAliveMajorIDs()) do
+		if pPlayerDiplomacy:IsAtWarWith(otherID) then
+			iNumWars = iNumWars + 1;
+			iOpponentPower = iOpponentPower + RST.PlayerGetMilitaryStrength(otherID);
+		end
+	end
+	--print(Game.GetCurrentGameTurn(), "...num wars, power our/theirs", iNumWars, iOurPower, iOpponentPower, "active?", iOurPower*100 < iOpponentPower*iThreshold);
+	if iNumWars == 0 then return false; end
+	-- must add some kind of momentum - game doesn't react so quickly?? or maybe not, this could be a nice counterattack
+	-- peace -> war: 50+10 i.e. 60% - must start faster?
+	-- war -> war: 50-10 - must stop a bit earlier, because cities will produce units from the queue - I could include units in production - need special function for that
+	-- for _,c in Players[1]:GetCities():Members() do print(c:GetName(),c:GetBuildQueue():CurrentlyBuilding()) end
+	-- war -> peace: stops immediately
+	return iOurPower*100 < iOpponentPower*iThreshold;
+end
+GameEvents.ActiveStrategyDefense.Add(ActiveStrategyDefense);
+
+
+-- will activate if out power falls below iThreshold% of the World average (known civs)
+-- this should be approx. 40% because it includes also us and we are low
+-- use data.Data.AvgMilStr
+-- similar mechanism could be used also for Yields, like YIELD_SCIENCE, YIELD_CULTURE, etc.
+function ActiveStrategyCatching(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyCatching", ePlayerID, iThreshold);
+	local pPlayer:table = Players[ePlayerID];
+	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
+	local data:table = tData[ePlayerID];
+	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
+	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
+	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", iOurPower*100 < data.Data.AvgMilStr*iThreshold);
+	return iOurPower*100 < data.Data.AvgMilStr*iThreshold;
+end
+GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
+
+
 ------------------------------------------------------------------------------
 function Initialize()
 	--print("FUN Initialize");

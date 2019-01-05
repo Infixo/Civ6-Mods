@@ -14,7 +14,7 @@
 
 DELETE FROM AiFavoredItems WHERE ListType = 'StandardSettlePlot';
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
-('StandardSettlePlot', 'Foreign Continent', 0, -5, NULL), -- def
+('StandardSettlePlot', 'Foreign Continent', 0, -4, NULL), -- def
 ('StandardSettlePlot', 'Nearest Friendly City', 0, -8, NULL), -- def, be careful - expansion gives +6, naval +4
 ('StandardSettlePlot', 'Fresh Water', 0, 16, NULL), -- +3
 ('StandardSettlePlot', 'Coastal', 0, 7, NULL), -- -1
@@ -143,7 +143,7 @@ UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GR
 UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_SCULPTURE'; -- 	10
 UPDATE PseudoYields SET DefaultValue = 12 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_WRITING'; -- 	10
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_HAPPINESS'; -- 	1
-UPDATE PseudoYields SET DefaultValue = 5  WHERE PseudoYieldType = 'PSEUDOYIELD_IMPROVEMENT'; -- 	0.5, 13.5 too much
+UPDATE PseudoYields SET DefaultValue = 3.0 WHERE PseudoYieldType = 'PSEUDOYIELD_IMPROVEMENT'; -- 	0.5, 13.5 too much
 --UPDATE PseudoYields SET DefaultValue = 0.55 WHERE PseudoYieldType = 'PSEUDOYIELD_INFLUENCE'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue = 40   WHERE PseudoYieldType = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- 	25
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_SPACE_RACE'; -- 	100

@@ -324,7 +324,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CleopatraYields', 'YIELD_PRODUCTION', 1, 10),
 ('CleopatraWonders', 'BUILDING_ORACLE', 1, 0),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
-('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 20),
+('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 500),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_WONDER', 1, 25),
@@ -348,7 +348,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CyrusPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
 --('CyrusPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 100),
 ('CyrusPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15),
-('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 10),
+('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
 ('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 500);
 
 
@@ -415,7 +415,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaWonders', 'BUILDING_ANGKOR_WAT', 1, 0),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
-('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10),
+('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
 
 
@@ -475,7 +475,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('HoJoYields', 'TRAIT_LEADER_DIVINE_WIND', 'Yields'),
 ('HoJoPseudoYields', 'TRAIT_LEADER_DIVINE_WIND', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('HoJoSettlement', 'Foreign Continent', 0, -10),
+('HoJoSettlement', 'Foreign Continent', 0, -8),
 ('HoJoSettlement', 'Nearest Friendly City', 0, -2), -- compact empire
 ('HoJoSettlement', 'Coastal', 0, 20),
 ('HoJoTechs', 'TECH_APPRENTICESHIP', 1, 0),
@@ -608,7 +608,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
-('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 10),
+('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 20), -- vanilla 1, RFX 1.2
@@ -717,7 +717,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PhilipDiplomacy', 'DIPLOACTION_KEEP_PROMISE_DONT_CONVERT', 0, 0), -- NOT favored
 ('PhilipPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 10),
 ('PhilipPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
-('PhilipPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10),
+('PhilipPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('PhilipPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
 
 
@@ -856,6 +856,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RooseveltCivics', '', 1, 0),
 ('RooseveltCivics', 'CIVIC_EXPLORATION', 1, 0),
 ('RooseveltUnits', 'UNIT_NATURALIST', 1, 50),
+('RooseveltWonders', 'BUILDING_STONEHENGE', 0, 0), -- low religion
 ('RooseveltWonders', 'BUILDING_STATUE_LIBERTY', 1, 0), -- who else if not him???
 ('RooseveltPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
@@ -887,7 +888,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('WilhelminaWonders', 'BUILDING_BIG_BEN', 1, 0),
-('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 20),
+('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
