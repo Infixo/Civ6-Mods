@@ -6,7 +6,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '3');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '4');
 
 -- configuration
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
@@ -31,12 +31,12 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
 ('RST_STRATEGY_TURN_ADJUST_START', 20), -- [x100] specific and generic priorities scale lineary, value at turn 0
 ('RST_STRATEGY_TURN_ADJUST_STOP', 200), -- [x100] specific and generic priorities scale lineary, value at the last turn
-('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 5), -- how many turns a strategy must be active before checking for new priorities, def. 10
+('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 7), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority, random between 20..40
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
 ('RST_STRATEGY_BETTER_THAN_US_NERF', -25), -- [x100] each player better than us decreases our priority by this percent -- VP uses 33, seems a lot
-('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 40), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
+('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 50), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -200), -- if nobody met, then decrease the priority, def. -100 -> this is scaled in a moment by approx. 0.3, so -100 gives actually -30.
@@ -82,7 +82,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 --    0 -      no influence on a strategy
 -- 1..3 -   minor influence on a strategy
 -- 4..6 - average influence on a strategy
--- 7..9 -   major influance on a strategy
+-- 7..9 -   major influence on a strategy
 -- ===========================================================================
 
 CREATE TABLE RSTFlavors (

@@ -261,6 +261,7 @@ UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYie
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
+('ReligiousVictoryDiplomacy',    'DIPLOACTION_DECLARE_HOLY_WAR', 1, 0),
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 25); -- base 0.8 -- this includes Guru and Naturalist!
@@ -420,7 +421,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ClassicalYields', 'YIELD_FAITH', 1, 10),
 ('ClassicalYields', 'YIELD_FOOD',  1, 15),
 ('ClassicalYields', 'YIELD_GOLD',  1, 10),
-('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
+('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
+('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -20), -- 2.8
 -- MEDIEVAL
 --('MedievalSensitivity',	'YIELD_CULTURE', 1, 10),
@@ -430,6 +433,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('MedievalYields', 'YIELD_GOLD', 1, 10),
 ('MedievalYields', 'YIELD_PRODUCTION', 1, 15),
 ('MedievalYields', 'YIELD_SCIENCE', 1, -10),
+('MedievalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('MedievalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, -10),
@@ -440,21 +445,26 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('RenaissanceYields', 'YIELD_GOLD', 1, 10),
 ('RenaissanceYields', 'YIELD_FAITH', 1, -25),
 ('RenaissanceYields', 'YIELD_SCIENCE', 1, 10),
+('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -100),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 20),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -20), -- 2.2
+('RenaissancePseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15), -- exploration time
 ('RenaissancePseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -20),
 -- INDUSTRIAL
 --('IndustrialYields', 'YIELD_FAITH',	1, -40),
 --('IndustrialYields', 'YIELD_GOLD',	1, 10),
 ('IndustrialYields', 'YIELD_PRODUCTION',	1, 15),
+('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -20), -- 2.0
-('IndustrialPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15),
+--('IndustrialPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 10),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 15),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -20),
 -- MODERN

@@ -191,7 +191,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AmanitoreUnits', 'UNIT_BUILDER', 1, 20); -- more improvements
 
 
--- BARBAROSSA / GERMANY
+-- LEADER_BARBAROSSA / GERMANY
 -- TRAIT_RST_MORE_DISTRICTS
 
 -- remove 23 favored Civics, insane!
@@ -207,6 +207,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('BarbarossaCivics', 'CIVIC_GUILDS', 1, 0),
 ('BarbarossaCivics', 'CIVIC_EXPLORATION', 1, 0),
 ('BarbarossaCivics', 'CIVIC_URBANIZATION', 1, 0),
+('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50),
+('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 150), -- more focus on Minors
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15), -- boost comm hubs
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20); -- boost hansas
@@ -646,7 +648,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('KongoYields',       'YIELD_CULTURE', 1, 10),
 ('KongoYields',       'YIELD_FOOD',    1, 10),
-('KongoYields',       'YIELD_SCIENCE', 1, -5),
+('KongoYields',       'YIELD_SCIENCE', 1,-10),
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10), -- to build Theater Squares
 ('KongoPseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
@@ -793,10 +795,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 UPDATE AiFavoredItems SET Item = (SELECT PrereqCivic FROM Governments WHERE GovernmentType = 'GOVERNMENT_MONARCHY')
 WHERE ListType = 'TamarCivics' AND Item = 'CIVIC_DIVINE_RIGHT';
 
--- 2019-01-01: based on mod "Hill Start Bias for Georgia" (the mod uses Tier 3 however)
+-- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
 DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
 INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
-SELECT 'CIVILIZATION_GEORGIA', TerrainType, 2
+SELECT 'CIVILIZATION_GEORGIA', TerrainType, 3
 FROM Terrains WHERE Hills = 1 AND EXISTS (SELECT * FROM Civilizations WHERE CivilizationType = 'CIVILIZATION_GEORGIA');
 
 --INSERT INTO AiListTypes (ListType) VALUES

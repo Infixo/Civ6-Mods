@@ -16,10 +16,10 @@ UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE' WHERE Item = 'DIPLOACTIO
 --AGENDA_IRON_CONFEDERACY_MANY_ALLIANCES	StatementKey	ARGTYPE_IDENTITY	LOC_DIPLO_WARNING_LEADER_ROBERT_THE_BRUCE_REASON_ANY
 
 
--- 2019-01-01: based on mod "Hill Start Bias for Georgia" (the mod uses Tier 3 however)
+-- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
 DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
 INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
-SELECT 'CIVILIZATION_GEORGIA', TerrainType, 2
+SELECT 'CIVILIZATION_GEORGIA', TerrainType, 3
 FROM Terrains WHERE Hills = 1;
 
 
