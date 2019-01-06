@@ -13,14 +13,14 @@
 	</Criteria>
   </ActionCriteria>
   <InGameActions>
-    <UpdateDatabase id="RFX_UpdateDatabase">
+    <UpdateDatabase id="RFX_Database">
       <Properties>
         <LoadOrder>10000</LoadOrder>
       </Properties>
       <File>RFX_Main.sql</File>
-      <File>RFX_AI.sql</File>
+      <!--<File>RFX_AI.sql</File>-->
     </UpdateDatabase>
-    <UpdateDatabase id="RFX_UpdateDatabase_RiseFall" criteria="Expansion1">
+    <UpdateDatabase id="RFX_Database_RiseFall" criteria="Expansion1">
       <Properties>
         <LoadOrder>10001</LoadOrder>
       </Properties>
@@ -30,6 +30,6 @@
   <Files>
     <File>RFX_Main.sql</File>
     <File>RFX_Main_RF.sql</File>
-    <File>RFX_AI.sql</File>
+    <!--<File>RFX_AI.sql</File>-->
   </Files>
 </Mod>
