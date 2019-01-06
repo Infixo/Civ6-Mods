@@ -44,8 +44,8 @@ DELETE FROM UnitAiInfos WHERE AiType = 'UNITTYPE_SIEGE_ALL' AND UnitType = 'UNIT
 
 INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 ('UNIT_BOMBER', 'UNITTYPE_SIEGE_ALL'),
-('UNIT_JET_BOMBER', 'UNITTYPE_SIEGE_ALL'),
-('UNIT_KHMER_DOMREY', 'UNITTYPE_SIEGE_ALL');
+('UNIT_JET_BOMBER', 'UNITTYPE_SIEGE_ALL');
+--('UNIT_KHMER_DOMREY', 'UNITTYPE_SIEGE_ALL');
 
 -- UNITTYPE_SIEGE_SUPPORT - ram, tower, medic, engi, baloon, drone, etc.
 -- needs to stay this way until BH is modified - it uses this to make a formation

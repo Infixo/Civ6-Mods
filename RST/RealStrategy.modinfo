@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Real Strategy. Version 0.4.[NEWLINE]Includes: main strategies (0.1), leaders (0.2), tactics (0.3), dlc support (0.4).</Description>
+		<Description>Real Strategy. Version 0.4.[NEWLINE]History: main strategies (0.1), leaders (0.2), tactics (0.3), dlc support (0.4).</Description>
 		<Teaser>Real Strategy</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -46,17 +46,33 @@
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Tactics.sql</File>
 		</UpdateDatabase>
-		<UpdateDatabase id="RST_DB_Poland" criteria="DLCPoland">
+		<UpdateDatabase id="RST_DB_Aztec" criteria="DLCAztec">
 			<Properties><LoadOrder>210</LoadOrder></Properties>
-			<!--<File>tdlc_poland.sql</File>-->
+			<File>RealStrategy_Aztec.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Poland" criteria="DLCPoland">
+			<Properties><LoadOrder>220</LoadOrder></Properties>
+			<File>RealStrategy_Poland.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCAustralia">
+			<Properties><LoadOrder>230</LoadOrder></Properties>
+			<File>RealStrategy_Australia.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCMacedoniaPersia">
+			<Properties><LoadOrder>240</LoadOrder></Properties>
+			<File>RealStrategy_MacedoniaPersia.sql</File>
 		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCNubia">
-			<Properties><LoadOrder>210</LoadOrder></Properties>
-			<!--<File>tdlc_nubia.sql</File>-->
+			<Properties><LoadOrder>250</LoadOrder></Properties>
+			<File>RealStrategy_Nubia.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCIndonesiaKhmer">
+			<Properties><LoadOrder>260</LoadOrder></Properties>
+			<File>RealStrategy_IndonesiaKhmer.sql</File>
 		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Expansion1" criteria="Expansion1">
-			<Properties><LoadOrder>220</LoadOrder></Properties>
-			<!--<File>tdlc_nubia.sql</File>-->
+			<Properties><LoadOrder>270</LoadOrder></Properties>
+			<File>RealStrategy_RiseAndFall.sql</File>
 		</UpdateDatabase>
 		<AddUserInterfaces id="RST_UI_Utils">
 			<Properties><Context>InGame</Context></Properties>
@@ -68,11 +84,17 @@
 	</InGameActions>
 	<Files>
 		<File>RealStrategy.lua</File>
-		<!--<File>RealStrategy.xml</File>-->
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
 		<File>RealStrategy_Leaders.sql</File>
 		<File>RealStrategy_Tactics.sql</File>
+		<File>RealStrategy_Aztec.sql</File>
+		<File>RealStrategy_Poland.sql</File>
+		<File>RealStrategy_Australia.sql</File>
+		<File>RealStrategy_MacedoniaPersia.sql</File>
+		<File>RealStrategy_Nubia.sql</File>
+		<File>RealStrategy_IndonesiaKhmer.sql</File>
+		<File>RealStrategy_RiseAndFall.sql</File>
 		<File>Utils/RealStrategy_InGameExp.lua</File>
 		<File>Utils/RealStrategy_InGameExp.xml</File>
 	</Files>
