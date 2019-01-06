@@ -2,7 +2,7 @@
 <Mod id="835c3ece-1a9c-4efb-996d-367815774ff0" version="1">
   <Properties>
     <Name>Real Fixes</Name>
-    <Description>Various game fixes and tweaks.</Description>
+    <Description>Various game fixes and tweaks. Version 1.0.</Description>
     <Teaser>Various game fixes and tweaks</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
@@ -18,7 +18,6 @@
         <LoadOrder>10000</LoadOrder>
       </Properties>
       <File>RFX_Main.sql</File>
-      <!--<File>RFX_AI.sql</File>-->
     </UpdateDatabase>
     <UpdateDatabase id="RFX_Database_RiseFall" criteria="Expansion1">
       <Properties>
@@ -30,6 +29,5 @@
   <Files>
     <File>RFX_Main.sql</File>
     <File>RFX_Main_RF.sql</File>
-    <!--<File>RFX_AI.sql</File>-->
   </Files>
 </Mod>

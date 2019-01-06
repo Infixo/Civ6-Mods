@@ -89,13 +89,13 @@ UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitTyp
 -- 2018-12-25: Some items in AiFavoredItems have values 1 and -1, which doesn't have any effect;
 -- after some testnig: it doesn't mean that they should be 100 and -100, more like 1 and -1 have no effect, values should be just tuned properly
 UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND Item = 'PROMOTION_CLASS_INQUISITOR'; -- was -1 -- this should be India, anyway
-UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
-UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
+UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
+UPDATE AiFavoredItems SET Value =  -10 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
 UPDATE AiFavoredItems SET Value =   20 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
-UPDATE AiFavoredItems SET Value =   50 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
+UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
 -- the below list is assigned as default to ALL major civs, so be careful; there is also PseudoYield for that, AI+ set it to 1.4
-UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1 
+UPDATE AiFavoredItems SET Value =   20 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1 
 
 
 -- 2019-01-01: "Make Military Formation" in AllowedMoves is set as IsHomeland, but used in Tactics lists for both Majors and Minors

@@ -47,6 +47,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 -- LEADER_JAYAVARMAN / KHMER
 
+UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('JayavarmanDistricts'),
 ('JayavarmanYields'),
@@ -57,6 +59,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('JayavarmanPseudoYields', 'TRAIT_LEADER_MONASTERIES_KING', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JayavarmanDistricts', 'DISTRICT_AQUEDUCT', 1, 0), -- risky???
+('JayavarmanDistricts', 'DISTRICT_HOLY_SITE', 1, 0), -- risky???
 ('JayavarmanYields', 'YIELD_FAITH',   1, 10),
 ('JayavarmanYields', 'YIELD_FOOD',    1, 15),
 ('JayavarmanYields', 'YIELD_SCIENCE', 1, -5),

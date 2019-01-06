@@ -320,6 +320,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GilgameshCivics', 'CIVIC_FOREIGN_TRADE' , 1, 0), -- joint war
 ('GilgameshCivics', 'CIVIC_CIVIL_SERVICE' , 1, 0), -- alliance
 ('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 25), -- is it actually 0.25???
+('GilgameshPseudoYields', 'PSEUDOYIELD_IMPROVEMENT' , 1, -50), -- he builds Ziggurats EVERYWHERE
 ('GilgameshPseudoYields', 'PSEUDOYIELD_INFLUENCE' , 1, 15); -- friend of CS
 
 -- Rise & Fall
@@ -521,10 +522,13 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_SALADIN / ARABIA
 
 INSERT INTO AiListTypes (ListType) VALUES
+('SaladinYields');
 ('SaladinPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('SaladinYields',       'TRAIT_LEADER_RIGHTEOUSNESS_OF_FAITH', 'Yields');
 ('SaladinPseudoYields', 'TRAIT_LEADER_RIGHTEOUSNESS_OF_FAITH', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('SaladinYields', 'YIELD_FAITH', 1, 15), -- we are still religious, nonetheless
 ('SaladinTechs', 'TECH_WRITING', 1, 0), -- get Campus first, then Holy Site
 ('SaladinPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -10),
 ('SaladinPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10);
@@ -532,7 +536,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 -- LEADER_TOMYRIS / SCYTHIA
 -- can we make her build Stables instead of Barracks?
- 
+
+UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('ScythiaFavorStable');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
@@ -632,4 +638,26 @@ Always tries to keep a large standing army. Respects other civilizations with la
 exclusive with: AGENDA_QUEEN_OF_NILE (Likes civilizations with powerful militaries, and will try to ally with them to avoid conflict.), AGENDA_BUSHIDO (Likes civilizations that have both a strong military)
 StandingArmyPseudoYields	PSEUDOYIELD_STANDING_ARMY_NUMBER	1	33   -- def. 1
 StandingArmyPseudoYields	PSEUDOYIELD_STANDING_ARMY_VALUE	1	50 -- def. 0.1
+*/
+
+/* TODO: Random Agendas
+These below are NOT defined in AiLists
+AGENDA_BARBARIAN_LOVER	TRAIT_AGENDA_BARBARIAN_LOVER Sympathizes with the barbarians.  Does not like civilizations that destroy barbarian outposts.
+- PSEUDOYIELD_CLEAR_BANDIT_CAMPS --
+AGENDA_DARWINIST		TRAIT_AGENDA_ENJOYS_WAR Likes to see civilizations at war, and believes in constant struggle.
+- PSEUDOYIELD_DIPLOMATIC_BONUS -- + wars + denounce
+AGENDA_FUN_LOVING		TRAIT_AGENDA_PREFER_HAPPINESS Tries to make the citizens in each city as happy as possible. Likes civilizations that also develop in this fashion.
+- PSEUDOYIELD_HAPPINESS
+AGENDA_IDEOLOGUE		TRAIT_AGENDA_PREFER_SAME_GOVERNMENT Favors civilizations with the same type of government, dislikes civilizations that have different governments, and really dislikes civilizations with different governments of the same era as its own.
+- N/A
+AGENDA_NATURALIST		TRAIT_AGENDA_NATURALIST Tries to find all natural wonders.  Likes civilizations that keep Woods and Rainforest unchopped, and those that establish National Parks.
+- PSEUDOYIELD_ENVIRONMENT
+AGENDA_PARANOID			TRAIT_AGENDA_PARANOID ???
+- ???
+AGENDA_POPULOUS			TRAIT_AGENDA_PREFER_POPULATION Tries to have the highest overall population.  Respects other high population civilizations.
+- YIELD_FOOD
+AGENDA_SYCOPHANT		TRAIT_AGENDA_SYCOPHANT ???
+- ???
+AGENDA_SYMPATHIZER		TRAIT_AGENDA_SYMPATHIZER Feels bad for those going through Dark Ages. Dislikes those in Golden Ages.
+- N/A
 */

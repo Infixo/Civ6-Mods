@@ -47,6 +47,8 @@ WHERE NaturalWonder = 1;
 --------------------------------------------------------------
 -- Yield biases
 
+UPDATE AiFavoredItems SET Value =  20 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1 
+
 --UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_PRODUCTION'; -- 25
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_SCIENCE'; -- 10
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_CULTURE'; -- 10
@@ -81,16 +83,16 @@ Based on testing:
 - PSEUDOYIELD_CITY_POPULATION   if positive, probably increases desire (too lazy to check)
 */
 
-UPDATE PseudoYields SET DefaultValue = 350   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450
+UPDATE PseudoYields SET DefaultValue = 400   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450
 --UPDATE PseudoYields SET DefaultValue = 100    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80
 UPDATE PseudoYields SET DefaultValue = 300   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400
-UPDATE PseudoYields SET DefaultValue = 100   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200 -- if this is used in Conquest, it should stay high
+UPDATE PseudoYields SET DefaultValue = 150   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200 -- if this is used in Conquest, it should stay high
 UPDATE PseudoYields SET DefaultValue =  25    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50
 --UPDATE PseudoYields SET DefaultValue =  3    WHERE PseudoYieldType = 'PSEUDOYIELD_CIVIC'; -- 	5, 1 too little
 UPDATE PseudoYields SET DefaultValue =  1.5  WHERE PseudoYieldType = 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS'; -- 	0.5, Ai+ 1.6
 --UPDATE PseudoYields SET DefaultValue =  0.15 WHERE PseudoYieldType = 'PSEUDOYIELD_DIPLOMATIC_BONUS'; -- 	0.25 -- let's not change diplomacy yet
 UPDATE PseudoYields SET DefaultValue = 4.0 WHERE PseudoYieldType = 'PSEUDOYIELD_DISTRICT'; -- 	3.5, AI+ = 6.7! check if this helps with Holy Sites - this is the earliest available district!
-UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_ENVIRONMENT'; -- 	0.5, AI+ 0.75
+UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_ENVIRONMENT'; -- 	0.5, AI+ 0.75
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_GOLDENAGE_POINT'; -- 	1
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_GOVERNOR'; -- 	2
 UPDATE PseudoYields SET DefaultValue =  0.5  WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ADMIRAL'; -- 	0.5
@@ -128,7 +130,7 @@ UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD
 UPDATE PseudoYields SET DefaultValue =  1.2 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SETTLER'; -- 1 -- 1.4 seems to much, they build Settlers even with 0 army and undeveloped cities
 --UPDATE PseudoYields SET DefaultValue = 15.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SPY'; -- 20
 UPDATE PseudoYields SET DefaultValue = 5.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_TRADE'; -- 1, AI+ 11 -- make sure they build them all
-UPDATE PseudoYields SET DefaultValue = 0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_WONDER'; -- 2, 0.55 is too low, they don't build them!
+UPDATE PseudoYields SET DefaultValue = 0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_WONDER'; -- 2, AI+ 0.55
 
 
 
@@ -514,7 +516,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ClassicalYields', 'YIELD_FAITH', 1, 10),
 ('ClassicalYields', 'YIELD_FOOD',  1, 15),
 ('ClassicalYields', 'YIELD_GOLD',  1, 10),
-('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -20), -- 2.8
@@ -526,7 +528,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('MedievalYields', 'YIELD_GOLD', 1, 10),
 ('MedievalYields', 'YIELD_PRODUCTION', 1, 15),
 ('MedievalYields', 'YIELD_SCIENCE', 1, -10),
-('MedievalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('MedievalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
@@ -538,7 +540,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('RenaissanceYields', 'YIELD_GOLD', 1, 10),
 ('RenaissanceYields', 'YIELD_FAITH', 1, -25),
 ('RenaissanceYields', 'YIELD_SCIENCE', 1, 10),
-('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
@@ -552,7 +554,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('IndustrialYields', 'YIELD_FAITH',	1, -40),
 --('IndustrialYields', 'YIELD_GOLD',	1, 10),
 ('IndustrialYields', 'YIELD_PRODUCTION',	1, 15),
-('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10),
@@ -732,6 +734,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ===========================================================================
 -- CHANGES TO EXISTING STRATEGIES
 -- ===========================================================================
+
+
+-- STRATEGY_EARLY_EXPLORATION
+
+-- learn more about your surroundings
+UPDATE StrategyConditions SET ThresholdValue = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION' AND ConditionFunction = 'Fewer Cities'; -- 1
 
 
 -- STRATEGY_RAPID_EXPANSION

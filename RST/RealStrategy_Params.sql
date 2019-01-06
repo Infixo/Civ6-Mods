@@ -45,7 +45,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_AT_WAR_PRIORITY', 30), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
-('RST_CONQUEST_LESS_CITIES_WEIGHT', 15), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
+('RST_CONQUEST_LESS_CITIES_WEIGHT', 20), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights

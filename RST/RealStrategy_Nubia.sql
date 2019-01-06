@@ -16,7 +16,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 -- LEADER_AMANITORE / NUBIA
 -- she likes to build, improvements and districts
 
-UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
+UPDATE AiFavoredItems SET Value = -10 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1 -- they build too many
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('AmanitoreYields'),

@@ -47,6 +47,13 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 -- UNITTYPE_SIEGE_SUPPORT - ram, tower, medic, engi, baloon, drone, etc.
 -- needs to stay this way until BH is modified - it uses this to make a formation
 
+-- 2018-01-06: UNIT_WARRIOR_MONK is not in UnitAiInfos, so he is basically chilling around, doing nothing
+INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
+('UNIT_WARRIOR_MONK', 'UNITAI_EXPLORE'),
+('UNIT_WARRIOR_MONK', 'UNITAI_COMBAT'),
+('UNIT_WARRIOR_MONK', 'UNITTYPE_LAND_COMBAT'),
+('UNIT_WARRIOR_MONK', 'UNITTYPE_MELEE');
+
 
 -- ===========================================================================
 -- OP TEAMS
