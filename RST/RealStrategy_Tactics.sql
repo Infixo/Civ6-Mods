@@ -17,9 +17,6 @@ UPDATE TreeData SET DefaultData = 'UNITTYPE_RANGED' WHERE TreeName = 'Simple Cit
 
 -- why is Scientist a Leader???
 DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_GREAT_SCIENTIST' AND AiType = 'UNITAI_LEADER';
-	
--- why is UNIT_KOREAN_HWACHA siege?
-DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_KOREAN_HWACHA' AND (AiType = 'UNITTYPE_SIEGE' OR AiType = 'UNITTYPE_SIEGE_ALL');
 
 -- planes actually use "Ranged Strength" and "Bombard Strength", so they could be treated as Ranged and Siege units respectively
 -- ships are registered in that way, too
