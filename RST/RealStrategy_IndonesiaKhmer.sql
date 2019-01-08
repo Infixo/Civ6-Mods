@@ -4,6 +4,17 @@
 -- 2019-01-05: Created
 -- ===========================================================================
 
+-- iOS compatibility
+-- GitarjaWonders was added in later versions of the game
+
+INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
+('GitarjaWonders');
+INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
+('GitarjaWonders', 'TRAIT_LEADER_EXALTED_GODDESS', 'Buildings');
+INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('GitarjaWonders', 'BUILDING_GREAT_LIGHTHOUSE', 1, 0);
+
+
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 ('LEADER_GITARJA', 'LEADER', '', 'CONQUEST', 1),
 ('LEADER_GITARJA', 'LEADER', '', 'SCIENCE',  4),
@@ -72,5 +83,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 
 -- tactics
-INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
-('UNIT_KHMER_DOMREY', 'UNITTYPE_SIEGE_ALL');
+INSERT INTO UnitAiInfos (UnitType, AiType)
+SELECT 'UNIT_KHMER_DOMREY', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
+FROM UnitAiTypes
+WHERE AiType = 'UNITTYPE_SIEGE_ALL';

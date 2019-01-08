@@ -531,6 +531,26 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- TIME STRATEGIES - they are CUMULATIVE
 -- ===========================================================================
 
+-- iOS compatibility
+-- 4 AiLists where added in later versions of the game
+
+INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
+('ClassicalPseudoYields'),
+('MedievalPseudoYields'),
+('RenaissancePseudoYields'),
+('IndustrialPseudoYields');
+INSERT OR REPLACE INTO AiLists (ListType, System) VALUES
+('ClassicalPseudoYields',   'PseudoYields'),
+('MedievalPseudoYields',    'PseudoYields'),
+('RenaissancePseudoYields', 'PseudoYields'),
+('IndustrialPseudoYields',  'PseudoYields');
+INSERT OR REPLACE INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('STRATEGY_CLASSICAL_CHANGES',   'ClassicalPseudoYields'),
+('STRATEGY_MEDIEVAL_CHANGES',    'MedievalPseudoYields'),
+('STRATEGY_RENAISSANCE_CHANGES', 'RenaissancePseudoYields'),
+('STRATEGY_INDUSTRIAL_CHANGES',  'IndustrialPseudoYields');
+
+
 -- fix
 INSERT OR REPLACE INTO Strategy_Priorities (StrategyType, ListType) VALUES ('STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements');
 

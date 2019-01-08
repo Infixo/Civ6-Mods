@@ -4,6 +4,18 @@
 -- 2019-01-05: Created
 -- ===========================================================================
 
+-- iOS compatibility
+-- AmanitoreWonders was added in later versions of the game
+
+INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
+('AmanitoreWonders');
+INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
+('AmanitoreWonders', 'TRAIT_LEADER_KANDAKE_OF_MEROE', 'Buildings');
+INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('AmanitoreWonders', 'BUILDING_PETRA', 1, 0),
+('AmanitoreWonders', 'BUILDING_RUHR_VALLEY', 1, 0);
+
+
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 ('LEADER_AMANITORE', 'LEADER', '', 'CONQUEST', 5),
 ('LEADER_AMANITORE', 'LEADER', '', 'SCIENCE',  4),

@@ -12,7 +12,7 @@
 <!-- Simple City Defense - It uses Garrison City at the begning, and if there is no unt togarrison - it blocks entire tree -->
 
 <BehaviorTreeNodes>
-	<Delete TreeName="Simple City Defense"></Where>
+	<Delete TreeName="Simple City Defense" />
 
 	<Row NodeType="Concurrent" NodeId="0" TreeName="Simple City Defense" JumpTo="12" />
 		<Row NodeType="Is City Threatened" NodeId="1" TreeName="Simple City Defense" />
@@ -33,7 +33,7 @@
 </BehaviorTreeNodes>
 
 <TreeData>
-	<Delete TreeName="Simple City Defense"></Where>
+	<Delete TreeName="Simple City Defense" />
 	
 	<!-- 0: Concurrent -->
 	<!-- 1: Is City Threatened -->
