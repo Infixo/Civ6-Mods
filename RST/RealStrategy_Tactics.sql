@@ -17,6 +17,14 @@ UPDATE AllowedMoves SET IsHomeland = 0, IsTactical = 1 WHERE AllowedMoveType = '
 -- 2019-01-01: AiOperationList Default_List is defined but never used (not causing problems, however)
 UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DEFAULT';
 
+-- 2019-01-01: "Plunder Trader" is only used by Barbarians, Majors and Minors don't use it
+-- I am not sure if this is an error, as apparently majors DO plunder TRs nonetheless
+-- BH trees have nodes for Pillaging but only for Districts and Improvements
+INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored) VALUES
+('Default Tactical', 'Plunder Trader', 1);
+--('Minor Civ Tactical', 'Plunder Trader', 1); -- later
+--('FreeCitiesTactics', 'Plunder Trader', 1); R&F
+
 
 -- ===========================================================================
 -- UNIT TYPES
@@ -136,12 +144,12 @@ City Defense	UNITTYPE_AIR_SIEGE		0
 */
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('City Defense', 'UNITTYPE_RANGED',  1, NULL), -- could use ranged - WARNING!!!!!!!!!!!
-('City Defense', 'UNITTYPE_MELEE',   0, NULL),
+('City Defense', 'UNITTYPE_MELEE',   1, NULL),
 ('City Defense', 'UNITTYPE_CAVALRY', 0, NULL);
-UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = NULL WHERE TeamName = 'City Defense' AND AiType = 'UNITAI_COMBAT'; -- WARNING!!!!! check if this works at all!!!!
+UPDATE OpTeamRequirements SET MinNumber = 3, MaxNumber = NULL WHERE TeamName = 'City Defense' AND AiType = 'UNITAI_COMBAT'; -- WARNING!!!!! check if this works at all!!!!
 UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 0    WHERE TeamName = 'City Defense' AND AiType = 'UNITAI_EXPLORE'; -- no Scouts pls
-UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 0    WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_NAVAL'; -- there is no naval defense op - Korea recruited a submarine for a land war... yeah...
-UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 0    WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_SIEGE';
+UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 0, MaxPercentage = 0 WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_NAVAL'; -- there is no naval defense op - Korea recruited a submarine for a land war... yeah...
+UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 0, MaxPercentage = 0 WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_SIEGE';
 UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3    WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_AIR'; -- pls use fighters
 UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3    WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_AIR_SIEGE'; -- ok, no bombers - can we use bombers?
 

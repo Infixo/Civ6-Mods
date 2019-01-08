@@ -23,7 +23,7 @@ DELETE FROM AiFavoredItems WHERE ListType = 'BaseListTest' AND Item = 'CIVIC_IMP
 UPDATE StrategyConditions SET ConditionFunction = 'Is Medieval' WHERE StrategyType = 'STRATEGY_MEDIEVAL_CHANGES' AND Disqualifier = 0; -- Fixed in Spring 2018 Patch (left for iOS)
 --INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES ('STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements');
 -- The following will allow for AI+ to remove this strategy
-INSERT INTO Strategy_Priorities (StrategyType, ListType)
+INSERT OR REPLACE INTO Strategy_Priorities (StrategyType, ListType)
 SELECT 'STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements'
 FROM Strategies
 WHERE StrategyType = 'STRATEGY_MEDIEVAL_CHANGES';
@@ -68,7 +68,7 @@ AGENDA_QUEEN_OF_NILE	StatementKey	ARGTYPE_IDENTITY	AGENDA_QUEEN_OF_NILE_WARNING
 
 -- 2018-12-09: Missing entries in Types for Victory Strategies
 -- The only one that exists is Religious one
-INSERT INTO Types (Type, Kind) VALUES
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES
 ('VICTORY_STRATEGY_CULTURAL_VICTORY', 'KIND_VICTORY_STRATEGY'),
 ('VICTORY_STRATEGY_MILITARY_VICTORY', 'KIND_VICTORY_STRATEGY'),
 ('VICTORY_STRATEGY_SCIENCE_VICTORY', 'KIND_VICTORY_STRATEGY');
@@ -91,7 +91,7 @@ UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitTyp
 UPDATE AiFavoredItems SET Value = -100 WHERE ListType = 'GandhiUnitBuilds' AND Item = 'PROMOTION_CLASS_INQUISITOR'; -- was -1 -- this should be India, anyway
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
 UPDATE AiFavoredItems SET Value =  -10 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1
-UPDATE AiFavoredItems SET Value =   20 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
+UPDATE AiFavoredItems SET Value =   10 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'JadwigaUnitBuilds' AND Item = 'UNIT_MILITARY_ENGINEER'; -- was 1
 UPDATE AiFavoredItems SET Value =   25 WHERE ListType = 'JayavarmanUnitBuilds' AND Item = 'UNIT_MISSIONARY'; -- was 1
 -- the below list is assigned as default to ALL major civs, so be careful; there is also PseudoYield for that, AI+ set it to 1.4
@@ -105,7 +105,7 @@ UPDATE AllowedMoves SET IsHomeland = 0, IsTactical = 1 WHERE AllowedMoveType = '
 -- 2019-01-01: "Plunder Trader" is only used by Barbarians, Majors and Minors don't use it
 -- I am not sure if this is an error, as apparently majors DO plunder TRs nonetheless
 -- BH trees have nodes for Pillaging but only for Districts and Improvements
-INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
+INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored) VALUES
 ('Default Tactical', 'Plunder Trader', 1);
 --('Minor Civ Tactical', 'Plunder Trader', 1); -- later
 --('FreeCitiesTactics', 'Plunder Trader', 1); R&F

@@ -15,9 +15,9 @@
 DELETE FROM AiFavoredItems WHERE ListType = 'StandardSettlePlot';
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('StandardSettlePlot', 'Foreign Continent', 0, -4, NULL), -- def
-('StandardSettlePlot', 'Nearest Friendly City', 0, -8, NULL), -- def, be careful - expansion gives +6, naval +4
-('StandardSettlePlot', 'Fresh Water', 0, 16, NULL), -- +3
-('StandardSettlePlot', 'Coastal', 0, 7, NULL), -- -1
+('StandardSettlePlot', 'Nearest Friendly City', 0, -9, NULL), -- def, be careful - expansion gives +6, naval +4
+('StandardSettlePlot', 'Fresh Water', 0, 20, NULL), -- +7
+('StandardSettlePlot', 'Coastal', 0, 6, NULL), -- -1
 ('StandardSettlePlot', 'Total Yield', 0, 1, 'YIELD_PRODUCTION'), -- def
 ('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_FOOD'), -- +1
 ('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_PRODUCTION'), -- +1
@@ -150,7 +150,7 @@ INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 UPDATE AiOperationDefs SET OperationType = 'OP_DEFENSE' WHERE OperationName = 'City Defense'; -- the only OP_ that is missing an assignment?
 
 --Changes the amount of operations of these types that can run at the same time
-UPDATE AiFavoredItems SET Value = 3 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_DEFENSE'; -- def. 1 ?number of simultaneus ops?  TUNE ACCORDING TO PEACE/WAR
+UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_DEFENSE'; -- def. 1 ?number of simultaneus ops?  TUNE ACCORDING TO PEACE/WAR
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_SETTLE'; -- def. 1 ?number of simultaneus ops?
 
 
@@ -189,6 +189,13 @@ Religion possible		+20		+20			-
 -- ===========================================================================
 -- STRATEGIES
 -- ===========================================================================
+
+-- 2018-12-09: Missing entries in Types for Victory Strategies
+-- The only one that exists is Religious one
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'KIND_VICTORY_STRATEGY'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'KIND_VICTORY_STRATEGY'),
+('VICTORY_STRATEGY_SCIENCE_VICTORY', 'KIND_VICTORY_STRATEGY');
 
 -- remove old conditions, leave only relevant
 UPDATE Strategies SET NumConditionsNeeded = 1 WHERE StrategyType LIKE 'VICTORY_STRATEGY_%';
@@ -250,16 +257,19 @@ DELETE FROM AiLists        WHERE System = 'Strategies';
 UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'CultureVictoryYields'       AND Item = 'YIELD_CULTURE'; -- def. 25
 
 UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CultureVictoryPseudoYields' AND Item LIKE 'PSEUDOYIELD_GREATWORK_%'; -- def. 10
-UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'CultureVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TOURISM'; -- def. 25
+UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'CultureVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TOURISM'; -- def. 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- base 350
+('CultureVictoryYields', 'YIELD_GOLD', 1, -10),
+('CultureVictoryYields', 'YIELD_SCIENCE', 1, -10),
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- base 350
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 100), -- base 300
 --('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20), -- base 80
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 10), -- base 0.25
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 100), -- base 5
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_TECHNOLOGY', 1, -100), -- base 5
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 10),
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_WONDER', 1, 50), -- base 0.8
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 200); -- base 4
 
@@ -314,13 +324,14 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --ScienceVictoryProjects
 -- ===========================================================================
 
---UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ScienceVictoryYields' AND Item = 'YIELD_SCIENCE'; -- def. 50
+UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ScienceVictoryYields' AND Item = 'YIELD_SCIENCE'; -- def. 50
 
 UPDATE AiFavoredItems SET Value =  40 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_SCIENTIST'; -- base 1.0
 UPDATE AiFavoredItems SET Value = 100 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TECHNOLOGY'; -- def 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ScienceVictoryYields', 'YIELD_FAITH', 1, -15),
+('ScienceVictoryYields', 'YIELD_CULTURE', 1, -10),
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50), -- base 350
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50), -- base 300
 --('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20), -- base 100
@@ -371,15 +382,18 @@ FROM Types WHERE Type = 'BUILDING_AMUNDSEN_SCOTT_RESEARCH_STATION';
 --ReligiousVictoryBehaviors
 -- ===========================================================================
 
-UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 75
+UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ReligiousVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 75
 
 UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_PROPHET'; -- base 0.8
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ReligiousVictoryYields', 'YIELD_GOLD', 1, -10),
+('ReligiousVictoryYields', 'YIELD_SCIENCE', 1, -10),
+('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_DECLARE_HOLY_WAR', 1, 0),
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
-('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
+('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -15), -- base 1
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 25); -- base 0.8 -- this includes Guru and Naturalist!
 
 
@@ -412,9 +426,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ReligiousVictoryWonders', 'BUILDING_HAGIA_SOPHIA', 1, 0),
 ('ReligiousVictoryWonders', 'BUILDING_STONEHENGE', 1, 0),
 ('ReligiousVictoryWonders', 'BUILDING_MAHABODHI_TEMPLE', 1, 0),
-('ReligiousVictoryUnits', 'UNIT_MISSIONARY', 1, 100),
-('ReligiousVictoryUnits', 'UNIT_APOSTLE', 1, 100),
-('ReligiousVictoryUnits', 'UNIT_INQUISITOR', 1, 50);
+('ReligiousVictoryUnits', 'UNIT_MISSIONARY', 1, 25),
+('ReligiousVictoryUnits', 'UNIT_APOSTLE', 1, 25),
+('ReligiousVictoryUnits', 'UNIT_NATURALIST', 1, -25),
+('ReligiousVictoryUnits', 'UNIT_INQUISITOR', 1, -10);
 
 
 -- ===========================================================================
@@ -515,6 +530,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ===========================================================================
 -- TIME STRATEGIES - they are CUMULATIVE
 -- ===========================================================================
+
+-- fix
+INSERT OR REPLACE INTO Strategy_Priorities (StrategyType, ListType) VALUES ('STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements');
+
 
 INSERT OR REPLACE INTO Types (Type, Kind) VALUES
 ('STRATEGY_ATOMIC_CHANGES',      'KIND_VICTORY_STRATEGY'), -- chances are, it will be added in GS
@@ -683,20 +702,22 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, Disqualifier) V
 ('RST_STRATEGY_ATWAR',    'Is Not Major', 1);
 
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue) VALUES
-('RST_STRATEGY_DEFENSE',  'Call Lua Function', 'ActiveStrategyDefense',  50),
-('RST_STRATEGY_CATCHING', 'Call Lua Function', 'ActiveStrategyCatching', 50),
+('RST_STRATEGY_DEFENSE',  'Call Lua Function', 'ActiveStrategyDefense',  60),
+('RST_STRATEGY_CATCHING', 'Call Lua Function', 'ActiveStrategyCatching', 60),
 ('RST_STRATEGY_ENOUGH',   'Call Lua Function', 'ActiveStrategyEnough',  250),
 ('RST_STRATEGY_PEACE',    'Call Lua Function', 'ActiveStrategyPeace',     0),
 ('RST_STRATEGY_ATWAR',    'Call Lua Function', 'ActiveStrategyAtWar',     0);
 
 
 INSERT INTO AiListTypes (ListType) VALUES
+('RSTDefenseOperations'),
 ('RSTDefenseDiplomacy'),
 ('RSTDefenseTechs'),
 ('RSTDefenseCivics'),
 ('RSTDefenseProjects'),
 ('RSTDefensePseudoYields'),
 ('RSTDefenseUnitBuilds'),
+('RSTCatchingOperations'),
 ('RSTCatchingPseudoYields'),
 ('RSTEnoughPseudoYields'),
 ('RSTPeaceProjects'),
@@ -705,12 +726,14 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('RSTAtWarYields'),
 ('RSTAtWarPseudoYields');
 INSERT INTO AiLists (ListType, System) VALUES
+('RSTDefenseOperations',  'AiOperationTypes'),
 ('RSTDefenseDiplomacy',   'DiplomaticActions'),
 ('RSTDefenseTechs',       'Technologies'),
 ('RSTDefenseCivics',      'Civics'),
 ('RSTDefenseProjects',    'Projects'),
 ('RSTDefensePseudoYields','PseudoYields'),
 ('RSTDefenseUnitBuilds',  'UnitPromotionClasses'),
+('RSTCatchingOperations',  'AiOperationTypes'),
 ('RSTCatchingPseudoYields','PseudoYields'),
 ('RSTEnoughPseudoYields', 'PseudoYields'),
 ('RSTPeaceProjects',      'Projects'),
@@ -719,12 +742,14 @@ INSERT INTO AiLists (ListType, System) VALUES
 ('RSTAtWarYields',        'Yields'),
 ('RSTAtWarPseudoYields',  'PseudoYields');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('RST_STRATEGY_DEFENSE', 'RSTDefenseOperations'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseDiplomacy'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseTechs'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseCivics'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseProjects'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefensePseudoYields'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseUnitBuilds'),
+('RST_STRATEGY_CATCHING', 'RSTCatchingOperations'),
 ('RST_STRATEGY_CATCHING', 'RSTCatchingPseudoYields'),
 ('RST_STRATEGY_ENOUGH', 'RSTEnoughPseudoYields'),
 ('RST_STRATEGY_PEACE', 'RSTPeaceProjects'),
@@ -734,6 +759,8 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_ATWAR', 'RSTAtWarPseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- Defense
+('RSTDefenseOperations', 'CITY_ASSAULT', 1, -2), -- don't attack anybody
+('RSTDefenseOperations', 'OP_DEFENSE', 1, 2), -- strengthen defenses
 ('RSTDefenseDiplomacy', 'DIPLOACTION_ALLIANCE', 1, 0),
 ('RSTDefenseDiplomacy', 'DIPLOACTION_ALLIANCE_MILITARY', 1, 0),
 ('RSTDefenseTechs', 'TECH_MASONRY', 1, 0),
@@ -743,6 +770,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTDefenseCivics', 'CIVIC_NATIONALISM', 1, 0),
 ('RSTDefenseCivics', 'CIVIC_MOBILIZATION', 1, 0),
 ('RSTDefenseProjects', 'PROJECT_REPAIR_OUTER_DEFENSES', 1, 0),
+('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -200), -- don't attack anybody
+('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 40), -- don't attack anybody
+('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 100), -- don't attack anybody
+('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100), -- don't attack anybody
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 50),
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25), -- until AI lears how to attack, these are not needed???
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -25), -- chances are that land units are more needed
@@ -754,7 +785,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, -300), -- no zoos, etc.
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -300), -- no builders
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_TOURISM', 1, -100), -- base 1
-('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 25), -- we might need him!
+--('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 25), -- we might need him! - without a settle spot there is no use
 ('RSTDefenseUnitBuilds', 'PROMOTION_CLASS_AIR_BOMBER', 1, -25),
 ('RSTDefenseUnitBuilds', 'PROMOTION_CLASS_AIR_FIGHTER', 1, 25),
 ('RSTDefenseUnitBuilds', 'PROMOTION_CLASS_ANTI_CAVALRY', 1, 25),
@@ -765,6 +796,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTDefenseUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, -100),
 ('RSTDefenseUnitBuilds', 'PROMOTION_CLASS_SUPPORT', 1, -100), -- ex. Anti-Air Gun and SAM, if AI will come with Bombers
 -- Catching Up
+('RSTCatchingOperations', 'CITY_ASSAULT', 1, -1), -- don't attack anybody
+('RSTCatchingOperations', 'OP_DEFENSE', 1, 1), -- strengthen defenses
+('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- don't attack anybody
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- don't attack anybody
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20), -- don't attack anybody
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50), -- don't attack anybody
@@ -777,7 +811,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_WONDER', 1, -50), -- slow down
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -100), -- slow down other builds
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, -150), -- slow down
-('RSTCatchingPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -100), -- slow down
+('RSTCatchingPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, -150), -- slow down
+('RSTCatchingPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -150), -- slow down
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
 -- Enough
 ('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- be more bold
@@ -842,7 +877,7 @@ UPDATE StrategyConditions SET ThresholdValue = 2 WHERE StrategyType = 'STRATEGY_
 -- important - it activates only when there is a settle spot
 
 UPDATE AiFavoredItems SET Value = 8 WHERE ListType = 'ExpansionSettlementPreferences' AND Item = 'Foreign Continent'; -- def. 4
-UPDATE AiFavoredItems SET Value = 5 WHERE ListType = 'ExpansionSettlementPreferences' AND Item = 'Nearest Friendly City'; -- def. 6
+UPDATE AiFavoredItems SET Value = 3 WHERE ListType = 'ExpansionSettlementPreferences' AND Item = 'Nearest Friendly City'; -- def. 6
 
 DELETE FROM AiFavoredItems WHERE ListType = 'ExpansionUnitPreferences'; -- remove old list that resulted in LESS combat units
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
@@ -864,10 +899,10 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('STRATEGY_NAVAL', 'NavalPreferredWonders'),
 ('STRATEGY_NAVAL', 'NavalPreferredUnitBuilds');
 
-UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. -90
-UPDATE AiFavoredItems SET Value =  25 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 150
+UPDATE AiFavoredItems SET Value = -20 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. -90
+UPDATE AiFavoredItems SET Value =  20 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 150
 
-UPDATE AiFavoredItems SET Value =  5 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Coastal'; -- def. 10
+--UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Coastal'; -- def. 10
 UPDATE AiFavoredItems SET Value =  8 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Foreign Continent'; -- def. 4
 UPDATE AiFavoredItems SET Value =  3 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Nearest Friendly City'; -- def. 4
 UPDATE AiFavoredItems SET Value = -4 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Specific Resource' AND StringVal = 'RESOURCE_IRON'; -- def. -5	
@@ -882,5 +917,5 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('NavalPreferredCivics', 'CIVIC_NAVAL_TRADITION', 1, 0),
 ('NavalPreferredWonders', 'BUILDING_GREAT_LIGHTHOUSE', 1, 0),
 ('NavalPreferredWonders', 'BUILDING_HALICARNASSUS_MAUSOLEUM', 1, 0),
-('NavalUnitPreferences', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
+('NavalUnitPreferences', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10),
 ('NavalUnitPreferences', 'PSEUDOYIELD_GPP_GENERAL', 1, -10);

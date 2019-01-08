@@ -32,8 +32,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaTechs', 'TECH_MINING', 1, 0), -- most luxes are here
 ('MontezumaTechs', 'TECH_IRRIGATION', 1, 0), -- most luxes are here
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- this.. is.. MONTY!
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- we need those builders
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- this.. is.. MONTY!
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -30), -- we need those builders
 --('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
@@ -43,8 +43,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10), -- vanilla 1, RFX 1.2
 ('MontezumaWonders',      'BUILDING_HUEY_TEOCALLI', 1, 0), -- who else?
-('MontezumaUnits',        'UNIT_BUILDER', 1, 20),
-('MontezumaUnitBuilds',   'PROMOTION_CLASS_SIEGE', 1, 15); -- vanilla 2, RFX 3
+('MontezumaUnits',        'UNIT_BUILDER', 1, 20);
+--('MontezumaUnitBuilds',   'PROMOTION_CLASS_SIEGE', 1, 10);
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('MontezumaSettlement', 'Fresh Water',           0,-6,                   NULL), -- 16

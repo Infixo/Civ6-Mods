@@ -493,7 +493,7 @@ FROM Types WHERE Type = 'BUILDING_ST_BASILS_CATHEDRAL';
 -- LEADER_PHILIP_II / SPAIN
 
 UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'PhilipForeignSettlement' AND Item = 'Foreign Continent'; -- Philip II, def. 60
-UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
+UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('PhilipDiplomacy'),
@@ -569,7 +569,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('TrajanSettlement',   'TRAIT_LEADER_EXPANSIONIST', 'PlotEvaluations'), -- Trajan only
 ('TrajanPseudoYields', 'TRAIT_LEADER_EXPANSIONIST', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('TrajanSettlement', 'Nearest Friendly City', 0, -2),
+('TrajanWonders', 'BUILDING_STONEHENGE', 0, 0),
+('TrajanSettlement', 'Nearest Friendly City', 0, -1),
 ('TrajanSettlement', 'Fresh Water', 0, -10),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100),
