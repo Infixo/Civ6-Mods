@@ -106,6 +106,17 @@ Religion not possible	-15		-15			0
 Religion possible		+20		+20			-
 */
 
+-- ===========================================================================
+-- FIXES
+-- ===========================================================================
+
+-- 2019-01-03: Some AiLists are assigned to Agenda Traits but registered in AiLists in a wrong column (for leaders, not agendas)
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_BACKSTABBER'      WHERE LeaderType = 'TRAIT_AGENDA_BACKSTABBER';
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_LAST_VIKING_KING' WHERE LeaderType = 'TRAIT_AGENDA_LAST_VIKING_KING';
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_WITH_SHIELD'      WHERE LeaderType = 'TRAIT_AGENDA_WITH_SHIELD';
+
+-- 2018-03-25: AiFavoredItems
+UPDATE AiFavoredItems SET Item = 'CIVIC_NAVAL_TRADITION' WHERE Item = 'CIVIC_NAVAL_TRADITIION';
 
 
 -- ===========================================================================
@@ -158,9 +169,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ===========================================================================
 -- Changes to existing leaders and civs
 -- ===========================================================================
-
--- generic (all)
-UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_DEFENSE'; -- def. 1 ?number of simultaneus ops?
 
 
 -- LEADER_BARBAROSSA / GERMANY
@@ -522,10 +530,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_SALADIN / ARABIA
 
 INSERT INTO AiListTypes (ListType) VALUES
-('SaladinYields');
+('SaladinYields'),
 ('SaladinPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
-('SaladinYields',       'TRAIT_LEADER_RIGHTEOUSNESS_OF_FAITH', 'Yields');
+('SaladinYields',       'TRAIT_LEADER_RIGHTEOUSNESS_OF_FAITH', 'Yields'),
 ('SaladinPseudoYields', 'TRAIT_LEADER_RIGHTEOUSNESS_OF_FAITH', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('SaladinYields', 'YIELD_FAITH', 1, 15), -- we are still religious, nonetheless
@@ -563,6 +571,9 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TrajanSettlement', 'Nearest Friendly City', 0, -2),
 ('TrajanSettlement', 'Fresh Water', 0, -10),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
 ('TrajanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
 ('TrajanPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10); -- more crappy cities
 

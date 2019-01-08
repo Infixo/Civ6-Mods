@@ -1,0 +1,64 @@
+<!--
+-- ===========================================================================
+-- Real Strategy - Tweaks to Behavior Trees
+-- Author: Infixo
+-- 2019-01-07: Created
+-- ===========================================================================
+-->
+
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+
+<!-- Simple City Defense - It uses Garrison City at the begning, and if there is no unt togarrison - it blocks entire tree -->
+
+<BehaviorTreeNodes>
+	<Delete TreeName="Simple City Defense"></Where>
+
+	<Row NodeType="Concurrent" NodeId="0" TreeName="Simple City Defense" JumpTo="12" />
+		<Row NodeType="Is City Threatened" NodeId="1" TreeName="Simple City Defense" />
+		<Row NodeType="Concurrent" NodeId="2" TreeName="Simple City Defense" JumpTo="12" />
+			<Row NodeType="Operation Defend Units" NodeId="3" TreeName="Simple City Defense" />
+			<Row NodeType="Recruit Units" NodeId="4" TreeName="Simple City Defense" />
+			<Row NodeType="Operation Attack Units" NodeId="5" TreeName="Simple City Defense" />
+			<Row NodeType="Operation Move" NodeId="6" TreeName="Simple City Defense" />
+			<Row NodeType="Operation Attack Units" NodeId="7" TreeName="Simple City Defense" />
+			<!-- it returns FAILURE and I don't know if that stops tree or not -->
+			<!-- <Row NodeType="Garrison City" NodeId="8" TreeName="Simple City Defense" /> -->
+			<!-- make it "independent" -->
+			<Row NodeType="Priority" NodeId="8" TreeName="Simple City Defense" JumpTo="12" />
+				<Row NodeType="Garrison City" NodeId="9" TreeName="Simple City Defense" />
+				<Row NodeType="Not" NodeId="10" TreeName="Simple City Defense" JumpTo="12" />
+					<Row NodeType="Garrison City" NodeId="11" TreeName="Simple City Defense" />
+			
+</BehaviorTreeNodes>
+
+<TreeData>
+	<Delete TreeName="Simple City Defense"></Where>
+	
+	<!-- 0: Concurrent -->
+	<!-- 1: Is City Threatened -->
+	<!-- 2: Concurrent -->
+	<!-- 3: Defend Units -->
+	<Row DefnId="0" NodeId="3" TreeName="Simple City Defense" DefaultData="20" /> <!-- int: AutoProtect 20% -->
+	<!-- 4: Recruit Units -->
+	<Row DefnId="0" NodeId="4" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Already in progress -->
+	<Row DefnId="2" NodeId="4" TreeName="Simple City Defense" DefaultData="5" /> <!-- int: Recruit Range -->
+	<Row DefnId="6" NodeId="4" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Allow Stealing -->
+	<!-- 5: Operation Attack Units -->
+	<Row DefnId="0" NodeId="5" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Attack Nearby Units -->
+	<Row DefnId="1" NodeId="5" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Attack Along March -->
+	<Row DefnId="2" NodeId="5" TreeName="Simple City Defense" DefaultData="false" /> <!-- bool: Allow Unequal Attacks -->
+	<!-- 6: Operation Move -->
+	<Row DefnId="0" NodeId="6" TreeName="Simple City Defense" DefaultData="1" /> <!-- int: Move To (enum) -->
+	<Row DefnId="1" NodeId="6" TreeName="Simple City Defense" DefaultData="2" /> <!-- int: Range to goal -->
+	<Row DefnId="3" NodeId="6" TreeName="Simple City Defense" DefaultData="3" /> <!-- int: Unit distance -->
+	<!-- 7: Operation Attack Units -->
+	<Row DefnId="0" NodeId="7" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Attack Nearby Units -->
+	<Row DefnId="1" NodeId="7" TreeName="Simple City Defense" DefaultData="false" /> <!-- bool: Attack Along March -->
+	<Row DefnId="2" NodeId="7" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Allow Unequal Attacks -->
+	<!--<Row DefnId="4" NodeId="7" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool : Attack Near Target -->
+	<!-- 8: Garrison City -->
+	
+</TreeData>
+	
+</GameInfo>

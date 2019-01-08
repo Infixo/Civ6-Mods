@@ -21,6 +21,9 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 -- ALEXANDER / MACEDON
 -- can't use DarwinistIgnoreWarmongerValue - others use it too
 
+-- 2018-03-26: AiLists Alexander's trait
+UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_TO_WORLDS_END' WHERE LeaderType = 'TRAIT_LEADER_CITADEL_CIVILIZATION' AND ListType IN ('AlexanderCivics', 'AlexanderTechs', 'AlexanderWonders');
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('AlexanderPseudoYields'),
 ('AlexanderUnitBuilds');

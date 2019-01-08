@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Real Strategy. Version 0.4.[NEWLINE]History: main strategies (0.1), leaders (0.2), tactics (0.3), dlc support (0.4).</Description>
+		<Description>Real Strategy. Version 0.5.[NEWLINE]History: main strategies (0.1), leaders (0.2), tactics (0.3), dlc support (0.4), trees (0.5).</Description>
 		<Teaser>Real Strategy</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -45,6 +45,7 @@
 			<File>RealStrategy_Main.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Tactics.sql</File>
+			<File>RealStrategy_Trees.xml</File>
 		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Aztec" criteria="DLCAztec">
 			<Properties><LoadOrder>210</LoadOrder></Properties>
@@ -88,6 +89,7 @@
 		<File>RealStrategy_Main.sql</File>
 		<File>RealStrategy_Leaders.sql</File>
 		<File>RealStrategy_Tactics.sql</File>
+		<File>RealStrategy_Trees.xml</File>
 		<File>RealStrategy_Aztec.sql</File>
 		<File>RealStrategy_Poland.sql</File>
 		<File>RealStrategy_Australia.sql</File>
