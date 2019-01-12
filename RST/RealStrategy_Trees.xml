@@ -9,7 +9,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameInfo>
 
-<!-- Simple City Defense - It uses Garrison City at the begning, and if there is no unt togarrison - it blocks entire tree -->
+<!-- Simple City Defense - It uses Garrison City at the begning, and if there is no unit to garrison - it blocks entire tree -->
 
 <BehaviorTreeNodes>
 	<Delete TreeName="Simple City Defense" />

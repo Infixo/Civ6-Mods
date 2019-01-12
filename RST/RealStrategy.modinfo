@@ -76,16 +76,16 @@
 			<Properties><LoadOrder>270</LoadOrder></Properties>
 			<File>RealStrategy_RiseAndFall.sql</File>
 		</UpdateDatabase>
-		<AddUserInterfaces id="RST_UI_Utils">
+		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
-			<File>Utils/RealStrategy_InGameExp.xml</File>
+			<File>Lua/RealStrategy_InGameExp.xml</File>
+			<File>Lua/RealStrategy_GreatPeople.xml</File>
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
 			<File>RealStrategy.lua</File>
 		</AddGameplayScripts>
 	</InGameActions>
 	<Files>
-		<File>RealStrategy.lua</File>
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
 		<File>RealStrategy_Leaders.sql</File>
@@ -99,7 +99,10 @@
 		<File>RealStrategy_Nubia.sql</File>
 		<File>RealStrategy_IndonesiaKhmer.sql</File>
 		<File>RealStrategy_RiseAndFall.sql</File>
-		<File>Utils/RealStrategy_InGameExp.lua</File>
-		<File>Utils/RealStrategy_InGameExp.xml</File>
+		<File>Lua/RealStrategy.lua</File>
+		<File>Lua/RealStrategy_GreatPeople.lua</File>
+		<File>Lua/RealStrategy_GreatPeople.xml</File>
+		<File>Lua/RealStrategy_InGameExp.lua</File>
+		<File>Lua/RealStrategy_InGameExp.xml</File>
 	</Files>
 </Mod>
