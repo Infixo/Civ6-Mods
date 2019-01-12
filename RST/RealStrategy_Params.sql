@@ -6,11 +6,13 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '5');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '6');
 
--- configuration
+-- logging
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
 
 
 -- ===========================================================================
@@ -40,7 +42,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -200), -- if nobody met, then decrease the priority, def. -100 -> this is scaled in a moment by approx. 0.3, so -100 gives actually -30.
-('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 70), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
+('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 80), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
 ('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 90), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 ('RST_CONQUEST_AT_WAR_PRIORITY', 30), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
@@ -49,15 +51,15 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
-('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 90), -- how does our situation compare to others, -100..100 and more
+('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 70), -- how does our situation compare to others, -100..100 and more
 --('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
-('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 90), -- how does our situation compare to others, -100..100 and more
+('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more - techs are more important than yield only (they show actual progress)
 ('RST_SCIENCE_PROJECT_WEIGHT', 70), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
 -- culture
 --('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 --('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
-('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 90), -- how does our situation compare to others, -100..100 and more
+('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
 --('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more  -- USE +AVERAGE approach?
 -- tourism is tough to measure! yields are very small at the begining
 -- try different approach - for Ancient & Classical use weight (like 1 Tourism = 2-3 pts.), after that use avg HOWEVER 

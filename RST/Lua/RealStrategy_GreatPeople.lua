@@ -1,6 +1,6 @@
 print("Loading RealStrategy_GreatPeople.lua from Real Strategy version "..GlobalParameters.RST_VERSION_MAJOR.."."..GlobalParameters.RST_VERSION_MINOR);
 -- ===========================================================================
--- Real Strategy - support for Great People
+-- Real Strategy - support for Great People and Great Works
 -- Author: Infixo
 -- 2019-01-12: Created
 -- ===========================================================================
@@ -9,6 +9,130 @@ print("Loading RealStrategy_GreatPeople.lua from Real Strategy version "..Global
 -- InGame functions exposed here
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
 local RST = ExposedMembers.RST;
+
+
+------------------------------------------------------------------------------
+-- STRATEGY MORE GREAT WORKS SLOTS
+-- This strategy activates when we are lacking slots for Great Works. This happens quite often, especially with heavy-oriented GP civs (Kongo, Peter).
+-- GW support in Lua is quite messy - have to go to the city level, etc. so this check will NOT be performed each turn.
+-- The function counts unused GWAMs and their respective GWs, then counts available slots for those GWs.
+-- Important! Buildings and Districts that contain GWs are also counted when they are being built
+-- It returns TRUE if we are lacking at least 2 slots
+
+-- helper - counts all types in one pass
+-- there's no function that simply returns number of great works... thx Firaxis!
+function GetNumEmptyGreatWorkSlots(ePlayerID:number)
+	print("FUN GetNumEmptyGreatWorkSlots", ePlayerID);
+	local iNumSlotWriting:number, iNumSlotArt:number, iNumSlotMusic:number = 0, 0, 0;
+
+	local function AddSlotType(sGWSlotType:string)
+		print("   ...adding slot type", sGWSlotType);
+		-- TODO: make it not hardcoded
+		if     sGWSlotType == "GREATWORKSLOT_ART"       then iNumSlotArt = iNumSlotArt + 1;
+		elseif sGWSlotType == "GREATWORKSLOT_CATHEDRAL" then iNumSlotArt = iNumSlotArt + 1; -- holds Religious
+		elseif sGWSlotType == "GREATWORKSLOT_MUSIC"     then iNumSlotMusic = iNumSlotMusic + 1;
+		elseif sGWSlotType == "GREATWORKSLOT_PALACE"    then iNumSlotWriting = iNumSlotWriting + 1; iNumSlotArt = iNumSlotArt + 1; iNumSlotMusic = iNumSlotMusic + 1;
+		elseif sGWSlotType == "GREATWORKSLOT_WRITING"   then iNumSlotWriting = iNumSlotWriting + 1;
+		else -- ignore GREATWORKSLOT_RELIC & GREATWORKSLOT_ARTIFACT
+		end
+	end
+	
+	local function AddSlotTypesFromBuilding(sBuildingType:string)
+		print("   ...adding building", sBuildingType);
+		for row in GameInfo.Building_GreatWorks() do
+			if row.BuildingType == sBuildingType then
+				for i = 1, row.NumSlots do AddSlotType(row.GreatWorkSlotType); end
+			end
+		end
+	end
+
+	for _,city in Players[ePlayerID]:GetCities():Members() do
+		
+		-- check existing buildings
+		local cityBuildings:table = city:GetBuildings();
+		for building in GameInfo.Buildings() do
+			local eBuilding:number = building.Index;
+			if cityBuildings:HasBuilding(eBuilding) then
+				print("   ...checking building", building.BuildingType);
+				for i = 0, cityBuildings:GetNumGreatWorkSlots(building.Index)-1 do
+					print("      ...checking slot", i);
+					-- get great work
+					local eGWIndex:number = cityBuildings:GetGreatWorkInSlot(eBuilding, i);
+					local eGWSlotType:number = cityBuildings:GetGreatWorkSlotType(eBuilding, i);
+					print("      ...slot", i, "type", eGWSlotType, "gw_index", eGWIndex);
+					if eGWIndex == -1 then -- empty slot
+						AddSlotType( GameInfo.GreatWorkSlotTypes[eGWSlotType] );
+					end
+				end
+			end
+		end -- all buildings
+		
+		-- check production queue - districts and buildings
+		local currentProductionHash:number = city:GetBuildQueue():GetCurrentProductionTypeHash();
+		local pBuildingDef:table;
+		local pDistrictDef:table;
+		-- Attempt to obtain a hash for each item
+		if currentProductionHash ~= 0 then
+			pBuildingDef = GameInfo.Buildings[currentProductionHash];
+			pDistrictDef = GameInfo.Districts[currentProductionHash];
+		end
+		if pBuildingDef ~= nil then
+			-- ok, we're building a building
+			AddSlotTypesFromBuilding(pBuildingDef.BuildingType);
+		elseif pDistrictDef ~= nil then
+			-- ok, we're building a district
+			-- TODO: hardcoded as of now
+			if pDistrictDef.DistrictType == "DISTRICT_THEATER" or pDistrictDef.DistrictType = "DISTRICT_ACROPOLIS" then
+				AddSlotTypesFromBuilding("BUILDING_AMPHITHEATER");
+				AddSlotTypesFromBuilding("BUILDING_MUSEUM_ART");
+				AddSlotTypesFromBuilding("BUILDING_BROADCAST_CENTER");
+			end
+		end
+
+	end -- cities
+	
+	print("Total empty slots found", iNumSlotWriting, iNumSlotArt, iNumSlotMusic);
+	return iNumSlotWriting, iNumSlotArt, iNumSlotMusic;
+end
+
+
+function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
+	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreGreatWorkSlots", ePlayerID, iThreshold);
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end -- have faith in the engine
+	local data:table = RST.tData[ePlayerID];
+	--if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
+
+	-- Iterate through units and look for GWs to be created
+	local iNumGWWriting:number, iNumGWArt:number, iNumGWMusic:number = 0, 0, 0; -- note that we don't bother with Artifacts - game assures that number of slots matches number of Archaelogists
+	for _,unit in Players[ePlayerID]:GetUnits():Members() do
+		local pUnitGP:table = unit:GetGreatPerson();
+		if pUnitGP ~= nil and pUnitGP:IsGreatPerson() then
+			local sGPClass:string = GameInfo.GreatPersonClasses[ pUnitGP:GetClass() ].GreatPersonClassType;
+			print("...found GP of class", sGPClass);
+			if     sGPClass == "GREAT_PERSON_CLASS_WRITER"   then iNumGWWriting = iNumGWWriting + pUnitGP:GetActionCharges();
+			elseif sGPClass == "GREAT_PERSON_CLASS_ARTIST"   then iNumGWArt     = iNumGWArt     + pUnitGP:GetActionCharges();
+			elseif sGPClass == "GREAT_PERSON_CLASS_MUSICIAN" then iNumGWMusic   = iNumGWMusic   + pUnitGP:GetActionCharges();
+			end
+			print("...num of works to be created", iNumGWWriting, iNumGWArt, iNumGWMusic);
+		end
+	end
+	local iTotWorks = iNumGWWriting + iNumGWArt + iNumGWMusic;
+
+	-- Check on each GW class separately - this is safe approach to avoid blocking, i.e. when we have slots for Art but not for Writing
+	local iNumSlotWriting:number, iNumSlotArt:number, iNumSlotMusic:number = GetNumEmptyGreatWorkSlots(ePlayerID);
+	print("...num of available slots", iNumSlotWriting, iNumSlotArt, iNumSlotMusic);
+	local iTotSlots = iNumSlotWriting + iNumSlotArt + iNumSlotMusic;
+	
+	data.ActiveMoreGWSlots = false;
+	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWWriting > iNumSlotWriting + 1) ); -- enabler, need it quickly; will acivate if 2 works
+	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWArt > iNumSlotArt + 2) ); -- they come in 3, so missing only 1 is not enough; will activate if 3 works
+	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWMusic > iNumSlotMusic + 2) ); -- music comes late, maybe it is not worth it to build a district just for 1 GW of Music; will activate if 3 works
+
+	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTGWSLT", ePlayerID, iThreshold, "...works/slots", iTotWorks, iTotSlots, "active?", data.ActiveMoreGWSlots); end
+	return data.ActiveMoreGWSlots;
+end
+GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
 
 
 
@@ -256,36 +380,7 @@ end
 
 
 function Initialize()
-	-- functions: Game
-	ExposedMembers.RST.GameIsVictoryEnabled         = GameIsVictoryEnabled;
-	ExposedMembers.RST.GameGetMaxGameTurns          = GameGetMaxGameTurns;
-	ExposedMembers.RST.GameGetAverageMilitaryStrength = GameGetAverageMilitaryStrength;
-	ExposedMembers.RST.GameGetAverageNumTechsResearched = GameGetAverageNumTechsResearched;
-	-- functions: City
-	ExposedMembers.RST.CityGetGreatWorkObjectType   = CityGetGreatWorkObjectType;
-	-- functions: Player
-	ExposedMembers.RST.PlayerGetWMDWeaponCount      = PlayerGetWMDWeaponCount;
-	ExposedMembers.RST.PlayerGetNumWMDs             = PlayerGetNumWMDs;
-	ExposedMembers.RST.PlayerGetGreatWorkCount      = PlayerGetGreatWorkCount;
-	ExposedMembers.RST.PlayerGetNumTechsResearched  = PlayerGetNumTechsResearched;
-	ExposedMembers.RST.PlayerGetMilitaryStrength    = PlayerGetMilitaryStrength;
-	ExposedMembers.RST.PlayerGetSlottedPolicies     = PlayerGetSlottedPolicies;
-	ExposedMembers.RST.PlayerGetRecruitedGreatPeopleClasses = PlayerGetRecruitedGreatPeopleClasses;
-	ExposedMembers.RST.PlayerGetCurrentGovernment   = PlayerGetCurrentGovernment;
-	ExposedMembers.RST.PlayerGetNumCapturedCapitals = PlayerGetNumCapturedCapitals;
-	ExposedMembers.RST.PlayerHasOriginalCapital     = PlayerHasOriginalCapital;
-	ExposedMembers.RST.PlayerGetCultureVictoryProgress = PlayerGetCultureVictoryProgress;
-	ExposedMembers.RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
-	ExposedMembers.RST.PlayerHasSpaceport           = PlayerHasSpaceport;
-	ExposedMembers.RST.PlayerHasReligion            = PlayerHasReligion;
-	ExposedMembers.RST.PlayerGetNumCitiesFollowingReligion = PlayerGetNumCitiesFollowingReligion;
-	ExposedMembers.RST.PlayerGetTourism             = PlayerGetTourism;
-	ExposedMembers.RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;
-	ExposedMembers.RST.PlayerGetNumBeliefsEarned    = PlayerGetNumBeliefsEarned;
-	ExposedMembers.RST.PlayerGetBeliefs             = PlayerGetBeliefs;
-	
-	-- objects
-	--ExposedMembers.RND.Calendar				= Calendar;
+	print("FUN Initialize");
 end
 Initialize();
 

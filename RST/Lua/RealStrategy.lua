@@ -14,8 +14,10 @@ local RST = ExposedMembers.RST;
 --print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
 
 -- configuration options
-local bOptionLogStrat:boolean = ( GlobalParameters.RST_OPTION_LOG_STRAT == 1 );
-local bOptionLogGuess:boolean = ( GlobalParameters.RST_OPTION_LOG_GUESS == 1 );
+local bLogDebug:boolean = ( GlobalParameters.RST_OPTION_LOG_DEBUG == 1 );
+local bLogStrat:boolean = ( GlobalParameters.RST_OPTION_LOG_STRAT == 1 );
+local bLogGuess:boolean = ( GlobalParameters.RST_OPTION_LOG_GUESS == 1 );
+local bLogOther:boolean = ( GlobalParameters.RST_OPTION_LOG_OTHER == 1 );
 
 
 -- ===========================================================================
@@ -49,6 +51,7 @@ local iMaxNumReligions:number = 0; -- maximum number of religions on this map
 -- ===========================================================================
 
 -- debug output routine
+--[[
 function dprint(sStr,p1,p2,p3,p4,p5,p6)
 	--if true then return; end
 	local sOutStr = sStr;
@@ -60,6 +63,7 @@ function dprint(sStr,p1,p2,p3,p4,p5,p6)
 	if p6 ~= nil then sOutStr = sOutStr.." [6] "..tostring(p6); end
 	print(Game.GetCurrentGameTurn(), sOutStr);
 end
+--]]
 
 -- debug routine - prints a table (no recursion)
 function dshowtable(tTable:table)
@@ -81,6 +85,7 @@ end
 
 -- debug routine - prints priorities table in a compacted form (1 line, formatted)
 function dshowpriorities(pTable:table, sComment:string)
+	if not bLogDebug then return; end
 	local tOut:table = {};
 	--for strat,value in pairs(pTable) do table.insert(tOut, string.format("%s %4.1f :", strat, value)); end
 	for _,strat in ipairs(tShowStrat) do table.insert(tOut, string.format(" : %s %4.1f", strat, pTable[strat])); end
@@ -282,14 +287,26 @@ end
 
 -- get City State category (cultural, industrial, etc.)
 -- this is tricky - this info is in TypeProperties table attached to CIVILIZATION_ type
+local tCityStateCategories:table = nil;
 function GetCityStateCategory(ePlayerID:number)
-	if PlayerConfigurations[ePlayerID] == nil then print("ERROR: GetCityStateCategory cannot get configuration for", ePlayerID); return "(error)"; end
-	local sCivilizationType:string = PlayerConfigurations[ePlayerID]:GetCivilizationTypeName();
-	for row in GameInfo.TypeProperties() do
-		if row.Type == sCivilizationType and row.Name == "CityStateCategory" then return row.Value; end
+	--if PlayerConfigurations[ePlayerID] == nil then print("ERROR: GetCityStateCategory cannot get configuration for", ePlayerID); return "(error)"; end -- engine faith
+	-- pre-fetch data
+	if tCityStateCategories == nil then
+		tCityStateCategories = {};
+		for row in GameInfo.TypeProperties() do
+			if row.Name == "CityStateCategory" then tCityStateCategories[row.Type] = row.Value; end
+		end
 	end
-	print("ERROR: GetCityStateCategory cannot find category for", sCivilizationType);
-	return "(error)";
+	local sCivilizationType:string = PlayerConfigurations[ePlayerID]:GetCivilizationTypeName();
+	local sCategory:string = tCityStateCategories[ sCivilizationType ];
+	--for row in GameInfo.TypeProperties() do
+		--if row.Type == sCivilizationType and row.Name == "CityStateCategory" then return row.Value; end
+	--end
+	if sCategory == nil then
+		print("ERROR: GetCityStateCategory cannot find category for", sCivilizationType);
+		return "(error)";
+	end
+	return sCategory;
 end
 
 
@@ -310,7 +327,7 @@ function InitializeData()
 			break;
 		end
 	end
-	print("Max religions:", iMaxNumReligions);
+	if bLogDebug then print("Max religions:", iMaxNumReligions); end
 
 	-- initialize players
 	for _,playerID in ipairs(PlayerManager.GetAliveMajorIDs()) do
@@ -335,7 +352,7 @@ function InitializeData()
 			Stored = {}, -- this will be stored between turns (persistent) and eventually perhaps in the save file
 		};
 		tData[playerID] = data;
-		print("...registering player", data.PlayerID, data.LeaderType); -- debug
+		if bLogDebug then print("...registering player", data.PlayerID, data.LeaderType); end
 	end
 	
 	-- initalize flavors
@@ -366,7 +383,7 @@ function InitializeData()
 	--[[
 	print("Table of priorities:"); -- debug
 	for objType,data in pairs(tPriorities) do
-		--dprint("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
+		--print("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
 		dshowpriorities(data.Priorities, data.ObjectType);
 	end
 	--]]
@@ -401,7 +418,7 @@ Event functions
 -- This function gathers data specific for a player that can be reused in many places, like Military Strength, Science Positions, Tourism, etc.
 -- all data is stored in tData[player].Data
 function RefreshPlayerData(data:table)
-	print(Game.GetCurrentGameTurn(), "FUN RefreshPlayerData", data.PlayerID, data.LeaderType);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN RefreshPlayerData", data.PlayerID, data.LeaderType); end
 	
 	local ePlayerID:number = data.PlayerID;
 	local pPlayer:table = Players[ePlayerID];
@@ -467,7 +484,7 @@ end
 ------------------------------------------------------------------------------
 -- Gather generic data like Leader, Policies, Beliefs, etc
 function GetGenericPriorities(data:table)
-	print(Game.GetCurrentGameTurn(), "FUN GetGenericPriorities", data.PlayerID, data.LeaderType);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN GetGenericPriorities", data.PlayerID, data.LeaderType); end
 	
 	local ePlayerID:number = data.PlayerID;
 	local pPlayer:table = Players[ePlayerID];
@@ -525,12 +542,12 @@ function GetGenericPriorities(data:table)
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
-	--print("...generic: city states", data.LeaderType);
+	print("...generic: city states", data.LeaderType);
 	local tMinorPriorities:table = PriorityTableNew();
 	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
 		if minor:GetInfluence():GetSuzerain() == ePlayerID then
 			local sCategory:string = GetCityStateCategory(minor:GetID());
-			--print("...suzerain of", sCategory);
+			print("...suzerain of", sCategory);
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
@@ -647,7 +664,7 @@ function GetPriorityConquest(data:table)
 	-- ???????? There is already Era Bias factor for each victory - is this really needed?
 	iPriority = tPriorities[data.LeaderType].Priorities.CONQUEST;
 	iPriority = iPriority * 2 * (1.0 - data.Data.Era/#GameInfo.Eras); -- PARAMETER???
-	dprint("...era adjusted extra conquest, priority=", iPriority);
+	if bLogDebug then print("...era adjusted extra conquest, priority=", iPriority); end
 	--end
 
 	-- early game, if we haven't met any Major Civs yet, then we probably shouldn't be planning on conquering the world
@@ -655,14 +672,14 @@ function GetPriorityConquest(data:table)
 	if data.Data.ElapsedTurns >= GlobalParameters.RST_CONQUEST_NOBODY_MET_NUM_TURNS then -- def. 20, AI_GS_CONQUEST_NOBODY_MET_FIRST_TURN
 		if data.Data.NumMajorsAliveAndMet == 0 then 
 			iPriority = iPriority + GlobalParameters.RST_CONQUEST_NOBODY_MET_PRIORITY; -- def. -50, AI_GRAND_STRATEGY_CONQUEST_NOBODY_MET_WEIGHT
-			print("...turn", Game.GetCurrentGameTurn(), "no majors met, priority=", iPriority);
+			if bLogDebug then print("...turn", Game.GetCurrentGameTurn(), "no majors met, priority=", iPriority); end
 		end
 	end
 
 	-- If we're at war, then boost the weight a bit (ignore minors)
 	for _,otherID in ipairs(PlayerManager.GetAliveMajorIDs()) do
 		if pPlayerDiplomacy:IsAtWarWith(otherID) then
-			print("we are at war with", otherID);
+			if bLogDebug then print("we are at war with", otherID); end
 			iPriority = iPriority + GlobalParameters.RST_CONQUEST_AT_WAR_PRIORITY;
 		end
 	end
@@ -672,7 +689,7 @@ function GetPriorityConquest(data:table)
 	--if iNumCapturedCapitals > 1 then
 	iPriority = iPriority + GlobalParameters.RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY * iNumCapturedCapitals;
 	--end
-	print("...player has captured", iNumCapturedCapitals, "capitals; priority=", iPriority);
+	if bLogDebug then print("...player has captured", iNumCapturedCapitals, "capitals; priority=", iPriority); end
 	
 	-- How many turns must have passed before we test for us having a weak military?
 	if data.Data.ElapsedTurns >= GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then -- AI_GS_CONQUEST_MILITARY_STRENGTH_FIRST_TURN, def. 60
@@ -687,26 +704,26 @@ function GetPriorityConquest(data:table)
 			--if iMilitaryRatio > 0 then -- let's not use negative priorities as for now
 			iPriority = iPriority + iMilitaryRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
 			--end
-			print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(ePlayerID), iWorldMilitaryStrength, "priority=", iPriority);
+			if bLogDebug then print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(ePlayerID), iWorldMilitaryStrength, "priority=", iPriority); end
 		end
 	end
 	
 	-- Desperate factor
 	--local iEra:number = pPlayer:GetEra();
 	local bDesperate:boolean = not PlayerIsCloseToAnyVictory(ePlayerID);
-	print("...era, desperate", data.Data.Era, bDesperate);
+	if bLogDebug then print("...era, desperate", data.Data.Era, bDesperate); end
 	local iPriorityDangerPlayers:number = 0;
 	local iNumCities:number = 0;
 	for _,otherID in ipairs(data.Data.MajorIDsAliveAndMet) do
 		if PlayerIsCloseToAnyVictory(otherID) then
-			print("player", otherID, "is close to a victory");
+			if bLogDebug then print("player", otherID, "is close to a victory"); end
 			iPriorityDangerPlayers = iPriorityDangerPlayers + (bDesperate and GlobalParameters.RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY or GlobalParameters.RST_CONQUEST_BOTH_CLOSE_TO_VICTORY);
 		end
 		iNumCities = iNumCities + Players[otherID]:GetCities():GetCount();
 	end
 	-- increase priority by desperate factor
 	iPriority = iPriority + iPriorityDangerPlayers * data.Data.Era;
-	if iPriorityDangerPlayers > 0 then print("iPriorityDangerPlayers", iPriorityDangerPlayers, "priority=", iPriority); end
+	if bLogDebug then print("iPriorityDangerPlayers", iPriorityDangerPlayers, "priority=", iPriority); end
 	
 	-- cramped factor - checks for all plots' ownership but it is cheating - use cities instead (available in deal screen)
 	-- HNT: this can be used for Defense also - if we lack with cities, we need better defense
@@ -717,7 +734,7 @@ function GetPriorityConquest(data:table)
 		if (iOurCities < iAvgCities) and ((iAvgCities - iOurCities) <= 3.0) then
 			-- only boost for max. 3 cities; if we're are lacking more then we are simply too weak for CONQUEST
 			iPriority = iPriority + GlobalParameters.RST_CONQUEST_LESS_CITIES_WEIGHT * ( iAvgCities - iOurCities );
-			print("our cities, on average", iOurCities, iAvgCities, "priority=", iPriority);
+			if bLogDebug then print("our cities, on average", iOurCities, iAvgCities, "priority=", iPriority); end
 		end
 	end
 
@@ -726,7 +743,7 @@ function GetPriorityConquest(data:table)
 		for _,otherID in ipairs(data.Data.MajorIDsAliveAndMet) do
 			if RST.PlayerGetNumWMDs(otherID) > 0 then
 				iPriority = iPriority + GlobalParameters.RST_CONQUEST_NUKE_THREAT;
-				print("player", otherID, "has NUKES; priority=", iPriority);
+				if bLogDebug then print("player", otherID, "has NUKES; priority=", iPriority); end
 				break;
 			end
 		end -- for
@@ -751,7 +768,7 @@ function GetPriorityScience(data:table)
 	-- if I already completed some projects I am very likely to follow through
 	local iSpaceRaceProjects:number = PlayerGetNumProjectsSpaceRace(ePlayerID);
 	iPriority = iPriority + iSpaceRaceProjects * GlobalParameters.RST_SCIENCE_PROJECT_WEIGHT;
-	if iSpaceRaceProjects > 0 then print("...space race projects", iSpaceRaceProjects, "priority=", iPriority); end
+	if bLogDebug then print("...space race projects", iSpaceRaceProjects, "priority=", iPriority); end
 	
 	-- Add in our base science value.
 	--iPriority = iPriority + pPlayer:GetTechs():GetScienceYield() * GlobalParameters.RST_SCIENCE_YIELD_WEIGHT / 100.0;
@@ -766,7 +783,7 @@ function GetPriorityScience(data:table)
 		if iWorld > 0 then
 			local iRatio:number = (pPlayer:GetTechs():GetScienceYield() - iWorld) * GlobalParameters.RST_SCIENCE_YIELD_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-			print("...science ratio", iRatio, "player/world", pPlayer:GetTechs():GetScienceYield(), iWorld, "priority=", iPriority);
+			if bLogDebug then print("...science ratio", iRatio, "player/world", pPlayer:GetTechs():GetScienceYield(), iWorld, "priority=", iPriority); end
 		end
 	end
 
@@ -789,14 +806,14 @@ function GetPriorityScience(data:table)
 			--if iRatio > 0 then -- let's not use negatives yet
 			iPriority = iPriority + iRatio;
 			--end
-			print("...tech ratio", iRatio, "player/world", RST.PlayerGetNumTechsResearched(ePlayerID), iWorld, "priority=", iPriority);
+			if bLogDebug then print("...tech ratio", iRatio, "player/world", RST.PlayerGetNumTechsResearched(ePlayerID), iWorld, "priority=", iPriority); end
 		end
 	end
 	
 	-- check for spaceport
 	if RST.PlayerHasSpaceport(ePlayerID) then
 		iPriority = iPriority + GlobalParameters.RST_SCIENCE_HAS_SPACEPORT;
-		print("...player has spaceport, priority=", iPriority)
+		if bLogDebug then print("...player has spaceport, priority=", iPriority); end
 	end
 	
 	--print("GetPriorityScience:", iPriority);
@@ -832,7 +849,7 @@ function GetPriorityCulture(data:table)
 		if iWorld > 0 then
 			local iRatio:number = (pPlayer:GetCulture():GetCultureYield() - iWorld) * GlobalParameters.RST_CULTURE_YIELD_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-			print("...culture ratio", iRatio, "player/world", pPlayer:GetCulture():GetCultureYield(), iWorld, "priority=", iPriority);
+			if bLogDebug then print("...culture ratio", iRatio, "player/world", pPlayer:GetCulture():GetCultureYield(), iWorld, "priority=", iPriority); end
 		end
 	end
 	
@@ -858,7 +875,7 @@ function GetPriorityCulture(data:table)
 	-- can't use - no info on civics available! no cheating!
 	-- simple idea - the more % we have, the more it adds
 	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(ePlayerID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 100.0) - 1.0);
-	print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(ePlayerID), "priority=", iPriority);
+	if bLogDebug then print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(ePlayerID), "priority=", iPriority); end
 	
 	-- PICKLE here: no holding back! what could be the negative?
 	
@@ -881,22 +898,22 @@ function GetPriorityReligion(data:table)
 	-- check if we can have a religion at all (Kongo)
 	-- simple version, complex one should check ExcludedGreatPersonClasses and ExcludedDistricts, then Trait and then Leader :(
 	if data.LeaderType == "LEADER_MVEMBA" then -- TRAIT_LEADER_RELIGIOUS_CONVERT
-		print("This is Kongo - no religious victory");
+		if bLogDebug then print("This is Kongo - no religious victory"); end
 		return -200;
 	end
 	
 	-- first, check if we have a religion
 	if data.Data.ReligionID == -1 or data.Data.ReligionID == GameInfo.Religions.RELIGION_PANTHEON.Index then
-		print("...we don't have a religion");
+		if bLogDebug then print("...we don't have a religion"); end
 		-- we don't have a religion - abandon this victory if we cannot get one
 		if #Game.GetReligion():GetReligions() >= iMaxNumReligions then
-			print("...and we cannot get one - no religious victory");
+			if bLogDebug then print("...and we cannot get one - no religious victory"); end
 			return -200;
 		end
 	else
 		--if data.Data.ReligionID ~= GameInfo.Religions.RELIGION_PANTHEON.Index then
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_RELIGION_WEIGHT;
-		print("...religion founded", data.Data.ReligionID, "priority=", iPriority);
+		if bLogDebug then print("...religion founded", data.Data.ReligionID, "priority=", iPriority); end
 	end
 
 	-- check number of beliefs - done even better in generic because it weights with flavors
@@ -910,7 +927,7 @@ function GetPriorityReligion(data:table)
 	-- WorldRankings displays how many civs were converted
 	if data.Data.NumCivsConverted > 1 then
 		iPriority = iPriority + (data.Data.NumCivsConverted-1) * GlobalParameters.RST_RELIGION_CONVERTED_WEIGHT;
-		print("...converted >1 civs, num", data.Data.NumCivsConverted , "priority=", iPriority);
+		if bLogDebug then print("...converted >1 civs, num", data.Data.NumCivsConverted , "priority=", iPriority); end
 	end
 
 	-- How many turns must have passed before we test for us against others
@@ -922,7 +939,7 @@ function GetPriorityReligion(data:table)
 			--local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * (GlobalParameters.RST_RELIGION_FAITH_FACTOR * (data.Data.Era+1)) / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-			print("...faith ratio", iRatio, "player/world/era", pPlayer:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority);
+			if bLogDebug then print("...faith ratio", iRatio, "player/world/era", pPlayer:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority); end
 		end
 	end
 		-- no, no... cities are limited, so it should be treated the same way as CultureProgress, expotential progress
@@ -941,14 +958,14 @@ function GetPriorityReligion(data:table)
 	if data.Data.NumCitiesMajors > 0 then -- first turn
 		local fCitiesProgress:number = RST.PlayerGetNumCitiesFollowingReligion(ePlayerID) / data.Data.NumCitiesMajors * 100.0;
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_CITIES_MULTIPLIER * (math.exp(fCitiesProgress * GlobalParameters.RST_RELIGION_CITIES_EXPONENT / 100.0) - 1.0);
-		print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(ePlayerID), data.Data.NumCitiesMajors, "priority=", iPriority);
+		if bLogDebug then print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(ePlayerID), data.Data.NumCitiesMajors, "priority=", iPriority); end
 	end
 	
 	-- early game, if we haven't met any Major Civs yet, then we probably shouldn't be planning on conquering the world with our religion - see also Conquest
 	if data.Data.ElapsedTurns >= GlobalParameters.RST_RELIGION_NOBODY_MET_NUM_TURNS then
 		if data.Data.NumMajorsAliveAndMet == 0 then 
 			iPriority = iPriority + GlobalParameters.RST_RELIGION_NOBODY_MET_PRIORITY;
-			print("...turn", Game.GetCurrentGameTurn(), "no majors met, priority=", iPriority);
+			if bLogDebug then print("...turn", Game.GetCurrentGameTurn(), "no majors met, priority=", iPriority); end
 		end
 	end
 
@@ -958,7 +975,7 @@ function GetPriorityReligion(data:table)
 	-- HINT: this is like being at war with conquest??? - maybe we should boost it actually?
 	for _,otherID in ipairs(data.Data.MajorIDsAliveAndMet) do
 		if Players[otherID]:GetReligion():HasLaunchedInquisition() then
-			print("...player", otherID, "has launched inqusition");
+			if bLogDebug then print("...player", otherID, "has launched inqusition"); end
 			iPriority = iPriority + GlobalParameters.RST_RELIGION_INQUISITION_WEIGHT;
 		end
 	end
@@ -996,7 +1013,7 @@ end
 -- Base Priority looks at Personality Flavors (0 - 10) and multiplies * the Flavors attached to a Grand Strategy (0-10),
 -- so expect a number between 0 and 100 back from this
 function EstablishStrategyBasePriority(data:table)
-	print(Game.GetCurrentGameTurn(), "FUN EstablishStrategyBasePriority", data.PlayerID, data.LeaderType);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN EstablishStrategyBasePriority", data.PlayerID, data.LeaderType); end
 	data.Priorities = PriorityTableNew();
 	--if tPriorities["BasePriority"] == nil then
 		--print("WARNING: BasePriority table not defined."); return;
@@ -1075,7 +1092,7 @@ function RefreshAndProcessData(ePlayerID:number)
 	local iMaxTurn:number = RST.GameGetMaxGameTurns();
 	local iCurrentTurn:number = Game.GetCurrentGameTurn();
 	local fTurnAdjust:number = GlobalParameters.RST_STRATEGY_TURN_ADJUST_START + (GlobalParameters.RST_STRATEGY_TURN_ADJUST_STOP - GlobalParameters.RST_STRATEGY_TURN_ADJUST_START) * iCurrentTurn / iMaxTurn;
-	dprint("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, fTurnAdjust);
+	if bLogDebug then print("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, fTurnAdjust); end
 	--PriorityTableMultiply(tSpecificPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
 	PriorityTableMultiply(tSpecificPriorities, fTurnAdjust/100.0); -- it scales lineary from _START to _STOP value during the game
 	--print("...specific and generic priorities after turn adjustment for leader", data.LeaderType);
@@ -1105,7 +1122,7 @@ function RefreshAndProcessData(ePlayerID:number)
 		local sOtherStrategy:string = GuessOtherPlayerStrategy(data, otherID); -- WARNING! can they pursue 2 strategies? if so, make changes here!
 		if sOtherStrategy ~= "NONE" then -- and sOtherStrategy == data.ActiveStrategy then -- we need to compare all, not only active!
 			if OtherPlayerDoingBetterThanUs(data, otherID, sOtherStrategy) then
-				print("...player", otherID, "is doing better than us with", sOtherStrategy);
+				if bLogDebug then print("...player", otherID, "is doing better than us with", sOtherStrategy); end
 				tBetterNum[sOtherStrategy] = tBetterNum[sOtherStrategy] + 1;
 			end
 		end
@@ -1140,10 +1157,10 @@ function RefreshAndProcessData(ePlayerID:number)
 	--end
 	--data.Dirty = false; -- data is refreshed
 	data.TurnRefreshStrategy = Game.GetCurrentGameTurn(); -- data is refreshed
-	print(Game.GetCurrentGameTurn(), data.LeaderType, "...selected", data.ActiveStrategy, "priority", iBestPriority);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), data.LeaderType, "...selected", data.ActiveStrategy, "priority", iBestPriority); end
 	
 	-- log strategy to Log.lua
-	if bOptionLogStrat then
+	if bLogStrat then
 		local tLog:table = {};
 		table.insert(tLog, tostring(Game.GetCurrentGameTurn()));
 		table.insert(tLog, "RSTSTRAT");
@@ -1184,7 +1201,7 @@ function GetOtherPlayerPriorityConquest(data:table, eOtherID:number)
 	--if iNumCapturedCapitals > 1 then
 	iPriority = iPriority + GlobalParameters.RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY * iNumCapturedCapitals;
 	--end
-	print("...other player has captured", iNumCapturedCapitals, "capitals; priority=", iPriority);
+	if bLogDebug then print("...other player has captured", iNumCapturedCapitals, "capitals; priority=", iPriority); end
 	
 	-- Compare his military strength to the rest of the world
 	local iWorldMilitaryStrength:number = RST.GameGetAverageMilitaryStrength(ePlayerID); -- include us and only known
@@ -1197,7 +1214,7 @@ function GetOtherPlayerPriorityConquest(data:table, eOtherID:number)
 		--if iMilitaryRatio > 0 then -- let's not use negative priorities as for now
 		iPriority = iPriority + iMilitaryRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
 		--end
-		print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(eOtherID), iWorldMilitaryStrength, "priority=", iPriority);
+		if bLogDebug then print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(eOtherID), iWorldMilitaryStrength, "priority=", iPriority); end
 	end
 
 	-- interesting, VP uses also "Warmonger threat" from Diplomacy! not sure if this can be extracted easily in Civ6
@@ -1221,7 +1238,7 @@ function GetOtherPlayerPriorityScience(data:table, eOtherID:number)
 	-- if he already completed some projects, he is very likely to follow through
 	local iSpaceRaceProjects:number = PlayerGetNumProjectsSpaceRace(eOtherID);
 	iPriority = iPriority + iSpaceRaceProjects * GlobalParameters.RST_SCIENCE_PROJECT_WEIGHT;
-	print("...space race projects", iSpaceRaceProjects, "priority=", iPriority);
+	if bLogDebug then print("...space race projects", iSpaceRaceProjects, "priority=", iPriority); end
 
 	-- Add in his base science value.
 	--iPriority = iPriority + pOther:GetTechs():GetScienceYield() * GlobalParameters.RST_SCIENCE_YIELD_WEIGHT / 100.0;
@@ -1255,7 +1272,7 @@ function GetOtherPlayerPriorityScience(data:table, eOtherID:number)
 	if iWorld > 0 then
 		local iRatio:number = (pOther:GetTechs():GetScienceYield() - iWorld) * GlobalParameters.RST_SCIENCE_YIELD_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 		iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's yield relative the world average.
-		print("...science ratio", iRatio, "player/world", pOther:GetTechs():GetScienceYield(), iWorld, "priority=", iPriority);
+		if bLogDebug then print("...science ratio", iRatio, "player/world", pOther:GetTechs():GetScienceYield(), iWorld, "priority=", iPriority); end
 	end
 
 	-- Compare our num techs to the rest of the world
@@ -1263,7 +1280,7 @@ function GetOtherPlayerPriorityScience(data:table, eOtherID:number)
 	if iWorld > 0 then
 		local iRatio:number = (RST.PlayerGetNumTechsResearched(eOtherID) - iWorld) * (GlobalParameters.RST_SCIENCE_TECH_RATIO_MULTIPLIER + 3 * iWorld) / iWorld; -- slightly modified formula, adding 3*World prevents the diff from diminishing too quickly!
 		iPriority = iPriority + iRatio;
-		print("...tech ratio", iRatio, "player/world", RST.PlayerGetNumTechsResearched(eOtherID), iWorld, "priority=", iPriority);
+		if bLogDebug then print("...tech ratio", iRatio, "player/world", RST.PlayerGetNumTechsResearched(eOtherID), iWorld, "priority=", iPriority); end
 	end
 
 	--print("GetOtherPlayerPriorityScience:", iPriority);
@@ -1294,7 +1311,7 @@ function GetOtherPlayerPriorityCulture(data:table, eOtherID:number)
 	if iWorld > 0 then
 		local iRatio:number = (pOther:GetCulture():GetCultureYield() - iWorld) * GlobalParameters.RST_CULTURE_YIELD_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 		iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-		print("...culture ratio", iRatio, "player/world", pOther:GetCulture():GetCultureYield(), iWorld, "priority=", iPriority);
+		if bLogDebug then print("...culture ratio", iRatio, "player/world", pOther:GetCulture():GetCultureYield(), iWorld, "priority=", iPriority); end
 	end
 
 	-- Compare our tourism output to the rest of the world
@@ -1312,7 +1329,7 @@ function GetOtherPlayerPriorityCulture(data:table, eOtherID:number)
 	-- can't use - no info on civics available! no cheating!
 	-- simple idea - the more % we have, the more it adds
 	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(eOtherID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 100.0) - 1.0);
-	print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(eOtherID), "priority=", iPriority);
+	if bLogDebug then print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(eOtherID), "priority=", iPriority); end
 	
 	--print("GetOtherPlayerPriorityCulture:", iPriority);
 	return iPriority;
@@ -1332,22 +1349,22 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 	-- check if we can have a religion at all (Kongo)
 	-- simple version, complex one should check ExcludedGreatPersonClasses and ExcludedDistricts, then Trait and then Leader :(
 	if PlayerConfigurations[eOtherID]:GetLeaderTypeName() == "LEADER_MVEMBA" then -- TRAIT_LEADER_RELIGIOUS_CONVERT
-		print("This is Kongo - no religious victory");
+		if bLogDebug then print("This is Kongo - no religious victory"); end
 		return -200;
 	end
 	
 	-- first, check if he has religion
 	local eReligionID:number = RST.PlayerGetReligionTypeCreated(eOtherID); -- pOther:GetReligion():GetReligionTypeCreated();
 	if eReligionID == -1 or eReligionID == GameInfo.Religions.RELIGION_PANTHEON.Index then
-		print("...he doesn't have a religion");
+		if bLogDebug then print("...he doesn't have a religion"); end
 		-- we don't have a religion - abandon this victory if we cannot get one
 		if #Game.GetReligion():GetReligions() >= iMaxNumReligions then
-			print("...and he cannot get one - no religious victory");
+			if bLogDebug then print("...and he cannot get one - no religious victory"); end
 			return -200;
 		end
 	else
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_RELIGION_WEIGHT;
-		print("...religion founded", eReligionID, "priority=", iPriority);
+		if bLogDebug then print("...religion founded", eReligionID, "priority=", iPriority); end
 	end
 
 	-- check number of beliefs
@@ -1362,7 +1379,7 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 	local iNumCivsConverted:number = PlayerGetNumCivsConverted(eOtherID);
 	if iNumCivsConverted > 1 then
 		iPriority = iPriority + (iNumCivsConverted-1) * GlobalParameters.RST_RELIGION_CONVERTED_WEIGHT;
-		print("...converted >1 civs, num", iNumCivsConverted , "priority=", iPriority);
+		if bLogDebug then print("...converted >1 civs, num", iNumCivsConverted , "priority=", iPriority); end
 	end
 	
 	-- Compare our faith output to the rest of the world
@@ -1372,7 +1389,7 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 		--local iRatio:number = (pOther:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 		local iRatio:number = (pOther:GetReligion():GetFaithYield() - iWorld) * (GlobalParameters.RST_RELIGION_FAITH_FACTOR * (data.Data.Era+1)) / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 		iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-		print("...faith ratio", iRatio, "player/world/era", pOther:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority);
+		if bLogDebug then print("...faith ratio", iRatio, "player/world/era", pOther:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority); end
 	end
 	-- check only if he has a religion
 	--[[
@@ -1390,7 +1407,7 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 	if data.Data.NumCitiesMajors > 0 then -- first turn
 		local fCitiesProgress:number = RST.PlayerGetNumCitiesFollowingReligion(eOtherID) / data.Data.NumCitiesMajors * 100.0;
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_CITIES_MULTIPLIER * (math.exp(fCitiesProgress * GlobalParameters.RST_RELIGION_CITIES_EXPONENT / 100.0) - 1.0);
-		print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(eOtherID), data.Data.NumCitiesMajors, "priority=", iPriority);
+		if bLogDebug then print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(eOtherID), data.Data.NumCitiesMajors, "priority=", iPriority); end
 	end
 	
 	--print("GetOtherPlayerPriorityReligion:", iPriority);
@@ -1400,7 +1417,7 @@ end
 
 ------------------------------------------------------------------------------
 function GuessOtherPlayerStrategy(data:table, eOtherID:number)
-	print(Game.GetCurrentGameTurn(), "FUN GuessOtherPlayerStrategy", data.PlayerID, eOtherID);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN GuessOtherPlayerStrategy", data.PlayerID, eOtherID); end
 	
 	local sLeaderType:string = PlayerConfigurations[eOtherID]:GetLeaderTypeName();
 	-- get leader but with 66% factor
@@ -1455,12 +1472,12 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
-	--print("...generic: city states", sLeaderType);
+	print("...generic: city states", sLeaderType);
 	local tMinorPriorities:table = PriorityTableNew();
 	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
 		if minor:GetInfluence():GetSuzerain() == eOtherID then
 			local sCategory:string = GetCityStateCategory(minor:GetID());
-			--print("...suzerain of", sCategory);
+			print("...suzerain of", sCategory);
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
@@ -1485,7 +1502,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	--[[ not neceassary since leader is out
 	local iMaxTurn:number = RST.GameGetMaxGameTurns();
 	local iCurrentTurn:number = Game.GetCurrentGameTurn();
-	dprint("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, iCurrentTurn * 2 / iMaxTurn);
+	print("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, iCurrentTurn * 2 / iMaxTurn);
 	PriorityTableMultiply(tSumPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
 	dshowpriorities(tSumPriorities, "specific & generic after turn adjust");
 	--]]
@@ -1504,10 +1521,10 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 			sGuessStrategy = strat;
 		end
 	end
-	print(Game.GetCurrentGameTurn(), sLeaderType, "...guessed", sGuessStrategy, "priority", iBestPriority);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), sLeaderType, "...guessed", sGuessStrategy, "priority", iBestPriority); end
 	
 	-- log guesses to Log.lua
-	if bOptionLogGuess then
+	if bLogGuess then
 		local tLog:table = {};
 		table.insert(tLog, tostring(Game.GetCurrentGameTurn()));
 		table.insert(tLog, "RSTGUESS");
@@ -1527,7 +1544,7 @@ end
 -- Returns TRUE only if better, equal returns false
 -- there also approx. 5% slack in comparison to allow for small fluctuations
 function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:string)
-	print("FUN OtherPlayerDoingBetterThanUs", data.PlayerID, eOtherID, sStrategy);
+	if bLogDebug then print("FUN OtherPlayerDoingBetterThanUs", data.PlayerID, eOtherID, sStrategy); end
 	if sStrategy == "NONE" then return false; end
 	local ePlayerID:number = data.PlayerID;
 	------------------------------------------------------------------------------
@@ -1536,7 +1553,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iNumCapitalsThem:number = RST.PlayerGetNumCapturedCapitals(eOtherID);
 		local iMilitaryPowerUs:number   = math.max(1, RST.PlayerGetMilitaryStrength(ePlayerID));
 		local iMilitaryPowerThem:number = math.max(1, RST.PlayerGetMilitaryStrength(eOtherID));
-		print("cities us/them", iNumCapitalsUs, iNumCapitalsThem, "power us/them", iMilitaryPowerUs, iMilitaryPowerThem);
+		if bLogDebug then print("cities us/them", iNumCapitalsUs, iNumCapitalsThem, "power us/them", iMilitaryPowerUs, iMilitaryPowerThem); end
 		-- basically, each taken capital is worth an entire army
 		iMilitaryPowerUs   = iMilitaryPowerUs   * math.max(1, iNumCapitalsUs);
 		iMilitaryPowerThem = iMilitaryPowerThem * math.max(1, iNumCapitalsThem);
@@ -1547,7 +1564,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iSpaceRaceProjectsThem:number = PlayerGetNumProjectsSpaceRace(eOtherID);
 		local iNumTechsUs:number = RST.PlayerGetNumTechsResearched(ePlayerID);
 		local iNumTechsThem:number = RST.PlayerGetNumTechsResearched(eOtherID);
-		print("projects us/them", iSpaceRaceProjectsUs, iSpaceRaceProjectsThem, "techs us/them", iNumTechsUs, iNumTechsThem);
+		if bLogDebug then print("projects us/them", iSpaceRaceProjectsUs, iSpaceRaceProjectsThem, "techs us/them", iNumTechsUs, iNumTechsThem); end
 		-- compare projects
 		if iSpaceRaceProjectsThem > iSpaceRaceProjectsUs then return true; end
 		if iSpaceRaceProjectsThem < iSpaceRaceProjectsUs then return false; end
@@ -1561,7 +1578,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iCultureThem:number = math.max(1, Players[eOtherID]:GetCulture():GetCultureYield());
 		--local iTourismUs:number   = math.max(1, RST.PlayerGetTourism(ePlayerID));
 		--local iTourismThem:number = math.max(1, RST.PlayerGetTourism(eOtherID));
-		print("progress us/them", iProgressUs, iProgressThem, "tourism us/them", iTourismUs, iTourismThem);
+		if bLogDebug then print("progress us/them", iProgressUs, iProgressThem, "tourism us/them", iTourismUs, iTourismThem); end
 		-- compare actual victory progress, however we are considered equal if difference is less than 5pp
 		if (iProgressThem - iProgressUs) > 5 then return true; end
 		-- otherwise, compare coulture output, again with 5% slack
@@ -1573,7 +1590,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iConvertedThem:number = PlayerGetNumCivsConverted(eOtherID);
 		local iFaithUs:number   = math.max(1, Players[ePlayerID]:GetReligion():GetFaithYield());
 		local iFaithThem:number = math.max(1, Players[eOtherID]:GetReligion():GetFaithYield());
-		print("converts us/them", iConvertedUs, iConvertedThem, "faith us/them", iFaithUs, iFaithThem);
+		if bLogDebug then print("converts us/them", iConvertedUs, iConvertedThem, "faith us/them", iFaithUs, iFaithThem); end
 		-- compare number of civs converted multiplies by Faith yield (see also Conquest)
 		-- basically 1 converted Civ is worth entire yield output
 		iFaithUs   = iFaithUs   * math.max(1, iConvertedUs);
@@ -1597,7 +1614,7 @@ end
 
 -- ===========================================================================
 function OnLoadScreenClose()
-	dprint("FUN OnLoadScreenClose");
+	print("FUN OnLoadScreenClose");
 end
 
 
@@ -1628,8 +1645,8 @@ end
 
 function ActiveStrategyConquest(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyConquest", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "CONQUEST");
 	return tData[ePlayerID].ActiveStrategy == "CONQUEST";
@@ -1638,8 +1655,8 @@ GameEvents.ActiveStrategyConquest.Add(ActiveStrategyConquest);
 
 function ActiveStrategyScience(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyScience", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "SCIENCE");
 	return tData[ePlayerID].ActiveStrategy == "SCIENCE";
@@ -1648,8 +1665,8 @@ GameEvents.ActiveStrategyScience.Add(ActiveStrategyScience);
 
 function ActiveStrategyCulture(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyCulture", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "CULTURE");
 	return tData[ePlayerID].ActiveStrategy == "CULTURE";
@@ -1658,14 +1675,15 @@ GameEvents.ActiveStrategyCulture.Add(ActiveStrategyCulture);
 
 function ActiveStrategyReligion(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyReligion", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "RELIGION");
 	return tData[ePlayerID].ActiveStrategy == "RELIGION";
 end
 GameEvents.ActiveStrategyReligion.Add(ActiveStrategyReligion);
 
+-- for testing purposes only
 function CheckTurnNumber(iPlayerID:number, iThreshold:number)
 	print(Game.GetCurrentGameTurn(), "FUN CheckTurnNumber", iPlayerID, iThreshold);
 	return Game.GetCurrentGameTurn() >= iThreshold;
@@ -1696,8 +1714,8 @@ end
 
 function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyDefense", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end -- have faith in the engine
 	--RefreshAndProcessData(ePlayerID);
 	local data:table = tData[ePlayerID];
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
@@ -1713,7 +1731,7 @@ function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
 	--]]
 	data.ActiveDefense = iOurPower*100 < iOpponentPower*iThreshold;
 	if iNumWars == 0 then data.ActiveDefense = false; end
-	print(Game.GetCurrentGameTurn(),"RSTDEFEN", ePlayerID, iThreshold, "...power our/theirs", iOurPower, iOpponentPower, "wars", iNumWars, "active?", data.ActiveDefense);
+	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTDEFEN", ePlayerID, iThreshold, "...power our/theirs", iOurPower, iOpponentPower, "wars", iNumWars, "active?", data.ActiveDefense); end
 	-- must add some kind of momentum - game doesn't react so quickly?? or maybe not, this could be a nice counterattack
 	-- peace -> war: 50+10 i.e. 60% - must start faster?
 	-- war -> war: 50-10 - must stop a bit earlier, because cities will produce units from the queue - I could include units in production - need special function for that
@@ -1730,14 +1748,14 @@ GameEvents.ActiveStrategyDefense.Add(ActiveStrategyDefense);
 -- similar mechanism could be used also for Yields, like YIELD_SCIENCE, YIELD_CULTURE, etc.
 function ActiveStrategyCatching(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyCatching", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end -- have faith in the engine
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
 	data.ActiveCatching = iOurPower*100 < data.Data.AvgMilStr*iThreshold;
-	print(Game.GetCurrentGameTurn(), "RSTCATCH", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveCatching);
+	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCATCH", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveCatching); end
 	return data.ActiveCatching;
 end
 GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
@@ -1749,14 +1767,14 @@ GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
 -- similar mechanism could be used also for Yields, like YIELD_SCIENCE, YIELD_CULTURE, etc.
 function ActiveStrategyEnough(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyEnough", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end -- have faith in the engine
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
 	data.ActiveEnough = iOurPower*100 > data.Data.AvgMilStr*iThreshold;
-	print(Game.GetCurrentGameTurn(), "RSTENOUG", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveEnough);
+	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTENOUG", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveEnough); end
 	return data.ActiveEnough;
 end
 GameEvents.ActiveStrategyEnough.Add(ActiveStrategyEnough);
@@ -1764,12 +1782,12 @@ GameEvents.ActiveStrategyEnough.Add(ActiveStrategyEnough);
 
 function ActiveStrategyPeace(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyPeace", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end -- have faith in the engine
 	local data:table = tData[ePlayerID];
 	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
 	data.ActivePeace = iNumWars == 0;
-	print(Game.GetCurrentGameTurn(),"RSTPEACE", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActivePeace);
+	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTPEACE", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActivePeace); end
 	return data.ActivePeace;
 end
 GameEvents.ActiveStrategyPeace.Add(ActiveStrategyPeace);
@@ -1777,12 +1795,12 @@ GameEvents.ActiveStrategyPeace.Add(ActiveStrategyPeace);
 
 function ActiveStrategyAtWar(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyAtWar", ePlayerID, iThreshold);
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end -- have faith in the engine
 	local data:table = tData[ePlayerID];
 	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
 	data.ActiveAtWar = iNumWars > 0;
-	print(Game.GetCurrentGameTurn(),"RSTATWAR", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActiveAtWar);
+	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTATWAR", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActiveAtWar); end
 	return data.ActiveAtWar;
 end
 GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
@@ -1825,9 +1843,6 @@ function Initialize()
 	--Events.GreatWorkCreated.Add( OnGreatWorkCreated );
 	--Events.GovernmentChanged.Add( OnGovernmentChanged );
 	
-	--InitializeBoosts();
-	--dprint("List of BoostClasses:");
-	--dshowtable(tBoostClasses, 0);
 	-- more pre-events to check
 	--Events.LoadComplete.Add( OnLoadComplete );  -- fires after loading a game, when it's ready to start (i.e. circle button)
 	--Events.LoadScreenClose.Add ( OnLoadScreenClose );   -- fires then Game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete

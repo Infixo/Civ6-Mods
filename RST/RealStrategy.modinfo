@@ -6,6 +6,7 @@
 		<Teaser>Real Strategy</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
+		<SupportsMultiplayer>0</SupportsMultiplayer>
 	</Properties>
 	<References>
 		<Mod id="02A8BDDE-67EA-4D38-9540-26E685E3156E" title="DLC: Aztec Civilization Pack" /> 
@@ -82,7 +83,7 @@
 			<File>Lua/RealStrategy_GreatPeople.xml</File>
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
-			<File>RealStrategy.lua</File>
+			<File>Lua/RealStrategy.lua</File>
 		</AddGameplayScripts>
 	</InGameActions>
 	<Files>
