@@ -713,14 +713,16 @@ INSERT INTO Types (Type, Kind) VALUES
 ('RST_STRATEGY_CATCHING', 'KIND_VICTORY_STRATEGY'), -- Activates when our military is lacking in comparison to other known civs
 ('RST_STRATEGY_ENOUGH',   'KIND_VICTORY_STRATEGY'), -- Activates when our military is rocking in comparison to other known civs (prevents from overinvestment into military)
 ('RST_STRATEGY_PEACE',    'KIND_VICTORY_STRATEGY'), -- Activates when at peace
-('RST_STRATEGY_ATWAR',    'KIND_VICTORY_STRATEGY'); -- Activates when at war
+('RST_STRATEGY_ATWAR',    'KIND_VICTORY_STRATEGY'), -- Activates when at war
+('RST_STRATEGY_GWSLOTS',  'KIND_VICTORY_STRATEGY'); -- Activates when we need more slots for Great Works
 
 INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
 ('RST_STRATEGY_DEFENSE',  NULL, 1),
 ('RST_STRATEGY_CATCHING', NULL, 1),
 ('RST_STRATEGY_ENOUGH',   NULL, 1),
 ('RST_STRATEGY_PEACE',    NULL, 1),
-('RST_STRATEGY_ATWAR',    NULL, 1);
+('RST_STRATEGY_ATWAR',    NULL, 1),
+('RST_STRATEGY_GWSLOTS',  NULL, 1);
 
 -- not for minors
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, Disqualifier) VALUES
@@ -728,14 +730,16 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, Disqualifier) V
 ('RST_STRATEGY_CATCHING', 'Is Not Major', 1),
 ('RST_STRATEGY_ENOUGH',   'Is Not Major', 1),
 ('RST_STRATEGY_PEACE',    'Is Not Major', 1),
-('RST_STRATEGY_ATWAR',    'Is Not Major', 1);
+('RST_STRATEGY_ATWAR',    'Is Not Major', 1),
+('RST_STRATEGY_GWSLOTS',  'Is Not Major', 1);
 
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue) VALUES
-('RST_STRATEGY_DEFENSE',  'Call Lua Function', 'ActiveStrategyDefense',  60),
+('RST_STRATEGY_DEFENSE',  'Call Lua Function', 'ActiveStrategyDefense',  70),
 ('RST_STRATEGY_CATCHING', 'Call Lua Function', 'ActiveStrategyCatching', 60),
-('RST_STRATEGY_ENOUGH',   'Call Lua Function', 'ActiveStrategyEnough',  250),
+('RST_STRATEGY_ENOUGH',   'Call Lua Function', 'ActiveStrategyEnough',  220),
 ('RST_STRATEGY_PEACE',    'Call Lua Function', 'ActiveStrategyPeace',     0),
-('RST_STRATEGY_ATWAR',    'Call Lua Function', 'ActiveStrategyAtWar',     0);
+('RST_STRATEGY_ATWAR',    'Call Lua Function', 'ActiveStrategyAtWar',     0),
+('RST_STRATEGY_GWSLOTS',  'Call Lua Function', 'ActiveStrategyMoreGreatWorkSlots', 0);
 
 
 INSERT INTO AiListTypes (ListType) VALUES
@@ -753,7 +757,10 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('RSTPeaceYields'),
 ('RSTPeacePseudoYields'),
 ('RSTAtWarYields'),
-('RSTAtWarPseudoYields');
+('RSTAtWarPseudoYields'),
+('RSTGWSlotsDistricts'),
+('RSTGWSlotsPseudoYields');
+
 INSERT INTO AiLists (ListType, System) VALUES
 ('RSTDefenseOperations',  'AiOperationTypes'),
 ('RSTDefenseDiplomacy',   'DiplomaticActions'),
@@ -769,7 +776,10 @@ INSERT INTO AiLists (ListType, System) VALUES
 ('RSTPeaceYields',        'Yields'),
 ('RSTPeacePseudoYields',  'PseudoYields'),
 ('RSTAtWarYields',        'Yields'),
-('RSTAtWarPseudoYields',  'PseudoYields');
+('RSTAtWarPseudoYields',  'PseudoYields'),
+('RSTGWSlotsDistricts',    'Districts'),
+('RSTGWSlotsPseudoYields', 'PseudoYields');
+
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseOperations'),
 ('RST_STRATEGY_DEFENSE', 'RSTDefenseDiplomacy'),
@@ -785,7 +795,10 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_PEACE', 'RSTPeaceYields'),
 ('RST_STRATEGY_PEACE', 'RSTPeacePseudoYields'),
 ('RST_STRATEGY_ATWAR', 'RSTAtWarYields'),
-('RST_STRATEGY_ATWAR', 'RSTAtWarPseudoYields');
+('RST_STRATEGY_ATWAR', 'RSTAtWarPseudoYields'),
+('RST_STRATEGY_GWSLOTS', 'RSTGWSlotsDistricts'),
+('RST_STRATEGY_GWSLOTS', 'RSTGWSlotsPseudoYields');
+
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- Defense
 ('RSTDefenseOperations', 'CITY_ASSAULT', 1, -2), -- don't attack anybody
@@ -885,8 +898,13 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTAtWarPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -100),
 ('RSTAtWarPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 20),
 ('RSTAtWarPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 5),
-('RSTAtWarPseudoYields', 'PSEUDOYIELD_WONDER', 1, -20);
-
+('RSTAtWarPseudoYields', 'PSEUDOYIELD_WONDER', 1, -20),
+-- More Great Work Slots - it should be a short boost until a Theater is placed
+('RSTGWSlotsDistricts', 'DISTRICT_THEATER', 1, 50), -- I don't know if 2nd param works in Districts system, but it won't hurt to set it
+('RSTGWSlotsDistricts', 'DISTRICT_ACROPOLIS', 1, 50),
+('RSTGWSlotsPseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 25),
+('RSTGWSlotsPseudoYields', 'PSEUDOYIELD_GPP_MUSICIAN', 1, 25),
+('RSTGWSlotsPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 25);
 
 
 -- ===========================================================================

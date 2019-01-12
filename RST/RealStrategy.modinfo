@@ -47,7 +47,7 @@
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Tactics.sql</File>
 			<File>RealStrategy_Trees.xml</File>
-			<File>RealStrategy_FastPillage</File>
+			<File>RealStrategy_FastPillage.xml</File>
 		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Aztec" criteria="DLCAztec">
 			<Properties><LoadOrder>210</LoadOrder></Properties>

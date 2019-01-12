@@ -61,4 +61,64 @@
 	
 </TreeData>
 	
+	
+<!-- Manage Great Person - this tree gets stuck (failure) on 2 nodes: (a) Find Unit Targets and (b) Protect Unit
+     The 1st one is PROBABLY not harmful. It is under Priority (OR) node, to it goes to "Build Unit" and finishes with Success.
+	 The 2nd probably due to lack of units. Those GPs just stand alone. The 2nd can be simply omitted as GPs cannot die. -->
+
+<BehaviorTreeNodes>
+	<Delete TreeName="Manage Great Person" />
+
+    <Row NodeType="Concurrent" NodeId="0" TreeName="Manage Great Person" JumpTo="12" />
+		<Row NodeType="Has Great Person" NodeId="1" TreeName="Manage Great Person" />
+		<Row NodeType="Has Valid Target" NodeId="2" TreeName="Manage Great Person" />
+		<Row NodeType="Sequence" NodeId="3" TreeName="Manage Great Person" JumpTo="12" />
+			<Row NodeType="Priority" NodeId="4" TreeName="Manage Great Person" JumpTo="9" />
+				<Row NodeType="Find Unit Targets" NodeId="5" TreeName="Manage Great Person" />
+				<Row NodeType="Contract Manager Decorator" NodeId="6" TreeName="Manage Great Person" JumpTo="8" />
+					<Row NodeType="Build Unit" NodeId="7" TreeName="Manage Great Person" />
+			<Row NodeType="Upgrade Units" NodeId="8" TreeName="Manage Great Person" />
+			<Row NodeType="Sequence" NodeId="9" TreeName="Manage Great Person" JumpTo="12" />
+				<!-- Confirmed that this at least releases the tree; it still however cannot find targets -->
+				<!--<Row NodeType="Protect Unit" NodeId="10" TreeName="Manage Great Person" />-->
+				<Row NodeType="Move Unit" NodeId="10" TreeName="Manage Great Person" />
+				<Row NodeType="Use Great Person" NodeId="11" TreeName="Manage Great Person" />
+
+</BehaviorTreeNodes>
+
+<TreeData>
+	<Delete TreeName="Manage Great Person" />
+	<!-- "Concurrent" -->
+	<!-- "Has Great Person" -->
+    <Row DefnId="0" NodeId="1" TreeName="Manage Great Person" Tag="GREAT_PERSON_CLASS_PROPHET" />
+	<!-- "Has Valid Target" -->
+	<!-- "Sequence" -->
+	<!-- "Priority" -->
+	<!-- Find Unit Targets -->
+    <Row DefnId="0" NodeId="5" TreeName="Manage Great Person" DefaultData="true" />
+    <Row DefnId="1" NodeId="5" TreeName="Manage Great Person" Tag="GP District" DefaultData="DISTRICT_THEATER" />
+    <Row DefnId="2" NodeId="5" TreeName="Manage Great Person" Tag="GP Buildings" />
+    <Row DefnId="3" NodeId="5" TreeName="Manage Great Person" Tag="Great Work Value" DefaultData="100" />
+	<!-- "Contract Manager Decorator" -->
+    <Row DefnId="0" NodeId="6" TreeName="Manage Great Person" Tag="Great Work Contract" />
+    <Row DefnId="1" NodeId="6" TreeName="Manage Great Person" />
+    <Row DefnId="2" NodeId="6" TreeName="Manage Great Person" DefaultData="20" />
+	<!-- "Build Unit" -->
+    <Row DefnId="0" NodeId="7" TreeName="Manage Great Person" />
+    <Row DefnId="1" NodeId="7" TreeName="Manage Great Person" Tag="GP Buildings" />
+    <Row DefnId="4" NodeId="7" TreeName="Manage Great Person" Tag="Great Work Contract" />
+    <Row DefnId="6" NodeId="7" TreeName="Manage Great Person" Tag="GP District" />
+    <Row DefnId="8" NodeId="7" TreeName="Manage Great Person" Tag="Great Work Value" />
+	<!-- "Upgrade Units" -->
+    <Row DefnId="0" NodeId="8" TreeName="Manage Great Person" Tag="true" />
+	<!-- "Sequence" -->
+	<!-- "Protect Unit" -->
+    <!--<Row DefnId="1" NodeId="10" TreeName="Manage Great Person" DefaultData="0" />-->
+	<!-- "Move Unit" -->
+    <Row DefnId="2" NodeId="10" TreeName="Manage Great Person" DefaultData="0" />
+    <Row DefnId="3" NodeId="10" TreeName="Manage Great Person" DefaultData="0" />
+	<!-- "Use Great Person" -->
+	
+</TreeData>
+
 </GameInfo>

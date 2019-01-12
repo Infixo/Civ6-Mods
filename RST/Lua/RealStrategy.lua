@@ -343,6 +343,7 @@ function InitializeData()
 			ActiveEnough = false,
 			ActivePeace = false,
 			ActiveAtWar = false,
+			ActiveMoreGWSlots = false,
 			-- data refreshed every turn
 			OurMilitaryStrength = 0,
 			AvgMilitaryStrength = 0,
