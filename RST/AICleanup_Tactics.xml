@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+	<AiFavoredItems>
+		<Delete ListType="Default Tactical" />
+		<Delete ListType="Default Homeland" />
+		<Delete ListType="Default Barbarian" />
+		<Delete ListType="Default Barbarian HL" />
+		<Delete ListType="Minor Civ Tactical" />
+		<Delete ListType="Minor Civ Homeland" />
+		<!-- Moved these three up because air attacks should soften up targets -->
+		<Row ListType="Default Tactical" Item="Air Rebase" />
+		<Row ListType="Default Tactical" Item="Air Deploy" />
+		<Row ListType="Default Tactical" Item="Air Assault" />
+		<!-- -->
+		<Row ListType="Default Tactical" Item="Attack High Priority"/>
+		<Row ListType="Default Tactical" Item="Attack Camps"/>
+		<Row ListType="Default Tactical" Item="Move to Safety"/>
+		<Row ListType="Default Tactical" Item="Gather Goody Hut" />
+		<Row ListType="Default Tactical" Item="Attack Medium Priority" />
+		<!-- Moved this one up because pillaging districts causes major damage -->
+		<Row ListTYpe="Default Tactical" Item="Pillage District" />
+		<!-- -->
+		<!-- Moved this away
+		<Row ListType="Default Tactical" Item="Attack Civilians" /> -->
+		<Row ListType="Default Tactical" Item="Coastal Raid" />
+		<Row ListType="Default Tactical" Item="Promotion" />
+		<!-- Removed this because it's a Homeland move and not a Tactical one
+		<Row ListType="Default Tactical" Item="Make Military Formation" /> -->
+		<Row ListType="Default Tactical" Item="Attack Low Priority" />
+		<Row ListType="Default Tactical" Item="Heal" />
+		<!-- Moved these away
+		<Row ListType="Default Tactical" Item="Air Rebase" />
+		<Row ListType="Default Tactical" Item="Air Deploy" />
+		<Row ListType="Default Tactical" Item="Air Assault" />
+		<Row ListTYpe="Default Tactical" Item="Pillage District" /> -->
+		<!-- Inserted this so the AI can pillage trade routes -->
+		<Row ListTYpe="Default Tactical" Item="Plunder Trader" />
+		<!-- -->
+		<Row ListTYpe="Default Tactical" Item="Pillage Improvement" />
+		<!-- Moved Attack Civilians down because you can't capture civilians anymore, moved Chase Target up because it's better than attacking encampments -->
+		<Row ListType="Default Tactical" Item="Attack Civilians" />
+		<Row ListType="Default Tactical" Item="Chase Target" />
+		<!-- -->
+		<Row ListTYpe="Default Tactical" Item="Attack District" />
+		<!-- Moved this away
+		<Row ListType="Default Tactical" Item="Chase Target" /> -->
+		<Row ListType="Default Tactical" Item="Wander Near City" />
+		<Row ListType="Default Tactical" Item="Wander" />
+		
+		<Row ListType="Default Homeland" Item="First Turn Settler" />
+		<Row ListType="Default Homeland" Item="Great Person Move" />
+		<Row ListType="Default Homeland" Item="Move to Safety" />
+		<Row ListType="Default Homeland" Item="Promotion" />
+		<Row ListType="Default Homeland" Item="Found Park" />
+		<Row ListType="Default Homeland" Item="Religious Combat" />
+		<Row ListType="Default Homeland" Item="Missionary Move" />
+		<Row ListType="Default Homeland" Item="Attack Civilians" />
+		<!-- Inserted this because it's a homeland move -->
+		<Row ListType="Default Homeland" Item="Make Military Formation" />
+		<!-- -->
+		<Row ListType="Default Homeland" Item="Explore Land" />
+		<Row ListType="Default Homeland" Item="End Turn" />
+		
+		<Row ListType="Default Barbarian" Item="Attack High Priority" />
+		<Row ListType="Default Barbarian" Item="Defend Camps" />
+		<!-- Moved this one up because pillaging districts causes major damage -->
+		<Row ListType="Default Barbarian" Item="Pillage District" />
+		<!-- -->
+		<!-- Moved this away
+		<Row ListType="Default Barbarian" Item="Attack Civilians" /> -->
+		<Row ListType="Default Barbarian" Item="Plunder Trader" />
+		<Row ListType="Default Barbarian" Item="Coastal Raid" />
+		<!-- Moved this away
+		<Row ListType="Default Barbarian" Item="Pillage District" /> -->
+		<Row ListType="Default Barbarian" Item="Pillage Improvement" />
+		<Row ListType="Default Barbarian" Item="Attack Medium Priority" />
+		<Row ListType="Default Barbarian" Item="Move to Safety" />
+		<Row ListType="Default Barbarian" Item="Attack Low Priority" />
+		<Row ListType="Default Barbarian" Item="Chase Target" />
+		<!-- Moved this down because you can't capture civilians anymore -->
+		<Row ListType="Default Barbarian" Item="Attack Civilians" />
+		<!-- -->
+		<Row ListType="Default Barbarian" Item="Wander Near Camp" />
+		
+		<Row ListType="Default Barbarian HL" Item="Plunder Trader" />
+		<Row ListType="Default Barbarian HL" Item="Move to Safety" />
+		<!-- Inserted this because it was missing from Barbarians -->
+		<Row ListType="Default Barbarian HL" Item="Make Military Formation" />
+		<!-- -->
+		<Row ListType="Default Barbarian HL" Item="Explore Land" />
+		<Row ListType="Default Barbarian HL" Item="End Turn" />
+		
+		<!-- Inserted this because it was missing from CS -->
+		<Row ListType="Minor Civ Tactical" Item="Air Rebase" />
+		<Row ListType="Minor Civ Tactical" Item="Air Deploy" />
+		<Row ListType="Minor Civ Tactical" Item="Air Assault" />
+		<!-- -->
+		<Row ListType="Minor Civ Tactical" Item="Attack High Priority"/>
+		<Row ListType="Minor Civ Tactical" Item="Move to Safety"/>
+		<Row ListType="Minor Civ Tactical" Item="Attack Medium Priority" />
+		<!-- Moved this away
+		<Row ListType="Minor Civ Tactical" Item="Attack Civilians" /> -->
+		<Row ListType="Minor Civ Tactical" Item="Promotion" />
+		<Row ListType="Minor Civ Tactical" Item="Attack Low Priority" />
+		<Row ListType="Minor Civ Tactical" Item="Heal" />
+		<!-- Moved this down because you can't capture civilians anymore -->
+		<Row ListType="Minor Civ Tactical" Item="Attack Civilians" />
+		<!-- -->
+		<Row ListType="Minor Civ Tactical" Item="Chase Target" />
+		<Row ListType="Minor Civ Tactical" Item="Wander Near City" />
+		
+		<Row ListType="Minor Civ Homeland" Item="First Turn Settler" />
+		<Row ListType="Minor Civ Homeland" Item="Move to Safety" />
+		<Row ListType="Minor Civ Homeland" Item="Promotion" />
+		<!-- Inserted this because it was missing from CS -->
+		<Row ListType="Minor Civ Homeland" Item="Make Military Formation" />
+		<!-- -->
+		<Row ListType="Minor Civ Homeland" Item="End Turn" />
+	</AiFavoredItems>
+</GameInfo>

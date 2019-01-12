@@ -4,6 +4,7 @@
 -- 2018-03-25: Created, Typos in Traits and AiFavoredItems, integrated existing mods
 -- 2018-03-26: Alexander's trait
 -- 2018-12-03: Balance section starts with Govs
+-- 2019-01-12: Added some fixes from Delnar's mod
 --------------------------------------------------------------
 
 
@@ -154,3 +155,19 @@ UPDATE Modifiers SET ModifierType = 'MODIFIER_PLAYER_CITIES_ADJUST_CITY_YIELD_CH
 -- 2018-12-22 From More Natural Beauty mod, increase number of Natural Wonders on maps	
 UPDATE Maps SET NumNaturalWonders = DefaultPlayers; -- default is 2,3,4,5,6,7 => will be 2,4,6,8,10,12
 UPDATE Features SET MinDistanceNW = 6 WHERE NaturalWonder = 1; -- default is 8
+
+
+--------------------------------------------------------------
+-- FIXES FROM DELNAR'S "AI CLEANUP" MOD
+-- AICleanup_BehaviorTrees - not valid any more, the Upgrade Tree doesn't use any field for the Upgrade Units node
+-- AICleanup_FavorHammerDistrict - too strong
+-- AICleanup_FavorUniqueDistricts - not necessary, uniques are boosted by default
+-- AICleanup_GlobalParameters - rejected
+-- AICleanup_Operations - already done
+-- AICleanup_SettlerLove - not needed
+-- AICleanup_Units - in the game
+-- AICleanup_Victories - in RST
+
+-- This was an odd one. Gold for units was set to 4, gold for plots and GPs was set to 1, and gold for splurge was set to 3.
+-- Splurge should always be last in the priority list, so I assumed priority went lowest->highest and set gold for units to 2. -->
+UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_UNITS';

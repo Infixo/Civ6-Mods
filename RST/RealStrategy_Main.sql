@@ -83,11 +83,11 @@ Based on testing:
 - PSEUDOYIELD_CITY_POPULATION   if positive, probably increases desire (too lazy to check)
 */
 
-UPDATE PseudoYields SET DefaultValue = 400   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450
---UPDATE PseudoYields SET DefaultValue = 100    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80
-UPDATE PseudoYields SET DefaultValue = 300   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400
-UPDATE PseudoYields SET DefaultValue = 150   WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200 -- if this is used in Conquest, it should stay high
-UPDATE PseudoYields SET DefaultValue =  25    WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50
+--UPDATE PseudoYields SET DefaultValue = 450 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450, important mostly early game, later valuations are in thousands (5000+)...
+UPDATE PseudoYields SET DefaultValue =  60 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80 -- very important, especially late game, causes huge jumps in city valuation
+UPDATE PseudoYields SET DefaultValue = 300 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 - very important for aggression mgmt!
+UPDATE PseudoYields SET DefaultValue = 100 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200, lower value should save Minors a bit, Conquest will boost it anyway
+UPDATE PseudoYields SET DefaultValue = 100 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50, not so important overall
 --UPDATE PseudoYields SET DefaultValue =  3    WHERE PseudoYieldType = 'PSEUDOYIELD_CIVIC'; -- 	5, 1 too little
 UPDATE PseudoYields SET DefaultValue =  1.5  WHERE PseudoYieldType = 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS'; -- 	0.5, Ai+ 1.6
 --UPDATE PseudoYields SET DefaultValue =  0.15 WHERE PseudoYieldType = 'PSEUDOYIELD_DIPLOMATIC_BONUS'; -- 	0.25 -- let's not change diplomacy yet
@@ -153,7 +153,8 @@ UPDATE AiOperationDefs SET OperationType = 'OP_DEFENSE' WHERE OperationName = 'C
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_DEFENSE'; -- def. 1 ?number of simultaneus ops?  TUNE ACCORDING TO PEACE/WAR
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_SETTLE'; -- def. 1 ?number of simultaneus ops?
 
-
+-- Units are put after Slush fund, weird...
+UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_UNITS';
 
 		
 
@@ -262,13 +263,13 @@ UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'CultureVictoryPseudoYield
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CultureVictoryYields', 'YIELD_GOLD', 1, -10),
 ('CultureVictoryYields', 'YIELD_SCIENCE', 1, -10),
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- base 350
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 100), -- base 300
---('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20), -- base 80
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- base 350
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 25), -- base 300
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 25), -- base 80
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 10), -- base 0.25
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 100), -- base 5
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_TECHNOLOGY', 1, -100), -- base 5
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -100), -- base 100, so it should be 100*100 by logic???
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 10),
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_WONDER', 1, 50), -- base 0.8
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, 200); -- base 4
@@ -333,8 +334,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ScienceVictoryYields', 'YIELD_FAITH', 1, -15),
 ('ScienceVictoryYields', 'YIELD_CULTURE', 1, -10),
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50), -- base 350
-('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50), -- base 300
---('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20), -- base 100
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- base 300 -10%
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -15), -- base 100 -10%
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, -100), -- base 5
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20), -- need for infra
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25), -- base 0.8
@@ -392,7 +393,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_DECLARE_HOLY_WAR', 1, 0),
-('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
+('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -100), -- base 100, so it should be 100*100 by logic???
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -15), -- base 1
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 25); -- base 0.8 -- this includes Guru and Naturalist!
 
@@ -451,10 +452,11 @@ UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'MilitaryVictoryPseudoYie
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MilitaryVictoryYields', 'YIELD_SCIENCE', 1,  15),
 ('MilitaryVictoryYields', 'YIELD_FAITH',   1, -25),
-('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 200), -- base 350 - or maybe 15000????
-('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- base 80
-('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25), -- base 25
-('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -10000), -- base 100, so it should be 100*100 by logic???
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- +100%
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 50), -- base 50 +50%
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -25), -- -25% - this is quite a lot, should trigger more wars
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- base 80, -20%
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -100), -- base 100, so it should be 100*100 by logic???
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 25), -- base 1.5, agenda lover uses 5, but it means probably 0.05
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10), -- base 0.7
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25), -- base 0.8
@@ -614,7 +616,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ClassicalYields', 'YIELD_FOOD',  1, 15),
 ('ClassicalYields', 'YIELD_GOLD',  1, 10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
-('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
+('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
+('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -20), -- 2.8
 -- MEDIEVAL
@@ -626,7 +629,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MedievalYields', 'YIELD_PRODUCTION', 1, 15),
 ('MedievalYields', 'YIELD_SCIENCE',    1,-10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
-('MedievalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
+('MedievalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25),
+('MedievalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, -10),
@@ -639,7 +643,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RenaissanceYields', 'YIELD_PRODUCTION', 1,-10),
 ('RenaissanceYields', 'YIELD_SCIENCE',    1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50),
-('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -5),
+('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -25),
+('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 25),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ARTIST', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -100),
@@ -653,7 +658,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('IndustrialYields', 'YIELD_GOLD',	1, 10),
 ('IndustrialYields', 'YIELD_PRODUCTION', 1, 15),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
-('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 5),
+('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
+('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -20), -- 2.0
@@ -666,8 +672,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ModernYields', 'YIELD_FOOD', 1, 10),
 ('ModernYields', 'YIELD_GOLD', 1, 15),
 ('ModernPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- incenvite for ideological wars
-('ModernPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -5),
-('ModernPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -10),
+('ModernPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25),
+('ModernPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
+('ModernPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
 ('ModernPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 10), -- incenvite for ideological wars
 ('ModernPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, 20),
 ('ModernPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -20),
@@ -676,7 +683,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AtomicYields', 'YIELD_SCIENCE', 1, 15),
 ('AtomicYields', 'YIELD_PRODUCTION', 1, 15),
 ('AtomicPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
-('AtomicPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -10),
+('AtomicPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
+('AtomicPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 ('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
 ('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 100),
 ('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -20),
@@ -687,7 +695,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('InformationYields', 'YIELD_GOLD', 1, 15),
 ('InformationYields', 'YIELD_SCIENCE', 1, -15),
 ('InformationPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100),
-('InformationPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -15),
+('InformationPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -25),
+('InformationPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50),
 ('InformationPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, -20), -- peace time!
 ('InformationPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, -40),
 ('InformationPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
@@ -790,8 +799,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTDefenseCivics', 'CIVIC_NATIONALISM', 1, 0),
 ('RSTDefenseCivics', 'CIVIC_MOBILIZATION', 1, 0),
 ('RSTDefenseProjects', 'PROJECT_REPAIR_OUTER_DEFENSES', 1, 0),
-('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -200), -- don't attack anybody
-('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 40), -- don't attack anybody
+('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- don't attack anybody
+('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 100), -- don't attack anybody
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 100), -- don't attack anybody
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100), -- don't attack anybody
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 50),
@@ -818,11 +827,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- Catching Up
 ('RSTCatchingOperations', 'CITY_ASSAULT', 1, -1), -- don't attack anybody
 ('RSTCatchingOperations', 'OP_DEFENSE', 1, 1), -- strengthen defenses
-('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- don't attack anybody
-('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -150), -- don't attack anybody
-('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 20), -- don't attack anybody
+('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- don't attack anybody
+('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 50), -- don't attack anybody
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 50), -- don't attack anybody
-('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -50), -- don't attack anybody
+('RSTCatchingPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100), -- don't attack anybody
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 25),
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 25),
@@ -835,10 +843,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -150), -- slow down
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
 -- Enough
-('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- be more bold
-('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- be more bold
-('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -50), -- be more bold
-('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50), -- be more bold
+('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- be more bold
+('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -25), -- be more bold
+('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -20), -- be more bold
+('RSTEnoughPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 100), -- be more bold
 ('RSTEnoughPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -50), -- opposite of the RSTCatchingPseudoYields
 ('RSTEnoughPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, -50),
 ('RSTEnoughPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -50),

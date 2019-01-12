@@ -31,7 +31,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('AlexanderPseudoYields', 'TRAIT_LEADER_TO_WORLDS_END', 'PseudoYields'),
 ('AlexanderUnitBuilds',   'TRAIT_LEADER_TO_WORLDS_END', 'UnitPromotionClasses');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- because cities give boosts!
+('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- because cities give boosts!
+('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15), -- because cities give boosts!
 ('AlexanderPseudoYields', 'PSEUDOYIELD_WONDER', 1, 25), -- because he has a ton of Wonders as favored and heals when captures one
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10), -- because he needs to know neighbors fast

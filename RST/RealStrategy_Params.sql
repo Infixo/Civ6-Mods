@@ -21,19 +21,19 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- weights
 ('RST_WEIGHT_LEADER', 20), -- weight of the leader's base priority
 ('RST_WEIGHT_POLICY', 3), -- how much each slotted policy weights
-('RST_WEIGHT_WONDER', 3), -- how much each wonder weights
+('RST_WEIGHT_WONDER', 2), -- how much each wonder weights
 ('RST_WEIGHT_GOVERNMENT', 6), -- how much each government weights
 ('RST_WEIGHT_MINOR', 4), -- how much each suzerained city state weights
 ('RST_WEIGHT_GREAT_PERSON', 1), -- how much each earned GP weights
 ('RST_WEIGHT_BELIEF', 3), -- how much each earned belief weights
 -- generic
 ('RST_STRATEGY_LEADER_RANDOM', 1), -- adds/subtracts a random number to a leader base flavor in a range +/- param
-('RST_STRATEGY_LEADER_ERA_BIAS', 120), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
+('RST_STRATEGY_LEADER_ERA_BIAS', 130), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
 ('RST_STRATEGY_TURN_ADJUST_START', 20), -- [x100] specific and generic priorities scale lineary, value at turn 0
-('RST_STRATEGY_TURN_ADJUST_STOP', 200), -- [x100] specific and generic priorities scale lineary, value at the last turn
+('RST_STRATEGY_TURN_ADJUST_STOP', 220), -- [x100] specific and generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 7), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
-('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority, random between 20..40
+('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority, random between 20..40
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
 ('RST_STRATEGY_BETTER_THAN_US_NERF', -25), -- [x100] each player better than us decreases our priority by this percent -- VP uses 33, seems a lot
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 50), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
@@ -41,7 +41,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -200), -- if nobody met, then decrease the priority, def. -100 -> this is scaled in a moment by approx. 0.3, so -100 gives actually -30.
 ('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 70), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
-('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 80), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 90), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 ('RST_CONQUEST_AT_WAR_PRIORITY', 30), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
@@ -49,15 +49,15 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
-('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
+('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 90), -- how does our situation compare to others, -100..100 and more
 --('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
-('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
-('RST_SCIENCE_PROJECT_WEIGHT', 60), -- each completed space race project
-('RST_SCIENCE_HAS_SPACEPORT', 30), -- adds if player has a spaceport
+('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 90), -- how does our situation compare to others, -100..100 and more
+('RST_SCIENCE_PROJECT_WEIGHT', 70), -- each completed space race project
+('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
 -- culture
 --('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 --('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
-('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
+('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 90), -- how does our situation compare to others, -100..100 and more
 --('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more  -- USE +AVERAGE approach?
 -- tourism is tough to measure! yields are very small at the begining
 -- try different approach - for Ancient & Classical use weight (like 1 Tourism = 2-3 pts.), after that use avg HOWEVER 
@@ -71,7 +71,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_CITIES_EXPONENT', 3), -- [x100], cultural progress formula used for cities converted, exponent => 0.03 speeds up after 50 and goes high after 80
 ('RST_RELIGION_CITIES_MULTIPLIER', 25), -- cultural progress formula used for cities converted, multiplier; 50 => 90, 60 => 130, 70 => 180, 80 => 250, 90 => 350
 ('RST_RELIGION_RELIGION_WEIGHT', 40), -- founded religion
-('RST_RELIGION_CONVERTED_WEIGHT', 60), -- each converted civ after 1 (I assume the 1st is us)
+('RST_RELIGION_CONVERTED_WEIGHT', 70), -- each converted civ after 1 (I assume the 1st is us)
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', 0); -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think

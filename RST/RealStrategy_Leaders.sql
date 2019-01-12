@@ -259,6 +259,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PeacekeeperWarLimits', 'DIPLOACTION_RENEW_ALLIANCE', 1, 0), -- peace!
 ('PeacekeeperWarLimits', 'DIPLOACTION_RESIDENT_EMBASSY', 1, 0), -- peace
 ('GandhiPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
+('GandhiPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
 ('GandhiPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
 ('GandhiPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
 ('GandhiPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -15), -- obvious
@@ -293,6 +294,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CleopatraYields', 'YIELD_PRODUCTION', 1, 10),
 ('CleopatraWonders', 'BUILDING_ORACLE', 1, 0),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
+('CleopatraPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('CleopatraPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
@@ -460,6 +462,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PedroCivics', 'CIVIC_NATURAL_HISTORY', 1, 0),
 ('PedroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
+('PedroPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
 ('PedroPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- leave jungle
 ('PedroPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -25), -- use faith for GP
 ('PedroPseudoYields', 'PSEUDOYIELD_WONDER', 1, -25);
@@ -545,7 +548,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_TOMYRIS / SCYTHIA
 -- can we make her build Stables instead of Barracks?
 
-UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
+-- Scythian Horse Archer is a Ranged Units, but since this is a UU, so it should be boosted already
+UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('ScythiaFavorStable');
@@ -553,7 +557,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('ScythiaFavorStable', 'TRAIT_CIVILIZATION_EXTRA_LIGHT_CAVALRY', 'Buildings');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TomyrisDiplomacy', 'DIPLOACTION_DECLARE_FRIENDSHIP', 1, 0),
-('TomyrisTechs', 'TECH_ASTROLOGY', 1, 0), -- religion as backup plan
+('TomyrisTechs', 'TECH_ASTROLOGY', 1, 0), -- religion as a backup plan
 ('ScythiaFavorStable', 'BUILDING_STABLE', 1, 0);
 
 
@@ -573,6 +577,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TrajanSettlement', 'Nearest Friendly City', 0, -1),
 ('TrajanSettlement', 'Fresh Water', 0, -10),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
 ('TrajanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),

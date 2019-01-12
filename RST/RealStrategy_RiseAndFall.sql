@@ -4,6 +4,15 @@
 -- 2019-01-05: Created
 -- ===========================================================================
 
+--------------------------------------------------------------
+-- 2018-12-22 PlotEvaluations
+-- I recreate original entries from R&F however I am not convinced that they work
+-- My tests show that 2nd value (-6) is ignored
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('StandardSettlePlot', 'Cultural Pressure', 0, 1),
+('StandardSettlePlot', 'Cultural Pressure', 1,-6);
+
 
 -- FIXES
 
@@ -170,7 +179,9 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('ChandraguptaPseudoYields', 'TRAIT_LEADER_ARTHASHASTRA', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- conquer neighbors
+('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- conquer neighbors
+('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 50), -- conquer neighbors
+('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- conquer neighbors
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -10),
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -15), -- to differ from Gandhi
@@ -190,7 +201,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('MongoliaDisfavorBarracks', 'TRAIT_CIVILIZATION_BUILDING_ORDU', 'Buildings');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MongoliaDisfavorBarracks', 'BUILDING_BARRACKS', 0, 0), -- let him not build Barracks, so he will build Ordu
-('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- DO conquer neighbors
+('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- DO conquer neighbors
+('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- DO conquer neighbors
 ('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 250),
 ('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0);
 
@@ -202,8 +214,8 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('LautaroPseudoYields', 'TRAIT_LEADER_LAUTARO_ABILITY', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('LautaroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100),
---('LautaroPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
+('LautaroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
+('LautaroPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 ('LautaroPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20),
 ('LautaroPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 10);
 
@@ -221,6 +233,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PoundmakerCivics', 'CIVIC_FOREIGN_TRADE', 1, 0),
 ('PoundmakerCivics', 'CIVIC_MERCENARIES', 1, 0),
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
+('PoundmakerPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 15), -- do NOT conquer neighbors
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10),
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 100),
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);

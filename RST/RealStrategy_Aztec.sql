@@ -32,8 +32,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaTechs', 'TECH_MINING', 1, 0), -- most luxes are here
 ('MontezumaTechs', 'TECH_IRRIGATION', 1, 0), -- most luxes are here
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- this.. is.. MONTY!
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -30), -- we need those builders
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- this.. is.. MONTY! +100%
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -25), -- we need those builders -25%
 --('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
