@@ -4,6 +4,11 @@
 -- 2019-01-05: Created
 -- ===========================================================================
 
+
+-- ===========================================================================
+-- GENERIC
+-- ===========================================================================
+
 --------------------------------------------------------------
 -- 2018-12-22 PlotEvaluations
 -- I recreate original entries from R&F however I am not convinced that they work
@@ -41,7 +46,30 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 */
 
 
+-- ===========================================================================
+-- STRATEGIES
+-- ===========================================================================
+
+-- support for Government Plaza buildings - uses Wonders because it is easy - it is the same system
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+-- Tier 1 BUILDING_GOV_TALL BUILDING_GOV_WIDE BUILDING_GOV_CONQUEST
+('MilitaryVictoryWonders', 'BUILDING_GOV_TALL', 0, 0), --  tall play, more housing when governor
+('MilitaryVictoryWonders', 'BUILDING_GOV_CONQUEST', 1, 0),
+-- Tier 2 BUILDING_GOV_CITYSTATES BUILDING_GOV_SPIES BUILDING_GOV_FAITH
+('ReligiousVictoryWonders', 'BUILDING_GOV_FAITH', 1, 0),
+-- Tier 3 BUILDING_GOV_MILITARY BUILDING_GOV_CULTURE BUILDING_GOV_SCIENCE
+('MilitaryVictoryWonders', 'BUILDING_GOV_MILITARY', 1, 0),
+('CultureVictoryWonders', 'BUILDING_GOV_CULTURE', 1, 0),
+('ScienceVictoryWonders', 'BUILDING_GOV_SCIENCE', 1, 0);
+
+
+
+
+
+-- ===========================================================================
 -- LEADERS
+-- ===========================================================================
+
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 ('LEADER_CHANDRAGUPTA', 'LEADER', '', 'CONQUEST', 6),
 ('LEADER_CHANDRAGUPTA', 'LEADER', '', 'SCIENCE',  4),

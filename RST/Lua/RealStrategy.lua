@@ -344,6 +344,9 @@ function InitializeData()
 			ActivePeace = false,
 			ActiveAtWar = false,
 			ActiveMoreGWSlots = false,
+			ActiveScience = false,
+			ActiveCulture = false,
+			ActiveThreat = false,
 			-- data refreshed every turn
 			OurMilitaryStrength = 0,
 			AvgMilitaryStrength = 0,
@@ -1805,6 +1808,64 @@ function ActiveStrategyAtWar(ePlayerID:number, iThreshold:number)
 	return data.ActiveAtWar;
 end
 GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
+
+
+------------------------------------------------------------------------------
+-- Simple catching up when falling behind the average num of techs
+-- This functions also as a counter to Tourism to some extent
+
+function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
+	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreScience", ePlayerID, iThreshold);
+	local data:table = tData[ePlayerID];
+	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
+	if data.Data.AvgTechs == nil then return false; end -- not calculated yet
+	local iOurTechs:number = RST.PlayerGetNumTechsResearched(ePlayerID);
+	-- threshold: 0.1 * num + 1, it gives nice 2,3,4,.. for 10,20,30,.. techs => call with iThreshold = 90
+	data.ActiveScience = iOurTechs*100 < data.Data.AvgTechs*iThreshold - 150; -- 1 tech = 100
+	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTSCIEN", ePlayerID, iThreshold, "...techs our/avg", iOurTechs, data.Data.AvgTechs, "active?", data.ActiveScience); end
+end
+GameEvents.ActiveStrategyMoreScience.Add(ActiveStrategyMoreScience);
+
+
+------------------------------------------------------------------------------
+-- Simple catching up when falling behind the average culture
+-- This functions also as a counter to Tourism to some extent
+
+function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
+	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreCulture", ePlayerID, iThreshold);
+	local data:table = tData[ePlayerID];
+	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
+	if data.Data.AvgCulture == nil then return false; end -- not calculated yet
+	local iOurCulture:number = Players[ePlayerID]:GetCulture():GetCultureYield();
+	-- culture reaches high values, so we can go with just %, approx. 75-80%
+	data.ActiveCulture = iOurCulture*100 < data.Data.AvgCulture*iThreshold;
+	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCULTR", ePlayerID, iThreshold, "...culture our/avg", iOurCulture, data.Data.AvgCulture, "active?", data.ActiveCulture); end
+end
+GameEvents.ActiveStrategyMoreCulture.Add(ActiveStrategyMoreCulture);
+
+
+
+------------------------------------------------------------------------------
+-- Threat Detection
+-- Diplo Relation – Unfriendly / Denounced?
+-- Military – Comparable / Weak / Very weak
+-- Comparable = not less than 75%? / Weak 50-75% / Very weak < 50%
+-- Unfriendly + Very weak = Threat
+-- Denounced + Weak/Very weak = Threat
+-- for i=0,5 do pd=Players[i]:GetAi_Diplomacy(); print(i,pd:GetDiplomaticState(3),pd:GetDiplomaticScore(3)) end
+-- How to detect if we are close to each other? Easy, go through all plots? No, only Cities and check how far they. The further, the less threat.
+
+function ActiveStrategyThreat(ePlayerID:number, iThreshold:number)
+	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyThreat", ePlayerID, iThreshold);
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end -- have faith in the engine
+	local data:table = tData[ePlayerID];
+	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
+	data.ActiveThreat = iNumWars > 0;
+	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTATWAR", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActiveThreat); end
+	return data.ActiveThreat;
+end
+GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
 
 
 ------------------------------------------------------------------------------

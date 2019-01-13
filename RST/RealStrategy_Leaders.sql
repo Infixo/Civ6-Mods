@@ -496,7 +496,7 @@ FROM Types WHERE Type = 'BUILDING_ST_BASILS_CATHEDRAL';
 -- LEADER_PHILIP_II / SPAIN
 
 UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'PhilipForeignSettlement' AND Item = 'Foreign Continent'; -- Philip II, def. 60
-UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
+UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('PhilipDiplomacy'),
@@ -549,7 +549,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- can we make her build Stables instead of Barracks?
 
 -- Scythian Horse Archer is a Ranged Units, but since this is a UU, so it should be boosted already
-UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
+UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'TomyrisiUnitBuilds' AND Item = 'PROMOTION_CLASS_LIGHT_CAVALRY'; -- was 1
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('ScythiaFavorStable');
@@ -610,7 +610,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RooseveltTechs', 'TECH_POTTERY', 1, 0),
 ('RooseveltCivics', 'CIVIC_EXPLORATION', 1, 0),
-('RooseveltUnits', 'UNIT_NATURALIST', 1, 50),
+('RooseveltUnits', 'UNIT_NATURALIST', 1, 25),
 ('RooseveltWonders', 'BUILDING_STONEHENGE', 0, 0), -- low religion
 ('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -50),

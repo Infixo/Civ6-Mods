@@ -37,7 +37,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10), -- because he needs to know neighbors fast
 ('AlexanderPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15), -- obvious
-('AlexanderUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, 15); -- for cities
+('AlexanderUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, 10); -- for cities
 
 
 -- CYRUS / PERSIA
