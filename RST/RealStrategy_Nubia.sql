@@ -39,10 +39,10 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('AmanitorePseudoYields', 'TRAIT_LEADER_KANDAKE_OF_MEROE', 'PseudoYields');
 --('AmanitoreUnits',        'TRAIT_LEADER_KANDAKE_OF_MEROE', 'Units');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AmanitoreYields', 'YIELD_FOOD', 1, 20),
-('AmanitorePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50), -- more districts
+('AmanitoreYields', 'YIELD_FOOD', 1, 15),
+('AmanitorePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
 ('AmanitorePseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
-('AmanitorePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50), -- more improvements
+('AmanitorePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- nubian pyramid
 ('AmanitoreWonders', 'BUILDING_JEBEL_BARKAL', 1, 0); -- who else?
 --('AmanitoreUnits', 'UNIT_BUILDER', 1, 20); -- more improvements - should be handled by PSEUDOYIELD_IMPROVEMENT
 

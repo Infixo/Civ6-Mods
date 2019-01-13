@@ -2,11 +2,11 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Real Strategy. Version 0.5.[NEWLINE]History: main strategies (0.1), leaders (0.2), tactics (0.3), dlc support (0.4), trees (0.5), various (0.6).</Description>
-		<Teaser>Real Strategy</Teaser>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall and all DLCs, in any configuration.[NEWLINE]Version 0.6.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
-		<SupportsMultiplayer>0</SupportsMultiplayer>
+		<!--<SupportsMultiplayer>0</SupportsMultiplayer>-->
 	</Properties>
 	<References>
 		<Mod id="02A8BDDE-67EA-4D38-9540-26E685E3156E" title="DLC: Aztec Civilization Pack" /> 

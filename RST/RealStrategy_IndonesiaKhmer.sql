@@ -47,11 +47,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaYields', 'YIELD_FOOD',       1, 15),
 ('GitarjaYields', 'YIELD_PRODUCTION', 1,  5),
 ('GitarjaYields', 'YIELD_GOLD',       1,-10),
-('GitarjaYields', 'YIELD_CULTURE',    1, -5),
+('GitarjaYields', 'YIELD_CULTURE',    1,  5),
 ('GitarjaYields', 'YIELD_SCIENCE',    1, -5),
 ('GitarjaWonders', 'BUILDING_ANGKOR_WAT', 1, 0),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
+('GitarjaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 25), -- kampung
 ('GitarjaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
@@ -75,9 +76,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JayavarmanYields', 'YIELD_FAITH',   1, 10),
 ('JayavarmanYields', 'YIELD_FOOD',    1, 15),
 ('JayavarmanYields', 'YIELD_SCIENCE', 1, -5),
-('JayavarmanYields', 'YIELD_GOLD',    1, -5),
+('JayavarmanYields', 'YIELD_GOLD',    1,-10),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 20),
-('JayavarmanPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 0, 20),
+('JayavarmanPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 0, 25),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -10),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -10);

@@ -27,5 +27,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_PROTECTORATE_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_RECONQUEST_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_LIBERATE_CITY', 1, 0),
+('CurtinPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- outback station
 ('CurtinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),
 ('CurtinPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20);

@@ -33,7 +33,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 150), -- because cities give boosts!
 ('AlexanderPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15), -- because cities give boosts!
-('AlexanderPseudoYields', 'PSEUDOYIELD_WONDER', 1, 25), -- because he has a ton of Wonders as favored and heals when captures one
+('AlexanderPseudoYields', 'PSEUDOYIELD_WONDER', 1, 15), -- because he has a ton of Wonders as favored and heals when captures one
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
 ('AlexanderPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10), -- because he needs to know neighbors fast
 ('AlexanderPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15), -- obvious
@@ -50,10 +50,10 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('CyrusYields',       'TRAIT_LEADER_FALL_BABYLON', 'Yields'),
 ('CyrusPseudoYields', 'TRAIT_LEADER_FALL_BABYLON', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('CyrusYields', 'YIELD_CULTURE', 1, 15),
+('CyrusYields', 'YIELD_CULTURE', 1, 10),
 ('CyrusYields', 'YIELD_GOLD', 1, 10),
-('CyrusPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
-('CyrusPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 50),
-('CyrusPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15),
+('CyrusPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15),
+('CyrusPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- pairidaeza
+('CyrusPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),
 ('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
-('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 250);
+('CyrusPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 50);

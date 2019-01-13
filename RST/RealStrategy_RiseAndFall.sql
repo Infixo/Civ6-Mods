@@ -213,7 +213,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -10),
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -15), -- to differ from Gandhi
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, -15); -- conquer neighbors
+('ChandraguptaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, -25); -- conquer neighbors
 
 
 -- GENGHIS_KHAN / MONGOLIA
@@ -231,7 +231,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MongoliaDisfavorBarracks', 'BUILDING_BARRACKS', 0, 0), -- let him not build Barracks, so he will build Ordu
 ('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- DO conquer neighbors
 ('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- DO conquer neighbors
-('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 250),
+('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 50),
 ('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0);
 
 
@@ -244,6 +244,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('LautaroPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
 ('LautaroPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
+('LautaroPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- chemamull
 ('LautaroPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20),
 ('LautaroPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 10);
 
@@ -263,13 +264,15 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 15), -- do NOT conquer neighbors
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10),
-('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 100),
+('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 50),
+('PoundmakerPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- mekewap
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
 
 
 -- LEADER_ROBERT_THE_BRUCE / SCOTLAND
 -- seems well done, PSEUDOYIELD_HAPPINESS +100!
 -- one of few leaders that have Favored PSEUDOYIELD_DISTRICT (Campus, Industrial Zone)
+-- Golf Course
 
 
 -- LEADER_SEONDEOK / KOREA
@@ -302,8 +305,8 @@ INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES
 --INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 --('TamarPseudoYields', 'TRAIT_LEADER_RELIGION_CITY_STATES', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('TamarTechs', 'TECH_ASTROLOGY', 1, 0), -- get Holy Site first
-('TamarTechs', 'TECH_MINING', 1, 0), -- hills bias
+('TamarTechs', 'TECH_ASTROLOGY', 1, 0), -- get Holy Site first -- !BUGGED!
+('TamarTechs', 'TECH_MINING', 1, 0), -- hills bias -- !BUGGED!
 ('TamarCivics', 'CIVIC_THEOLOGY', 1, 0),
 ('ProtectorateWarriorList', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV', 0, 0), -- for now only Tamar uses it, might change in the future
 ('ProtectorateWarriorList', 'DIPLOACTION_DECLARE_LIBERATION_WAR', 1, 0);
@@ -317,6 +320,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15),
+('WilhelminaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- polder
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
 
 

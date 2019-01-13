@@ -27,12 +27,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JadwigaDiplomacy', 'DIPLOACTION_PROPOSE_TRADE', 1, 0),
 ('JadwigaDiplomacy', 'DIPLOACTION_ALLIANCE', 1, 0),
 ('JadwigaDistricts', 'DISTRICT_ENCAMPMENT', 1, 0),
-('JadwigaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 5),
-('JadwigaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 50),
+('JadwigaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 10),
+('JadwigaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 15),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15), -- for Encampment
-('JadwigaPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 1, 20),
+('JadwigaPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 1, 25),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 10);
 
 
