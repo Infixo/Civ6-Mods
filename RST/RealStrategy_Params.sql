@@ -14,6 +14,9 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '1'); -- log supporting (other) strategies
 
+-- random numbers - support for Multi Player
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); -- 0 - turned OFF / 1 - turned ON, using math.rand / 2 - turned ON, using Game.GetRandNum
+
 
 -- ===========================================================================
 -- Parameters
@@ -35,8 +38,8 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_STRATEGY_TURN_ADJUST_STOP', 220), -- [x100] specific and generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 7), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
-('RST_STRATEGY_CURRENT_PRIORITY', 50), -- how much current strategy adds to the priority, random between 20..40
-('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, def. 50
+('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority
+('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, can be switched off via an option
 ('RST_STRATEGY_BETTER_THAN_US_NERF', -25), -- [x100] each player better than us decreases our priority by this percent -- VP uses 33, seems a lot
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 50), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest

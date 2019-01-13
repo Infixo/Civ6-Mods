@@ -18,6 +18,9 @@ local bLogDebug:boolean = ( GlobalParameters.RST_OPTION_LOG_DEBUG == 1 );
 local bLogStrat:boolean = ( GlobalParameters.RST_OPTION_LOG_STRAT == 1 );
 local bLogGuess:boolean = ( GlobalParameters.RST_OPTION_LOG_GUESS == 1 );
 local bLogOther:boolean = ( GlobalParameters.RST_OPTION_LOG_OTHER == 1 );
+local eOptionRand:number = GlobalParameters.RST_OPTION_RANDOM;
+local bUseRandom:boolean = ( eOptionRand ~= 0 );
+print("Randomization: "..(bUseRandom and ( eOptionRand == 1 and "ON (math.random)" or "ON (Game.GetRandNum)") or "OFF"));
 
 
 -- ===========================================================================
@@ -216,6 +219,21 @@ end
 
 
 -- ===========================================================================
+-- MULTIPLAYER SUPPORT
+-- ===========================================================================
+
+-- math.random(lower, upper): generates integer numbers between lower and upper (both inclusive)
+-- Game.GetRandNum(max):generates integer in range 0..max-1 (max is NOT included)
+-- there is no documentation, but I called it with (100) 10000 times and 100 was never rolled
+
+function GetRandomNumber(iMin:number, iMax:number)
+	if eOptionRand == 0 then return 0; end
+	if eOptionRand == 1 then return math.random(iMin, iMax); end
+	return Game.GetRandNum(iMax - iMin + 1, "Real Strategy Roll") + iMin;
+end
+
+
+-- ===========================================================================
 -- HELPERS
 -- ===========================================================================
 
@@ -228,8 +246,9 @@ end
 
 -- get a new table with random integers in range -iRand..+iRand (both inclusive)
 function PriorityTableRandom(iRand:number)
-	local tNew:table = {};
-	for strat,_ in pairs(Strategies) do tNew[ strat ] = math.random(-iRand, iRand); end
+	local tNew:table = PriorityTableNew();
+	-- changed to ipairs for MP support
+	for _,strat in ipairs(tShowStrat) do tNew[ strat ] = GetRandomNumber(-iRand, iRand); end
 	return tNew;
 end
 
@@ -375,13 +394,20 @@ function InitializeData()
 	end
 	
 	-- randomize a bit leaders
-	for _,data in pairs(tPriorities) do
-		if data.Type == "LEADER" then
-			local tRandom:table = PriorityTableRandom(GlobalParameters.RST_STRATEGY_LEADER_RANDOM);
-			--dshowpriorities(tRandom, "...randomizing "..data.ObjectType);
-			PriorityTableAdd(data.Priorities, tRandom);
-			PriorityTableMinMax(data.Priorities, 1, 9);
-			--dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
+	if bUseRandom then
+		--for _,data in pairs(tPriorities) do
+		-- changed to avoid pairs (unknown order)
+		for _,row in ipairs(DB.Query("select LeaderType from Leaders where InheritFrom = 'LEADER_DEFAULT' order by LeaderType")) do
+			local data = tPriorities[row.LeaderType];
+			if data ~= nil and data.Type == "LEADER" then
+				local tRandom:table = PriorityTableRandom(GlobalParameters.RST_STRATEGY_LEADER_RANDOM);
+				--dshowpriorities(tRandom, "...randomizing "..data.ObjectType);
+				PriorityTableAdd(data.Priorities, tRandom);
+				PriorityTableMinMax(data.Priorities, 1, 9);
+				--dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
+			else
+				print("WARNING: InitializeData Priorities table for leader", row.LeaderType, "not defined."); return;
+			end
 		end
 	end
 	--[[
@@ -500,7 +526,7 @@ function GetGenericPriorities(data:table)
 	local tPolicyPriorities:table = PriorityTableNew();
 	for _,policy in ipairs(tPolicies) do
 		if tPriorities[policy] then PriorityTableAdd(tPolicyPriorities, tPriorities[policy].Priorities);
-		else                        print("WARNING: policy", policy, "not defined in Priorities"); end
+		else                        print("WARNING: GetGenericPriorities policy", policy, "not defined in Priorities"); end
 	end
 	PriorityTableMultiply(tPolicyPriorities, GlobalParameters.RST_WEIGHT_POLICY);
 	dshowpriorities(tPolicyPriorities, "generic policies");
@@ -510,7 +536,7 @@ function GetGenericPriorities(data:table)
 	local sGovType:string = GameInfo.Governments[ RST.PlayerGetCurrentGovernment(ePlayerID) ].GovernmentType;
 	local tGovPriorities:table = PriorityTableNew();
 	if tPriorities[sGovType] then PriorityTableAdd(tGovPriorities, tPriorities[sGovType].Priorities);
-	else                          print("WARNING: government", sGovType, "not defined in Priorities"); end
+	else                          print("WARNING: GetGenericPriorities government", sGovType, "not defined in Priorities"); end
 	PriorityTableMultiply(tGovPriorities, GlobalParameters.RST_WEIGHT_GOVERNMENT);
 	dshowpriorities(tGovPriorities, "generic government "..string.gsub(sGovType, "GOVERNMENT_", ""));
 	
@@ -540,7 +566,7 @@ function GetGenericPriorities(data:table)
 	local tGPPriorities:table = PriorityTableNew();
 	for _,class in ipairs(tGPs) do
 		if tPriorities[class] then PriorityTableAdd(tGPPriorities, tPriorities[class].Priorities);
-		else                       print("WARNING: great person class", class, "not defined in Priorities"); end
+		else                       print("WARNING: GetGenericPriorities great person class", class, "not defined in Priorities"); end
 	end
 	PriorityTableMultiply(tGPPriorities, GlobalParameters.RST_WEIGHT_GREAT_PERSON);
 	dshowpriorities(tGPPriorities, "generic great people");
@@ -568,7 +594,7 @@ function GetGenericPriorities(data:table)
 			local sBelief:string = GameInfo.Beliefs[beliefID].BeliefType;
 			--print("..earned", sBelief);
 			if tPriorities[sBelief] then PriorityTableAdd(tBeliefPriorities, tPriorities[sBelief].Priorities);
-			else                         print("WARNING: belief", sBelief, "not defined in Priorities"); end
+			else                         print("WARNING: GetGenericPriorities belief", sBelief, "not defined in Priorities"); end
 		end
 	end
 	PriorityTableMultiply(tBeliefPriorities, GlobalParameters.RST_WEIGHT_BELIEF);
@@ -1023,7 +1049,7 @@ function EstablishStrategyBasePriority(data:table)
 		--print("WARNING: BasePriority table not defined."); return;
 	--end
 	if tPriorities[data.LeaderType] == nil then
-		print("WARNING: Priorities table for leader", data.LeaderType, "not defined."); return;
+		print("WARNING: EstablishStrategyBasePriority Priorities table for leader", data.LeaderType, "not defined."); return;
 	end
 	-- multiply Leader flavors by base priority weight
 	PriorityTableAdd(data.Priorities, tPriorities[data.LeaderType].Priorities);
@@ -1107,16 +1133,19 @@ function RefreshAndProcessData(ePlayerID:number)
 	dshowpriorities(data.Priorities, "applying specific priorities");
 	
 	-- random element
-	for strat,value in pairs(data.Priorities) do
-		data.Priorities[strat] = value + math.random(0,GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY); -- AI_GS_RAND_ROLL
+	if bUseRandom then
+		--for strat,value in pairs(data.Priorities) do -- changed to ipairs for MP support
+		for _,strat in ipairs(tShowStrat) do
+			data.Priorities[strat] = data.Priorities[strat] + GetRandomNumber(0,GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY); -- AI_GS_RAND_ROLL
+		end
+		dshowpriorities(data.Priorities, "applying a bit of randomization");
 	end
-	--print("...applying a bit of randomization", data.LeaderType);
-	dshowpriorities(data.Priorities, "applying a bit of randomization");
 	
 	-- Give a boost to the current strategy so that small fluctuation doesn't cause a big change
 	if data.ActiveStrategy ~= "NONE" then
 		--print("...boosting current strategy", data.ActiveStrategy);
-		data.Priorities[data.ActiveStrategy] = data.Priorities[data.ActiveStrategy] + math.random(GlobalParameters.RST_STRATEGY_CURRENT_PRIORITY/2, GlobalParameters.RST_STRATEGY_CURRENT_PRIORITY); -- AI_GRAND_STRATEGY_CURRENT_STRATEGY_WEIGHT
+		--data.Priorities[data.ActiveStrategy] = data.Priorities[data.ActiveStrategy] + GetRandomNumber(GlobalParameters.RST_STRATEGY_CURRENT_PRIORITY/2, GlobalParameters.RST_STRATEGY_CURRENT_PRIORITY); -- AI_GRAND_STRATEGY_CURRENT_STRATEGY_WEIGHT
+		data.Priorities[data.ActiveStrategy] = data.Priorities[data.ActiveStrategy] + GlobalParameters.RST_STRATEGY_CURRENT_PRIORITY;
 		dshowpriorities(data.Priorities, "boosting current strategy "..data.ActiveStrategy);
 	end
 			
@@ -1460,7 +1489,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	local sGovType:string = GameInfo.Governments[ RST.PlayerGetCurrentGovernment(eOtherID) ].GovernmentType;
 	local tGovPriorities:table = PriorityTableNew();
 	if tPriorities[sGovType] then PriorityTableAdd(tGovPriorities, tPriorities[sGovType].Priorities);
-	else                          print("WARNING: government", sGovType, "not defined in Priorities"); end
+	else                          print("WARNING: GuessOtherPlayerStrategy government", sGovType, "not defined in Priorities"); end
 	PriorityTableMultiply(tGovPriorities, GlobalParameters.RST_WEIGHT_GOVERNMENT);
 	dshowpriorities(tGovPriorities, "generic government "..string.gsub(sGovType, "GOVERNMENT_", ""));
 	
@@ -1470,7 +1499,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	local tGPPriorities:table = PriorityTableNew();
 	for _,class in ipairs(tGPs) do
 		if tPriorities[class] then PriorityTableAdd(tGPPriorities, tPriorities[class].Priorities);
-		else                       print("WARNING: great person class", class, "not defined in Priorities"); end
+		else                       print("WARNING: GuessOtherPlayerStrategy great person class", class, "not defined in Priorities"); end
 	end
 	PriorityTableMultiply(tGPPriorities, GlobalParameters.RST_WEIGHT_GREAT_PERSON);
 	dshowpriorities(tGPPriorities, "generic great people");
@@ -1489,11 +1518,11 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	dshowpriorities(tMinorPriorities, "generic city states");
 	
 	-- randomize, but less
-	local tRandPriorities:table = PriorityTableNew();
-	for strat,value in pairs(tRandPriorities) do
-		tRandPriorities[strat] = math.random(0, GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY * 0.5);
-	end
-	dshowpriorities(tRandPriorities, "randomization");
+	--local tRandPriorities:table = PriorityTableNew();
+	--for strat,value in pairs(tRandPriorities) do
+		--tRandPriorities[strat] = GetRandomNumber(0, GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY * 0.5);
+	--end
+	--dshowpriorities(tRandPriorities, "randomization");
 	
 	local tSumPriorities:table = PriorityTableNew(); -- final here
 	PriorityTableAdd(tSumPriorities, tSpecificPriorities);
