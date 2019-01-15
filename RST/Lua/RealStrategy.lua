@@ -572,12 +572,12 @@ function GetGenericPriorities(data:table)
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
-	print("...generic: city states", data.LeaderType);
+	--print("...generic: city states", data.LeaderType);
 	local tMinorPriorities:table = PriorityTableNew();
 	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
 		if minor:GetInfluence():GetSuzerain() == ePlayerID then
 			local sCategory:string = GetCityStateCategory(minor:GetID());
-			print("...suzerain of", sCategory);
+			--print("...suzerain of", sCategory);
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
@@ -1505,12 +1505,12 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
-	print("...generic: city states", sLeaderType);
+	--print("...generic: city states", sLeaderType);
 	local tMinorPriorities:table = PriorityTableNew();
 	for _,minor in ipairs(PlayerManager.GetAliveMinors()) do
 		if minor:GetInfluence():GetSuzerain() == eOtherID then
 			local sCategory:string = GetCityStateCategory(minor:GetID());
-			print("...suzerain of", sCategory);
+			--print("...suzerain of", sCategory);
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
@@ -1844,7 +1844,7 @@ GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
 -- This functions also as a counter to Tourism to some extent
 
 function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
-	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreScience", ePlayerID, iThreshold);
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreScience", ePlayerID, iThreshold);
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgTechs == nil then return false; end -- not calculated yet
@@ -1861,7 +1861,7 @@ GameEvents.ActiveStrategyMoreScience.Add(ActiveStrategyMoreScience);
 -- This functions also as a counter to Tourism to some extent
 
 function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
-	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreCulture", ePlayerID, iThreshold);
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreCulture", ePlayerID, iThreshold);
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgCulture == nil then return false; end -- not calculated yet

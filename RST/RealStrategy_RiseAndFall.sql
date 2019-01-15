@@ -324,7 +324,43 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
 
 
+-- ===========================================================================
 -- Tactics
+-- ===========================================================================
 
 -- why is UNIT_KOREAN_HWACHA siege?
 DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_KOREAN_HWACHA' AND (AiType = 'UNITTYPE_SIEGE' OR AiType = 'UNITTYPE_SIEGE_ALL');
+
+
+-- ===========================================================================
+-- RANDOM AGENDAS
+-- These agendas are no longer in use
+-- AGENDA_CURMUDGEON
+-- AGENDA_FLIRTATIOUS
+-- ===========================================================================
+
+
+-- AGENDA_GOSSIP / TRAIT_AGENDA_GOSSIP / OK (R&F)
+-- LEADER_CATHERINE_DE_MEDICI has 15%
+-- Wants to know everything about everyone. Does not like civilizations who don't share information.
+--		<Row ListType="GossipFavoredDiplomacy" AgendaType="TRAIT_AGENDA_GOSSIP" System="DiplomaticActions"/>
+--		<Row ListType="GossipFavoredDiplomacy" Item="DIPLOACTION_RESIDENT_EMBASSY" Favored="true"/>
+--		<Row ListType="GossipFavoredDiplomacy" Item="DIPLOACTION_OPEN_BORDERS" Favored="true"/>
+--		<Row ListType="GossipFavoredDiplomacy" Item="DIPLOACTION_DIPLOMATIC_DELEGATION" Favored="true"/>
+--		<Row ListType="GossipFavoredDiplomacy" Item="DIPLOACTION_KEEP_PROMISE_DONT_SPY" Favored="false"/>
+
+
+-- AGENDA_SYCOPHANT / TRAIT_AGENDA_SYCOPHANT / OK (R&F)
+-- Impressed by any civilization that earns a Golden Age. Dislikes those in Dark Ages
+
+INSERT INTO AiListTypes (ListType) VALUES
+('SycophantPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('SycophantPseudoYields', 'TRAIT_AGENDA_SYCOPHANT', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('SycophantPseudoYields', 'PSEUDOYIELD_GOLDENAGE_POINT', 1, 20);
+
+
+-- AGENDA_SYMPATHIZER / TRAIT_AGENDA_SYMPATHIZER / OK (R&F)
+-- Feels bad for those going through Dark Ages. Dislikes those in Golden Ages.
+-- Can't influence anything here

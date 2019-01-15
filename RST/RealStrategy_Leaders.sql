@@ -271,7 +271,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GandhiPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 25), -- peace!
 -- nukes, because... Gandhi
 ('PeacekeeperWarLimits', 'DIPLOACTION_USE_NUCLEAR_WEAPON', 1, 0),
-('GandhiPseudoYields', 'PSEUDOYIELD_NUCLEAR_WEAPON', 1, 25),
+('GandhiPseudoYields', 'PSEUDOYIELD_NUCLEAR_WEAPON', 1, 20),
 ('GandhiProjects', 'PROJECT_MANHATTAN_PROJECT', 1, 0),
 ('GandhiProjects', 'PROJECT_OPERATION_IVY', 1, 0),
 ('GandhiProjects', 'PROJECT_BUILD_NUCLEAR_DEVICE', 1, 0),
@@ -624,7 +624,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -50),
 ('RooseveltPseudoYields', 'PSEUDOYIELD_GPP_WRITER', 1, 10),
-('RooseveltPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 25), -- national parks?
+('RooseveltPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- national parks?
 ('RooseveltPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15), -- national parks?
 ('RooseveltPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -25); -- get only Naturalists
 
@@ -666,24 +666,186 @@ StandingArmyPseudoYields	PSEUDOYIELD_STANDING_ARMY_NUMBER	1	33   -- def. 1
 StandingArmyPseudoYields	PSEUDOYIELD_STANDING_ARMY_VALUE	1	50 -- def. 0.1
 */
 
-/* TODO: Random Agendas
-These below are NOT defined in AiLists
-AGENDA_BARBARIAN_LOVER	TRAIT_AGENDA_BARBARIAN_LOVER Sympathizes with the barbarians.  Does not like civilizations that destroy barbarian outposts.
-- PSEUDOYIELD_CLEAR_BANDIT_CAMPS --
-AGENDA_DARWINIST		TRAIT_AGENDA_ENJOYS_WAR Likes to see civilizations at war, and believes in constant struggle.
-- PSEUDOYIELD_DIPLOMATIC_BONUS -- + wars + denounce
-AGENDA_FUN_LOVING		TRAIT_AGENDA_PREFER_HAPPINESS Tries to make the citizens in each city as happy as possible. Likes civilizations that also develop in this fashion.
-- PSEUDOYIELD_HAPPINESS
-AGENDA_IDEOLOGUE		TRAIT_AGENDA_PREFER_SAME_GOVERNMENT Favors civilizations with the same type of government, dislikes civilizations that have different governments, and really dislikes civilizations with different governments of the same era as its own.
-- N/A
-AGENDA_NATURALIST		TRAIT_AGENDA_NATURALIST Tries to find all natural wonders.  Likes civilizations that keep Woods and Rainforest unchopped, and those that establish National Parks.
-- PSEUDOYIELD_ENVIRONMENT
-AGENDA_PARANOID			TRAIT_AGENDA_PARANOID ???
-- ???
-AGENDA_POPULOUS			TRAIT_AGENDA_PREFER_POPULATION Tries to have the highest overall population.  Respects other high population civilizations.
-- YIELD_FOOD
-AGENDA_SYCOPHANT		TRAIT_AGENDA_SYCOPHANT ???
-- ???
-AGENDA_SYMPATHIZER		TRAIT_AGENDA_SYMPATHIZER Feels bad for those going through Dark Ages. Dislikes those in Golden Ages.
-- N/A
-*/
+
+-- ===========================================================================
+-- RANDOM AGENDAS
+-- These agendas are no longer in use
+-- AGENDA_BARBARIAN_LOVER / TRAIT_AGENDA_BARBARIAN_LOVER (Sympathizes with the barbarians.  Does not like civilizations that destroy barbarian outposts.)
+-- AGENDA_NATURALISTT / RAIT_AGENDA_NATURALIST (Tries to find all natural wonders.  Likes civilizations that keep Woods and Rainforest unchopped, and those that establish National Parks.)
+-- ===========================================================================
+
+
+-- AGENDA_AIRPOWER / TRAIT_AGENDA_PREFER_AIRPOWER / OK
+--		<Row ListType="AirpowerLoverAirpowerPreference" AgendaType="TRAIT_AGENDA_PREFER_AIRPOWER" System="PseudoYields"/>
+--		<Row ListType="AirpowerLoverAirpowerPreference" Item="PSEUDOYIELD_UNIT_AIR_COMBAT" Value="50"/>
+
+
+-- AGENDA_CITY_STATE_ALLY / TRAIT_AGENDA_CITY_STATE_ALLY / OK
+--		<Row ListType="CityStateAllyInfluencePreference" AgendaType="TRAIT_AGENDA_CITY_STATE_ALLY" System="PseudoYields"/>
+--		<Row ListType="CityStateAllyInfluencePreference" Item="PSEUDOYIELD_INFLUENCE" Value="25"/>
+--		<Row ListType="CityStateAllyNoWarPreference" AgendaType="TRAIT_AGENDA_CITY_STATE_ALLY" System="DiplomaticActions"/>
+--		<Row ListType="CityStateAllyNoWarPreference" Item="DIPLOACTION_DECLARE_WAR_MINOR_CIV" Favored="false"/>
+
+
+-- AGENDA_CITY_STATE_PROTECTOR / TRAIT_AGENDA_PREFER_CITY_STATE_PROTECTOR / OK
+-- Emphasizes protectorate wars. Admires civilizations that start protectorate wars. Dislikes civilizations that attack city states.
+--		<Row ListType="CitySateProtectionLoverCityStateProtectionPreference" AgendaType="TRAIT_AGENDA_PREFER_CITY_STATE_PROTECTOR" System="DiplomaticActions"/>
+--		<Row ListType="CitySateProtectionLoverCityStateProtectionPreference" Item="DIPLOACTION_DECLARE_PROTECTORATE_WAR" Favored="true"/>
+
+
+-- AGENDA_CIVILIZED / TRAIT_AGENDA_PREFER_CLEAR_BANDIT_CAMPS / OK
+-- Hates barbarians. Likes civilizations that clear out barbarian outposts. Does not like civilizations that ignore barbarian outposts.
+--		<Row ListType="ClearingBarbCampLoverClearingBarbCampPreference" AgendaType="TRAIT_AGENDA_PREFER_CLEAR_BANDIT_CAMPS" System="PseudoYields"/>
+--		<Row ListType="ClearingBarbCampLoverClearingBarbCampPreference" Item="PSEUDOYIELD_CLEAR_BANDIT_CAMPS" Value="5"/>
+
+UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'ClearingBarbCampLoverClearingBarbCampPreference' AND Item = 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS';
+
+
+-- AGENDA_CULTURED / TRAIT_AGENDA_PREFER_CULTURE / OK
+--Tries to build up [ICON_Culture] Culture, and likes civilizations that also focus on [ICON_Culture] Culture.
+--		<Row ListType="CultureLoverCulturePreference" AgendaType="TRAIT_AGENDA_PREFER_CULTURE" System="Yields"/>
+--		<Row ListType="CultureLoverCulturePreference" Item="YIELD_CULTURE" Value="20"/>
+
+
+-- AGENDA_DARWINIST / TRAIT_AGENDA_ENJOYS_WAR / TRAIT_AGENDA_IGNORE_WARMONGERING / OK
+-- Likes to see civilizations at war, and believes in constant struggle.
+--		<Row ListType="DarwinistIgnoreWarmongerValue" AgendaType="TRAIT_AGENDA_IGNORE_WARMONGERING" System="PseudoYields"/>
+--		<Row ListType="DarwinistIgnoreWarmongerValue" Item="PSEUDOYIELD_DIPLOMATIC_BONUS" Value="-100"/>
+
+INSERT INTO AiListTypes (ListType) VALUES
+('DarwinistEnjoysWarDiplomacy'),
+('DarwinistEnjoysWarPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('DarwinistEnjoysWarDiplomacy',    'TRAIT_AGENDA_ENJOYS_WAR', 'DiplomaticActions'),
+('DarwinistEnjoysWarPseudoYields', 'TRAIT_AGENDA_ENJOYS_WAR', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('DarwinistEnjoysWarDiplomacy', 'DIPLOACTION_DENOUNCE', 1, 0),
+('DarwinistEnjoysWarDiplomacy', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV', 1, 0),
+('DarwinistEnjoysWarDiplomacy', 'DIPLOACTION_DECLARE_SURPRISE_WAR', 1, 0),
+('DarwinistEnjoysWarDiplomacy', 'DIPLOACTION_JOINT_WAR', 1, 0),
+('DarwinistEnjoysWarDiplomacy', 'DIPLOACTION_THIRD_PARTY_WAR', 1, 0),
+('DarwinistEnjoysWarPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15),
+('DarwinistEnjoysWarPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -15),
+('DarwinistEnjoysWarPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 10),
+('DarwinistEnjoysWarPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, 15);
+INSERT INTO AiFavoredItems (ListType, Item, Favored)
+SELECT 'DarwinistEnjoysWarDiplomacy', DiplomaticActionType, 1
+FROM DiplomaticActions
+WHERE UIGroup = 'FORMALWAR';
+
+
+-- AGENDA_DEVOUT / TRAIT_AGENDA_PREFER_FAITH / OK
+--		<Row ListType="FaithLoverFaithPreference" AgendaType="TRAIT_AGENDA_PREFER_FAITH" System="Yields"/>
+--		<Row ListType="FaithLoverFaithPreference" Item="YIELD_FAITH" Value="20"/>
+
+
+-- AGENDA_ENVIRONMENTALIST / TRAIT_AGENDA_PREFER_ENVIRONMENT / OK
+-- LEADER_T_ROOSEVELT has 33% chance
+-- Builds National Parks, doesn't clear features, plants forests. Likes civilizations that plant forests or found National Parks. Dislikes civilizations that clear features.
+--		<Row ListType="EnvironmentLoverEnvironmentPreference" AgendaType="TRAIT_AGENDA_PREFER_ENVIRONMENT" System="PseudoYields"/>
+--		<Row ListType="EnvironmentLoverEnvironmentPreference" Item="PSEUDOYIELD_ENVIRONMENT" Value="5"/>
+
+UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'EnvironmentLoverEnvironmentPreference' AND Item = 'PSEUDOYIELD_ENVIRONMENT';
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('EnvironmentLoverEnvironmentPreference', 'PSEUDOYIELD_IMPROVEMENT', 1, -25);
+
+
+-- AGENDA_EXPLOITATIVE / TRAIT_AGENDA_PREFER_EXPLOITATION
+--Clears all features and improves all possible tiles. Likes civilizations with a high percentage of improved tiles. Dislikes civilizations with low percentage of improved tiles or that found National Parks.
+--		<Row ListType="ExploitationLoverExploitationPreference" AgendaType="TRAIT_AGENDA_PREFER_EXPLOITATION" System="PseudoYields"/>
+--		<Row ListType="ExploitationLoverExploitationPreference" Item="PSEUDOYIELD_IMPROVEMENT" Value="5"/>
+		
+UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'ExploitationLoverExploitationPreference' AND Item = 'PSEUDOYIELD_IMPROVEMENT';
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ExploitationLoverExploitationPreference', 'PSEUDOYIELD_ENVIRONMENT', 1, -25);
+
+
+-- AGENDA_EXPLORER / TRAIT_AGENDA_EXPLORATION_OBSESSED
+-- Tries to explore the map, and likes civilizations that have explored less of the map than itself and dislikes civilizations that have explored more of the map than itself.
+--		<Row ListTYpe="ExplorationObsessedExplorers" AgendaType="TRAIT_AGENDA_EXPLORATION_OBSESSED" System="PseudoYields"/>
+--		<Row ListType="ExplorationObsessedExplorers" Item="PSEUDOYIELD_UNIT_EXPLORER" Value="50"/>
+
+INSERT INTO AiListTypes (ListType) VALUES
+('ExplorationObsessedScoutUses');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('ExplorationObsessedScoutUses', 'TRAIT_AGENDA_EXPLORATION_OBSESSED', 'AiScoutUses');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ExplorationObsessedScoutUses', 'DEFAULT_LAND_SCOUTS', 1, 100),
+('ExplorationObsessedScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 100),
+('ExplorationObsessedScoutUses', 'NAVAL_SCOUTS_FOR_WORLD_EXPLORATION', 1, 100);
+
+
+-- AGENDA_FUN_LOVING / TRAIT_AGENDA_PREFER_HAPPINESS / OK
+-- Tries to make the citizens in each city as happy as possible. Likes civilizations that also develop in this fashion
+
+INSERT INTO AiListTypes (ListType) VALUES
+('PreferHappinessPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('PreferHappinessPseudoYields', 'TRAIT_AGENDA_PREFER_HAPPINESS', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('PreferHappinessPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 50);
+
+
+-- AGENDA_GREAT_PERSON_ADVOCATE / TRAIT_AGENDA_GREAT_PERSON_ADVOCATE / OK
+-- Likes civilizations who are not competing for [ICON_GreatPerson] Great People, and will recruit [ICON_GreatPerson] Great People whenever possible.
+--		<Row ListType="GreatPersonObsessedGreatPeople" AgendaType="TRAIT_AGENDA_GREAT_PERSON_OBSESSED" System="PseudoYields"/> -> this is for LEADER_PEDRO
+--		<Row ListType="GreatPersonObsessedGreatPeople" AgendaType="TRAIT_AGENDA_GREAT_PERSON_ADVOCATE" System="PseudoYields"/> -> this is for Random Agenda
+-- OK, this list is updated with LEADER_PEDRO
+
+	
+-- AGENDA_IDEOLOGUE / TRAIT_AGENDA_PREFER_SAME_GOVERNMENT / OK
+-- Favors civilizations with the same type of government, dislikes civilizations that have different governments, and really dislikes civilizations with different governments of the same era as its own.
+-- Can't influence anything here
+
+
+-- AGENDA_INDUSTRIALIST / TRAIT_AGENDA_PREFER_INDUSTRY / OK
+--		<Row ListType="IndustryLoverIndustryPreference" AgendaType="TRAIT_AGENDA_PREFER_INDUSTRY" System="Yields"/>
+--		<Row ListType="IndustryLoverIndustryPreference" Item="YIELD_PRODUCTION" Value="20"/>
+
+
+-- AGENDA_MONEY_GRUBBER / TRAIT_AGENDA_PREFER_INCOME / OK
+--		<Row ListType="MoneyGrubberGoldPreference" AgendaType="TRAIT_AGENDA_PREFER_INCOME" System="Yields"/>
+--		<Row ListType="MoneyGrubberGoldPreference" Item="YIELD_GOLD" Value="20"/>
+
+		
+-- AGENDA_NUKE_LOVER / TRAIT_AGENDA_PREFER_NUKES / OK
+-- LEADER_GANDHI has 70%
+--		<Row ListType="NukeLoverNukePreference" AgendaType="TRAIT_AGENDA_PREFER_NUKES" System="PseudoYields"/>
+--		<Row ListType="NukeLoverNukePreference" Item="PSEUDOYIELD_NUCLEAR_WEAPON" Value="20"/>
+--		<Row ListType="NukeLoverUseNukePreference" AgendaType="TRAIT_AGENDA_PREFER_NUKES" System="DiplomaticActions"/>
+--		<Row ListType="NukeLoverUseNukePreference" Item="DIPLOACTION_USE_NUCLEAR_WEAPON" Favored="true"/>
+
+
+-- AGENDA_PARANOID / TRAIT_AGENDA_PARANOID / OK
+-- Likes civilizations who pose no threat. Dislikes civilizations with strong militaries or ones with nearby cities.
+-- Can't influence anything here
+
+
+-- AGENDA_POPULOUS / TRAIT_AGENDA_PREFER_POPULATION / OK
+-- Tries to have the highest overall population.  Respects other high population civilizations.
+
+INSERT INTO AiListTypes (ListType) VALUES
+('PreferPopulationYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('PreferPopulationYields', 'TRAIT_AGENDA_PREFER_POPULATION', 'Yields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('PreferPopulationYields', 'YIELD_FOOD', 1, 20);
+
+
+-- AGENDA_STANDING_ARMY / TRAIT_AGENDA_PREFER_STANDING_ARMY / OK
+--	<Row ListType="StandingArmyPseudoYields" AgendaType="TRAIT_AGENDA_PREFER_STANDING_ARMY" System="PseudoYields"/>
+--    <Row ListType="StandingArmyPseudoYields" Item="PSEUDOYIELD_STANDING_ARMY_NUMBER" Value="33"/>
+--    <Row ListType="StandingArmyPseudoYields" Item="PSEUDOYIELD_STANDING_ARMY_VALUE" Value="50"/>
+
+
+
+-- AGENDA_TECHNOPHILE / TRAIT_AGENDA_PREFER_SCIENCE / OK
+--		<Row ListType="ScienceLoverSciencePreference" AgendaType="TRAIT_AGENDA_PREFER_SCIENCE" System="Yields"/>
+--		<Row ListType="ScienceLoverSciencePreference" Item="YIELD_SCIENCE" Value="20"/>
+
+
+-- AGENDA_WONDER_ADVOCATE / TRAIT_AGENDA_WONDER_ADVOCATE / OK
+--Likes civilizations not competing for wonders, and builds wonders whenever possible. Dislikes losing a wonder to another civilization.
+--		<Row ListType="WonderObsessedWonders" AgendaType="TRAIT_AGENDA_WONDER_ADVOCATE" System="PseudoYields"/>
+--		<Row ListType="WonderObsessedWonders" AgendaType="TRAIT_AGENDA_WONDER_OBSESSED" System="PseudoYields"/> -> this is for LEADER_QIN
+--		<Row ListType="WonderObsessedWonders" Item="PSEUDOYIELD_WONDER" Value="25"/>

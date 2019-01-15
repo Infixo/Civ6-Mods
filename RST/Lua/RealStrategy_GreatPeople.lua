@@ -131,7 +131,7 @@ function GetNumGreatWorksToCreate(eGPIndividual:number)
 end
 
 function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
-	print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreGreatWorkSlots", ePlayerID, iThreshold);
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreGreatWorkSlots", ePlayerID, iThreshold);
 	--local pPlayer:table = Players[ePlayerID];
 	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end -- have faith in the engine
 	local data:table = RST.Data[ePlayerID];
