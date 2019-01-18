@@ -15,7 +15,7 @@
 DELETE FROM AiFavoredItems WHERE ListType = 'StandardSettlePlot';
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('StandardSettlePlot', 'Foreign Continent', 0, -4, NULL), -- def
-('StandardSettlePlot', 'Nearest Friendly City', 0, -9, NULL), -- def, be careful - expansion gives +6, naval +4
+('StandardSettlePlot', 'Nearest Friendly City', 0, -8, NULL), -- def, be careful - expansion gives +3, naval +2/4
 ('StandardSettlePlot', 'Fresh Water', 0, 20, NULL), -- +7
 ('StandardSettlePlot', 'Coastal', 0, 6, NULL), -- -2
 ('StandardSettlePlot', 'Total Yield', 0, 1, 'YIELD_PRODUCTION'), -- def
@@ -1003,12 +1003,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ===========================================================================
 
 
--- STRATEGY_EARLY_EXPLORATION
-
--- learn more about your surroundings
-UPDATE StrategyConditions SET ThresholdValue = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION' AND ConditionFunction = 'Fewer Cities'; -- 1
-
-
 -- STRATEGY_RAPID_EXPANSION
 -- this is actually peace / small war strategy
 -- important - it activates only when there is a settle spot
@@ -1019,56 +1013,3 @@ UPDATE AiFavoredItems SET Value = 3 WHERE ListType = 'ExpansionSettlementPrefere
 DELETE FROM AiFavoredItems WHERE ListType = 'ExpansionUnitPreferences'; -- remove old list that resulted in LESS combat units
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ExpansionUnitPreferences', 'PSEUDOYIELD_UNIT_SETTLER', 1, 25);
-
-
--- STRATEGY_NAVAL
-
-INSERT INTO AiListTypes (ListType) VALUES
-('NavalPreferredScoutUses'),
-('NavalPreferredCivics'),
-('NavalPreferredWonders'),
-('NavalPreferredUnitBuilds'); -- for future
-INSERT INTO AiLists (ListType, System) VALUES
-('NavalPreferredScoutUses', 'AiScoutUses'),
-('NavalPreferredCivics',    'Civics'),
-('NavalPreferredWonders',   'Buildings'),
-('NavalPreferredUnitBuilds','UnitPromotionClasses'); -- for future
-INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
-('STRATEGY_NAVAL', 'NavalPreferredScoutUses'),
-('STRATEGY_NAVAL', 'NavalPreferredCivics'),
-('STRATEGY_NAVAL', 'NavalPreferredWonders'),
-('STRATEGY_NAVAL', 'NavalPreferredUnitBuilds');
-
-UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. -90
-UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 150
-
---UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Coastal'; -- def. 10
-UPDATE AiFavoredItems SET Value =  8 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Foreign Continent'; -- def. 4
-UPDATE AiFavoredItems SET Value =  3 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Nearest Friendly City'; -- def. 4
-UPDATE AiFavoredItems SET Value = -4 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Specific Resource' AND StringVal = 'RESOURCE_IRON'; -- def. -5	
-UPDATE AiFavoredItems SET Value = -2 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Specific Resource' AND StringVal = 'RESOURCE_HORSES'; -- def. -3	
-
-INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('NavalPreferredScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 100),
-('NavalPreferredScoutUses', 'NAVAL_SCOUTS_FOR_WORLD_EXPLORATION', 1, 100),
-('NavalPreferredTechs', 'TECH_SQUARE_RIGGING', 1, 0), -- !BUGGED!
-('NavalPreferredTechs', 'TECH_STEAM_POWER', 1, 0), -- !BUGGED!
-('NavalPreferredTechs', 'TECH_STEEL', 1, 0), -- !BUGGED!
-('NavalPreferredTechs', 'TECH_COMBINED_ARMS', 1, 0), -- !BUGGED!
-('NavalPreferredCivics', 'CIVIC_FOREIGN_TRADE', 1, 0),
-('NavalPreferredCivics', 'CIVIC_NAVAL_TRADITION', 1, 0),
-('NavalPreferredWonders', 'BUILDING_GREAT_LIGHTHOUSE', 1, 0),
-('NavalPreferredWonders', 'BUILDING_HALICARNASSUS_MAUSOLEUM', 1, 0),
-('NavalUnitPreferences', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
-('NavalUnitPreferences', 'PSEUDOYIELD_GPP_GENERAL', 1, -15);
-
-
-/* AiScoutUses - All are put into in DefaultScoutUse with values in braces - values seem to show no. of units (100 = 1 unit)
-Comment from Vikings:     <!-- Note: Scouting values are read in as percentages, so multiply desired numbers by 100 -->
-Question: is it related to UNITAI_EXPLORE (many units) or PSEUDOYIELD_UNIT_EXPLORER (only UNIT_SCOUT)
-DEFAULT_LAND_SCOUTS (100) EarlyExplorationBoost (200)
-DEFAULT_NAVAL_SCOUTS (100) NavalScoutingPreferences (200)
-LAND_SCOUTS_PER_PRIMARY_REGION (100) not used
-LAND_SCOUTS_PER_SECONDARY_REGION (50) not used
-NAVAL_SCOUTS_FOR_WORLD_EXPLORATION (300) NavalScoutingPreferences (200)
-*/

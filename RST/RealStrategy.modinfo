@@ -2,11 +2,11 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall and all DLCs, in any configuration.[NEWLINE]Version 0.6.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall and all DLCs, in any configuration.[NEWLINE]Version 0.7.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
-		<!--<SupportsMultiplayer>0</SupportsMultiplayer>-->
+		<SupportsMultiplayer>1</SupportsMultiplayer>
 	</Properties>
 	<References>
 		<Mod id="02A8BDDE-67EA-4D38-9540-26E685E3156E" title="DLC: Aztec Civilization Pack" /> 
@@ -44,6 +44,7 @@
 			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
 			<File>RealStrategy_Params.sql</File>
 			<File>RealStrategy_Main.sql</File>
+			<File>RealStrategy_Naval.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Tactics.sql</File>
 			<File>RealStrategy_Trees.xml</File>
@@ -89,6 +90,7 @@
 	<Files>
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
+		<File>RealStrategy_Naval.sql</File>
 		<File>RealStrategy_Leaders.sql</File>
 		<File>RealStrategy_Tactics.sql</File>
 		<File>RealStrategy_Trees.xml</File>
