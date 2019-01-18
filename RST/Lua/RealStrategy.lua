@@ -97,65 +97,6 @@ end
 
 
 -- ===========================================================================
--- HELPFUL ENUMS
--- ===========================================================================
-
--- from MapEnums.lua
-DirectionTypes = {
-	DIRECTION_NORTHEAST = 0,
-	DIRECTION_EAST 		= 1,
-	DIRECTION_SOUTHEAST = 2,
-	DIRECTION_SOUTHWEST = 3,
-	DIRECTION_WEST		= 4,
-	DIRECTION_NORTHWEST = 5,
-	NUM_DIRECTION_TYPES = 6,
-};
-
--- from MapEnums.lua
-function GetGameInfoIndex(table_name, type_name) 
-	local index = -1;
-	local table = GameInfo[table_name];
-	if(table) then
-		local t = table[type_name];
-		if(t) then
-			index = t.Index;
-		end
-	end
-	return index;
-end
-
--- from MapEnums.lua, These come from the database.  Get the runtime index values.
-g_TERRAIN_NONE				= -1;
-g_TERRAIN_GRASS				= GetGameInfoIndex("Terrains", "TERRAIN_GRASS");
-g_TERRAIN_GRASS_HILLS		= GetGameInfoIndex("Terrains", "TERRAIN_GRASS_HILLS");
-g_TERRAIN_GRASS_MOUNTAIN	= GetGameInfoIndex("Terrains", "TERRAIN_GRASS_MOUNTAIN");
-g_TERRAIN_PLAINS			= GetGameInfoIndex("Terrains", "TERRAIN_PLAINS");
-g_TERRAIN_PLAINS_HILLS		= GetGameInfoIndex("Terrains", "TERRAIN_PLAINS_HILLS");
-g_TERRAIN_PLAINS_MOUNTAIN	= GetGameInfoIndex("Terrains", "TERRAIN_PLAINS_MOUNTAIN");
-g_TERRAIN_DESERT			= GetGameInfoIndex("Terrains", "TERRAIN_DESERT");
-g_TERRAIN_DESERT_HILLS		= GetGameInfoIndex("Terrains", "TERRAIN_DESERT_HILLS");
-g_TERRAIN_DESERT_MOUNTAIN	= GetGameInfoIndex("Terrains", "TERRAIN_DESERT_MOUNTAIN");
-g_TERRAIN_TUNDRA			= GetGameInfoIndex("Terrains", "TERRAIN_TUNDRA");
-g_TERRAIN_TUNDRA_HILLS		= GetGameInfoIndex("Terrains", "TERRAIN_TUNDRA_HILLS");
-g_TERRAIN_TUNDRA_MOUNTAIN	= GetGameInfoIndex("Terrains", "TERRAIN_TUNDRA_MOUNTAIN");
-g_TERRAIN_SNOW				= GetGameInfoIndex("Terrains", "TERRAIN_SNOW");
-g_TERRAIN_SNOW_HILLS		= GetGameInfoIndex("Terrains", "TERRAIN_SNOW_HILLS");
-g_TERRAIN_SNOW_MOUNTAIN		= GetGameInfoIndex("Terrains", "TERRAIN_SNOW_MOUNTAIN");
-g_TERRAIN_COAST				= GetGameInfoIndex("Terrains", "TERRAIN_COAST");
-g_TERRAIN_OCEAN				= GetGameInfoIndex("Terrains", "TERRAIN_OCEAN");
-g_FEATURE_NONE				= -1;
-g_FEATURE_FLOODPLAINS		= GetGameInfoIndex("Features", "FEATURE_FLOODPLAINS");
-g_FEATURE_ICE				= GetGameInfoIndex("Features", "FEATURE_ICE");
-g_FEATURE_JUNGLE			= GetGameInfoIndex("Features", "FEATURE_JUNGLE");
-g_FEATURE_FOREST			= GetGameInfoIndex("Features", "FEATURE_FOREST");
-g_FEATURE_OASIS				= GetGameInfoIndex("Features", "FEATURE_OASIS");
-g_FEATURE_MARSH				= GetGameInfoIndex("Features", "FEATURE_MARSH");
-
--- new ones
---IMPROVEMENT_BARBARIAN_CAMP
---IMPROVEMENT_GOODY_HUT
-
--- ===========================================================================
 -- TABLE HELPERS
 -- ===========================================================================
 
@@ -173,48 +114,6 @@ function GetTableKey(pTable:table, value)
 		if data == value then return key; end
 	end
 	return nil;
-end
-
--- ===========================================================================
--- PLOT FUNCTIONS AND HELPERS
--- ===========================================================================
-
--- table with new coors corresponding to given Direction
-local tAdjCoors:table = {
-	[DirectionTypes.DIRECTION_NORTHEAST] = { dx= 1, dy= 1 },  -- shifting +X, in some conditons dx=0 (rows with even Y-coor)
-	[DirectionTypes.DIRECTION_EAST] 	 = { dx= 1, dy= 0 },
-	[DirectionTypes.DIRECTION_SOUTHEAST] = { dx= 1, dy=-1 },  -- shifting +X, in some conditons dx=0
-	[DirectionTypes.DIRECTION_SOUTHWEST] = { dx=-1, dy=-1 },  -- shifting -X, in some conditons dx=0 (rows with odd Y-coor)
-	[DirectionTypes.DIRECTION_WEST]      = { dx=-1, dy= 0 },
-	[DirectionTypes.DIRECTION_NORTHWEST] = { dx=-1, dy= 1 },  -- shifting -X, in some conditons dx=0
-};
-
--- Returns coordinates (x,y) of a plot adjacent to the one tested in a specific direction
-function GetAdjacentPlotXY(iX:number, iY:number, eDir:number)
-	-- double-checking
-	if tAdjCoors[eDir] == nil then
-		print("ERROR: GetAdjacentXY() invalid direction - ", tostring(eDir));
-		return iX, iY;
-	end
-	-- shifting X, in some conditons dx=-1 or dx=+1
-	local idx = tAdjCoors[eDir].dx;
-	if (eDir == DirectionTypes.DIRECTION_NORTHEAST or eDir ==  DirectionTypes.DIRECTION_SOUTHEAST) and (iY % 2 == 0) then idx = 0; end
-	if (eDir == DirectionTypes.DIRECTION_NORTHWEST or eDir ==  DirectionTypes.DIRECTION_SOUTHWEST) and (iY % 2 == 1) then idx = 0; end
-	-- get new coors
-	local iAdjX = iX + idx;
-	local iAdjY = iY + tAdjCoors[eDir].dy;
-	-- wrap coordinates
-	if iAdjX >= iMapWidth 	then iAdjX = 0; end
-	if iAdjX < 0 			then iAdjX = iMapWidth-1; end
-	if iAdjY >= iMapHeight 	then iAdjY = 0; end
-	if iAdjY < 0 			then iAdjY = iMapHeight-1; end
-	return iAdjX, iAdjY;
-end
-
--- Returns Index of a plot adjacent to the one tested in a specific direction
-function GetAdjacentPlotIndex(iIndex:number, eDir:number)
-	local iAdjX, iAdjY = GetAdjacentPlotXY(iIndex % iMapWidth, math.floor(iIndex/iMapWidth), eDir);
-	return iMapWidth * iAdjY + iAdjX;
 end
 
 
@@ -328,6 +227,21 @@ function GetCityStateCategory(ePlayerID:number)
 	return sCategory;
 end
 
+-- scales number of turns according to the game speed
+local iCostMultiplier:number = GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
+function GetNumTurnsScaled(iNumTurns:number)
+	return iNumTurns * 100 / iCostMultiplier;
+end
+
+
+-- used to check if a district is being produced
+function IsPlayerBuilding(ePlayerID:number, sType:string)
+	for _,city in Players[ePlayerID]:GetCities():Members() do
+		if city:GetBuildQueue():CurrentlyBuilding() == sType then return true; end
+	end
+	return false;
+end
+
 
 -- ===========================================================================
 -- CORE FUNCTIONS
@@ -349,7 +263,7 @@ function InitializeData()
 	if bLogDebug then print("Max religions:", iMaxNumReligions); end
 
 	-- initialize players
-	for _,playerID in ipairs(PlayerManager.GetAliveMajorIDs()) do
+	for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
 		local data:table = {
 			PlayerID = playerID,
 			LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName(),
@@ -366,6 +280,11 @@ function InitializeData()
 			ActiveScience = false,
 			ActiveCulture = false,
 			ActiveThreat = false,
+			-- naval
+			ActiveNaval = 1, -- 0 Pangea, 1 Default, 2 Coastal (aka Naval), 3 Island
+			TurnRefreshNaval = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
+			NavalFactor = -1,
+			NavalRevealed = -1,
 			-- data refreshed every turn
 			OurMilitaryStrength = 0,
 			AvgMilitaryStrength = 0,
@@ -475,7 +394,7 @@ function RefreshPlayerData(data:table)
 	};
 	
 	-- elapsed turns with game speed scaling
-	tNewData.ElapsedTurns = (Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn()) * 100 / GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
+	tNewData.ElapsedTurns = GetNumTurnsScaled(Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn());
 	
 	-- gather IDs and infos of major civs met
 	local pPlayerDiplomacy:table = pPlayer:GetDiplomacy();
@@ -1085,10 +1004,10 @@ function RefreshAndProcessData(ePlayerID:number)
 	if data.TurnRefreshStrategy == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
 
 	-- active turns with game speed scaling
-	local iNumTurnsActive:number = (Game.GetCurrentGameTurn() - data.TurnRefreshStrategy) * 100 / GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
+	local iNumTurnsActive:number = GetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshStrategy);
 	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "turn refresh", data.TurnRefreshStrategy, "active for", iNumTurnsActive, "turns");
 	if not( data.TurnRefreshStrategy == -1 or data.ActiveStrategy == "NONE" or iNumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE ) then
-		return
+		return;
 	end
 	
 	-- we should go here if: TurnRefreshStrategy == -1, ActiveStrategy == "NONE", or current strategy needs to be refreshed after being active for X turns
@@ -1841,13 +1760,18 @@ GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
 
 ------------------------------------------------------------------------------
 -- Simple catching up when falling behind the average num of techs
--- This functions also as a counter to Tourism to some extent
+-- Will not activate if there is a Campus being produced
 
 function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreScience", ePlayerID, iThreshold);
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgTechs == nil then return false; end -- not calculated yet
+	if IsPlayerBuilding("DISTRICT_CAMPUS") or IsPlayerBuilding("DISTRICT_SEOWON") then
+		if bLogOther then print(Game.GetCurrentGameTurn(), "RSTSCIEN", ePlayerID, iThreshold, "...Campus is being produced - not active"); end
+		return false;
+	end
+	-- actual comparison
 	local iOurTechs:number = RST.PlayerGetNumTechsResearched(ePlayerID);
 	-- threshold: 0.1 * num + 1, it gives nice 2,3,4,.. for 10,20,30,.. techs => call with iThreshold = 90
 	data.ActiveScience = iOurTechs*100 < data.Data.AvgTechs*iThreshold - 150; -- 1 tech = 100
@@ -1859,12 +1783,18 @@ GameEvents.ActiveStrategyMoreScience.Add(ActiveStrategyMoreScience);
 ------------------------------------------------------------------------------
 -- Simple catching up when falling behind the average culture
 -- This functions also as a counter to Tourism to some extent
+-- Will not activate if there is a Theater being produced
 
 function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreCulture", ePlayerID, iThreshold);
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgCulture == nil then return false; end -- not calculated yet
+	if IsPlayerBuilding("DISTRICT_THEATER") or IsPlayerBuilding("DISTRICT_ACROPOLIS") then
+		if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCULTR", ePlayerID, iThreshold, "...Theater is being produced - not active"); end
+		return false;
+	end
+	-- actual comparison
 	local iOurCulture:number = Players[ePlayerID]:GetCulture():GetCultureYield();
 	-- culture reaches high values, so we can go with just %, approx. 75-80%
 	data.ActiveCulture = iOurCulture*100 < data.Data.AvgCulture*iThreshold;
@@ -1872,6 +1802,121 @@ function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 end
 GameEvents.ActiveStrategyMoreCulture.Add(ActiveStrategyMoreCulture);
 
+
+-- ===========================================================================
+-- NAVAL STRATEGIES SUPPORT
+-- ===========================================================================
+
+------------------------------------------------------------------------------
+-- Detection algorithm - calculates percentage of the coast in relation to the total land
+-- Coast is considered a land that has sea within N tiles, algorithm uses 2 as default
+-- I've tested it also with N=3 - gives better results for Islands but N=2 is better overall
+-- Algorithm only counts revealed tiles, however it "knows" where the sea is even if it is not revealed
+-- This small cheat compensates the fact that human player chooses the map and simply knows in advance what it is :)
+-- Note: the algorithm considers Lakes as part of the land.
+
+function IsPlotLand(pPlot:table)
+	if pPlot:IsWater() then return pPlot:IsLake(); end
+	return true;
+end
+
+function IsPlotWater(pPlot:table) -- no lakes!
+	if pPlot:IsWater() then return not pPlot:IsLake(); end
+	return false;
+end
+
+-- works only for Land!
+function HasWaterWithinRange(pStartingPlot:table, iRange:number)
+	if IsPlotWater(pStartingPlot) then return false; end
+	local iPlotX:number = pStartingPlot:GetX(); 
+	local iPlotY:number = pStartingPlot:GetY();
+	-- iterate through plots
+	for dy = -iRange, iRange do
+		for dx = -iRange, iRange do
+			local pPlot:table = Map.GetPlotXYWithRangeCheck(iPlotX, iPlotY, dx, dy, iRange);
+			if pPlot and IsPlotWater(pPlot) then return true; end
+		end
+	end
+	return false;
+end
+
+-- return a percentage of Coast to Land for all Revealed tiles, and num of Revealed tiles
+function PlayerCalculateIslandFactor(ePlayerID:number, iRange:number)
+	--print("FUN PlayerCalculateIslandFactor");
+	
+	local pPlayerVis:table = PlayersVisibility[ePlayerID];
+	local iLand:number, iCoast:number, iRev:number = 0, 0, 0;
+	for idx = 0, Map.GetPlotCount()-1 do
+		if pPlayerVis:IsRevealed(idx) then
+			iRev = iRev + 1;
+			local pPlot:table = Map.GetPlotByIndex(idx);
+			if IsPlotLand(pPlot) then
+				iLand = iLand + 1;
+				if HasWaterWithinRange(pPlot, iRange) then iCoast = iCoast + 1; end
+			end
+		end
+	end
+	--print("...rev/land/coast", iRev, iLand, iCoast);
+	if iLand == 0 then return 0, iRev; end -- should never happen for majors, may happen for Free Cities
+	return math.floor(iCoast * 100 / iLand), iRev;
+end
+
+local iThresholdPangea:number  = GlobalParameters.RST_NAVAL_THRESHOLD_PANGEA;
+local iThresholdCoastal:number = GlobalParameters.RST_NAVAL_THRESHOLD_COASTAL;
+local iThresholdIsland:number  = GlobalParameters.RST_NAVAL_THRESHOLD_ISLAND;
+
+function InitializeNaval()
+	print("Initial naval thresholds",iThresholdPangea,iThresholdCoastal,iThresholdIsland);
+	local iMapSize:number = math.floor( Map.GetPlotCount()/570 + 0.5 );
+	local iDelta:number = (iMapSize - GlobalParameters.RST_NAVAL_MAP_SIZE_DEFAULT) * GlobalParameters.RST_NAVAL_MAP_SIZE_SHIFT / 100;
+	print("Map Size & Delta", iMapSize, iDelta);
+	iThresholdPangea = iThresholdPangea + iDelta;
+	iThresholdCoastal = iThresholdCoastal + iDelta;
+	iThresholdIsland = iThresholdIsland + iDelta;
+	print("Final naval thresholds",iThresholdPangea,iThresholdCoastal,iThresholdIsland);
+end
+
+function RefreshNavalData(ePlayerID:number)
+	--print(Game.GetCurrentGameTurn(), "FUN RefreshNavalData", ePlayerID);
+
+	-- check if data needs to be refreshed
+	local data:table = tData[ePlayerID];
+	if data.TurnRefreshNaval == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
+	
+	-- active turns with game speed scaling
+	local iNumTurnsActive:number = GetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshNaval);
+	--if data.TurnRefreshNaval == -1 then iNumTurnsActive = GetNumTurnsScaled(Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn()); end
+	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...old naval strategy", data.ActiveNaval, "turn refresh", data.TurnRefreshNaval, "active for", iNumTurnsActive, "turns");
+	if iNumTurnsActive < GlobalParameters.RST_NAVAL_NUM_TURNS then
+		--print("...not active long enough");
+		return;
+	end
+	local iCoastFactor:number, iNumRevealed:number = PlayerCalculateIslandFactor(ePlayerID, 2);
+	
+	-- ok, time to determine the strategy
+	data.ActiveNaval = 1; -- default
+	if     iCoastFactor < iThresholdPangea  then data.ActiveNaval = 0; -- Pangea
+	elseif iCoastFactor > iThresholdIsland  then data.ActiveNaval = 3; -- Island
+	elseif iCoastFactor > iThresholdCoastal then data.ActiveNaval = 2; end -- Coastal
+	data.TurnRefreshNaval = Game.GetCurrentGameTurn();
+	data.NavalFactor = iCoastFactor;
+	data.NavalRevealed = iNumRevealed;
+	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTNAVAL", ePlayerID, "...factor/revealed", iCoastFactor, iNumRevealed, "active naval", data.ActiveNaval); end
+end
+
+function ActiveStrategyNaval(ePlayerID:number, iThreshold:number)
+	if ePlayerID == 62 or ePlayerID == 63 then return false; end
+	RefreshNavalData(ePlayerID);
+	return tData[ePlayerID].ActiveNaval == iThreshold;
+end
+GameEvents.ActiveStrategyNaval.Add(ActiveStrategyNaval);
+
+function ActiveStrategyLand(ePlayerID:number, iThreshold:number)
+	if ePlayerID == 62 or ePlayerID == 63 then return false; end
+	RefreshNavalData(ePlayerID);
+	return tData[ePlayerID].ActiveNaval < 2; -- includes 0 (Pangea) & 1 (Default)
+end
+GameEvents.ActiveStrategyLand.Add(ActiveStrategyLand);
 
 
 ------------------------------------------------------------------------------
@@ -1906,6 +1951,7 @@ function Initialize()
 	ExposedMembers.RST.PlayerGetNumCivsConverted = PlayerGetNumCivsConverted;
 	
 	InitializeData();
+	InitializeNaval();
 	
 	-- disable - StrategyConditions are called every turn, so it will auto-refresh when needed
 	--Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...

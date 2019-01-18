@@ -36,12 +36,13 @@
 -- NAVAL STRATEGIES
 -- These strategies activate based on a geo-situation assessed from revealed plots.
 -- The default situation (i.e. land with some coast only) does NOT trigger any specific strategy.
--- Minors are eligible too.
+-- Minors are eligible.
 -- Existing STRATEGY_NAVAL with all associated items will be reused as Coastal strategy
 -- ===========================================================================
 
 -- thresholds for the detection algorithm
 INSERT INTO GlobalParameters (Name, Value) VALUES
+('RST_NAVAL_NUM_TURNS', 4), -- frequency of the check
 ('RST_NAVAL_THRESHOLD_PANGEA',  20), -- Pangea if LESS than
 ('RST_NAVAL_THRESHOLD_COASTAL', 43), -- Coastal if MORE than
 ('RST_NAVAL_THRESHOLD_ISLAND',  80), -- Island if MORE than
@@ -50,12 +51,11 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 
 INSERT INTO Types (Type, Kind) VALUES
 ('RST_STRATEGY_PANGEA', 'KIND_VICTORY_STRATEGY'), -- heavy land, typical Pangea maps
---(   'STRATEGY_NAVAL', 'KIND_VICTORY_STRATEGY'), -- land with lots of coast, peninsulas, etc. Earth is such a map or small continents
 ('RST_STRATEGY_ISLAND', 'KIND_VICTORY_STRATEGY'); -- heavy water, small lands or islands, typical Islands or Archipelago maps
+-- STRATEGY_NAVAL -- land with lots of coast, peninsulas, etc. Earth is such a map or small continents
 
 INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
 ('RST_STRATEGY_PANGEA', NULL, 1),
---(   'STRATEGY_NAVAL', NULL, 1),
 ('RST_STRATEGY_ISLAND', NULL, 1);
 
 DELETE FROM StrategyConditions WHERE StrategyType = 'STRATEGY_NAVAL';
@@ -129,7 +129,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('NavalSettlementPreferences', 'Specific Resource', 0, 3, 'RESOURCE_COAL'); -- needed
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('RSTNavalOperations', 'NAVAL_SUPERIORITY', 1, 2),
+('RSTNavalOperations', 'NAVAL_SUPERIORITY', 1, 1),
 ('RSTNavalDistricts', 'DISTRICT_HARBOR', 1, 0), -- DISTRICT_ENTERTAINMENT_COMPLEX / DISTRICT_WATER_ENTERTAINMENT_COMPLEX
 ('RSTNavalScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 100),
 ('NavalPreferredTechs', 'TECH_SQUARE_RIGGING', 1, 0), -- !BUGGED!
@@ -230,22 +230,21 @@ INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
 ('RST_STRATEGY_EXPLORATION_NAVAL',  NULL, 1),
 ('RST_STRATEGY_EXPLORATION_ISLAND', NULL, 1);
 
-
 -- STRATEGY_EARLY_EXPLORATION
+UPDATE Strategies SET NumConditionsNeeded = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION';
 UPDATE StrategyConditions SET ThresholdValue = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION' AND ConditionFunction = 'Fewer Cities'; -- 1
 
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue, Disqualifier) VALUES
--- exclude existing one from Naval/Island
-('STRATEGY_EARLY_EXPLORATION', 'Call Lua Function', 'ActiveStrategyNaval', 2, 1),
-('STRATEGY_EARLY_EXPLORATION', 'Call Lua Function', 'ActiveStrategyNaval', 3, 1),
+-- apply existing strategy only for Pangea/Default
+('STRATEGY_EARLY_EXPLORATION', 'Call Lua Function', 'ActiveStrategyLand', 0, 0),
 -- Naval (aka Coastal)
-('RST_STRATEGY_EXPLORATION_NAVAL', 'Call Lua Function', 'ActiveStrategyNaval', 2, 0),
-('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Classical',                  NULL, 0, 1),
 ('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Not Major',                  NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Classical',                  NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_NAVAL', 'Call Lua Function', 'ActiveStrategyNaval', 2, 0),
 -- Island
-('RST_STRATEGY_EXPLORATION_ISLAND', 'Call Lua Function', 'ActiveStrategyNaval', 3, 0),
+('RST_STRATEGY_EXPLORATION_ISLAND',      'Is Not Major',                  NULL, 0, 1),
 ('RST_STRATEGY_EXPLORATION_ISLAND',       'Is Medieval',                  NULL, 0, 1),
-('RST_STRATEGY_EXPLORATION_ISLAND',      'Is Not Major',                  NULL, 0, 1);
+('RST_STRATEGY_EXPLORATION_ISLAND', 'Call Lua Function', 'ActiveStrategyNaval', 3, 0);
 
 
 /* AiScoutUses - All are put into in DefaultScoutUse with values in braces - values seem to show no. of units (100 = 1 unit)
