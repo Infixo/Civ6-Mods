@@ -8,6 +8,7 @@ print("Loading RealStrategy_InGameExp.lua from Real Strategy version "..GlobalPa
 
 
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
+local RST = ExposedMembers.RST;
 
 
 function PlayerGetWMDWeaponCount(ePlayerID:number, sWeaponType:string)
@@ -257,37 +258,62 @@ function PlayerGetBeliefs(ePlayerID:number)
 end
 
 
+-- storing persistent data on Game level
+function GameConfigurationSetValue(sSlot:string, value)
+	GameConfiguration.SetValue(sSlot, value);
+end
+
+-- retrieving persistent data on Game level
+function GameConfigurationGetValue(sSlot:string)
+	GameConfiguration.GetValue(sSlot);
+end
+
+-- storing persistent data on Player level
+function PlayerConfigurationSetValue(ePlayerID:number, sSlot:string, value)
+	PlayerConfigurations[ePlayerID]:SetValue(sSlot, value);
+end
+
+-- retrieving persistent data on Player level
+function PlayerConfigurationGetValue(ePlayerID:number, sSlot:string)
+	PlayerConfigurations[ePlayerID]:GetValue(sSlot);
+end
+
+
 function Initialize()
 	-- functions: Game
-	ExposedMembers.RST.GameIsVictoryEnabled         = GameIsVictoryEnabled;
-	ExposedMembers.RST.GameGetMaxGameTurns          = GameGetMaxGameTurns;
-	ExposedMembers.RST.GameGetAverageMilitaryStrength = GameGetAverageMilitaryStrength;
-	ExposedMembers.RST.GameGetAverageNumTechsResearched = GameGetAverageNumTechsResearched;
+	RST.GameConfigurationSetValue    = GameConfigurationSetValue;
+	RST.GameConfigurationGetValue    = GameConfigurationGetValue;
+	RST.GameIsVictoryEnabled         = GameIsVictoryEnabled;
+	RST.GameGetMaxGameTurns          = GameGetMaxGameTurns;
+	RST.GameGetAverageMilitaryStrength = GameGetAverageMilitaryStrength;
+	RST.GameGetAverageNumTechsResearched = GameGetAverageNumTechsResearched;
 	-- functions: City
-	ExposedMembers.RST.CityGetGreatWorkObjectType   = CityGetGreatWorkObjectType;
+	RST.CityGetGreatWorkObjectType   = CityGetGreatWorkObjectType;
 	-- functions: Player
-	ExposedMembers.RST.PlayerGetWMDWeaponCount      = PlayerGetWMDWeaponCount;
-	ExposedMembers.RST.PlayerGetNumWMDs             = PlayerGetNumWMDs;
-	ExposedMembers.RST.PlayerGetGreatWorkCount      = PlayerGetGreatWorkCount;
-	ExposedMembers.RST.PlayerGetNumTechsResearched  = PlayerGetNumTechsResearched;
-	ExposedMembers.RST.PlayerGetMilitaryStrength    = PlayerGetMilitaryStrength;
-	ExposedMembers.RST.PlayerGetSlottedPolicies     = PlayerGetSlottedPolicies;
-	ExposedMembers.RST.PlayerGetRecruitedGreatPeopleClasses = PlayerGetRecruitedGreatPeopleClasses;
-	ExposedMembers.RST.PlayerGetCurrentGovernment   = PlayerGetCurrentGovernment;
-	ExposedMembers.RST.PlayerGetNumCapturedCapitals = PlayerGetNumCapturedCapitals;
-	ExposedMembers.RST.PlayerHasOriginalCapital     = PlayerHasOriginalCapital;
-	ExposedMembers.RST.PlayerGetCultureVictoryProgress = PlayerGetCultureVictoryProgress;
-	ExposedMembers.RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
-	ExposedMembers.RST.PlayerHasSpaceport           = PlayerHasSpaceport;
-	ExposedMembers.RST.PlayerHasReligion            = PlayerHasReligion;
-	ExposedMembers.RST.PlayerGetNumCitiesFollowingReligion = PlayerGetNumCitiesFollowingReligion;
-	ExposedMembers.RST.PlayerGetTourism             = PlayerGetTourism;
-	ExposedMembers.RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;
-	ExposedMembers.RST.PlayerGetNumBeliefsEarned    = PlayerGetNumBeliefsEarned;
-	ExposedMembers.RST.PlayerGetBeliefs             = PlayerGetBeliefs;
+	RST.PlayerConfigurationSetValue  = PlayerConfigurationSetValue;
+	RST.PlayerConfigurationGetValue  = PlayerConfigurationGetValue;
+	RST.PlayerGetWMDWeaponCount      = PlayerGetWMDWeaponCount;
+	RST.PlayerGetNumWMDs             = PlayerGetNumWMDs;
+	RST.PlayerGetGreatWorkCount      = PlayerGetGreatWorkCount;
+	RST.PlayerGetNumTechsResearched  = PlayerGetNumTechsResearched;
+	RST.PlayerGetMilitaryStrength    = PlayerGetMilitaryStrength;
+	RST.PlayerGetSlottedPolicies     = PlayerGetSlottedPolicies;
+	RST.PlayerGetRecruitedGreatPeopleClasses = PlayerGetRecruitedGreatPeopleClasses;
+	RST.PlayerGetCurrentGovernment   = PlayerGetCurrentGovernment;
+	RST.PlayerGetNumCapturedCapitals = PlayerGetNumCapturedCapitals;
+	RST.PlayerHasOriginalCapital     = PlayerHasOriginalCapital;
+	RST.PlayerGetCultureVictoryProgress = PlayerGetCultureVictoryProgress;
+	RST.PlayerGetNumProjectsAdvanced = PlayerGetNumProjectsAdvanced;
+	RST.PlayerHasSpaceport           = PlayerHasSpaceport;
+	RST.PlayerHasReligion            = PlayerHasReligion;
+	RST.PlayerGetNumCitiesFollowingReligion = PlayerGetNumCitiesFollowingReligion;
+	RST.PlayerGetTourism             = PlayerGetTourism;
+	RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;
+	RST.PlayerGetNumBeliefsEarned    = PlayerGetNumBeliefsEarned;
+	RST.PlayerGetBeliefs             = PlayerGetBeliefs;
 	
 	-- objects
-	--ExposedMembers.RND.Calendar				= Calendar;
+	--RND.Calendar				= Calendar;
 end
 Initialize();
 

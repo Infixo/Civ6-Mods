@@ -4,6 +4,7 @@ print("Loading RealStrategy.lua from Real Strategy version "..GlobalParameters.R
 -- 2018-12-14: Created by Infixo
 -- ===========================================================================
 
+include("Serialize");
 
 -- InGame functions exposed here
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
@@ -13,14 +14,11 @@ local RST = ExposedMembers.RST;
 --local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 --print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
 
--- configuration options
+-- logging options
 local bLogDebug:boolean = ( GlobalParameters.RST_OPTION_LOG_DEBUG == 1 );
 local bLogStrat:boolean = ( GlobalParameters.RST_OPTION_LOG_STRAT == 1 );
 local bLogGuess:boolean = ( GlobalParameters.RST_OPTION_LOG_GUESS == 1 );
 local bLogOther:boolean = ( GlobalParameters.RST_OPTION_LOG_OTHER == 1 );
-local eOptionRand:number = GlobalParameters.RST_OPTION_RANDOM;
-local bUseRandom:boolean = ( eOptionRand ~= 0 );
-print("Randomization: "..(bUseRandom and ( eOptionRand == 1 and "ON (math.random)" or "ON (Game.GetRandNum)") or "OFF"));
 
 
 -- ===========================================================================
@@ -34,16 +32,17 @@ local Strategies:table = {
 	CULTURE  = 3, 
 	RELIGION = 4,
 	DIPLO    = 5, -- reserved for Gathering Storm
-	DEFENSE  = 6, -- supporting
-	NAVAL    = 7, -- supporting
-	TRADE    = 8, -- supporting
+	--DEFENSE  = 6, -- supporting
+	--NAVAL    = 7, -- supporting
+	--TRADE    = 8, -- supporting
 };
 --dshowtable(Strategies);
 
 local tShowStrat:table = { "CONQUEST", "SCIENCE", "CULTURE", "RELIGION" }; -- only these will be shown in logs and debugs
 
 local tData:table = {}; -- a table of data sets, one for each player
-ExposedMembers.RST.Data = tData; -- to access data in FireTuner
+RST.Data = tData; -- to access data in FireTuner
+
 local tPriorities:table = {}; -- a table of Priorities tables (flavors); constructed from DB
 
 local iMaxNumReligions:number = 0; -- maximum number of religions on this map
@@ -52,21 +51,6 @@ local iMaxNumReligions:number = 0; -- maximum number of religions on this map
 -- ===========================================================================
 -- DEBUG ROUTINES
 -- ===========================================================================
-
--- debug output routine
---[[
-function dprint(sStr,p1,p2,p3,p4,p5,p6)
-	--if true then return; end
-	local sOutStr = sStr;
-	if p1 ~= nil then sOutStr = sOutStr.." [1] "..tostring(p1); end
-	if p2 ~= nil then sOutStr = sOutStr.." [2] "..tostring(p2); end
-	if p3 ~= nil then sOutStr = sOutStr.." [3] "..tostring(p3); end
-	if p4 ~= nil then sOutStr = sOutStr.." [4] "..tostring(p4); end
-	if p5 ~= nil then sOutStr = sOutStr.." [5] "..tostring(p5); end
-	if p6 ~= nil then sOutStr = sOutStr.." [6] "..tostring(p6); end
-	print(Game.GetCurrentGameTurn(), sOutStr);
-end
---]]
 
 -- debug routine - prints a table (no recursion)
 function dshowtable(tTable:table)
@@ -120,6 +104,10 @@ end
 -- ===========================================================================
 -- MULTIPLAYER SUPPORT
 -- ===========================================================================
+
+local eOptionRand:number = GlobalParameters.RST_OPTION_RANDOM;
+local bUseRandom:boolean = ( eOptionRand ~= 0 );
+print("Randomization: "..(bUseRandom and ( eOptionRand == 1 and "ON (math.random)" or "ON (Game.GetRandNum)") or "OFF"));
 
 -- math.random(lower, upper): generates integer numbers between lower and upper (both inclusive)
 -- Game.GetRandNum(max):generates integer in range 0..max-1 (max is NOT included)
@@ -257,123 +245,6 @@ end
 -- CORE FUNCTIONS
 -- ===========================================================================
 
-------------------------------------------------------------------------------
--- Read flavors and parameters, initialize players
-function InitializeData()
-	--print("FUN InitializeData");
-	
-	-- get max religions
-	local mapSizeType:string = GameInfo.Maps[Map.GetMapSize()].MapSizeType;
-	for row in GameInfo.Map_GreatPersonClasses() do
-		if row.MapSizeType == mapSizeType and row.GreatPersonClassType == "GREAT_PERSON_CLASS_PROPHET" then
-			iMaxNumReligions = row.MaxWorldInstances;
-			break;
-		end
-	end
-	if bLogDebug then print("Max religions:", iMaxNumReligions); end
-
-	-- initialize players
-	for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
-		local data:table = {
-			PlayerID = playerID,
-			LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName(),
-			--Dirty = true,
-			TurnRefreshStrategy = -1, -- turn number when Strategy was refreshed last time (used with the counter)
-			ActiveStrategy = "NONE",
-			TurnRefreshData = -1, -- turn number when various other data was refreshed last time  (basically used each turn)
-			ActiveDefense = false,
-			ActiveCatching = false,
-			ActiveEnough = false,
-			ActivePeace = false,
-			ActiveAtWar = false,
-			ActiveScience = false,
-			ActiveCulture = false,
-			ActiveThreat = false,
-			-- more slots
-			ActiveMoreGWSlots = false,
-			TurnRefreshSlots = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
-			-- naval
-			ActiveNaval = 1, -- 0 Pangea, 1 Default, 2 Coastal (aka Naval), 3 Island
-			TurnRefreshNaval = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
-			NavalFactor = -1,
-			NavalRevealed = -1,
-			-- data refreshed every turn
-			OurMilitaryStrength = 0,
-			AvgMilitaryStrength = 0,
-			NumWars = 0,
-			--NumTurnsActive = 0,
-			Data = {}, -- this will be refreshed whenever needed, but only once per turn
-			Stored = {}, -- this will be stored between turns (persistent) and eventually perhaps in the save file
-		};
-		tData[playerID] = data;
-		if bLogDebug then print("...registering player", data.PlayerID, data.LeaderType); end
-	end
-	
-	-- initalize flavors
-	for flavor in GameInfo.RSTFlavors() do
-		local data:table = tPriorities[flavor.ObjectType];
-		if data == nil then
-			data = {
-				ObjectType = flavor.ObjectType,
-				Type = flavor.Type,
-				Subtype = flavor.Subtype,
-				Priorities = PriorityTableNew(),
-			};
-			tPriorities[flavor.ObjectType] = data;
-		end
-		data.Priorities[flavor.Strategy] = flavor.Value;
-	end
-	
-	-- randomize a bit leaders
-	if bUseRandom then
-		--for _,data in pairs(tPriorities) do
-		-- changed to avoid pairs (unknown order)
-		for _,row in ipairs(DB.Query("select LeaderType from Leaders where InheritFrom = 'LEADER_DEFAULT' order by LeaderType")) do
-			local data = tPriorities[row.LeaderType];
-			if data ~= nil and data.Type == "LEADER" then
-				local tRandom:table = PriorityTableRandom(GlobalParameters.RST_STRATEGY_LEADER_RANDOM);
-				--dshowpriorities(tRandom, "...randomizing "..data.ObjectType);
-				PriorityTableAdd(data.Priorities, tRandom);
-				PriorityTableMinMax(data.Priorities, 1, 9);
-				--dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
-			else
-				print("WARNING: InitializeData Priorities table for leader", row.LeaderType, "not defined."); return;
-			end
-		end
-	end
-	--[[
-	print("Table of priorities:"); -- debug
-	for objType,data in pairs(tPriorities) do
-		--print("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
-		dshowpriorities(data.Priorities, data.ObjectType);
-	end
-	--]]
-end
-
---[[
-Data
-- Each civ needs its own set of data - should be stored in the table []????
-- Not needed, assuming that all is refreshed!
-- However, it is possible that some data could be stored between turns, e.g. current strategy
-- Weights should be parameters
-
-Main function:
-- uses bDirty to mark dirty data
-- gather current data about ourselves
-- store each element in a table of priorities, with the name and weight?
-- recalculate (easy)
-- log results (details)
-- guess what others are doing
-- AI logic?
-
-Event functions
-- There will be many or few, but they will be called for many strategies, so multiple times
-- Recalculate only once and later just return quickly results
-- Need bDirty to mark the need to recalculate
-
-
-
---]]
 
 ------------------------------------------------------------------------------
 -- This function gathers data specific for a player that can be reused in many places, like Military Strength, Science Positions, Tourism, etc.
@@ -1006,8 +877,8 @@ function RefreshAndProcessData(ePlayerID:number)
 	--print(Game.GetCurrentGameTurn(), "FUN RefreshAndProcessData", ePlayerID);
 	
 	-- do all pre-checks so others won't have to
-	local pPlayer:table = Players[ePlayerID];
-	if not (pPlayer ~= nil and pPlayer:IsAlive() and pPlayer:IsMajor()) then return; end
+	--local pPlayer:table = Players[ePlayerID];
+	--if not (pPlayer ~= nil and pPlayer:IsAlive() and pPlayer:IsMajor()) then return; end
 	
 	-- check if data needs to be refreshed
 	local data:table = tData[ePlayerID];
@@ -1127,7 +998,7 @@ function RefreshAndProcessData(ePlayerID:number)
 		end 
 		print(table.concat(tLog, ", "));
 	end
-	
+	SavePlayerData(ePlayerID);
 	--dshowrectable(tData[ePlayerID]); -- show all info
 end
 
@@ -1534,28 +1405,27 @@ end
 -- GAME EVENTS
 -- ===========================================================================
 
--- ===========================================================================
-function OnLoadScreenClose()
-	print("FUN OnLoadScreenClose");
-end
-
-
 ------------------------------------------------------------------------------
 -- PlayerTurnActivated = { "player", "bIsFirstTime" },
--- TESTING MODE - it should be deactivated later, there is no need to call this here 
+-- TESTING - it should be deactivated later, there is no need to call this here
+--[[
 function OnPlayerTurnActivated( ePlayerID:number, bIsFirstTime:boolean)
 	print("FUN OnPlayerTurnActivated", ePlayerID, bIsFirstTime);
 	RefreshAndProcessData(ePlayerID);
 end
+--]]
 
 ------------------------------------------------------------------------------
 -- PlayerTurnDeactivated = { "player" },
+-- TESTING
+--[[
 function OnPlayerTurnDeactivated(ePlayerID:number)
 	print("FUN OnPlayerTurnDeactivated", ePlayerID);
 	local pPlayer:table = Players[ePlayerID];
 	if not (pPlayer ~= nil and pPlayer:IsAlive() and pPlayer:IsMajor()) then return; end
 	tData[ePlayerID].Dirty = true; -- default mode - later can be changed for specific events (e.g. Policy changed, gov changed, etc.)
 end
+--]]
 
 
 ------------------------------------------------------------------------------
@@ -1563,12 +1433,12 @@ end
 -- Called separately for each player, including Minors, Free Cities and Barbarians
 -- For player X it is called BEFORE PlayerTurnActivated(X)
 -- For a Human, it is called AFTER LocalPlayerTurnBegin, but before PlayerTurnActivated(0)
+-- Please note that Conditions are checked in the order they are defined in the DB, so it is
+-- recommended to put Disqualifers at the begining i.e. for Minors
 ------------------------------------------------------------------------------
 
 function ActiveStrategyConquest(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyConquest", ePlayerID, iThreshold);
-	--local pPlayer:table = Players[ePlayerID];
-	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "CONQUEST");
 	return tData[ePlayerID].ActiveStrategy == "CONQUEST";
@@ -1577,8 +1447,6 @@ GameEvents.ActiveStrategyConquest.Add(ActiveStrategyConquest);
 
 function ActiveStrategyScience(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyScience", ePlayerID, iThreshold);
-	--local pPlayer:table = Players[ePlayerID];
-	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "SCIENCE");
 	return tData[ePlayerID].ActiveStrategy == "SCIENCE";
@@ -1587,8 +1455,6 @@ GameEvents.ActiveStrategyScience.Add(ActiveStrategyScience);
 
 function ActiveStrategyCulture(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyCulture", ePlayerID, iThreshold);
-	--local pPlayer:table = Players[ePlayerID];
-	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "CULTURE");
 	return tData[ePlayerID].ActiveStrategy == "CULTURE";
@@ -1597,8 +1463,6 @@ GameEvents.ActiveStrategyCulture.Add(ActiveStrategyCulture);
 
 function ActiveStrategyReligion(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyReligion", ePlayerID, iThreshold);
-	--local pPlayer:table = Players[ePlayerID];
-	--if not (pPlayer:IsAlive() and pPlayer:IsMajor()) then return false; end
 	RefreshAndProcessData(ePlayerID);
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "RELIGION");
 	return tData[ePlayerID].ActiveStrategy == "RELIGION";
@@ -1659,6 +1523,7 @@ function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
 	-- war -> war: 50-10 - must stop a bit earlier, because cities will produce units from the queue - I could include units in production - need special function for that
 	-- for _,c in Players[1]:GetCities():Members() do print(c:GetName(),c:GetBuildQueue():CurrentlyBuilding()) end
 	-- war -> peace: stops immediately
+	SavePlayerData(ePlayerID);
 	return data.ActiveDefense;
 end
 GameEvents.ActiveStrategyDefense.Add(ActiveStrategyDefense);
@@ -1678,6 +1543,7 @@ function ActiveStrategyCatching(ePlayerID:number, iThreshold:number)
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
 	data.ActiveCatching = iOurPower*100 < data.Data.AvgMilStr*iThreshold;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCATCH", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveCatching); end
+	SavePlayerData(ePlayerID);
 	return data.ActiveCatching;
 end
 GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
@@ -1697,6 +1563,7 @@ function ActiveStrategyEnough(ePlayerID:number, iThreshold:number)
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
 	data.ActiveEnough = iOurPower*100 > data.Data.AvgMilStr*iThreshold;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTENOUG", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveEnough); end
+	SavePlayerData(ePlayerID);
 	return data.ActiveEnough;
 end
 GameEvents.ActiveStrategyEnough.Add(ActiveStrategyEnough);
@@ -1710,6 +1577,7 @@ function ActiveStrategyPeace(ePlayerID:number, iThreshold:number)
 	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
 	data.ActivePeace = iNumWars == 0;
 	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTPEACE", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActivePeace); end
+	SavePlayerData(ePlayerID);
 	return data.ActivePeace;
 end
 GameEvents.ActiveStrategyPeace.Add(ActiveStrategyPeace);
@@ -1723,6 +1591,7 @@ function ActiveStrategyAtWar(ePlayerID:number, iThreshold:number)
 	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
 	data.ActiveAtWar = iNumWars > 0;
 	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTATWAR", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActiveAtWar); end
+	SavePlayerData(ePlayerID);
 	return data.ActiveAtWar;
 end
 GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
@@ -1746,6 +1615,7 @@ function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
 	-- threshold: 0.1 * num + 1, it gives nice 2,3,4,.. for 10,20,30,.. techs => call with iThreshold = 90
 	data.ActiveScience = iOurTechs*100 < data.Data.AvgTechs*iThreshold - 150; -- 1 tech = 100
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTSCIEN", ePlayerID, iThreshold, "...techs our/avg", iOurTechs, data.Data.AvgTechs, "active?", data.ActiveScience); end
+	SavePlayerData(ePlayerID);
 end
 GameEvents.ActiveStrategyMoreScience.Add(ActiveStrategyMoreScience);
 
@@ -1769,6 +1639,7 @@ function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 	-- culture reaches high values, so we can go with just %, approx. 75-80%
 	data.ActiveCulture = iOurCulture*100 < data.Data.AvgCulture*iThreshold;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCULTR", ePlayerID, iThreshold, "...culture our/avg", iOurCulture, data.Data.AvgCulture, "active?", data.ActiveCulture); end
+	SavePlayerData(ePlayerID);
 end
 GameEvents.ActiveStrategyMoreCulture.Add(ActiveStrategyMoreCulture);
 
@@ -1872,6 +1743,7 @@ function RefreshNavalData(ePlayerID:number)
 	data.NavalFactor = iCoastFactor;
 	data.NavalRevealed = iNumRevealed;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTNAVAL", ePlayerID, "...factor/revealed", iCoastFactor, iNumRevealed, "active naval", data.ActiveNaval); end
+	SavePlayerData(ePlayerID);
 end
 
 function ActiveStrategyNaval(ePlayerID:number, iThreshold:number)
@@ -1912,76 +1784,268 @@ end
 GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
 
 
+-- ===========================================================================
+-- SAVING/LOADING PERSISTENT DATA
+-- ===========================================================================
+-- 1. Saving - all data is saved in SaveAllData function called in events that change the data
+--   Warning! Cannot use SaveComplete - its called AFTER the actual save.
+-- 2. Loading - little more complex
+--   2a. Initialize - cannot use ExposedMembers
+--		i. get constant data (map/game parameters)
+--		ii. retrieve config parameters
+--		iii. initialize objects with DB data
+--		This step should leave all save-file related data empty, like in a newly created game
+--   2b. LoadComplete
+--		i. Random Leader flavors.
+--		ii. Current game state.
+--   2c. LoadScreenClose - basically nothing to do?
+
+------------------------------------------------------------------------------
+-- Save player and game related data into Game and Player Values
+-- Serialize values using serialize()
+
+function SaveDataInGameSlot(sSlotName:string, data)
+	print("FUN SaveDataInGameSlot() (slot,type)", sSlotName, type(data));
+	dshowrectable(data);
+	local sData = serialize(data);
+	print("---->>", sData);
+	RST.GameConfigurationSetValue(sSlotName, sData);
+	local sCheck:string = RST.GameConfigurationGetValue(sSlotName);
+	print("check:", sCheck);
+end
+
+function SaveDataToPlayerSlot(ePlayerID:number, sSlotName:string, data)
+	print("FUN SaveDataToPlayerSlot (pid,slot,type)", ePlayerID, sSlotName, type(data));
+	dshowrectable(data);
+	local sData = serialize(data);
+	print("-->>", sData);
+	RST.PlayerConfigurationSetValue(ePlayerID, sSlotName, sData);
+	local sCheck:string = RST.PlayerConfigurationGetValue(ePlayerID, sSlotName);
+	print("check:", sCheck);
+end
+
+function SavePlayerData(ePlayerID:number)
+	print("FUN SavePlayerData", ePlayerID);
+	SaveDataToPlayerSlot(ePlayerID, "RSTPlayerData", tData[ePlayerID]);
+end
+
+
+------------------------------------------------------------------------------
+-- Load persistent data (careful - it is BEFORE OnLoadScreenClose)
+-- Deserialize values using loadstring()
+
+function LoadDataFromGameSlot(sSlotName:string)
+	print("FUN LoadDataFromGameSlot() (slot)", sSlotName);
+	local sData:string = GameConfiguration.GetValue(sSlotName);
+	print("<<--", sData);
+	if sData == nil then print("WARNING: LoadDataFromGameSlot no data in slot", sSlotName); return {}; end
+	local tTable = loadstring(sData)();
+	dshowrectable(tTable);
+	return tTable;
+end
+
+function LoadDataFromPlayerSlot(ePlayerID:number, sSlotName:string)
+	print("FUN LoadDataFromPlayerSlot() (pid,slot)", ePlayerID, sSlotName);
+	local sData:string = RST.PlayerConfigurationGetValue(ePlayerID, sSlotName);
+	print("<<--", sData);
+	if sData == nil then print("WARNING: LoadDataFromPlayerSlot no data in slot", sSlotName, "for player", ePlayerID); return nil; end
+	local tTable = loadstring(sData)();
+	dshowrectable(tTable);
+	return tTable;
+end
+
+-- this event is called ONLY when loading a save file
+function OnLoadComplete()
+	print("FUN OnLoadComplete");
+	-- initialize players from a save file
+	print("--- LOADING PLAYERS ---");
+	for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
+		local data:table = LoadDataFromPlayerSlot(playerID, "RSTPlayerData");
+		if data ~= nil then -- but make sure we really loaded the data
+			tData[playerID] = data;
+			if bLogDebug then print("...loaded player", data.PlayerID, data.LeaderType); end
+			dshowrectable(tData[playerID]);
+		end
+	end
+	print("--- END LOADING PLAYERS ---");
+end
+
+function OnLoadScreenClose()
+	print("FUN OnLoadScreenClose");
+	InitializeRandomFlavors();
+end
+
+
+-- ===========================================================================
+-- INITIALIZE
+-- ===========================================================================
+
+--[[
+Data
+- Each civ needs its own set of data - should be stored in the table []????
+- Not needed, assuming that all is refreshed!
+- However, it is possible that some data could be stored between turns, e.g. current strategy
+- Weights should be parameters
+
+Main function:
+- uses bDirty to mark dirty data
+- gather current data about ourselves
+- store each element in a table of priorities, with the name and weight?
+- recalculate (easy)
+- log results (details)
+- guess what others are doing
+- AI logic?
+
+Event functions
+- There will be many or few, but they will be called for many strategies, so multiple times
+- Recalculate only once and later just return quickly results
+- Need bDirty to mark the need to recalculate
+--]]
+
+------------------------------------------------------------------------------
+-- Read flavors and parameters, initialize players
+function InitializeData()
+	print("FUN InitializeData");
+	
+	-- get max religions
+	local mapSizeType:string = GameInfo.Maps[Map.GetMapSize()].MapSizeType;
+	for row in GameInfo.Map_GreatPersonClasses() do
+		if row.MapSizeType == mapSizeType and row.GreatPersonClassType == "GREAT_PERSON_CLASS_PROPHET" then
+			iMaxNumReligions = row.MaxWorldInstances;
+			break;
+		end
+	end
+	if bLogDebug then print("Max religions:", iMaxNumReligions); end
+
+	-- initialize players
+	for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
+		local data:table = {
+			PlayerID = playerID,
+			LeaderType = PlayerConfigurations[playerID]:GetLeaderTypeName(),
+			--Dirty = true,
+			TurnRefreshStrategy = -1, -- turn number when Strategy was refreshed last time (used with the counter)
+			ActiveStrategy = "NONE",
+			TurnRefreshData = -1, -- turn number when various other data was refreshed last time  (basically used each turn)
+			ActiveDefense = false,
+			ActiveCatching = false,
+			ActiveEnough = false,
+			ActivePeace = false,
+			ActiveAtWar = false,
+			ActiveScience = false,
+			ActiveCulture = false,
+			ActiveThreat = false,
+			-- more slots
+			ActiveMoreGWSlots = false,
+			TurnRefreshSlots = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
+			-- naval
+			ActiveNaval = 1, -- 0 Pangea, 1 Default, 2 Coastal (aka Naval), 3 Island
+			TurnRefreshNaval = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
+			NavalFactor = -1,
+			NavalRevealed = -1,
+			-- data refreshed every turn
+			OurMilitaryStrength = 0,
+			AvgMilitaryStrength = 0,
+			NumWars = 0,
+			--NumTurnsActive = 0,
+			Data = {}, -- this will be refreshed whenever needed, but only once per turn
+			Stored = {}, -- this will be stored between turns (persistent) and eventually perhaps in the save file
+		};
+		tData[playerID] = data;
+		if bLogDebug then print("...registering player", data.PlayerID, data.LeaderType); end
+	end
+	
+	-- initalize flavors
+	for flavor in GameInfo.RSTFlavors() do
+		local data:table = tPriorities[flavor.ObjectType];
+		if data == nil then
+			data = {
+				ObjectType = flavor.ObjectType,
+				Type = flavor.Type,
+				Subtype = flavor.Subtype,
+				Priorities = PriorityTableNew(),
+			};
+			tPriorities[flavor.ObjectType] = data;
+		end
+		data.Priorities[flavor.Strategy] = flavor.Value;
+	end
+	
+	--[[
+	print("Table of priorities:"); -- debug
+	for objType,data in pairs(tPriorities) do
+		--print("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
+		dshowpriorities(data.Priorities, data.ObjectType);
+	end
+	--]]
+end
+
+
+-- randomize a bit leaders
+-- this will called afer the game is loaded, so it will either get saved data or generate new ones
+
+function InitializeRandomFlavors()
+	print("FUN InitializeRandomFlavors");
+	
+	if not bUseRandom then return; end -- no randomization at all
+	
+	local sData:string = GameConfiguration.GetValue("RSTRandomFlavors");
+	local tRandomData:table = {};
+
+	if sData ~= nil then
+		-- load from save file
+		print("...RSTRandomFlavors EXISTS - load data");
+		tRandomData = LoadDataFromGameSlot("RSTRandomFlavors");
+	else
+		-- generate new ones
+		print("...RSTRandomFlavors NOT exists - generate randoms");
+		
+		-- changed to avoid pairs (unknown order)
+		for _,row in ipairs(DB.Query("select LeaderType from Leaders where InheritFrom = 'LEADER_DEFAULT' order by LeaderType")) do
+			local tRandomFlavors:table = PriorityTableRandom(GlobalParameters.RST_STRATEGY_LEADER_RANDOM);
+			dshowpriorities(tRandomFlavors, "...randomizing "..row.LeaderType);
+			tRandomData[row.LeaderType] = tRandomFlavors;
+		end
+		-- store for the future
+		SaveDataInGameSlot("RSTRandomFlavors", tRandomData);
+	end
+	
+	print("*** data in tRandomData ***");
+	dshowrectable(tRandomData);
+	
+	-- apply random values - only for leaders retrieved/generated, order doesn't matter here
+	for leaderType, randomFlavors in pairs(tRandomData) do
+		local data = tPriorities[leaderType];
+		if data ~= nil and data.Type == "LEADER" then
+			local tRandom:table = 
+			dshowpriorities(randomFlavors, "...randomizing "..data.ObjectType);
+			PriorityTableAdd(data.Priorities, randomFlavors);
+			PriorityTableMinMax(data.Priorities, 1, 9);
+			dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
+		else
+			print("WARNING: InitializeRandomFlavors Priorities table for leader", leaderType, "not defined.");
+		end
+	end
+end
+
+
 ------------------------------------------------------------------------------
 function Initialize()
-	--print("FUN Initialize");
+	print("FUN Initialize");
 	
 	-- for FireTuner
 	ExposedMembers.RST.PlayerGetNumProjectsSpaceRace = PlayerGetNumProjectsSpaceRace;
 	ExposedMembers.RST.PlayerGetNumCivsConverted = PlayerGetNumCivsConverted;
 	ExposedMembers.RST.GameGetNumTurnsScaled = GameGetNumTurnsScaled;
 	
+	-- this part must NOT use ExposedMembers
+	--Initialize_Parameters();
+	--Initialize_Objects();
 	InitializeData();
 	InitializeNaval();
-	
-	-- disable - StrategyConditions are called every turn, so it will auto-refresh when needed
-	--Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
-	--Events.PlayerTurnDeactivated.Add( OnPlayerTurnDeactivated );  -- main event for any player end (including minors)
 
-	--Events.LoadScreenClose.Add ( OnLoadScreenClose );   -- fires when Game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete
-	-- these events fire AFTER custom PlayerTurnActivated()
-	--Events.CityProductionCompleted.Add( OnCityProductionCompleted );
-	--Events.CityProjectCompleted.Add( OnCityProjectCompleted );
-	--Events.UnitGreatPersonCreated.Add( OnUnitGreatPersonCreated );
-	--Events.TechBoostTriggered.Add( OnTechBoostTriggered );
-	--Events.CivicBoostTriggered.Add( OnCivicBoostTriggered );
-	--Events.ResearchCompleted.Add( OnResearchComplete );
-	--Events.CivicCompleted.Add( OnCivicComplete );
-	--Events.CityAddedToMap.Add( OnCityAddedToMap );
-	--Events.DistrictAddedToMap.Add( OnDistrictAddedToMap );
-	--Events.ImprovementAddedToMap.Add( OnImprovementAddedToMap );
-	--Events.UnitAddedToMap.Add( OnUnitAddedToMap );
-	--Events.UnitMoved.Add( OnUnitMoved );
-	--Events.UnitMoveComplete.Add( OnUnitMoveComplete );
-	--Events.DiplomacyMeet.Add( OnDiplomacyMeet );
-	--Events.DiplomacyRelationshipChanged.Add( OnDiplomacyMeet );
-	--Events.InfluenceChanged.Add( OnDiplomacyMeet );
-	--Events.InfluenceGiven.Add( OnInfluenceGiven );
-	--Events.CityReligionFollowersChanged.Add( OnCityReligionFollowersChanged ); -- this event fires every turn, for each city, very often!
-	--Events.GreatWorkCreated.Add( OnGreatWorkCreated );
-	--Events.GovernmentChanged.Add( OnGovernmentChanged );
+	-- loading persistent data
+	Events.LoadComplete.Add( OnLoadComplete ); -- fires after loading a game, when it's ready to start (i.e. circle button)
+	Events.LoadScreenClose.Add ( OnLoadScreenClose );  -- fires when the game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete
 	
-	-- more pre-events to check
-	--Events.LoadComplete.Add( OnLoadComplete );  -- fires after loading a game, when it's ready to start (i.e. circle button)
-	--Events.LoadScreenClose.Add ( OnLoadScreenClose );   -- fires then Game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete
-	--Events.SaveComplete.Add( OnSaveComplete );  -- fires after save is completed, and Main Game Menu is displayed
-	--Events.AppInitComplete.Add( OnAppInitComplete );
-	--Events.GameViewStateDone.Add( OnGameViewStateDone );
-	--Events.RequestSave.Add( OnRequestSave );  -- didn't fire
-	--Events.RequestLoad.Add( OnRequestLoad );  -- didn't fire
-	
-	-- initialize events - starting events
-	--Events.LocalPlayerChanged.Add( OnLocalPlayerChanged );  -- fires in-between TurnEnd and TurnBegin
-	--Events.PreTurnBegin.Add( OnPreTurnBegin );  -- fires ONCE at start of turn, before actual Turn start
-	--Events.TurnBegin.Add( OnTurnBegin );  -- fires ONCE at the start of Turn
-	--Events.PhaseBegin.Add( OnPhaseBegin );  -- engine?
-	--Events.LocalPlayerTurnBegin.Add( OnLocalPlayerTurnBegin );  -- event for LOCAL player only (i.e. HUMANS), fires BEFORE PlayerTurnActivated
-	--Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
-	-- these events fire AFTER custom PlayerTurnActivated()
-	--Events.CityProductionCompleted.Add(	OnCityProductionCompleted );
-	--Events.CityProjectCompleted.Add( OnCityProjectComplete );	
-	--Events.TechBoostTriggered.Add( OnTechBoostTriggered );
-	--Events.CivicBoostTriggered.Add( OnCivicBoostTriggered );
-	--Events.ResearchCompleted.Add( OnResearchComplete );
-	--Events.CivicCompleted.Add( OnCivicComplete );
-	
-	-- HERE YOU PLAY GAME AS HUMAN
-	-- initialize events - finishing events
-	--Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );  -- fires only for HUMANS
-	--Events.PhaseEnd.Add( OnPhaseEnd );  -- engine?
-	--Events.TurnEnd.Add( OnTurnEnd );  -- fires ONCE at end of turn
-	--Events.EndTurnDirty.Add( OnEndTurnDirty );  -- engine event, triggers very often
-
 end	
 Initialize();
 

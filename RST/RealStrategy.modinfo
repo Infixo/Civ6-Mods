@@ -40,6 +40,9 @@
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
+		<ImportFiles id="RST_Imports">
+			<File>Lua/Serialize.lua</File>
+		</ImportFiles>
 		<UpdateDatabase id="RST_DB_Main">
 			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
 			<File>RealStrategy_Params.sql</File>
@@ -107,5 +110,6 @@
 		<File>Lua/RealStrategy_GreatPeople.xml</File>
 		<File>Lua/RealStrategy_InGameExp.lua</File>
 		<File>Lua/RealStrategy_InGameExp.xml</File>
+		<File>Lua/Serialize.lua</File>
 	</Files>
 </Mod>
