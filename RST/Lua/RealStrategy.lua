@@ -998,7 +998,7 @@ function RefreshAndProcessData(ePlayerID:number)
 		end 
 		print(table.concat(tLog, ", "));
 	end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "RefreshAndProcessData");
 	--dshowrectable(tData[ePlayerID]); -- show all info
 end
 
@@ -1523,7 +1523,7 @@ function ActiveStrategyDefense(ePlayerID:number, iThreshold:number)
 	-- war -> war: 50-10 - must stop a bit earlier, because cities will produce units from the queue - I could include units in production - need special function for that
 	-- for _,c in Players[1]:GetCities():Members() do print(c:GetName(),c:GetBuildQueue():CurrentlyBuilding()) end
 	-- war -> peace: stops immediately
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyDefense");
 	return data.ActiveDefense;
 end
 GameEvents.ActiveStrategyDefense.Add(ActiveStrategyDefense);
@@ -1543,7 +1543,7 @@ function ActiveStrategyCatching(ePlayerID:number, iThreshold:number)
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
 	data.ActiveCatching = iOurPower*100 < data.Data.AvgMilStr*iThreshold;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCATCH", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveCatching); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyCatching");
 	return data.ActiveCatching;
 end
 GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
@@ -1563,7 +1563,7 @@ function ActiveStrategyEnough(ePlayerID:number, iThreshold:number)
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
 	data.ActiveEnough = iOurPower*100 > data.Data.AvgMilStr*iThreshold;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTENOUG", ePlayerID, iThreshold, "...power our/theirs", iOurPower, data.Data.AvgMilStr, "active?", data.ActiveEnough); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyEnough");
 	return data.ActiveEnough;
 end
 GameEvents.ActiveStrategyEnough.Add(ActiveStrategyEnough);
@@ -1577,7 +1577,7 @@ function ActiveStrategyPeace(ePlayerID:number, iThreshold:number)
 	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
 	data.ActivePeace = iNumWars == 0;
 	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTPEACE", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActivePeace); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyPeace");
 	return data.ActivePeace;
 end
 GameEvents.ActiveStrategyPeace.Add(ActiveStrategyPeace);
@@ -1591,7 +1591,7 @@ function ActiveStrategyAtWar(ePlayerID:number, iThreshold:number)
 	local iNumWars:number, _ = PlayerGetNumWars(ePlayerID);
 	data.ActiveAtWar = iNumWars > 0;
 	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTATWAR", ePlayerID, iThreshold, "...wars", iNumWars, "active?", data.ActiveAtWar); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyAtWar");
 	return data.ActiveAtWar;
 end
 GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
@@ -1615,7 +1615,7 @@ function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
 	-- threshold: 0.1 * num + 1, it gives nice 2,3,4,.. for 10,20,30,.. techs => call with iThreshold = 90
 	data.ActiveScience = iOurTechs*100 < data.Data.AvgTechs*iThreshold - 150; -- 1 tech = 100
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTSCIEN", ePlayerID, iThreshold, "...techs our/avg", iOurTechs, data.Data.AvgTechs, "active?", data.ActiveScience); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyMoreScience");
 end
 GameEvents.ActiveStrategyMoreScience.Add(ActiveStrategyMoreScience);
 
@@ -1639,7 +1639,7 @@ function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 	-- culture reaches high values, so we can go with just %, approx. 75-80%
 	data.ActiveCulture = iOurCulture*100 < data.Data.AvgCulture*iThreshold;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCULTR", ePlayerID, iThreshold, "...culture our/avg", iOurCulture, data.Data.AvgCulture, "active?", data.ActiveCulture); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "ActiveStrategyMoreCulture");
 end
 GameEvents.ActiveStrategyMoreCulture.Add(ActiveStrategyMoreCulture);
 
@@ -1707,14 +1707,14 @@ local iThresholdCoastal:number = GlobalParameters.RST_NAVAL_THRESHOLD_COASTAL;
 local iThresholdIsland:number  = GlobalParameters.RST_NAVAL_THRESHOLD_ISLAND;
 
 function InitializeNaval()
-	print("Initial naval thresholds",iThresholdPangea,iThresholdCoastal,iThresholdIsland);
+	if bLogDebug then print("Initial naval thresholds",iThresholdPangea,iThresholdCoastal,iThresholdIsland); end
 	local iMapSize:number = math.floor( Map.GetPlotCount()/570 + 0.5 );
 	local iDelta:number = (iMapSize - GlobalParameters.RST_NAVAL_MAP_SIZE_DEFAULT) * GlobalParameters.RST_NAVAL_MAP_SIZE_SHIFT / 100;
-	print("Map Size & Delta", iMapSize, iDelta);
+	if bLogDebug then print("Map Size & Delta", iMapSize, iDelta); end
 	iThresholdPangea = iThresholdPangea + iDelta;
 	iThresholdCoastal = iThresholdCoastal + iDelta;
 	iThresholdIsland = iThresholdIsland + iDelta;
-	print("Final naval thresholds",iThresholdPangea,iThresholdCoastal,iThresholdIsland);
+	if bLogDebug then print("Final naval thresholds",iThresholdPangea,iThresholdCoastal,iThresholdIsland); end
 end
 
 function RefreshNavalData(ePlayerID:number)
@@ -1743,7 +1743,7 @@ function RefreshNavalData(ePlayerID:number)
 	data.NavalFactor = iCoastFactor;
 	data.NavalRevealed = iNumRevealed;
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTNAVAL", ePlayerID, "...factor/revealed", iCoastFactor, iNumRevealed, "active naval", data.ActiveNaval); end
-	SavePlayerData(ePlayerID);
+	SavePlayerData(ePlayerID, "RefreshNavalData");
 end
 
 function ActiveStrategyNaval(ePlayerID:number, iThreshold:number)
@@ -1787,7 +1787,7 @@ GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
 -- ===========================================================================
 -- SAVING/LOADING PERSISTENT DATA
 -- ===========================================================================
--- 1. Saving - all data is saved in SaveAllData function called in events that change the data
+-- 1. Saving - all data is saved in SavePlayerData function called in events that change the data
 --   Warning! Cannot use SaveComplete - its called AFTER the actual save.
 -- 2. Loading - little more complex
 --   2a. Initialize - cannot use ExposedMembers
@@ -1800,32 +1800,34 @@ GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
 --		ii. Current game state.
 --   2c. LoadScreenClose - basically nothing to do?
 
+local iDataVersion = 1; -- internal number for versioning data stored in save files
+
 ------------------------------------------------------------------------------
 -- Save player and game related data into Game and Player Values
 -- Serialize values using serialize()
 
-function SaveDataInGameSlot(sSlotName:string, data)
-	print("FUN SaveDataInGameSlot() (slot,type)", sSlotName, type(data));
-	dshowrectable(data);
+function SaveDataToGameSlot(sSlotName:string, data)
+	--print("FUN SaveDataToGameSlot() (slot,type)", sSlotName, type(data));
+	--dshowrectable(data);
 	local sData = serialize(data);
-	print("---->>", sData);
+	--print("-->>", sData);
 	RST.GameConfigurationSetValue(sSlotName, sData);
-	local sCheck:string = RST.GameConfigurationGetValue(sSlotName);
-	print("check:", sCheck);
+	--local sCheck:string = RST.GameConfigurationGetValue(sSlotName);
+	--print("check:", sCheck == sData);
 end
 
 function SaveDataToPlayerSlot(ePlayerID:number, sSlotName:string, data)
-	print("FUN SaveDataToPlayerSlot (pid,slot,type)", ePlayerID, sSlotName, type(data));
-	dshowrectable(data);
+	--print("FUN SaveDataToPlayerSlot (pid,slot,type)", ePlayerID, sSlotName, type(data));
+	--dshowrectable(data);
 	local sData = serialize(data);
-	print("-->>", sData);
+	--print("-->>", sData);
 	RST.PlayerConfigurationSetValue(ePlayerID, sSlotName, sData);
-	local sCheck:string = RST.PlayerConfigurationGetValue(ePlayerID, sSlotName);
-	print("check:", sCheck);
+	--local sCheck:string = RST.PlayerConfigurationGetValue(ePlayerID, sSlotName);
+	--print("check:", sCheck == sData);
 end
 
-function SavePlayerData(ePlayerID:number)
-	print("FUN SavePlayerData", ePlayerID);
+function SavePlayerData(ePlayerID:number, sFunction:string)
+	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN SavePlayerData", ePlayerID, sFunction); end
 	SaveDataToPlayerSlot(ePlayerID, "RSTPlayerData", tData[ePlayerID]);
 end
 
@@ -1835,44 +1837,56 @@ end
 -- Deserialize values using loadstring()
 
 function LoadDataFromGameSlot(sSlotName:string)
-	print("FUN LoadDataFromGameSlot() (slot)", sSlotName);
-	local sData:string = GameConfiguration.GetValue(sSlotName);
-	print("<<--", sData);
-	if sData == nil then print("WARNING: LoadDataFromGameSlot no data in slot", sSlotName); return {}; end
+	--print("FUN LoadDataFromGameSlot() (slot)", sSlotName);
+	local sData:string = RST.GameConfigurationGetValue(sSlotName);
+	--print("<<--", sData);
+	if sData == nil then print("WARNING: LoadDataFromGameSlot no data in slot", sSlotName); return nil; end
 	local tTable = loadstring(sData)();
-	dshowrectable(tTable);
+	--dshowrectable(tTable);
 	return tTable;
 end
 
 function LoadDataFromPlayerSlot(ePlayerID:number, sSlotName:string)
-	print("FUN LoadDataFromPlayerSlot() (pid,slot)", ePlayerID, sSlotName);
+	--print("FUN LoadDataFromPlayerSlot() (pid,slot)", ePlayerID, sSlotName);
 	local sData:string = RST.PlayerConfigurationGetValue(ePlayerID, sSlotName);
-	print("<<--", sData);
+	--print("<<--", sData);
 	if sData == nil then print("WARNING: LoadDataFromPlayerSlot no data in slot", sSlotName, "for player", ePlayerID); return nil; end
 	local tTable = loadstring(sData)();
-	dshowrectable(tTable);
+	--dshowrectable(tTable);
 	return tTable;
 end
 
 -- this event is called ONLY when loading a save file
 function OnLoadComplete()
-	print("FUN OnLoadComplete");
+	--print("FUN OnLoadComplete");
+	-- check data version
+	local iSaveFileVersion = LoadDataFromGameSlot("RSTDataVersion");
+	if iSaveFileVersion ~= iDataVersion then
+		if bLogDebug then print("WARNING: OnLoadComplete Different data version, not loading (ver/save)", iDataVersion, iSaveFileVersion); end
+		return;
+	end
 	-- initialize players from a save file
-	print("--- LOADING PLAYERS ---");
+	if bLogDebug then print("--- LOADING PLAYERS ---"); end
 	for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
 		local data:table = LoadDataFromPlayerSlot(playerID, "RSTPlayerData");
 		if data ~= nil then -- but make sure we really loaded the data
 			tData[playerID] = data;
 			if bLogDebug then print("...loaded player", data.PlayerID, data.LeaderType); end
-			dshowrectable(tData[playerID]);
+			--dshowrectable(tData[playerID]);
 		end
 	end
-	print("--- END LOADING PLAYERS ---");
+	if bLogDebug then print("--- END LOADING PLAYERS ---"); end
 end
 
 function OnLoadScreenClose()
-	print("FUN OnLoadScreenClose");
+	--print("FUN OnLoadScreenClose");
 	InitializeRandomFlavors();
+	-- perform initial save for all players (to avoid warnings later)
+	for pid, _ in pairs(tData) do
+		SavePlayerData(pid, "Initial");
+	end
+	-- register data version
+	SaveDataToGameSlot("RSTDataVersion", iDataVersion);
 end
 
 
@@ -1905,7 +1919,7 @@ Event functions
 ------------------------------------------------------------------------------
 -- Read flavors and parameters, initialize players
 function InitializeData()
-	print("FUN InitializeData");
+	--print("FUN InitializeData");
 	
 	-- get max religions
 	local mapSizeType:string = GameInfo.Maps[Map.GetMapSize()].MapSizeType;
@@ -1983,7 +1997,7 @@ end
 -- this will called afer the game is loaded, so it will either get saved data or generate new ones
 
 function InitializeRandomFlavors()
-	print("FUN InitializeRandomFlavors");
+	--print("FUN InitializeRandomFlavors");
 	
 	if not bUseRandom then return; end -- no randomization at all
 	
@@ -1991,25 +2005,26 @@ function InitializeRandomFlavors()
 	local tRandomData:table = {};
 
 	if sData ~= nil then
+		-- note that there is no versioning here - a new field for DIPLO will be added together with GS which will make all save files obsolete anyway
 		-- load from save file
-		print("...RSTRandomFlavors EXISTS - load data");
+		if bLogDebug then print("...RSTRandomFlavors EXISTS - load data"); end
 		tRandomData = LoadDataFromGameSlot("RSTRandomFlavors");
 	else
 		-- generate new ones
-		print("...RSTRandomFlavors NOT exists - generate randoms");
+		if bLogDebug then print("...RSTRandomFlavors NOT exists - generate randoms"); end
 		
 		-- changed to avoid pairs (unknown order)
 		for _,row in ipairs(DB.Query("select LeaderType from Leaders where InheritFrom = 'LEADER_DEFAULT' order by LeaderType")) do
 			local tRandomFlavors:table = PriorityTableRandom(GlobalParameters.RST_STRATEGY_LEADER_RANDOM);
-			dshowpriorities(tRandomFlavors, "...randomizing "..row.LeaderType);
+			--dshowpriorities(tRandomFlavors, "...randomizing "..row.LeaderType);
 			tRandomData[row.LeaderType] = tRandomFlavors;
 		end
 		-- store for the future
-		SaveDataInGameSlot("RSTRandomFlavors", tRandomData);
+		SaveDataToGameSlot("RSTRandomFlavors", tRandomData);
 	end
 	
-	print("*** data in tRandomData ***");
-	dshowrectable(tRandomData);
+	--print("*** data in tRandomData ***");
+	--dshowrectable(tRandomData);
 	
 	-- apply random values - only for leaders retrieved/generated, order doesn't matter here
 	for leaderType, randomFlavors in pairs(tRandomData) do
@@ -2019,7 +2034,7 @@ function InitializeRandomFlavors()
 			dshowpriorities(randomFlavors, "...randomizing "..data.ObjectType);
 			PriorityTableAdd(data.Priorities, randomFlavors);
 			PriorityTableMinMax(data.Priorities, 1, 9);
-			dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
+			--dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
 		else
 			print("WARNING: InitializeRandomFlavors Priorities table for leader", leaderType, "not defined.");
 		end
@@ -2029,7 +2044,7 @@ end
 
 ------------------------------------------------------------------------------
 function Initialize()
-	print("FUN Initialize");
+	--print("FUN Initialize");
 	
 	-- for FireTuner
 	ExposedMembers.RST.PlayerGetNumProjectsSpaceRace = PlayerGetNumProjectsSpaceRace;
@@ -2037,14 +2052,12 @@ function Initialize()
 	ExposedMembers.RST.GameGetNumTurnsScaled = GameGetNumTurnsScaled;
 	
 	-- this part must NOT use ExposedMembers
-	--Initialize_Parameters();
-	--Initialize_Objects();
 	InitializeData();
 	InitializeNaval();
 
 	-- loading persistent data
-	Events.LoadComplete.Add( OnLoadComplete ); -- fires after loading a game, when it's ready to start (i.e. circle button)
-	Events.LoadScreenClose.Add ( OnLoadScreenClose );  -- fires when the game is ready to begin i.e. big circle buttons appears; if loaded - fires AFTER LoadComplete
+	Events.LoadComplete.Add( OnLoadComplete ); -- fires ONLY when loading a game from a save file, when it's ready to start (i.e. circle button appears)
+	Events.LoadScreenClose.Add ( OnLoadScreenClose );  -- fires when the game is about to begin i.e. after clicking the big circle buttons; fires AFTER LoadComplete
 	
 end	
 Initialize();

@@ -9,8 +9,8 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '7');
 
 -- logging
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '0'); -- log strategy priorities
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '0'); -- log guess priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
 
@@ -276,7 +276,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('POLICY_SPORTS_MEDIA', 'POLICY', 'ECONOMIC', 'SCIENCE', 1),	('POLICY_SPORTS_MEDIA', 'POLICY', 'ECONOMIC', 'CULTURE', 6),	('POLICY_SPORTS_MEDIA', 'POLICY', 'ECONOMIC', 'RELIGION', 1),	('POLICY_SPORTS_MEDIA', 'POLICY', 'ECONOMIC', 'CONQUEST', 1),
 			('POLICY_STRATEGIC_AIR_FORCE', 'POLICY', 'MILITARY', 'CONQUEST', 5),
 			('POLICY_STRATEGOS', 'POLICY', 'GREAT_PERSON', 'CONQUEST', 5),
-			
+('POLICY_SURVEY', 'POLICY', 'MILITARY', 'CONQUEST', 1),
 	('POLICY_SYMPHONIES', 'POLICY', 'GREAT_PERSON', 'CULTURE', 6),		
 ('POLICY_THIRD_ALTERNATIVE', 'POLICY', 'ECONOMIC', 'SCIENCE', 6),			
 ('POLICY_TOTAL_WAR', 'POLICY', 'MILITARY', 'SCIENCE', 2),	('POLICY_TOTAL_WAR', 'POLICY', 'MILITARY', 'CULTURE', 2),	('POLICY_TOTAL_WAR', 'POLICY', 'MILITARY', 'RELIGION', 2),	('POLICY_TOTAL_WAR', 'POLICY', 'MILITARY', 'CONQUEST', 6),

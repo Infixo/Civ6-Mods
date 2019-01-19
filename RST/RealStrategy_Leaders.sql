@@ -501,7 +501,7 @@ FROM Types WHERE Type = 'BUILDING_ST_BASILS_CATHEDRAL';
 -- LEADER_PHILIP_II / SPAIN
 
 UPDATE AiFavoredItems SET Favored = 0, Value = 40 WHERE ListType = 'PhilipForeignSettlement' AND Item = 'Foreign Continent'; -- Philip II, def. 60
-UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
+UPDATE AiFavoredItems SET Value = 10 WHERE ListType = 'CounterReformerInquisitorPreference' AND Item = 'UNIT_INQUISITOR'; -- was 1 -- Philip II
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('PhilipDiplomacy'),

@@ -265,17 +265,19 @@ end
 
 -- retrieving persistent data on Game level
 function GameConfigurationGetValue(sSlot:string)
-	GameConfiguration.GetValue(sSlot);
+	return GameConfiguration.GetValue(sSlot);
 end
 
 -- storing persistent data on Player level
 function PlayerConfigurationSetValue(ePlayerID:number, sSlot:string, value)
 	PlayerConfigurations[ePlayerID]:SetValue(sSlot, value);
+	--GameConfiguration.SetValue(sSlot..tostring(ePlayerID), value);
 end
 
 -- retrieving persistent data on Player level
 function PlayerConfigurationGetValue(ePlayerID:number, sSlot:string)
-	PlayerConfigurations[ePlayerID]:GetValue(sSlot);
+	return PlayerConfigurations[ePlayerID]:GetValue(sSlot);
+	--return GameConfiguration.GetValue(sSlot..tostring(ePlayerID));
 end
 
 
