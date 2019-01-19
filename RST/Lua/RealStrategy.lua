@@ -229,10 +229,20 @@ end
 
 -- scales number of turns according to the game speed
 local iCostMultiplier:number = GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].CostMultiplier;
-function GetNumTurnsScaled(iNumTurns:number)
+function GameGetNumTurnsScaled(iNumTurns:number)
 	return iNumTurns * 100 / iCostMultiplier;
 end
 
+-- adjust table of priorities according to game turn
+-- it scales lineary from _START to _STOP value during the game
+function TurnAdjustPriorities(tPriorities:table, iStartPerc:number, iStopPerc:number)
+	local iMaxTurn:number = RST.GameGetMaxGameTurns();
+	local iCurrentTurn:number = Game.GetCurrentGameTurn();
+	local fTurnAdjust:number = iStartPerc + (iStopPerc - iStartPerc) * iCurrentTurn / iMaxTurn;
+	if bLogDebug then print(Game.GetCurrentGameTurn(), string.format("turn adjust %d..%d (iMaxT=%d,iCurT=%d,perc=%5.1f)", iStartPerc, iStopPerc, iMaxTurn, iCurrentTurn, fTurnAdjust)); end
+	PriorityTableMultiply(tPriorities, fTurnAdjust/100.0);
+	dshowpriorities(tPriorities, "after turn adjust");
+end
 
 -- used to check if a district is being produced
 function IsPlayerBuilding(ePlayerID:number, sType:string)
@@ -276,10 +286,12 @@ function InitializeData()
 			ActiveEnough = false,
 			ActivePeace = false,
 			ActiveAtWar = false,
-			ActiveMoreGWSlots = false,
 			ActiveScience = false,
 			ActiveCulture = false,
 			ActiveThreat = false,
+			-- more slots
+			ActiveMoreGWSlots = false,
+			TurnRefreshSlots = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
 			-- naval
 			ActiveNaval = 1, -- 0 Pangea, 1 Default, 2 Coastal (aka Naval), 3 Island
 			TurnRefreshNaval = GameConfiguration.GetStartTurn(), -- skip the 1st turn update
@@ -394,7 +406,7 @@ function RefreshPlayerData(data:table)
 	};
 	
 	-- elapsed turns with game speed scaling
-	tNewData.ElapsedTurns = GetNumTurnsScaled(Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn());
+	tNewData.ElapsedTurns = GameGetNumTurnsScaled(Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn());
 	
 	-- gather IDs and infos of major civs met
 	local pPlayerDiplomacy:table = pPlayer:GetDiplomacy();
@@ -447,7 +459,7 @@ function GetGenericPriorities(data:table)
 		if tPriorities[policy] then PriorityTableAdd(tPolicyPriorities, tPriorities[policy].Priorities);
 		else                        print("WARNING: GetGenericPriorities policy", policy, "not defined in Priorities"); end
 	end
-	PriorityTableMultiply(tPolicyPriorities, GlobalParameters.RST_WEIGHT_POLICY);
+	PriorityTableMultiply(tPolicyPriorities, GlobalParameters.RST_WEIGHT_POLICY/100);
 	dshowpriorities(tPolicyPriorities, "generic policies");
 	
 	-- GOVERNMENT
@@ -456,7 +468,7 @@ function GetGenericPriorities(data:table)
 	local tGovPriorities:table = PriorityTableNew();
 	if tPriorities[sGovType] then PriorityTableAdd(tGovPriorities, tPriorities[sGovType].Priorities);
 	else                          print("WARNING: GetGenericPriorities government", sGovType, "not defined in Priorities"); end
-	PriorityTableMultiply(tGovPriorities, GlobalParameters.RST_WEIGHT_GOVERNMENT);
+	PriorityTableMultiply(tGovPriorities, GlobalParameters.RST_WEIGHT_GOVERNMENT/100);
 	dshowpriorities(tGovPriorities, "generic government "..string.gsub(sGovType, "GOVERNMENT_", ""));
 	
 	-- WONDERS
@@ -475,7 +487,7 @@ function GetGenericPriorities(data:table)
 			end
 		end
 	end
-	PriorityTableMultiply(tWonderPriorities, GlobalParameters.RST_WEIGHT_WONDER);
+	PriorityTableMultiply(tWonderPriorities, GlobalParameters.RST_WEIGHT_WONDER/100);
 	dshowpriorities(tWonderPriorities, "generic wonders");
 	
 	-- GREAT PEOPLE
@@ -487,7 +499,7 @@ function GetGenericPriorities(data:table)
 		if tPriorities[class] then PriorityTableAdd(tGPPriorities, tPriorities[class].Priorities);
 		else                       print("WARNING: GetGenericPriorities great person class", class, "not defined in Priorities"); end
 	end
-	PriorityTableMultiply(tGPPriorities, GlobalParameters.RST_WEIGHT_GREAT_PERSON);
+	PriorityTableMultiply(tGPPriorities, GlobalParameters.RST_WEIGHT_GREAT_PERSON/100);
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
@@ -500,7 +512,7 @@ function GetGenericPriorities(data:table)
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
-	PriorityTableMultiply(tMinorPriorities, GlobalParameters.RST_WEIGHT_MINOR);
+	PriorityTableMultiply(tMinorPriorities, GlobalParameters.RST_WEIGHT_MINOR/100);
 	dshowpriorities(tMinorPriorities, "generic city states");
 
 	-- BELIEFS
@@ -516,7 +528,7 @@ function GetGenericPriorities(data:table)
 			else                         print("WARNING: GetGenericPriorities belief", sBelief, "not defined in Priorities"); end
 		end
 	end
-	PriorityTableMultiply(tBeliefPriorities, GlobalParameters.RST_WEIGHT_BELIEF);
+	PriorityTableMultiply(tBeliefPriorities, GlobalParameters.RST_WEIGHT_BELIEF/100);
 	dshowpriorities(tBeliefPriorities, "generic beliefs");
 
 	
@@ -749,9 +761,8 @@ function GetPriorityScience(data:table)
 		--local iWorld:number = RST.GameGetAverageNumTechsResearched(ePlayerID); --, true, true); -- include us and only known
 		local iWorld:number = data.Data.AvgTechs;
 		if iWorld > 0 then
-			-- the PICKLE here: when we are behind, we get a negative value - it is not the case with Culture nor Religion
-			--local iRatio:number = (RST.PlayerGetNumTechsResearched(ePlayerID) - iWorld) * GlobalParameters.RST_SCIENCE_TECH_WEIGHT;
-			local iRatio:number = (RST.PlayerGetNumTechsResearched(ePlayerID) - iWorld) * (GlobalParameters.RST_SCIENCE_TECH_RATIO_MULTIPLIER + 3 * iWorld) / iWorld; -- slightly modified formula, adding 3*World prevents the diff from diminishing too quickly!
+			local iRatio:number = (RST.PlayerGetNumTechsResearched(ePlayerID) - iWorld) * GlobalParameters.RST_SCIENCE_TECH_WEIGHT;
+			--local iRatio:number = (RST.PlayerGetNumTechsResearched(ePlayerID) - iWorld) * (GlobalParameters.RST_SCIENCE_TECH_RATIO_MULTIPLIER + 3 * iWorld) / iWorld; -- slightly modified formula, adding 3*World prevents the diff from diminishing too quickly!
 			--if iRatio > 0 then -- let's not use negatives yet
 			iPriority = iPriority + iRatio;
 			--end
@@ -1004,7 +1015,7 @@ function RefreshAndProcessData(ePlayerID:number)
 	if data.TurnRefreshStrategy == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
 
 	-- active turns with game speed scaling
-	local iNumTurnsActive:number = GetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshStrategy);
+	local iNumTurnsActive:number = GameGetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshStrategy);
 	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...current strategy", data.ActiveStrategy, "turn refresh", data.TurnRefreshStrategy, "active for", iNumTurnsActive, "turns");
 	if not( data.TurnRefreshStrategy == -1 or data.ActiveStrategy == "NONE" or iNumTurnsActive >= GlobalParameters.RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE ) then
 		return;
@@ -1026,30 +1037,21 @@ function RefreshAndProcessData(ePlayerID:number)
 	tSpecificPriorities.CULTURE  = GetPriorityCulture(data);
 	tSpecificPriorities.RELIGION = GetPriorityReligion(data);
 	tSpecificPriorities.DIPLO    = GetPriorityDiplo(data);
-	tSpecificPriorities.DEFENSE  = GetPriorityDefense(data);
-	--tSpecificPriorities.NAVAL  = GetPriorityNaval(data);
-	--tSpecificPriorities.TRADE  = GetPriorityTrade(data);
-	--print("...specific priorities for leader", data.LeaderType);
 	dshowpriorities(tSpecificPriorities, "*** specific priorities "..data.LeaderType);
 	
-	-- add generic to specific priorities
-	PriorityTableAdd(tSpecificPriorities, GetGenericPriorities(data));
-	
-	-- reduce the potency of these until the mid game.
-	-- Civ5 just uses MaxTurn, but for Cv6 it won't work - TODO: use Num of techs / civics just as for District costs
-	-- int MaxTurn = GC.getGame().getEstimateEndTurn();
-	local iMaxTurn:number = RST.GameGetMaxGameTurns();
-	local iCurrentTurn:number = Game.GetCurrentGameTurn();
-	local fTurnAdjust:number = GlobalParameters.RST_STRATEGY_TURN_ADJUST_START + (GlobalParameters.RST_STRATEGY_TURN_ADJUST_STOP - GlobalParameters.RST_STRATEGY_TURN_ADJUST_START) * iCurrentTurn / iMaxTurn;
-	if bLogDebug then print("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, fTurnAdjust); end
-	--PriorityTableMultiply(tSpecificPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
-	PriorityTableMultiply(tSpecificPriorities, fTurnAdjust/100.0); -- it scales lineary from _START to _STOP value during the game
-	--print("...specific and generic priorities after turn adjustment for leader", data.LeaderType);
-	dshowpriorities(tSpecificPriorities, "specific & generic after turn adjust");
-	
-	--print("...applying specific priorities", data.LeaderType);
+	-- time adjustment: reduce the potency of these until the mid game.
+	TurnAdjustPriorities(tSpecificPriorities, GlobalParameters.RST_STRATEGY_ADJUST_SPECIFIC_START, GlobalParameters.RST_STRATEGY_ADJUST_SPECIFIC_STOP);
+	--dshowpriorities(tSpecificPriorities, "specific after turn adjust");
+
+	-- get generic priorities and adjust for time
+	local tGenericPriorities:table = GetGenericPriorities(data);
+	TurnAdjustPriorities(tGenericPriorities, GlobalParameters.RST_STRATEGY_ADJUST_GENERIC_START, GlobalParameters.RST_STRATEGY_ADJUST_GENERIC_STOP);
+	--dshowpriorities(tGenericPriorities, "generic after turn adjust");
+
+	-- sum it up: base adjusted, specific adjusted, generic adjusted
 	PriorityTableAdd(data.Priorities, tSpecificPriorities);
-	dshowpriorities(data.Priorities, "applying specific priorities");
+	PriorityTableAdd(data.Priorities, tGenericPriorities);
+	dshowpriorities(data.Priorities, "applying specific & generic priorities");
 	
 	-- random element
 	if bUseRandom then
@@ -1230,7 +1232,8 @@ function GetOtherPlayerPriorityScience(data:table, eOtherID:number)
 	-- Compare our num techs to the rest of the world
 	iWorld = data.Data.AvgTechs;
 	if iWorld > 0 then
-		local iRatio:number = (RST.PlayerGetNumTechsResearched(eOtherID) - iWorld) * (GlobalParameters.RST_SCIENCE_TECH_RATIO_MULTIPLIER + 3 * iWorld) / iWorld; -- slightly modified formula, adding 3*World prevents the diff from diminishing too quickly!
+		local iRatio:number = (RST.PlayerGetNumTechsResearched(eOtherID) - iWorld) * GlobalParameters.RST_SCIENCE_TECH_WEIGHT;
+		--local iRatio:number = (RST.PlayerGetNumTechsResearched(eOtherID) - iWorld) * (GlobalParameters.RST_SCIENCE_TECH_RATIO_MULTIPLIER + 3 * iWorld) / iWorld; -- slightly modified formula, adding 3*World prevents the diff from diminishing too quickly!
 		iPriority = iPriority + iRatio;
 		if bLogDebug then print("...tech ratio", iRatio, "player/world", RST.PlayerGetNumTechsResearched(eOtherID), iWorld, "priority=", iPriority); end
 	end
@@ -1372,24 +1375,6 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN GuessOtherPlayerStrategy", data.PlayerID, eOtherID); end
 	
 	local sLeaderType:string = PlayerConfigurations[eOtherID]:GetLeaderTypeName();
-	-- get leader but with 66% factor
-	--[[ ABANDONED - this early game weights too much, actual results are insignificant!
-	local tLeaderPriorities:table = PriorityTableNew();
-	if tPriorities[sLeaderType] == nil then
-		print("WARNING: Priorities for leader", sLeaderType, "not defined.");
-	else
-		PriorityTableAdd(tLeaderPriorities, tPriorities[sLeaderType].Priorities);
-	end
-	-- multiply Leader flavors by base priority weight
-	PriorityTableMultiply(tLeaderPriorities, (2/3) * GlobalParameters.RST_WEIGHT_LEADER);
-	dshowpriorities(tLeaderPriorities, "*** leader priorities "..sLeaderType);
-	
-	-- the later the game the greater the chance
-	local tEraBiasPriorities:table = PriorityTableNew();
-	PriorityTableAdd(tEraBiasPriorities, tPriorities[sLeaderType].Priorities);
-	PriorityTableMultiply(tEraBiasPriorities, data.Data.Era * (2/3) * GlobalParameters.RST_STRATEGY_LEADER_ERA_BIAS / 100.0);
-	dshowpriorities(tEraBiasPriorities, "era bias for era "..tostring(data.Data.Era));
-	--]]
 
 	-- get specifics
 	local tSpecificPriorities:table = PriorityTableNew();
@@ -1398,10 +1383,10 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	tSpecificPriorities.CULTURE  = GetOtherPlayerPriorityCulture(data, eOtherID);
 	tSpecificPriorities.RELIGION = GetOtherPlayerPriorityReligion(data, eOtherID);
 	--tSpecificPriorities.DIPLO    = GetPriorityDiplo(data);
-	--tSpecificPriorities.DEFENSE  = GetPriorityDefense(data);
-	--tSpecificPriorities.NAVAL  = GetPriorityNaval(data);
-	--tSpecificPriorities.TRADE  = GetPriorityTrade(data);
 	dshowpriorities(tSpecificPriorities, "*** specific priorities "..sLeaderType);
+	-- no turn adjustment because we don't have the base priorities
+	
+	-- we do not know all generic info, so what we know is boosted
 	
 	-- GOVERNMENT
 	--print("...generic: government", sLeaderType);
@@ -1409,7 +1394,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	local tGovPriorities:table = PriorityTableNew();
 	if tPriorities[sGovType] then PriorityTableAdd(tGovPriorities, tPriorities[sGovType].Priorities);
 	else                          print("WARNING: GuessOtherPlayerStrategy government", sGovType, "not defined in Priorities"); end
-	PriorityTableMultiply(tGovPriorities, GlobalParameters.RST_WEIGHT_GOVERNMENT);
+	PriorityTableMultiply(tGovPriorities, 2.0 * GlobalParameters.RST_WEIGHT_GOVERNMENT/100);
 	dshowpriorities(tGovPriorities, "generic government "..string.gsub(sGovType, "GOVERNMENT_", ""));
 	
 	-- GREAT PEOPLE
@@ -1420,7 +1405,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 		if tPriorities[class] then PriorityTableAdd(tGPPriorities, tPriorities[class].Priorities);
 		else                       print("WARNING: GuessOtherPlayerStrategy great person class", class, "not defined in Priorities"); end
 	end
-	PriorityTableMultiply(tGPPriorities, GlobalParameters.RST_WEIGHT_GREAT_PERSON);
+	PriorityTableMultiply(tGPPriorities, 1.5 * GlobalParameters.RST_WEIGHT_GREAT_PERSON/100);
 	dshowpriorities(tGPPriorities, "generic great people");
 	
 	-- CITY STATES
@@ -1433,35 +1418,20 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 			PriorityTableAdd(tMinorPriorities, tPriorities[sCategory].Priorities);
 		end
 	end
-	PriorityTableMultiply(tMinorPriorities, GlobalParameters.RST_WEIGHT_MINOR);
+	PriorityTableMultiply(tMinorPriorities, 2.0 * GlobalParameters.RST_WEIGHT_MINOR/100);
 	dshowpriorities(tMinorPriorities, "generic city states");
 	
-	-- randomize, but less
-	--local tRandPriorities:table = PriorityTableNew();
-	--for strat,value in pairs(tRandPriorities) do
-		--tRandPriorities[strat] = GetRandomNumber(0, GlobalParameters.RST_STRATEGY_RANDOM_PRIORITY * 0.5);
-	--end
-	--dshowpriorities(tRandPriorities, "randomization");
+	-- no randomization while guessing (guess is random enough :))
 	
 	local tSumPriorities:table = PriorityTableNew(); -- final here
-	PriorityTableAdd(tSumPriorities, tSpecificPriorities);
 	PriorityTableAdd(tSumPriorities, tGovPriorities);
 	PriorityTableAdd(tSumPriorities, tGPPriorities);
 	PriorityTableAdd(tSumPriorities, tMinorPriorities);
-	--dshowpriorities(tSumPriorities, "specific & generic "..sLeaderType);
-	
-	-- reduce the potency of these until the mid game.
-	--[[ not neceassary since leader is out
-	local iMaxTurn:number = RST.GameGetMaxGameTurns();
-	local iCurrentTurn:number = Game.GetCurrentGameTurn();
-	print("...game turn adjustment (iMaxT,iCurT,perc)", iMaxTurn, iCurrentTurn, iCurrentTurn * 2 / iMaxTurn);
-	PriorityTableMultiply(tSumPriorities, iCurrentTurn * 2 / iMaxTurn); -- effectively, it gives 100% at half the game and scales linearly
-	dshowpriorities(tSumPriorities, "specific & generic after turn adjust");
-	--]]
-	
-	--PriorityTableAdd(tSumPriorities, tLeaderPriorities);
-	--PriorityTableAdd(tSumPriorities, tEraBiasPriorities);
-	--PriorityTableAdd(tSumPriorities, tRandPriorities);
+	-- turn adjusted because at the begining they are insignificant
+	TurnAdjustPriorities(tSumPriorities, GlobalParameters.RST_STRATEGY_ADJUST_GENERIC_START, GlobalParameters.RST_STRATEGY_ADJUST_GENERIC_STOP);
+
+	-- get total
+	PriorityTableAdd(tSumPriorities, tSpecificPriorities);
 	dshowpriorities(tSumPriorities, "*** sum of all priorities "..sLeaderType);
 	
 	-- Now see which Grand Strategy should be active, based on who has the highest Priority right now
@@ -1767,7 +1737,7 @@ function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgTechs == nil then return false; end -- not calculated yet
-	if IsPlayerBuilding("DISTRICT_CAMPUS") or IsPlayerBuilding("DISTRICT_SEOWON") then
+	if IsPlayerBuilding(ePlayerID, "DISTRICT_CAMPUS") or IsPlayerBuilding(ePlayerID, "DISTRICT_SEOWON") then
 		if bLogOther then print(Game.GetCurrentGameTurn(), "RSTSCIEN", ePlayerID, iThreshold, "...Campus is being produced - not active"); end
 		return false;
 	end
@@ -1790,7 +1760,7 @@ function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 	local data:table = tData[ePlayerID];
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgCulture == nil then return false; end -- not calculated yet
-	if IsPlayerBuilding("DISTRICT_THEATER") or IsPlayerBuilding("DISTRICT_ACROPOLIS") then
+	if IsPlayerBuilding(ePlayerID, "DISTRICT_THEATER") or IsPlayerBuilding(ePlayerID, "DISTRICT_ACROPOLIS") then
 		if bLogOther then print(Game.GetCurrentGameTurn(), "RSTCULTR", ePlayerID, iThreshold, "...Theater is being produced - not active"); end
 		return false;
 	end
@@ -1884,8 +1854,8 @@ function RefreshNavalData(ePlayerID:number)
 	if data.TurnRefreshNaval == Game.GetCurrentGameTurn() then return; end -- we already refreshed on this turn
 	
 	-- active turns with game speed scaling
-	local iNumTurnsActive:number = GetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshNaval);
-	--if data.TurnRefreshNaval == -1 then iNumTurnsActive = GetNumTurnsScaled(Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn()); end
+	local iNumTurnsActive:number = GameGetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshNaval);
+	--if data.TurnRefreshNaval == -1 then iNumTurnsActive = GameGetNumTurnsScaled(Game.GetCurrentGameTurn() - GameConfiguration.GetStartTurn()); end
 	--print(Game.GetCurrentGameTurn(), data.LeaderType, "...old naval strategy", data.ActiveNaval, "turn refresh", data.TurnRefreshNaval, "active for", iNumTurnsActive, "turns");
 	if iNumTurnsActive < GlobalParameters.RST_NAVAL_NUM_TURNS then
 		--print("...not active long enough");
@@ -1949,6 +1919,7 @@ function Initialize()
 	-- for FireTuner
 	ExposedMembers.RST.PlayerGetNumProjectsSpaceRace = PlayerGetNumProjectsSpaceRace;
 	ExposedMembers.RST.PlayerGetNumCivsConverted = PlayerGetNumCivsConverted;
+	ExposedMembers.RST.GameGetNumTurnsScaled = GameGetNumTurnsScaled;
 	
 	InitializeData();
 	InitializeNaval();

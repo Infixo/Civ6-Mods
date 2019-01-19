@@ -69,8 +69,13 @@ function CityGetGreatWorkObjectType(iCityX:number, iCityY:number, iGreatWorkInde
 end
 
 -- wrapper - get number of researched techs
+-- accounts also for the tech currently in progress
 function PlayerGetNumTechsResearched(ePlayerID:number)
-	return Players[ePlayerID]:GetStats():GetNumTechsResearched();
+	local iNumTechs:number = Players[ePlayerID]:GetStats():GetNumTechsResearched();
+	local pPlayerTechs:table = Players[ePlayerID]:GetTechs();
+	local eTechID:number = pPlayerTechs:GetResearchingTech();
+	if eTechID < 0 then return iNumTechs; end -- nothing is researched
+	return iNumTechs + pPlayerTechs:GetResearchProgress(eTechID) / pPlayerTechs:GetResearchCost(eTechID);
 end
 
 -- wrapper - find out military strength

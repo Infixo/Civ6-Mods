@@ -136,7 +136,7 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	--if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 
 	-- active turns with game speed scaling
-	local iNumTurnsActive:number = GetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshNaval); -- we'll use Naval counter for convinience
+	local iNumTurnsActive:number = RST.GameGetNumTurnsScaled(Game.GetCurrentGameTurn() - data.TurnRefreshSlots); -- we'll use Naval counter for convinience
 	if iNumTurnsActive < GlobalParameters.RST_NAVAL_NUM_TURNS then return data.ActiveMoreGWSlots; end
 	
 	-- Iterate through units and look for GWs to be created
@@ -165,7 +165,8 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWWriting > iNumSlotWriting + 1) ); -- enabler, need it quickly; will acivate if 2 works
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWArt > iNumSlotArt + 2) ); -- they come in 3, so missing only 1 is not enough; will activate if 3 works
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWMusic > iNumSlotMusic + 2) ); -- music comes late, maybe it is not worth it to build a district just for 1 GW of Music; will activate if 3 works
-
+	data.TurnRefreshSlots = Game.GetCurrentGameTurn();
+	
 	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTMGWSL", ePlayerID, iThreshold, "...works/slots", iTotWorks, iTotSlots, "active?", data.ActiveMoreGWSlots); end
 	return data.ActiveMoreGWSlots;
 end

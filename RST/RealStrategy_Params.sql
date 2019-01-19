@@ -9,10 +9,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '7');
 
 -- logging
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '1'); -- log supporting (other) strategies
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '0'); -- log guess priorities
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
 
 -- random numbers - support for Multi Player
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); -- 0 - turned OFF / 1 - turned ON, using math.rand / 2 - turned ON, using Game.GetRandNum
@@ -25,23 +25,25 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); --
 INSERT INTO GlobalParameters (Name, Value) VALUES
 -- weights
 ('RST_WEIGHT_LEADER', 20), -- weight of the leader's base priority
-('RST_WEIGHT_POLICY', 3), -- how much each slotted policy weights
-('RST_WEIGHT_WONDER', 2), -- how much each wonder weights
-('RST_WEIGHT_GOVERNMENT', 6), -- how much each government weights
-('RST_WEIGHT_MINOR', 4), -- how much each suzerained city state weights
-('RST_WEIGHT_GREAT_PERSON', 1), -- how much each earned GP weights
-('RST_WEIGHT_BELIEF', 3), -- how much each earned belief weights
+('RST_WEIGHT_POLICY',       250), -- [x100] how much each slotted policy weights
+('RST_WEIGHT_WONDER',       150), -- [x100] how much each wonder weights
+('RST_WEIGHT_GOVERNMENT',   500), -- [x100] how much each government weights
+('RST_WEIGHT_MINOR',        300), -- [x100] how much each suzerained city state weights
+('RST_WEIGHT_GREAT_PERSON',  75), -- [x100] how much each earned GP weights
+('RST_WEIGHT_BELIEF',       300), -- [x100] how much each earned belief weights
 -- generic
 ('RST_STRATEGY_LEADER_RANDOM', 1), -- adds/subtracts a random number to a leader base flavor in a range +/- param
 ('RST_STRATEGY_LEADER_ERA_BIAS', 130), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
-('RST_STRATEGY_TURN_ADJUST_START', 20), -- [x100] specific and generic priorities scale lineary, value at turn 0
-('RST_STRATEGY_TURN_ADJUST_STOP', 220), -- [x100] specific and generic priorities scale lineary, value at the last turn
+('RST_STRATEGY_ADJUST_SPECIFIC_START', 25), -- [x100] specific priorities scale lineary, value at turn 0
+('RST_STRATEGY_ADJUST_SPECIFIC_STOP', 200), -- [x100] specific priorities scale lineary, value at the last turn
+('RST_STRATEGY_ADJUST_GENERIC_START', 125), -- [x100] generic priorities scale lineary, value at turn 0
+('RST_STRATEGY_ADJUST_GENERIC_STOP', 50), -- [x100] generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 7), -- how many turns a strategy must be active before checking for new priorities, def. 10
 ('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
 ('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, can be switched off via an option
 ('RST_STRATEGY_BETTER_THAN_US_NERF', -25), -- [x100] each player better than us decreases our priority by this percent -- VP uses 33, seems a lot
-('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 50), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
+('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 40), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -200), -- if nobody met, then decrease the priority, def. -100 -> this is scaled in a moment by approx. 0.3, so -100 gives actually -30.
@@ -55,14 +57,14 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
 ('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 70), -- how does our situation compare to others, -100..100 and more
---('RST_SCIENCE_TECH_WEIGHT', 20), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
-('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more - techs are more important than yield only (they show actual progress)
+('RST_SCIENCE_TECH_WEIGHT', 8), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+--('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more - techs are more important than yield only (they show actual progress)
 ('RST_SCIENCE_PROJECT_WEIGHT', 70), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
 -- culture
 --('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 --('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
-('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 80), -- how does our situation compare to others, -100..100 and more
+('RST_CULTURE_YIELD_RATIO_MULTIPLIER', 70), -- how does our situation compare to others, -100..100 and more
 --('RST_CULTURE_TOURISM_RATIO_MULTIPLIER', 50), -- how does our situation compare to others, -100..100 and more  -- USE +AVERAGE approach?
 -- tourism is tough to measure! yields are very small at the begining
 -- try different approach - for Ancient & Classical use weight (like 1 Tourism = 2-3 pts.), after that use avg HOWEVER 
@@ -118,7 +120,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 --('LEADER_GITARJA', 'LEADER', '', 'CONQUEST', 1),	('LEADER_GITARJA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_GITARJA', 'LEADER', '', 'CULTURE', 4),	('LEADER_GITARJA', 'LEADER', '', 'RELIGION', 6),
 ('LEADER_GORGO', 'LEADER', '', 'CONQUEST', 6),	('LEADER_GORGO', 'LEADER', '', 'SCIENCE', 2),	('LEADER_GORGO', 'LEADER', '', 'CULTURE', 6),	('LEADER_GORGO', 'LEADER', '', 'RELIGION', 1),
 ('LEADER_PERICLES', 'LEADER', '', 'CONQUEST', 3),	('LEADER_PERICLES', 'LEADER', '', 'SCIENCE', 2),	('LEADER_PERICLES', 'LEADER', '', 'CULTURE', 8),	('LEADER_PERICLES', 'LEADER', '', 'RELIGION', 1),
-('LEADER_HARDRADA', 'LEADER', '', 'CONQUEST', 4),	('LEADER_HARDRADA', 'LEADER', '', 'SCIENCE', 3),	('LEADER_HARDRADA', 'LEADER', '', 'CULTURE', 1),	('LEADER_HARDRADA', 'LEADER', '', 'RELIGION', 6),
+('LEADER_HARDRADA', 'LEADER', '', 'CONQUEST', 5),	('LEADER_HARDRADA', 'LEADER', '', 'SCIENCE', 3),	('LEADER_HARDRADA', 'LEADER', '', 'CULTURE', 1),	('LEADER_HARDRADA', 'LEADER', '', 'RELIGION', 5),
 ('LEADER_HOJO', 'LEADER', '', 'CONQUEST', 4),	('LEADER_HOJO', 'LEADER', '', 'SCIENCE', 2),	('LEADER_HOJO', 'LEADER', '', 'CULTURE', 6),	('LEADER_HOJO', 'LEADER', '', 'RELIGION', 6),
 --('LEADER_JADWIGA', 'LEADER', '', 'CONQUEST', 4),	('LEADER_JADWIGA', 'LEADER', '', 'SCIENCE', 1),	('LEADER_JADWIGA', 'LEADER', '', 'CULTURE', 4),	('LEADER_JADWIGA', 'LEADER', '', 'RELIGION', 7),
 --('LEADER_JAYAVARMAN', 'LEADER', '', 'CONQUEST', 2),	('LEADER_JAYAVARMAN', 'LEADER', '', 'SCIENCE', 1),	('LEADER_JAYAVARMAN', 'LEADER', '', 'CULTURE', 5),	('LEADER_JAYAVARMAN', 'LEADER', '', 'RELIGION', 8),
@@ -178,7 +180,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'SCIENCE', 1),	('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'CULTURE', 2),	('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'RELIGION', 2),	('POLICY_CORVEE', 'POLICY', 'ECONOMIC', 'CONQUEST', 1),
 ('POLICY_CRAFTSMEN', 'POLICY', 'ECONOMIC', 'SCIENCE', 2),			('POLICY_CRAFTSMEN', 'POLICY', 'ECONOMIC', 'CONQUEST', 2),
 			('POLICY_CRYPTOGRAPHY', 'POLICY', 'DIPLOMATIC', 'CONQUEST', 1),
-			
+('POLICY_DIPLOMATIC_LEAGUE', 'POLICY', 'DIPLOMATIC', 'CONQUEST', 1),	('POLICY_DIPLOMATIC_LEAGUE', 'POLICY', 'DIPLOMATIC', 'SCIENCE', 1),	('POLICY_DIPLOMATIC_LEAGUE', 'POLICY', 'DIPLOMATIC', 'CULTURE', 1),	('POLICY_DIPLOMATIC_LEAGUE', 'POLICY', 'DIPLOMATIC', 'RELIGION', 1),
 			('POLICY_DISCIPLINE', 'POLICY', 'MILITARY', 'CONQUEST', 2),
 			
 ('POLICY_ECOMMERCE', 'POLICY', 'ECONOMIC', 'SCIENCE', 3),			
@@ -222,7 +224,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 			('POLICY_LEVEE_EN_MASSE', 'POLICY', 'MILITARY', 'CONQUEST', 4),
 			
 			('POLICY_LIGHTNING_WARFARE', 'POLICY', 'MILITARY', 'CONQUEST', 7),
-			
+	('POLICY_LIMES', 'POLICY', 'MILITARY', 'SCIENCE', 1),	('POLICY_LIMES', 'POLICY', 'MILITARY', 'CULTURE', 1),	('POLICY_LIMES', 'POLICY', 'MILITARY', 'RELIGION', 1),
 --			('POLICY_LIMITANEI', 'POLICY', 'MILITARY', 'CONQUEST', 4),
 	('POLICY_LITERARY_TRADITION', 'POLICY', 'GREAT_PERSON', 'CULTURE', 5),		
 			('POLICY_LOGISTICS', 'POLICY', 'MILITARY', 'CONQUEST', 5),
@@ -319,7 +321,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('BELIEF_CROSS_CULTURAL_DIALOGUE', 'BELIEF', 'FOUNDER', 'SCIENCE', 3),		('BELIEF_CROSS_CULTURAL_DIALOGUE', 'BELIEF', 'FOUNDER', 'RELIGION', 3),	
 		('BELIEF_DANCE_OF_THE_AURORA', 'BELIEF', 'PANTHEON', 'RELIGION', 4),	
 		('BELIEF_DAR_E_MEHR', 'BELIEF', 'WORSHIP', 'RELIGION', 6),	
-			
+('BELIEF_DEFENDER_OF_FAITH', 'BELIEF', 'ENHANCER', 'CONQUEST', 1),		('BELIEF_DEFENDER_OF_FAITH', 'BELIEF', 'ENHANCER', 'CULTURE', 2),	('BELIEF_DEFENDER_OF_FAITH', 'BELIEF', 'ENHANCER', 'RELIGION', 3),
 		('BELIEF_DESERT_FOLKLORE', 'BELIEF', 'PANTHEON', 'RELIGION', 5),	
 	('BELIEF_DIVINE_INSPIRATION', 'BELIEF', 'FOLLOWER', 'CULTURE', 3),	('BELIEF_DIVINE_INSPIRATION', 'BELIEF', 'FOLLOWER', 'RELIGION', 4),	
 ('BELIEF_DIVINE_SPARK', 'BELIEF', 'PANTHEON', 'SCIENCE', 3),	('BELIEF_DIVINE_SPARK', 'BELIEF', 'PANTHEON', 'CULTURE', 3),	('BELIEF_DIVINE_SPARK', 'BELIEF', 'PANTHEON', 'RELIGION', 3),	
