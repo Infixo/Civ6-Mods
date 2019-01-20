@@ -166,13 +166,13 @@
     <Row DefnId="5" NodeId="1" TreeName="Naval Superiority Tree" />
     <Row DefnId="6" NodeId="1" TreeName="Naval Superiority Tree" />
     <Row DefnId="7" NodeId="1" TreeName="Naval Superiority Tree" />
-    <Row DefnId="8" NodeId="1" TreeName="Naval Superiority Tree" Tag="Present Value" />
+    <Row DefnId="8" NodeId="1" TreeName="Naval Superiority Tree" Tag="Present Value" /> <!-- Note: this always gives 100, thus units here are not high priority! -->
 	<!-- "Operation Defend Units" -->
     <Row DefnId="0" NodeId="3" TreeName="Naval Superiority Tree" DefaultData="40" />
 	<!-- Contract Manager Decorator -->
     <Row DefnId="0" NodeId="4" TreeName="Naval Superiority Tree" Tag="Naval Force Contract" /> <!-- req, contract -->
     <Row DefnId="1" NodeId="4" TreeName="Naval Superiority Tree" /> <!-- req, multi -->
-    <Row DefnId="2" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="10" /> <!-- turn limit -->
+    <Row DefnId="2" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="7" /> <!-- turn limit, due to low priority it gets stuck here often! better to reset faster -->
     <Row DefnId="3" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- block while running -->
 	<!-- "Recruit Units" -->
     <Row DefnId="0" NodeId="5" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- not in progress -->
@@ -210,8 +210,16 @@
 
 <!-- Siege City Assault -->
 <TreeData>
-	<Delete TreeName="Siege City Assault" NodeId="20" Tag="Ongoing Recruits"/> <!-- This contract is undefined -->
+	<!-- Contract Manager -->
+	<Update>
+		<Where DefnId="2" NodeId="8" TreeName="Siege City Assault" /> <!-- contract manager, turns -->
+		<Set DefaultData="7"/>
+	</Update>
+	<!-- "Recruit Units" - the only node without Par0 set -->
+    <Row DefnId="0" NodeId="9" TreeName="Siege City Assault" DefaultData="false" /> <!-- not in progress -->
+	<Delete DefnId="5" NodeId="9" TreeName="Siege City Assault" /> <!-- 10 turns, not needed -->
+	<!-- "Recrut Units" This contract is undefined Tag="Ongoing Recruits" -->
+	<Delete DefnId="1" NodeId="20" TreeName="Siege City Assault" /> 
 </TreeData>
-
 
 </GameInfo>

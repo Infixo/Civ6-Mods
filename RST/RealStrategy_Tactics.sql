@@ -104,13 +104,6 @@ INSERT INTO AiFavoredItems (ListType, Item, StringVal) VALUES
 ('DefaultCityBuilds',  'CITY_UNDER_THREAT', 'City Defense Unwalled'),
 ('MinorCivCityBuilds', 'CITY_UNDER_THREAT', 'City Defense Unwalled');
 
--- define a team
-INSERT INTO AiTeams (TeamName) VALUES
-('City Defense Unwalled');
-
-INSERT INTO AiOperationTeams (TeamName,OperationName,InitialStrengthAdvantage,OngoingStrengthAdvantage) VALUES
-('City Defense Unwalled', 'City Defense Unwalled', -1, 1);
-
 ------------------------------------------------------------------------------
 -- A new op - Naval Op Early - this is Naval Superiority but with Ranged ships optional (they are available in Ancient, and difficult to get in Classical)
 
@@ -119,13 +112,6 @@ VALUES                      ('Naval Op Early', 'TARGET_NAVAL_SUPERIORITY',      
 
 INSERT INTO AllowedOperations (ListType, OperationDef) VALUES
 ('Default_List', 'Naval Op Early');
-
--- define a team
-INSERT INTO AiTeams (TeamName) VALUES
-('Naval Op Early Force');
-
-INSERT INTO AiOperationTeams (TeamName,OperationName,InitialStrengthAdvantage,OngoingStrengthAdvantage) VALUES
-('Naval Op Early Force', 'Naval Op Early', 0, 3);
 
 
 -- ===========================================================================
@@ -142,13 +128,15 @@ Simple Early Attack Force - used for:
 */
 -- seems OK
 
-
 /*
 -- Simple City Attack Force - I assume the city doesn't have walls
 Simple City Attack Force - used for:
 	- Attack Enemy City 1.5, 3.0         => 50%, TARGET_ENEMY_COMBAT_DISTRICT, CITY_ASSAULT, BehaviorTree="Early City Assault", MustHaveUnits="5"
 	- Wartime Attack Enemy City 0.5, 3.0 => 25%, same as above, but MustBeAtWar="true" MustHaveUnits="3"
 */
+-- strength
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = 1.0, OngoingStrengthAdvantage = 2.0 WHERE TeamName = 'Simple City Attack Force' AND OperationName = 'Attack Enemy City';
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.0 WHERE TeamName = 'Simple City Attack Force' AND OperationName = 'Wartime Attack Enemy City';
 -- Seems OK, up to 3 UNITTYPE_SIEGE, so Rams & Towers should count now
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6 WHERE TeamName = 'Simple City Attack Force' AND AiType = 'UNITTYPE_MELEE';
 UPDATE OpTeamRequirements SET MinNumber = 1, MaxNumber = 6 WHERE TeamName = 'Simple City Attack Force' AND AiType = 'UNITTYPE_RANGED';
@@ -158,18 +146,11 @@ UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3 WHERE TeamName = 'Sim
 City Attack Force - used for:
 	- Attack Walled City 2.0, 4.0          => 60%, TARGET_ENEMY_COMBAT_DISTRICT CITY_ASSAULT BehaviorTree="Siege City Assault" MustHaveUnits="10"
 	- Wartime Attack Walled City 1.0, 6.0  => 40%, same as above, but MustBeAtWar="true" MustHaveUnits="6"
-City Attack Force	UNITAI_COMBAT	5	16
-City Attack Force	UNITTYPE_AIR		0
-City Attack Force	UNITTYPE_AIR_SIEGE	0	1
-City Attack Force	UNITTYPE_CIVILIAN		0
-City Attack Force	UNITTYPE_CIVILIAN_LEADER		1
-City Attack Force	UNITTYPE_MELEE	2	
-City Attack Force	UNITTYPE_NAVAL		0
-City Attack Force	UNITTYPE_RANGED	1	
-City Attack Force	UNITTYPE_SIEGE	0	3
-City Attack Force	UNITTYPE_SIEGE_ALL	1	
-City Attack Force	UNITTYPE_SIEGE_SUPPORT	0	2
 */
+-- strength
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = 1.0, OngoingStrengthAdvantage = 2.5 WHERE TeamName = 'City Attack Force' AND OperationName = 'Attack Walled City';
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.5 WHERE TeamName = 'City Attack Force' AND OperationName = 'Wartime Attack Walled City';
+-- composition
 UPDATE OpTeamRequirements SET MinNumber = 7                WHERE TeamName = 'City Attack Force' AND AiType = 'UNITAI_COMBAT';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_MELEE';
 UPDATE OpTeamRequirements SET MinNumber = 3, MaxNumber = 6 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_RANGED';
@@ -179,25 +160,29 @@ UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 4 WHERE TeamName = 'Cit
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_SIEGE_ALL';
 UPDATE OpTeamRequirements SET MinNumber = 1, MaxNumber = 2 WHERE TeamName = 'City Attack Force' AND AiType = 'UNITTYPE_SIEGE_SUPPORT';
 
-
 /*
 City Naval Attack Force - used for:
 	- all 4 types of attack (war/no war, normal/walled), Condition="IsCoastalTarget"
-City Naval Attack Force	UNITTYPE_NAVAL		-- 100% naval
-City Naval Attack Force	UNITTYPE_MELEE	0	
-City Naval Attack Force	UNITTYPE_RANGED	0	-- can't change that because Ranged are not available in Ancient Era
-City Naval Attack Force	UNITTYPE_CIVILIAN_LEADER		1
+-- 100% naval
+UNITTYPE_RANGED	0	-- can't change that because Ranged are not available in Ancient Era
 */
+-- strength
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = 1.0, OngoingStrengthAdvantage = 2.0 WHERE TeamName = 'City Naval Attack Force' AND OperationName = 'Attack Enemy City'; --         AND Condition = 'IsCoastalTarget';
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.0 WHERE TeamName = 'City Naval Attack Force' AND OperationName = 'Wartime Attack Enemy City'; -- AND Condition = 'IsCoastalTarget';
+-- composition
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber, MinPercentage, MaxPercentage) VALUES
 ('City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',  0, 3, 0, 0.5);
 UPDATE OpTeamRequirements SET MinNumber = 3, MaxNumber = 7, MinPercentage = 0.5 WHERE TeamName = 'City Naval Attack Force' AND AiType = 'UNITTYPE_NAVAL';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6                      WHERE TeamName = 'City Naval Attack Force' AND AiType = 'UNITTYPE_MELEE';
 
+/*
+Walled City Naval Attack Force
 -- define a different team for walled cities
+*/
 INSERT INTO AiTeams (TeamName) VALUES
 ('Walled City Naval Attack Force');
-UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force' WHERE OperationName = 'Attack Walled City'         AND Condition = 'IsCoastalTarget';
-UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force' WHERE OperationName = 'Wartime Attack Walled City' AND Condition = 'IsCoastalTarget';
+UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force', InitialStrengthAdvantage = 1.0, OngoingStrengthAdvantage = 2.5 WHERE OperationName = 'Attack Walled City'         AND Condition = 'IsCoastalTarget';
+UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force', InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.5 WHERE OperationName = 'Wartime Attack Walled City' AND Condition = 'IsCoastalTarget';
 INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentage,MaxPercentage) VALUES
 ('Walled City Naval Attack Force', 'UNITTYPE_NAVAL',           3, 9, 0.5, 1), -- some naval
 ('Walled City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',     0, 5, 0, 0.5), -- some land
@@ -208,18 +193,10 @@ INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentag
 ('Walled City Naval Attack Force', 'UNITTYPE_SIEGE_ALL',       0, 2, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_SIEGE_SUPPORT',   0, 1, 0, 1);
 
-
 /*
 City Defense - used for:
 	- OperationName="City Defense", TARGET_FRIENDLY_CITY, BehaviorTree="Simple City Defense"
-City Defense	UNITTYPE_CIVILIAN		0
-City Defense	UNITTYPE_CIVILIAN_LEADER		1
-City Defense	UNITTYPE_NAVAL		0 -- what if this a naval attack? there is no "naval defense" at all !!!!!
-City Defense	UNITAI_COMBAT	0	-- how exactly should we defend without any units?
-City Defense	UNITAI_EXPLORE	0	
-City Defense	UNITTYPE_SIEGE		0
-City Defense	UNITTYPE_AIR		0
-City Defense	UNITTYPE_AIR_SIEGE		0
+UNITTYPE_NAVAL		0 -- what if this a naval attack? there is no "naval defense" at all !!!!!
 */
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('City Defense', 'UNITTYPE_RANGED',  2, 6), -- could use ranged - WARNING!!!!!!!!!!!
@@ -232,7 +209,17 @@ UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 0, MaxPercentage = 0 WH
 UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3    WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_AIR'; -- pls use fighters
 UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3    WHERE TeamName = 'City Defense' AND AiType = 'UNITTYPE_AIR_SIEGE'; -- ok, no bombers - can we use bombers?
 
--- special team for unwalled cities - more melee
+/*
+City Defense Unwalled
+-- (new) special team for unwalled cities - more melee
+*/
+
+INSERT INTO AiTeams (TeamName) VALUES
+('City Defense Unwalled');
+
+INSERT INTO AiOperationTeams (TeamName,OperationName,InitialStrengthAdvantage,OngoingStrengthAdvantage) VALUES
+('City Defense Unwalled', 'City Defense Unwalled', -1, 1);
+
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('City Defense Unwalled', 'UNITAI_COMBAT',     3, 6),
 ('City Defense Unwalled', 'UNITTYPE_MELEE',    2, 4),
@@ -240,7 +227,6 @@ INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('City Defense Unwalled', 'UNITTYPE_CAVALRY',  0, 2),
 ('City Defense Unwalled', 'UNITTYPE_CIVILIAN', 0, 0),
 ('City Defense Unwalled', 'UNITTYPE_CIVILIAN_LEADER', 0, 1);
-
 
 /*
 Naval Superiority Force - used for:
@@ -251,6 +237,9 @@ Naval Superiority Force	UNITTYPE_MELEE	1	-- really, one ship only? this is calle
 Naval Superiority Force	UNITTYPE_RANGED	0	
 Naval Superiority Force	UNITTYPE_CIVILIAN_LEADER		1
 */
+-- strength
+UPDATE AiOperationTeams SET InitialStrengthAdvantage = -0.5, OngoingStrengthAdvantage = 1.0 WHERE TeamName = 'Naval Superiority Force' AND OperationName = 'Naval Superiority';
+-- composition
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES -- AI keeps recruiting land units, setting 100% naval doesn't prevent this
 ('Naval Superiority Force', 'UNITTYPE_LAND_COMBAT',  0, 0);
 UPDATE OpTeamRequirements SET MinNumber = 4, MaxNumber = 9 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_NAVAL';
@@ -258,11 +247,17 @@ UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 4 WHERE TeamName = 'Nav
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_RANGED';
 UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 1 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_CIVILIAN_LEADER';
 
-
 /*
 Naval Op Early Force - used for "Naval Op Early"
-Basically the same as Naval Superiority, but Ranged ships are optional
+(new) Basically the same as Naval Superiority, but Ranged ships are optional
 */
+
+INSERT INTO AiTeams (TeamName) VALUES
+('Naval Op Early Force');
+
+INSERT INTO AiOperationTeams (TeamName,OperationName,InitialStrengthAdvantage,OngoingStrengthAdvantage) VALUES
+('Naval Op Early Force', 'Naval Op Early', -0.5, 1.0);
+
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('Naval Op Early Force', 'UNITTYPE_NAVAL',       3, 6),
 ('Naval Op Early Force', 'UNITTYPE_MELEE',       2, 5),
@@ -270,8 +265,6 @@ INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('Naval Op Early Force', 'UNITTYPE_CIVILIAN_LEADER',  0, 1),
 ('Naval Op Early Force', 'UNITTYPE_LAND_COMBAT', 0, 0);
 UPDATE OpTeamRequirements SET MinPercentage = 1, MaxPercentage = 1 WHERE TeamName = 'Naval Op Early Force' AND AiType = 'UNITTYPE_NAVAL';
-
-
 
 /*	
 How does the game decide which attack/tree to use?
@@ -293,7 +286,6 @@ Node 36: BomberType=UNITTYPE_AIR_SIEGE, Priorities:CombatDistrict, Improvement, 
 - Attack City (46, 52)
 + Operation Ait Assault (36, 51)
 */
-
 
 ---------------------- TEST ---------------------
 -- I want to create a defense city with Fighters
@@ -327,7 +319,6 @@ INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('Air City Defense', 'UNITAI_COMBAT', 0, 5),
 ('Air City Defense', 'UNITTYPE_AIR', 1, 4),
 ('Air City Defense', 'UNITTYPE_AIR_SIEGE', 0, 2);
-
 
 /*
 TARGET_FRIENDLY_CITY

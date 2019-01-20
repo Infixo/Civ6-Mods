@@ -36,7 +36,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 --('StandardSettlePlot', 'Specific Resource', 0, 0, 'RESOURCE_OIL'), -- plenty
 ('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_ALUMINUM'), -- new
 ('StandardSettlePlot', 'Specific Resource', 0, 10, 'RESOURCE_URANIUM'), -- new
-('StandardSettlePlot', 'Specific Feature', 0, -3, 'FEATURE_ICE'); -- def
+('StandardSettlePlot', 'Specific Feature', 0, -5, 'FEATURE_ICE');
 -- put Natural Wonders as generally good to be around
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal)
 SELECT 'StandardSettlePlot', 'Specific Feature', 0, 3, FeatureType -- +1
@@ -95,8 +95,8 @@ I determined that:
 */
 
 --UPDATE PseudoYields SET DefaultValue = 450 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450, important mostly early game, later valuations are in thousands (5000+)...
-UPDATE PseudoYields SET DefaultValue =  50 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80 -- very important, especially late game, causes huge jumps in city valuation
-UPDATE PseudoYields SET DefaultValue = 250 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 - very important for aggression mgmt!
+UPDATE PseudoYields SET DefaultValue =  80 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80 -- very important, especially late game, causes huge jumps in city valuation
+UPDATE PseudoYields SET DefaultValue = 350 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 - very important for aggression mgmt!
 UPDATE PseudoYields SET DefaultValue = 150 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200, lower value should save Minors a bit, Conquest will boost it anyway
 UPDATE PseudoYields SET DefaultValue = 100 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50, not so important overall
 
@@ -677,6 +677,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, -15),
 ('MedievalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -10),
+('MedievalPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -15),
 -- RENAISSANCE
 ('RenaissanceYields', 'YIELD_CULTURE',    1, 15),
 ('RenaissanceYields', 'YIELD_FAITH',      1,-20),
@@ -1012,4 +1013,4 @@ UPDATE AiFavoredItems SET Value = 3 WHERE ListType = 'ExpansionSettlementPrefere
 
 DELETE FROM AiFavoredItems WHERE ListType = 'ExpansionUnitPreferences'; -- remove old list that resulted in LESS combat units
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ExpansionUnitPreferences', 'PSEUDOYIELD_UNIT_SETTLER', 1, 25);
+('ExpansionUnitPreferences', 'PSEUDOYIELD_UNIT_SETTLER', 1, 20);
