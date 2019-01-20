@@ -273,18 +273,18 @@ DELETE FROM AiLists        WHERE System = 'Strategies';
 -- ??? UnitPromotionClasses
 -- ??? Units
 -- Not needed?
--- AiOperationTypes
+-- AiOperationTypes - num of ops (OP_SETTLE, OP_DEFENSE, etc.)
 -- AiScoutUses
--- CityEvents
--- Homeland
--- PerWarOperationTypes
--- PlotEvaluations
--- SavingTypes
--- SettlementPreferences
+-- CityEvents - manages event-related ops for the city (building things, default attack, under threat) -> OperationName
+-- Homeland - AllowedMoves
+-- PerWarOperationTypes - ops per war
+-- PlotEvaluations - static settling
+-- SavingTypes - what the gold is for
+-- SettlementPreferences - dynamic settling
 -- NO! Strategies - don't use it, messes up conditions
--- Tactics
--- TechBoosts
--- TriggeredTrees
+-- Tactics - AllowedMoves
+-- TechBoosts - pre-configured
+-- TriggeredTrees - manages event-related trees
 -- ===========================================================================
 
 

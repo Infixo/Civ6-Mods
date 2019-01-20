@@ -144,18 +144,19 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MinorFavorWalls', 'BUILDING_WALLS', 1, 100), -- notice that Minors have a hidden bonus to build Walls 200%
 ('MinorFavorWalls', 'BUILDING_CASTLE', 1, 100),
 ('MinorFavorWalls', 'BUILDING_STAR_FORT', 1, 100),
-('MinorCivUnitBuilds', 'PROMOTION_CLASS_AIR_FIGHTER', 1, 20),
-('MinorCivUnitBuilds', 'PROMOTION_CLASS_ANTI_CAVALRY', 1, 20),
-('MinorCivUnitBuilds', 'PROMOTION_CLASS_LIGHT_CAVALRY', 1, 20),
+('MinorCivUnitBuilds', 'PROMOTION_CLASS_AIR_FIGHTER', 1, 15),
+('MinorCivUnitBuilds', 'PROMOTION_CLASS_ANTI_CAVALRY', 1, 15),
+('MinorCivUnitBuilds', 'PROMOTION_CLASS_LIGHT_CAVALRY', 1, 15),
 ('MinorCivUnitBuilds', 'PROMOTION_CLASS_HEAVY_CAVALRY', 1, -50),
-('MinorCivUnitBuilds', 'PROMOTION_CLASS_RANGED', 1, 20),
+('MinorCivUnitBuilds', 'PROMOTION_CLASS_RANGED', 1, 15),
 ('MinorCivUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, -50),
 ('MinorCivUnitBuilds', 'PROMOTION_CLASS_SUPPORT', 1, -50),
 --('MinorCivPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 200),
 --('MinorCivPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 50),
 ('MinorCivPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 25),
-('MinorCivPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
-('MinorCivPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 25);
+('MinorCivPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 20),
+('MinorCivPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
+('MinorCivPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15);
 
 
 /*

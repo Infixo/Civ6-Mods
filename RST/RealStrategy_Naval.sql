@@ -32,6 +32,8 @@
     <Row ListType="NavalPreferredTechs" Item="TECH_CARTOGRAPHY" Favored="true"/>
 */
 
+
+
 -- ===========================================================================
 -- NAVAL STRATEGIES
 -- These strategies activate based on a geo-situation assessed from revealed plots.
@@ -70,15 +72,15 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('RSTPangeaSettlement'),
-('RSTPangeaOperations'),
+--('RSTPangeaOperations'),
 ('RSTPangeaPseudoYields');
 INSERT INTO AiLists (ListType, System) VALUES
 ('RSTPangeaSettlement',   'PlotEvaluations'),
-('RSTPangeaOperations',   'AiOperationTypes'),
+--('RSTPangeaOperations',   'AiOperationTypes'),
 ('RSTPangeaPseudoYields', 'PseudoYields');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_PANGEA', 'RSTPangeaSettlement'),
-('RST_STRATEGY_PANGEA', 'RSTPangeaOperations'),
+--('RST_STRATEGY_PANGEA', 'RSTPangeaOperations'),
 ('RST_STRATEGY_PANGEA', 'RSTPangeaPseudoYields');
 
 -- Settlement
@@ -87,7 +89,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 
 -- Pangea
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('RSTPangeaOperations', 'NAVAL_SUPERIORITY', 1, -1),
+--('RSTPangeaOperations', 'NAVAL_SUPERIORITY', 1, -1),
 ('RSTPangeaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -25),
 ('RSTPangeaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -50);
 
@@ -97,19 +99,19 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- existing lists: NavalUnitPreferences, NavalSettlementPreferences, NavalSettlementBoost, NavalPreferredTechs
 
 INSERT INTO AiListTypes (ListType) VALUES
-('RSTNavalOperations'),
+--('RSTNavalOperations'),
 ('RSTNavalDistricts'),
 ('RSTNavalScoutUses'),
 ('RSTNavalCivics'),
 ('RSTNavalWonders');
 INSERT INTO AiLists (ListType, System) VALUES
-('RSTNavalOperations', 'AiOperationTypes'),
+--('RSTNavalOperations', 'AiOperationTypes'),
 ('RSTNavalDistricts',  'Districts'),
 ('RSTNavalScoutUses',  'AiScoutUses'),
 ('RSTNavalCivics',     'Civics'),
 ('RSTNavalWonders',    'Buildings');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
-('STRATEGY_NAVAL', 'RSTNavalOperations'),
+--('STRATEGY_NAVAL', 'RSTNavalOperations'),
 ('STRATEGY_NAVAL', 'RSTNavalDistricts'),
 ('STRATEGY_NAVAL', 'RSTNavalScoutUses'),
 ('STRATEGY_NAVAL', 'RSTNavalCivics'),
@@ -129,7 +131,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('NavalSettlementPreferences', 'Specific Resource', 0, 3, 'RESOURCE_COAL'); -- needed
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('RSTNavalOperations', 'NAVAL_SUPERIORITY', 1, 1),
+--('RSTNavalOperations', 'NAVAL_SUPERIORITY', 1, 1),
 ('RSTNavalDistricts', 'DISTRICT_HARBOR', 1, 0), -- DISTRICT_ENTERTAINMENT_COMPLEX / DISTRICT_WATER_ENTERTAINMENT_COMPLEX
 ('RSTNavalScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 100),
 ('NavalPreferredTechs', 'TECH_SQUARE_RIGGING', 1, 0), -- !BUGGED!
@@ -150,7 +152,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 INSERT INTO AiListTypes (ListType) VALUES
 ('RSTIslandPlotEvals'),
 ('RSTIslandSettlement'),
-('RSTIslandOperations'),
+--('RSTIslandOperations'),
 ('RSTIslandScoutUses'),
 ('RSTIslandDistricts'),
 ('RSTIslandTechs'),
@@ -160,7 +162,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, System) VALUES
 ('RSTIslandPlotEvals',   'PlotEvaluations'),
 ('RSTIslandSettlement',  'SettlementPreferences'),
-('RSTIslandOperations',  'AiOperationTypes'),
+--('RSTIslandOperations',  'AiOperationTypes'),
 ('RSTIslandScoutUses',   'AiScoutUses'),
 ('RSTIslandDistricts',   'Districts'),
 ('RSTIslandTechs',       'Technologies'),
@@ -170,7 +172,7 @@ INSERT INTO AiLists (ListType, System) VALUES
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_ISLAND', 'RSTIslandPlotEvals'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandSettlement'),
-('RST_STRATEGY_ISLAND', 'RSTIslandOperations'),
+--('RST_STRATEGY_ISLAND', 'RSTIslandOperations'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandScoutUses'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandDistricts'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandTechs'),
@@ -194,7 +196,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTIslandSettlement', 'SETTLEMENT_CITY_MINIMUM_VALUE', 1, 100), -- copied from original Naval
 ('RSTIslandSettlement', 'SETTLEMENT_CITY_VALUE_MULTIPLIER', 1, 2), -- copied from original Naval
-('RSTIslandOperations', 'NAVAL_SUPERIORITY', 1, 2),
+--('RSTIslandOperations', 'NAVAL_SUPERIORITY', 1, 2),
 ('RSTIslandScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 200),
 ('RSTIslandDistricts', 'DISTRICT_HARBOR', 1, 0), -- DISTRICT_ENTERTAINMENT_COMPLEX / DISTRICT_WATER_ENTERTAINMENT_COMPLEX
 ('RSTIslandTechs', 'TECH_SAILING', 1, 0), -- !BUGGED!
@@ -214,6 +216,149 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -50),
 ('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 75);
+
+
+
+
+/*
+-- ===========================================================================
+-- NAVAL OPERATIONS
+-- The issue here is that Ranged ships are NOT available in Ancient Era.
+-- Quadrireme is with Ship Buildng, which is 2nd column of Classical, so quite late
+-- Idea: make 2 different types of OpTeams
+-- * melee, ranged optional -> will be used in Ancient & Classical -> 'Is Medieval' = Disqualifier [NAVAL_OP_EARLY]
+-- * melee, ranged required -> will be used from Medieval onwards  -> 'Is Medieval' = required condition [NAVAL_SUPERIORITY]
+-- However, the ONLY way to influence team composition from AiFavoredItems is by usage of AiOperationTypes list
+-- Right now, there is only NAVAL_SUPERIORITY defined - another one needs to be defined (NAVAL_OP_EARLY)
+-- Note: BaseOperationsLimits is connected to TRAIT_LEADER_MAJOR_CIV and MINOR_CIV_DEFAULT_TRAIT
+--       We have to exclude Minors from Naval Ops, because they end-up building a ton? Or just +1 for Naval/Island
+-- ===========================================================================
+
+               NAVAL_OP_EARLY   NAVAL_SUPERIORITY
+GeoStrat   DefGame    ANC-CLA   MED+       Minors
+Pangea      1-1=0       0        0          1 / 1
+Default     1 (base)    1        1          1 / 1
+Naval       1+1=2       2        2          1 / 1
+Island      1+2=3       3        3          1 / 1
+
+Steps:
+1. Remove Naval Ops from BaseOperationsLimits
+2. Add separate list for Minors for Naval Ops (=1)
+3. Create 8 strategies, 4 per Geo * 2 per time
+4. Create and populate 8 AiLists.
+*/
+
+-- register a new op, they are numbered for unknown reason
+INSERT INTO AiOperationTypes (OperationType, Value)
+SELECT 'NAVAL_OP_EARLY', MAX(Value)+1
+FROM AiOperationTypes;
+
+-- remove NAVAL_SUPERIORITY from current usage
+DELETE FROM AiFavoredItems WHERE ListType = 'BaseOperationsLimits' AND Item = 'NAVAL_SUPERIORITY';
+
+
+INSERT INTO Types (Type, Kind) VALUES
+('RST_STRATEGY_NAVOP_EARLY_PANGEA',  'KIND_VICTORY_STRATEGY'), -- 1 condition, 1 disqualifier
+('RST_STRATEGY_NAVOP_EARLY_DEFAULT', 'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_NAVOP_EARLY_NAVAL',   'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_NAVOP_EARLY_ISLAND',  'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_NAVOP_LATE_PANGEA',  'KIND_VICTORY_STRATEGY'), -- 2 conditons
+('RST_STRATEGY_NAVOP_LATE_DEFAULT', 'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_NAVOP_LATE_NAVAL',   'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_NAVOP_LATE_ISLAND',  'KIND_VICTORY_STRATEGY'),
+-- minors - same for all geos
+('RST_STRATEGY_MINOR_NAVOP_EARLY', 'KIND_VICTORY_STRATEGY'),
+('RST_STRATEGY_MINOR_NAVOP_LATE',  'KIND_VICTORY_STRATEGY');
+
+INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
+('RST_STRATEGY_NAVOP_EARLY_PANGEA',  NULL, 1), -- 1 condition, 1 disqualifier
+('RST_STRATEGY_NAVOP_EARLY_DEFAULT', NULL, 1),
+('RST_STRATEGY_NAVOP_EARLY_NAVAL',   NULL, 1),
+('RST_STRATEGY_NAVOP_EARLY_ISLAND',  NULL, 1),
+('RST_STRATEGY_NAVOP_LATE_PANGEA',  NULL, 2), -- 2 conditons
+('RST_STRATEGY_NAVOP_LATE_DEFAULT', NULL, 2),
+('RST_STRATEGY_NAVOP_LATE_NAVAL',   NULL, 2),
+('RST_STRATEGY_NAVOP_LATE_ISLAND',  NULL, 2),
+-- minors
+('RST_STRATEGY_MINOR_NAVOP_EARLY', NULL, 1),
+('RST_STRATEGY_MINOR_NAVOP_LATE',  NULL, 2);
+
+-- not for minors
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, Disqualifier)
+SELECT Type, 'Is Not Major', 1
+FROM Types WHERE Kind = 'KIND_VICTORY_STRATEGY' AND Type LIKE 'RST_STRATEGY_NAVOP%';
+
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue, Disqualifier) VALUES
+-- early
+('RST_STRATEGY_NAVOP_EARLY_PANGEA',  'Is Medieval', NULL, 0, 1),
+('RST_STRATEGY_NAVOP_EARLY_DEFAULT', 'Is Medieval', NULL, 0, 1),
+('RST_STRATEGY_NAVOP_EARLY_NAVAL',   'Is Medieval', NULL, 0, 1),
+('RST_STRATEGY_NAVOP_EARLY_ISLAND',  'Is Medieval', NULL, 0, 1),
+('RST_STRATEGY_NAVOP_EARLY_PANGEA',  'Call Lua Function', 'ActiveStrategyNaval', 0, 0),
+('RST_STRATEGY_NAVOP_EARLY_DEFAULT', 'Call Lua Function', 'ActiveStrategyNaval', 1, 0),
+('RST_STRATEGY_NAVOP_EARLY_NAVAL',   'Call Lua Function', 'ActiveStrategyNaval', 2, 0),
+('RST_STRATEGY_NAVOP_EARLY_ISLAND',  'Call Lua Function', 'ActiveStrategyNaval', 3, 0),
+-- late
+('RST_STRATEGY_NAVOP_LATE_PANGEA',  'Is Medieval', NULL, 0, 0),
+('RST_STRATEGY_NAVOP_LATE_DEFAULT', 'Is Medieval', NULL, 0, 0),
+('RST_STRATEGY_NAVOP_LATE_NAVAL',   'Is Medieval', NULL, 0, 0),
+('RST_STRATEGY_NAVOP_LATE_ISLAND',  'Is Medieval', NULL, 0, 0),
+('RST_STRATEGY_NAVOP_LATE_PANGEA',  'Call Lua Function', 'ActiveStrategyNaval', 0, 0),
+('RST_STRATEGY_NAVOP_LATE_DEFAULT', 'Call Lua Function', 'ActiveStrategyNaval', 1, 0),
+('RST_STRATEGY_NAVOP_LATE_NAVAL',   'Call Lua Function', 'ActiveStrategyNaval', 2, 0),
+('RST_STRATEGY_NAVOP_LATE_ISLAND',  'Call Lua Function', 'ActiveStrategyNaval', 3, 0);
+
+-- minors specific
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue, Disqualifier) VALUES
+('RST_STRATEGY_MINOR_NAVOP_EARLY', 'Is Not Major', NULL, 0, 0),
+('RST_STRATEGY_MINOR_NAVOP_EARLY', 'Is Medieval',  NULL, 0, 1),
+('RST_STRATEGY_MINOR_NAVOP_LATE',  'Is Not Major', NULL, 0, 0),
+('RST_STRATEGY_MINOR_NAVOP_LATE',  'Is Medieval',  NULL, 0, 0);
+
+
+INSERT INTO AiListTypes (ListType) VALUES
+('RSTNavalOpsEarlyPangea'),
+('RSTNavalOpsEarlyDefault'),
+('RSTNavalOpsEarlyNaval'),
+('RSTNavalOpsEarlyIsland'),
+('RSTNavalOpsLatePangea'),
+('RSTNavalOpsLateDefault'),
+('RSTNavalOpsLateNaval'),
+('RSTNavalOpsLateIsland'),
+('RSTNavalOpsMinorEarly'),
+('RSTNavalOpsMinorLate');
+
+INSERT INTO AiLists (ListType, System)
+SELECT ListType, 'AiOperationTypes'
+FROM AiListTypes WHERE ListType LIKE 'RSTNavalOps%';
+
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('RST_STRATEGY_NAVOP_EARLY_PANGEA',  'RSTNavalOpsEarlyPangea'),
+('RST_STRATEGY_NAVOP_EARLY_DEFAULT', 'RSTNavalOpsEarlyDefault'),
+('RST_STRATEGY_NAVOP_EARLY_NAVAL',   'RSTNavalOpsEarlyNaval'),
+('RST_STRATEGY_NAVOP_EARLY_ISLAND',  'RSTNavalOpsEarlyIsland'),
+('RST_STRATEGY_NAVOP_LATE_PANGEA',  'RSTNavalOpsLatePangea'),
+('RST_STRATEGY_NAVOP_LATE_DEFAULT', 'RSTNavalOpsLateDefault'),
+('RST_STRATEGY_NAVOP_LATE_NAVAL',   'RSTNavalOpsLateNaval'),
+('RST_STRATEGY_NAVOP_LATE_ISLAND',  'RSTNavalOpsLateIsland'),
+-- minors
+('RST_STRATEGY_MINOR_NAVOP_EARLY', 'RSTNavalOpsMinorEarly'),
+('RST_STRATEGY_MINOR_NAVOP_LATE',  'RSTNavalOpsMinorLate');
+
+-- Note: Favored uses a default value 1
+INSERT INTO AiFavoredItems (ListType, Item, Value) VALUES
+('RSTNavalOpsEarlyPangea',  'NAVAL_OP_EARLY', 0),
+('RSTNavalOpsEarlyDefault', 'NAVAL_OP_EARLY', 1),
+('RSTNavalOpsEarlyNaval',   'NAVAL_OP_EARLY', 2),
+('RSTNavalOpsEarlyIsland',  'NAVAL_OP_EARLY', 3),
+('RSTNavalOpsLatePangea',  'NAVAL_SUPERIORITY', 0),
+('RSTNavalOpsLateDefault', 'NAVAL_SUPERIORITY', 1),
+('RSTNavalOpsLateNaval',   'NAVAL_SUPERIORITY', 2),
+('RSTNavalOpsLateIsland',  'NAVAL_SUPERIORITY', 3),
+-- minors
+('RSTNavalOpsMinorEarly', 'NAVAL_OP_EARLY', 1),
+('RSTNavalOpsMinorLate',  'NAVAL_SUPERIORITY', 1);
+
 
 
 -- ===========================================================================
