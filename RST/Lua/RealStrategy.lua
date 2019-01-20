@@ -1753,12 +1753,17 @@ function ActiveStrategyNaval(ePlayerID:number, iThreshold:number)
 end
 GameEvents.ActiveStrategyNaval.Add(ActiveStrategyNaval);
 
-function ActiveStrategyLand(ePlayerID:number, iThreshold:number)
+-- iThreshold - max num of cities
+function ActiveStrategyExploreLand(ePlayerID:number, iThreshold:number)
+	--print("FUN ActiveStrategyExploreLand", ePlayerID, iThreshold);
 	if ePlayerID == 62 or ePlayerID == 63 then return false; end
+	--print("...cities", Players[ePlayerID]:GetCities():GetCount());
+	if Players[ePlayerID]:GetCities():GetCount() > iThreshold then return false; end
 	RefreshNavalData(ePlayerID);
+	--print("...naval", tData[ePlayerID].ActiveNaval, "active?", tData[ePlayerID].ActiveNaval < 2);
 	return tData[ePlayerID].ActiveNaval < 2; -- includes 0 (Pangea) & 1 (Default)
 end
-GameEvents.ActiveStrategyLand.Add(ActiveStrategyLand);
+GameEvents.ActiveStrategyExploreLand.Add(ActiveStrategyExploreLand);
 
 
 ------------------------------------------------------------------------------

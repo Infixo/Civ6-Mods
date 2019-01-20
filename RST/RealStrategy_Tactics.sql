@@ -228,8 +228,8 @@ Naval Superiority Force	UNITTYPE_MELEE	1	-- really, one ship only? this is calle
 Naval Superiority Force	UNITTYPE_RANGED	0	
 Naval Superiority Force	UNITTYPE_CIVILIAN_LEADER		1
 */
---INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
---('Naval Superiority Force', 'UNITAI_COMBAT',  2, 10); -- let's do this with at least 2 ships, later test for 3 ships
+INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES -- AI keeps recruiting land units, setting 100% naval doesn't prevent this
+('Naval Superiority Force', 'UNITTYPE_LAND_COMBAT',  0, 0);
 UPDATE OpTeamRequirements SET MinNumber = 4, MaxNumber = 9 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_NAVAL';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 4 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_MELEE';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_RANGED';

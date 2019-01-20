@@ -195,7 +195,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTIslandSettlement', 'SETTLEMENT_CITY_MINIMUM_VALUE', 1, 100), -- copied from original Naval
 ('RSTIslandSettlement', 'SETTLEMENT_CITY_VALUE_MULTIPLIER', 1, 2), -- copied from original Naval
 ('RSTIslandOperations', 'NAVAL_SUPERIORITY', 1, 2),
-('RSTIslandScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 100),
+('RSTIslandScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 200),
 ('RSTIslandDistricts', 'DISTRICT_HARBOR', 1, 0), -- DISTRICT_ENTERTAINMENT_COMPLEX / DISTRICT_WATER_ENTERTAINMENT_COMPLEX
 ('RSTIslandTechs', 'TECH_SAILING', 1, 0), -- !BUGGED!
 ('RSTIslandTechs', 'TECH_CELESTIAL_NAVIGATION', 1, 0), -- !BUGGED!
@@ -223,27 +223,35 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ===========================================================================
 
 INSERT INTO Types (Type, Kind) VALUES
+('RST_STRATEGY_EXPLORATION_LAND',  'KIND_VICTORY_STRATEGY'),
 ('RST_STRATEGY_EXPLORATION_NAVAL',  'KIND_VICTORY_STRATEGY'),
 ('RST_STRATEGY_EXPLORATION_ISLAND', 'KIND_VICTORY_STRATEGY');
 
 INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
+('RST_STRATEGY_EXPLORATION_LAND',   NULL, 1),
 ('RST_STRATEGY_EXPLORATION_NAVAL',  NULL, 1),
 ('RST_STRATEGY_EXPLORATION_ISLAND', NULL, 1);
 
 -- STRATEGY_EARLY_EXPLORATION
-UPDATE Strategies SET NumConditionsNeeded = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION';
-UPDATE StrategyConditions SET ThresholdValue = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION' AND ConditionFunction = 'Fewer Cities'; -- 1
+-- Please note that this strategy will start at turn T1 and cannot be turned off until T21.
+-- This applies to any other strategy - they cannot be deactivated before T21.
+-- Just disconnect it from AiLists
+DELETE FROM Strategy_Priorities WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION';
+--UPDATE Strategies SET NumConditionsNeeded = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION';
+--UPDATE StrategyConditions SET ThresholdValue = 2 WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION' AND ConditionFunction = 'Fewer Cities'; -- 1
+--DELETE FROM StrategyConditions WHERE StrategyType = 'STRATEGY_EARLY_EXPLORATION';
 
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, ThresholdValue, Disqualifier) VALUES
 -- apply existing strategy only for Pangea/Default
-('STRATEGY_EARLY_EXPLORATION', 'Call Lua Function', 'ActiveStrategyLand', 0, 0),
+('RST_STRATEGY_EXPLORATION_LAND',      'Is Not Major',                        NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_LAND', 'Call Lua Function', 'ActiveStrategyExploreLand', 2, 0),
 -- Naval (aka Coastal)
 ('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Not Major',                  NULL, 0, 1),
-('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Classical',                  NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Medieval',                  NULL, 0, 1),
 ('RST_STRATEGY_EXPLORATION_NAVAL', 'Call Lua Function', 'ActiveStrategyNaval', 2, 0),
 -- Island
 ('RST_STRATEGY_EXPLORATION_ISLAND',      'Is Not Major',                  NULL, 0, 1),
-('RST_STRATEGY_EXPLORATION_ISLAND',       'Is Medieval',                  NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_ISLAND',       'Is Renaissance',                  NULL, 0, 1),
 ('RST_STRATEGY_EXPLORATION_ISLAND', 'Call Lua Function', 'ActiveStrategyNaval', 3, 0);
 
 
@@ -258,12 +266,15 @@ NAVAL_SCOUTS_FOR_WORLD_EXPLORATION (300) Vikings/NavalScoutingPreferences (200)
 */
 
 INSERT INTO AiListTypes (ListType) VALUES
+('RSTExplorationLandScoutUses'),
 ('RSTExplorationNavalScoutUses'),
 ('RSTExplorationIslandScoutUses');
 INSERT INTO AiLists (ListType, System) VALUES
+('RSTExplorationLandScoutUses',   'AiScoutUses'),
 ('RSTExplorationNavalScoutUses',  'AiScoutUses'),
 ('RSTExplorationIslandScoutUses', 'AiScoutUses');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('RST_STRATEGY_EXPLORATION_LAND',   'RSTExplorationLandScoutUses'),
 ('RST_STRATEGY_EXPLORATION_NAVAL',  'RSTExplorationNavalScoutUses'),
 ('RST_STRATEGY_EXPLORATION_ISLAND', 'RSTExplorationIslandScoutUses');
 
@@ -272,6 +283,7 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 --    <Row ListType="EarlyExplorationBoost" System="AiScoutUses"/>
 --    <Row ListType="EarlyExplorationBoost" Item="DEFAULT_LAND_SCOUTS" Value="200"/>
 INSERT INTO AiFavoredItems (ListType, Item, Value) VALUES
+('RSTExplorationLandScoutUses', 'DEFAULT_LAND_SCOUTS', 200), -- same as EarlyExplorationBoost
 ('RSTExplorationNavalScoutUses', 'DEFAULT_LAND_SCOUTS', 0),
 ('RSTExplorationNavalScoutUses', 'DEFAULT_NAVAL_SCOUTS', 100),
 ('RSTExplorationNavalScoutUses', 'NAVAL_SCOUTS_FOR_WORLD_EXPLORATION', 100),

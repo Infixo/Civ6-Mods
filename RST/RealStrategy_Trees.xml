@@ -3,6 +3,7 @@
 -- Real Strategy - Tweaks to Behavior Trees
 -- Author: Infixo
 -- 2019-01-07: Created
+-- 2019-01-19: Added Naval Superiority Tree
 -- ===========================================================================
 -->
 
@@ -120,5 +121,97 @@
 	<!-- "Use Great Person" -->
 	
 </TreeData>
+
+
+<!-- Naval Superiority Tree
+     I think it has a serious problem with recruiting units - always fails at that. -->
+
+<BehaviorTreeNodes>
+	<Delete TreeName="Naval Superiority Tree" />
+
+    <Row NodeType="Sequence" NodeId="0" TreeName="Naval Superiority Tree" JumpTo="16" />
+		<Row NodeType="Decode Trigger" NodeId="1" TreeName="Naval Superiority Tree" />
+		<Row NodeType="Concurrent" NodeId="2" TreeName="Naval Superiority Tree" JumpTo="7" />
+			<Row NodeType="Operation Defend Units" NodeId="3" TreeName="Naval Superiority Tree" />
+			<Row NodeType="Contract Manager Decorator" NodeId="4" TreeName="Naval Superiority Tree" JumpTo="6"/> <!-- new node -->
+				<Row NodeType="Recruit Units" NodeId="5" TreeName="Naval Superiority Tree" />
+			<Row NodeType="Operation Attack Units" NodeId="6" TreeName="Naval Superiority Tree" />
+			<!--			
+			Priority
+			Operation Is Ready
+			Operation Move
+			-->
+		<Row NodeType="Concurrent" NodeId="7" TreeName="Naval Superiority Tree" JumpTo="16" />
+			<Row NodeType="Recruit Units" NodeId="8" TreeName="Naval Superiority Tree" />
+			<Row NodeType="Operation Defend Units" NodeId="9" TreeName="Naval Superiority Tree" />
+			<!--<Row NodeType="Operation Attack Units" NodeId="5" TreeName="Naval Superiority Tree" />-->
+			<Row NodeType="Naval Choose Target" NodeId="10" TreeName="Naval Superiority Tree" JumpTo="14" /> <!-- decorator node Choose a naval superiority target. If none available, don't run child. -->
+				<Row NodeType="Concurrent" NodeId="11" TreeName="Naval Superiority Tree" JumpTo="14" />
+					<Row NodeType="Operation Move" NodeId="12" TreeName="Naval Superiority Tree" />
+					<Row NodeType="Operation Attack Units" NodeId="13" TreeName="Naval Superiority Tree" />
+			<Row NodeType="Naval Pillage" NodeId="14" TreeName="Naval Superiority Tree" />
+			<Row NodeType="Naval Patrol" NodeId="15" TreeName="Naval Superiority Tree" /> <!-- Choose a naval patrol target and move accordingly. -->
+	
+</BehaviorTreeNodes>
+
+<TreeData>
+	<Delete TreeName="Naval Superiority Tree" />
+	
+	<!-- "Decode Trigger" -->
+    <Row DefnId="0" NodeId="1" TreeName="Naval Superiority Tree" Tag="Unused" />
+    <Row DefnId="1" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="2" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="3" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="4" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="5" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="6" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="7" NodeId="1" TreeName="Naval Superiority Tree" />
+    <Row DefnId="8" NodeId="1" TreeName="Naval Superiority Tree" Tag="Present Value" />
+	<!-- "Operation Defend Units" -->
+    <Row DefnId="0" NodeId="3" TreeName="Naval Superiority Tree" DefaultData="40" />
+	<!-- Contract Manager Decorator -->
+    <Row DefnId="0" NodeId="4" TreeName="Naval Superiority Tree" Tag="Naval Force Contract" /> <!-- req, contract -->
+    <Row DefnId="1" NodeId="4" TreeName="Naval Superiority Tree" /> <!-- req, multi -->
+    <Row DefnId="2" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="10" /> <!-- turn limit -->
+    <Row DefnId="3" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- block while running -->
+	<!-- "Recruit Units" -->
+    <Row DefnId="0" NodeId="5" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- not in progress -->
+    <Row DefnId="1" NodeId="5" TreeName="Naval Superiority Tree" Tag="Naval Force Contract" /> <!-- missing contract id -->
+    <!--<Row DefnId="3" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="false" />--> <!-- commented out to Allow Creation -->
+    <Row DefnId="4" NodeId="5" TreeName="Naval Superiority Tree" Tag="Present Value" />
+	<!-- "Operation Attack Units" -->
+    <Row DefnId="0" NodeId="6" TreeName="Naval Superiority Tree" DefaultData="true" />
+    <Row DefnId="1" NodeId="6" TreeName="Naval Superiority Tree" DefaultData="false" />
+    <Row DefnId="2" NodeId="6" TreeName="Naval Superiority Tree" DefaultData="false" />
+    <Row DefnId="3" NodeId="6" TreeName="Naval Superiority Tree" DefaultData="false" />
+	<!-- "Recruit Units" -->
+    <Row DefnId="0" NodeId="8" TreeName="Naval Superiority Tree" DefaultData="true" /> <!-- in progress -->
+    <!--<Row DefnId="3" NodeId="8" TreeName="Naval Superiority Tree" DefaultData="false" />--> <!-- commented out to Allow Creation -->
+    <Row DefnId="4" NodeId="8" TreeName="Naval Superiority Tree" Tag="Present Value" />
+	<!-- "Operation Defend Units" -->
+    <Row DefnId="0" NodeId="9" TreeName="Naval Superiority Tree" DefaultData="40" />
+	<!-- "Naval Choose Target" -->
+    <Row DefnId="0" NodeId="10" TreeName="Naval Superiority Tree" DefaultData="DOMAIN_SEA" />
+    <Row DefnId="1" NodeId="10" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- do NOT fail for no target -->
+	<!-- "Operation Move" -->
+    <Row DefnId="0" NodeId="12" TreeName="Naval Superiority Tree" DefaultData="1" />
+    <Row DefnId="1" NodeId="12" TreeName="Naval Superiority Tree" DefaultData="3" />
+    <Row DefnId="2" NodeId="12" TreeName="Naval Superiority Tree" DefaultData="false" />
+    <Row DefnId="3" NodeId="12" TreeName="Naval Superiority Tree" DefaultData="3" />
+	<!-- "Operation Attack Units" -->
+    <Row DefnId="0" NodeId="13" TreeName="Naval Superiority Tree" DefaultData="true" /> <!-- nearby -->
+    <Row DefnId="1" NodeId="13" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- along march -->
+    <Row DefnId="2" NodeId="13" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- unequal -->
+    <Row DefnId="3" NodeId="13" TreeName="Naval Superiority Tree" DefaultData="false" />
+	<!-- "Naval Pillage" -->
+    <Row DefnId="0" NodeId="14" TreeName="Naval Superiority Tree" DefaultData="No Value" />
+	
+</TreeData>
+
+<!-- Siege City Assault -->
+<TreeData>
+	<Delete TreeName="Siege City Assault" NodeId="20" Tag="Ongoing Recruits"/> <!-- This contract is undefined -->
+</TreeData>
+
 
 </GameInfo>
