@@ -240,8 +240,10 @@ Naval Superiority Force	UNITTYPE_CIVILIAN_LEADER		1
 -- strength
 UPDATE AiOperationTeams SET InitialStrengthAdvantage = -0.5, OngoingStrengthAdvantage = 1.0 WHERE TeamName = 'Naval Superiority Force' AND OperationName = 'Naval Superiority';
 -- composition
-INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES -- AI keeps recruiting land units, setting 100% naval doesn't prevent this
-('Naval Superiority Force', 'UNITTYPE_LAND_COMBAT',  0, 0);
+INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES 
+('Naval Superiority Force', 'UNITTYPE_LAND_COMBAT', 0, 0), -- AI keeps recruiting land units, setting 100% naval doesn't prevent this
+('Naval Superiority Force', 'UNITTYPE_AIR',         0, 0), -- I made planes Ranged, so AI tries to contract them
+('Naval Superiority Force', 'UNITTYPE_AIR_SIEGE',   0, 0); -- I made planes Ranged, so AI tries to contract them
 UPDATE OpTeamRequirements SET MinNumber = 4, MaxNumber = 9 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_NAVAL';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 4 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_MELEE';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6 WHERE TeamName = 'Naval Superiority Force' AND AiType = 'UNITTYPE_RANGED';

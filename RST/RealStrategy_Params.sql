@@ -57,9 +57,9 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
 ('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 70), -- how does our situation compare to others, -100..100 and more
-('RST_SCIENCE_TECH_WEIGHT', 8), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+('RST_SCIENCE_TECH_WEIGHT', 10), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
 --('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more - techs are more important than yield only (they show actual progress)
-('RST_SCIENCE_PROJECT_WEIGHT', 70), -- each completed space race project
+('RST_SCIENCE_PROJECT_WEIGHT', 75), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
 -- culture
 --('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
