@@ -46,7 +46,7 @@
 INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_NAVAL_NUM_TURNS', 4), -- frequency of the check
 ('RST_NAVAL_THRESHOLD_PANGEA',  20), -- Pangea if LESS than
-('RST_NAVAL_THRESHOLD_COASTAL', 43), -- Coastal if MORE than
+('RST_NAVAL_THRESHOLD_COASTAL', 45), -- Coastal if MORE than
 ('RST_NAVAL_THRESHOLD_ISLAND',  80), -- Island if MORE than
 ('RST_NAVAL_MAP_SIZE_DEFAULT', 8), -- the above parameters are valid for this map size
 ('RST_NAVAL_MAP_SIZE_SHIFT', -100); -- bigger maps tend to have more land (obvious), and smaller the opposite; this is to counter that effect; this is a percentage of the map size difference
@@ -72,15 +72,12 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('RSTPangeaSettlement'),
---('RSTPangeaOperations'),
 ('RSTPangeaPseudoYields');
 INSERT INTO AiLists (ListType, System) VALUES
 ('RSTPangeaSettlement',   'PlotEvaluations'),
---('RSTPangeaOperations',   'AiOperationTypes'),
 ('RSTPangeaPseudoYields', 'PseudoYields');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_PANGEA', 'RSTPangeaSettlement'),
---('RST_STRATEGY_PANGEA', 'RSTPangeaOperations'),
 ('RST_STRATEGY_PANGEA', 'RSTPangeaPseudoYields');
 
 -- Settlement
@@ -89,7 +86,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 
 -- Pangea
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
---('RSTPangeaOperations', 'NAVAL_SUPERIORITY', 1, -1),
 ('RSTPangeaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -25),
 ('RSTPangeaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -50);
 
@@ -99,19 +95,16 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- existing lists: NavalUnitPreferences, NavalSettlementPreferences, NavalSettlementBoost, NavalPreferredTechs
 
 INSERT INTO AiListTypes (ListType) VALUES
---('RSTNavalOperations'),
 ('RSTNavalDistricts'),
 ('RSTNavalScoutUses'),
 ('RSTNavalCivics'),
 ('RSTNavalWonders');
 INSERT INTO AiLists (ListType, System) VALUES
---('RSTNavalOperations', 'AiOperationTypes'),
 ('RSTNavalDistricts',  'Districts'),
 ('RSTNavalScoutUses',  'AiScoutUses'),
 ('RSTNavalCivics',     'Civics'),
 ('RSTNavalWonders',    'Buildings');
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
---('STRATEGY_NAVAL', 'RSTNavalOperations'),
 ('STRATEGY_NAVAL', 'RSTNavalDistricts'),
 ('STRATEGY_NAVAL', 'RSTNavalScoutUses'),
 ('STRATEGY_NAVAL', 'RSTNavalCivics'),
@@ -121,9 +114,9 @@ UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'NavalUnitPreferences' AN
 UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 150
 
 -- Settlement
-UPDATE AiFavoredItems SET Value = 5 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Coastal'; -- def. 10
-UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Nearest Friendly City'; -- def. 4
-UPDATE AiFavoredItems SET Value = 4 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Foreign Continent'; -- def. 4
+UPDATE AiFavoredItems SET Value =  5 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Coastal'; -- def. 10
+UPDATE AiFavoredItems SET Value =  2 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Nearest Friendly City'; -- def. 4
+UPDATE AiFavoredItems SET Value =  4 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Foreign Continent'; -- def. 4
 UPDATE AiFavoredItems SET Value = -1 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Specific Resource' AND StringVal = 'RESOURCE_HORSES'; -- def. -3
 UPDATE AiFavoredItems SET Value = -2 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Specific Resource' AND StringVal = 'RESOURCE_IRON'; -- def. -5
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
@@ -131,7 +124,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('NavalSettlementPreferences', 'Specific Resource', 0, 3, 'RESOURCE_COAL'); -- needed
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
---('RSTNavalOperations', 'NAVAL_SUPERIORITY', 1, 1),
 ('RSTNavalDistricts', 'DISTRICT_HARBOR', 1, 0), -- DISTRICT_ENTERTAINMENT_COMPLEX / DISTRICT_WATER_ENTERTAINMENT_COMPLEX
 ('RSTNavalScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 100),
 ('NavalPreferredTechs', 'TECH_SQUARE_RIGGING', 1, 0), -- !BUGGED!
@@ -152,7 +144,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 INSERT INTO AiListTypes (ListType) VALUES
 ('RSTIslandPlotEvals'),
 ('RSTIslandSettlement'),
---('RSTIslandOperations'),
 ('RSTIslandScoutUses'),
 ('RSTIslandDistricts'),
 ('RSTIslandTechs'),
@@ -162,7 +153,6 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, System) VALUES
 ('RSTIslandPlotEvals',   'PlotEvaluations'),
 ('RSTIslandSettlement',  'SettlementPreferences'),
---('RSTIslandOperations',  'AiOperationTypes'),
 ('RSTIslandScoutUses',   'AiScoutUses'),
 ('RSTIslandDistricts',   'Districts'),
 ('RSTIslandTechs',       'Technologies'),
@@ -172,7 +162,6 @@ INSERT INTO AiLists (ListType, System) VALUES
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_ISLAND', 'RSTIslandPlotEvals'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandSettlement'),
---('RST_STRATEGY_ISLAND', 'RSTIslandOperations'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandScoutUses'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandDistricts'),
 ('RST_STRATEGY_ISLAND', 'RSTIslandTechs'),
@@ -190,13 +179,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('RSTIslandPlotEvals', 'Specific Resource', 0, -2, 'RESOURCE_HORSES'), -- not needed
 ('RSTIslandPlotEvals', 'Specific Resource', 0, -4, 'RESOURCE_IRON'), -- not needed
 ('RSTIslandPlotEvals', 'Specific Resource', 0, -2, 'RESOURCE_NITER'), -- not needed
-('RSTIslandPlotEvals', 'Specific Feature', 0, -3, 'FEATURE_ICE');
+('RSTIslandPlotEvals', 'Specific Feature', 0, -5, 'FEATURE_ICE');
 
 -- Island
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTIslandSettlement', 'SETTLEMENT_CITY_MINIMUM_VALUE', 1, 100), -- copied from original Naval
 ('RSTIslandSettlement', 'SETTLEMENT_CITY_VALUE_MULTIPLIER', 1, 2), -- copied from original Naval
---('RSTIslandOperations', 'NAVAL_SUPERIORITY', 1, 2),
 ('RSTIslandScoutUses', 'DEFAULT_NAVAL_SCOUTS', 1, 200),
 ('RSTIslandDistricts', 'DISTRICT_HARBOR', 1, 0), -- DISTRICT_ENTERTAINMENT_COMPLEX / DISTRICT_WATER_ENTERTAINMENT_COMPLEX
 ('RSTIslandTechs', 'TECH_SAILING', 1, 0), -- !BUGGED!
@@ -224,7 +212,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ===========================================================================
 -- NAVAL OPERATIONS
 -- The issue here is that Ranged ships are NOT available in Ancient Era.
--- Quadrireme is with Ship Buildng, which is 2nd column of Classical, so quite late
+-- Quadrireme is with Shipbuilding, which is 2nd column of Classical, so quite late
 -- Idea: make 2 different types of OpTeams
 -- * melee, ranged optional -> will be used in Ancient & Classical -> 'Is Medieval' = Disqualifier [NAVAL_OP_EARLY]
 -- * melee, ranged required -> will be used from Medieval onwards  -> 'Is Medieval' = required condition [NAVAL_SUPERIORITY]
@@ -248,7 +236,7 @@ Steps:
 4. Create and populate 8 AiLists.
 */
 
--- register a new op, they are numbered for unknown reason
+-- register a new op, they are numbered for an unknown reason
 INSERT INTO AiOperationTypes (OperationType, Value)
 SELECT 'NAVAL_OP_EARLY', MAX(Value)+1
 FROM AiOperationTypes;
@@ -392,11 +380,11 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 ('RST_STRATEGY_EXPLORATION_LAND', 'Call Lua Function', 'ActiveStrategyExploreLand', 2, 0),
 -- Naval (aka Coastal)
 ('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Not Major',                  NULL, 0, 1),
-('RST_STRATEGY_EXPLORATION_NAVAL',      'Is Medieval',                  NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_NAVAL',       'Is Medieval',                  NULL, 0, 1),
 ('RST_STRATEGY_EXPLORATION_NAVAL', 'Call Lua Function', 'ActiveStrategyNaval', 2, 0),
 -- Island
 ('RST_STRATEGY_EXPLORATION_ISLAND',      'Is Not Major',                  NULL, 0, 1),
-('RST_STRATEGY_EXPLORATION_ISLAND',       'Is Renaissance',                  NULL, 0, 1),
+('RST_STRATEGY_EXPLORATION_ISLAND',    'Is Renaissance',                  NULL, 0, 1),
 ('RST_STRATEGY_EXPLORATION_ISLAND', 'Call Lua Function', 'ActiveStrategyNaval', 3, 0);
 
 

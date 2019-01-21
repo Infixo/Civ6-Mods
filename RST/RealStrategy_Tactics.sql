@@ -82,14 +82,14 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 -- Strengthen teams a bit
 -- ===========================================================================
 
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 15, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Attack Enemy City'; -- early, no walls 50%, 5
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 20, MinOddsOfSuccess = 0.4, MustHaveUnits = 4 WHERE OperationName = 'Wartime Attack Enemy City'; -- early no walls 25%, 3
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 15, MinOddsOfSuccess = 0.8, MustHaveUnits =12 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 20, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
+UPDATE AiOperationDefs SET MaxTargetDistInArea = 15, MaxTargetDistInWorld = 15, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Attack Enemy City'; -- early, no walls 50%, 5
+UPDATE AiOperationDefs SET MaxTargetDistInArea = 15, MaxTargetDistInWorld = 15, MinOddsOfSuccess = 0.4, MustHaveUnits = 4 WHERE OperationName = 'Wartime Attack Enemy City'; -- early no walls 25%, 3
+UPDATE AiOperationDefs SET MaxTargetDistInArea = 10, MaxTargetDistInWorld = 10, MinOddsOfSuccess = 0.7, MustHaveUnits =10 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
+UPDATE AiOperationDefs SET MaxTargetDistInArea = 10, MaxTargetDistInWorld = 10, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
 
-UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 5 WHERE OperationName = 'City Defense'; -- 40%, 6
+UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 4 WHERE OperationName = 'City Defense'; -- 0%, 6
 
-UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.5, MustHaveUnits = 3, EnemyType = 'WAR' WHERE OperationName = 'Naval Superiority'; -- 0%, -1 -- this is NOT city attack, just naval wars and patrol?
+UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.4, MustHaveUnits = 3, EnemyType = 'WAR' WHERE OperationName = 'Naval Superiority'; -- 0%, -1 -- this is NOT city attack, just naval wars and patrol?
 
 ------------------------------------------------------------------------------
 -- A new op - City Defense Unwalled
@@ -190,8 +190,12 @@ INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentag
 ('Walled City Naval Attack Force', 'UNITTYPE_MELEE',           2, 4, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_RANGED',          4, 9, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_SIEGE',           0, 2, 0, 1),
-('Walled City Naval Attack Force', 'UNITTYPE_SIEGE_ALL',       0, 2, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_SIEGE_SUPPORT',   0, 1, 0, 1);
+INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentage,MaxPercentage)
+SELECT 'Walled City Naval Attack Force', 'UNITTYPE_SIEGE_ALL', 0, 2, 0, 1 -- iOS compatibility
+FROM UnitAiTypes
+WHERE AiType = 'UNITTYPE_SIEGE_ALL';
+
 
 /*
 City Defense - used for:

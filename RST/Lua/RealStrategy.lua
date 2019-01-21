@@ -526,16 +526,16 @@ function GetPriorityConquest(data:table)
 	-- How many turns must have passed before we test for us having a weak military?
 	if data.Data.ElapsedTurns >= GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then -- AI_GS_CONQUEST_MILITARY_STRENGTH_FIRST_TURN, def. 60
 		-- Compare our military strength to the rest of the world
-		--local iWorldMilitaryStrength:number = RST.GameGetAverageMilitaryStrength(ePlayerID); -- include us and only known
 		-- Reduce world average if we're rocking multiple capitals (VP specific)
 		local iWorldMilitaryStrength:number = data.Data.AvgMilStr * 100 / (100 + iNumCapturedCapitals * 10); -- ??????
 		if iWorldMilitaryStrength > 0 then
-			local iMilitaryRatio:number = (RST.PlayerGetMilitaryStrength(ePlayerID) - iWorldMilitaryStrength) * GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER / iWorldMilitaryStrength; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
-			-- Make the likelihood of BECOMING a warmonger lower than dropping the bad behavior
-			--iMilitaryRatio = iMilitaryRatio * 0.5; -- should be the same as setting param to 50
-			--if iMilitaryRatio > 0 then -- let's not use negative priorities as for now
+			local fStrengthRatio:number = (RST.PlayerGetMilitaryStrength(ePlayerID) - iWorldMilitaryStrength) / iWorldMilitaryStrength;
+			local iMilitaryRatio:number = fStrengthRatio * GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+			if fStrengthRatio > 1.0 then -- it actually means that our power is 2x more
+				-- use logarithmic function, otherwise this is getting out ot control
+				iMilitaryRatio = GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER + GlobalParameters.RST_CONQUEST_POWER_RATIO_LOG_MULTIPLIER * math.log(fStrengthRatio);
+			end
 			iPriority = iPriority + iMilitaryRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-			--end
 			if bLogDebug then print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(ePlayerID), iWorldMilitaryStrength, "priority=", iPriority); end
 		end
 	end
@@ -705,7 +705,7 @@ function GetPriorityCulture(data:table)
 	-- also similar algorithm to check if we are ahead or behind - it used pure yields however, not policies or similar
 	-- can't use - no info on civics available! no cheating!
 	-- simple idea - the more % we have, the more it adds
-	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(ePlayerID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 100.0) - 1.0);
+	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(ePlayerID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 10000.0) - 1.0);
 	if bLogDebug then print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(ePlayerID), "priority=", iPriority); end
 	
 	-- PICKLE here: no holding back! what could be the negative?
@@ -769,7 +769,7 @@ function GetPriorityReligion(data:table)
 		if iWorld > 0 then
 			--local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * GlobalParameters.RST_RELIGION_FAITH_RATIO_MULTIPLIER / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
 			local iRatio:number = (pPlayer:GetReligion():GetFaithYield() - iWorld) * (GlobalParameters.RST_RELIGION_FAITH_FACTOR * (data.Data.Era+1)) / iWorld; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
-			iPriority = iPriority + iRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
+			iPriority = iPriority + iRatio;
 			if bLogDebug then print("...faith ratio", iRatio, "player/world/era", pPlayer:GetReligion():GetFaithYield(), iWorld, data.Data.Era, "priority=", iPriority); end
 		end
 	end
@@ -787,7 +787,7 @@ function GetPriorityReligion(data:table)
 	-- to convert first cities, you need religion + missionaries, so at least T80+
 	-- other civs should have at least 2-3 cities, so our first cities will account for 10-20% of the whole, giving a smooth start
 	if data.Data.NumCitiesMajors > 0 then -- first turn
-		local fCitiesProgress:number = RST.PlayerGetNumCitiesFollowingReligion(ePlayerID) / data.Data.NumCitiesMajors * 100.0;
+		local fCitiesProgress:number = RST.PlayerGetNumCitiesFollowingReligion(ePlayerID) / data.Data.NumCitiesMajors;
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_CITIES_MULTIPLIER * (math.exp(fCitiesProgress * GlobalParameters.RST_RELIGION_CITIES_EXPONENT / 100.0) - 1.0);
 		if bLogDebug then print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(ePlayerID), data.Data.NumCitiesMajors, "priority=", iPriority); end
 	end
@@ -1033,12 +1033,13 @@ function GetOtherPlayerPriorityConquest(data:table, eOtherID:number)
 	-- Reduce world average if he's rocking multiple capitals (VP specific)
 	iWorldMilitaryStrength = iWorldMilitaryStrength * 100 / (100 + iNumCapturedCapitals * 10); -- ??????
 	if iWorldMilitaryStrength > 0 then
-		local iMilitaryRatio:number = (RST.PlayerGetMilitaryStrength(eOtherID) - iWorldMilitaryStrength) * GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER / iWorldMilitaryStrength; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
-		-- Make the likelihood of BECOMING a warmonger lower than dropping the bad behavior
-		--iMilitaryRatio = math.floor(iMilitaryRatio / 2); -- should be the same as setting param to 50
-		--if iMilitaryRatio > 0 then -- let's not use negative priorities as for now
+		local fStrengthRatio:number = (RST.PlayerGetMilitaryStrength(eOtherID) - iWorldMilitaryStrength) / iWorldMilitaryStrength;
+		local iMilitaryRatio:number = fStrengthRatio * GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER; -- -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+		if fStrengthRatio > 1.0 then -- it actually means that our power is 2x more
+			-- use logarithmic function, otherwise this is getting out ot control
+			iMilitaryRatio = GlobalParameters.RST_CONQUEST_POWER_RATIO_MULTIPLIER + GlobalParameters.RST_CONQUEST_POWER_RATIO_LOG_MULTIPLIER * math.log(fStrengthRatio);
+		end
 		iPriority = iPriority + iMilitaryRatio; -- This will add between -100 and 100 depending on this player's MilitaryStrength relative the world average. The number will typically be near 0 though, as it's fairly hard to get away from the world average
-		--end
 		if bLogDebug then print("...military ratio", iMilitaryRatio, "player/world", RST.PlayerGetMilitaryStrength(eOtherID), iWorldMilitaryStrength, "priority=", iPriority); end
 	end
 
@@ -1154,7 +1155,7 @@ function GetOtherPlayerPriorityCulture(data:table, eOtherID:number)
 	-- also similar algorithm to check if we are ahead or behind - it used pure yields however, not policies or similar
 	-- can't use - no info on civics available! no cheating!
 	-- simple idea - the more % we have, the more it adds
-	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(eOtherID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 100.0) - 1.0);
+	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(eOtherID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 10000.0) - 1.0);
 	if bLogDebug then print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(eOtherID), "priority=", iPriority); end
 	
 	--print("GetOtherPlayerPriorityCulture:", iPriority);
@@ -1231,7 +1232,7 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 	
 	-- cities converted use expotential formula for Cities
 	if data.Data.NumCitiesMajors > 0 then -- first turn
-		local fCitiesProgress:number = RST.PlayerGetNumCitiesFollowingReligion(eOtherID) / data.Data.NumCitiesMajors * 100.0;
+		local fCitiesProgress:number = RST.PlayerGetNumCitiesFollowingReligion(eOtherID) / data.Data.NumCitiesMajors;
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_CITIES_MULTIPLIER * (math.exp(fCitiesProgress * GlobalParameters.RST_RELIGION_CITIES_EXPONENT / 100.0) - 1.0);
 		if bLogDebug then print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(eOtherID), data.Data.NumCitiesMajors, "priority=", iPriority); end
 	end
@@ -1613,7 +1614,7 @@ function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
 	-- actual comparison
 	local iOurTechs:number = RST.PlayerGetNumTechsResearched(ePlayerID);
 	-- threshold: 0.1 * num + 1, it gives nice 2,3,4,.. for 10,20,30,.. techs => call with iThreshold = 90
-	data.ActiveScience = iOurTechs*100 < data.Data.AvgTechs*iThreshold - 150; -- 1 tech = 100
+	data.ActiveScience = iOurTechs*100 < data.Data.AvgTechs*iThreshold - 125; -- 1 tech = 100
 	if bLogOther then print(Game.GetCurrentGameTurn(), "RSTSCIEN", ePlayerID, iThreshold, "...techs our/avg", iOurTechs, data.Data.AvgTechs, "active?", data.ActiveScience); end
 	SavePlayerData(ePlayerID, "ActiveStrategyMoreScience");
 end
@@ -1832,7 +1833,7 @@ function SaveDataToPlayerSlot(ePlayerID:number, sSlotName:string, data)
 end
 
 function SavePlayerData(ePlayerID:number, sFunction:string)
-	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN SavePlayerData", ePlayerID, sFunction); end
+	--if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN SavePlayerData", ePlayerID, sFunction); end
 	SaveDataToPlayerSlot(ePlayerID, "RSTPlayerData", tData[ePlayerID]);
 end
 

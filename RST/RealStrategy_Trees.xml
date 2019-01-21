@@ -20,12 +20,12 @@
 		<Row NodeType="Concurrent" NodeId="2" TreeName="Simple City Defense" JumpTo="12" />
 			<Row NodeType="Operation Defend Units" NodeId="3" TreeName="Simple City Defense" />
 			<Row NodeType="Recruit Units" NodeId="4" TreeName="Simple City Defense" />
+			<!-- it returns FAILURE and I think (not 100% sure) it stops  the entire tree -->
+			<!-- <Row NodeType="Garrison City" NodeId="4" TreeName="Simple City Defense" /> -->
 			<Row NodeType="Operation Attack Units" NodeId="5" TreeName="Simple City Defense" />
 			<Row NodeType="Operation Move" NodeId="6" TreeName="Simple City Defense" />
 			<Row NodeType="Operation Attack Units" NodeId="7" TreeName="Simple City Defense" />
-			<!-- it returns FAILURE and I don't know if that stops tree or not -->
-			<!-- <Row NodeType="Garrison City" NodeId="8" TreeName="Simple City Defense" /> -->
-			<!-- make it "independent" -->
+			<!-- Move Garrison to the end and make it "independent" -->
 			<Row NodeType="Priority" NodeId="8" TreeName="Simple City Defense" JumpTo="12" />
 				<Row NodeType="Garrison City" NodeId="9" TreeName="Simple City Defense" />
 				<Row NodeType="Not" NodeId="10" TreeName="Simple City Defense" JumpTo="12" />
@@ -64,7 +64,7 @@
 	
 	
 <!-- Manage Great Person - this tree gets stuck (failure) on 2 nodes: (a) Find Unit Targets and (b) Protect Unit
-     The 1st one is PROBABLY not harmful. It is under Priority (OR) node, to it goes to "Build Unit" and finishes with Success.
+     The 1st one is PROBABLY not harmful. It is under Priority (OR) node, so it goes to "Build Unit" and finishes with Success.
 	 The 2nd probably due to lack of units. Those GPs just stand alone. The 2nd can be simply omitted as GPs cannot die. -->
 
 <BehaviorTreeNodes>
@@ -208,18 +208,33 @@
 	
 </TreeData>
 
+
 <!-- Siege City Assault -->
 <TreeData>
-	<!-- Contract Manager -->
+	<!-- 8:Contract Manager -->
 	<Update>
 		<Where DefnId="2" NodeId="8" TreeName="Siege City Assault" /> <!-- contract manager, turns -->
-		<Set DefaultData="7"/>
+		<Set DefaultData="7" />
 	</Update>
-	<!-- "Recruit Units" - the only node without Par0 set -->
+	<!-- 9:"Recruit Units" - the only node without Par0 set -->
     <Row DefnId="0" NodeId="9" TreeName="Siege City Assault" DefaultData="false" /> <!-- not in progress -->
 	<Delete DefnId="5" NodeId="9" TreeName="Siege City Assault" /> <!-- 10 turns, not needed -->
-	<!-- "Recrut Units" This contract is undefined Tag="Ongoing Recruits" -->
+	<!-- 20:"Recrut Units" This contract is undefined Tag="Ongoing Recruits" -->
 	<Delete DefnId="1" NodeId="20" TreeName="Siege City Assault" /> 
+</TreeData>
+
+
+<!-- Nuclear Assault -->
+<TreeData>
+	<!-- 7:Contract Manager Decorator  “Initial Recruits” not defined -->
+	<Update>
+		<Where DefnId="0" NodeId="7" TreeName="Nuclear Assault" /> <!-- contract manager, contract id -->
+		<Set Tag="Initial Recruits" />
+	</Update>
+	<!-- 8:Recruit Units Par0 is missing (not in progress) -->
+    <Row DefnId="0" NodeId="8" TreeName="Nuclear Assault" DefaultData="false" /> <!-- not in progress -->
+	<!-- 13:Recruit Units “Ongoing Recruits” not defined -->
+	<Delete DefnId="1" NodeId="13" TreeName="Nuclear Assault" /> 
 </TreeData>
 
 </GameInfo>

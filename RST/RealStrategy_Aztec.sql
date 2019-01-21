@@ -44,7 +44,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10), -- vanilla 1, RFX 1.2
 ('MontezumaWonders',      'BUILDING_HUEY_TEOCALLI', 1, 0), -- who else?
 ('MontezumaUnits',        'UNIT_BUILDER', 1, 15),
-('MontezumaUnits',        'UNIT_MILITARY_ENGINEER', 1, -25);
+('MontezumaUnits',        'UNIT_MILITARY_ENGINEER', 1, -50);
 -- There is a bug in BH Node that makes him build Engis instead of Builders, probably because they both have tag UNITAI_BUILD
 -- Seems that BH is actually working good, because one can use Engi to speed up the District.
 -- So, the bug is in the ability. Anyway, he produces dozens of them, so at least slow it down a bit.

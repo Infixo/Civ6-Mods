@@ -111,7 +111,7 @@ UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_HAPPINESS'; -- 1
 UPDATE PseudoYields SET DefaultValue = 4.0 WHERE PseudoYieldType = 'PSEUDOYIELD_IMPROVEMENT'; -- 	0.5, 13.5 too much
 --UPDATE PseudoYields SET DefaultValue = 0.55 WHERE PseudoYieldType = 'PSEUDOYIELD_INFLUENCE'; -- 	0.5, envoys - Diplo?
-UPDATE PseudoYields SET DefaultValue = 30 WHERE PseudoYieldType = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- 	25, AI+ 45
+UPDATE PseudoYields SET DefaultValue = 40 WHERE PseudoYieldType = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- 	25, AI+ 45
 UPDATE PseudoYields SET DefaultValue = 100 WHERE PseudoYieldType = 'PSEUDOYIELD_SPACE_RACE'; -- 100
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_STANDING_ARMY_NUMBER'; -- 	1 -- controls size of the army
 --UPDATE PseudoYields SET DefaultValue = X.X WHERE PseudoYieldType = 'PSEUDOYIELD_STANDING_ARMY_VALUE'; -- 	0.1 -- controls size of the army
@@ -148,7 +148,7 @@ UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_RELIGIOUS'; -- 1
 UPDATE PseudoYields SET DefaultValue =  1.1 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SETTLER'; -- 1 -- 1.4 seems to much, they build Settlers even with 0 army and undeveloped cities
 --UPDATE PseudoYields SET DefaultValue = 15.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_SPY'; -- 20
-UPDATE PseudoYields SET DefaultValue = 5.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_TRADE'; -- 1, AI+ 11 -- make sure they build them all
+UPDATE PseudoYields SET DefaultValue = 4.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_TRADE'; -- 1, AI+ 11 -- make sure they build them all
 
 /*
 These Pseudos affect the valuation of Civics and Technologies
@@ -175,6 +175,7 @@ INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 */
 
 
+--------------------------------------------------------------
 -- BaseOperationsLimits
 
 UPDATE AiOperationDefs SET OperationType = 'OP_DEFENSE' WHERE OperationName = 'City Defense'; -- the only OP_ that is missing an assignment?
@@ -182,6 +183,17 @@ UPDATE AiOperationDefs SET OperationType = 'OP_DEFENSE' WHERE OperationName = 'C
 --Changes the amount of operations of these types that can run at the same time
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_DEFENSE'; -- def. 1 ?number of simultaneus ops?  TUNE ACCORDING TO PEACE/WAR
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_SETTLE'; -- def. 1 ?number of simultaneus ops?
+
+-- Fast Pillage - new op from Delnar - trying to make it work
+-- register a new op, they are numbered for an unknown reason
+INSERT INTO AiOperationTypes (OperationType, Value)
+SELECT 'OP_PILLAGE', MAX(Value)+1
+FROM AiOperationTypes;
+
+INSERT INTO AiFavoredItems(ListType, Item, Value) VALUES
+('BaseOperationsLimits',   'OP_PILLAGE', 1),
+('PerWarOperationsLimits', 'OP_PILLAGE', 1);
+
 
 -- Units are put after Slush fund, weird...
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_UNITS';
@@ -191,10 +203,10 @@ UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item =
 -- UNITS - in some cases civs produce too many specific units
 
 UPDATE AiFavoredItems SET Value =  10 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1
-UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_INQUISITOR';
-UPDATE AiFavoredItems SET Value =  10 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_NATURALIST';
-UPDATE AiFavoredItems SET Value = -15 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_MILITARY_ENGINEER';
-
+INSERT INTO AiFavoredItems(ListType, Item, Value) VALUES
+('UnitPriorityBoosts', 'UNIT_INQUISITOR', -15),
+('UnitPriorityBoosts', 'UNIT_NATURALIST', 10),
+('UnitPriorityBoosts', 'UNIT_MILITARY_ENGINEER', -15);
 		
 
 --------------------------------------------------------------
@@ -480,9 +492,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'MilitaryVictoryYields' AND Item = 'YIELD_PRODUCTION'; -- def. 25 -- will get more if at war
 
---UPDATE AiFavoredItems SET Value =  25 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- def. 25
-UPDATE AiFavoredItems SET Value = 35 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- def. 25
-UPDATE AiFavoredItems SET Value = 35 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. 25
+UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_NUCLEAR_WEAPON'; -- def. 25
+--UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- def. 25
+--UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. 25
 UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 25 -- leave it for Naval strategies
 --UPDATE AiFavoredItems SET Value = 150 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- def. 100
 UPDATE AiFavoredItems SET Value = -50 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_CITY_DEFENSES'; -- def. -25
@@ -732,7 +744,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AtomicPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('AtomicPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 --('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
-('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 50),
+('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('AtomicPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -15),
 -- INFORMATION
 ('InformationYields', 'YIELD_CULTURE', 1, -15),
@@ -792,8 +804,8 @@ INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue, Th
 ('RST_STRATEGY_PEACE',    'Call Lua Function', 'ActiveStrategyPeace',     0),
 ('RST_STRATEGY_ATWAR',    'Call Lua Function', 'ActiveStrategyAtWar',     0),
 ('RST_STRATEGY_GWSLOTS',  'Call Lua Function', 'ActiveStrategyMoreGreatWorkSlots', 0),
-('RST_STRATEGY_SCIENCE',  'Call Lua Function', 'ActiveStrategyMoreScience', 85),
-('RST_STRATEGY_CULTURE',  'Call Lua Function', 'ActiveStrategyMoreCulture', 75);
+('RST_STRATEGY_SCIENCE',  'Call Lua Function', 'ActiveStrategyMoreScience', 90),
+('RST_STRATEGY_CULTURE',  'Call Lua Function', 'ActiveStrategyMoreCulture', 80);
 
 
 INSERT INTO AiListTypes (ListType) VALUES

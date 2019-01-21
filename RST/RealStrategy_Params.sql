@@ -47,9 +47,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_CONQUEST_NOBODY_MET_PRIORITY', -200), -- if nobody met, then decrease the priority, def. -100 -> this is scaled in a moment by approx. 0.3, so -100 gives actually -30.
-('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 80), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
-('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 90), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
-('RST_CONQUEST_AT_WAR_PRIORITY', 30), -- conquest priority for each ongoing war with a major civ, def. 10
+('RST_CONQUEST_CAPTURED_CAPITAL_PRIORITY', 50), -- increase conquest priority for each captured capital if we have more than 1, def. 125 + added in VP, seems quite a lot?
+('RST_CONQUEST_POWER_RATIO_MULTIPLIER', 80), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+('RST_CONQUEST_POWER_RATIO_LOG_MULTIPLIER', 80), -- how does our military strength compare to others, -100 = we are at 0, 0 = we are average, +100 = we are 2x as average, +200 = we are 3x as average, etc.
+('RST_CONQUEST_AT_WAR_PRIORITY', 20), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
 ('RST_CONQUEST_LESS_CITIES_WEIGHT', 20), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
@@ -59,8 +60,8 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 70), -- how does our situation compare to others, -100..100 and more
 ('RST_SCIENCE_TECH_WEIGHT', 10), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
 --('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more - techs are more important than yield only (they show actual progress)
-('RST_SCIENCE_PROJECT_WEIGHT', 75), -- each completed space race project
-('RST_SCIENCE_HAS_SPACEPORT', 40), -- adds if player has a spaceport
+('RST_SCIENCE_PROJECT_WEIGHT', 60), -- each completed space race project
+('RST_SCIENCE_HAS_SPACEPORT', 30), -- adds if player has a spaceport
 -- culture
 --('RST_CULTURE_YIELD_WEIGHT', 20), -- [x100] how much culture yield is worth
 --('RST_CULTURE_TOURISM_WEIGHT', 20), -- [x100] how much tourism yield is worth
@@ -69,16 +70,16 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- tourism is tough to measure! yields are very small at the begining
 -- try different approach - for Ancient & Classical use weight (like 1 Tourism = 2-3 pts.), after that use avg HOWEVER 
 -- also cannot use Tourism to Guess - too rare in early game
-('RST_CULTURE_PROGRESS_EXPONENT', 3), -- [x100], cultural progress formula, exponent => 0.03 speeds up after 50 and goes high after 80
-('RST_CULTURE_PROGRESS_MULTIPLIER', 22), -- cultural progress formula, multiplier; 50 => 80, 60 => 110, 70 => 160, 80 => 220, 90 => 300
+('RST_CULTURE_PROGRESS_EXPONENT', 270), -- [x100], cultural progress formula, exponent => 0.03 speeds up after 50 and goes high after 80
+('RST_CULTURE_PROGRESS_MULTIPLIER', 24), -- cultural progress formula, multiplier; 50 => 80, 60 => 110, 70 => 160, 80 => 220, 90 => 300
 -- religion
 --('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
-('RST_RELIGION_FAITH_FACTOR', 10), -- how does our situation compare to others; uses typical formula but actual Multiplier = Factor * Era - this smoothes down early faith jumps
+('RST_RELIGION_FAITH_FACTOR', 9), -- how does our situation compare to others; uses typical formula but actual Multiplier = Factor * Era - this smoothes down early faith jumps
 --('RST_RELIGION_CITIES_RATIO_MULTIPLIER', 40), -- number of cities following our religion, how does our situation compare to others, -100..100 and more - problem with early converts, gives huge negatives when working your own empire even
-('RST_RELIGION_CITIES_EXPONENT', 3), -- [x100], cultural progress formula used for cities converted, exponent => 0.03 speeds up after 50 and goes high after 80
-('RST_RELIGION_CITIES_MULTIPLIER', 25), -- cultural progress formula used for cities converted, multiplier; 50 => 90, 60 => 130, 70 => 180, 80 => 250, 90 => 350
+('RST_RELIGION_CITIES_EXPONENT', 260), -- [x100], cultural progress formula used for cities converted, exponent => 0.03 speeds up after 50 and goes high after 80
+('RST_RELIGION_CITIES_MULTIPLIER', 28), -- cultural progress formula used for cities converted, multiplier; 50 => 90, 60 => 130, 70 => 180, 80 => 250, 90 => 350
 ('RST_RELIGION_RELIGION_WEIGHT', 40), -- founded religion
-('RST_RELIGION_CONVERTED_WEIGHT', 70), -- each converted civ after 1 (I assume the 1st is us)
+('RST_RELIGION_CONVERTED_WEIGHT', 50), -- each converted civ after 1 (I assume the 1st is us)
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', 0); -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
