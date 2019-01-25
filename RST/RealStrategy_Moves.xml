@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <AllowedMoves>
+    <!-- Moved Air operations up to see if this would activate Fighters -->
+  	<Delete/>
+	<!-- critical -->
+    <Row AllowedMoveType="First Turn Settler" Value="0" IsHomeland="true" />
+    <Row AllowedMoveType="Move to Safety" Value="1" IsHomeland="true" IsTactical="true" />
+    <Row AllowedMoveType="Promotion" Value="2" isTactical="true" isHomeland="true" />
+    <Row AllowedMoveType="Gather Goody Hut" Value="3" IsTactical="true" IsHomeland="true" />
+	<!-- military - attack -->
+    <Row AllowedMoveType="Air Assault" Value="4" isTactical="true" />
+    <Row AllowedMoveType="Attack High Priority" Value="5" IsTactical="true" />
+    <Row AllowedMoveType="Attack Medium Priority" Value="6" IsTactical="true" />
+    <Row AllowedMoveType="Air Deploy" Value="7" isTactical="true" />
+	<!-- military - medium -->
+    <Row AllowedMoveType="Heal" Value="8" IsTactical="true" />
+    <Row AllowedMoveType="Charge Heal" Value="9" isHomeland="true"/> <!-- At this point, this only applies to the Guru, leaving open to future heal charge units, though -->
+    <Row AllowedMoveType="Coastal Raid" Value="10" IsTactical="true" />
+    <Row AllowedMoveType="Pillage Improvement" Value="11" IsTactical="true" />
+    <Row AllowedMoveType="Pillage District" Value="12" IsTactical="true" />
+    <Row AllowedMoveType="Plunder Trader" Value="13" IsTactical="true" isHomeland="true" />
+    <Row AllowedMoveType="Air Rebase" Value="14" isTactical="true" />
+	<!-- military - low -->
+    <Row AllowedMoveType="Attack Low Priority" Value="15" IsTactical="true" />
+    <Row AllowedMoveType="Attack District" Value="16" IsTactical="true" />
+    <Row AllowedMoveType="Attack Camps" Value="17" IsTactical="true" />
+    <Row AllowedMoveType="Explore Land" Value="18" IsHomeland="true" />
+    <Row AllowedMoveType="Make Military Formation" Value="19" isTactical="true" /> <!-- fixed -->
+    <Row AllowedMoveType="Leader Formation" Value="20" isTactical="true" />
+    <Row AllowedMoveType="Support Formation" Value="21" isTactical="true" /> <!-- Support units not in use by an operation should try to move close to allied military -->
+    <Row AllowedMoveType="Attack Civilians" Value="22" IsTactical="true" isHomeland="true" />
+    <Row AllowedMoveType="Chase Target" Value="23" IsTactical="true" />
+	<!-- barbarians -->
+    <Row AllowedMoveType="Defend Camps" Value="24" IsTactical="true" />
+    <Row AllowedMoveType="Barbarian Rampage" Value="25" isTactical="true" />
+	<!-- civilians -->
+    <Row AllowedMoveType="Great Person Move" Value="26" IsHomeland="true" />
+    <Row AllowedMoveType="Found Park" Value="27" isHomeland="true" />
+    <Row AllowedMoveType="Religious Combat" Value="28" isHomeland="true" />
+    <Row AllowedMoveType="Missionary Move" Value="29" isHomeland="true" />
+    <Row AllowedMoveType="Builder Outside Ring" Value="30" isHomeland="true" />
+	<!-- free time -->
+    <Row AllowedMoveType="Wander" Value="31" IsTactical="true" />
+    <Row AllowedMoveType="Wander Near Camp" Value="32" IsTactical="true" />
+    <Row AllowedMoveType="Wander Near City" Value="33" IsTactical="true" />
+	<!-- end -->
+    <Row AllowedMoveType="End Turn" Value="34" IsHomeland="true" />
+  </AllowedMoves>
+</GameInfo>

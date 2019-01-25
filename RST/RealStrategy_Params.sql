@@ -6,10 +6,10 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '7');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '8');
 
 -- logging
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '0'); -- log guess priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
@@ -25,12 +25,12 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); --
 INSERT INTO GlobalParameters (Name, Value) VALUES
 -- weights
 ('RST_WEIGHT_LEADER', 20), -- weight of the leader's base priority
-('RST_WEIGHT_POLICY',       250), -- [x100] how much each slotted policy weights
-('RST_WEIGHT_WONDER',       150), -- [x100] how much each wonder weights
+('RST_WEIGHT_POLICY',       210), -- [x100] how much each slotted policy weights
+('RST_WEIGHT_WONDER',       120), -- [x100] how much each wonder weights
 ('RST_WEIGHT_GOVERNMENT',   500), -- [x100] how much each government weights
-('RST_WEIGHT_MINOR',        300), -- [x100] how much each suzerained city state weights
-('RST_WEIGHT_GREAT_PERSON',  75), -- [x100] how much each earned GP weights
-('RST_WEIGHT_BELIEF',       300), -- [x100] how much each earned belief weights
+('RST_WEIGHT_MINOR',        280), -- [x100] how much each suzerained city state weights
+('RST_WEIGHT_GREAT_PERSON',  70), -- [x100] how much each earned GP weights
+('RST_WEIGHT_BELIEF',       220), -- [x100] how much each earned belief weights
 -- generic
 ('RST_STRATEGY_LEADER_RANDOM', 1), -- adds/subtracts a random number to a leader base flavor in a range +/- param
 ('RST_STRATEGY_LEADER_ERA_BIAS', 130), -- [x100] leader's individual bias is multiplied by Era and this factor, def. 250, for Atomic=7, low=2 mid=5 high=8 => 17 / 42 / 67
@@ -53,7 +53,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_CONQUEST_AT_WAR_PRIORITY', 20), -- conquest priority for each ongoing war with a major civ, def. 10
 ('RST_CONQUEST_SOMEONE_CLOSE_TO_VICTORY', 15), -- add this for each player close to victory when we are NOT, def. 25 (desperate!), multiplied by ERA - seems a lot!!!
 ('RST_CONQUEST_BOTH_CLOSE_TO_VICTORY', 5), -- add this for each player close to victory when we are too, def. 5, multiplied by ERA
-('RST_CONQUEST_LESS_CITIES_WEIGHT', 20), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
+('RST_CONQUEST_LESS_CITIES_WEIGHT', 25), -- added for each city we have less than all known civs on average, because conquest is a wide play, check together with power
 ('RST_CONQUEST_NUKE_THREAT', -50), -- others have WMDs, but we don't, counted only once?
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
@@ -294,18 +294,18 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 
 -- CityStates
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
-	('CULTURAL', 'CityState', '', 'CULTURE', 7),		
-('INDUSTRIAL', 'CityState', '', 'SCIENCE', 4),	('INDUSTRIAL', 'CityState', '', 'CULTURE', 2),	('INDUSTRIAL', 'CityState', '', 'RELIGION', 2),	('INDUSTRIAL', 'CityState', '', 'CONQUEST', 3),
-			('MILITARISTIC', 'CityState', '', 'CONQUEST', 7),
-		('RELIGIOUS', 'CityState', '', 'RELIGION', 7),	
-('SCIENTIFIC', 'CityState', '', 'SCIENCE', 7),
-('TRADE', 'CityState', '', 'SCIENCE', 1),	('TRADE', 'CityState', '', 'CULTURE', 1),	('TRADE', 'CityState', '', 'RELIGION', 1),	('TRADE', 'CityState', '', 'CONQUEST', 1);
+		('CULTURAL', 'CityState', '', 'CULTURE', 6),	
+('INDUSTRIAL', 'CityState', '', 'CONQUEST', 2),	('INDUSTRIAL', 'CityState', '', 'SCIENCE', 3),	('INDUSTRIAL', 'CityState', '', 'CULTURE', 3),	('INDUSTRIAL', 'CityState', '', 'RELIGION', 1),
+('MILITARISTIC', 'CityState', '', 'CONQUEST', 6),			
+			('RELIGIOUS', 'CityState', '', 'RELIGION', 6),
+	('SCIENTIFIC', 'CityState', '', 'SCIENCE', 6),		
+('TRADE', 'CityState', '', 'CONQUEST', 2),	('TRADE', 'CityState', '', 'SCIENCE', 2),	('TRADE', 'CityState', '', 'CULTURE', 2),	('TRADE', 'CityState', '', 'RELIGION', 2);
 
 -- GreatPeople
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 			('GREAT_PERSON_CLASS_ADMIRAL', 'GreatPerson', '', 'CONQUEST', 3),
 	('GREAT_PERSON_CLASS_ARTIST', 'GreatPerson', '', 'CULTURE', 4),		
-('GREAT_PERSON_CLASS_ENGINEER', 'GreatPerson', '', 'SCIENCE', 1),	('GREAT_PERSON_CLASS_ENGINEER', 'GreatPerson', '', 'CULTURE', 1),		
+('GREAT_PERSON_CLASS_ENGINEER', 'GreatPerson', '', 'SCIENCE', 2),	('GREAT_PERSON_CLASS_ENGINEER', 'GreatPerson', '', 'CULTURE', 1),		
 			('GREAT_PERSON_CLASS_GENERAL', 'GreatPerson', '', 'CONQUEST', 5),
 ('GREAT_PERSON_CLASS_MERCHANT', 'GreatPerson', '', 'SCIENCE', 1),	('GREAT_PERSON_CLASS_MERCHANT', 'GreatPerson', '', 'CULTURE', 1),		
 	('GREAT_PERSON_CLASS_MUSICIAN', 'GreatPerson', '', 'CULTURE', 4),		

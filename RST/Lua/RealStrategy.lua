@@ -563,8 +563,8 @@ function GetPriorityConquest(data:table)
 	if data.Data.ElapsedTurns >= GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then
 		local iOurCities:number = pPlayer:GetCities():GetCount();
 		local iAvgCities:number = (iNumCities + iOurCities) / (data.Data.NumMajorsAliveAndMet + 1);
-		if (iOurCities < iAvgCities) and ((iAvgCities - iOurCities) <= 3.0) then
-			-- only boost for max. 3 cities; if we're are lacking more then we are simply too weak for CONQUEST
+		if (iOurCities < iAvgCities) and ((iAvgCities - iOurCities) <= 4.0) then
+			-- only boost for max. 4 cities; if we're are lacking more then we are simply too weak for CONQUEST
 			iPriority = iPriority + GlobalParameters.RST_CONQUEST_LESS_CITIES_WEIGHT * ( iAvgCities - iOurCities );
 			if bLogDebug then print("our cities, on average", iOurCities, iAvgCities, "priority=", iPriority); end
 		end

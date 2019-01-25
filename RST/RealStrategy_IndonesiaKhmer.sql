@@ -54,8 +54,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
 ('GitarjaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 25), -- kampung
 ('GitarjaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
-('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 15),
-('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15);
+('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10),
+('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 10);
 
 
 -- LEADER_JAYAVARMAN / KHMER

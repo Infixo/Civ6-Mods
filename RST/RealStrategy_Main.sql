@@ -140,7 +140,7 @@ UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD
 --UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_WRITING'; -- 	10
 
 -- units
-UPDATE PseudoYields SET DefaultValue =  3.5 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- 	2, 2.2 in AI+, 20 in AirpowerFix
+UPDATE PseudoYields SET DefaultValue =  3.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- 	2, 2.2 in AI+, 20 in AirpowerFix
 --UPDATE PseudoYields SET DefaultValue =  3.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST'; -- 4
 UPDATE PseudoYields SET DefaultValue =  1.1 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_COMBAT'; -- 1.0, AI+ 1.4
 UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_EXPLORER'; --	1
@@ -184,6 +184,12 @@ UPDATE AiOperationDefs SET OperationType = 'OP_DEFENSE' WHERE OperationName = 'C
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_DEFENSE'; -- def. 1 ?number of simultaneus ops?  TUNE ACCORDING TO PEACE/WAR
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'BaseOperationsLimits' AND Item = 'OP_SETTLE'; -- def. 1 ?number of simultaneus ops?
 
+-- Air City Defense - new op from RST
+-- register a new op, they are numbered for an unknown reason
+INSERT INTO AiOperationTypes (OperationType, Value)
+SELECT 'OP_AIR_DEFENSE', MAX(Value)+1
+FROM AiOperationTypes;
+
 -- Fast Pillage - new op from Delnar - trying to make it work
 -- register a new op, they are numbered for an unknown reason
 INSERT INTO AiOperationTypes (OperationType, Value)
@@ -191,6 +197,8 @@ SELECT 'OP_PILLAGE', MAX(Value)+1
 FROM AiOperationTypes;
 
 INSERT INTO AiFavoredItems(ListType, Item, Value) VALUES
+('BaseOperationsLimits',   'OP_AIR_DEFENSE', 2),
+('PerWarOperationsLimits', 'OP_AIR_DEFENSE', 1),
 ('BaseOperationsLimits',   'OP_PILLAGE', 1),
 ('PerWarOperationsLimits', 'OP_PILLAGE', 1);
 
@@ -200,14 +208,30 @@ UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item =
 
 
 --------------------------------------------------------------
--- UNITS - in some cases civs produce too many specific units
+-- UNITS - in some cases civs produce too many or too few specific units
 
 UPDATE AiFavoredItems SET Value =  10 WHERE ListType = 'UnitPriorityBoosts' AND Item = 'UNIT_SETTLER'; -- was 1
 INSERT INTO AiFavoredItems(ListType, Item, Value) VALUES
 ('UnitPriorityBoosts', 'UNIT_INQUISITOR', -15),
 ('UnitPriorityBoosts', 'UNIT_NATURALIST', 10),
 ('UnitPriorityBoosts', 'UNIT_MILITARY_ENGINEER', -15);
-		
+
+
+--------------------------------------------------------------
+-- UNIT PROMOTON CLASSES - in some cases civs produce too many or too few specific units
+
+-- Planes balance 80 vs 90 => 12% / 85 vs. 100 => +18%
+INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
+('DefaultUnitBuilds');
+INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
+('DefaultUnitBuilds', 'TRAIT_LEADER_MAJOR_CIV', 'UnitPromotionClasses');
+INSERT INTO AiFavoredItems (ListType, Item, Value) VALUES
+('DefaultUnitBuilds', 'PROMOTION_CLASS_AIR_FIGHTER', 10),
+--('DefaultUnitBuilds', 'PROMOTION_CLASS_AIR_BOMBER',  -5),
+('MinorCivUnitBuilds', 'PROMOTION_CLASS_AIR_FIGHTER', 10);
+--('MinorCivUnitBuilds', 'PROMOTION_CLASS_AIR_BOMBER',  -5);
+
+
 
 --------------------------------------------------------------
 /* TODO: Faith & Religion conundrum

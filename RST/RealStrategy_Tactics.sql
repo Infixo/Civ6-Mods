@@ -4,9 +4,9 @@
 -- 2019-01-04: Created
 -- ===========================================================================
 
-
 -- 2019-01-01: "Make Military Formation" in AllowedMoves is set as IsHomeland, but used in Tactics lists for both Majors and Minors
-UPDATE AllowedMoves SET IsHomeland = 0, IsTactical = 1 WHERE AllowedMoveType = 'Make Military Formation';
+-- 2019-01-25: moved to RealStrategy_Moves.xml
+--UPDATE AllowedMoves SET IsHomeland = 0, IsTactical = 1 WHERE AllowedMoveType = 'Make Military Formation';
 
 -- 2019-01-01: AiOperationList Default_List is defined but never used (not causing problems, however)
 UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DEFAULT';
@@ -65,7 +65,6 @@ WHERE AiType = 'UNITTYPE_SIEGE_ALL';
 --DELETE FROM UnitAiInfos WHERE AiType = 'UNITTYPE_SIEGE_SUPPORT' AND UnitType IN ('UNIT_BATTERING_RAM', 'UNIT_SIEGE_TOWER'); -- moved to SIEGE
 
 
-
 -- 2018-01-06: UNIT_WARRIOR_MONK is not in UnitAiInfos, so he is basically chilling around, doing nothing
 INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 ('UNIT_RANGER', 'UNITAI_COMBAT'),
@@ -73,6 +72,13 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 ('UNIT_WARRIOR_MONK', 'UNITAI_COMBAT'),
 ('UNIT_WARRIOR_MONK', 'UNITTYPE_LAND_COMBAT'),
 ('UNIT_WARRIOR_MONK', 'UNITTYPE_MELEE');
+
+-- 2019-01-25: AntiAir units
+INSERT INTO UnitAiTypes(AiType) VALUES ('UNITTYPE_ANTIAIR');
+INSERT INTO UnitAiInfos (UnitType, AiType)
+SELECT UnitType, 'UNITTYPE_ANTIAIR'
+FROM Units
+WHERE AntiAirCombat > 0;
 
 
 -- ===========================================================================
@@ -82,10 +88,10 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 -- Strengthen teams a bit
 -- ===========================================================================
 
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 15, MaxTargetDistInWorld = 15, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Attack Enemy City'; -- early, no walls 50%, 5
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 15, MaxTargetDistInWorld = 15, MinOddsOfSuccess = 0.4, MustHaveUnits = 4 WHERE OperationName = 'Wartime Attack Enemy City'; -- early no walls 25%, 3
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 10, MaxTargetDistInWorld = 10, MinOddsOfSuccess = 0.7, MustHaveUnits =10 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
-UPDATE AiOperationDefs SET MaxTargetDistInArea = 10, MaxTargetDistInWorld = 10, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
+UPDATE AiOperationDefs SET MaxTargetDistInRegion = 12, MaxTargetDistInArea = 12, MaxTargetDistInWorld = 16, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Attack Enemy City'; -- early, no walls 50%, 5
+UPDATE AiOperationDefs SET MaxTargetDistInRegion = 12, MaxTargetDistInArea = 12, MaxTargetDistInWorld = 16, MinOddsOfSuccess = 0.4, MustHaveUnits = 4 WHERE OperationName = 'Wartime Attack Enemy City'; -- early no walls 25%, 3
+UPDATE AiOperationDefs SET MaxTargetDistInRegion =  9, MaxTargetDistInArea =  9, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.7, MustHaveUnits =10 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
+UPDATE AiOperationDefs SET MaxTargetDistInRegion =  9, MaxTargetDistInArea =  9, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.5, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
 
 UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 4 WHERE OperationName = 'City Defense'; -- 0%, 6
 
@@ -312,19 +318,21 @@ INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, StringVal) VALUES
 INSERT INTO AllowedOperations (ListType, OperationDef) VALUES
 ('Default_List', 'Air City Defense');
 INSERT INTO AiOperationDefs (OperationName,TargetType,TargetParameter,BehaviorTree,Priority,MaxTargetDistInRegion,MaxTargetDistInArea,MaxTargetDistInWorld,MustHaveUnits,OperationType) VALUES
-('Air City Defense','TARGET_FRIENDLY_CITY',1,'Simple City Defense',4,-1,-1,0,2,'OP_DEFENSE');
+('Air City Defense','TARGET_FRIENDLY_CITY',1,'Simple City Defense',4,-1,-1,0,2,'OP_AIR_DEFENSE');
 
 -- define a team
 INSERT INTO AiTeams (TeamName) VALUES
 ('Air City Defense');
 INSERT INTO AiOperationTeams (TeamName,OperationName,InitialStrengthAdvantage,OngoingStrengthAdvantage) VALUES
-('Air City Defense','Air City Defense',-1,1);
+('Air City Defense','Air City Defense',-1,-1);
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('Air City Defense', 'UNITTYPE_CIVILIAN', 0, 0),
-('Air City Defense', 'UNITTYPE_NAVAL', 0, 0),
-('Air City Defense', 'UNITAI_COMBAT', 0, 5),
-('Air City Defense', 'UNITTYPE_AIR', 1, 4),
-('Air City Defense', 'UNITTYPE_AIR_SIEGE', 0, 2);
+--('Air City Defense', 'UNITTYPE_LAND_COMBAT', 0, 0),
+--('Air City Defense', 'UNITTYPE_NAVAL', 0, 0),
+--('Air City Defense', 'UNITAI_COMBAT', 0, 5),
+('Air City Defense', 'UNITTYPE_AIR_SIEGE', 0, 0),
+('Air City Defense', 'UNITTYPE_AIR', 1, 3),
+('Air City Defense', 'UNITTYPE_ANTIAIR', 1, 2);
 
 /*
 TARGET_FRIENDLY_CITY

@@ -23,7 +23,7 @@
 	</OpTeamRequirements>
 	<AiOperationDefs>
 		<!-- Operation targets non-encampment districts (passive districts) and doesn't target past 16 tiles because that might make the AI travel way too much just to pillage a district -->
-		<Row OperationName="Fast District Pillage" TargetType="TARGET_ENEMY_PASSIVE_DISTRICT" EnemyType="WAR" OperationType="OP_PILLAGE" BehaviorTree="District Pillage Harassment" Priority="3" SelfStart="true" MaxTargetDistInRegion="-1" MaxTargetDistInArea="16" MaxTargetDistInWorld="-1" MinOddsOfSuccess="0.3" MustHaveUnits="2" />
+		<Row OperationName="Fast District Pillage" TargetType="TARGET_ENEMY_PASSIVE_DISTRICT" EnemyType="WAR" OperationType="OP_PILLAGE" BehaviorTree="District Pillage Harassment" Priority="3" SelfStart="true" MaxTargetDistInRegion="12" MaxTargetDistInArea="12" MaxTargetDistInWorld="12" MinOddsOfSuccess="0.3" MustHaveUnits="2" />
 	</AiOperationDefs>
 	<AllowedOperations>
 		<Row ListType="Default_List" OperationDef="Fast District Pillage" />
