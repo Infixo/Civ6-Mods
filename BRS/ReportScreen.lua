@@ -180,6 +180,7 @@ end
 --	Single entry point for display
 -- ===========================================================================
 function Open()
+	--print("FUN Open()");
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Normal );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
@@ -2372,7 +2373,7 @@ function city_fields( kCityData, pCityInstance )
 	else                                         sPopulationText = sPopulationText..tostring(fRealHousing); end
 	-- check for Sewer
 	pCityInstance.Population:SetToolTipString("");
-	if kCityData.City:GetBuildings():HasBuilding( GameInfo.Buildings[ "BUILDING_SEWER" ].Index ) then
+	if GameInfo.Buildings["BUILDING_SEWER"] ~= nil and kCityData.City:GetBuildings():HasBuilding( GameInfo.Buildings["BUILDING_SEWER"].Index ) then
 		sPopulationText = sPopulationText..ColorGreen("!");
 		pCityInstance.Population:SetToolTipString( Locale.Lookup("LOC_BUILDING_SEWER_NAME") );
 	end
@@ -2417,7 +2418,7 @@ function city_fields( kCityData, pCityInstance )
 	local sStrengthToolTip:string = "";
 	local function CheckForWalls(sWallsType:string)
 		local pCityBuildings:table = kCityData.City:GetBuildings();
-		if pCityBuildings:HasBuilding( GameInfo.Buildings[ sWallsType ].Index ) then
+		if GameInfo.Buildings[sWallsType] ~= nil and pCityBuildings:HasBuilding( GameInfo.Buildings[sWallsType].Index ) then
 			sStrengthToolTip = sStrengthToolTip..(string.len(sStrengthToolTip) == 0 and "" or "[NEWLINE]")..Locale.Lookup(GameInfo.Buildings[ sWallsType ].Name);
 			if pCityBuildings:IsPillaged( GameInfo.Buildings[ sWallsType ].Index ) then
 				sStrength = sStrength.."[COLOR_Red]!";
@@ -3330,7 +3331,7 @@ function InitializePolicyData()
 	tPolicyGroupNames.SLOT_FOLLOWER     = Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_FOLLOWER_BELIEFS_NAME");
 	-- Rise & Fall
 	if not bIsRiseFall then
-		tPolicyOrder.SLOT_WILDCARD = nil;
+		--tPolicyOrder.SLOT_WILDCARD = nil; -- 2019-01-26: Nubia Scenario uses SLOT_WILDCARD
 		tPolicyOrder.SLOT_DARKAGE = nil;
 	end
 	--print("*** POLICY ORDER ***"); dshowtable(tPolicyOrder);
@@ -3354,7 +3355,6 @@ function UpdatePolicyData()
 	--print("...Slotted policies"); dshowtable(tSlottedPolicies);
 	-- iterate through all policies
 	for policy in GameInfo.Policies() do
-		--print("Policy:", policy.Index, policy.PolicyType, policy.GovernmentSlotType);
 		local policyData:table = {
 			Index = policy.Index,
 			Name = Locale.Lookup(policy.Name),
@@ -3364,9 +3364,13 @@ function UpdatePolicyData()
 			IsActive = (pPlayerCulture:IsPolicyUnlocked(policy.Index) and not pPlayerCulture:IsPolicyObsolete(policy.Index)),
 			IsSlotted = ((tSlottedPolicies[ policy.Index ] and true) or false),
 		};
-		--dshowtable(policyData); -- !!!BUG HERE with Aesthetics CTD!!!
+		--print("Policy:", policy.Index, policy.PolicyType, policy.GovernmentSlotType, "active/slotted", policyData.IsActive, policyData.IsSlotted);
+		-- dshowtable(policyData); -- !!!BUG HERE with Aesthetics CTD!!! Also with CRAFTSMEN, could be others - DON'T USE
 		local sSlotType:string = policy.GovernmentSlotType;
-		if sSlotType == "SLOT_WILDCARD" then sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_WILDCARD") or "SLOT_DARKAGE"); end
+		if sSlotType == "SLOT_WILDCARD" then --sSlotType = ((policy.RequiresGovernmentUnlock and "SLOT_WILDCARD") or "SLOT_DARKAGE"); end
+			-- 2019-01-26: Better check for Dark Age policies
+			if GameInfo.Policies_XP1 ~= nil and GameInfo.Policies_XP1[policy.PolicyType] ~= nil then sSlotType = "SLOT_DARKAGE"; end
+		end
 		--print("...inserting policy", policyData.Name, "into", sSlotType);
 		table.insert(m_kPolicyData[sSlotType], policyData);
 		-- policy impact from modifiers
@@ -3387,6 +3391,7 @@ function UpdatePolicyData()
 				IsSlotted = ( pPlayer:GetReligion():GetPantheon() == belief.Index ),
 			};
 			local sSlotType:string = string.gsub(belief.BeliefClassType, "BELIEF_CLASS_", "SLOT_");
+			--print("...inserting belief", policyData.Name, "into", sSlotType);
 			table.insert(m_kPolicyData[sSlotType], policyData);
 			-- belief impact from modifiers
 			policyData.Impact, policyData.Yields, policyData.ImpactToolTip, policyData.UnknownEffect = RMA.CalculateModifierEffect("Belief", belief.BeliefType, ePlayerID, nil);
@@ -3536,7 +3541,18 @@ function UpdateMinorData()
 			tMinorBonuses[ row.Value ] = {};
 		end
 	end
-	--dshowrectable(m_kMinorData); -- debug
+	-- 2019-01-26: Australia scenario removes entries from TypeProperties but still uses those Categories
+	for leader in GameInfo.Leaders() do
+		if leader.InheritFrom == "LEADER_MINOR_CIV_DEFAULT" then
+			local sCategory:string = string.gsub(leader.LeaderType, "LEADER_MINOR_CIV_", "");
+			if m_kMinorData[ sCategory ] == nil then
+				print("WARNING: UpdateMinorData() LeaderType", leader.LeaderType, "uses category that doesn't exist in TypeProperties; registering", sCategory);
+				m_kMinorData[ sCategory ] = {};
+				tMinorBonuses[ sCategory ] = {};
+			end
+		end
+	end
+	--print("*** Minors in TypeProperties ***"); dshowrectable(m_kMinorData); -- debug
 	
 	-- find out our level of involvement with alive Minors
 	local tMinorRelations:table = {};
@@ -3555,7 +3571,7 @@ function UpdateMinorData()
 			tMinorRelations[ minorRelation.CivType ] = minorRelation;
 		end
 	end
-	--dshowrectable(tMinorRelations);
+	--print("*** Relations with Alive Minors ***"); dshowrectable(tMinorRelations);
 	
 	-- iterate through all Minors
 	-- assumptions: no Civilization Traits are used, only Leader Traits; each has 1 leader; main leader is for Suzerain bonus; Inherited leaders are for small/medium/large bonuses
