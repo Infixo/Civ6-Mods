@@ -38,6 +38,10 @@ local Strategies:table = {
 };
 --dshowtable(Strategies);
 
+local tValidVictories:table = {};
+local iMinimumPriority:number = 0;
+local iBetterThanUsNerf:number = 0;
+
 local tShowStrat:table = { "CONQUEST", "SCIENCE", "CULTURE", "RELIGION" }; -- only these will be shown in logs and debugs
 
 local tData:table = {}; -- a table of data sets, one for each player
@@ -482,7 +486,8 @@ end
 function GetPriorityConquest(data:table)
 	--print("FUN GetPriorityConquest", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_CONQUEST") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_CONQUEST") then return -200; end
+	if tValidVictories.CONQUEST == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -591,7 +596,8 @@ end
 function GetPriorityScience(data:table)
 	--print("FUN GetPriorityScience", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then return -200; end
+	if tValidVictories.SCIENCE == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -657,7 +663,8 @@ end
 function GetPriorityCulture(data:table)
 	--print("FUN GetPriorityCulture", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_CULTURE") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_CULTURE") then return -200; end
+	if tValidVictories.CULTURE == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -720,7 +727,8 @@ end
 function GetPriorityReligion(data:table)
 	--print("FUN GetPriorityReligion", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS") then return -200; end
+	if tValidVictories.RELIGION == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -958,7 +966,7 @@ function RefreshAndProcessData(ePlayerID:number)
 	-- For each player following the strategy and being better than us, reduce our priority by 33%
 	local tNerfFactor:table = PriorityTableNew();
 	PriorityTableAdd(tNerfFactor, data.Priorities); -- copy
-	PriorityTableMultiply(tNerfFactor, GlobalParameters.RST_STRATEGY_BETTER_THAN_US_NERF/100.0);
+	PriorityTableMultiply(tNerfFactor, iBetterThanUsNerf/100.0);
 	PriorityTableMultiplyByTable(tNerfFactor, tBetterNum);
 	dshowpriorities(tNerfFactor, "nerf factors");
 	
@@ -966,8 +974,12 @@ function RefreshAndProcessData(ePlayerID:number)
 	PriorityTableAdd(data.Priorities, tNerfFactor);
 	dshowpriorities(data.Priorities, "*** final priorities "..data.LeaderType);
 	
+	-- 2019-01-26: Switch off not-valid victories
+	PriorityTableMultiplyByTable(data.Priorities, tValidVictories);
+	dshowpriorities(data.Priorities, "*** final valid "..data.LeaderType);
+	
 	-- Now see which Grand Strategy should be active, based on who has the highest Priority right now
-	local iBestPriority:number = GlobalParameters.RST_STRATEGY_MINIMUM_PRIORITY; -- minimum score to activate a strategy
+	local iBestPriority:number = iMinimumPriority; --GlobalParameters.RST_STRATEGY_MINIMUM_PRIORITY; -- minimum score to activate a strategy
 	for strat,value in pairs(data.Priorities) do
 		if value > iBestPriority then
 			iBestPriority = value;
@@ -1014,7 +1026,8 @@ end
 function GetOtherPlayerPriorityConquest(data:table, eOtherID:number)
 	--print("FUN GetOtherPlayerPriorityConquest", data.LeaderType, eOtherID);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_CONQUEST") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_CONQUEST") then return -200; end
+	if tValidVictories.CONQUEST == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -1055,7 +1068,8 @@ end
 function GetOtherPlayerPriorityScience(data:table, eOtherID:number)
 	--print("FUN GetOtherPlayerPriorityScience", data.LeaderType, eOtherID);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then return -200; end
+	if tValidVictories.SCIENCE == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -1119,7 +1133,8 @@ end
 function GetOtherPlayerPriorityCulture(data:table, eOtherID:number)
 	--print("FUN GetOtherPlayerPriorityCulture", data.LeaderType, eOtherID);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_CULTURE") then return -200; end
+	--if not RST.GameIsVictoryEnabled("VICTORY_CULTURE") then return -200; end
+	if tValidVictories.CULTURE == 0 then return -200; end
 	
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
@@ -1167,8 +1182,9 @@ end
 function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 	--print("FUN GetOtherPlayerPriorityReligion", data.LeaderType, eOtherID);
 	-- check if this victory type is enabled
-	if not RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS") then return -200; end
-	
+	--if not RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS") then return -200; end
+	if tValidVictories.RELIGION == 0 then return -200; end
+
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
 	local pOther:table = Players[eOtherID];
@@ -1305,6 +1321,10 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	-- get total
 	PriorityTableAdd(tSumPriorities, tSpecificPriorities);
 	dshowpriorities(tSumPriorities, "*** sum of all priorities "..sLeaderType);
+
+	-- 2019-01-26: Switch off not-valid victories
+	PriorityTableMultiplyByTable(tSumPriorities, tValidVictories);
+	dshowpriorities(tSumPriorities, "*** sum of all valid "..sLeaderType);
 	
 	-- Now see which Grand Strategy should be active, based on who has the highest Priority right now
 	local sGuessStrategy:string = "NONE";
@@ -1887,6 +1907,7 @@ end
 function OnLoadScreenClose()
 	--print("FUN OnLoadScreenClose");
 	InitializeRandomFlavors();
+	InitializeValidVictories();
 	-- perform initial save for all players (to avoid warnings later)
 	for pid, _ in pairs(tData) do
 		SavePlayerData(pid, "Initial");
@@ -2045,6 +2066,23 @@ function InitializeRandomFlavors()
 			print("WARNING: InitializeRandomFlavors Priorities table for leader", leaderType, "not defined.");
 		end
 	end
+end
+
+
+------------------------------------------------------------------------------
+function InitializeValidVictories()
+	print("FUN InitializeValidVictories");
+	tValidVictories = PriorityTableNew();
+	local iNumV:number = 0;
+	if RST.GameIsVictoryEnabled("VICTORY_CONQUEST")   then tValidVictories.CONQUEST = 1; iNumV = iNumV + 1; end
+	if RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then tValidVictories.SCIENCE  = 1; iNumV = iNumV + 1; end
+	if RST.GameIsVictoryEnabled("VICTORY_CULTURE")    then tValidVictories.CULTURE  = 1; iNumV = iNumV + 1; end
+	if RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS")  then tValidVictories.RELIGION = 1; iNumV = iNumV + 1; end
+	--if RST.GameIsVictoryEnabled("VICTORY_DIPLO") then tValidVictories.DIPLO = 1; end
+	dshowpriorities(tValidVictories, "Valid Victories");
+	iMinimumPriority  = GlobalParameters.RST_STRATEGY_MINIMUM_PRIORITY * iNumV;
+	iBetterThanUsNerf = GlobalParameters.RST_STRATEGY_BETTER_THAN_US_NERF * (iNumV+1);
+	if bLogDebug then print(Game.GetCurrentGameTurn(), "Num Victories", iNumV, "Minimum Priority", iMinimumPriority, "BetterThanUsNerf", iBetterThanUsNerf); end
 end
 
 

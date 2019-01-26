@@ -44,7 +44,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaSettlement', 'Coastal', 0, 10),
 ('GitarjaYields', 'YIELD_FAITH',      1, 10),
-('GitarjaYields', 'YIELD_FOOD',       1, 15),
+('GitarjaYields', 'YIELD_FOOD',       1, 10),
 ('GitarjaYields', 'YIELD_PRODUCTION', 1,  5),
 ('GitarjaYields', 'YIELD_GOLD',       1,-10),
 ('GitarjaYields', 'YIELD_CULTURE',    1,  5),
@@ -52,10 +52,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaWonders', 'BUILDING_ANGKOR_WAT', 1, 0),
 ('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('GitarjaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
-('GitarjaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 25), -- kampung
-('GitarjaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
-('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10),
-('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 10);
+('GitarjaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 20), -- kampung
+('GitarjaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
+('GitarjaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 5),
+('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 5);
 
 
 -- LEADER_JAYAVARMAN / KHMER

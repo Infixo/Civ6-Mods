@@ -39,10 +39,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_STRATEGY_ADJUST_GENERIC_START', 125), -- [x100] generic priorities scale lineary, value at turn 0
 ('RST_STRATEGY_ADJUST_GENERIC_STOP', 50), -- [x100] generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 7), -- how many turns a strategy must be active before checking for new priorities, def. 10
-('RST_STRATEGY_MINIMUM_PRIORITY', 100), -- minimum priority to activate a strategy
+('RST_STRATEGY_MINIMUM_PRIORITY', 25), -- minimum priority to activate a strategy (per active victory)
 ('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, can be switched off via an option
-('RST_STRATEGY_BETTER_THAN_US_NERF', -25), -- [x100] each player better than us decreases our priority by this percent -- VP uses 33, seems a lot
+('RST_STRATEGY_BETTER_THAN_US_NERF', -5), -- [x100] each player better than us decreases our priority by this percent, for each active victory type (1 vic = -10, 4 vic = -25)
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 40), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20

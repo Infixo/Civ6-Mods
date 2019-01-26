@@ -181,20 +181,29 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 DELETE FROM AiFavoredItems WHERE ListType = 'BarbarossaCivics';
 
 INSERT INTO AiListTypes (ListType) VALUES
+--('BarbarossaDiplomacy'),
+('BarbarossaYields'),
 ('BarbarossaPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+--('BarbarossaDiplomacy',    'TRAIT_LEADER_HOLY_ROMAN_EMPEROR', 'DiplomaticActions'),
+('BarbarossaYields',       'TRAIT_LEADER_HOLY_ROMAN_EMPEROR', 'Yields'),
 ('BarbarossaPseudoYields', 'TRAIT_LEADER_HOLY_ROMAN_EMPEROR', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+--('BarbarossaDiplomacy', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV', 1, 0), -- sorry guys :(
 ('BarbarossaTechs', 'TECH_INDUSTRIALIZATION', 1, 0), -- !BUGGED!
 ('BarbarossaCivics', 'CIVIC_GAMES_RECREATION', 1, 0),
 ('BarbarossaCivics', 'CIVIC_GUILDS', 1, 0),
 ('BarbarossaCivics', 'CIVIC_EXPLORATION', 1, 0),
 ('BarbarossaCivics', 'CIVIC_URBANIZATION', 1, 0),
-('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50),
-('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 150), -- more focus on Minors
-('BarbarossaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 25), -- more districts
-('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15), -- boost comm hubs
-('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20); -- boost hansas
+('BarbarossaYields', 'YIELD_FAITH', 1, -15),
+('BarbarossaYields', 'YIELD_GOLD', 1, 5),
+('BarbarossaYields', 'YIELD_PRODUCTION', 1, 5),
+('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -15),
+('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50), -- more focus on Minors
+('BarbarossaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
+('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET',  1,-25),
+('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10), -- boost comm hubs
+('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 15); -- boost hansas
 
 
 -- LEADER_CATHERINE_DE_MEDICI / FRANCE
@@ -312,7 +321,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 
 -- LEADER_GILGAMESH / SUMERIA
--- TRAIT_RST_MORE_IMPROVEMENTS
 -- Ziggurat has no tech req... so broken! - it is the ONLY unique improvement like this
 
 INSERT INTO AiListTypes (ListType) VALUES
@@ -321,9 +329,9 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('GilgameshWonders'),
 ('GilgameshPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
-('GilgameshTechs', 'TRAIT_LEADER_ADVENTURES_ENKIDU', 'Technologies'),
-('GilgameshCivics', 'TRAIT_LEADER_ADVENTURES_ENKIDU', 'Civics'),
-('GilgameshWonders', 'TRAIT_LEADER_ADVENTURES_ENKIDU', 'Buildings'),
+('GilgameshTechs',        'TRAIT_LEADER_ADVENTURES_ENKIDU', 'Technologies'),
+('GilgameshCivics',       'TRAIT_LEADER_ADVENTURES_ENKIDU', 'Civics'),
+('GilgameshWonders',      'TRAIT_LEADER_ADVENTURES_ENKIDU', 'Buildings'),
 ('GilgameshPseudoYields', 'TRAIT_LEADER_ADVENTURES_ENKIDU', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GilgameshDiplomacy', 'DIPLOACTION_ALLIANCE' , 1, 0),
@@ -335,7 +343,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GilgameshTechs', 'TECH_EDUCATION' , 1, 0), -- !BUGGED!
 ('GilgameshCivics', 'CIVIC_FOREIGN_TRADE' , 1, 0), -- joint war
 ('GilgameshCivics', 'CIVIC_CIVIL_SERVICE' , 1, 0), -- alliance
-('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 15), -- +15%
+('GilgameshPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST' , 1, 25),
+('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 25), -- +15%
 ('GilgameshPseudoYields', 'PSEUDOYIELD_IMPROVEMENT' , 1, -15), -- he builds Ziggurats EVERYWHERE
 ('GilgameshPseudoYields', 'PSEUDOYIELD_INFLUENCE' , 1, 15); -- friend of CS
 
@@ -416,7 +425,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HoJoYields', 'YIELD_PRODUCTION', 1, 10),
 ('HoJoYields', 'YIELD_GOLD',       1,-15), -- balance
 ('HoJoYields', 'YIELD_SCIENCE',    1,-10), -- balance
-('HoJoPseudoYields', 'PSEUDOYIELD_DISTRICT', 0, 25),
+('HoJoPseudoYields', 'PSEUDOYIELD_DISTRICT', 0, 15),
 ('HoJoPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 0, 20),
 ('HoJoPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
 ('HoJoPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 0, 15);

@@ -140,7 +140,7 @@ UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD
 --UPDATE PseudoYields SET DefaultValue = 8 WHERE PseudoYieldType = 'PSEUDOYIELD_GREATWORK_WRITING'; -- 	10
 
 -- units
-UPDATE PseudoYields SET DefaultValue =  3.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- 	2, 2.2 in AI+, 20 in AirpowerFix
+UPDATE PseudoYields SET DefaultValue =  3.5 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_AIR_COMBAT'; -- 	2, 2.2 in AI+, 20 in AirpowerFix
 --UPDATE PseudoYields SET DefaultValue =  3.0 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST'; -- 4
 UPDATE PseudoYields SET DefaultValue =  1.1 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_COMBAT'; -- 1.0, AI+ 1.4
 UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_UNIT_EXPLORER'; --	1
@@ -989,8 +989,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTPeaceYields', 'YIELD_GOLD',       1, -10),
 ('RSTPeaceYields', 'YIELD_PRODUCTION', 1,  -5),
 ('RSTPeaceYields', 'YIELD_SCIENCE',    1,  -5),
-('RSTPeacePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 25), -- build infra
-('RSTPeacePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 25), -- build infra
+('RSTPeacePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- build infra
+('RSTPeacePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- build infra
 ('RSTPeacePseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, -5), -- shrink a bit
 ('RSTPeacePseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, -10), -- shrink a bit
 ('RSTPeacePseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10), -- base 1
