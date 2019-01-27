@@ -95,8 +95,8 @@ I determined that:
 */
 
 --UPDATE PseudoYields SET DefaultValue = 450 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_BASE'; -- 	450, important mostly early game, later valuations are in thousands (5000+)...
-UPDATE PseudoYields SET DefaultValue =  60 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80 -- very important, especially late game, causes huge jumps in city valuation
-UPDATE PseudoYields SET DefaultValue = 300 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 - very important for aggression mgmt!
+UPDATE PseudoYields SET DefaultValue =  50 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENDING_UNITS'; -- 	80 -- very important, especially late game, causes huge jumps in city valuation
+UPDATE PseudoYields SET DefaultValue = 275 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_DEFENSES'; -- 	400 - very important for aggression mgmt!
 UPDATE PseudoYields SET DefaultValue = 150 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL'; -- 	200, lower value should save Minors a bit, Conquest will boost it anyway
 UPDATE PseudoYields SET DefaultValue =  75 WHERE PseudoYieldType = 'PSEUDOYIELD_CITY_POPULATION'; -- 	50, not so important overall
 
@@ -338,9 +338,9 @@ UPDATE AiFavoredItems SET Value = 35 WHERE ListType = 'CultureVictoryPseudoYield
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CultureVictoryYields', 'YIELD_GOLD', 1, -10),
 ('CultureVictoryYields', 'YIELD_SCIENCE', 1, -10),
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- base 350
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 25), -- base 300
-('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 25), -- base 80
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50), -- base 350
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 15), -- base 300
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 15), -- base 80
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 15), -- base 0.25
 --('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 100), -- see explaination above
 --('CultureVictoryPseudoYields', 'PSEUDOYIELD_TECHNOLOGY', 1, -100), -- base 5
@@ -408,7 +408,7 @@ UPDATE AiFavoredItems SET Value =  35 WHERE ListType = 'ScienceVictoryPseudoYiel
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ScienceVictoryYields', 'YIELD_FAITH', 1, -20),
 ('ScienceVictoryYields', 'YIELD_CULTURE', 1, -10),
-('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50), -- base 350
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -25), -- base 350
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- base 300 -10%
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -15), -- base 100 -10%
 --('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, -100), -- see explanation above

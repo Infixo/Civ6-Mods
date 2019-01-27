@@ -198,8 +198,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('BarbarossaYields', 'YIELD_FAITH', 1, -15),
 ('BarbarossaYields', 'YIELD_GOLD', 1, 5),
 ('BarbarossaYields', 'YIELD_PRODUCTION', 1, 5),
-('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -15),
-('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50), -- more focus on Minors
+('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -25),
+('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 100), -- more focus on Minors
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET',  1,-25),
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10), -- boost comm hubs
@@ -596,9 +596,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TrajanSettlement', 'Nearest Friendly City', 0, -1),
 ('TrajanSettlement', 'Fresh Water', 0, -10),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
-('TrajanPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25),
-('TrajanPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -100),
-('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -25),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -50),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15),
+('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -15),
 ('TrajanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
 ('TrajanPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10); -- more crappy cities
 

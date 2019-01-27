@@ -5,6 +5,8 @@ print("Loading RealStrategy_GreatPeople.lua from Real Strategy version "..Global
 -- 2019-01-12: Created
 -- ===========================================================================
 
+include( "Civ6Common" ); -- contains easy to use MoveUnitToPlot()
+
 
 -- InGame functions exposed here
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
@@ -171,6 +173,93 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	return data.ActiveMoreGWSlots;
 end
 GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
+
+
+
+------------------------------------------------------------------------------
+-- MANUAL GP ACTIVATION
+-- After some time, lots of GPs gets stuck on "Find Unit Targets" BH node and nothing happens.
+-- This script is an emergency fix for that.
+-- Iterate through GPs and find the stuck ones - must be recruited more than 5 turns earlier
+-- Find out where is the nearest place to activate him
+--   - if we are on it - activate
+--   - if we are not on it - go there
+
+-- find out at what turn a GP was recruited
+--Game	GetGreatPeople GetPastTimeline
+---> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
+function GetTurnRecruited(eIndividual:number)
+	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
+		if pastGP.Individual == eIndividual then return pastGP.TurnGranted; end
+	end
+	return Game.GetCurrentGameTurn();
+end
+
+-- find out where is the nearest place to activate a GP
+-- Unit:GetGreatPerson():GetActivationHighlightPlots()
+---> table of Plot Indices
+function GetNearestActivationPlotIndex(pUnit:table)
+	local iUnitX:number, iUnitY:number = pUnit:GetX(), pUnit:GetY();
+	--print("looking for neareast activation for unit in plot", iUnitX, iUnitY);
+	local iNearestIdx:number, iMinDist:number = -1, 9999;
+	for _,idx in ipairs(pUnit:GetGreatPerson():GetActivationHighlightPlots()) do
+		local pPlot:table = Map.GetPlotByIndex(idx);
+		local iDist:number = Map.GetPlotDistance(iUnitX, iUnitY, pPlot:GetX(), pPlot:GetY());
+		--print("plot", idx, pPlot:GetX(), pPlot:GetY(), "dist", iDist);
+		if iDist < iMinDist then iMinDist = iDist; iNearestIdx = idx; end
+	end
+	return iNearestIdx;
+end
+
+
+-- main function - should be run every few turns
+-- RequestCommand
+-- UNITCOMMAND_ACTIVATE_GREAT_PERSON, Category SPECIFIC
+-- 1st param UnitCommandTypes.TYPE (-1572680103)
+-- GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash == 374670040 (actionHash)
+function ManualManageGWAM(ePlayerID:number)
+	print("FUN ManualManageGWAM", ePlayerID);
+	-- Iterate through GPs and find the stuck ones - must be recruited more than 10 turns earlier
+	local tMoves:table = {}; -- we move units separately to avoid deadlocks
+	for _,unit in Players[ePlayerID]:GetUnits():Members() do
+		local pUnitGP:table = unit:GetGreatPerson();
+		if pUnitGP ~= nil and pUnitGP:IsGreatPerson() then
+			local sGPClass:string = GameInfo.GreatPersonClasses[ pUnitGP:GetClass() ].GreatPersonClassType;
+			print("...found GP of class", sGPClass, "type", GameInfo.GreatPersonIndividuals[pUnitGP:GetIndividual()].GreatPersonIndividualType);
+			if sGPClass == "GREAT_PERSON_CLASS_WRITER" or sGPClass == "GREAT_PERSON_CLASS_ARTIST" or sGPClass == "GREAT_PERSON_CLASS_MUSICIAN" then
+				-- find the stuck ones - must be recruited more than 10 turns earlier
+				local iTurnRecruited:number = GetTurnRecruited(pUnitGP:GetIndividual());
+				print("...GWAM recruited on turn", iTurnRecruited, Game.GetCurrentGameTurn()-iTurnRecruited);
+				if Game.GetCurrentGameTurn()-iTurnRecruited >= 10 then
+					-- Find out where is the nearest place to activate him
+					local iUnitPlotIdx:number = unit:GetPlotId();
+					local iNearestIdx:number = GetNearestActivationPlotIndex(unit);
+					if iNearestIdx == iUnitPlotIdx then
+						print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...ACTIVATE UNIT HERE");
+						UnitManager.RequestCommand(unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
+					elseif iNearestIdx > -1 then
+						local iNearestX:number, iNearestY:number = Map.GetPlotByIndex(iNearestIdx):GetX(), Map.GetPlotByIndex(iNearestIdx):GetY();
+						print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...MOVE UNIT TO", iNearestX, iNearestY);
+						table.insert(tMoves, { Unit = unit, ToX = iNearestX, ToY = iNearestY });
+					else
+						print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...NO VALID PLACE");
+					end
+				end -- >=10 turns
+			end -- is GWAM
+		end -- is GP
+	end -- units
+	-- move units separately to avoid deadlocks
+	for _,move in ipairs(tMoves) do
+		print("...moving", move.Unit:GetID(), "to", move.ToX, move.ToY);
+		MoveUnitToPlot(move.Unit, move.ToX, move.ToY);
+		-- if by chance we arrived, then activate
+		if move.Unit:GetX() == move.ToX and move.Unit:GetY() == move.ToY then
+			print("...unit arrived and be activated");
+			UnitManager.RequestCommand(move.Unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
+		end
+	end
+end
+
 
 
 function Initialize()

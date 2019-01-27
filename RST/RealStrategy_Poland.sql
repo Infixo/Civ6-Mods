@@ -28,7 +28,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JadwigaDiplomacy', 'DIPLOACTION_ALLIANCE', 1, 0),
 ('JadwigaDistricts', 'DISTRICT_ENCAMPMENT', 1, 0),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 10),
-('JadwigaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15),
+--('JadwigaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 15),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15),
 ('JadwigaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15), -- for Encampment

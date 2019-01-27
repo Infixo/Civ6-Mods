@@ -88,10 +88,10 @@ WHERE AntiAirCombat > 0;
 -- Strengthen teams a bit
 -- ===========================================================================
 
-UPDATE AiOperationDefs SET MaxTargetDistInRegion = 12, MaxTargetDistInArea = 12, MaxTargetDistInWorld = 16, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Attack Enemy City'; -- early, no walls 50%, 5
-UPDATE AiOperationDefs SET MaxTargetDistInRegion = 12, MaxTargetDistInArea = 12, MaxTargetDistInWorld = 16, MinOddsOfSuccess = 0.4, MustHaveUnits = 4 WHERE OperationName = 'Wartime Attack Enemy City'; -- early no walls 25%, 3
-UPDATE AiOperationDefs SET MaxTargetDistInRegion =  9, MaxTargetDistInArea =  9, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.7, MustHaveUnits =10 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
-UPDATE AiOperationDefs SET MaxTargetDistInRegion =  9, MaxTargetDistInArea =  9, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.5, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
+UPDATE AiOperationDefs SET MaxTargetDistInRegion = 10, MaxTargetDistInArea = 10, MaxTargetDistInWorld = 15, MinOddsOfSuccess = 0.6, MustHaveUnits = 7 WHERE OperationName = 'Attack Enemy City'; -- early, no walls 50%, 5
+UPDATE AiOperationDefs SET MaxTargetDistInRegion = 10, MaxTargetDistInArea = 10, MaxTargetDistInWorld = 15, MinOddsOfSuccess = 0.4, MustHaveUnits = 4 WHERE OperationName = 'Wartime Attack Enemy City'; -- early no walls 25%, 3
+UPDATE AiOperationDefs SET MaxTargetDistInRegion =  8, MaxTargetDistInArea =  8, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.7, MustHaveUnits =10 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
+UPDATE AiOperationDefs SET MaxTargetDistInRegion =  8, MaxTargetDistInArea =  8, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.5, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
 
 UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 4 WHERE OperationName = 'City Defense'; -- 0%, 6
 

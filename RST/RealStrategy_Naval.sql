@@ -45,8 +45,8 @@
 -- thresholds for the detection algorithm
 INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_NAVAL_NUM_TURNS', 4), -- frequency of the check
-('RST_NAVAL_THRESHOLD_PANGEA',  20), -- Pangea if LESS than
-('RST_NAVAL_THRESHOLD_COASTAL', 45), -- Coastal if MORE than
+('RST_NAVAL_THRESHOLD_PANGEA',  22), -- Pangea if LESS than
+('RST_NAVAL_THRESHOLD_COASTAL', 48), -- Coastal if MORE than
 ('RST_NAVAL_THRESHOLD_ISLAND',  80), -- Island if MORE than
 ('RST_NAVAL_MAP_SIZE_DEFAULT', 8), -- the above parameters are valid for this map size
 ('RST_NAVAL_MAP_SIZE_SHIFT', -100); -- bigger maps tend to have more land (obvious), and smaller the opposite; this is to counter that effect; this is a percentage of the map size difference
@@ -110,8 +110,8 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('STRATEGY_NAVAL', 'RSTNavalCivics'),
 ('STRATEGY_NAVAL', 'RSTNavalWonders');
 
-UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. -90
-UPDATE AiFavoredItems SET Value =  50 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 150
+UPDATE AiFavoredItems SET Value = -15 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_COMBAT'; -- def. -90
+UPDATE AiFavoredItems SET Value =  25 WHERE ListType = 'NavalUnitPreferences' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 150
 
 -- Settlement
 UPDATE AiFavoredItems SET Value =  5 WHERE ListType = 'NavalSettlementPreferences' AND Item = 'Coastal'; -- def. 10
@@ -199,11 +199,11 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTIslandCivics', 'CIVIC_NAVAL_TRADITION', 1, 0),
 ('RSTIslandWonders', 'BUILDING_GREAT_LIGHTHOUSE', 1, 0),
 ('RSTIslandWonders', 'BUILDING_HALICARNASSUS_MAUSOLEUM', 1, 0),
-('RSTIslandPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 50),
-('RSTIslandPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, -50),
+('RSTIslandPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 25),
+('RSTIslandPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, -25),
 ('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
-('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -50),
-('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 75);
+('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -30),
+('RSTIslandPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 50);
 
 
 
