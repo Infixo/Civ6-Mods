@@ -164,7 +164,7 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	local iTotSlots = iNumSlotWriting + iNumSlotArt + iNumSlotMusic;
 	
 	data.ActiveMoreGWSlots = false;
-	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWWriting > iNumSlotWriting + 1) ); -- enabler, need it quickly; will acivate if 2 works
+	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWWriting > iNumSlotWriting + 2) ); -- enabler, need it quickly; will acivate if 2 works
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWArt > iNumSlotArt + 2) ); -- they come in 3, so missing only 1 is not enough; will activate if 3 works
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWMusic > iNumSlotMusic + 2) ); -- music comes late, maybe it is not worth it to build a district just for 1 GW of Music; will activate if 3 works
 	data.TurnRefreshSlots = Game.GetCurrentGameTurn();
@@ -218,31 +218,31 @@ end
 -- 1st param UnitCommandTypes.TYPE (-1572680103)
 -- GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash == 374670040 (actionHash)
 function ManualManageGWAM(ePlayerID:number)
-	print("FUN ManualManageGWAM", ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "FUN ManualManageGWAM", ePlayerID);
 	-- Iterate through GPs and find the stuck ones - must be recruited more than 10 turns earlier
 	local tMoves:table = {}; -- we move units separately to avoid deadlocks
 	for _,unit in Players[ePlayerID]:GetUnits():Members() do
 		local pUnitGP:table = unit:GetGreatPerson();
 		if pUnitGP ~= nil and pUnitGP:IsGreatPerson() then
 			local sGPClass:string = GameInfo.GreatPersonClasses[ pUnitGP:GetClass() ].GreatPersonClassType;
-			print("...found GP of class", sGPClass, "type", GameInfo.GreatPersonIndividuals[pUnitGP:GetIndividual()].GreatPersonIndividualType);
+			--print("...found GP of class", sGPClass, "type", GameInfo.GreatPersonIndividuals[pUnitGP:GetIndividual()].GreatPersonIndividualType);
 			if sGPClass == "GREAT_PERSON_CLASS_WRITER" or sGPClass == "GREAT_PERSON_CLASS_ARTIST" or sGPClass == "GREAT_PERSON_CLASS_MUSICIAN" then
 				-- find the stuck ones - must be recruited more than 10 turns earlier
 				local iTurnRecruited:number = GetTurnRecruited(pUnitGP:GetIndividual());
-				print("...GWAM recruited on turn", iTurnRecruited, Game.GetCurrentGameTurn()-iTurnRecruited);
-				if Game.GetCurrentGameTurn()-iTurnRecruited >= 10 then
+				--print("...GWAM", GameInfo.GreatPersonIndividuals[pUnitGP:GetIndividual()].GreatPersonIndividualType, "recruited on turn", iTurnRecruited, Game.GetCurrentGameTurn()-iTurnRecruited);
+				if Game.GetCurrentGameTurn()-iTurnRecruited > 7 then
 					-- Find out where is the nearest place to activate him
 					local iUnitPlotIdx:number = unit:GetPlotId();
 					local iNearestIdx:number = GetNearestActivationPlotIndex(unit);
 					if iNearestIdx == iUnitPlotIdx then
-						print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...ACTIVATE UNIT HERE");
+						--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...ACTIVATE UNIT HERE");
 						UnitManager.RequestCommand(unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
 					elseif iNearestIdx > -1 then
 						local iNearestX:number, iNearestY:number = Map.GetPlotByIndex(iNearestIdx):GetX(), Map.GetPlotByIndex(iNearestIdx):GetY();
-						print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...MOVE UNIT TO", iNearestX, iNearestY);
+						--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...MOVE UNIT TO", iNearestX, iNearestY);
 						table.insert(tMoves, { Unit = unit, ToX = iNearestX, ToY = iNearestY });
 					else
-						print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...NO VALID PLACE");
+						--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...NO VALID PLACE");
 					end
 				end -- >=10 turns
 			end -- is GWAM
@@ -250,20 +250,26 @@ function ManualManageGWAM(ePlayerID:number)
 	end -- units
 	-- move units separately to avoid deadlocks
 	for _,move in ipairs(tMoves) do
-		print("...moving", move.Unit:GetID(), "to", move.ToX, move.ToY);
+		--print("...moving", move.Unit:GetID(), "to", move.ToX, move.ToY);
 		MoveUnitToPlot(move.Unit, move.ToX, move.ToY);
-		-- if by chance we arrived, then activate
-		if move.Unit:GetX() == move.ToX and move.Unit:GetY() == move.ToY then
-			print("...unit arrived and be activated");
-			UnitManager.RequestCommand(move.Unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
-		end
+		-- if by chance we arrived, then activate - never happens
+		--if move.Unit:GetX() == move.ToX and move.Unit:GetY() == move.ToY then
+			--print("...unit arrived and be activated");
+			--UnitManager.RequestCommand(move.Unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
+		--end
 	end
 end
 
+function OnPlayerTurnActivated(ePlayerID:number, bIsFirstTime:boolean)
+	if not Players[ePlayerID]:IsMajor() then return; end -- only majors
+	if Game.GetLocalPlayer() == ePlayerID then return; end -- don't do for a local player
+	ManualManageGWAM(ePlayerID);
+end
 
 
 function Initialize()
 	--print("FUN Initialize");
+	Events.PlayerTurnActivated.Add(OnPlayerTurnActivated);  -- main event for any player start (AIs, including minors), goes for playerID = 0,1,2,...
 end
 Initialize();
 

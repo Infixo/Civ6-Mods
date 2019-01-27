@@ -1058,6 +1058,9 @@ function GetOtherPlayerPriorityConquest(data:table, eOtherID:number)
 
 	-- interesting, VP uses also "Warmonger threat" from Diplomacy! not sure if this can be extracted easily in Civ6
 	-- InGame: Player	GetDiplomacy	GetWarmongerLevel
+
+	-- 2019-01-27: use the scaler because Religion has 4 items scored
+	iPriority = iPriority * GlobalParameters.RST_GUESS_SCALER_CONQUEST / 100;
 	
 	--print("GetOtherPlayerPriorityConquest", iPriority);
 	return iPriority;
@@ -1124,6 +1127,9 @@ function GetOtherPlayerPriorityScience(data:table, eOtherID:number)
 		if bLogDebug then print("...tech ratio", iRatio, "player/world", RST.PlayerGetNumTechsResearched(eOtherID), iWorld, "priority=", iPriority); end
 	end
 
+	-- 2019-01-27: use the scaler because Religion has 4 items scored
+	iPriority = iPriority * GlobalParameters.RST_GUESS_SCALER_SCIENCE / 100;
+
 	--print("GetOtherPlayerPriorityScience:", iPriority);
 	return iPriority;
 end
@@ -1172,6 +1178,9 @@ function GetOtherPlayerPriorityCulture(data:table, eOtherID:number)
 	-- simple idea - the more % we have, the more it adds
 	iPriority = iPriority + GlobalParameters.RST_CULTURE_PROGRESS_MULTIPLIER * (math.exp(RST.PlayerGetCultureVictoryProgress(eOtherID) * GlobalParameters.RST_CULTURE_PROGRESS_EXPONENT / 10000.0) - 1.0);
 	if bLogDebug then print("...added cultural progress, perc%", RST.PlayerGetCultureVictoryProgress(eOtherID), "priority=", iPriority); end
+
+	-- 2019-01-27: use the scaler because Religion has 4 items scored
+	iPriority = iPriority * GlobalParameters.RST_GUESS_SCALER_CULTURE / 100;
 	
 	--print("GetOtherPlayerPriorityCulture:", iPriority);
 	return iPriority;
@@ -1252,6 +1261,9 @@ function GetOtherPlayerPriorityReligion(data:table, eOtherID:number)
 		iPriority = iPriority + GlobalParameters.RST_RELIGION_CITIES_MULTIPLIER * (math.exp(fCitiesProgress * GlobalParameters.RST_RELIGION_CITIES_EXPONENT / 100.0) - 1.0);
 		if bLogDebug then print("...cities progress, num, all", RST.PlayerGetNumCitiesFollowingReligion(eOtherID), data.Data.NumCitiesMajors, "priority=", iPriority); end
 	end
+
+	-- 2019-01-27: use the scaler because Religion has 4 items scored
+	iPriority = iPriority * GlobalParameters.RST_GUESS_SCALER_RELIGION / 100;
 	
 	--print("GetOtherPlayerPriorityReligion:", iPriority);
 	return iPriority;

@@ -5,13 +5,13 @@
 -- ===========================================================================
 
 -- just to make versioning easier
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '8');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '0');
 
 -- logging
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '0'); -- log guess priorities
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
 
 -- random numbers - support for Multi Player
@@ -42,7 +42,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_STRATEGY_MINIMUM_PRIORITY', 25), -- minimum priority to activate a strategy (per active victory)
 ('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, can be switched off via an option
-('RST_STRATEGY_BETTER_THAN_US_NERF', -5), -- [x100] each player better than us decreases our priority by this percent, for each active victory type (1 vic = -10, 4 vic = -25)
+('RST_STRATEGY_BETTER_THAN_US_NERF', -6), -- [x100] each player better than us decreases our priority by this percent, for each active victory type (1 vic = -12, 4 vic = -30)
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 40), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
@@ -71,7 +71,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- try different approach - for Ancient & Classical use weight (like 1 Tourism = 2-3 pts.), after that use avg HOWEVER 
 -- also cannot use Tourism to Guess - too rare in early game
 ('RST_CULTURE_PROGRESS_EXPONENT', 270), -- [x100], cultural progress formula, exponent => 0.03 speeds up after 50 and goes high after 80
-('RST_CULTURE_PROGRESS_MULTIPLIER', 24), -- cultural progress formula, multiplier; 50 => 80, 60 => 110, 70 => 160, 80 => 220, 90 => 300
+('RST_CULTURE_PROGRESS_MULTIPLIER', 35), -- cultural progress formula, multiplier; 50 => 100, 60 => 140, 70 => 200, 80 => 270, 90 => 360
 -- religion
 --('RST_RELIGION_FAITH_YIELD_WEIGHT', 25), -- [x100] faith yield
 ('RST_RELIGION_FAITH_FACTOR', 9), -- how does our situation compare to others; uses typical formula but actual Multiplier = Factor * Era - this smoothes down early faith jumps
@@ -82,7 +82,12 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_CONVERTED_WEIGHT', 50), -- each converted civ after 1 (I assume the 1st is us)
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
-('RST_RELIGION_NOBODY_MET_PRIORITY', 0); -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
+('RST_RELIGION_NOBODY_MET_PRIORITY', 0), -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
+-- guess others scalers
+('RST_GUESS_SCALER_CONQUEST', 100),
+('RST_GUESS_SCALER_SCIENCE',  100),
+('RST_GUESS_SCALER_CULTURE',  115),
+('RST_GUESS_SCALER_RELIGION', 75); -- religion has 4 items scored, always getting a bit much
 
 
 -- ===========================================================================
