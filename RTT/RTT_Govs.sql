@@ -10,10 +10,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RTT_OPTION_GOVS', '0');
 
 
 -- Autocracy
-UPDATE Governments SET PrereqCivic = 'CIVIC_GAMES_RECREATION' WHERE GovernmentType = 'GOVERNMENT_AUTOCRACY' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RTT_OPTION_GOVS' AND Value = '1');
+--UPDATE Governments SET PrereqCivic = 'CIVIC_GAMES_RECREATION' WHERE GovernmentType = 'GOVERNMENT_AUTOCRACY' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RTT_OPTION_GOVS' AND Value = '1');
 
 -- Classical Republic
-UPDATE Governments SET PrereqCivic = 'CIVIC_DRAMA_POETRY' WHERE GovernmentType = 'GOVERNMENT_CLASSICAL_REPUBLIC' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RTT_OPTION_GOVS' AND Value = '1');
+--UPDATE Governments SET PrereqCivic = 'CIVIC_DRAMA_POETRY' WHERE GovernmentType = 'GOVERNMENT_CLASSICAL_REPUBLIC' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RTT_OPTION_GOVS' AND Value = '1');
 
 -- Monarchy
 UPDATE Governments SET PrereqCivic = 'CIVIC_DIPLOMATIC_SERVICE' WHERE GovernmentType = 'GOVERNMENT_MONARCHY' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RTT_OPTION_GOVS' AND Value = '1');

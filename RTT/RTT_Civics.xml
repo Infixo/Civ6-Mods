@@ -3,6 +3,7 @@
 <!-- Created by Infixo (Feb 26, 2017) -->
 <!-- Version 2.3 Oct 20, 2017 - Updated for Fall 2017 Patch -->
 <!-- Version 2.4 Jan 2, 2019 - Tweaks for more balance -->
+<!-- Version 3.0, 2019-02-15: Gathering Storm compatibility -->
 
 <GameInfo>
 
@@ -114,6 +115,7 @@
 		<!--Modern Era 1 (33) -->
 		<Row Civic="CIVIC_CONSERVATION" PrereqCivic="CIVIC_NATIONALISM"/> <!-- more balance -->
 		<Row Civic="CIVIC_CONSERVATION" PrereqCivic="CIVIC_OPERA_BALLET"/> <!-- more balance -->
+		<Delete Civic="CIVIC_MOBILIZATION" PrereqCivic="CIVIC_SCORCHED_EARTH"/> <!-- GS compatibility -->
 		<Row Civic="CIVIC_MOBILIZATION" PrereqCivic="CIVIC_SCORCHED_EARTH"/>
 		<!--Modern Era 2 -->
 		<Row Civic="CIVIC_CAPITALISM" PrereqCivic="CIVIC_OPERA_BALLET"/> <!-- more balance -->
