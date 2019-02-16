@@ -7,8 +7,8 @@ print("Loading TechAndCivicSupport_BTT.lua from Better Tech Tree version "..Glob
 -- ===========================================================================
 
 -- Rise & Fall check
-local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
-print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
+--local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+--print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
 
 -- configuration options
 local bOptionHarvests:boolean = ( GlobalParameters.BTT_OPTION_HARVESTS == 1 );
@@ -211,7 +211,7 @@ end
 -- NOT USED!!!
 --[[
 function GetUnlockablesForCivic_Cached(civicType, playerId)
-	dprint("FUN GetUnlockablesForCivic_Cached",civicType,playerId);
+	--dprint("FUN GetUnlockablesForCivic_Cached",civicType,playerId);
 	-- get data from base function
 	local results = BTT_BASE_GetUnlockablesForCivic_Cached(civicType, playerId);
 	-- add our own
@@ -232,7 +232,7 @@ end
 -- NOT USED!!!
 --[[
 function GetUnlockablesForTech_Cached(techType, playerId)
-	dprint("FUN GetUnlockablesForTech_Cached",techType,playerId);
+	--dprint("FUN GetUnlockablesForTech_Cached",techType,playerId);
 	-- get data from base function
 	local results = BTT_BASE_GetUnlockablesForTech_Cached(techType, playerId);
 	-- add our own

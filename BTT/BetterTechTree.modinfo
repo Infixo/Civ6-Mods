@@ -3,13 +3,17 @@
 	<Properties>
 		<Name>Better Tech Tree</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Supports all languages. Version 1.1.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.2.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>2.0</CompatibleVersions>
 	</Properties>
 	<ActionCriteria>
 		<Criteria id="Expansion1">
 			<GameCoreInUse>Expansion1</GameCoreInUse>
+		</Criteria>
+		<Criteria id="Expansion2">
+			<GameCoreInUse>Expansion2</GameCoreInUse>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
@@ -23,7 +27,7 @@
 				<!-- core files, will be included in wrappers -->
 				<File>TechAndCivicSupport_BTT.lua</File>
 				<!-- wrappers -->
-				<File>TechTree_BTT_vanilla.lua</File>
+				<File>TechTree_BTT.lua</File>
 				<File>CivicsTree_BTT.lua</File>
             </Items>
         </ImportFiles>
@@ -34,7 +38,7 @@
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree">
 			<Properties>
 				<LuaContext>TechTree</LuaContext>
-				<LuaReplace>TechTree_BTT_vanilla.lua</LuaReplace>
+				<LuaReplace>TechTree_BTT.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree">
@@ -44,19 +48,43 @@
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Rise&Fall actions - replace lua only for TechTree, Civics tree was not updated in R&F! -->
-        <ImportFiles id="BTT_ImportFiles_RiseFall" criteria="Expansion1">
-			<Properties>
+        <ImportFiles id="BTT_ImportFiles_XP1" criteria="Expansion1">
+			<!--<Properties>
                 <LoadOrder>2</LoadOrder>
-            </Properties>		
+            </Properties>		-->
             <Items>
-				<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
+				<File>XP1/TechTree_BTT_XP1.lua</File>
             </Items>
         </ImportFiles>
-		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_RiseFall" criteria="Expansion1">
+		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP1" criteria="Expansion1">
 			<Properties>
                 <LoadOrder>2</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
-				<LuaReplace>RiseFall/TechTree_BTT_RiseFall.lua</LuaReplace>
+				<LuaReplace>XP1/TechTree_BTT_XP1.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<!-- Gathering Storm actions - replace lua for both trees -->
+        <ImportFiles id="BTT_ImportFiles_XP2" criteria="Expansion2">
+			<!--<Properties>
+                <LoadOrder>2</LoadOrder>
+            </Properties>		-->
+            <Items>
+				<File>XP2/TechTree_BTT_XP2.lua</File>
+				<File>XP2/CivicsTree_BTT_XP2.lua</File>
+            </Items>
+        </ImportFiles>
+		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP2" criteria="Expansion2">
+			<Properties>
+                <LoadOrder>3</LoadOrder>
+				<LuaContext>TechTree</LuaContext>
+				<LuaReplace>XP2/TechTree_BTT_XP2.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree_XP2" criteria="Expansion2">
+			<Properties>
+                <LoadOrder>3</LoadOrder>
+				<LuaContext>CivicsTree</LuaContext>
+				<LuaReplace>XP2/CivicsTree_BTT_XP2.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
     </InGameActions>
@@ -64,12 +92,15 @@
 		<!-- Shared files -->
 		<File>BetterTechTree_Database.sql</File>
 		<File>TechAndCivicSupport_BTT.lua</File>
-		<File>CivicsTree_BTT.lua</File>
 		<File>Icons/BTT_Icons.xml</File>
 		<File>Icons/BTTUnlockFrames.dds</File>
 		<!-- Vanilla files -->
-		<File>TechTree_BTT_vanilla.lua</File>
+		<File>TechTree_BTT.lua</File>
+		<File>CivicsTree_BTT.lua</File>
 		<!-- Rise & Fall files -->
-		<File>RiseFall/TechTree_BTT_RiseFall.lua</File>
+		<File>XP1/TechTree_BTT_XP1.lua</File>
+		<!-- Gahtering Storm files -->
+		<File>XP2/TechTree_BTT_XP2.lua</File>
+		<File>XP2/CivicsTree_BTT_XP2.lua</File>
     </Files>
 </Mod>
