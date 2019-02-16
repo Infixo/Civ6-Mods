@@ -6,17 +6,26 @@
 
 		<TextButton				ID="FallbackMessage"	Anchor="C,C" Align="center" Style="FontFlair20"	SmallCapsType="EveryWord" SmallCaps="26" 	String="{LOC_LOADING_PLEASE_WAIT:upper}" Color="200,200,200,255"/>
 
-		<Image	ID="BackgroundImage"	Anchor="C,C"	Texture="LEADER_T_ROOSEVELT_BACKGROUND"		StretchMode="Auto">
+		<Image	ID="BackgroundImage"	Anchor="C,C"	StretchMode="Auto">
 			<Group Size="parent,parent" Clip="1">
-				<Image						ID="Banner"						Anchor="C,C" Offset="-300,0"	Size="560,987"				Texture="Controls_BannerWideTint" >
-					<Image																															Size="parent,parent" 	Texture="Loading_Map" Alpha="0.2"/>
+
+				<!-- Start left alignment from center of the screen -->
+				<Container Anchor="C,T" Size="1,parent">
+					<Container	ID="PortraitContainer" Anchor="L,T" Offset="80,0" Size="100,parent" Color="0,0,255,200">
+						<Image	 ID="Portrait"						Anchor="C,T" StretchMode="Auto" />
+					</Container>
+				</Container>
+
+				<Image						ID="Banner"						Anchor="C,C" Offset="-300,0"	Size="560,987"				Texture="Controls_BannerWideTint" Alpha="0.8" >
+          <Grid				    ID="BannerShadow"			Anchor="C,C"  	SliceCorner="6,6" Size="610,parent" SliceSize="16,16"	  SliceTextureSize="28,28"	      Texture="Controls_DropShadow5"  />
+					<Image																															Size="parent,parent" 	Texture="Loading_Map" Alpha="0.8"/>
 					<Image					ID="BannerBarLeft"		Anchor="L,C" Offset="5,0"			Size="5,987"					Texture="Controls_BannerWideTint" TextureOffset="5,0" Color="255,255,255,50" />
 					<Image					ID="BannerBarRight"		Anchor="R,C" Offset="5,0"			Size="5,987"					Texture="Controls_BannerWideTint" TextureOffset="5,0" Color="255,255,255,50" />
 					<Image																Anchor="C,C"									Size="parent,parent"	Texture="Controls_Gradient" Color="0,0,0,100"/>
 					<Image																Anchor="C,C"									Size="parent,parent"	Texture="Controls_Gradient" Color="0,0,0,255"/>
 					<Container														Anchor="C,C"									Size="parent,800">
 						<Image				ID="LogoContainer"		Anchor="C,C"									Size="256,256"				Texture="CircleBacking256" Alpha="0.4" >
-							<Image			ID="Logo"							Anchor="C,C"									Size="200,200"				Texture="CivSymbols200"		 Alpha="0.3" />
+							<Image			ID="Logo"							Anchor="C,C"									Size="200,200"				Texture="CivSymbols200"		 Alpha="0.5" />
 						</Image>
 						<Stack				ID="MainStack"				Anchor="C,T" StackGrowth="Down" StackPadding="10">
 							<!--<Line															Start="0,0"	 End="470,0"			Width="2"							Color="200,200,200,100" />-->
@@ -48,10 +57,6 @@
 							</Image>
 						</Container>
 					</AlphaAnim>
-
-					<Container Size="512,parent" AnchorSide="O,I" Anchor="R,B">
-						<Image					ID="Portrait"						Anchor="C,T" Texture="LEADER_T_ROOSEVELT_NEUTRAL" StretchMode="Auto"/>
-					</Container>
 				</Image>
 
 				<Image  Anchor="C,T" Size="parent,10" Texture="Loading_LetterboxEdge" StretchMode="TileX" />
@@ -73,7 +78,7 @@
 			<Image		ID="Icon"					Size="32,32" Offset="-5,-2" />
 			<Stack		ID="TextStack"		Offset="36,0"		StackGrowth="Bottom" StackPadding="4">
 				<Label	ID="Header"				WrapWidth="460" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$"/>
-				<Label	ID="Description"	WrapWidth="460"	Style="DawnText"	String="$Description$"/>
+				<Label	ID="Description"	WrapWidth="460"	Style="DawnText"	String="$Description$" />
 			</Stack>
 		</Container>
 	</Instance>

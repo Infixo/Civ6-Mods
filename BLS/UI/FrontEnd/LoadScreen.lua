@@ -1,4 +1,4 @@
-print("Loading LoadScreen.lua from Better Load Screen");
+print("Loading LoadScreen.lua from Better Load Screen v1.1");
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.
@@ -9,7 +9,7 @@ include( "InputSupport" );
 include( "InstanceManager" );
 include( "SupportFunctions" );
 include( "Civ6Common" );
-
+include( "Colors") ;
 
 -- ===========================================================================
 --	Action Hotkeys
@@ -50,7 +50,7 @@ function OnActivateButtonClicked()
 	Controls.Portrait:UnloadTexture();
 	Events.LoadScreenClose();
 	UI.PlaySound("STOP_SPEECH_DAWNOFMAN");
-	UI.PlaySound("Stop_Main_Menu_Music");
+	UI.StartStopMenuMusic(false);
 	UI.PlaySound("Game_Begin_Button_Click");
 	UI.PlaySound("Set_View_3D");
 	UIManager:DequeuePopup( ContextPtr );
@@ -97,14 +97,12 @@ function RegisterButtonCallbacks()
 	Controls.ActivateButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.ActivateButton:RegisterCallback( Mouse.eLClick, OnActivateButtonClicked );
 	Controls.StartLabelButton:RegisterCallback( Mouse.eLClick, OnActivateButtonClicked );
-	Controls.FallbackMessage:RegisterCallback( Mouse.eLClick, OnActivateButtonClicked );
 end
 
 -- ===========================================================================
 function ClearButtonCallbacks()
 	Controls.ActivateButton:ClearCallback( Mouse.eLClick );
 	Controls.ActivateButton:ClearCallback( Mouse.eMouseEnter );
-	Controls.FallbackMessage:ClearCallback( Mouse.eLClick );
 	Controls.StartLabelButton:ClearCallback( Mouse.eLClick );
 end
 
@@ -207,6 +205,7 @@ function OnLoadScreenContentReady()
 		Controls.BackgroundImage:SetTexture( backgroundTexture );
 		if (not Controls.BackgroundImage:HasTexture()) then
 			UI.DataError("Failed to load background image texture: "..backgroundTexture);
+			Controls.BackgroundImage:SetTexture("LEADER_T_ROOSEVELT_BACKGROUND");	-- Set to well known texture
 		end
 
 		local LEADER_CONTAINER_X = 512;
@@ -299,6 +298,13 @@ function OnLoadScreenContentReady()
 		Controls.Banner:SetHide(false);
 		Controls.Portrait:SetHide(false);
 
+		-- Find center of remaining space to right of ribbon, portrait will center it's texture on that.
+		local ribbonRunsPastCenter:number = 80;
+		local screenWidth, screenHeight = UIManager:GetScreenSizeVal();
+		local backgroundWidth, backgroundHeight = Controls.BackgroundImage:GetSizeVal();
+		local minWidth = math.min(backgroundWidth, screenWidth);
+		Controls.PortraitContainer:SetSizeX( (minWidth*0.5) - ribbonRunsPastCenter );
+
 		-- start the voiceover
 		local leaderID = playerConfig:GetLeaderTypeID();
 		local bPlayDOM = true;
@@ -319,7 +325,10 @@ function OnLoadScreenContentReady()
 		end
 
 		-- Obtain "uniques" from Civilization and for the chosen leader
-		local uniqueAbilities, uniqueUnits, uniqueBuildings = GetLeaderUniqueTraits( leaderType, true );
+		local uniqueAbilities;
+		local uniqueUnits;
+		local uniqueBuildings;
+		uniqueAbilities, uniqueUnits, uniqueBuildings = GetLeaderUniqueTraits( leaderType, true );
 		local CivUniqueAbilities, CivUniqueUnits, CivUniqueBuildings = GetCivilizationUniqueTraits( civType, true );
 	
 		-- Merge tables
@@ -388,7 +397,7 @@ function OnLoadGameViewStateDone()
 	
 	UIManager:SetUICursor( 0 );	
 	
-	if m_isResyncLoad or GameConfiguration.IsAnyMultiplayer() then
+	if m_isResyncLoad or GameConfiguration.IsAnyMultiplayer() or GameConfiguration:IsWorldBuilderEditor() then
 		-- If this is a resync load, skip the Begin Game button.
 		OnActivateButtonClicked();
 	else
@@ -417,8 +426,6 @@ function OnLoadGameViewStateDone()
 		end
 	end    
 	
-	Controls.FallbackMessage:SetText("Start Game");
-
 	RegisterButtonCallbacks();
 
 	-- Engine loading should be done at this point; enable input handling.	
@@ -442,9 +449,7 @@ function Initialize()
 	Events.BeforeMultiplayerInviteProcessing.Add( OnBeforeMultiplayerInviteProcessing );
 
     UI.SetExitOnClose(true);
-
-	Controls.Portrait:ReprocessAnchoring();
 end
 Initialize();
 
-print("OK loaded LoadScreen.lua from Better Load Screen");
+print("OK loaded LoadScreen.lua from Better Load Screen v1.1");
