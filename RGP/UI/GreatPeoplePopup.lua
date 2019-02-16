@@ -1,60 +1,112 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 2.0");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.0");
 -- ===========================================================================
---  Great People Popup
+--	Great People Popup
 -- ===========================================================================
 
 include("InstanceManager");
 include("TabSupport");
 include("SupportFunctions");
-include("Civ6Common"); --DifferentiateCivs
+include("Civ6Common"); --DifferentiateCiv
 include("ModalScreen_PlayerYieldsHelper");
 include("GameCapabilities");
 
--- debug output routine
-function dprint(sStr,p1,p2,p3,p4,p5,p6)
-	local sOutStr = sStr;
-	if p1 ~= nil then sOutStr = sOutStr.." [1] "..tostring(p1); end
-	if p2 ~= nil then sOutStr = sOutStr.." [2] "..tostring(p2); end
-	if p3 ~= nil then sOutStr = sOutStr.." [3] "..tostring(p3); end
-	if p4 ~= nil then sOutStr = sOutStr.." [4] "..tostring(p4); end
-	if p5 ~= nil then sOutStr = sOutStr.." [5] "..tostring(p5); end
-	if p6 ~= nil then sOutStr = sOutStr.." [6] "..tostring(p6); end
-	print(sOutStr);
-end
+-- ===========================================================================
+--	CONSTANTS
+-- ===========================================================================
+local MAX_BIOGRAPHY_PARAGRAPHS	: number = 9;						-- maximum # of paragraphs for a biography
+local RELOAD_CACHE_ID			: string = "GreatPeoplePopup";		-- hotloading
+local SIZE_ACTION_ICON			: number = 38;
+
 
 
 -- ===========================================================================
---  CONSTANTS
+--	MEMBERS
 -- ===========================================================================
-local COLOR_CLAIMED       : number = 0xffffffff;
-local COLOR_AVAILABLE     : number = 0xbbffffff;
-local COLOR_UNAVAILABLE     : number = 0x55ffffff;
-local MAX_BIOGRAPHY_PARAGRAPHS  : number = 9;           -- maximum # of paragraphs for a biography
-local MIN_WIDTH         : number = 285 * 2;         -- minimum width of screen (instance size x # of panels)
-local RELOAD_CACHE_ID     : string = "GreatPeoplePopup";    -- hotloading
-local SIZE_ACTION_ICON      : number = 38;
-local MAX_BEFORE_TRUNC_IND_NAME : number = 220;
-
--- ===========================================================================
---  VARIABLES
--- ===========================================================================
-
+local m_TopPanelConsideredHeight:number = 0;
 local m_greatPersonPanelIM  :table  = InstanceManager:new("PanelInstance",        "Content",  Controls.PeopleStack);
 local m_greatPersonRowIM  :table  = InstanceManager:new("PastRecruitmentInstance",  "Content",  Controls.RecruitedStack);
 local m_uiGreatPeople   :table;
 local m_kData       :table;
 local m_activeBiographyID :number = -1; -- Only allow one open at a time (or very quick exceed font allocation)
+local m_activeRecruitInfoID	:number	= -1;	-- Only allow one open at a time (or very quick exceed font allocation)
 local m_tabs        :table;
 local m_defaultPastRowHeight    :number = -1; -- Default/mix height (from XML) for a previously recruited row
+local m_displayPlayerID		:number = -1; -- What player are we displaying.  Used for looking at different players in autoplay
 local m_screenWidth			:number = -1;
-local _, m_ActscreenHeight = UIManager:GetScreenSizeVal();
-local m_ModalFrameBaseSize = Controls.ModalFrame:GetSizeY();
-local m_WoodPanelingBaseSize = Controls.WoodPaneling:GetSizeY();
-local m_PopupContainerBaseSize = Controls.PopupContainer:GetSizeY();
 
--- Filters (pulldowns)
+-- CQUI (not used)
+--local _, m_ActscreenHeight = UIManager:GetScreenSizeVal();
+--local m_ModalFrameBaseSize = Controls.ModalFrame:GetSizeY();
+--local m_WoodPanelingBaseSize = Controls.WoodPaneling:GetSizeY();
+--local m_PopupContainerBaseSize = Controls.PopupContainer:GetSizeY();
+
+-- Infixo Filters (pulldowns)
 local m_filterClassID:number = -1; -- -1 for All, >-1 for Great Person Class ID
 local m_filterPlayerID:number = -1; -- -1 for All, >-1 for Player ID (as in GetLocalPlayer() or Players[])
+
+-- ===========================================================================
+function ChangeDisplayPlayerID(bBackward)
+	
+	if (bBackward == nil) then
+		bBackward = false;
+	end
+
+	local aPlayers = PlayerManager.GetAliveMajors();
+	local playerCount = #aPlayers;
+
+	-- Anything set yet?
+	if (m_displayPlayerID ~= -1) then
+		-- Loop and find the current player and skip to the next
+		for i, pPlayer in ipairs(aPlayers) do
+			if (pPlayer:GetID() == m_displayPlayerID) then
+
+				if (bBackward) then
+					-- Have a previous one?
+					if (i >= 2) then
+						-- Yes
+						m_displayPlayerID = aPlayers[ playerCount ]:GetID();
+					else
+						-- Go to the end
+						m_displayPlayerID = aPlayers[1]:GetID();
+					end
+				else
+					-- Have a next one?
+					if (#aPlayer > i) then
+						-- Yes
+						m_displayPlayerID = aPlayers[i + 1]:GetID();
+					else
+						-- Back to the beginning
+						m_displayPlayerID = aPlayers[1]:GetID();
+					end
+				end
+
+				return m_displayPlayerID;
+			end
+		end
+
+	end
+
+	-- No player, or didn't find the previous player, start from the beginning.
+	if (playerCount > 0) then
+		m_displayPlayerID = aPlayers[1]:GetID();
+	end
+
+	return m_displayPlayerID;
+end
+				
+-- ===========================================================================
+function GetDisplayPlayerID()
+
+	if Automation.IsActive() then
+		if (m_displayPlayerID ~= -1) then
+			return m_displayPlayerID;
+		end
+
+		return ChangeDisplayPlayerID();
+	end
+
+	return Game.GetLocalPlayer();
+end
 
 -- ===========================================================================
 function GetActivationEffectTextByGreatPersonClass( greatPersonClassID:number )
@@ -113,17 +165,18 @@ function ViewCurrent( data:table )
   Controls.PeopleScroller:SetHide(false);
   Controls.RecruitedArea:SetHide(true);
 
+	local kInstanceToShow:table = nil;
+	
   -- Infixo: moving the Great Prophet to the end
   local eClassProphet = GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].Index;
   local iNumGPs = #GameInfo.GreatPersonClasses;  -- num of GPs classes
   if table.count(data.Timeline) == iNumGPs then  -- just a precaution, should always be equal
-    --dprint("Moving Great Prophet to the end");
+    --print("Moving Great Prophet to the end");
 	local temp = data.Timeline[eClassProphet+1];
 	for i=eClassProphet+1, iNumGPs-1, 1 do data.Timeline[i] = data.Timeline[i+1]; end
 	data.Timeline[iNumGPs] = temp;
   end
 
-  local firstAvailableIndex :number = 0;
   local preferedRecruitScrollSize = 0;
   local isPreferedRecruitScrollSizeComputed:boolean = false;
   for i, kPerson:table in ipairs(data.Timeline) do
@@ -135,13 +188,13 @@ function ViewCurrent( data:table )
 
     -- Infixo: moving the Great Prophet to the end
 	local eClassID = kPerson.ClassID;
-	--dprint("BEFORE: i,eClassID,eCP,tabcnt", i, eClassID, eClassProphet, table.count(data.Timeline));
+	--print("BEFORE: i,eClassID,eCP,tabcnt", i, eClassID, eClassProphet, table.count(data.Timeline));
 	if kPerson.ClassID == nil then
 		if i == iNumGPs then eClassID = eClassProphet;
 		elseif i < eClassProphet+1 then eClassID = i-1;
 		else eClassID = i; end
 	end
-	--dprint("AFTER: i,eClassID", i, eClassID);
+	--print("AFTER: i,eClassID", i, eClassID);
     instance.ClassName:SetText(Locale.Lookup(GameInfo.GreatPersonClasses[eClassID].Name));
 
   --CQUI Changes to Keep Great Person Class Label even when all are claimed
@@ -174,7 +227,6 @@ function ViewCurrent( data:table )
     if kPerson.IndividualID ~= nil then
       local individualName:string = Locale.ToUpper(kPerson.Name);
       instance.IndividualName:SetText( individualName );
-      --TruncateStringWithTooltip(instance.IndividualName, MAX_BEFORE_TRUNC_IND_NAME, individualName);
     end
 
     if kPerson.EraID ~= nil then
@@ -183,11 +235,12 @@ function ViewCurrent( data:table )
     end
 
     -- Grab icon representing type of class
+	--[[ Infixo: not used
     if (kPerson.ClassID ~= nil) then
       local icon:string = "ICON_" .. classData.GreatPersonClassType;
-	  --dprint("icon string", icon);
+	  --print("icon string", icon);
       local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(icon, 50);
-	  --dprint("icon texture X, Y, Sheet", textureOffsetX, textureOffsetY, textureSheet);
+	  --print("icon texture X, Y, Sheet", textureOffsetX, textureOffsetY, textureSheet);
       if textureSheet == nil then   -- Use default if none found
         print("WARNING: Could not find icon atlas entry for the class of Great Person '"..icon.."', using default instead.");
         textureOffsetX = 0;
@@ -198,14 +251,15 @@ function ViewCurrent( data:table )
 	  -- Infixo
       --instance.ClassImage:SetSizeVal(45,45);
     end
+	--]]
 
     -- Grab icon of the great person themselves; first try a specific image, if it doesn't exist
     -- then grab a generic representation based on the class.
-	--dprint("ClassID, IndividualID", kPerson.ClassID, kPerson.IndividualID);
+	--print("ClassID, IndividualID", kPerson.ClassID, kPerson.IndividualID);
     if (kPerson.ClassID ~= nil) and (kPerson.IndividualID ~= nil) then
       local portrait:string = "ICON_" .. individualData.GreatPersonIndividualType;
       textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(portrait, 160);
-	  --dprint("icon: portrait, OffX, OffY, Sheet", portrait, textureOffsetX, textureOffsetY, textureSheet);
+	  --print("icon: portrait, OffX, OffY, Sheet", portrait, textureOffsetX, textureOffsetY, textureSheet);
       if textureSheet == nil then   -- Use a default if none found
         print("WARNING: Could not find icon atlas entry for the individual Great Person '"..portrait.."', using default instead.");
         portrait = "ICON_GENERIC_" .. classData.GreatPersonClassType .. "_" .. individualData.Gender;
@@ -221,16 +275,6 @@ function ViewCurrent( data:table )
       instance["m_EffectsIM"]:ResetInstances();
     else
       instance["m_EffectsIM"] = InstanceManager:new("EffectInstance", "Top",  instance.EffectStack);
-    end
-
-    if kPerson.PassiveNameText ~= nil and kPerson.PassiveNameText ~= "" then
-      local effectInst:table  = instance["m_EffectsIM"]:GetInstance();
-      local effectText:string = kPerson.PassiveEffectText;
-      local fullText:string = kPerson.PassiveNameText .. "[NEWLINE][NEWLINE]" .. effectText;
-      effectInst.Text:SetText( effectText );
-      effectInst.EffectTypeIcon:SetToolTipString( fullText );
-      effectInst.PassiveAbilityIcon:SetHide(false);
-      effectInst.ActiveAbilityIcon:SetHide(true);
     end
 
     if (kPerson.ActionNameText ~= nil and kPerson.ActionNameText ~= "") then
@@ -260,11 +304,28 @@ function ViewCurrent( data:table )
       end
     end
 
+    -- Infixo: passive effect moved to the end
+    if kPerson.PassiveNameText ~= nil and kPerson.PassiveNameText ~= "" then
+      local effectInst:table  = instance["m_EffectsIM"]:GetInstance();
+      local effectText:string = kPerson.PassiveEffectText;
+      local fullText:string = kPerson.PassiveNameText .. "[NEWLINE][NEWLINE]" .. effectText;
+      effectInst.Text:SetText( effectText );
+      effectInst.EffectTypeIcon:SetToolTipString( fullText );
+      effectInst.PassiveAbilityIcon:SetHide(false);
+      effectInst.ActiveAbilityIcon:SetHide(true);
+    end
+
     if instance["m_RecruitIM"] ~= nil then
       instance["m_RecruitIM"]:ResetInstances();
     else
       instance["m_RecruitIM"] = InstanceManager:new("RecruitInstance", "Top", instance.RecruitStack);
     end
+
+	if instance["m_RecruitExtendedIM"] ~= nil then
+	  instance["m_RecruitExtendedIM"]:ResetInstances();
+	else
+      instance["m_RecruitExtendedIM"] = InstanceManager:new("RecruitInstance", "Top", instance.RecruitInfoStack);
+	end
 
     if kPerson.IndividualID ~= nil and kPerson.ClassID ~= nil then
 
@@ -317,6 +378,15 @@ function ViewCurrent( data:table )
         instance.RejectButton:SetHide(true);
       end
 
+	  -- If Recruit or Reject buttons are shown hide the minimized recruit stack
+	  --[[ Infixo not used
+	  if not instance.RejectButton:IsHidden() or not instance.RecruitButton:IsHidden() then
+		instance.RecruitMinimizedStack:SetHide(true);
+	  else
+		instance.RecruitMinimizedStack:SetHide(false);
+	  end
+	  --]]
+
       -- Recruiting standings
       -- Let's sort the table first by points total, then by the lower player id (to push yours toward the top of the list for readability)
       local recruitTable: table = {};
@@ -351,7 +421,6 @@ function ViewCurrent( data:table )
           if(recruitTurnsLeft == math.huge) then recruitTurnsLeft = "∞"; end
           recruitInst.CQUI_PerTurn:SetText( "(+" .. tostring(Round(kPlayerPoints.PointsPerTurn,1)) .. ") " .. tostring(recruitTurnsLeft) .. "[ICON_Turn]");
 
-
           local progressPercent :number = Clamp( kPlayerPoints.PointsTotal / kPerson.RecruitCost, 0, 1 );
           recruitInst.ProgressBar:SetPercent( progressPercent );
           local recruitColorName:string = "GreatPeopleCS";
@@ -375,37 +444,55 @@ function ViewCurrent( data:table )
         end
       end
       if not isPreferedRecruitScrollSizeComputed then isPreferedRecruitScrollSizeComputed = true; end
-
-      local sRecruitText:string = Locale.Lookup("LOC_GREAT_PEOPLE_OR_RECRUIT_WITH_PATRONAGE");
-      local sRecruitTooltip:string = "";
-      if (kPerson.EarnConditions ~= nil and kPerson.EarnConditions ~= "") then
-        sRecruitText = "[COLOR_Civ6Red]" .. Locale.Lookup("LOC_GREAT_PEOPLE_CANNOT_EARN_PERSON") .. "[ENDCOLOR]"
-        sRecruitTooltip = "[COLOR_Civ6Red]" .. kPerson.EarnConditions .. "[ENDCOLOR]";
-      end
-      instance.RecruitInfo:SetText(sRecruitText);
-      instance.RecruitInfo:SetToolTipString(sRecruitTooltip);
+	  
+	  if (kPerson.EarnConditions ~= nil and kPerson.EarnConditions ~= "") then
+	    instance.RecruitInfo:SetText("[COLOR_Civ6Red]" .. Locale.Lookup("LOC_GREAT_PEOPLE_CANNOT_EARN_PERSON") .. "[ENDCOLOR]");
+	    instance.RecruitInfo:SetToolTipString("[COLOR_Civ6Red]" .. kPerson.EarnConditions .. "[ENDCOLOR]");
+	    instance.RecruitInfo:SetHide(false);
+	  else
+	    instance.RecruitInfo:SetHide(true);
+	  end
+      --local sRecruitText:string = Locale.Lookup("LOC_GREAT_PEOPLE_OR_RECRUIT_WITH_PATRONAGE");
+      --local sRecruitTooltip:string = "";
+      --if (kPerson.EarnConditions ~= nil and kPerson.EarnConditions ~= "") then
+        --sRecruitText = "[COLOR_Civ6Red]" .. Locale.Lookup("LOC_GREAT_PEOPLE_CANNOT_EARN_PERSON") .. "[ENDCOLOR]"
+        --sRecruitTooltip = "[COLOR_Civ6Red]" .. kPerson.EarnConditions .. "[ENDCOLOR]";
+      --end
+      --instance.RecruitInfo:SetText(sRecruitText);
+      --instance.RecruitInfo:SetToolTipString(sRecruitTooltip);
 
       instance.RecruitScroll:CalculateSize();
     end
 
-    -- Set the biography button.
     if kPerson.IndividualID ~= nil then
-      instance.BiographyBackButton:SetText( Locale.Lookup("LOC_GREAT_PEOPLE_BIOGRAPHY") );
+      -- Set the biography buttons
       instance.BiographyBackButton:SetVoid1( kPerson.IndividualID );
-      instance.BiographyBackButton:RegisterCallback( Mouse.eLClick, OnBiographyBackClick );
+      instance.BiographyBackButton:RegisterCallback( Mouse.eLClick, OnBiographyClick );
+	  instance.BiographyOpenButton:SetVoid1( kPerson.IndividualID );
+	  instance.BiographyOpenButton:RegisterCallback( Mouse.eLClick, OnBiographyClick );
+			
+	  -- Setup extended recruit info buttons
+	  --[[ Infixo not used
+	  instance.RecruitInfoOpenButton:SetVoid1( kPerson.IndividualID );
+	  instance.RecruitInfoOpenButton:RegisterCallback( Mouse.eLClick, OnRecruitInfoClick );
+	  instance.RecruitInfoBackButton:SetVoid1( kPerson.IndividualID );
+	  instance.RecruitInfoBackButton:RegisterCallback( Mouse.eLClick, OnRecruitInfoClick );
+      --]]
       m_uiGreatPeople[kPerson.IndividualID] = instance;   -- Store instance for later look up
     end
 
     local noneAvailable   :boolean = (kPerson.ClassID == nil);
-    --instance.ClassName:SetHide( noneAvailable );
-    instance.TitleLine:SetHide( noneAvailable );
+    instance.ClassName:SetHide( noneAvailable );
+    --instance.TitleLine:SetHide( noneAvailable ); -- Infixo: not used
     instance.IndividualName:SetHide( noneAvailable );
     instance.EraName:SetHide( noneAvailable );
     instance.MainInfo:SetHide( noneAvailable );
     instance.BiographyBackButton:SetHide( noneAvailable );
     instance.ClaimedLabel:SetHide( not noneAvailable );
     instance.BiographyArea:SetHide( true );
-
+	--instance.RecruitInfoArea:SetHide( true ); -- Infixo: not used
+	instance.FadedBackground:SetHide( true );
+	instance.BiographyOpenButton:SetHide( noneAvailable );
     instance.EffectStack:CalculateSize();
     instance.EffectStackScroller:CalculateSize();
 
@@ -414,7 +501,6 @@ function ViewCurrent( data:table )
     if (m_PopupContainerBaseSize + preferedRecruitScrollSize - 86) > m_ActscreenHeight then -- AZURENCY : 86 is the default height of the recruit scroll
       preferedRecruitScrollSize = m_ActscreenHeight - 86 - 582 -- AZURENCY :  (582 = 768 (default popup height) - 186 (default recruit progress box height))
     end
-
 
     instance.RecruitScroll:SetSizeY(preferedRecruitScrollSize);
     instance.RecruitProgressBox:SetSizeY(preferedRecruitScrollSize + 114); -- (114 = 200 - 86)
@@ -458,6 +544,28 @@ function ViewCurrent( data:table )
   end
 end
 
+function FillRecruitInstance(instance:table, playerPoints:table, personData:table, classData:table)
+	instance.Country:SetText( playerPoints.PlayerName );
+	
+	instance.Amount:SetText( tostring(Round(playerPoints.PointsTotal,1)) .. "/" .. tostring(personData.RecruitCost) );
+	local progressPercent :number = Clamp( playerPoints.PointsTotal / personData.RecruitCost, 0, 1 );
+	instance.ProgressBar:SetPercent( progressPercent );
+	
+	local recruitColorName:string = "GreatPeopleCS";
+	if playerPoints.IsPlayer then
+		recruitColorName = "GreatPeopleActiveCS";			
+	end
+	instance.Amount:SetColorByName( recruitColorName );
+	instance.Country:SetColorByName( recruitColorName );
+	instance.Country:SetColorByName( recruitColorName );
+	instance.ProgressBar:SetColorByName( recruitColorName );
+
+	DifferentiateCiv(playerPoints.PlayerID,instance.CivIcon,instance.CivIcon,instance.CivBacking, nil, nil, Game.GetLocalPlayer());
+
+	local recruitDetails:string = Locale.Lookup("LOC_GREAT_PEOPLE_POINT_DETAILS", Round(playerPoints.PointsPerTurn, 1), classData.IconString, classData.Name);
+	instance.Top:SetToolTipString(recruitDetails);
+end
+
 function GetPatronizeWithGoldTT(kPerson)
   return Locale.Lookup("LOC_GREAT_PEOPLE_PATRONAGE_GOLD_DETAILS", kPerson.PatronizeWithGoldCost);
 end
@@ -472,7 +580,7 @@ end
 -- =======================================================================================
 
 function ClassNameClicked(classID:number, className:string)
-	--dprint("ClassNameClicked", classID, className);
+	--print("FUN ClassNameClicked", classID, className);
 	if m_filterClassID == classID then return; end -- selected the same, do nothing
 	Controls.ClassNamePull:GetButton():LocalizeAndSetText( className );
 	m_filterClassID = classID;
@@ -480,7 +588,7 @@ function ClassNameClicked(classID:number, className:string)
 end
 
 function PopulateClassNamePull()
-	--dprint("PopulateClassNamePull");
+	--print("FUN PopulateClassNamePull");
 
 	-- Clear current filters
 	Controls.ClassNamePull:ClearEntries();
@@ -512,7 +620,7 @@ function PopulateClassNamePull()
 end
 
 function CivLeaderClicked(playerID:number, playerName:string)
-	--dprint("CivLeaderClicked", playerID, playerName);
+	--print("FUN CivLeaderClicked", playerID, playerName);
 	if m_filterPlayerID == playerID then return; end -- selected the same, do nothing
 	Controls.CivLeaderPull:GetButton():LocalizeAndSetText( playerName );
 	m_filterPlayerID = playerID;
@@ -520,7 +628,7 @@ function CivLeaderClicked(playerID:number, playerName:string)
 end
 
 function PopulateCivLeaderPull()
-	--dprint("PopulateCivLeaderPull");
+	--print("FUN PopulateCivLeaderPull");
 
 	-- Clear current filters
 	Controls.CivLeaderPull:ClearEntries();
@@ -565,7 +673,6 @@ function PopulateCivLeaderPull()
 	Controls.CivLeaderPull:CalculateInternals();
 end
 
-
 -- =======================================================================================
 --  Layout the data for previously recruited great people.
 -- =======================================================================================
@@ -579,9 +686,8 @@ function ViewPast( data:table )
   Controls.PeopleScroller:SetHide(true);
   Controls.RecruitedArea:SetHide(false);
 
-  local firstAvailableIndex     :number = 0;
   local localPlayerID         :number = Game.GetLocalPlayer();
-  local iTotal:number = 0;
+  local iTotal:number = 0; -- Infixo
 
   local PADDING_FOR_SPACE_AROUND_TEXT :number = 20;
 
@@ -596,6 +702,7 @@ function ViewPast( data:table )
 	else bShowPlayer = ( kPerson.ClaimantID == m_filterPlayerID); end
 	
 	if bShowClass and bShowPlayer then -- FILTER here
+    -- Infixo end
 
     local instance  :table  = m_greatPersonRowIM:GetInstance();
     local classData :table = GameInfo.GreatPersonClasses[kPerson.ClassID];
@@ -604,7 +711,6 @@ function ViewPast( data:table )
       m_defaultPastRowHeight = instance.Content:GetSizeY();
     end
     local rowHeight :number = math.max(m_defaultPastRowHeight, 72); -- 68 is for Civ icon
-
 
     local date    :string = Calendar.MakeYearStr( kPerson.TurnGranted);
     instance.EarnDate:SetText( date );
@@ -615,9 +721,10 @@ function ViewPast( data:table )
     else
       UI.DataError("GreatPeople previous recruited as unable to find the class text for #"..tostring(i));
     end
-    instance.GreatPersonInfo:SetText( kPerson.Name );
     instance.ClassName:SetText( Locale.ToUpper(classText) );
-	-- Era Name
+    instance.GreatPersonInfo:SetText( kPerson.Name );
+
+	-- Infixo Era Name
     if kPerson.EraID ~= nil then
       local eraName:string = Locale.Lookup(GameInfo.Eras[kPerson.EraID].Name);
       instance.EraName:SetText( Locale.ToUpper(eraName) );
@@ -638,7 +745,7 @@ function ViewPast( data:table )
           instance.RecruitedImage:SetHide(false);
           instance.YouIndicator:SetHide(false);
 
-        elseif (localPlayer ~= nil and localPlayer:GetDiplomacy() ~= nil and localPlayer:GetDiplomacy():HasMet(kPerson.ClaimantID)) then
+		elseif (Game.GetLocalObserver() == PlayerTypes.OBSERVER or (localPlayer ~= nil and localPlayer:GetDiplomacy() ~= nil and localPlayer:GetDiplomacy():HasMet(kPerson.ClaimantID))) then
           instance.RecruitedImage:SetIcon(iconName, 55);
           instance.RecruitedImage:SetToolTipString( Locale.Lookup(playerConfig:GetPlayerName()) );
           instance.RecruitedImage:SetHide(false);
@@ -667,7 +774,7 @@ function ViewPast( data:table )
     else
       instance["m_EffectsIM"] = InstanceManager:new("PastEffectInstance", "Top", instance.EffectStack);
     end
-
+	
     if (kPerson.ActionNameText ~= nil and kPerson.ActionNameText ~= "") then
       local effectInst:table  = instance["m_EffectsIM"]:GetInstance();
       local effectText:string = kPerson.ActionEffectText;
@@ -698,6 +805,7 @@ function ViewPast( data:table )
       end
     end
 
+    -- Infixo: passive effect moved to the end
     if kPerson.PassiveNameText ~= nil and kPerson.PassiveNameText ~= "" then
       local effectInst:table  = instance["m_EffectsIM"]:GetInstance();
       local effectText:string = kPerson.PassiveEffectText;
@@ -713,12 +821,12 @@ function ViewPast( data:table )
     end
 
     instance.Content:SetSizeY( rowHeight );
-	iTotal = iTotal + 1;
+	iTotal = iTotal + 1; -- Infixo
 	end -- Infixo: end FILTER here
 
   end
   
-  Controls.Total:SetText(Locale.Lookup("LOC_HUD_CITY_TOTAL")..": "..tostring(iTotal)); -- display total
+  Controls.Total:SetText(Locale.Lookup("LOC_HUD_CITY_TOTAL")..": "..tostring(iTotal)); -- Infixo display total
 
   -- Scaling to screen width required for the previously recruited tab
   Controls.PopupContainer:SetSizeX( m_screenWidth );
@@ -728,16 +836,45 @@ function ViewPast( data:table )
   Controls.RecruitedScroller:CalculateSize();
 end
 
+-- =======================================================================================
+-- Toggle Extended Recruit Info whether open or closed
+-- =======================================================================================
+function OnRecruitInfoClick( individualID )
+	-- If a recruit info is open, close the last opened
+	if m_activeRecruitInfoID ~= -1 and individualID ~= m_activeRecruitInfoID then
+		OnRecruitInfoClick( m_activeRecruitInfoID );		
+	end
+	
+	local instance:table= m_uiGreatPeople[individualID];
+	if instance == nil then
+		print("WARNING: Was unable to find instance for individual \""..tostring(individualID).."\"");
+		return;
+	end
+
+	--local isShowingRecruitInfo:boolean = not instance.RecruitInfoArea:IsHidden(); -- Infixo: not used
+
+	instance.BiographyArea:SetHide( true );
+	--instance.RecruitInfoArea:SetHide( isShowingRecruitInfo ); -- Infixo: not used
+	instance.MainInfo:SetHide( not isShowingRecruitInfo );
+	instance.FadedBackground:SetHide( isShowingRecruitInfo );
+	instance.BiographyOpenButton:SetHide( not isShowingRecruitInfo );
+
+	if isShowingRecruitInfo then	
+		m_activeRecruitInfoID = -1;
+	else
+		m_activeRecruitInfoID = individualID;
+	end
+end
 
 -- =======================================================================================
 --  Button Callback
 --  Switch between biography and stats for a great person
 -- =======================================================================================
-function OnBiographyBackClick( individualID )
+function OnBiographyClick( individualID )
 
   -- If a biography is open, close it via recursive magic...
   if m_activeBiographyID ~= -1 and individualID ~= m_activeBiographyID then
-    OnBiographyBackClick( m_activeBiographyID );
+    OnBiographyClick( m_activeBiographyID );
   end
 
   local instance:table= m_uiGreatPeople[individualID];
@@ -750,17 +887,17 @@ function OnBiographyBackClick( individualID )
   local buttonLabelText   :string;
 
   instance.BiographyArea:SetHide( isShowingBiography );
+  --instance.RecruitInfoArea:SetHide( true ); -- Infixo: not used
   instance.MainInfo:SetHide( not isShowingBiography );
-  instance.BiographyActiveBG:SetHide( isShowingBiography );
+  instance.FadedBackground:SetHide( isShowingBiography );
+  instance.BiographyOpenButton:SetHide( not isShowingBiography );
 
   if isShowingBiography then
+	-- Current showing; so hide...		
     m_activeBiographyID = -1;
-    buttonLabelText = Locale.Lookup("LOC_GREAT_PEOPLE_BIOGRAPHY");    -- Current showing; so hide...
   else
-    m_activeBiographyID = individualID;
-
     -- Current hidden, show biography...
-    buttonLabelText = Locale.Lookup("LOC_GREAT_PEOPLE_BACK");
+    m_activeBiographyID = individualID;
 
     -- Get data
     local kBiographyText:table;
@@ -779,8 +916,6 @@ function OnBiographyBackClick( individualID )
 
     instance.BiographyScroll:CalculateSize();
   end
-
-  instance.BiographyBackButton:SetText( buttonLabelText );
 end
 
 
@@ -796,7 +931,11 @@ function PopulateData( data:table, isPast:boolean )
     return;
   end
 
-  local localPlayerID :number = Game.GetLocalPlayer();
+  local displayPlayerID :number = GetDisplayPlayerID();
+    if (displayPlayerID == -1) then
+	  return;
+	end
+
   local pGreatPeople  :table  = Game.GetGreatPeople();
   if pGreatPeople == nil then
     UI.DataError("GreatPeoplePopup received NIL great people object.");
@@ -830,31 +969,22 @@ function PopulateData( data:table, isPast:boolean )
     local rejectCost      :number = nil;
     local earnConditions    :string = nil;
     if (entry.Individual ~= nil) then
-      if (Players[localPlayerID] ~= nil) then
-        canRecruit = pGreatPeople:CanRecruitPerson(localPlayerID, entry.Individual);
+      if (Players[displayPlayerID] ~= nil) then
+        canRecruit = pGreatPeople:CanRecruitPerson(displayPlayerID, entry.Individual);
         if (not isPast) then
-          canReject = pGreatPeople:CanRejectPerson(localPlayerID, entry.Individual);
+          canReject = pGreatPeople:CanRejectPerson(displayPlayerID, entry.Individual);
           if (canReject) then
-            rejectCost = pGreatPeople:GetRejectCost(localPlayerID, entry.Individual);
+            rejectCost = pGreatPeople:GetRejectCost(displayPlayerID, entry.Individual);
           end
         end
-        canPatronizeWithGold = pGreatPeople:CanPatronizePerson(localPlayerID, entry.Individual, YieldTypes.GOLD);
-        patronizeWithGoldCost = pGreatPeople:GetPatronizeCost(localPlayerID, entry.Individual, YieldTypes.GOLD);
-        canPatronizeWithFaith = pGreatPeople:CanPatronizePerson(localPlayerID, entry.Individual, YieldTypes.FAITH);
-        patronizeWithFaithCost = pGreatPeople:GetPatronizeCost(localPlayerID, entry.Individual, YieldTypes.FAITH);
-        earnConditions = pGreatPeople:GetEarnConditionsText(localPlayerID, entry.Individual);
+        canPatronizeWithGold = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.GOLD);
+        patronizeWithGoldCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.GOLD);
+        canPatronizeWithFaith = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.FAITH);
+        patronizeWithFaithCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.FAITH);
+        earnConditions = pGreatPeople:GetEarnConditionsText(displayPlayerID, entry.Individual);
       end
       local individualInfo = GameInfo.GreatPersonIndividuals[entry.Individual];
       actionCharges = individualInfo.ActionCharges;
-    end
-
-    local color = COLOR_UNAVAILABLE;
-    if (entry.Class ~= nil) then
-      if (canRecruit or canReject) then
-        color = COLOR_CLAIMED;
-      else
-        color = COLOR_AVAILABLE;
-      end
     end
 
     local personName:string = "";
@@ -876,7 +1006,6 @@ function PopulateData( data:table, isPast:boolean )
       CanPatronizeWithGold  = canPatronizeWithGold,
       CanReject       = canReject,
       ClaimantName      = claimantName,
-      Color         = color,
       CanRecruit        = canRecruit,
       EarnConditions      = earnConditions,
       Name          = personName,
@@ -900,10 +1029,10 @@ function PopulateData( data:table, isPast:boolean )
     for i, player in ipairs(players) do
       local playerName = "";
       local isPlayer:boolean = false;
-      if (player:GetID() == localPlayerID) then
+	  if (player:GetID() == displayPlayerID) then
         playerName = playerName .. Locale.Lookup(PlayerConfigurations[player:GetID()]:GetCivilizationShortDescription());
         isPlayer = true;
-      elseif (Players[localPlayerID]:GetDiplomacy():HasMet(player:GetID())) then
+			elseif (Game.GetLocalObserver() == PlayerTypes.OBSERVER or Players[displayPlayerID]:GetDiplomacy():HasMet(player:GetID())) then
         playerName = playerName .. Locale.Lookup(PlayerConfigurations[player:GetID()]:GetCivilizationShortDescription());
       else
         playerName = playerName .. Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER");
@@ -943,7 +1072,8 @@ function Open()
   -- Infixo:pulldowns
   PopulateClassNamePull();
   PopulateCivLeaderPull();
-
+  -- Infixo end
+  
   -- Queue the screen as a popup, but we want it to render at a desired location in the hierarchy, not on top of everything.
   if not UIManager:IsInPopupQueue(ContextPtr) then
     local kParameters = {};
@@ -957,7 +1087,9 @@ function Open()
   Refresh();
 
   -- From ModalScreen_PlayerYieldsHelper
-  RefreshYields();
+  if not RefreshYields() then
+    Controls.Vignette:SetSizeY(m_TopPanelConsideredHeight);
+  end
 
   -- From Civ6_styles: FullScreenVignetteConsumer
   Controls.ScreenAnimIn:SetToBeginning();
@@ -1077,7 +1209,7 @@ end
 --  Game Engine Event
 -- ===========================================================================
 function OnUnitGreatPersonActivated( unitOwner:number, unitID:number, greatPersonClassID:number, greatPersonIndividualID:number )
-  if (unitOwner == Game.GetLocalPlayer()) then
+	if (unitOwner == Game.GetLocalObserver() or Game.GetLocalObserver() == PlayerTypes.OBSERVER) then
     local player = Players[unitOwner];
     if (player ~= nil) then
       local unit = player:GetUnits():FindID(unitID);
@@ -1134,6 +1266,7 @@ function OnGreatPeopleClick()
   Controls.ClassNamePull:SetHide( true );
   Controls.CivLeaderPull:SetHide( true );
   Controls.Total:SetHide( true );
+  -- Infixo end
   Refresh();
 end
 
@@ -1149,6 +1282,7 @@ function OnPreviousRecruitedClick()
   Controls.ClassNamePull:SetHide( false );
   Controls.CivLeaderPull:SetHide( false );
   Controls.Total:SetHide( false );
+  -- Infixo end
   Refresh();
 end
 
@@ -1219,9 +1353,9 @@ function Initialize()
   m_tabs.AddTab( Controls.ButtonGreatPeople,      OnGreatPeopleClick );
   m_tabs.AddTab( Controls.ButtonPreviouslyRecruited,  OnPreviousRecruitedClick );
   m_tabs.CenterAlignTabs(-10);
-  if Game.GetLocalPlayer() ~= -1 then
+  --if Game.GetLocalPlayer() ~= -1 then -- Infixo: should handle autoplay
     m_tabs.SelectTab( Controls.ButtonGreatPeople );
-  end
+  --end
 
   -- UI Events
   ContextPtr:SetInitHandler( OnInit );
@@ -1233,24 +1367,25 @@ function Initialize()
   Controls.ModalBG:SetHide(true);
   Controls.ModalScreenClose:RegisterCallback(Mouse.eLClick, OnClose);
   Controls.ModalScreenTitle:SetText(Locale.ToUpper(Locale.Lookup("LOC_GREAT_PEOPLE_TITLE")));
-
+	
   -- Game engine Events
   Events.LocalPlayerChanged.Add( OnLocalPlayerChanged );
   Events.LocalPlayerTurnBegin.Add( OnLocalPlayerTurnBegin );
   Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
   Events.UnitGreatPersonActivated.Add( OnUnitGreatPersonActivated );
   Events.GreatPeoplePointsChanged.Add( OnGreatPeoplePointsChanged );
-
+	
   -- LUA Events
   LuaEvents.GameDebug_Return.Add(             OnGameDebugReturn );
   LuaEvents.LaunchBar_OpenGreatPeoplePopup.Add(     OnOpenViaLaunchBar );
   LuaEvents.NotificationPanel_OpenGreatPeoplePopup.Add( OnOpenViaNotification );
   LuaEvents.LaunchBar_CloseGreatPeoplePopup.Add(			OnClose );
-
+	
     -- Audio Events
   Controls.ButtonGreatPeople:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
   Controls.ButtonPreviouslyRecruited:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
+	m_TopPanelConsideredHeight = Controls.Vignette:GetSizeY() - TOP_PANEL_OFFSET;
 end
 Initialize();
 
