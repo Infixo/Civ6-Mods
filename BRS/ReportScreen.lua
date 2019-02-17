@@ -2,7 +2,7 @@ print("Loading ReportScreen.lua from Better Report Screen version "..GlobalParam
 -- ===========================================================================
 --	ReportScreen
 --	All the data
---
+--  Copyright 2016-2018, Firaxis Games
 -- ===========================================================================
 include("CitySupport");
 include("Civ6Common");
@@ -19,13 +19,15 @@ local RMA = ExposedMembers.RMA;
 -- ===========================================================================
 
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+print("Rise & Fall    :", (bIsRiseFall and "YES" or "no"));
+local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
+print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 
 
 -- ===========================================================================
 --	DEBUG
 --	Toggle these for temporary debugging help.
 -- ===========================================================================
-local m_debugFullHeight				:boolean = true;		-- (false) if the screen area should resize to full height of the available space.
 local m_debugNumResourcesStrategic	:number = 0;			-- (0) number of extra strategics to show for screen testing.
 local m_debugNumBonuses				:number = 0;			-- (0) number of extra bonuses to show for screen testing.
 local m_debugNumResourcesLuxuries	:number = 0;			-- (0) number of extra luxuries to show for screen testing.
@@ -41,6 +43,14 @@ local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll ar
 local INDENT_STRING								:string = "      ";
 local TOOLTIP_SEP								:string = "-------------------";
 local TOOLTIP_SEP_NEWLINE						:string = "[NEWLINE]"..TOOLTIP_SEP.."[NEWLINE]";
+
+-- Mapping of unit type to cost.
+local UnitCostMap:table = {};
+do
+	for row in GameInfo.Units() do
+		UnitCostMap[row.UnitType] = row.Maintenance;
+	end
+end
 
 --BRS !! Added function to sort out tables for units
 -- Infixo: this is only used by Upgrade Callback; parent will be used a flag; must be set to nil when leaving report screen
@@ -72,19 +82,19 @@ end
 --	VARIABLES
 -- ===========================================================================
 
-m_simpleIM = InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
-m_tabIM = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
-local m_groupIM				:table = InstanceManager:new("GroupInstance",			"Top",		Controls.Stack);				-- Collapsable
-local m_bonusResourcesIM	:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.BonusResources);
-local m_luxuryResourcesIM	:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.LuxuryResources);
-local m_strategicResourcesIM:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.StrategicResources);
+m_simpleIM							= InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
+m_tabIM								= InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
+m_strategicResourcesIM				= InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.StrategicResources);
+m_bonusResourcesIM					= InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.BonusResources);
+m_luxuryResourcesIM					= InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.LuxuryResources);
+local m_groupIM				:table  = InstanceManager:new("GroupInstance",			"Top",		Controls.Stack);				-- Collapsable
 
 
 m_kCityData = nil;
 m_tabs = nil;
+m_kResourceData = nil;
 local m_kCityTotalData		:table = nil;
 local m_kUnitData			:table = nil;	-- TODO: Show units by promotion class
-local m_kResourceData		:table = nil;
 local m_kDealData			:table = nil;
 local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all action.
 
@@ -179,16 +189,18 @@ end
 -- ===========================================================================
 --	Single entry point for display
 -- ===========================================================================
-function Open()
+function Open( tabToOpen:string )
+	if tabToOpen=="Yields" then m_kCurrentTab = 1; end
+	if tabToOpen=="Resources" then m_kCurrentTab = 2; end
+	if tabToOpen=="CityStatus" then m_kCurrentTab = 3; end
 	--print("FUN Open()");
-	UIManager:QueuePopup( ContextPtr, PopupPriority.Normal );
+	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
 	UI.PlaySound("UI_Screen_Open");
 	LuaEvents.ReportScreen_Opened();
 
 	-- BRS !! new line to add new variables 
-	-- m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData = GetData();
 	Timer2Start()
 	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
 	UpdatePolicyData();
@@ -209,6 +221,20 @@ end
 -- ===========================================================================
 function OnTopOpenReportsScreen()
 	Open();
+end
+
+-- ===========================================================================
+--	LUA Events
+-- ===========================================================================
+function OnOpenCityStatus()
+	Open("CityStatus");
+end
+
+-- ===========================================================================
+--	LUA Events
+-- ===========================================================================
+function OnOpenResources()
+	Open("Resources");
 end
 
 -- ===========================================================================
@@ -1075,26 +1101,30 @@ function GetData()
 			end
 		end
 	end
+	
+	kResources = AddMiscResourceData(pResources, kResources);
 
+	--BRS !! changed
+	return kCityData, kCityTotalData, kResources, kUnitData, kDealData, kCurrentDeals, kUnitDataReport;
+end
+
+function AddMiscResourceData(pResourceData:table, kResourceTable:table)
 	-- Resources not yet accounted for come from other gameplay bonuses
-	if pResources then
+	if pResourceData then
 		for row in GameInfo.Resources() do
-			local internalResourceAmount:number = pResources:GetResourceAmount(row.Index);
+			local internalResourceAmount:number = pResourceData:GetResourceAmount(row.Index);
 			if (internalResourceAmount > 0) then
-				if (kResources[row.Index] ~= nil) then
-					if (internalResourceAmount > kResources[row.Index].Total) then
-						AddResourceData(kResources, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount - kResources[row.Index].Total);
+				if (kResourceTable[row.Index] ~= nil) then
+					if (internalResourceAmount > kResourceTable[row.Index].Total) then
+						AddResourceData(kResourceTable, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount - kResourceTable[row.Index].Total);
 					end
 				else
-					AddResourceData(kResources, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount);
+					AddResourceData(kResourceTable, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount);
 				end
 			end
 		end
 	end
-
-	--BRS !! changed
-	--return kCityData, kCityTotalData, kResources, kUnitData, kDealData;
-	return kCityData, kCityTotalData, kResources, kUnitData, kDealData, kCurrentDeals, kUnitDataReport
+	return kResourceTable;
 end
 
 -- ===========================================================================
@@ -1228,9 +1258,9 @@ end
 
 -- ===========================================================================
 -- Obtain unit maintenance
--- This function will use GameInfo for vanilla game and UnitManager for Rise&Fall
+-- This function will use GameInfo for vanilla game and UnitManager for R&F/GS
 function GetUnitMaintenance(pUnit:table)
-	if bIsRiseFall then
+	if bIsRiseFall or bIsGatheringStorm then
 		-- Rise & Fall version
 		local iUnitInfoHash:number = GameInfo.Units[ pUnit:GetUnitType() ].Hash;
 		local unitMilitaryFormation = pUnit:GetMilitaryFormation();
@@ -1911,15 +1941,21 @@ function ViewYieldsPage()
 	for cityName,kCityData in pairs(m_kCityData) do
 		for _,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do
 			local key = kDistrict.Name;
-			if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
-			kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
-			kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kDistrict.Maintenance;
+			-- GS change: don't count pillaged districts
+			if kDistrict.isPillaged == false then
+				if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
+				kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
+				kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kDistrict.Maintenance;
+			end
 		end
 		for _,kBuilding in ipairs(kCityData.Buildings) do
 			local key = kBuilding.Name;
-			if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
-			kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
-			kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kBuilding.Maintenance;
+			-- GS change: don't count pillaged buildings
+			if kBuilding.isPillaged == false then
+				if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
+				kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
+				kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kBuilding.Maintenance;
+			end
 		end
 	end
 	--BRS sort by name here somehow?
@@ -2137,7 +2173,7 @@ function ViewResourcesPage()
 			--pFooterInstance.AmenitiesContainer:SetHide(false);
 			instance.AmenitiesContainer:SetHide(false); ---BRS
 			--pFooterInstance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..numCitiesProvidingTo.." "..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME"));
-			instance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..numCitiesProvidingTo.." "..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME"));
+			instance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..Locale.Lookup("LOC_HUD_REPORTS_CITY_AMENITIES", numCitiesProvidingTo));
 			local amenitiesTooltip: string = "";
 			local playerCities = localPlayer:GetCities();
 			for i,city in ipairs(citiesProvidedTo) do
@@ -2211,11 +2247,11 @@ end
 
 function GetFontIconForDistrict(sDistrictType:string)
 	-- exceptions first
-	if sDistrictType == "DISTRICT_CITY_CENTER"                 then return "[ICON_DISTRICT_CITYCENTER]";    end
-	if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLYSITE]";      end
-	if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
-	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT]"; end -- no need to check for mutuals with that
-	if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
+	--if sDistrictType == "DISTRICT_CITY_CENTER"                 then return "[ICON_DISTRICT_CITY_CENTER]";    end
+	--if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLY_SITE]";      end
+	--if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
+	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT_COMPLEX]"; end -- no need to check for mutuals with that
+	--if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
 	-- default icon last
 	return "[ICON_"..sDistrictType.."]";
 end
@@ -2223,21 +2259,21 @@ end
 local tDistrictsOrder:table = {
 	-- Ancient Era
 	--"DISTRICT_GOVERNMENT", -- to save space, will be treated separately
-	"DISTRICT_HOLY_SITE", -- icon is DISTRICT_HOLYSITE
+	"DISTRICT_HOLY_SITE", -- icon is DISTRICT_HOLY_SITE
 	"DISTRICT_CAMPUS",
 	"DISTRICT_ENCAMPMENT",
 	-- Classical Era
 	"DISTRICT_THEATER",
 	"DISTRICT_COMMERCIAL_HUB",
 	"DISTRICT_HARBOR",
-	"DISTRICT_ENTERTAINMENT_COMPLEX", -- with DISTRICT_WATER_ENTERTAINMENT_COMPLEX, icon is DISTRICT_ENTERTAINMENT
+	"DISTRICT_ENTERTAINMENT_COMPLEX", -- with DISTRICT_WATER_ENTERTAINMENT_COMPLEX, icon is DISTRICT_ENTERTAINMENT_COMPLEX
 	-- Medieval Era
 	"DISTRICT_INDUSTRIAL_ZONE",
 	-- others
 	"DISTRICT_AQUEDUCT",
 	"DISTRICT_NEIGHBORHOOD",
 	"DISTRICT_SPACEPORT",
-	"DISTRICT_AERODROME", -- no icon, we'll use an icon for DISTRICT_WONDER
+	"DISTRICT_AERODROME", -- icon is ICON_DISTRICT_AERODROME, added in GS
 }
 --for k,v in pairs(tDistrictsOrder) do print("tDistrictsOrder",k,v) end;
 
@@ -2392,7 +2428,8 @@ function city_fields( kCityData, pCityInstance )
 	local sGRColor:string = "";
 	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED"; sGRColor = "[COLOR:200,62,52,255]"; -- Error
 	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:200,146,52,255]"; -- WarningMajor "LOC_HUD_REPORTS_STATUS_SLOWED"; 
-	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:206,199,91,255]"; end -- WarningMinor "LOC_HUD_REPORTS_STATUS_SLOWED";
+	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:206,199,91,255]"; -- WarningMinor "LOC_HUD_REPORTS_STATUS_SLOWED";
+	elseif kCityData.HappinessGrowthModifier > 0                  then sGRStatus = "LOC_HUD_REPORTS_STATUS_ACCELERATED"; end -- GS addition
 	pCityInstance.GrowthRateStatus:SetText( sGRColor..Locale.Lookup(sGRStatus)..(sGRColor~="" and "[ENDCOLOR]" or "") );
 	--if sGRColor ~= "" then pCityInstance.GrowthRateStatus:SetColorByName( sGRColor ); end
 
@@ -3813,27 +3850,53 @@ end
 
 
 -- ===========================================================================
+function Resize()
+	local topPanelSizeY:number = 30;
+
+	x,y = UIManager:GetScreenSizeVal();
+	Controls.Main:SetSizeY( y - topPanelSizeY );
+	Controls.Main:SetOffsetY( topPanelSizeY * 0.5 );
+end
+
+-- ===========================================================================
+--	Game Event Callback
+-- ===========================================================================
+function OnLocalPlayerTurnEnd()
+	if(GameConfiguration.IsHotseat()) then
+		OnCloseButton();
+	end
+end
+
+-- ===========================================================================
+function LateInitialize()
+	Resize();
+
+	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
+	--AddTabSection( "Test",								ViewTestPage );			--TRONSTER debug
+	--AddTabSection( "Test2",								ViewTestPage );			--TRONSTER debug
+	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_MINORS",		ViewMinorPage );
+
+	m_tabs.SameSizedTabs(20);
+	m_tabs.CenterAlignTabs(-10);
+end
+
+-- ===========================================================================
 --	UI Event
 -- ===========================================================================
 function OnInit( isReload:boolean )
+	LateInitialize();
 	if isReload then		
-		if ContextPtr:IsHidden()==false then
+		if ContextPtr:IsHidden() == false then
 			Open();
 		end
 	end
 	m_tabs.AddAnimDeco(Controls.TabAnim, Controls.TabArrow);	
-end
-
-
--- ===========================================================================
-function Resize()
-	local topPanelSizeY:number = 30;
-
-	if m_debugFullHeight then
-		x,y = UIManager:GetScreenSizeVal();
-		Controls.Main:SetSizeY( y - topPanelSizeY );
-		Controls.Main:SetOffsetY( topPanelSizeY * 0.5 );
-	end
 end
 
 
@@ -3914,22 +3977,6 @@ end
 function Initialize()
 
 	InitializePolicyData();
-	
-	Resize();	
-
-	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
-	--AddTabSection( "Test",								ViewTestPage );			--TRONSTER debug
-	--AddTabSection( "Test2",								ViewTestPage );			--TRONSTER debug
-	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );	
-	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_MINORS",		ViewMinorPage );
-
-	m_tabs.SameSizedTabs(20);
-	m_tabs.CenterAlignTabs(-10);
 
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );
@@ -3991,7 +4038,11 @@ function Initialize()
 	-- Events
 	LuaEvents.TopPanel_OpenReportsScreen.Add( OnTopOpenReportsScreen );
 	LuaEvents.TopPanel_CloseReportsScreen.Add( OnTopCloseReportsScreen );
+	LuaEvents.ReportsList_OpenCityStatus.Add( OnOpenCityStatus );
+	LuaEvents.ReportsList_OpenResources.Add( OnOpenResources );
+	LuaEvents.ReportsList_OpenYields.Add( OnTopOpenReportsScreen );
 
+	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
 end
 Initialize();
 
