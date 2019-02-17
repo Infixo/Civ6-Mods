@@ -40,10 +40,11 @@
             <Items>
                 <File>ReportScreen.lua</File>
 				<File>ReportScreen.xml</File>
+				<File>ReportsList_BRS.lua</File>
 				<!-- core file, will be included in wrappers -->
-				<!--<File>LaunchBar_BRS.lua</File>-->
+				<File>PartialScreenHooks_BRS.lua</File>
 				<!-- wrapper -->
-				<!--<File>LaunchBar_BRS_vanilla.lua</File>-->
+				<File>PartialScreenHooks_BRS_vanilla.lua</File>
             </Items>
         </ImportFiles>
 		<UpdateText id="BRS_UpdateText">
@@ -61,48 +62,50 @@
 			<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
 		</UpdateText>
 		<!-- Vanilla actions -->
-		<!--
-		<ReplaceUIScript id="BRS_ReplaceUI_LaunchBar">
+		<ReplaceUIScript id="BRS_ReplaceUI_ReportsList">
 			<Properties>
-				<LuaContext>LaunchBar</LuaContext>
-				<LuaReplace>LaunchBar_BRS_vanilla.lua</LuaReplace>
+				<LuaContext>ReportsList</LuaContext>
+				<LuaReplace>ReportsList_BRS.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
-		-->
+		<ReplaceUIScript id="BRS_ReplaceUI_PartialScreenHooks">
+			<Properties>
+				<LuaContext>PartialScreenHooks</LuaContext>
+				<LuaReplace>PartialScreenHooks_BRS_vanilla.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
 		<!-- Rise&Fall actions - replace lua and import xml (there's no 'replace' for xml) -->
-        <ImportFiles id="BRS_ImportFiles_RiseFall" criteria="Expansion1">
+        <ImportFiles id="BRS_ImportFiles_XP1" criteria="Expansion1">
 			<Properties>
                 <LoadOrder>101</LoadOrder>
             </Properties>		
             <Items>
-				<File>RiseFall/ReportScreen.xml</File>
-				<!--<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File>-->
+				<File>XP1/ReportScreen.xml</File>
+				<File>XP1/PartialScreenHooks_BRS_XP1.lua</File>
             </Items>
         </ImportFiles>
-		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_RiseFall" criteria="Expansion1">
+		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_XP1" criteria="Expansion1">
 			<Properties>
                 <LoadOrder>101</LoadOrder>
 				<LuaContext>ReportScreen</LuaContext>
 				<LuaReplace>ReportScreen.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
-		<!--
-		<ReplaceUIScript id="BRS_ReplaceUI_LaunchBar_RiseFall" criteria="Expansion1">
+		<ReplaceUIScript id="BRS_ReplaceUI_PartialScreenHooks_XP1" criteria="Expansion1">
 			<Properties>
                 <LoadOrder>101</LoadOrder>
-				<LuaContext>LaunchBar</LuaContext>
-				<LuaReplace>RiseFall/LaunchBar_BRS_RiseFall.lua</LuaReplace>
+				<LuaContext>PartialScreenHooks</LuaContext>
+				<LuaReplace>XP1/PartialScreenHooks_BRS_XP1.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
-		-->
 		<!-- Gathering Storm actions - replace lua and import xml (there's no 'replace' for xml) -->
         <ImportFiles id="BRS_ImportFiles_XP2" criteria="Expansion2">
 			<Properties>
                 <LoadOrder>102</LoadOrder>
             </Properties>		
             <Items>
-				<File>RiseFall/ReportScreen.xml</File> <!-- no layout changes in GS -->
-				<!--<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File>-->
+				<File>XP1/ReportScreen.xml</File> <!-- no layout changes in GS -->
+				<File>XP2/PartialScreenHooks_BRS_XP2.lua</File>-->
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_XP2" criteria="Expansion2">
@@ -110,6 +113,13 @@
                 <LoadOrder>102</LoadOrder>
 				<LuaContext>ReportScreen</LuaContext>
 				<LuaReplace>ReportScreen.lua</LuaReplace> <!-- we'll try to use the same file -->
+			</Properties>
+		</ReplaceUIScript>
+		<ReplaceUIScript id="BRS_ReplaceUI_PartialScreenHooks_XP2" criteria="Expansion2">
+			<Properties>
+                <LoadOrder>102</LoadOrder>
+				<LuaContext>PartialScreenHooks</LuaContext>
+				<LuaReplace>XP2/PartialScreenHooks_BRS_XP2.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
     </InGameActions>
@@ -122,7 +132,8 @@
         <File>ReportScreen.lua</File>
 		<File>RealModifierAnalysis.lua</File>
 		<File>RealModifierAnalysis.xml</File>
-		<!--<File>LaunchBar_BRS.lua</File>-->
+		<File>PartialScreenHooks_BRS.lua</File>
+		<File>ReportsList_BRS.lua</File>
 		<File>Text/BetterReportScreen_Text.xml</File>
 		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
 		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
@@ -136,9 +147,11 @@
 		<File>Text/BetterReportScreen_Text_zh_Hant_HK.xml</File>
 		<!-- Vanilla files -->
 		<File>ReportScreen.xml</File>
-		<!--<File>LaunchBar_BRS_vanilla.lua</File>-->
+		<File>PartialScreenHooks_BRS_vanilla.lua</File>
 		<!-- Rise & Fall files -->
-		<File>RiseFall/ReportScreen.xml</File>
-		<!--<File>RiseFall/LaunchBar_BRS_RiseFall.lua</File>-->
+		<File>XP1/ReportScreen.xml</File>
+		<File>XP1/PartialScreenHooks_BRS_XP1.lua</File>
+		<!-- Gathering Storm files -->
+		<File>XP2/PartialScreenHooks_BRS_XP2.lua</File>
     </Files>
 </Mod>
