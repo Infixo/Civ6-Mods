@@ -174,7 +174,7 @@ function Close()
 
 	UIManager:DequeuePopup(ContextPtr);
 	LuaEvents.ReportScreen_Closed();
-	--print("Closing... current tab is:", m_kCurrentTab);
+	print("Closing... current tab is:", m_kCurrentTab);
 	tUnitSort.parent = nil; -- unit upgrades off the report screen should not call re-sort
 end
 
@@ -186,14 +186,12 @@ function OnCloseButton()
 	Close();
 end
 
+
 -- ===========================================================================
 --	Single entry point for display
 -- ===========================================================================
-function Open( tabToOpen:string )
-	if tabToOpen=="Yields" then m_kCurrentTab = 1; end
-	if tabToOpen=="Resources" then m_kCurrentTab = 2; end
-	if tabToOpen=="CityStatus" then m_kCurrentTab = 3; end
-	--print("FUN Open()");
+function Open( tabToOpen:number )
+	print("FUN Open()", tabToOpen);
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
@@ -208,42 +206,13 @@ function Open( tabToOpen:string )
 	Timer2Tick("GetData")
 	
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
-	--m_tabs.SelectTab( 1 );
+	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
 	m_tabs.SelectTab( m_kCurrentTab );
 	
 	-- show number of cities in the title bar
 	Controls.TotalsLabel:SetText( Locale.Lookup("LOC_DIPLOMACY_DEAL_CITIES").." "..tostring(Players[Game.GetLocalPlayer()]:GetCities():GetCount()) );
 end
 
--- ===========================================================================
---	LUA Events
---	Opened via the top panel
--- ===========================================================================
-function OnTopOpenReportsScreen()
-	Open();
-end
-
--- ===========================================================================
---	LUA Events
--- ===========================================================================
-function OnOpenCityStatus()
-	Open("CityStatus");
-end
-
--- ===========================================================================
---	LUA Events
--- ===========================================================================
-function OnOpenResources()
-	Open("Resources");
-end
-
--- ===========================================================================
---	LUA Events
---	Closed via the top panel
--- ===========================================================================
-function OnTopCloseReportsScreen()
-	Close();	
-end
 
 -- ===========================================================================
 --	UI Callback
@@ -265,10 +234,10 @@ function OnCollapseAllButton()
 	m_isCollapsing = not m_isCollapsing;
 end
 
+
 -- ===========================================================================
 --	Populate with all data required for any/all report tabs.
 -- ===========================================================================
-
 
 -- REAL HOUSING FROM IMPROVEMENTS
 -- Get the real housing from improvements, not rounded-down
@@ -3848,6 +3817,23 @@ function OnInputHandler( pInputStruct:table )
 	return false;
 end
 
+local m_ToggleReportsId:number = Input.GetActionId("ToggleReports");
+print("ToggleReports key is", m_ToggleReportsId);
+
+function OnInputActionTriggered( actionId )
+	print("FUN OnInputActionTriggered", actionId);
+	--BRS_BASE_OnInputActionTriggered( actionId );
+	-- Always available
+	if actionId == m_ToggleReportsId then
+		print(".....Detected F8.....")
+		--ToggleReports();
+		if ContextPtr:IsHidden() then
+			Open();
+		else
+			Close();
+		end
+	end
+end
 
 -- ===========================================================================
 function Resize()
@@ -4034,15 +4020,20 @@ function Initialize()
 	Controls.HideNoImpactMinorsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNoImpactMinors );
 	Controls.HideNoImpactMinorsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.HideNoImpactMinorsCheckbox:SetSelected( false );
-	
-	-- Events
-	LuaEvents.TopPanel_OpenReportsScreen.Add( OnTopOpenReportsScreen );
-	LuaEvents.TopPanel_CloseReportsScreen.Add( OnTopCloseReportsScreen );
-	LuaEvents.ReportsList_OpenCityStatus.Add( OnOpenCityStatus );
-	LuaEvents.ReportsList_OpenResources.Add( OnOpenResources );
-	LuaEvents.ReportsList_OpenYields.Add( OnTopOpenReportsScreen );
 
+	-- Events
+	LuaEvents.TopPanel_OpenReportsScreen.Add(  function() Open();  end );
+	LuaEvents.TopPanel_CloseReportsScreen.Add( function() Close(); end );
+	LuaEvents.ReportsList_OpenYields.Add(     function() Open(1); end );
+	LuaEvents.ReportsList_OpenResources.Add(  function() Open(2); end );
+	LuaEvents.ReportsList_OpenCityStatus.Add( function() Open(3); end );
+	LuaEvents.ReportsList_OpenDeals.Add(      function() Open(4); end );
+	LuaEvents.ReportsList_OpenUnits.Add(      function() Open(5); end );
+	LuaEvents.ReportsList_OpenPolicies.Add(   function() Open(6); end );
+	LuaEvents.ReportsList_OpenMinors.Add(     function() Open(7); end );
+	
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+	Events.InputActionTriggered.Add( OnInputActionTriggered );
 end
 Initialize();
 

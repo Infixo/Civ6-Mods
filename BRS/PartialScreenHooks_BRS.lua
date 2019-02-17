@@ -1,8 +1,8 @@
-print("Loading LaunchBar_BRS.lua from Better Report Screen version "..GlobalParameters.BRS_VERSION_MAJOR.."."..GlobalParameters.BRS_VERSION_MINOR);
+print("Loading PartialScreenHooks_BRS.lua from Better Report Screen version "..GlobalParameters.BRS_VERSION_MAJOR.."."..GlobalParameters.BRS_VERSION_MINOR);
 -- ===========================================================================
 -- Better Report Screen
 -- Author: Infixo
--- 2018-03-12: Created, based on LaunchBar_Expansion1.lua
+-- 2019-02-17: Created
 -- ===========================================================================
 
 
@@ -11,18 +11,21 @@ print("Loading LaunchBar_BRS.lua from Better Report Screen version "..GlobalPara
 -- ===========================================================================
 --include("LaunchBar");
 --BASE_CloseAllPopups = CloseAllPopups;
---BASE_OnInputActionTriggered = OnInputActionTriggered;
+BRS_BASE_OnInputActionTriggered = OnInputActionTriggered;
+BRS_BASE_LateInitialize = LateInitialize;
 
 
--- Check for HellBlazer's World Info Interface
-local bIsModHBWII:boolean = Modding.IsModActive("ff9ea14f-62d8-4d10-9a9f-3512fdb11e57"); 
+-- ===========================================================================
+--	Action Hotkeys
+-- ===========================================================================
+local m_ToggleReportsId:number = Input.GetActionId("ToggleReports");
 
 
 -- ===========================================================================
 --	VARIABLES
 -- ===========================================================================
-local m_ReportsInstance = {};
-local m_ReportsInstancePip = {};
+--local m_ReportsInstance = {};
+--local m_ReportsInstancePip = {};
 local m_isReportScreenOpen:boolean = false;
 
 
@@ -32,55 +35,73 @@ local m_isReportScreenOpen:boolean = false;
 
 --	Input Hotkey Event
 function OnInputActionTriggered( actionId )
+	print("FUN OnInputActionTriggered_BRS", actionId);
 	BRS_BASE_OnInputActionTriggered( actionId );
 	-- Always available
-	if actionId == Input.GetActionId("ToggleReports") then
-		--print(".....Detected F8.....")
+	if actionId == m_ToggleReportsId then
+		print(".....Detected F8.....")
 		ToggleReports();
 	end
 end
 
-function CloseAllPopups()
-	BRS_BASE_CloseAllPopups();
-	LuaEvents.TopPanel_CloseReportsScreen();
-end
+--function CloseAllPopups()
+	--BRS_BASE_CloseAllPopups();
+	--LuaEvents.TopPanel_CloseReportsScreen();
+--end
 
 function ToggleReports()
+	print("FUN ToggleReports", m_isReportScreenOpen);
 	if m_isReportScreenOpen then
 		LuaEvents.TopPanel_CloseReportsScreen();
 	else
-		CloseAllPopups();
+		--CloseAllPopups();
 		LuaEvents.TopPanel_OpenReportsScreen();
 	end
 end
 
-
 -- ===========================================================================
-function Initialize()
+-- Add a button to the partial screen hooks.
+-- Must override this function because it doesn't return the instance created within it
+-- Nope, can't do. m_kPartialScreens is a local variable and I cannot access it from here.
+-- Conversly, I cannot redefine it here as it used to add a static World Rankings screen in the main file.
+-- ===========================================================================
+--[[
+function AddScreenHook( contextName:string, texture:string, tooltip:string, callback:ifunction, callback2:ifunction)
+	print("FUN AddScreenHook", contextName, texture, tooltip, callback, callback2);
 
-	if bIsModHBWII then
-		-- Replace existing button
-		Controls.ReportsButton:RegisterCallback(Mouse.eLClick, ToggleReports);
-		Controls.ReportsButton:SetTexture("LaunchBar_Hook_GreatWorksButton"); -- LaunchBar_Hook_ReligionButton
-		Controls.ReportsButton:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS").." "..Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS_TT") );
-		Controls.ReportsImage:SetTexture( IconManager:FindIconAtlas("ICON_TECH_ENGINEERING", 38) );
+	if m_kPartialScreens[contextName] == nil then
+		table.insert(m_kPartialScreens, contextName);
 	else
-		-- Create a new button
-		ContextPtr:BuildInstanceForControl("LaunchBarItem", m_ReportsInstance, Controls.ButtonStack);
-		m_ReportsInstance.LaunchItemButton:RegisterCallback(Mouse.eLClick, ToggleReports);
-		m_ReportsInstance.LaunchItemButton:SetTexture("LaunchBar_Hook_GreatWorksButton"); -- LaunchBar_Hook_ReligionButton
-		m_ReportsInstance.LaunchItemButton:SetToolTipString( Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS").." "..Locale.Lookup("LOC_HUD_REPORTS_VIEW_REPORTS_TT") );
-		m_ReportsInstance.LaunchItemIcon:SetTexture( IconManager:FindIconAtlas("ICON_TECH_ENGINEERING", 38) );
-		-- Add a pin to the stack for each new item
-		ContextPtr:BuildInstanceForControl("LaunchBarPinInstance", m_ReportsInstancePip, Controls.ButtonStack);
+		UI.DataError("Attempt to add a screen hook '"..contextName.."' which already exists!");
+		return;
 	end
 	
-	-- events called from ReportScreen when opened/closed
-	LuaEvents.ReportScreen_Opened.Add( function() m_isReportScreenOpen = true;  OnOpen();  end );
-	LuaEvents.ReportScreen_Closed.Add( function() m_isReportScreenOpen = false; OnClose(); end );
-
-	RefreshView();
+	local screenHookInst:table = m_ScreenHookIM:GetInstance();
+	screenHookInst.ScreenHookImage:SetTexture(texture);
+	screenHookInst.ScreenHookButton:SetToolTipString(Locale.Lookup(tooltip));
+	screenHookInst.ScreenHookButton:RegisterCallback( Mouse.eLClick, callback );
+	screenHookInst.ScreenHookButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	if callback2 ~= nil then screenHookInst.ScreenHookButton:RegisterCallback( Mouse.eRClick, callback2 ); end;
 end
-Initialize();
+--]]
 
-print("OK loaded LaunchBar_BRS.lua from Better Report Screen");
+-- ===========================================================================
+--[[
+function AddReportsHook()
+	print("FUN AddReportsHook");
+	if ( HasCapability("CAPABILITY_REPORTS_LIST") ) then
+		AddScreenHook("ReportsList", "LaunchBar_Hook_Reports", "LOC_PARTIALSCREEN_REPORTS_TOOLTIP", OnToggleReportsList, ToggleReports );
+	end
+end
+--]]
+
+-- ===========================================================================
+function LateInitialize()
+	print("FUN LateInitialize");
+	BRS_BASE_LateInitialize();
+	-- events called from ReportScreen when opened/closed
+	LuaEvents.ReportScreen_Opened.Add( function() m_isReportScreenOpen = true;  end );
+	LuaEvents.ReportScreen_Closed.Add( function() m_isReportScreenOpen = false; end );
+end
+
+print("OK loaded PartialScreenHooks_BRS.lua from Better Report Screen");

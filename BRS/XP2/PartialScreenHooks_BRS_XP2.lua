@@ -1,4 +1,4 @@
-print("Loading PartialScreenHooks_BRS_vanilla.lua from Better Report Screen "..GlobalParameters.BRS_VERSION_MAJOR.."."..GlobalParameters.BRS_VERSION_MINOR);
+print("Loading PartialScreenHooks_BRS_XP2.lua from Better Report Screen version "..GlobalParameters.BRS_VERSION_MAJOR.."."..GlobalParameters.BRS_VERSION_MINOR);
 -- ===========================================================================
 -- Better Report Screen
 -- Author: Infixo
@@ -9,10 +9,10 @@ print("Loading PartialScreenHooks_BRS_vanilla.lua from Better Report Screen "..G
 -- ===========================================================================
 -- CACHE BASE FUNCTIONS
 -- ===========================================================================
-include("PartialScreenHooks");
+include("PartialScreenHooks_Expansion2");
 --BRS_BASE_CloseAllPopups = CloseAllPopups;
 --BRS_BASE_OnInputActionTriggered = OnInputActionTriggered;
 
 include("PartialScreenHooks_BRS");
 
-print("OK loaded PartialScreenHooks_BRS_vanilla.lua from Better Report Screen");
+print("OK loaded PartialScreenHooks_BRS_XP2.lua from Better Report Screen");
