@@ -56,6 +56,10 @@ INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding)
 SELECT 'BUILDING_MUSEUM_ARTIFACT', 'BUILDING_CONCERT_HALL'
 FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
 
+-- Enables
+INSERT INTO BuildingPrereqs(Building, PrereqBuilding) 
+SELECT 'BUILDING_BROADCAST_CENTER', 'BUILDING_CONCERT_HALL'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
 
 -- Policy Grand Opera +100% yields to Theater buildings
 
