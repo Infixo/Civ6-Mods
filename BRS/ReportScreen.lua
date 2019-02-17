@@ -174,7 +174,7 @@ function Close()
 
 	UIManager:DequeuePopup(ContextPtr);
 	LuaEvents.ReportScreen_Closed();
-	print("Closing... current tab is:", m_kCurrentTab);
+	--print("Closing... current tab is:", m_kCurrentTab);
 	tUnitSort.parent = nil; -- unit upgrades off the report screen should not call re-sort
 end
 
@@ -191,7 +191,7 @@ end
 --	Single entry point for display
 -- ===========================================================================
 function Open( tabToOpen:number )
-	print("FUN Open()", tabToOpen);
+	--print("FUN Open()", tabToOpen);
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
@@ -392,6 +392,14 @@ function GetData()
 		unit.NearCityName = "";
 		unit.NearCityIsCapital = false;
 		unit.NearCityIsOurs = true;
+		-- Gathering Storm
+		if bIsGatheringStorm then
+			unit.ResMaint = "";
+			local unitInfoXP2:table = GameInfo.Units_XP2[ unitInfo.UnitType ];
+			if unitInfoXP2 ~= nil and unitInfoXP2.ResourceMaintenanceType ~= nil then
+				unit.ResMaint = "[ICON_"..unitInfoXP2.ResourceMaintenanceType.."]";
+			end
+		end
 		table.insert( tUnitsDist, unit );
 	end
 	
@@ -832,9 +840,19 @@ function GetData()
 		local unitTypeKey = pUnitInfo.UnitType..unitMilitaryFormation;
 		if kUnitData[unitTypeKey] == nil then
 			kUnitData[unitTypeKey] = { Name = Locale.Lookup(pUnitInfo.Name), Formation = unitMilitaryFormation, Count = 1, Maintenance = TotalMaintenanceAfterDiscount };
+			if bIsGatheringStorm then kUnitData[unitTypeKey].ResCount = 0; end
 		else
 			kUnitData[unitTypeKey].Count = kUnitData[unitTypeKey].Count + 1;
 			kUnitData[unitTypeKey].Maintenance = kUnitData[unitTypeKey].Maintenance + TotalMaintenanceAfterDiscount;
+		end
+		-- Gathering Storm
+		if bIsGatheringStorm then
+			kUnitData[unitTypeKey].ResIcon = "";
+			local unitInfoXP2:table = GameInfo.Units_XP2[ pUnitInfo.UnitType ];
+			if unitInfoXP2 ~= nil and unitInfoXP2.ResourceMaintenanceType ~= nil then
+				kUnitData[unitTypeKey].ResIcon  = "[ICON_"..unitInfoXP2.ResourceMaintenanceType.."]";
+				kUnitData[unitTypeKey].ResCount = kUnitData[unitTypeKey].ResCount + unitInfoXP2.ResourceMaintenanceAmount;
+			end
 		end
 	end
 
@@ -1078,6 +1096,8 @@ function GetData()
 end
 
 function AddMiscResourceData(pResourceData:table, kResourceTable:table)
+	if bIsGatheringStorm then return AddMiscResourceDataXP2(pResourceData, kResourceTable); end
+	
 	-- Resources not yet accounted for come from other gameplay bonuses
 	if pResourceData then
 		for row in GameInfo.Resources() do
@@ -1096,7 +1116,87 @@ function AddMiscResourceData(pResourceData:table, kResourceTable:table)
 	return kResourceTable;
 end
 
+function AddMiscResourceDataXP2(pResourceData:table, kResourceTable:table)
+	--Append our resource entries before we continue
+	kResourceTable = AppendXP2ResourceData(kResourceTable);
+
+	-- Resources not yet accounted for come from other gameplay bonuses
+	if pResourceData then
+		for row in GameInfo.Resources() do
+			local internalResourceAmount:number = pResourceData:GetResourceAmount(row.Index);
+			local resourceUnitConsumptionPerTurn:number = -pResourceData:GetUnitResourceDemandPerTurn(row.ResourceType);
+			local resourcePowerConsumptionPerTurn:number = -pResourceData:GetPowerResourceDemandPerTurn(row.ResourceType);
+			local resourceAccumulationPerTurn:number = pResourceData:GetResourceAccumulationPerTurn(row.ResourceType);
+			local resourceDelta:number = resourceUnitConsumptionPerTurn + resourcePowerConsumptionPerTurn + resourceAccumulationPerTurn;
+			if (row.ResourceClassType == "RESOURCECLASS_STRATEGIC") then
+				internalResourceAmount = resourceDelta;
+			end
+			if (internalResourceAmount > 0 or internalResourceAmount < 0) then
+				if (kResourceTable[row.Index] ~= nil) then
+					if (internalResourceAmount > kResourceTable[row.Index].Total) then
+						AddResourceData(kResourceTable, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount - kResourceTable[row.Index].Total);
+					end
+				else
+					AddResourceData(kResourceTable, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount);
+				end
+			end
+
+			--Stockpile only?
+			if pResourceData:GetResourceAmount(row.ResourceType) > 0 then
+				AddResourceData(kResourceTable, row.Index, "", "", 0);
+			end
+
+		end
+	end
+
+	return kResourceTable;
+end
+
 -- ===========================================================================
+function AppendXP2ResourceData(kResourceData:table)
+	local playerID:number = Game.GetLocalPlayer();
+	if playerID == PlayerTypes.NONE then
+		UI.DataError("Unable to get valid playerID for ReportScreen_Expansion2.");
+		return;
+	end
+
+	local player:table  = Players[playerID];
+
+	local pResources:table	= player:GetResources();
+	if pResources then
+		for row in GameInfo.Resources() do
+			local resourceHash:number = row.Hash;
+			local resourceUnitCostPerTurn:number = pResources:GetUnitResourceDemandPerTurn(resourceHash);
+			local resourcePowerCostPerTurn:number = pResources:GetPowerResourceDemandPerTurn(resourceHash);
+			local reservedCostForProduction:number = pResources:GetReservedResourceAmount(resourceHash);
+			local miscResourceTotal:number = pResources:GetResourceAmount(resourceHash);
+			local importResources:number = pResources:GetResourceImportPerTurn(resourceHash);
+			
+			if resourceUnitCostPerTurn > 0 then
+				AddResourceData(kResourceData, row.Index, "LOC_PRODUCITON_PANEL_UNITS_TOOLTIP", "-", -resourceUnitCostPerTurn);
+			end
+
+			if resourcePowerCostPerTurn > 0 then
+				AddResourceData(kResourceData, row.Index, "LOC_UI_PEDIA_POWER_COST", "-", -resourcePowerCostPerTurn);
+			end
+
+			if reservedCostForProduction > 0 then
+				AddResourceData(kResourceData, row.Index, "LOC_RESOURCE_REPORTS_ITEM_IN_RESERVE", "-", -reservedCostForProduction);
+			end
+
+			if kResourceData[row.Index] == nil and miscResourceTotal > 0 then
+				local titleString:string = importResources > 0 and "LOC_RESOURCE_REPORTS_CITY_STATES" or "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE";
+				AddResourceData(kResourceData, row.Index, titleString, "-", miscResourceTotal);
+			elseif importResources > 0 then
+				AddResourceData(kResourceData, row.Index, "LOC_RESOURCE_REPORTS_CITY_STATES", "-", importResources);
+			end
+
+		end
+	end
+
+	return kResourceData;
+end
+
 function AddResourceData( kResources:table, eResourceType:number, EntryString:string, ControlString:string, InAmount:number)
 	local kResource :table = GameInfo.Resources[eResourceType];
 
@@ -1106,32 +1206,47 @@ function AddResourceData( kResources:table, eResourceType:number, EntryString:st
 		return;
 	end
 
-	if kResources[eResourceType] == nil then
-		kResources[eResourceType] = {
-			EntryList	= {},
-			Icon		= "[ICON_"..kResource.ResourceType.."]",
-			IsStrategic	= kResource.ResourceClassType == "RESOURCECLASS_STRATEGIC",
-			IsLuxury	= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_LUXURY",
-			IsBonus		= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_BONUS",
-			Total		= 0
-		};
-	end
+	local localPlayerID = Game.GetLocalPlayer();
+	local localPlayer = Players[localPlayerID];
+	if localPlayer then
+		local pPlayerResources:table	=  localPlayer:GetResources();
+		if pPlayerResources then
+	
+			if kResources[eResourceType] == nil then
+				kResources[eResourceType] = {
+					EntryList	= {},
+					Icon		= "[ICON_"..kResource.ResourceType.."]",
+					IsStrategic	= kResource.ResourceClassType == "RESOURCECLASS_STRATEGIC",
+					IsLuxury	= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_LUXURY",
+					IsBonus		= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_BONUS",
+					Total		= 0
+				};
+				if bIsGatheringStorm then
+					kResources[eResourceType].Maximum   = pPlayerResources:GetResourceStockpileCap(eResourceType);
+					kResources[eResourceType].Stockpile = pPlayerResources:GetResourceAmount(eResourceType);
+				end
+			end
 
-	table.insert( kResources[eResourceType].EntryList, 
-	{
-		EntryText	= EntryString,
-		ControlText = ControlString,
-		Amount		= InAmount,					
-	});
+			if EntryString ~= "" then
+				table.insert( kResources[eResourceType].EntryList, 
+				{
+					EntryText	= EntryString,
+					ControlText = ControlString,
+					Amount		= InAmount,					
+				});
+			end
 
-	kResources[eResourceType].Total = kResources[eResourceType].Total + InAmount;
+			kResources[eResourceType].Total = kResources[eResourceType].Total + InAmount;
+		end -- pPlayerResources
+	end -- localPlayer
 end
 
 -- ===========================================================================
 --	Obtain the total resources for a given city.
 -- ===========================================================================
 function GetCityResourceData( pCity:table )
-
+	if bIsGatheringStorm then return GetCityResourceDataXP2(pCity); end
+	
 	-- Loop through all the plots for a given city; tallying the resource amount.
 	local kResources : table = {};
 	local cityPlots : table = Map.GetCityPlots():GetPurchasedPlots(pCity)
@@ -1152,6 +1267,29 @@ function GetCityResourceData( pCity:table )
 	end
 	return kResources;
 end
+
+-- a new function used: GetResourcesExtractedByCity
+function GetCityResourceDataXP2( pCity:table )
+	-- Loop through all the plots for a given city; tallying the resource amount.
+	local kResources : table = {};
+	local localPlayerID = Game.GetLocalPlayer();
+	local localPlayer = Players[localPlayerID];
+	if localPlayer then
+		local pPlayerResources:table = localPlayer:GetResources();
+		if pPlayerResources then
+			local kExtractedResources = pPlayerResources:GetResourcesExtractedByCity( pCity:GetID(), ResultFormat.SUMMARY );
+			if kExtractedResources ~= nil and table.count(kExtractedResources) > 0 then
+				for i, entry in ipairs(kExtractedResources) do
+					if entry.Amount > 0 then
+						kResources[entry.ResourceType] = entry.Amount;
+					end
+				end
+			end
+		end
+	end
+	return kResources;
+end
+
 
 -- ===========================================================================
 --	Obtain the yields from the worked plots
@@ -1985,6 +2123,9 @@ function ViewYieldsPage()
 				else                                                                      pUnitInstance.UnitName:SetText(kUnitData.Name); end
 				pUnitInstance.UnitCount:SetText(kUnitData.Count);
 				pUnitInstance.Gold:SetText( kUnitData.Maintenance == 0 and "0" or "-"..tostring(kUnitData.Maintenance) );
+				if bIsGatheringStorm and kUnitData.ResCount > 0 then
+					pUnitInstance.UnitCount:SetText( kUnitData.Count..string.format(" /-%d%s", kUnitData.ResCount, kUnitData.ResIcon) );
+				end
 				iTotalUnitMaintenance = iTotalUnitMaintenance - kUnitData.Maintenance;
 			end
 		end
@@ -2096,6 +2237,10 @@ function ViewResourcesPage()
 	local kLuxuries			:table	= {};
 	local kStrategics		:table	= {};
 	
+	local function FormatStrategicTotal(iTot:number)
+		if iTot < 0 then return "[COLOR_Red]"..tostring(iTot).."[ENDCOLOR]";
+		else             return "+"..tostring(iTot); end
+	end
 
 	--for eResourceType,kSingleResourceData in pairs(m_kResourceData) do
 	for eResourceType,kSingleResourceData in spairs(m_kResourceData, function(t,a,b) return Locale.Lookup(GameInfo.Resources[a].Name) < Locale.Lookup(GameInfo.Resources[b].Name) end) do
@@ -2115,6 +2260,9 @@ function ViewResourcesPage()
 			instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." [COLOR_Red]"..tostring(kSingleResourceData.Total).."[ENDCOLOR]" );
 		else
 			instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(kSingleResourceData.Total) );
+		end
+		if bIsGatheringStorm and kSingleResourceData.IsStrategic then
+			instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS")..string.format(" %d/%d ", kSingleResourceData.Stockpile, kSingleResourceData.Maximum)..FormatStrategicTotal(kSingleResourceData.Total) );
 		end
 
 		local pHeaderInstance:table = {};
@@ -2166,13 +2314,17 @@ function ViewResourcesPage()
 		end -- ARISTOS checkboxes
 
 		local tResBottomData:table = {
-			Text = kSingleResourceData.Icon..tostring(kSingleResourceData.Total),
+			Text    = kSingleResourceData.Icon..                                      tostring(kSingleResourceData.Total),
 			ToolTip = kSingleResourceData.Icon..Locale.Lookup( kResource.Name ).." "..tostring(kSingleResourceData.Total),
 		};
+		if bIsGatheringStorm and kSingleResourceData.IsStrategic then
+			tResBottomData.Text    = string.format("%s%d/%d ",     kSingleResourceData.Icon,                                  kSingleResourceData.Stockpile, kSingleResourceData.Maximum)..FormatStrategicTotal(kSingleResourceData.Total);
+			tResBottomData.ToolTip = string.format("%s %s %d/%d ", kSingleResourceData.Icon, Locale.Lookup( kResource.Name ), kSingleResourceData.Stockpile, kSingleResourceData.Maximum)..FormatStrategicTotal(kSingleResourceData.Total);
+		end
 		if     kSingleResourceData.IsStrategic then table.insert(kStrategics, tResBottomData);
 		elseif kSingleResourceData.IsLuxury    then table.insert(kLuxuries,   tResBottomData);
 		else                                        table.insert(kBonuses,    tResBottomData); end
-
+		
 		--SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
 		--RealizeGroup( instance ); --BRS moved into if
 	end
@@ -2216,11 +2368,10 @@ end
 
 function GetFontIconForDistrict(sDistrictType:string)
 	-- exceptions first
-	--if sDistrictType == "DISTRICT_CITY_CENTER"                 then return "[ICON_DISTRICT_CITY_CENTER]";    end
-	--if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLY_SITE]";      end
-	--if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
-	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT_COMPLEX]"; end -- no need to check for mutuals with that
-	--if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
+	if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLYSITE]";      end
+	if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
+	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT]"; end -- no need to check for mutuals with that
+	if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
 	-- default icon last
 	return "[ICON_"..sDistrictType.."]";
 end
@@ -2228,21 +2379,21 @@ end
 local tDistrictsOrder:table = {
 	-- Ancient Era
 	--"DISTRICT_GOVERNMENT", -- to save space, will be treated separately
-	"DISTRICT_HOLY_SITE", -- icon is DISTRICT_HOLY_SITE
+	"DISTRICT_HOLY_SITE", -- icon is DISTRICT_HOLYSITE
 	"DISTRICT_CAMPUS",
 	"DISTRICT_ENCAMPMENT",
 	-- Classical Era
 	"DISTRICT_THEATER",
 	"DISTRICT_COMMERCIAL_HUB",
 	"DISTRICT_HARBOR",
-	"DISTRICT_ENTERTAINMENT_COMPLEX", -- with DISTRICT_WATER_ENTERTAINMENT_COMPLEX, icon is DISTRICT_ENTERTAINMENT_COMPLEX
+	"DISTRICT_ENTERTAINMENT_COMPLEX", -- with DISTRICT_WATER_ENTERTAINMENT_COMPLEX, icon is DISTRICT_ENTERTAINMENT
 	-- Medieval Era
 	"DISTRICT_INDUSTRIAL_ZONE",
 	-- others
 	"DISTRICT_AQUEDUCT",
 	"DISTRICT_NEIGHBORHOOD",
 	"DISTRICT_SPACEPORT",
-	"DISTRICT_AERODROME", -- icon is ICON_DISTRICT_AERODROME, added in GS
+	"DISTRICT_AERODROME", -- there is no font icon, so we'll use ICON_DISTRICT_WONDER
 }
 --for k,v in pairs(tDistrictsOrder) do print("tDistrictsOrder",k,v) end;
 
@@ -2398,7 +2549,7 @@ function city_fields( kCityData, pCityInstance )
 	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED"; sGRColor = "[COLOR:200,62,52,255]"; -- Error
 	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:200,146,52,255]"; -- WarningMajor "LOC_HUD_REPORTS_STATUS_SLOWED"; 
 	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:206,199,91,255]"; -- WarningMinor "LOC_HUD_REPORTS_STATUS_SLOWED";
-	elseif kCityData.HappinessGrowthModifier > 0                  then sGRStatus = "LOC_HUD_REPORTS_STATUS_ACCELERATED"; end -- GS addition
+	elseif kCityData.HappinessGrowthModifier > 0                  then sGRStatus = "LOC_HUD_REPORTS_STATUS_ACCELERATED"; sGRColor = "[COLOR_White]"; end -- GS addition
 	pCityInstance.GrowthRateStatus:SetText( sGRColor..Locale.Lookup(sGRStatus)..(sGRColor~="" and "[ENDCOLOR]" or "") );
 	--if sGRColor ~= "" then pCityInstance.GrowthRateStatus:SetColorByName( sGRColor ); end
 
@@ -2901,6 +3052,9 @@ function common_unit_fields( unit, unitInstance )
 	unitInstance.UnitCity:SetText( (unit.NearCityDistance > 3) and "" or sCityName );
 	
 	unitInstance.UnitMaintenance:SetText( toPlusMinusString(-unit.MaintenanceAfterDiscount) );
+	if bIsGatheringStorm then
+		unitInstance.UnitMaintenance:SetText( unit.ResMaint..tostring(unit.MaintenanceAfterDiscount));
+	end
 end
 
 -- simple texts for modifiers' effects
@@ -3818,20 +3972,13 @@ function OnInputHandler( pInputStruct:table )
 end
 
 local m_ToggleReportsId:number = Input.GetActionId("ToggleReports");
-print("ToggleReports key is", m_ToggleReportsId);
+--print("ToggleReports key is", m_ToggleReportsId);
 
 function OnInputActionTriggered( actionId )
-	print("FUN OnInputActionTriggered", actionId);
-	--BRS_BASE_OnInputActionTriggered( actionId );
-	-- Always available
+	--print("FUN OnInputActionTriggered", actionId);
 	if actionId == m_ToggleReportsId then
-		print(".....Detected F8.....")
-		--ToggleReports();
-		if ContextPtr:IsHidden() then
-			Open();
-		else
-			Close();
-		end
+		--print(".....Detected F8.....")
+		if ContextPtr:IsHidden() then Open(); else Close(); end
 	end
 end
 

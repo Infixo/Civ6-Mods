@@ -937,7 +937,7 @@
 	
 	<Instance Name="UnitsMilitaryHeaderInstance">
 		<Container ID="Top" Offset="8,0" Size="1123,22">
-			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+			<Image Offset="4,0" Size="parent-20,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right">
 				<Box Size="2,parent" Color="46,70,95,128" />
 
@@ -1001,7 +1001,7 @@
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="30,parent">
+				<Container Offset="1,0" Size="35,parent">
 					<GridButton		ID="UnitMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="[ICON_Gold]" ToolTip="LOC_UI_PEDIA_MAITENANCE_COST"/>
 					</GridButton>
@@ -1361,7 +1361,7 @@
 	
 	<Instance Name="UnitsMilitaryEntryInstance">
 		<Container ID="Top" Offset="8,0" Size="1123,28">
-			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+			<Image Offset="4,0" Size="parent-20,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
 			<Stack StackGrowth="Right" >
 				<Box Size="2,parent" Color="46,70,95,128"/>
 
@@ -1414,7 +1414,7 @@
 					</Button>
 				</Container>
 				
-				<Container Offset="1,0" Size="30,parent">
+				<Container Offset="1,0" Size="35,parent">
 					<Label ID="UnitMaintenance" Color="Gold" Style="ReportValueText" String="$Gold$" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				

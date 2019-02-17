@@ -9,10 +9,13 @@ include("ReportsList");
 
 local m_ReportButtonIM:table = InstanceManager:new("ReportButtonInstance", "Button");
 
-function OnRaiseDealsReport()    LuaEvents.ReportsList_OpenDeals();    end
-function OnRaiseUnitsReport()    LuaEvents.ReportsList_OpenUnits();    end
-function OnRaisePoliciesReport() LuaEvents.ReportsList_OpenPolicies(); end
-function OnRaiseMinorsReport()   LuaEvents.ReportsList_OpenMinors();   end
+function OnRaiseYieldsReport()     Close(); LuaEvents.ReportsList_OpenYields();     end
+function OnRaiseResourcesReport()  Close(); LuaEvents.ReportsList_OpenResources();  end
+function OnRaiseCityStatusReport() Close(); LuaEvents.ReportsList_OpenCityStatus(); end
+function OnRaiseDealsReport()      Close(); LuaEvents.ReportsList_OpenDeals();      end
+function OnRaiseUnitsReport()      Close(); LuaEvents.ReportsList_OpenUnits();      end
+function OnRaisePoliciesReport()   Close(); LuaEvents.ReportsList_OpenPolicies();   end
+function OnRaiseMinorsReport()     Close(); LuaEvents.ReportsList_OpenMinors();     end
 
 function LateInitialize()	
 	m_ReportButtonIM:ResetInstances();
