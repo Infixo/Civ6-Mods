@@ -2,14 +2,18 @@
 <Mod id="a768ead1-32b9-4da5-9b05-eb966364670b" version="1">
   <Properties>
     <Name>Real Building Upgrades</Name>
-    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR] game and [COLOR_Green]Rise &amp; Fall[ENDCOLOR] expansion. Version 3.2.</Description>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.2.[NEWLINE]Please note that new buildings from Gathering Storm are not yet supported (will be added soon).</Description>
     <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
+	<CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
   <ActionCriteria>
     <Criteria id="Expansion1">
       <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+    <Criteria id="Expansion2">
+      <GameCoreInUse>Expansion2</GameCoreInUse>
     </Criteria>
   </ActionCriteria>
   <FrontEndActions />
@@ -34,25 +38,29 @@
       <File>Icons/RBU_Buildings128.dds</File>
       <File>Icons/RBU_Buildings256.dds</File>
     </ImportFiles>
-    <UpdateIcons id="RBU_RF_Icons" criteria="Expansion1">
+    <AddGameplayScripts id="RBU_Scripts">
+      <File>Lua/RBU_Main.lua</File>
+    </AddGameplayScripts>
+	<!-- Rise & Fall -->
+    <UpdateIcons id="RBU_Icons_XP1" criteria="Expansion1">
       <Properties>
         <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
     </UpdateIcons>
-    <UpdateDatabase id="RBU_RF_Database" criteria="Expansion1">
+    <UpdateDatabase id="RBU_Database_XP1" criteria="Expansion1">
       <Properties>
         <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/RealBuildingUpgradesRF.sql</File>
     </UpdateDatabase>
-    <UpdateText id="RBU_RF_Text" criteria="Expansion1">
+    <UpdateText id="RBU_Text_XP1" criteria="Expansion1">
       <Properties>
         <LoadOrder>60</LoadOrder>
       </Properties>
       <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
     </UpdateText>
-    <ImportFiles id="RBU_RF_Imports" criteria="Expansion1">
+    <ImportFiles id="RBU_Imports_XP1" criteria="Expansion1">
       <Properties>
         <LoadOrder>60</LoadOrder>
       </Properties>
@@ -63,9 +71,37 @@
       <File>RiseFall/Icons/RBU_RF_Buildings128.dds</File>
       <File>RiseFall/Icons/RBU_RF_Buildings256.dds</File>
     </ImportFiles>
-    <AddGameplayScripts id="RBU_Scripts">
-      <File>Lua/RBU_Main.lua</File>
-    </AddGameplayScripts>
+	<!-- Gathering Storm -->
+    <UpdateIcons id="RBU_Icons_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>70</LoadOrder>
+      </Properties>
+      <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
+    </UpdateIcons>
+    <UpdateDatabase id="RBU_Database_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>70</LoadOrder>
+      </Properties>
+      <File Priority="2">RiseFall/RealBuildingUpgradesRF.sql</File>
+      <File Priority="1">GatheringStorm/RealBuildingUpgradesGS.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RBU_Text_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>70</LoadOrder>
+      </Properties>
+      <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
+    </UpdateText>
+    <ImportFiles id="RBU_Imports_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>70</LoadOrder>
+      </Properties>
+      <File>RiseFall/Icons/RBU_RF_Buildings32.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings38.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings50.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings80.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings128.dds</File>
+      <File>RiseFall/Icons/RBU_RF_Buildings256.dds</File>
+    </ImportFiles>
   </InGameActions>
   <Files>
     <File>Icons/RBU_Buildings128.dds</File>
@@ -76,6 +112,9 @@
     <File>Icons/RBU_Buildings80.dds</File>
     <File>Icons/RealBuildingUpgrades_Icons.xml</File>
     <File>RealBuildingUpgrades.sql</File>
+    <File>Text/RealBuildingUpgrades_Text.xml</File>
+    <File>Lua/RBU_Main.lua</File>
+	<!-- Rise & Fall -->
     <File>RiseFall/Icons/RBU_RF_Buildings128.dds</File>
     <File>RiseFall/Icons/RBU_RF_Buildings256.dds</File>
     <File>RiseFall/Icons/RBU_RF_Buildings32.dds</File>
@@ -85,7 +124,7 @@
     <File>RiseFall/Icons/RealBuildingUpgradesRF_Icons.xml</File>
     <File>RiseFall/RealBuildingUpgradesRF.sql</File>
     <File>RiseFall/Text/RealBuildingUpgradesRF_Text.xml</File>
-    <File>Text/RealBuildingUpgrades_Text.xml</File>
-    <File>Lua/RBU_Main.lua</File>
+	<!-- Gathering Storm -->
+    <File>GatheringStorm/RealBuildingUpgradesGS.sql</File>
   </Files>
 </Mod>

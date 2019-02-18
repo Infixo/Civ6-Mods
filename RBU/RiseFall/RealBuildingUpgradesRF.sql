@@ -230,10 +230,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- 2018-03-27 Changes to upgrades of Vanilla buildings made possible in R&F
 --------------------------------------------------------------
 
-INSERT INTO Types (Type, Kind) VALUES  -- hash value generated automatically
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES  -- hash value generated automatically
 ('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 'KIND_MODIFIER');
 
-INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
 ('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_POPULATION', 'COLLECTION_OWNER', 'EFFECT_ADJUST_CITY_YIELD_PER_POPULATION');
 
 
