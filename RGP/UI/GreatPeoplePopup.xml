@@ -6,7 +6,7 @@
   <Container              ID="PopupContainer"           Anchor="C,C"                  Size="parent,768">
 	<!-- Great People main window -->
     <ScrollPanel          ID="PeopleScroller"                         Offset="0,0"    Size="parent,parent"  Vertical="0" AutoScrollBar="1">
-      <Image              ID="WoodPaneling"                                           Size="214,768"       Texture="GreatPeople_Background" StretchMode="Tile"/>
+      <Image              ID="WoodPaneling"                                           Size="212,768"       Texture="GreatPeopleBackgroundRGP.dds" StretchMode="Tile"/>
       <Stack              ID="PeopleStack"                            Offset="0,78"   StackGrowth="Right"   StackPadding="0" />
       <ScrollBar                                        Anchor="L,B"  Offset="0,10"   Size="parent-10,8"    Style="ScrollHorizontalBackingAlt">
         <Thumb                                                                                              Style="ScrollThumbHAlt" />
@@ -72,7 +72,9 @@
   <!--  Instances                                                         -->
   <!-- ================================================================== -->
   <Instance           Name="PanelInstance">
-    <Container        ID="Content"                                          Size="214,670">
+    <Container        ID="Content"                                          Size="212,670">
+      <Box Anchor="L,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the left -->
+      <Box Anchor="R,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the right -->
       <Grid		ID="FadedBackground"	Anchor="C,T"	Offset="-1,0"	Size="parent-10,parent-46" Texture="GreatPeople_Overlay" SliceCorner="13,13" SliceSize="1,1" SliceTextureSize="25,25" Hidden="1" />
       <Label	ID="ClassName"          Anchor="C,T"  Offset="0,12"    Color="60,60,30,255" GradientColor="230,230,150,255"  Style="FontFlair18" SmallCaps="24" SmallCapsType="EveryWord" String="$ClassName$"/>
       <Label	ID="IndividualName"     Anchor="C,T"  Offset="0,40" Align="C,C" WrapWidth="210" Style="GreatPeopleLargeText"  String="$IndividualName$"/>
@@ -116,11 +118,11 @@
       <Label          ID="ClaimedLabel"         Anchor="C,C"  Offset="0,-120" Align="Center" WrapWidth="200" Style="FontFlair16" FontStyle="Shadow" ColorSet="GreatPeopleCS" String="LOC_GREAT_PEOPLE_ALL_POSSIBLE_CHOSEN" />
 
 	  <!-- Biography -->
-      <Container        ID="BiographyArea"                    Offset="0,105"  Size="215,510" >  <!-- offset 305 -->
+      <Container        ID="BiographyArea"                    Offset="-2,105"  Size="215,510" >  <!-- offset 305 -->
         <Line                                   Start="15,0"  End="190,0" Width="2"       Color="199,187,157,90"  Hidden="1" /> <!-- added Hidden -->
-        <ScrollPanel    ID="BiographyScroll"                  Offset="10,10"    Size="parent,parent-10"     Vertical="1">
-          <Label ID="BiographyText" Offset="10,0" WrapWidth="185" Style="GreatPeopleText" FontStyle="Shadow" ColorSet="GreatPeopleCS" String="$Text$" />
-          <ScrollBar                            Anchor="L,C"  Offset="1,0"    AnchorSide="O,I"          Style="ScrollVerticalBarAlt" />
+        <ScrollPanel    ID="BiographyScroll"                  Offset="8,10"    Size="parent,parent-12"     Vertical="1">
+          <Label ID="BiographyText" Offset="15,0" WrapWidth="185" Style="GreatPeopleText" FontStyle="Shadow" ColorSet="GreatPeopleCS" String="$Text$" />
+          <ScrollBar                            Anchor="L,C"  Offset="0,0"    AnchorSide="I,I"          Style="ScrollVerticalBarAlt" />
         </ScrollPanel>
         <GridButton			ID="BiographyBackButton"	Anchor="C,B"	AnchorSide="I,O" Offset="0,20" Size="parent-40,28" SliceCorner="12,12" SliceSize="1,1" SliceTextureSize="24,24" Texture="Controls_ButtonControl_Tan" TextColor="20,20,20" Style="FontNormal16" String="LOC_GREAT_PEOPLE_BACK" StateOffsetIncrement="0,24" />
       </Container>

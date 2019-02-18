@@ -7,8 +7,6 @@
 -->
 <GameInfo>
 <IconTextureAtlases>
-<!-- Smaller Class icons so they will not cover Portraits -->
-<Row Name="ICON_ATLAS_GREAT_PERSON_CLASS" IconSize="50" IconsPerRow="8" IconsPerColumn="2" Filename="GreatPeopleClass50.dds"/>
 <!-- Each Individual has its own Atlas with 1 Portrait in it -->
 <Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_ARTEMISIA" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Artemisia.dds" />
 <Row Name="ICON_ATLAS_GREAT_PERSON_INDIVIDUAL_GAIUS_DUILIUS" IconSize="160" IconsPerRow="1" IconsPerColumn="1" Filename="RGP_Gaius_Duilius.dds" />

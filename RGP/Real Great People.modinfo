@@ -2,7 +2,7 @@
 <Mod id="6a18ae19-df93-4322-a3d5-33c5a5087b36" version="1">
   <Properties>
     <Name>Real Great People</Name>
-    <Description>Pictures of real Great People. Tweaked Great People window.[NEWLINE][NEWLINE]Works with vanilla, Rise &amp; Fall and Gathering Storm. Version 3.0.</Description>
+    <Description>Pictures of real Great People. Tweaked Great People window.[NEWLINE][NEWLINE]Works with vanilla, Rise &amp; Fall and Gathering Storm. Version 3.1.</Description>
     <Teaser>Pictures of real Great People. Tweaked Great People window.</Teaser>
     <Authors>Infixo</Authors>
     <SpecialThanks>Sun Ce of Wu, SeelingCat, DemonEmperor, Desertmoongw, natchuy, Gabrielino77</SpecialThanks>
@@ -14,15 +14,13 @@
     <UpdateIcons id="RGP_Icons">
       <File>RealGreatPeople_Icons.xml</File>
     </UpdateIcons>
-    <ImportFiles id="RGP_Imports_Icons">
-      <File>UI/GreatPeopleClass50.dds</File>
-    </ImportFiles>
     <ImportFiles id="RGP_Imports_UI">
       <Properties>
         <LoadOrder>10000</LoadOrder>
       </Properties>
       <File>UI/GreatPeoplePopup.xml</File>
       <File>UI/GreatPeoplePopup.lua</File>
+      <File>UI/GreatPeopleBackgroundRGP.dds</File>
       <File>UI/CivilopediaPage_GreatPerson.lua</File>
     </ImportFiles>
     <ImportFiles id="RGP_Imports_Musicians">
@@ -405,7 +403,7 @@
     <File>Icons/Writer/RGP_WILLIAM_SHAKESPEARE.dds</File>
     <File>RealGreatPeople_Icons.xml</File>
     <File>UI/CivilopediaPage_GreatPerson.lua</File>
-    <File>UI/GreatPeopleClass50.dds</File>
+    <File>UI/GreatPeopleBackgroundRGP.dds</File>
     <File>UI/GreatPeoplePopup.lua</File>
     <File>UI/GreatPeoplePopup.xml</File>
   </Files>
