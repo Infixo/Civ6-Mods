@@ -161,7 +161,7 @@ function ShowInternalPageInfo(page)
 	local chapter_body = {};
 	for k,v in pairs(page) do
 		if type(v) ~= "table" then
-			table.insert(chapter_body, k..": "..v);
+			table.insert(chapter_body, k..": "..tostring(v));
 		else
 			table.insert(chapter_body, k..": [table]");
 		end
@@ -516,11 +516,12 @@ end
 
 -- helper
 function AddTrait(sTraitType:string, sUniqueName:string)
+	--print("FUN AddTrait", sTraitType, sUniqueName);
 	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", sTraitType, Game.GetLocalPlayer(), nil);
 	local chapter_body = {};
 	table.insert(chapter_body, sImpact);
 	table.insert(chapter_body, sToolTip);
-	local sName:string = Locale.Lookup(GameInfo.Traits[sTraitType].Name);
+	local sName:string = ( GameInfo.Traits[sTraitType].Name == nil and sTraitType or Locale.Lookup(GameInfo.Traits[sTraitType].Name));
 	if GameInfo.Traits[sTraitType].InternalOnly then sName = "[COLOR_Red]"..sTraitType.."[ENDCOLOR]"; end
 	if sUniqueName then sName = sUniqueName; end
 	if bOptionModifiers then AddChapter(sName, chapter_body); end

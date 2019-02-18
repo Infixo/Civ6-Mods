@@ -5,8 +5,9 @@ print("Loading CivilopediaPage_BCP.lua from Better Civilopedia version "..Global
 -- 2018-03-23: Created
 --------------------------------------------------------------
 
--- Rise & Fall check
+-- Expansions
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 
 
 -- ===========================================================================
@@ -239,6 +240,14 @@ PageLayouts["RandAgenda"] = function(page)
 	for row in GameInfo.AgendaPreferredLeaders() do
 		if row.AgendaType == agendaType then
 			table.insert(chapter_body, string.format("%s %d%%", Locale.Lookup(GameInfo.Leaders[row.LeaderType].Name), row.PercentageChance));
+		end
+	end
+	-- Gathering Storm
+	if bIsGatheringStorm then
+		local tRandAgendaInfoXP2:table = GameInfo.RandomAgendas_XP2[agendaType];
+		if tRandAgendaInfoXP2 ~= nil then
+			if tRandAgendaInfoXP2.RequiresReligion then table.insert(chapter_body, Locale.Lookup("LOC_UI_RELIGION_TITLE")); end
+			table.insert(chapter_body, string.format("%s", tRandAgendaInfoXP2.AgendaTag));
 		end
 	end
 	AddChapter(Locale.Lookup(agenda.Name), chapter_body);

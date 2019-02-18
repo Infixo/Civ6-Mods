@@ -6,6 +6,7 @@
 		<Teaser>More information in Civilopedia!</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>2.0</CompatibleVersions>
 	</Properties>
 	<Dependencies>
 		<Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" minversion="1" maxversion="999" title="Better Report Screen"/>
@@ -13,6 +14,9 @@
 	<ActionCriteria>
 		<Criteria id="Expansion1">
 			<GameCoreInUse>Expansion1</GameCoreInUse>
+		</Criteria>
+		<Criteria id="Expansion2">
+			<GameCoreInUse>Expansion2</GameCoreInUse>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
@@ -24,18 +28,26 @@
 			<File>CivilopediaScreen.xml</File>
 			<File>CivilopediaPage_BCP.lua</File>
 		</ImportFiles>
-		<UpdateDatabase id="BCP_Database_RiseFall" criteria="Expansion1">
-			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
-		</UpdateDatabase>
-		<ImportFiles id="BCP_Imports_RiseFall" criteria="Expansion1">
-			<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
-		</ImportFiles>
 		<ReplaceUIScript id="BCP_Replace_CivilopediaScreen">
 			<Properties>
 				<LuaContext>CivilopediaScreen</LuaContext>
 				<LuaReplace>CivilopediaScreen_BCP.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
+		<!-- Rise & Fall -->
+		<UpdateDatabase id="BCP_Database_XP1" criteria="Expansion1">
+			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
+		</UpdateDatabase>
+		<ImportFiles id="BCP_Imports_XP1" criteria="Expansion1">
+			<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
+		</ImportFiles>
+		<!-- Gathering Storm -->
+		<UpdateDatabase id="BCP_Database_XP2" criteria="Expansion2">
+			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
+		</UpdateDatabase>
+		<ImportFiles id="BCP_Imports_XP2" criteria="Expansion2">
+			<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
+		</ImportFiles>
 	</InGameActions>
 	<Files>
 		<!-- shared -->
