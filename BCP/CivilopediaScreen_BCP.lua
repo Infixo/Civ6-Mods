@@ -14,6 +14,7 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 -- exposed functions and variables
 if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
+local bIsRMA:boolean = Modding.IsModActive("6f2888d4-79dc-415f-a8ff-f9d81d7afb53"); -- Real Modifier Analysis
 
 -- Rise & Fall check
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
@@ -191,7 +192,7 @@ local tPagesWithCityOwner:table = {
 }
 
 function ShowModifiers(page)
-	if not bOptionModifiers or tPagesToSkip[page.PageLayoutId] then return; end
+	if not bOptionModifiers or not bIsRMA or tPagesToSkip[page.PageLayoutId] then return; end
 	-- to avoid warnings in the log I should pass either a Player ID or a city ID
 	local ePlayerID:number = Game.GetLocalPlayer();
 	local iCityID = Players[ePlayerID]:GetCities():GetCapitalCity();
@@ -317,11 +318,13 @@ PageLayouts["GreatPerson"] = function(page)
 	print("...showing page layout", page.PageLayoutId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
 	-- we need to show (a) GreatPersonIndividualActionModifiers (b) GreatPersonIndividualBirthModifiers
-	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("GreatPersonIndividual", page.PageId, Game.GetLocalPlayer(), nil);
-	local chapter_body = {};
-	table.insert(chapter_body, sImpact);
-	table.insert(chapter_body, sToolTip);
-	if bOptionModifiers then AddChapter("Action Modifiers", chapter_body); end
+	if bOptionModifiers and bIsRMA then
+		local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("GreatPersonIndividual", page.PageId, Game.GetLocalPlayer(), nil);
+		local chapter_body = {};
+		table.insert(chapter_body, sImpact);
+		table.insert(chapter_body, sToolTip);
+		AddChapter("Action Modifiers", chapter_body);
+	end
 	ShowInternalPageInfo(page);
 end
 
@@ -371,6 +374,8 @@ function ShowSourcesOfGPPs(page)
 	end
 	
 	-- modifiers - need some more work to detect which one exactly it is
+	if bOptionModifiers and bIsRMA then
+
 	table.insert(chapter_body, Locale.Lookup("LOC_UI_PEDIA_UNIQUE_ABILITY"));
 	for row in GameInfo.ModifierArguments() do
 		if row.Name == "GreatPersonClassType" and row.Value == gpclassType then
@@ -412,6 +417,8 @@ function ShowSourcesOfGPPs(page)
 		end
 	end
 	
+	end -- modifiers & RMA
+	
 	AddChapter("LOC_CITY_STATES_OVERVIEW", chapter_body);
 	
 end
@@ -444,15 +451,16 @@ PageLayouts["Unit"] = function(page)
 		end
 	end
 	-- show modifiers
-	--for k,v in pairs(tAbilities) do print(k,v) end
-	for ability,_ in pairs(tAbilities) do
-		local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("UnitAbility", ability, Game.GetLocalPlayer(), nil);
-		local chapter_body = {};
-		table.insert(chapter_body, sImpact);
-		table.insert(chapter_body, sToolTip);
-		if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.UnitAbilities[ability].Name), chapter_body); end
+	if bOptionModifiers and bIsRMA then
+		--for k,v in pairs(tAbilities) do print(k,v) end
+		for ability,_ in pairs(tAbilities) do
+			local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("UnitAbility", ability, Game.GetLocalPlayer(), nil);
+			local chapter_body = {};
+			table.insert(chapter_body, sImpact);
+			table.insert(chapter_body, sToolTip);
+			if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.UnitAbilities[ability].Name), chapter_body); end
+		end
 	end
-	
 	ShowInternalPageInfo(page);
 end
 
@@ -517,6 +525,7 @@ end
 -- helper
 function AddTrait(sTraitType:string, sUniqueName:string)
 	--print("FUN AddTrait", sTraitType, sUniqueName);
+	if not (bOptionModifiers and bIsRMA) then return; end
 	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", sTraitType, Game.GetLocalPlayer(), nil);
 	local chapter_body = {};
 	table.insert(chapter_body, sImpact);
@@ -524,7 +533,7 @@ function AddTrait(sTraitType:string, sUniqueName:string)
 	local sName:string = ( GameInfo.Traits[sTraitType].Name == nil and sTraitType or Locale.Lookup(GameInfo.Traits[sTraitType].Name));
 	if GameInfo.Traits[sTraitType].InternalOnly then sName = "[COLOR_Red]"..sTraitType.."[ENDCOLOR]"; end
 	if sUniqueName then sName = sUniqueName; end
-	if bOptionModifiers then AddChapter(sName, chapter_body); end
+	AddChapter(sName, chapter_body);
 end
 
 PageLayouts["Civilization"] = function(page)
@@ -644,7 +653,8 @@ PageLayouts["CityState"] = function(page)
         if(row.CivilizationType == civType) then AddTrait(row.TraitType); end
     end
 
-    -- Populate traits from leaders (including inherited)
+    -- Populate traits from leaders (including inherited) [modifiers]
+	if bOptionModifiers and bIsRMA then
     for row in GameInfo.LeaderTraits() do
         if has_leader[row.LeaderType] and not has_trait[row.TraitType] and row.TraitType ~= "MINOR_CIV_DEFAULT_TRAIT" then
 			-- just display the trait
@@ -652,10 +662,10 @@ PageLayouts["CityState"] = function(page)
 			local chapter_body = {};
 			table.insert(chapter_body, sImpact);
 			table.insert(chapter_body, sToolTip);
-			if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body); end
+			AddChapter(Locale.Lookup(GameInfo.Traits[row.TraitType].Name), chapter_body);
 		end
     end
-
+	end
 	ShowInternalPageInfo(page);
 end
 
@@ -707,6 +717,8 @@ end
 
 function ShowPlotYields(page, sTable:string)
 
+	if not (bOptionModifiers and bIsRMA) then return; end
+	
 	if tPlotModifiers == nil then Initialize_PlotYields(); end -- delayed init
 
 	local objectInfo:table = GameInfo[sTable][page.PageId];

@@ -2,15 +2,12 @@
 <Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
 	<Properties>
 		<Name>Better Civilopedia</Name>
-		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE]Remembers visited pages (back/next buttons).[NEWLINE][NEWLINE]Version 1.3</Description>
+		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE]Remembers visited pages (back/next buttons).[NEWLINE][NEWLINE]Version 1.4</Description>
 		<Teaser>More information in Civilopedia!</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
 	</Properties>
-	<Dependencies>
-		<Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" minversion="1" maxversion="999" title="Better Report Screen"/>
-	</Dependencies>
 	<ActionCriteria>
 		<Criteria id="Expansion1">
 			<GameCoreInUse>Expansion1</GameCoreInUse>
