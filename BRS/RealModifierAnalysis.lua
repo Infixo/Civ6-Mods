@@ -904,11 +904,13 @@ function GetCityData( pCity:table )
 		---------------------------------------------------------------------
 		-- BUILDINGS
 		local buildingTypes = pCityBuildings:GetBuildingsAtLocation(plotID);
-		for _, buildingType in ipairs(buildingTypes) do
+		for _, buildingType in ipairs(buildingTypes) do -- buildingType is an Index here
 			local building		:table = GameInfo.Buildings[buildingType];
-			local kYields		:table = {};
+			local sBuildingType:string = building.BuildingType;
+			--local kYields		:table = {}; -- not used
 
 			-- Obtain yield info for buildings.
+			--[[ Infixo noy used
 			for yieldRow in GameInfo.Yields() do
 				local yieldChange = pCity:GetBuildingYield(buildingType, yieldRow.YieldType);
 				if yieldChange ~= 0 then
@@ -918,8 +920,9 @@ function GetCityData( pCity:table )
 					});
 				end
 			end
-
+			--]]
 			-- Helper: to extract a particular yield type
+			--[[ Infixo not used
 			function YieldFind( kYields:table, yieldType:string )
 				for _,yield in ipairs(kYields) do
 					if yield.YieldType == yieldType then
@@ -928,7 +931,7 @@ function GetCityData( pCity:table )
 				end
 				return 0;	-- none found
 			end
-
+			--]]
 			-- Duplicate of data but common yields in an easy to parse format.
 			--local culture	:number = YieldFind( kYields, "YIELD_CULTURE" );
 			--local faith		:number = YieldFind( kYields, "YIELD_FAITH" );
@@ -938,7 +941,18 @@ function GetCityData( pCity:table )
 			--local science	:number = YieldFind( kYields, "YIELD_SCIENCE" );
 			-- extended yields
 			local extyields :table = YieldTableNew();
-			for yield,yid in pairs(YieldTypes) do extyields[ yield ] = pCity:GetBuildingYield(buildingType, yid); end
+			-- fix for certain policies based on building yields
+			-- pCity:GetBuildingYield does NOT return a base yield, only processed one, so if the policy is selected, then it calculates the effect twice
+			-- use the base data from DB
+			function GetBuildingBaseYield(sBuildingType:string, sYieldType:string)
+				--print("GetBuildingBaseYield", sBuildingType, sYieldType);
+				for row in GameInfo.Building_YieldChanges() do
+					if row.BuildingType == sBuildingType and row.YieldType == sYieldType then return row.YieldChange; end
+				end
+				return 0;
+			end
+			--for yield,yid in pairs(YieldTypes) do extyields[ yield ] = pCity:GetBuildingYield(buildingType, yid); end
+			for yield,_ in pairs(YieldTypes) do extyields[ yield ] = GetBuildingBaseYield(sBuildingType, "YIELD_"..yield); end
 			-- extyields.TOURISM = 0; -- tourism is produced in another way, GetBuildingYield() produces stupid numbers here ??? I don't know, the bug is for districts for sure
 			
 			if building.IsWonder then
@@ -946,10 +960,10 @@ function GetCityData( pCity:table )
 					SubjectType			= SubjectTypes.Building,
 					Name				= Locale.Lookup(building.Name), 
 					Yields				= extyields,
-					BuildingType		= building.BuildingType,
+					BuildingType		= sBuildingType,
 					-- not used yet
 					--Yields				= kYields,
-					Icon				= "ICON_"..building.BuildingType,
+					Icon				= "ICON_"..sBuildingType,
 					--Citizens
 					isPillaged			= pCityBuildings:IsPillaged(building.BuildingType),
 					isBuilt				= pCityBuildings:HasBuilding(building.Index),
@@ -966,10 +980,10 @@ function GetCityData( pCity:table )
 					SubjectType			= SubjectTypes.Building,
 					Name				= Locale.Lookup(building.Name),
 					Yields				= extyields,
-					BuildingType		= building.BuildingType,
+					BuildingType		= sBuildingType,
 					-- not used yet
 					--Yields				= kYields,
-					Icon				= "ICON_"..building.BuildingType,
+					Icon				= "ICON_"..sBuildingType,
 					Citizens			= kPlot:GetWorkerCount(),
 					isPillaged			= pCityBuildings:IsPillaged(buildingType);
 					isBuilt				= pCityBuildings:HasBuilding(building.Index);
@@ -1958,22 +1972,23 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		-- DistrictType, FeatureType (must be adjacent), YieldType, Amount
 		-- need to iterate through all built districts and check if there's an adjacent feature
 		
-		local function IsPlotAdjacentToFeature(iX:number, iY:number, sFeatureType:string)
-			local adjacentPlot:table, eFeature:number = nil, 0;
+		local function GetNumAdjacentFeatureType(iX:number, iY:number, sFeatureType:string)
+			local adjacentPlot:table, eFeature:number, iNum:number = nil, 0, 0;
 			for direction = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1, 1 do
 				adjacentPlot = Map.GetAdjacentPlot(iX, iY, direction);
 				if adjacentPlot then
 					eFeature = adjacentPlot:GetFeatureType();
-					if eFeature > -1 and GameInfo.Features[eFeature].FeatureType == sFeatureType then return true; end
+					if eFeature > -1 and GameInfo.Features[eFeature].FeatureType == sFeatureType then iNum = iNum + 1; end
 				end
 			end
-			return false;
+			return iNum;
 		end
 		
 		local iNum:number = 0;
 		for _,district in ipairs(tSubject.Districts) do
-			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType and
-				IsPlotAdjacentToFeature(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.FeatureType) then iNum = iNum + 1; end
+			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType then
+				iNum = iNum + GetNumAdjacentFeatureType(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.FeatureType);
+			end
 		end
 		-- compatibility tweak for CIVITAS CS mod - remove if not needed any more
 		-- they use YieldChange instead of Amount in this modifier
@@ -1987,22 +2002,23 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		-- DistrictType, TerrainType (must be adjacent), YieldType, Amount
 		-- need to iterate through all built districts and check if there's an adjacent terrain
 		
-		local function IsPlotAdjacentToTerrain(iX:number, iY:number, sTerrainType:string)
-			local adjacentPlot:table, eTerrain:number = nil, 0;
+		local function GetNumAdjacentTerrainType(iX:number, iY:number, sTerrainType:string)
+			local adjacentPlot:table, eTerrain:number, iNum:number = nil, 0, 0;
 			for direction = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1, 1 do
 				adjacentPlot = Map.GetAdjacentPlot(iX, iY, direction);
 				if adjacentPlot then
 					eTerrain = adjacentPlot:GetTerrainType();
-					if eTerrain > -1 and GameInfo.Terrains[eTerrain].TerrainType == sTerrainType then return true; end
+					if eTerrain > -1 and GameInfo.Terrains[eTerrain].TerrainType == sTerrainType then iNum = iNum + 1; end
 				end
 			end
-			return false;
+			return iNum;
 		end
 		
 		local iNum:number = 0;
 		for _,district in ipairs(tSubject.Districts) do
-			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType and
-				IsPlotAdjacentToTerrain(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.TerrainType) then iNum = iNum + 1; end
+			if district.isBuilt and district.DistrictType == tMod.Arguments.DistrictType then
+				iNum = iNum + GetNumAdjacentTerrainType(district.Plot:GetX(), district.Plot:GetY(), tMod.Arguments.TerrainType);
+			end
 		end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
 		
@@ -2046,7 +2062,7 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		-- must use 3 arguments actually, plus replacements
 		for _,district in ipairs(tSubject.Districts) do
-			local districtType:string = district.DistrictType;	
+			local districtType:string = district.DistrictType;
 			if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
 			if districtType == tMod.Arguments.DistrictType then -- DISTRICT_THEATER, etc.
 				if district.isBuilt then
