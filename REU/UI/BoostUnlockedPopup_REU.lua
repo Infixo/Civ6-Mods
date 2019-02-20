@@ -14,9 +14,9 @@ REU_BASE_ShowCivicBoost = ShowCivicBoost;
 
 -- ===========================================================================
 function ShowTechBoost(techIndex, iTechProgress, eSource)
-	print("ShowTechBoost", techIndex, iTechProgress, eSource);
 	REU_BASE_ShowTechBoost(techIndex, iTechProgress, eSource);
 	
+	-- Make sure we're the local player
 	if Game.GetLocalPlayer() == -1 then return; end
 
 	local currentTech = GameInfo.Technologies[techIndex];
