@@ -7,11 +7,13 @@ print("Loading TechTree_BTT_XP2.lua from Better Tech Tree version "..GlobalParam
 
 include("TechTree_Expansion2");
 
+BTT_XP2_LateInitialize = LateInitialize;
+
 include("TechAndCivicSupport_BTT");
 
-if HasCapability("CAPABILITY_TECH_TREE") then
-	Initialize_BTT_TechTree(); -- we must call it BEFORE main Initialize because of AllocateUI being called there; all data must be ready before that
-	Initialize(); -- run it 2nd time but no problems with that, all data and UI is recreated from scratch
+function LateInitialize()
+	Initialize_BTT_TechTree(); -- we must call it BEFORE main LateInitialize because of AllocateUI being called there; all data must be ready before that
+	BTT_XP2_LateInitialize();
 end
 
 print("OK Loaded TechTree_BTT_XP2.lua from Better Tech Tree");

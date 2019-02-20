@@ -1,4 +1,4 @@
-print("Loading TechTree_BTT_RiseFall.lua from Better Tech Tree version "..GlobalParameters.BTT_VERSION_MAJOR.."."..GlobalParameters.BTT_VERSION_MINOR);
+print("Loading TechTree_BTT_XP1.lua from Better Tech Tree version "..GlobalParameters.BTT_VERSION_MAJOR.."."..GlobalParameters.BTT_VERSION_MINOR);
 -- ===========================================================================
 -- Better Tech Tree
 -- Author: Infixo
@@ -7,11 +7,13 @@ print("Loading TechTree_BTT_RiseFall.lua from Better Tech Tree version "..Global
 
 include("TechTree_Expansion1");
 
+BTT_XP1_LateInitialize = LateInitialize;
+
 include("TechAndCivicSupport_BTT");
 
-if HasCapability("CAPABILITY_TECH_TREE") then
-	Initialize_BTT_TechTree(); -- we must call it BEFORE main Initialize because of AllocateUI being called there; all data must be ready before that
-	Initialize(); -- run it 2nd time but no problems with that, all data and UI is recreated from scratch
+function LateInitialize()
+	Initialize_BTT_TechTree(); -- we must call it BEFORE main LateInitialize because of AllocateUI being called there; all data must be ready before that
+	BTT_XP1_LateInitialize();
 end
 
-print("OK Loaded TechTree_BTT_RiseFall.lua from Better Tech Tree");
+print("OK Loaded TechTree_BTT_XP1.lua from Better Tech Tree");

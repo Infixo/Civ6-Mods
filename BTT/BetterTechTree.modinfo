@@ -22,6 +22,9 @@
 		</UpdateDatabase>
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
+			<Properties>
+				<LoadOrder>100</LoadOrder>
+			</Properties>
             <Items>
 				<File>Icons/BTTUnlockFrames.dds</File>
 				<!-- core files, will be included in wrappers -->
@@ -37,37 +40,39 @@
 		<!-- Vanilla actions -->
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree">
 			<Properties>
+				<LoadOrder>100</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>TechTree_BTT.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree">
 			<Properties>
+				<LoadOrder>100</LoadOrder>
 				<LuaContext>CivicsTree</LuaContext>
 				<LuaReplace>CivicsTree_BTT.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Rise&Fall actions - replace lua only for TechTree, Civics tree was not updated in R&F! -->
         <ImportFiles id="BTT_ImportFiles_XP1" criteria="Expansion1">
-			<!--<Properties>
-                <LoadOrder>2</LoadOrder>
-            </Properties>		-->
+			<Properties>
+                <LoadOrder>101</LoadOrder>
+            </Properties>
             <Items>
 				<File>XP1/TechTree_BTT_XP1.lua</File>
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP1" criteria="Expansion1">
 			<Properties>
-                <LoadOrder>2</LoadOrder>
+                <LoadOrder>101</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>XP1/TechTree_BTT_XP1.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Gathering Storm actions - replace lua for both trees -->
         <ImportFiles id="BTT_ImportFiles_XP2" criteria="Expansion2">
-			<!--<Properties>
-                <LoadOrder>2</LoadOrder>
-            </Properties>		-->
+			<Properties>
+                <LoadOrder>102</LoadOrder>
+            </Properties>
             <Items>
 				<File>XP2/TechTree_BTT_XP2.lua</File>
 				<File>XP2/CivicsTree_BTT_XP2.lua</File>
@@ -75,14 +80,14 @@
         </ImportFiles>
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>3</LoadOrder>
+                <LoadOrder>102</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>XP2/TechTree_BTT_XP2.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>3</LoadOrder>
+                <LoadOrder>102</LoadOrder>
 				<LuaContext>CivicsTree</LuaContext>
 				<LuaReplace>XP2/CivicsTree_BTT_XP2.lua</LuaReplace>
 			</Properties>

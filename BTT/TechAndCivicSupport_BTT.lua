@@ -19,25 +19,11 @@ local bOptionHarvests:boolean = ( GlobalParameters.BTT_OPTION_HARVESTS == 1 );
 -- ===========================================================================
 BTT_BASE_PopulateUnlockablesForCivic = PopulateUnlockablesForCivic;
 BTT_BASE_PopulateUnlockablesForTech = PopulateUnlockablesForTech;
---BTT_BASE_GetUnlockablesForCivic_Cached = GetUnlockablesForCivic_Cached;
---BTT_BASE_GetUnlockablesForTech_Cached = GetUnlockablesForTech_Cached;
---BTT_BASE_GetUnlockIcon = GetUnlockIcon;
+
 
 -- ===========================================================================
 -- DEBUG ROUTINES
 -- ===========================================================================
-
--- debug output routine
-function dprint(sStr,p1,p2,p3,p4,p5,p6)
-	local sOutStr = sStr;
-	if p1 ~= nil then sOutStr = sOutStr.." [1] "..tostring(p1); end
-	if p2 ~= nil then sOutStr = sOutStr.." [2] "..tostring(p2); end
-	if p3 ~= nil then sOutStr = sOutStr.." [3] "..tostring(p3); end
-	if p4 ~= nil then sOutStr = sOutStr.." [4] "..tostring(p4); end
-	if p5 ~= nil then sOutStr = sOutStr.." [5] "..tostring(p5); end
-	if p6 ~= nil then sOutStr = sOutStr.." [6] "..tostring(p6); end
-	print(Game:GetCurrentGameTurn().." "..sOutStr);
-end
 
 -- debug routine - prints a table (no recursion)
 function dshowtable(tTable:table)
@@ -75,7 +61,7 @@ function GetExtraUnlockables(sType:string)
 end
 
 function AddExtraUnlockable(sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string)
-	--dprint("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+	--print("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 	local tItem:table = {
 		Type = sType,
 		UnlockKind = sUnlockKind, -- "BOOST", "IMPROVEMENT", "SPY", "HARVEST"
@@ -117,7 +103,7 @@ end
 
 -- this will add 1 simple unlockable, i.e. only background and icon
 function PopulateUnlockableSimple(tItem:table, instanceManager:table)
-	--dprint("FUN PopulateUnlockableSimple"); dshowtable(tItem);
+	--print("FUN PopulateUnlockableSimple"); dshowtable(tItem);
 
 	local unlockInstance = instanceManager:GetInstance();
 
@@ -143,7 +129,7 @@ end
 
 
 function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:table, kGovernmentIM:table, callback:ifunction, hideDescriptionIcon:boolean )
-	--dprint("FUN PopulateUnlockablesForCivic (pid,cid,bhide)",playerID,civicID,hideDescriptionIcon);
+	--print("FUN PopulateUnlockablesForCivic (pid,cid,bhide)",playerID,civicID,hideDescriptionIcon);
 	
 	local civicInfo:table = GameInfo.Civics[civicID];
 	if civicInfo == nil then
@@ -180,7 +166,7 @@ end
 --
 -- ===========================================================================
 function PopulateUnlockablesForTech(playerID:number, techID:number, instanceManager:table, callback:ifunction )
-	--dprint("FUN PopulateUnlockablesForTech (pid,tid)",playerID,techID);
+	--print("FUN PopulateUnlockablesForTech (pid,tid)",playerID,techID);
 
 	local techInfo:table = GameInfo.Technologies[techID];
 	if techInfo == nil then
@@ -206,48 +192,6 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 	return iNumIcons;
 end
 
-
--- need to plug into these so the orginal functions will know about new unlockables and e.g. extend the size of nodes
--- NOT USED!!!
---[[
-function GetUnlockablesForCivic_Cached(civicType, playerId)
-	--dprint("FUN GetUnlockablesForCivic_Cached",civicType,playerId);
-	-- get data from base function
-	local results = BTT_BASE_GetUnlockablesForCivic_Cached(civicType, playerId);
-	-- add our own
-	for _,item in ipairs( GetExtraUnlockables(civicType) ) do
-		-- for some reasons it remembers previous inserts?
-		local bIsInserted:boolean = false;
-		for _,res in ipairs(results) do if res[1] == item.UnlockType and res[2] == item.Description then bIsInserted = true; break; end end
-		if not bIsInserted then
-			print("inserting extra civic unlock", item.UnlockType, item.Description, item.PediaKey);
-			table.insert(results, { item.UnlockType, item.Description, item.PediaKey });
-		end
-	end
-	if civicType == "CIVIC_DIPLOMATIC_SERVICE" or civicType == "CIVIC_NATURAL_HISTORY" or civicType == "CIVIC_MOBILIZATION" or civicType == "CIVIC_CONSERVATION" then print(civicType); dshowrectable(results); end
-	return results;
-end
---]]
-
--- NOT USED!!!
---[[
-function GetUnlockablesForTech_Cached(techType, playerId)
-	--dprint("FUN GetUnlockablesForTech_Cached",techType,playerId);
-	-- get data from base function
-	local results = BTT_BASE_GetUnlockablesForTech_Cached(techType, playerId);
-	-- add our own
-	for _,item in ipairs( GetExtraUnlockables(techType) ) do
-		-- for some reasons it remembers previous inserts?
-		local bIsInserted:boolean = false;
-		for _,res in ipairs(results) do if res[1] == item.UnlockType and res[2] == item.Description then bIsInserted = true; break; end end
-		if not bIsInserted then
-			print("inserting extra tech unlock", item.UnlockType, item.Description, item.PediaKey);
-			table.insert(results, { item.UnlockType, item.Description, item.PediaKey });
-		end
-	end
-	return results;
-end
---]]
 
 -- ===========================================================================
 -- POPULATE EXTRA UNLOCKABLES
@@ -357,7 +301,7 @@ end
 -- many improvements are unique to a Civ
 -- must not show them unless the player is that Civ
 function CanShowImprovement(sImprovementType:string)
-	--dprint("FUN CanShowImprovement(imp)",sImprovementType);
+	--print("FUN CanShowImprovement(imp)",sImprovementType);
 	local imprInfo:table = GameInfo.Improvements[sImprovementType];
 	if imprInfo == nil then return false; end -- assert
 	if imprInfo.TraitType == nil then return true; end -- not unique
@@ -365,7 +309,7 @@ function CanShowImprovement(sImprovementType:string)
 	if string.find(imprInfo.TraitType, "MINOR_CIV") then return true; end -- we may acquire that! ugly hack, but I don't to iterate LeaderTraits to check for 1 instance (Colossal Head)
 	-- find civ
 	local sLocalPlayerCivType:string = PlayerConfigurations[ Game.GetLocalPlayer() ]:GetCivilizationTypeName();
-	--dprint("checking trait for",sLocalPlayerCivType);
+	--print("checking trait for",sLocalPlayerCivType);
 	for row in GameInfo.CivilizationTraits() do
 		if row.TraitType == imprInfo.TraitType then
 			return row.CivilizationType == sLocalPlayerCivType; -- true if that's our improvement, false if somebody's else
@@ -415,7 +359,7 @@ function PopulateFromModifiers(sTreeKind:string)
 end
 
 function Initialize_BTT_TechTree()
-	--dprint("FUN Initialize_BTT_TechTree()");
+	--print("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
 	if bOptionHarvests then PopulateHarvests(); end
@@ -426,7 +370,7 @@ end
 
 
 function Initialize_BTT_CivicsTree()
-	--dprint("FUN Initialize_BTT_CivicsTree()");
+	--print("FUN Initialize_BTT_CivicsTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
 	PopulateImprovementBonus();
