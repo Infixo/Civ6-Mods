@@ -3,8 +3,7 @@ print("Loading CivilopediaPage_Technology.lua from Real Eurekas version  "..Glob
 --	Civilopedia - Technology Page Layout
 -- ===========================================================================
 include("TechAndCivicUnlockables");
--- Infixo
-include( "TechAndCivicSupport");
+include( "RealEurekasCanShow"); -- Infixo
 
 PageLayouts["Technology" ] = function(page)
 	local sectionId = page.SectionId;
@@ -216,4 +215,5 @@ PageLayouts["Technology" ] = function(page)
 		AddChapter(chapter_header, chapter_body);
 	end
 end
+
 print("OK loaded CivilopediaPage_Technology.lua from Real Eurekas");

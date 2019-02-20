@@ -1,56 +1,85 @@
-print("Loading CivilopediaPage_Civic.lua from Real Eurekas version  "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
+print("Loading CivilopediaPage_Technology.lua (XP2) from Real Eurekas version  "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
---	Civilopedia - Civic Page Layout
+--	Civilopedia - Technology Page Layout (XP2 override)
 -- ===========================================================================
-include("TechAndCivicUnlockables");
-include("RealEurekasCanShow"); -- Infixo
+include( "RealEurekasCanShow"); -- Infixo
 
-PageLayouts["Civic" ] = function(page)
+PageLayouts["Technology" ] = function(page)
 	local sectionId = page.SectionId;
 	local pageId = page.PageId;
 
 	SetPageHeader(page.Title);
 	SetPageSubHeader(page.Subtitle);
 
-	local civic = GameInfo.Civics[pageId];
-	if(civic == nil) then
+	-- Find live node that matches page id
+	local tech		:table = nil;			-- From DB (static data, doesn't change)
+	local pLiveTech	:table = nil;	-- From engine (live data changes per player)
+	local techNodes	:table = Game.GetTechs():GetActiveTechNodes();
+	for _,v in ipairs(techNodes) do
+		local kFullNode:table = GameInfo.Technologies[v.TechType];
+		if kFullNode.TechnologyType == pageId then
+			tech = kFullNode;
+			pLiveTech = v;
+		end
+	end
+	
+	if(tech == nil) then
 		return;
 	end
-	local civicType = civic.CivicType;
+	local techType = tech.TechnologyType;	-- named id, same as pageId
 
-	local required_civics = {};
-	local leadsto_civics = {};
+	local required_techs = {};
+	local leadsto = {};
 
-	for row in GameInfo.CivicPrereqs() do
-		if(row.Civic == civicType) then
-			local c = GameInfo.Civics[row.PrereqCivic];
-			if(c) then
-				table.insert(required_civics, {"ICON_" .. c.CivicType, c.Name, c.CivicType});
+	local ePlayer			:number = Game.GetLocalPlayer();
+	local pPlayerTechManager:table = Players[ePlayer]:GetTechs();
+
+	-- What was required for this tech.
+	local show_prereqs = true;
+	if(GameInfo.Technologies_XP2) then
+		local tech_xp2 = GameInfo.Technologies_XP2[techType];
+		if(tech_xp2 and tech_xp2.RandomPrereqs == true) then
+			show_prereqs = false;
+		end
+	end
+
+	if(show_prereqs) then
+		for __,prereqTechIndex in ipairs(pLiveTech.PrereqTechTypes) do
+			local pPreReqLive :table = techNodes[prereqTechIndex];
+			local kPreReqData :table = GameInfo.Technologies[prereqTechIndex];
+			if pPlayerTechManager:IsTechRevealed(pPreReqLive) then
+				table.insert(required_techs, {"ICON_" .. kPreReqData.TechnologyType, kPreReqData.Name, kPreReqData.TechnologyType});
 			end
 		end
+	end
 
-		if(row.PrereqCivic == civicType) then
-			local c = GameInfo.Civics[row.Civic];
-			if(c) then
-				table.insert(leadsto_civics, {"ICON_" .. c.CivicType, c.Name, c.CivicType});
+	-- Build list of what more advanced technologies require this to be unlocked.
+	for _,v in ipairs(techNodes) do
+		for _,prereqTechIndex in ipairs(v.PrereqTechTypes) do
+			if prereqTechIndex == pLiveTech.TechType then		
+				if pPlayerTechManager:IsTechRevealed(v.TechType) then		
+					local kFutureTech :table = GameInfo.Technologies[v.TechType];
+					table.insert(leadsto, {"ICON_" .. kFutureTech.TechnologyType, kFutureTech.Name, kFutureTech.TechnologyType});
+				end
+				break
 			end
 		end
 	end
 
 	local boosts = {};
 	for row in GameInfo.Boosts() do
-		if(row.CivicType == civicType) then
+		if(row.TechnologyType == techType) then
 			table.insert(boosts, row);
 		end
 	end
 
-	local stats = {};
+		local stats = {};
 
 	local envoys = 0;
 	local spies = 0;
 
-	for row in GameInfo.CivicModifiers() do
-		if(row.CivicType == civicType) then
+	for row in GameInfo.TechnologyModifiers() do
+		if(row.TechnologyType == techType) then
 			-- Extract information from Modifiers to append to stats.
 			-- NOTE: This is a pretty naive implementation as it only looks at the effect and arguments and not the requirements.
 			local modifier = GameInfo.Modifiers[row.ModifierId];
@@ -87,16 +116,7 @@ PageLayouts["Civic" ] = function(page)
 		table.insert(stats, Locale.Lookup("LOC_TYPE_TRAIT_ENVOYS", envoys)); 
 	end
 
-	for row in GameInfo.Building_YieldChanges() do
-		if(row.BuildingType == buildingType) then
-			local yield = GameInfo.Yields[row.YieldType];
-			if(yield) then
-				table.insert(stats, Locale.Lookup("LOC_TYPE_TRAIT_YIELD", row.YieldChange, yield.IconString, yield.Name)); 
-			end
-		end
-	end
-
-	local unlockables = GetUnlockablesForCivic(civicType);
+	local unlockables = GetUnlockablesForTech(techType);
 
 	local unlocks = {};
 	for i,v in ipairs(unlockables) do
@@ -117,18 +137,17 @@ PageLayouts["Civic" ] = function(page)
 	end
 
 	table.sort(unlocks, SortUnlockables);
-	
+		
 	-- Right Column
-	AddPortrait("ICON_" .. civicType);
+	AddPortrait("ICON_" .. techType);
 
 	-- Quotes!
-	for row in GameInfo.CivicQuotes() do
-		if(row.CivicType == civicType) then
+	for row in GameInfo.TechnologyQuotes() do
+		if(row.TechnologyType == techType) then
 			AddQuote(row.Quote, row.QuoteAudio);
 		end
 	end
 
-	
 	AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
 		s:AddSeparator();
 
@@ -161,31 +180,31 @@ PageLayouts["Civic" ] = function(page)
 	AddRightColumnStatBox("LOC_UI_PEDIA_REQUIREMENTS", function(s)
 		s:AddSeparator();
 
-		if(civic.EraType) then
-			local era = GameInfo.Eras[civic.EraType];
+		if(tech.EraType) then
+			local era = GameInfo.Eras[tech.EraType];
 			if(era) then
 				s:AddLabel(era.Name);
 				s:AddSeparator();
 			end
 		end
 
-		if(#required_civics > 0) then
-			s:AddHeader("LOC_UI_PEDIA_REQUIRED_CIVICS");
+		if(#required_techs > 0) then
+			s:AddHeader("LOC_UI_PEDIA_REQUIRED_TECHNOLOGIES");
 			local icons = {};
-			for _, icon in ipairs(required_civics) do
+			for _, icon in ipairs(required_techs) do
 				s:AddIconLabel(icon, icon[2]);
 			end
 			s:AddSeparator();
 		end
 				
-		local yield = GameInfo.Yields["YIELD_CULTURE"];
+		local yield = GameInfo.Yields["YIELD_SCIENCE"];
 		if(yield) then
-			s:AddHeader("LOC_UI_PEDIA_CULTURE_COST");
-			local t = Locale.Lookup("LOC_UI_PEDIA_BASE_COST", tonumber(civic.Cost), yield.IconString, yield.Name);
+			s:AddHeader("LOC_UI_PEDIA_RESEARCH_COST");
+			local t = Locale.Lookup("LOC_UI_PEDIA_BASE_COST", tonumber(tech.Cost), yield.IconString, yield.Name);
 			s:AddLabel(t);
 			s:AddSeparator();
 		end
-		
+
 
 		if(#boosts > 0) then
 			s:AddHeader("LOC_UI_PEDIA_BOOSTS");
@@ -193,30 +212,28 @@ PageLayouts["Civic" ] = function(page)
 			for i,b in ipairs(boosts) do
 				-- Infixo: start
 				--s:AddLabel(b.TriggerDescription);
-				if CanShowTrigger(civic.Index, true) then s:AddLabel(b.TriggerDescription);
+				if CanShowTrigger(tech.Index, false) then s:AddLabel(b.TriggerDescription);
 				else s:AddLabel("LOC_REUR_QUOTE_"..math.random(22)); end
 				-- Infixo: end
 			end
 			s:AddSeparator();
 		end
-	end);
+end);
 
 	AddRightColumnStatBox("LOC_UI_PEDIA_PROGRESSION", function(s)
 		s:AddSeparator();
 
-		if(#leadsto_civics > 0) then
-			s:AddHeader("LOC_UI_PEDIA_LEADS_TO_CIVICS");
-			local icons = {};
-			for _, icon in ipairs(leadsto_civics) do
-				s:AddIconLabel(icon, icon[2]);
+		if(#leadsto > 0) then
+			s:AddHeader("LOC_UI_PEDIA_LEADS_TO_TECHS");
+			for _, tech in ipairs(leadsto) do
+				s:AddIconLabel(tech, tech[2]);
 			end
 		end
-
 		s:AddSeparator();
 	end);
 
 	-- Left Column
-	AddChapter("LOC_UI_PEDIA_DESCRIPTION", civic.Description);
+	AddChapter("LOC_UI_PEDIA_DESCRIPTION", tech.Description);
 
 	local chapters = GetPageChapters(page.PageLayoutId);
 	for i, chapter in ipairs(chapters) do
@@ -228,4 +245,4 @@ PageLayouts["Civic" ] = function(page)
 	end
 end
 
-print("OK loaded CivilopediaPage_Civic.lua from Real Eurekas");
+print("OK loaded CivilopediaPage_Technology.lua (XP2) from Real Eurekas");

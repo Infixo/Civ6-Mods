@@ -7,6 +7,7 @@ print("Loading TechAndCivicSupport.lua from Real Eurekas version "..GlobalParame
 include("InstanceManager");
 include("SupportFunctions");
 include("Civ6Common");
+include("RealEurekasCanShow"); -- Infixo
 
 
 -- ===========================================================================
@@ -25,15 +26,6 @@ local MAX_ICONS_BEFORE_OVERFLOW	:number = 6;
 local m_kGovernmentData		:table; -- Used to cache government info.
 local m_kCivicsData			:table; -- Used to cache civics info.
 local m_kTechsData			:table; -- Used to cache tech info.
-
--- CQUI variables
-local CQUI_ShowTechCivicRecommendations = true; -- if CQUI is not present then the default is to show recommendations! the update function should never be called
-
-function CQUI_OnSettingsUpdate()
-  CQUI_ShowTechCivicRecommendations = GameConfiguration.GetValue("CQUI_ShowTechCivicRecommendations") == 1
-end
-LuaEvents.CQUI_SettingsUpdate.Add(CQUI_OnSettingsUpdate);
-LuaEvents.CQUI_SettingsInitialized.Add(CQUI_OnSettingsUpdate);
 
 -- Utility Methods
 
@@ -61,7 +53,14 @@ function GetUnlockablesForCivic_Cached(civicType, playerId)
 	return results;
 end
 
-function GetUnlockablesForTech_Cached(techType, playerId)
+-- ===================================================================================================================================
+--	Get the unlockables for a tech, through the 'cached' table.
+--	If the entry in the table is not initialized, it will be added.
+--	This optionally accepts a database generated table of all the player's unlockables, this
+--	should only be passed in when generating the cache.  While the game is running, the cache should contain all the
+--	necessary entries.
+-- ===================================================================================================================================
+function GetUnlockablesForTech_Cached(techType, playerId, playerUnlockables)
 
 	--Set player ID to -1 if it is invalid in any way.
 	local playerIndex = playerId;
@@ -80,16 +79,18 @@ function GetUnlockablesForTech_Cached(techType, playerId)
 		return m_kTechsData[playerIndex][techType];
 	end
 
-	local results:table = GetUnlockablesForTech(techType, playerId);
+	local results:table = GetUnlockablesForTech(techType, playerId, playerUnlockables);
 	m_kTechsData[playerIndex][techType] = results;
 	return results;
 end
 
+-- ===================================================================================================================================
+--	RETURNS the string name of an unlocked icon based on the type passed in
+-- ===================================================================================================================================
+function GetUnlockIcon( typeName :string )
+	local icon :string = "ICON_TECHUNLOCK_0";
 
-function GetUnlockIcon(typeName)
-	local icon = "ICON_TECHUNLOCK_0";
-
-	local typeInfo = GameInfo.Types[typeName];
+	local typeInfo :table = GameInfo.Types[typeName];
 	if(typeInfo) then
 		local icons_by_kind = {
 			KIND_PROJECT = "ICON_TECHUNLOCK_0",
@@ -100,7 +101,7 @@ function GetUnlockIcon(typeName)
 			KIND_UNIT = "ICON_TECHUNLOCK_4",
 			KIND_RESOURCE = "ICON_TECHUNLOCK_5",
 			KIND_GOVERNMENT = "ICON_TECHUNLOCK_6",
-			KIND_ROUTE = "ICON_TECHUNLOCK_7",
+			KIND_ROUTE = "ICON_TECHUNLOCK_3",
 			KIND_AGREEMENT = "ICON_TECHUNLOCK_8",
 			KIND_POLICY = "ICON_TECHUNLOCK_9",
 		};
@@ -229,52 +230,18 @@ function HandleOverflow( numUnlockables:number, kItemInstance:table, numMaxVisib
 end
 
 -- ===========================================================================
--- Infixo: function to check if trigger description can be shown
--- ===========================================================================
-
-local eTVP:number = GameConfiguration.GetValue("TriggerVisibilityParam");
-
-function CanShowTrigger(iTechID:number, bCivic:boolean)
-	if eTVP == nil then eTVP = 0; end
-	-- alway visible, nothing more to check
-	if eTVP == 0 then return true; end
-	local pPlayerTechs = Players[Game.GetLocalPlayer()]:GetTechs();
-	if bCivic then pPlayerTechs = Players[Game.GetLocalPlayer()]:GetCulture(); end
-	-- already triggered, no point hiding it
-	if pPlayerTechs:HasBoostBeenTriggered(iTechID) then return true; end
-	-- only for techs and civics that can be researched (default)
-	if eTVP == 1 then
-		if bCivic then 
-			return pPlayerTechs:CanProgress(iTechID);
-		else
-			return pPlayerTechs:CanResearch(iTechID);
-		end
-	end
-	-- only after triggering
-	if eTVP == 3 then  
-		return pPlayerTechs:HasBoostBeenTriggered(iTechID);  -- same name for both Techs and Civics
-	end
-	-- eTVP == 2, only after some progress has been made (last option remaining)
-	if bCivic then
-		return pPlayerTechs:GetCulturalProgress(iTechID) > 0;
-	else
-		return pPlayerTechs:GetResearchProgress(iTechID) > 0;
-	end
-end
-
--- ===========================================================================
 --
 -- ===========================================================================
 function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:table, kGovernmentIM:table, callback:ifunction, hideDescriptionIcon:boolean )
 
-	local civicData:table = GameInfo.Civics[civicID];
-	if civicData == nil then
+	local kCivicData:table = GameInfo.Civics[civicID];
+	if kCivicData == nil then
 		UI.DataError("Unable to find a civic type in the database with an ID value of #"..tostring(civicID));
 		return;
 	end
 
 	local governmentData = GetGovernmentData();
-	local civicType:string = civicData.CivicType;
+	local civicType:string = kCivicData.CivicType;
 
 	-- Unlockables is an array of {type, name}
 	local numIcons:number = 0;
@@ -311,11 +278,11 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 				end
 			else
 				local unlockIcon = kItemIM:GetInstance();
-				local icon = GetUnlockIcon(typeName);	
-				unlockIcon.Icon:SetIcon("ICON_"..typeName);
-				unlockIcon.Icon:SetHide(false);
 
-				local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(icon,38);
+				local iconName :string = GetUnlockIcon(typeName);					
+				unlockIcon.Icon:SetHide( not unlockIcon.Icon:SetIcon("ICON_"..typeName));	-- Hide if an icon isn't found with that type.
+
+				local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName,38);
 				if textureSheet ~= nil then
 					unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 				end
@@ -342,14 +309,14 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 		
 	end
 
-	if (civicData.Description and hideDescriptionIcon ~= true) then
+	if (kCivicData.Description and hideDescriptionIcon ~= true) then
 		local unlockIcon:table	= kItemIM:GetInstance();
 		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
 		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
 		if textureSheet ~= nil then
 			unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 		end
-		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(GameInfo.Civics[civicID].Description);
+		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(kCivicData.Description);
 		if callback ~= nil then		
 			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
 		else
@@ -376,11 +343,14 @@ end
 -- ===========================================================================
 function PopulateUnlockablesForTech(playerID:number, techID:number, instanceManager:table, callback:ifunction )
 
-	local techType:string = GameInfo.Technologies[techID].TechnologyType;
-	if techType == nil then
+	local kTechData:table = GameInfo.Technologies[techID];
+	if kTechData==nil then
 		UI.DataError("Unable to find a tech type in the database with an ID value of #"..tostring(techID));
 		return;
 	end
+
+	local techType:string = kTechData.TechnologyType;
+
 
 	-- Unlockables is an array of {type, name}
 	local numIcons:number = 0;
@@ -394,16 +364,15 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 			local civilopediaKey = v[3];
 			local unlockIcon:table	= instanceManager:GetInstance();
 			
-			local icon = GetUnlockIcon(typeName);		
-			unlockIcon.Icon:SetIcon("ICON_"..typeName);
-			unlockIcon.Icon:SetHide(false);
+			local iconName :string = GetUnlockIcon(typeName);					
+			unlockIcon.Icon:SetHide( not unlockIcon.Icon:SetIcon("ICON_"..typeName));	-- Hide if an icon isn't found with that type.
 			 
-			local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(icon,38);
+			local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName,38);
 			if textureSheet ~= nil then
 				unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 			end
 
-			local toolTip :string = ToolTipHelper.GetToolTip(typeName, playerID);
+			local toolTip :string = ToolTipHelper.GetToolTip(typeName, playerID, nil);
 			unlockIcon.UnlockIcon:LocalizeAndSetToolTip(toolTip);
 			if callback ~= nil then		
 				unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
@@ -421,14 +390,14 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 		numIcons = numIcons + 1;
 	end
 
-	if (GameInfo.Technologies[techID].Description) then
+	if kTechData.Description then
 		local unlockIcon:table	= instanceManager:GetInstance();
 		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
 		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
 		if textureSheet ~= nil then
 			unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 		end
-		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(GameInfo.Technologies[techID].Description);
+		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(kTechData.Description);
 		if callback ~= nil then		
 			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
 		else
@@ -437,7 +406,7 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 
 		if(not IsTutorialRunning()) then
 			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-				LuaEvents.OpenCivilopedia(GameInfo.Technologies[techID].TechnologyType);
+				LuaEvents.OpenCivilopedia(kTechData.TechnologyType);
 			end);
 		end
 
@@ -654,9 +623,8 @@ function RealizeCurrentResearch( playerID:number, kData:table, kControl:table )
 		end
 
 		-- Show/Hide Recommended Icon
-		-- CQUI : only if show tech civ enabled in settings
 		if kControl.RecommendedIcon then
-			if kData.IsRecommended and kData.AdvisorType and CQUI_ShowTechCivicRecommendations then
+			if kData.IsRecommended and kData.AdvisorType then
 				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
 				kControl.RecommendedIcon:SetHide(false);
 				kControl.TitleStack:ReprocessAnchoring();
@@ -797,9 +765,8 @@ function RealizeCurrentCivic( playerID:number, kData:table, kControl:table, cach
 		HandleOverflow(numUnlockables, kControl, MAX_ICONS_BEFORE_OVERFLOW, MAX_ICONS_BEFORE_OVERFLOW-1);
 
 		-- Show/Hide Recommended Icon
-		-- CQUI : only if show tech civ enabled in settings
 		if kControl.RecommendedIcon then
-			if kData.IsRecommended and kData.AdvisorType and CQUI_ShowTechCivicRecommendations then
+			if kData.IsRecommended and kData.AdvisorType then
 				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
 				kControl.RecommendedIcon:SetHide(false);
 				kControl.TitleStack:ReprocessAnchoring();
@@ -858,4 +825,4 @@ function TechAndCivicSupport_BuildCivicModifierCache()
 
 	return tCache;
 end
-print("OK loaded TechAndCivicSupport.lua from Real Eurekas");
+print("OK loaded TechAndCivicSupport_REU.lua from Real Eurekas");

@@ -1,11 +1,10 @@
 --------------------------------------------------------------
--- RealEurekas_2_RiseFall
+-- RealEurekas - Rise & Fall changes
 -- Author: Infixo
 -- 2018-04-01: Created
 --------------------------------------------------------------
 
 --------------------------------------------------------------
--- Rise & Fall changes
 -- There's no HAVE_RESEARCH_AGREEMENT in R&F, instead there's BOOST_TRIGGER_HAVE_ALLIANCE_LEVEL_X (Have a level 2 Alliance.)
 --------------------------------------------------------------
 

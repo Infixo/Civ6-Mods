@@ -1,6 +1,6 @@
-print("Loading CivilopediaPage_Civic.lua from Real Eurekas version  "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
+print("Loading CivilopediaPage_Civic.lua (XP2) from Real Eurekas version  "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
 -- ===========================================================================
---	Civilopedia - Civic Page Layout
+--	Civilopedia - Civic Page Layout (XP2 override)
 -- ===========================================================================
 include("TechAndCivicUnlockables");
 include("RealEurekasCanShow"); -- Infixo
@@ -12,27 +12,60 @@ PageLayouts["Civic" ] = function(page)
 	SetPageHeader(page.Title);
 	SetPageSubHeader(page.Subtitle);
 
+	-- Find live node that matches page id
+	local civic			:table = nil;			-- From DB (static data, doesn't change)
+	local pLiveCivic	:table = nil;			-- From engine (live data changes per player)
+	local civicNodes	:table = Game.GetCulture():GetActiveCivicNodes();
+	for _,v in ipairs(civicNodes) do
+		local kFullNode:table = GameInfo.Civics[v.CivicType];
+		if kFullNode.CivicType == pageId then
+			civic = kFullNode;
+			pLiveCivic = v;
+		end
+	end
+	
 	local civic = GameInfo.Civics[pageId];
 	if(civic == nil) then
 		return;
 	end
-	local civicType = civic.CivicType;
+	local civicType = civic.CivicType;		-- named id, same as pageId
 
 	local required_civics = {};
 	local leadsto_civics = {};
 
-	for row in GameInfo.CivicPrereqs() do
-		if(row.Civic == civicType) then
-			local c = GameInfo.Civics[row.PrereqCivic];
-			if(c) then
-				table.insert(required_civics, {"ICON_" .. c.CivicType, c.Name, c.CivicType});
+	local ePlayer				:number = Game.GetLocalPlayer();
+	local pPlayerCultureManager	:table = Players[ePlayer]:GetCulture();
+
+	-- What was required for this civic.
+	local show_prereqs = true;
+	if(GameInfo.Civics_XP2) then
+		local civic_xp2 = GameInfo.Civics_XP2[civicType];
+		if(civic_xp2 and civic_xp2.RandomPrereqs == true) then
+			show_prereqs = false;
+		end
+	end
+
+	if(show_prereqs) then
+		for __,prereqCivicIndex in ipairs(pLiveCivic.PrereqCivicTypes) do
+			local pPreReqLive = civicNodes[prereqCivicIndex];
+			local kPreReqData = GameInfo.Civics[prereqCivicIndex];
+			if pPlayerCultureManager:IsCivicRevealed(pPreReqLive) then
+				table.insert(required_civics, {"ICON_" .. kPreReqData.CivicType, kPreReqData.Name, kPreReqData.CivicType});
 			end
 		end
+	end
 
-		if(row.PrereqCivic == civicType) then
-			local c = GameInfo.Civics[row.Civic];
-			if(c) then
-				table.insert(leadsto_civics, {"ICON_" .. c.CivicType, c.Name, c.CivicType});
+	-- Build list of what more advanced civics require this to be unlocked.
+	for _,v in ipairs(civicNodes) do
+		for _,prereqCivicIndex in ipairs(v.PrereqCivicTypes) do
+			if prereqCivicIndex == pLiveCivic.CivicType then		
+				if pPlayerCultureManager:IsCivicRevealed(v.CivicType) then		
+					local kFutureCivic = GameInfo.Civics[v.CivicType];
+					if(kFutureCivic) then
+						table.insert(leadsto_civics, {"ICON_" .. kFutureCivic.CivicType, kFutureCivic.Name, kFutureCivic.CivicType});
+					end
+				end
+				break
 			end
 		end
 	end
@@ -228,4 +261,4 @@ PageLayouts["Civic" ] = function(page)
 	end
 end
 
-print("OK loaded CivilopediaPage_Civic.lua from Real Eurekas");
+print("OK loaded CivilopediaPage_Civic.lua (XP2) from Real Eurekas");
