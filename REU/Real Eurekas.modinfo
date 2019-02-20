@@ -58,28 +58,52 @@
 	<!-- vanilla -->
     <ImportFiles id="REU_Imports">
       <Properties>
-        <LoadOrder>10000</LoadOrder>
+        <LoadOrder>20</LoadOrder>
       </Properties>
 	  <File>Utils/RealEurekasCanShow.lua</File>
-      <File>UI/BoostUnlockedPopup_REU.lua</File>
+	  <File>UI/RealizeMeterAndBoosts_REU.lua</File>
+      <File>UI/WorldTracker_REU.lua</File>
       <File>UI/CivicsTree_REU.lua</File>
       <File>UI/TechTree_REU.lua</File>
-      <File>UI/TechAndCivicSupport.lua</File>
+	  <File>UI/CivicsChooser_REU.lua</File>
+	  <File>UI/ResearchChooser_REU.lua</File>
       <File>UI/CivilopediaPage_Civic.lua</File>
       <File>UI/CivilopediaPage_Technology.lua</File>
+      <File>UI/BoostUnlockedPopup_REU.lua</File>
     </ImportFiles>
+	<ReplaceUIScript id="REU_ReplaceUI_WorldTracker">
+	  <Properties>
+        <LoadOrder>20</LoadOrder>
+	    <LuaContext>WorldTracker</LuaContext>
+		<LuaReplace>UI/WorldTracker_REU.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_CivicsTree">
 	  <Properties>
-        <LoadOrder>10000</LoadOrder>
+        <LoadOrder>20</LoadOrder>
 	    <LuaContext>CivicsTree</LuaContext>
 		<LuaReplace>UI/CivicsTree_REU.lua</LuaReplace>
 	  </Properties>
 	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_TechTree">
 	  <Properties>
-        <LoadOrder>10000</LoadOrder>
+        <LoadOrder>20</LoadOrder>
 	    <LuaContext>TechTree</LuaContext>
 		<LuaReplace>UI/TechTree_REU.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
+	<ReplaceUIScript id="REU_ReplaceUI_CivicsChooser">
+	  <Properties>
+        <LoadOrder>20</LoadOrder>
+	    <LuaContext>CivicsChooser</LuaContext>
+		<LuaReplace>UI/CivicsChooser_REU.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
+	<ReplaceUIScript id="REU_ReplaceUI_ResearchChooser">
+	  <Properties>
+        <LoadOrder>20</LoadOrder>
+	    <LuaContext>ResearchChooser</LuaContext>
+		<LuaReplace>UI/ResearchChooser_REU.lua</LuaReplace>
 	  </Properties>
 	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_BoostUnlockedPopup">
@@ -91,37 +115,69 @@
 	<!-- Rise & Fall -->
     <ImportFiles id="REU_Imports_XP1" criteria="Expansion1">
       <Properties>
-        <LoadOrder>10001</LoadOrder>
+        <LoadOrder>21</LoadOrder>
       </Properties>
+	  <File>XP1/WorldTracker_REU_XP1.lua</File>
       <File>XP1/TechTree_REU_XP1.lua</File>
+      <File>XP1/ResearchChooser_REU_XP1.lua</File>
     </ImportFiles>
+	<ReplaceUIScript id="REU_ReplaceUI_WorldTracker_XP1" criteria="Expansion1">
+	  <Properties>
+        <LoadOrder>21</LoadOrder>
+	    <LuaContext>WorldTracker</LuaContext>
+		<LuaReplace>XP1/WorldTracker_REU_XP1.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_TechTree_XP1" criteria="Expansion1">
 	  <Properties>
-        <LoadOrder>10001</LoadOrder>
+        <LoadOrder>21</LoadOrder>
 	    <LuaContext>TechTree</LuaContext>
 		<LuaReplace>XP1/TechTree_REU_XP1.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
+	<ReplaceUIScript id="REU_ReplaceUI_ResearchChooser_XP1" criteria="Expansion1">
+	  <Properties>
+        <LoadOrder>21</LoadOrder>
+	    <LuaContext>ResearchChooser</LuaContext>
+		<LuaReplace>XP1/ResearchChooser_REU_XP1.lua</LuaReplace>
 	  </Properties>
 	</ReplaceUIScript>
     <!-- Gathering Storm -->
     <ImportFiles id="REU_Imports_XP2" criteria="Expansion2">
       <Properties>
-        <LoadOrder>10002</LoadOrder>
+        <LoadOrder>22</LoadOrder>
       </Properties>
+	  <File>XP1/WorldTracker_REU_XP1.lua</File>
+      <File>XP1/ResearchChooser_REU_XP1.lua</File>
       <File>XP2/CivicsTree_REU_XP2.lua</File>
       <File>XP2/TechTree_REU_XP2.lua</File>
       <File>XP2/CivilopediaPage_Civic.lua</File>
       <File>XP2/CivilopediaPage_Technology.lua</File>
     </ImportFiles>
+	<ReplaceUIScript id="REU_ReplaceUI_WorldTracker_XP2" criteria="Expansion2">
+	  <Properties>
+        <LoadOrder>22</LoadOrder>
+	    <LuaContext>WorldTracker</LuaContext>
+		<LuaReplace>XP1/WorldTracker_REU_XP1.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
+	<ReplaceUIScript id="REU_ReplaceUI_ResearchChooser_XP2" criteria="Expansion2">
+	  <Properties>
+        <LoadOrder>22</LoadOrder>
+	    <LuaContext>ResearchChooser</LuaContext>
+		<LuaReplace>XP1/ResearchChooser_REU_XP1.lua</LuaReplace>
+	  </Properties>
+	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_CivicsTree_XP2" criteria="Expansion2">
 	  <Properties>
-        <LoadOrder>10002</LoadOrder>
+        <LoadOrder>22</LoadOrder>
 	    <LuaContext>CivicsTree</LuaContext>
 		<LuaReplace>XP2/CivicsTree_REU_XP2.lua</LuaReplace>
 	  </Properties>
 	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_TechTree_XP2" criteria="Expansion2">
 	  <Properties>
-        <LoadOrder>10002</LoadOrder>
+        <LoadOrder>22</LoadOrder>
 	    <LuaContext>TechTree</LuaContext>
 		<LuaReplace>XP2/TechTree_REU_XP2.lua</LuaReplace>
 	  </Properties>
@@ -140,15 +196,20 @@
     <File>Utils/RealEurekas_InGameExp.lua</File>
     <File>Utils/RealEurekas_InGameExp.xml</File>
 	<File>Utils/RealEurekasCanShow.lua</File>
+	<File>UI/RealizeMeterAndBoosts_REU.lua</File>
 	<!-- vanilla -->
-    <File>UI/TechAndCivicSupport.lua</File>
+    <File>UI/WorldTracker_REU.lua</File>
     <File>UI/CivicsTree_REU.lua</File>
     <File>UI/TechTree_REU.lua</File>
+    <File>UI/CivicsChooser_REU.lua</File>
+    <File>UI/ResearchChooser_REU.lua</File>
     <File>UI/CivilopediaPage_Civic.lua</File>
     <File>UI/CivilopediaPage_Technology.lua</File>
     <File>UI/BoostUnlockedPopup_REU.lua</File>
 	<!-- Rise & Fall -->
+    <File>XP1/WorldTracker_REU_XP1.lua</File>
     <File>XP1/TechTree_REU_XP1.lua</File>
+    <File>XP1/ResearchChooser_REU_XP1.lua</File>
 	<!-- Gathering Storm -->
     <File>XP2/CivicsTree_REU_XP2.lua</File>
     <File>XP2/TechTree_REU_XP2.lua</File>
