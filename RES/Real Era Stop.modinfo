@@ -2,38 +2,13 @@
 <Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="2">
   <Properties>
     <Name>Real Era Stop</Name>
-    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Version 2.3</Description>
+    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.4.</Description>
     <Teaser>Allows to stop research at specific Era (from Classical to Atomic)</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
+    <AffectsSavedGames>1</AffectsSavedGames>
+	<CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
-  <ActionCriteria>
-    <Criteria id="GAME_LAST_ERA_CLASSICAL">
-      <ConfigurationValueMatches>
-        <GameLastEra>CLA</GameLastEra>
-      </ConfigurationValueMatches>
-    </Criteria>
-    <Criteria id="GAME_LAST_ERA_MEDIEVAL">
-      <ConfigurationValueMatches>
-        <GameLastEra>MED</GameLastEra>
-      </ConfigurationValueMatches>
-    </Criteria>
-    <Criteria id="GAME_LAST_ERA_RENAISSANCE">
-      <ConfigurationValueMatches>
-        <GameLastEra>REN</GameLastEra>
-      </ConfigurationValueMatches>
-    </Criteria>
-    <Criteria id="GAME_LAST_ERA_INDUSTRIAL">
-      <ConfigurationValueMatches>
-        <GameLastEra>IND</GameLastEra>
-      </ConfigurationValueMatches>
-    </Criteria>
-    <Criteria id="GameLastEraRen">
-      <ConfigurationValueMatches>
-        <GameLastEra>REN</GameLastEra>
-      </ConfigurationValueMatches>
-    </Criteria>
-  </ActionCriteria>
   <FrontEndActions>
     <UpdateDatabase id="RealEraStop_Database_Config">
       <File>Config/RealEraStop_Config.xml</File>

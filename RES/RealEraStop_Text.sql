@@ -6,14 +6,6 @@
 -- March 28th, 2017: Version 2.1, Update for Spring 2017 Patch (game's Future Civic will be used)
 --------------------------------------------------------------
 
-/* Version 2.1
--- Civic: Future Society
-INSERT INTO LocalizedText (Tag, Language, Text)
-VALUES ('LOC_CIVIC_FUTURE_SOCIETY_NAME', 'en_US', 'Future Society');
-INSERT INTO LocalizedText (Tag, Language, Text)
-VALUES ('LOC_CIVIC_FUTURE_SOCIETY_DESCRIPTION', 'en_US', 'Can be completed multiple times, increasing your points towards the Score Victory.');
-*/
-
 -- Version 2, custom Game Speeds
 
 INSERT INTO LocalizedText (Tag, Language, Text)
