@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Tech Tree</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.2.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.3.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
@@ -27,6 +27,7 @@
 			</Properties>
             <Items>
 				<File>Icons/BTTUnlockFrames.dds</File>
+				<File>RealEurekasCanShowBTT.lua</File>
 				<!-- core files, will be included in wrappers -->
 				<File>TechAndCivicSupport_BTT.lua</File>
 				<!-- wrappers -->
@@ -99,6 +100,7 @@
 		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>Icons/BTT_Icons.xml</File>
 		<File>Icons/BTTUnlockFrames.dds</File>
+		<File>RealEurekasCanShowBTT.lua</File> <!-- file from Real Eurekas mod -->
 		<!-- Vanilla files -->
 		<File>TechTree_BTT.lua</File>
 		<File>CivicsTree_BTT.lua</File>
