@@ -2,8 +2,8 @@
 <Mod id="4a8aa030-69f0-4677-9a43-2772088ea041" version="1">
   <Properties>
     <Name>Real Eurekas</Name>
-    <Description>Make Eurekas a real surprise! There are 250+ new ones and they are randomly assigned to Techs and Civics. Each game will look different from now on.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.0.</Description>
-    <Teaser>Make Eurekas a real surprise! 250+ new ones, randomly assigned to Techs and Civics.</Teaser>
+    <Description>Make Eurekas a real surprise! There are 350+ new ones and they are randomly assigned to Techs and Civics. Each game will look different from now on.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.0.</Description>
+    <Teaser>Make Eurekas a real surprise! 350+ new ones, randomly assigned to Techs and Civics.</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
 	<CompatibleVersions>2.0</CompatibleVersions>
