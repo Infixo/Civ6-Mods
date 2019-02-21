@@ -2,33 +2,56 @@
 <Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="2">
   <Properties>
     <Name>Real Era Stop</Name>
-    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.4.</Description>
+    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.5.</Description>
     <Teaser>Allows to stop research at specific Era (from Classical to Atomic)</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
     <AffectsSavedGames>1</AffectsSavedGames>
 	<CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
+  <ActionCriteria>
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+    <Criteria id="Expansion2">
+      <GameCoreInUse>Expansion2</GameCoreInUse>
+    </Criteria>
+  </ActionCriteria>
   <FrontEndActions>
-    <UpdateDatabase id="RealEraStop_Database_Config">
+    <UpdateDatabase id="RES_Config_Database">
       <File>Config/RealEraStop_Config.xml</File>
     </UpdateDatabase>
-    <UpdateText id="RealEraStop_Text_Config">
+    <UpdateText id="RES_Config_Text">
       <File>Config/RealEraStop_Config_Text.sql</File>
     </UpdateText>
   </FrontEndActions>
   <InGameActions>
-    <UpdateDatabase id="RealEraStop_Database">
+    <UpdateDatabase id="RES_Database">
       <Properties>
-        <LoadOrder>999999</LoadOrder>
+        <LoadOrder>999990</LoadOrder>
       </Properties>
       <File>RealEraStop.sql</File>
       <File>RealEraStop_Dates.sql</File>
     </UpdateDatabase>
-    <UpdateText id="RealEraStop_Text">
+    <UpdateDatabase id="RES_Database_XP1" criteria="Expansion1">
+      <Properties>
+        <LoadOrder>999991</LoadOrder>
+      </Properties>
+      <File>RealEraStop_XP1.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RES_Database_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>999992</LoadOrder>
+      </Properties>
+      <File>RealEraStop_XP2.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RES_Database_Delete">
       <Properties>
         <LoadOrder>999999</LoadOrder>
       </Properties>
+      <File>RealEraStop_Delete.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RES_Text">
       <File>RealEraStop_Text.sql</File>
     </UpdateText>
   </InGameActions>
@@ -36,6 +59,9 @@
     <File>Config/RealEraStop_Config.xml</File>
     <File>Config/RealEraStop_Config_Text.sql</File>
     <File>RealEraStop.sql</File>
+    <File>RealEraStop_XP1.sql</File>
+    <File>RealEraStop_XP2.sql</File>
+    <File>RealEraStop_Delete.sql</File>
     <File>RealEraStop_Dates.sql</File>
     <File>RealEraStop_Text.sql</File>
   </Files>
