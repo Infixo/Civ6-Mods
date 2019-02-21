@@ -30,6 +30,8 @@
 --		Fix for Industrial Zone Projects when Classical Era is last
 -- 		Fix for Collosal Heads instead of Goody Huts when Classical is last - must NOT remove Lumber Mills since the MapUtilities.lua uses RowId as Index of the Goody Hut,
 --			so there must not be any empty spaces; it will be moved to Engineering in that case
+-- April 17, 2017: Version 2.3
+--		Proper handling of some Great People bonuses that depend on Era (Eurekas for specifc or random boosts mostly, unit granting)
 --------------------------------------------------------------
 
 --------------------------------------------------------------
@@ -282,6 +284,59 @@ WHERE TechnologyType = 'TECH_CARTOGRAPHY' AND ModifierId = 'CARTOGRAPHY_GRANT_OC
 UPDATE Improvements SET PrereqTech = 'TECH_ENGINEERING'
 WHERE ImprovementType = 'IMPROVEMENT_LUMBER_MILL' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '2');
 
+
+--------------------------------------------------------------
+-- GREAT PEOPLE, Version 2.3
+-- This section updates Great People bonuses so they will not become invalid because an Era is removed
+-- Basically 3 groups: eurekas for specific techs, eurekas for random techs and creating a unit
+--------------------------------------------------------------
+
+CREATE TABLE RESModifierArgumentsUpdate (
+	LastEra		TEXT NOT NULL,
+    ModifierId  TEXT NOT NULL,
+    Name        TEXT NOT NULL,
+    NewValue    TEXT NOT NULL,
+    PRIMARY KEY (LastEra, ModifierId, Name),
+    FOREIGN KEY (ModifierId) REFERENCES Modifiers (ModifierId) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+INSERT INTO RESModifierArgumentsUpdate (LastEra, ModifierId, Name, NewValue)
+VALUES
+	-- MODIFIER_PLAYER_GRANT_SPECIFIC_TECH_BOOST
+	('3', 'GREATPERSON_PRINTINGTECHBOOST',  'TechType', 'TECH_EDUCATION'),  -- TECH_PRINTING, Bi Sheng
+	('5', 'GREATPERSON_COMPUTERSTECHBOOST', 'TechType', 'TECH_ECONOMICS'),  -- TECH_COMPUTERS, Ada Lovelace
+	('5', 'GREATPERSON_CHEMISTRYTECHBOOST', 'TechType', 'TECH_SCIENTIFIC_THEORY'),  -- TECH_CHEMISTRY, Dmitri Mendeleev
+	('6', 'GREATPERSON_COMPUTERSTECHBOOST', 'TechType', 'TECH_ELECTRICITY'),  -- TECH_COMPUTERS, Ada Lovelace and Alan Turing
+	('6', 'GREATPERSON_ROCKETRYTECHBOOST',  'TechType', 'TECH_CHEMISTRY'),  -- TECH_ROCKETRY, Robert Goddard
+	-- MODIFIER_PLAYER_GRANT_RANDOM_TECHNOLOGY_BOOST_BY_ERA
+	('2', 'GREATPERSON_3CLASSICALMEDIEVALTECHBOOSTS', 	'EndEraType', 'ERA_CLASSICAL'),  -- ERA_MEDIEVAL, ARYABHATA
+	('2', 'GREATPERSON_1MEDIEVALTECHBOOST', 			'StartEraType', 'ERA_CLASSICAL'),  -- ERA_MEDIEVAL, EUCLID
+	('2', 'GREATPERSON_1MEDIEVALTECHBOOST', 			'EndEraType', 'ERA_CLASSICAL'),  -- ERA_MEDIEVAL, EUCLID
+	('3', 'GREATPERSON_1MEDIEVALRENAISSANCETECHBOOST', 	'EndEraType', 'ERA_MEDIEVAL'),  -- ERA_RENAISSANCE, ABU_AL_QASIM_AL_ZAHRAWI
+	('3', 'GREATPERSON_1MEDIEVALRENAISSANCECIVICBOOST', 'EndEraType', 'ERA_MEDIEVAL'),  -- ERA_RENAISSANCE, OMAR_KHAYYAM
+	('3', 'GREATPERSON_2MEDIEVALRENAISSANCETECHBOOSTS', 'EndEraType', 'ERA_MEDIEVAL'),  -- ERA_RENAISSANCE, OMAR_KHAYYAM
+	('4', 'GREATPERSON_3RENAISSANCEINDUSTRIALTECHBOOSTS', 'EndEraType', 'ERA_RENAISSANCE'),  -- ERA_INDUSTRIAL, EMILIE_DU_CHATELET
+	('4', 'GREATPERSON_1MODERNTECHBOOST', 				'StartEraType', 'ERA_RENAISSANCE'),  -- ERA_MODERN, LEONARDO_DA_VINCI
+	('4', 'GREATPERSON_1MODERNTECHBOOST', 				'EndEraType', 'ERA_RENAISSANCE'),  -- ERA_MODERN, LEONARDO_DA_VINCI
+	('5', 'GREATPERSON_2INDUSTRIALMODERNTECHBOOSTS', 	'EndEraType', 'ERA_INDUSTRIAL'),  -- ERA_MODERN
+	('6', 'GREATPERSON_1MODERNATOMICTECHBOOST', 		'EndEraType', 'ERA_MODERN'),  -- ERA_ATOMIC
+	('6', 'BUILDING_BROADWAY_RANDOMCIVICBOOST', 		'StartEraType', 'ERA_MODERN'),  -- ERA_ATOMIC
+	('6', 'BUILDING_BROADWAY_RANDOMCIVICBOOST', 		'EndEraType', 'ERA_MODERN'),  -- ERA_ATOMIC
+	('7', 'GREATPERSON_3ATOMICINFORMATIONTECHBOOSTS',	'EndEraType', 'ERA_ATOMIC'),  -- ERA_INFORMATION
+	('7', 'GREATPERSON_GRACE_HOPPER_ACTIVE', 			'EndEraType', 'ERA_ATOMIC'),  -- ERA_INFORMATION
+	-- MODIFIER_PLAYER_UNIT_GRANT_UNIT_WITH_EXPERIENCE
+	('4', 'GREATPERSON_YI_SUN_SIN_ACTIVE', 'UnitType', 'UNIT_CARAVEL');  -- UNIT_IRONCLAD, YI_SUN_SIN
+
+-- r2u = rows to update, temporary view
+WITH r2u (rowident, newvalue) AS (
+	SELECT ModifierId||Name, NewValue
+	FROM RESModifierArgumentsUpdate
+	WHERE LastEra = (SELECT Value FROM GlobalParameters WHERE Name = 'RES_MAX_ERA')
+)
+UPDATE ModifierArguments
+SET Value = (SELECT newvalue FROM r2u WHERE ModifierArguments.ModifierId||ModifierArguments.Name = rowident)
+WHERE ModifierId||Name IN (SELECT rowident FROM r2u);
+	
 --------------------------------------------------------------
 -- REMOVALS
 -- If any of these should be available in the game, it should be connected to an earlier tech/civic
