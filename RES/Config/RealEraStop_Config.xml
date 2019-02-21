@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RealEraStop_Config -->
+<!-- Author: Infixo -->
+<!-- Mar 26th, 2017: Created, custom Game Speeds -->
+<GameData>
+	<GameSpeeds>
+		<Row GameSpeedType="GAMESPEED_LASTERACLA" Name="LOC_GAMESPEED_LASTERACLA_NAME" Description="LOC_GAMESPEED_LASTERACLA_HELP" SortIndex="120" />
+		<Row GameSpeedType="GAMESPEED_LASTERAMED" Name="LOC_GAMESPEED_LASTERAMED_NAME" Description="LOC_GAMESPEED_LASTERAMED_HELP" SortIndex="130" />
+		<Row GameSpeedType="GAMESPEED_LASTERAREN" Name="LOC_GAMESPEED_LASTERAREN_NAME" Description="LOC_GAMESPEED_LASTERAREN_HELP" SortIndex="140" />
+		<Row GameSpeedType="GAMESPEED_LASTERAIND" Name="LOC_GAMESPEED_LASTERAIND_NAME" Description="LOC_GAMESPEED_LASTERAIND_HELP" SortIndex="150" />
+		<Row GameSpeedType="GAMESPEED_LASTERAMOD" Name="LOC_GAMESPEED_LASTERAMOD_NAME" Description="LOC_GAMESPEED_LASTERAMOD_HELP" SortIndex="160" />
+		<Row GameSpeedType="GAMESPEED_LASTERAATO" Name="LOC_GAMESPEED_LASTERAATO_NAME" Description="LOC_GAMESPEED_LASTERAATO_HELP" SortIndex="170" />
+	</GameSpeeds>
+</GameData>

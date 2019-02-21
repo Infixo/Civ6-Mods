@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="2">
+  <Properties>
+    <Name>Real Era Stop</Name>
+    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Introduces a new repeatable civic - Future Society - to finish an Era in a similar way as tech tree does.[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.</Description>
+    <Teaser>Allows to stop research at specific Era (from Classical to Atomic)</Teaser>
+    <Authors>Infixo</Authors>
+    <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
+  </Properties>
+  <FrontEndActions>
+    <UpdateDatabase id="RealEraStop_Database_Config">
+      <File>Config/RealEraStop_Config.xml</File>
+    </UpdateDatabase>
+    <UpdateText id="RealEraStop_Text_Config">
+      <File>Config/RealEraStop_Config_Text.sql</File>
+    </UpdateText>
+  </FrontEndActions>
+  <InGameActions>
+    <UpdateDatabase id="RealEraStop_Database">
+      <Properties>
+        <LoadOrder>999999</LoadOrder>
+      </Properties>
+      <File>RealEraStop.sql</File>
+      <File>RealEraStop_Dates.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RealEraStop_Text">
+      <Properties>
+        <LoadOrder>999999</LoadOrder>
+      </Properties>
+      <File>RealEraStop_Text.sql</File>
+    </UpdateText>
+  </InGameActions>
+  <Files>
+    <File>Config/RealEraStop_Config.xml</File>
+    <File>Config/RealEraStop_Config_Text.sql</File>
+    <File>RealEraStop.sql</File>
+    <File>RealEraStop_Dates.sql</File>
+    <File>RealEraStop_Text.sql</File>
+  </Files>
+</Mod>
