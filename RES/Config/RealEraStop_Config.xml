@@ -11,4 +11,17 @@
 		<Row GameSpeedType="GAMESPEED_LASTERAMOD" Name="LOC_GAMESPEED_LASTERAMOD_NAME" Description="LOC_GAMESPEED_LASTERAMOD_HELP" SortIndex="160" />
 		<Row GameSpeedType="GAMESPEED_LASTERAATO" Name="LOC_GAMESPEED_LASTERAATO_NAME" Description="LOC_GAMESPEED_LASTERAATO_HELP" SortIndex="170" />
 	</GameSpeeds>
+	<!--
+	<Parameters>
+		<Row ParameterId="GameLastEra" Name="LOC_GAME_LAST_ERA_NAME" Description="LOC_GAME_LAST_ERA_DESC" Domain="LastEraAvailable" DefaultValue="3" ConfigurationGroup="Game" ConfigurationId="GameLastEra" GroupId="GameOptions" SortIndex="62" />
+    </Parameters>
+    <DomainValues>
+        <Row Domain="LastEraAvailable" Value="CLA" SortIndex="20" Name="Classical" 	Description="The game will last till Classical Era" />
+        <Row Domain="LastEraAvailable" Value="MED" SortIndex="30" Name="Medieval" 	Description="The game will last till Medieval Era" />
+        <Row Domain="LastEraAvailable" Value="REN" SortIndex="40" Name="Renaissance"Description="The game will last till Renaissance Era" />
+        <Row Domain="LastEraAvailable" Value="IND" SortIndex="50" Name="Industrial" Description="The game will last till Industrial Era" />
+        <Row Domain="LastEraAvailable" Value="MOD" SortIndex="60" Name="Modern" 	Description="The game will last till Modern Era" />
+        <Row Domain="LastEraAvailable" Value="ATO" SortIndex="70" Name="Atomic" 	Description="The game will last till Atomic Era" />
+    </DomainValues>
+	-->
 </GameData>

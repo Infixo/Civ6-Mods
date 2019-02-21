@@ -6,6 +6,7 @@
 
 INSERT INTO LocalizedText (Tag, Language, Text)
 VALUES
+	('LOC_GAME_LAST_ERA_NAME', 'en_US', 'Last Era'),
 	('LOC_GAMESPEED_LASTERACLA_NAME', 'en_US', 'Last Era Classical'),
 	('LOC_GAMESPEED_LASTERAMED_NAME', 'en_US', 'Last Era Medieval'),
 	('LOC_GAMESPEED_LASTERAREN_NAME', 'en_US', 'Last Era Renaissance'),
@@ -15,6 +16,7 @@ VALUES
 	
 INSERT INTO LocalizedText (Tag, Language, Text)
 VALUES
+	('LOC_GAME_LAST_ERA_DESC', 'en_US', 'Allows to choose the last Era in the game'),
 	('LOC_GAMESPEED_LASTERACLA_HELP', 'en_US', 'Last Era Classical (up to 600 AD)'),
 	('LOC_GAMESPEED_LASTERAMED_HELP', 'en_US', 'Last Era Medieval (up to 1400 AD'),
 	('LOC_GAMESPEED_LASTERAREN_HELP', 'en_US', 'Last Era Renaissance (up to 1745 AD)'),
