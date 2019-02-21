@@ -13,7 +13,7 @@
 	</GameSpeeds>
 	<!--
 	<Parameters>
-		<Row ParameterId="GameLastEra" Name="LOC_GAME_LAST_ERA_NAME" Description="LOC_GAME_LAST_ERA_DESC" Domain="LastEraAvailable" DefaultValue="3" ConfigurationGroup="Game" ConfigurationId="GameLastEra" GroupId="GameOptions" SortIndex="62" />
+		<Row ParameterId="GameLastEra" ConfigurationId="GameLastEra" Name="LOC_GAME_LAST_ERA_NAME" Description="LOC_GAME_LAST_ERA_DESC" Domain="LastEraAvailable" DefaultValue="3" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="62" />
     </Parameters>
     <DomainValues>
         <Row Domain="LastEraAvailable" Value="CLA" SortIndex="20" Name="Classical" 	Description="The game will last till Classical Era" />

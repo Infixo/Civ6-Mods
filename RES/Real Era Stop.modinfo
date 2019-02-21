@@ -2,7 +2,7 @@
 <Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="2">
   <Properties>
     <Name>Real Era Stop</Name>
-    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Introduces a new repeatable civic - Future Society - to finish an Era in a similar way as tech tree does.[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.</Description>
+    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.</Description>
     <Teaser>Allows to stop research at specific Era (from Classical to Atomic)</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
@@ -28,6 +28,11 @@
         <GameLastEra>IND</GameLastEra>
       </ConfigurationValueMatches>
     </Criteria>
+    <Criteria id="GameLastEraRen">
+      <ConfigurationValueMatches>
+        <GameLastEra>REN</GameLastEra>
+      </ConfigurationValueMatches>
+    </Criteria>
   </ActionCriteria>
   <FrontEndActions>
     <UpdateDatabase id="RealEraStop_Database_Config">
@@ -51,18 +56,6 @@
       </Properties>
       <File>RealEraStop_Text.sql</File>
     </UpdateText>
-    <UpdateDatabase id="RealEraStop_Database_Classical">
-      <Criteria>GAME_LAST_ERA_CLASSICAL</Criteria>
-      <File>Config/RealEraStop_Config_Classical.sql</File>
-    </UpdateDatabase>
-    <UpdateDatabase id="RealEraStop_Database_Medival">
-      <Criteria>GAME_LAST_ERA_MEDIEVAL</Criteria>
-      <File>Config/RealEraStop_Config_Medieval.sql</File>
-    </UpdateDatabase>
-    <UpdateDatabase id="RealEraStop_Database_Renaissance">
-      <Criteria>GAME_LAST_ERA_RENAISSANCE</Criteria>
-      <File>Config/RealEraStop_Config_Renaissance.sql</File>
-    </UpdateDatabase>
   </InGameActions>
   <Files>
     <File>Config/RealEraStop_Config.xml</File>

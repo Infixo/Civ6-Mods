@@ -26,6 +26,10 @@
 --						'allows all land units to embark' to CELESTIAL_NAVIGATION (from SHIPBUILDING)
 -- March 28, 2017: Version 2.1
 --      Update for Spring 2017 Patch (game's Future Civic will be used)
+-- April 17, 2017: Version 2.2
+--		Fix for Industrial Zone Projects when Classical Era is last
+-- 		Fix for Collosal Heads instead of Goody Huts when Classical is last - must NOT remove Lumber Mills since the MapUtilities.lua uses RowId as Index of the Goody Hut,
+--			so there must not be any empty spaces; it will be moved to Engineering in that case
 --------------------------------------------------------------
 
 --------------------------------------------------------------
@@ -274,6 +278,9 @@ WHERE TechnologyType = 'TECH_SHIPBUILDING' AND EXISTS (SELECT * FROM GlobalParam
 UPDATE TechnologyModifiers SET TechnologyType = 'TECH_SHIPBUILDING'
 WHERE TechnologyType = 'TECH_CARTOGRAPHY' AND ModifierId = 'CARTOGRAPHY_GRANT_OCEAN_NAVIGATION' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '2');
 
+-- GOODY HUT FIX (Version 2.2) for Classical
+UPDATE Improvements SET PrereqTech = 'TECH_ENGINEERING'
+WHERE ImprovementType = 'IMPROVEMENT_LUMBER_MILL' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '2');
 
 --------------------------------------------------------------
 -- REMOVALS
@@ -286,6 +293,12 @@ DELETE FROM Buildings WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
 DELETE FROM Buildings WHERE PrereqDistrict IN (SELECT DistrictType FROM Districts WHERE PrereqTech IN (SELECT TechnologyType FROM RESTechnologies));
 DELETE FROM Buildings WHERE PrereqDistrict IN (SELECT DistrictType FROM Districts WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics));
 
+DELETE FROM Projects WHERE PrereqTech IN (SELECT TechnologyType FROM RESTechnologies);
+DELETE FROM Projects WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
+-- Version 2.2 fix for Industrial Zone Projects
+DELETE FROM Projects WHERE PrereqDistrict IN (SELECT DistrictType FROM Districts WHERE PrereqTech IN (SELECT TechnologyType FROM RESTechnologies));
+DELETE FROM Projects WHERE PrereqDistrict IN (SELECT DistrictType FROM Districts WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics));
+
 DELETE FROM Districts WHERE PrereqTech IN (SELECT TechnologyType FROM RESTechnologies);
 DELETE FROM Districts WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
 
@@ -295,9 +308,6 @@ DELETE FROM Improvements WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
 DELETE FROM Policies WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
 
 DELETE FROM Governments WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
-
-DELETE FROM Projects WHERE PrereqTech IN (SELECT TechnologyType FROM RESTechnologies);
-DELETE FROM Projects WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
 
 DELETE FROM Resources WHERE PrereqTech IN (SELECT TechnologyType FROM RESTechnologies);
 DELETE FROM Resources WHERE PrereqCivic IN (SELECT CivicType FROM RESCivics);
