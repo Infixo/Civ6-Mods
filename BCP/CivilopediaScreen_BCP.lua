@@ -207,8 +207,9 @@ end
 
 -- add internal info and modifiers to all pages at once
 function ShowPage(page)
-	--print("...showing page layout", page.PageLayoutId);
-	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	local template = _PageLayoutScriptTemplates[page.PageLayoutId];
+	--print("...showing page layout", page.PageLayoutId, "with", template);
+	BCP_BASE_PageLayouts[template](page); -- call original function
 	ShowModifiers(page);
 	ShowInternalPageInfo(page);
 end
