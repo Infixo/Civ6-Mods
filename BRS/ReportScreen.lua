@@ -155,7 +155,7 @@ end
 -- ===========================================================================
 function toPlusMinusString( value:number )
 	if value == 0 then return "0"; end
-	return Locale.ToNumber(math.floor((value*10)+0.5)/10, "+#,###.#;-#,###.#");  
+	return Locale.ToNumber(math.floor((value*10)+0.5)/10, "+#,###.#;-#,###.#");
 end
 
 function toPlusMinusNoneString( value:number )
@@ -1660,18 +1660,21 @@ function ViewYieldsPage()
 		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 
 		-- Current Production
-		local kCurrentProduction:table = kCityData.ProductionQueue[1];
+		local kCurrentProduction:table = kCityData.ProductionQueue[1]; -- this returns a table from GetCurrentProductionInfoOfCity() modified a bit in CitySupport.lua
 		pCityInstance.CurrentProduction:SetHide( kCurrentProduction == nil );
 		if kCurrentProduction ~= nil then
-			local tooltip:string = Locale.Lookup(kCurrentProduction.Name);
+			local tooltip:string = kCurrentProduction.Name.." [ICON_Turn]"..tostring(kCurrentProduction.Turns)..string.format(" (%d%%)", kCurrentProduction.PercentComplete*100);
 			if kCurrentProduction.Description ~= nil then
 				tooltip = tooltip .. "[NEWLINE]" .. Locale.Lookup(kCurrentProduction.Description);
 			end
-			pCityInstance.CurrentProduction:SetToolTipString( tooltip )
+			pCityInstance.CurrentProduction:SetToolTipString( tooltip );
 
-			if kCurrentProduction.Icon then
+			if kCurrentProduction.Icons ~= nil then
 				pCityInstance.CityBannerBackground:SetHide( false );
-				pCityInstance.CurrentProduction:SetIcon( kCurrentProduction.Icon );
+				-- Gathering Storm - there are 5 icons returned now
+				for _,iconName in ipairs(kCurrentProduction.Icons) do
+					if iconName ~= nil and pCityInstance.CurrentProduction:TrySetIcon(iconName) then break; end
+				end
 				pCityInstance.CityProductionMeter:SetPercent( kCurrentProduction.PercentComplete );
 				pCityInstance.CityProductionNextTurn:SetPercent( kCurrentProduction.PercentCompleteNextTurn );			
 				pCityInstance.ProductionBorder:SetHide( kCurrentProduction.Type == ProductionType.DISTRICT );
@@ -3192,8 +3195,10 @@ function group_military( unit, unitInstance, group, parent, type )
 			UnitManager.RequestCommand( unit, UnitCommandTypes.UPGRADE );
 		end )
 		-- tooltip
-		local upgradeUnitName = GameInfo.Units[tResults[UnitOperationResults.UNIT_TYPE]].Name;
-		local toolTipString:string = Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_INFO", Locale.Lookup(upgradeUnitName), unit:GetUpgradeCost() ); -- Upgrade to {1_Unit}: {2_Amount} [ICON_Gold]Gold
+		local upgradeToUnit:table = GameInfo.Units[tResults[UnitOperationResults.UNIT_TYPE]];
+		local toolTipString:string = Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_INFO", Locale.Lookup(upgradeToUnit.Name), unit:GetUpgradeCost() ); -- Upgrade to {1_Unit}: {2_Amount} [ICON_Gold]Gold
+		-- Gathering Storm
+		if bIsGatheringStorm then toolTipString = toolTipString .. AddUpgradeResourceCost(unit, upgradeToUnit); end
 		if tResults[UnitOperationResults.FAILURE_REASONS] then
 			-- Add the reason(s) to the tool tip
 			for i,v in ipairs(tResults[UnitOperationResults.FAILURE_REASONS]) do
@@ -3203,6 +3208,35 @@ function group_military( unit, unitInstance, group, parent, type )
 		unitInstance.Upgrade:SetToolTipString( toolTipString );
 	end
 	
+end
+
+-- modified function from UnitPanel_Expansion2.lua, adds also maintenance resource cost
+function AddUpgradeResourceCost( pUnit:table, upgradeToUnitInfo:table )
+	local toolTipString:string = "";
+	-- requires
+	local upgradeResource, upgradeResourceCost = pUnit:GetUpgradeResourceCost();
+	if (upgradeResource ~= nil and upgradeResource >= 0) then
+		local resourceName:string = Locale.Lookup(GameInfo.Resources[upgradeResource].Name);
+		local resourceIcon = "[ICON_" .. GameInfo.Resources[upgradeResource].ResourceType .. "]";
+		toolTipString = toolTipString .. "[NEWLINE]" .. Locale.Lookup("LOC_UNITOPERATION_UPGRADE_RESOURCE_INFO", upgradeResourceCost, resourceIcon, resourceName); -- Requires: {1_Amount} {2_ResourceIcon} {3_ResourceName}
+	end
+	-- maintenance info
+	local unitInfoXP2:table = GameInfo.Units_XP2[ upgradeToUnitInfo.UnitType ];
+	if unitInfoXP2 ~= nil then
+		-- upgrade to unit name
+		toolTipString = toolTipString.."[NEWLINE]"..Locale.Lookup(upgradeToUnitInfo.Name).." [ICON_GoingTo]";
+		-- gold
+		if upgradeToUnitInfo.Maintenance > 0 then
+			toolTipString = toolTipString.." "..Locale.Lookup("LOC_TOOLTIP_BASE_COST", upgradeToUnitInfo.Maintenance, "[ICON_Gold]", "LOC_YIELD_GOLD_NAME"); -- Base Cost: {1_Amount} {2_YieldIcon} {3_YieldName}
+		end
+		-- resources
+		if unitInfoXP2.ResourceMaintenanceType ~= nil then
+			local resourceName:string = Locale.Lookup(GameInfo.Resources[ unitInfoXP2.ResourceMaintenanceType ].Name);
+			local resourceIcon = "[ICON_" .. GameInfo.Resources[unitInfoXP2.ResourceMaintenanceType].ResourceType .. "]";
+			toolTipString = toolTipString.." "..Locale.Lookup("LOC_UNIT_PRODUCTION_FUEL_CONSUMPTION", unitInfoXP2.ResourceMaintenanceAmount, resourceIcon, resourceName); -- Consumes: {1_Amount} {2_Icon} {3_FuelName} per turn.
+		end
+	end
+	return toolTipString;
 end
 
 function group_civilian( unit, unitInstance, group, parent, type )
@@ -3304,7 +3338,7 @@ function group_trader( unit, unitInstance, group, parent, type )
 
 				for j, yieldInfo in pairs( route.OriginYields ) do
 					if yieldInfo.Amount > 0 then
-						yields = yields .. GameInfo.Yields[yieldInfo.YieldIndex].IconString .. "+" .. yieldInfo.Amount
+						yields = yields .. GameInfo.Yields[yieldInfo.YieldIndex].IconString .. toPlusMinusString(yieldInfo.Amount);
 						unitInstance.UnitYields:SetText( yields )
 						unit.yields = yields
 					end
