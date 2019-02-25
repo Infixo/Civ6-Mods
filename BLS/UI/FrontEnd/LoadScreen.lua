@@ -350,6 +350,7 @@ function OnLoadScreenContentReady()
 			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
 		end
 
+		-- Unique Units
 		for _, item in ipairs(uniqueUnits) do
 			--print( "uu:", item.TraitType, item.Name, item.Description, Locale.Lookup(item.Description));	--debug
 			local instance:table = {};
@@ -359,25 +360,51 @@ function OnLoadScreenContentReady()
 			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
 			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name ));
 			instance.Header:SetText( headerText );
-			instance.Description:SetText(Locale.Lookup(item.Description));
-			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
+			local itemInfo:table = GameInfo.Units[item.Type];
+			local sDescription:string = string.format("[ICON_GoingTo] %s", Locale.Lookup("LOC_TECH_KEY_AVAILABLE"));
+			if itemInfo.PrereqCivic ~= nil then sDescription = GetUnlockCivicDesc(itemInfo.PrereqCivic); end
+			if itemInfo.PrereqTech  ~= nil then sDescription = GetUnlockTechDesc(itemInfo.PrereqTech); end
+			sDescription = sDescription.."[NEWLINE]"..Locale.Lookup(item.Description);
+			instance.Description:SetText(sDescription);
+			instance.Icon:SetToolTipString(sDescription); -- add description also as tool tip to icon
 		end
 
+		-- Unique Buildings/Districts/Improvements
 		for _, item in ipairs(uniqueBuildings) do
 			--print( "ub:", item.TraitType, item.Name, item.Description, Locale.Lookup(item.Description));	--debug
 			local instance:table = {};
 			ContextPtr:BuildInstanceForControl("IconInfoInstance", instance, Controls.FeaturesStack );
-			instance.Icon:SetSizeVal(38,38);
+			--instance.Icon:SetSizeVal(38,38);
 			iconAtlas = "ICON_"..item.Type;
 			instance.Icon:SetIcon(iconAtlas);
 			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
 			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name ));
 			instance.Header:SetText( headerText );
-			instance.Description:SetText(Locale.Lookup(item.Description));
-			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
+			local itemInfo:table = GameInfo.Buildings[item.Type];
+			if itemInfo == nil then itemInfo = GameInfo.Districts[item.Type]; end
+			if itemInfo == nil then itemInfo = GameInfo.Improvements[item.Type]; end
+			local sDescription:string = string.format("[ICON_GoingTo] %s", Locale.Lookup("LOC_TECH_KEY_AVAILABLE"));
+			if itemInfo.PrereqCivic ~= nil then sDescription = GetUnlockCivicDesc(itemInfo.PrereqCivic); end
+			if itemInfo.PrereqTech  ~= nil then sDescription = GetUnlockTechDesc(itemInfo.PrereqTech); end
+			sDescription = sDescription.."[NEWLINE]"..Locale.Lookup(item.Description);
+			instance.Description:SetText(sDescription);
+			instance.Icon:SetToolTipString(sDescription); -- add description also as tool tip to icon
 		end
 	end
 end
+
+function GetUnlockCivicDesc(sCivic:string)
+	local civicInfo:table = GameInfo.Civics[sCivic];
+	local eraInfo:table = GameInfo.Eras[civicInfo.EraType];
+	return string.format("[ICON_GoingTo] %s (%s)", Locale.Lookup(civicInfo.Name), Locale.Lookup(eraInfo.Name));
+end
+
+function GetUnlockTechDesc(sTech:string)
+	local techInfo:table = GameInfo.Technologies[sTech];
+	local eraInfo:table = GameInfo.Eras[techInfo.EraType];
+	return string.format("[ICON_GoingTo] %s (%s)", Locale.Lookup(techInfo.Name), Locale.Lookup(eraInfo.Name));
+end
+
 
 -- ===========================================================================
 -- ENGINE Event

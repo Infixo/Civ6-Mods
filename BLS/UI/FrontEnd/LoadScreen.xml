@@ -75,7 +75,7 @@
 
 	<Instance			Name="IconInfoInstance">
 		<Container	ID="Top"				 Size="230,auto">
-			<Image		ID="Icon"					Size="32,32" Offset="-5,-2" />
+			<Image		ID="Icon"					Size="38,38" Offset="-5,-2" />
 			<Stack		ID="TextStack"		Offset="36,0"		StackGrowth="Bottom" StackPadding="4">
 				<Label	ID="Header"				WrapWidth="460" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$"/>
 				<Label	ID="Description"	WrapWidth="460"	Style="DawnText"	String="$Description$" />
