@@ -1,4 +1,4 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.0");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.2");
 -- ===========================================================================
 --	Great People Popup
 -- ===========================================================================
@@ -391,16 +391,21 @@ function ViewCurrent( data:table )
       -- Let's sort the table first by points total, then by the lower player id (to push yours toward the top of the list for readability)
       local recruitTable: table = {};
       for i, kPlayerPoints in ipairs(data.PointsByClass[kPerson.ClassID]) do
+	    kPlayerPoints.TurnsLeft = Round((kPerson.RecruitCost-kPlayerPoints.PointsTotal)/kPlayerPoints.PointsPerTurn + 0.5,0);
         table.insert(recruitTable,kPlayerPoints);
       end
       table.sort(recruitTable,
-        function (a,b)
-          if(a.PointsTotal == b.PointsTotal) then
-            return a.PlayerID < b.PlayerID;
-          else
-            return a.PointsTotal > b.PointsTotal;
-          end
-          end);
+        function (a,b) -- sort first by TurnsLeft, then by PointsTotal, then by PlayerID
+		  if a.TurnsLeft == b.TurnsLeft then
+            if a.PointsTotal == b.PointsTotal then
+              return a.PlayerID < b.PlayerID;
+            else
+              return a.PointsTotal > b.PointsTotal;
+            end
+		  else
+		    return a.TurnsLeft < b.TurnsLeft;
+		  end
+        end);
 
       for i, kPlayerPoints in ipairs(recruitTable) do
         local canEarnAnotherOfThisClass:boolean = true;
@@ -417,7 +422,7 @@ function ViewCurrent( data:table )
 
           -- CQUI Points Per Turn and Turns Left -- Add the turn icon into the text
           --recruitTurnsLeft gets +0.5 so that's rounded up
-          local recruitTurnsLeft = Round((kPerson.RecruitCost-kPlayerPoints.PointsTotal)/kPlayerPoints.PointsPerTurn + 0.5,0);
+          local recruitTurnsLeft = kPlayerPoints.TurnsLeft; --Round((kPerson.RecruitCost-kPlayerPoints.PointsTotal)/kPlayerPoints.PointsPerTurn + 0.5,0);
           if(recruitTurnsLeft == math.huge) then recruitTurnsLeft = "∞"; end
           recruitInst.CQUI_PerTurn:SetText( "(+" .. tostring(Round(kPlayerPoints.PointsPerTurn,1)) .. ") " .. tostring(recruitTurnsLeft) .. "[ICON_Turn]");
 
