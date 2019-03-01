@@ -43,13 +43,20 @@
       <Properties>
         <LoadOrder>999992</LoadOrder>
       </Properties>
+      <File>RealEraStop_XP1.sql</File>
       <File>RealEraStop_XP2.sql</File>
     </UpdateDatabase>
     <UpdateDatabase id="RES_Database_Delete">
       <Properties>
-        <LoadOrder>999999</LoadOrder>
+        <LoadOrder>999998</LoadOrder>
       </Properties>
       <File>RealEraStop_Delete.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RES_Database_Delete_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>999999</LoadOrder>
+      </Properties>
+      <File>RealEraStop_Delete_XP2.sql</File>
     </UpdateDatabase>
     <UpdateText id="RES_Text">
       <File>RealEraStop_Text.sql</File>
@@ -62,6 +69,7 @@
     <File>RealEraStop_XP1.sql</File>
     <File>RealEraStop_XP2.sql</File>
     <File>RealEraStop_Delete.sql</File>
+    <File>RealEraStop_Delete_XP2.sql</File>
     <File>RealEraStop_Dates.sql</File>
     <File>RealEraStop_Text.sql</File>
   </Files>
