@@ -1974,5 +1974,149 @@
 			</Stack>
 		</Container>
 	</Instance>
-	
+
+
+
+	<!-- CITY STATUS 2 - GATHERING STORM -->
+
+	<Instance					Name="CityStatus2HeaderInstance">
+		<Container			ID="Top"														Offset="8,0" Size="1123,22">
+			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack	StackGrowth="Right" >
+				<Box																													Size="2,parent"	Color="46,70,95,255" />
+				<Container		Size="55,parent">
+					<GridButton		ID="CityStatusButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_STATUS" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="24,parent">
+					<GridButton		ID="CityIconButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Religion]" ToolTip="LOC_HUD_CITY_RELIGION" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="180,parent">
+					<GridButton		ID="CityNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<GridButton		ID="CityPopulationButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_POPULATION" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="CityPowerConsumedButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Power][ICON_VOTE_DOWN]" ToolTip="LOC_POWER_PANEL_CONSUMED_POWER" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="CityPowerProducedButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Power][ICON_VOTE_UP]" ToolTip="LOC_POWER_PANEL_GENERATED_POWER" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="CityCO2FootprintButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_CO2" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<GridButton		ID="CityNuclearPowerPlantButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_UNITNAME_ROCK_BAND_PREFIX_NUCLEAR" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<GridButton		ID="CityRiverFloodDamButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_DISTRICT_DAM_NAME" ToolTip="t.b.d / t.b.d." />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<GridButton		ID="CityFloodBarrierButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_BARRIER" ToolTip="LOC_BUILDING_FLOOD_BARRIER_NAME" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="CityBarrierMaintenanceButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Gold]" ToolTip="LOC_BRS_BARRIER_MAINTENANCE" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="60,parent">
+					<GridButton		ID="CityRailroadsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_ROUTE_RAILROAD_NAME" />
+					</GridButton>
+				</Container>
+				<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,255" />
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance					Name="CityStatus2EntryInstance">
+		<Container	ID="Top"									Offset="8,0" Size="1123,28">
+			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack	StackGrowth="Right" >
+				<Box											Size="2,parent"	Color="46,70,95,255" />
+				<Container		Size="55,parent">
+					<Label			ID="Status"	Offset="0,5"	Style="ReportValueText"		String="$Status$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container 		Size="24,parent">
+					<Image 			ID="Icon" 	Anchor="C,C" Size="22,22" Texture="Religions22"/>
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="180,parent">
+					<GridButton		ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
+						<Label		ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
+					</GridButton>
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<Label			ID="Population"				Style="ReportValueText"		String="$Population$" />
+				</Container>
+				<Box 											Size="2,parent" Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<Label			ID="PowerConsumed"			Style="ReportValueText"		String="$PowerConsumed$" />
+				</Container>
+				<Box 											Size="2,parent" Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<Label			ID="PowerProduced"			Style="ReportValueText"		String="$PowerProduced$" />
+				</Container>
+				<Box 											Size="2,parent" Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<Label			ID="CO2Footprint"			Style="ReportValueText"		String="$CO2Footprint$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<Label			ID="NuclearPowerPlant"		Style="ReportValueText"		String="$NuclearPP$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<Label			ID="RiverFloodDam"			Style="ReportValueText"		String="$RiverFloodDam$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<Label			ID="FloodBarrier"			Style="ReportValueText"		String="$FloodBarrier$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<Label			ID="BarrierMaintenance"		Style="ReportValueText"		String="$BarrierMaintenance$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="60,parent">
+					<Label			ID="Railroads"				Style="ReportValueText"		String="$Railroads$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,255" />
+			</Stack>
+		</Container>
+	</Instance>
+
 </Context>

@@ -8,7 +8,7 @@
 
 	<!-- Tab names -->
 	<Row Tag="LOC_HUD_REPORTS_TAB_DEALS"> <!-- LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS -->
-		<Text>Current Deals</Text>
+		<Text>Deals</Text>
 	</Row>
 	<Row Tag="LOC_HUD_REPORTS_TAB_UNITS"> <!-- LOC_PEDIA_UNITS_TITLE -->
 		<Text>Units</Text>
@@ -17,7 +17,13 @@
 		<Text>Policies</Text>
 	</Row>
 	<Row Tag="LOC_HUD_REPORTS_TAB_MINORS"> <!-- LOC_CITY_STATES_CITY_STATES -->
-		<Text>City States</Text>
+		<Text>Minors</Text>
+	</Row>
+	<Row Tag="LOC_HUD_REPORTS_TAB_CITIES"> <!-- Gathering Storm -->
+		<Text>Cities</Text>
+	</Row>
+	<Row Tag="LOC_HUD_REPORTS_TAB_CITIES2"> <!-- Gathering Storm -->
+		<Text>[ICON_Power]Cities</Text>
 	</Row>
 	<!-- Column headers -->
 	<Row Tag="LOC_BRS_HEADER_BUILDINGNAME">
@@ -170,6 +176,16 @@
     <Row Tag="LOC_BRS_HAVING_DISTRICTS"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
 		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
 		<Text>From having {1_Num : plural 1?{1} district; other?{1} districts;}</Text>
+    </Row>
+	<!-- Gathering Storm -->
+    <Row Tag="LOC_BRS_CO2">
+		<Text>CO2</Text>
+    </Row>
+    <Row Tag="LOC_BRS_BARRIER">
+		<Text>Barrier</Text>
+    </Row>
+    <Row Tag="LOC_BRS_BARRIER_MAINTENANCE">
+		<Text>Flood Barrier maintenance cost</Text>
     </Row>
 
 </BaseGameText>

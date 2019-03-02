@@ -800,6 +800,9 @@ function GetData()
 		
 		data.TotalFoodSurplusToolTip = table.concat(tGrowthTT, "[NEWLINE]");
 
+		-- Gathering Storm
+		if bIsGatheringStorm then AppendXP2CityData(data); end
+	
 	end -- for Cities:Members
 
 	kCityTotalData.Expenses[YieldTypes.GOLD] = pTreasury:GetTotalMaintenance();
@@ -814,7 +817,6 @@ function GetData()
 	kCityTotalData.Treasury[YieldTypes.GOLD]		= Round( pTreasury:GetGoldBalance(), 0 );
 	kCityTotalData.Treasury[YieldTypes.SCIENCE]		= Round( pScience:GetScienceYield(), 0 );
 	kCityTotalData.Treasury["TOURISM"]				= Round( kCityTotalData.Income["TOURISM"], 0 );
-
 
 	-- Units (TODO: Group units by promotion class and determine total maintenance cost)
 	--print("FUN GetData() - units");
@@ -1381,6 +1383,70 @@ function GetUnitMaintenance(pUnit:table)
 	if unitMilitaryFormation == MilitaryFormationTypes.CORPS_FORMATION then return math.ceil(iUnitMaintenance * 1.5); end -- it is 150% rounded UP
 	if unitMilitaryFormation == MilitaryFormationTypes.ARMY_FORMATION  then return iUnitMaintenance * 2; end -- it is 200%
 	                                                                        return iUnitMaintenance;
+end
+
+
+-- ===========================================================================
+-- Gathering Storm City Data
+function AppendXP2CityData(data:table) -- data is the main city data record filled with tons of info
+
+	-- status column
+	data.IsNuclearRisk = false; -- could be more levels here?
+	data.IsUnderpowered = false; -- check City Panel
+	
+	-- icon? - seems not needed
+	-- city name & population
+
+	-- new column: num buildings
+	--data.NumBuildings = -1; -- sort by
+	--data.NumBuildingsTT = "not yet implemented";
+	
+	-- Power consumption [number]
+	data.PowerConsumed = -1; -- sort by
+	data.PowerConsumedTT = "not yet implemented"; -- list of buildings
+	-- Buildings_XP2.RequiredPower
+	
+	-- Power produced [number]
+	-- buildings, improvements. Details in tooltip.
+	data.PowerProduced = -1; -- sort by
+	data.PowerProducedTT = "not yet implemented"; -- list of buildings
+	-- Resource_Consumption.PowerProvided
+	-- improvements???
+
+	-- Cities: CO2 footprint calculation? Is it possible?
+	--"Resource_Consumption" table has a field "CO2perkWh" INTEGER NOT NULL DEFAULT 0,
+	--GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index );
+	data.CO2Footprint = -1; -- must be calculated manually; sort by
+	data.CO2FootprintTT = "not yet implemented";
+
+	-- Cities: Nuclear power plant [nuclear icon / num turns]
+	-- timer? Disaster risk? Maybe show how many turns since last recomm project?
+	-- Check what is possible actually - Recommision Project displays some info
+	data.HasNuclearPowerPlant = false;
+	data.NumTurnsSinceRecommission = -1; -- sort by
+	data.NuclearPowerPlantTT = "not yet implemented";
+
+	-- Dam district & Flood info [num tiles / dam icon]
+	-- Flood indicator, dam yes/no.
+	data.NumRiverFloodTiles = -1; -- sort by
+	data.HasDamDistrict = false;
+	data.RiverFloodDamTT = "not yet implemented";
+
+	-- Info about Flood barrier. [num tiles / flood barrier icon]
+	-- Num of endangered tiles, per level. Tooltip - info about features (improvement, district, etc).
+	data.NumFloodTiles = -1; -- sort by
+	data.HasFloodBarrier = false;
+	data.FloodTilesTT = "not yet implemented"
+
+	-- Flood Barrier Per turn maintenance. [number]
+	-- probably manually calculated?
+	data.FloodBarrierMaintenance = -1; -- sort by
+	data.FloodBarrierMaintenanceTT = "not yet implemented";
+	
+	-- Cities: Number of RR tiles in the city borders [number]
+	-- this seems easy - iterate through tiles and use Plot:GetRouteType()
+	data.NumRailroads = -1; -- sort by
+	data.NumRailroadsTT = "not yet implemented";
 end
 
 -- ===========================================================================
@@ -2547,13 +2613,15 @@ function city_fields( kCityData, pCityInstance )
 	--]]
 	
 	-- GrowthRateStatus
-	local sGRStatus:string = "LOC_HUD_REPORTS_STATUS_NORMAL";
+	local sGRStatus:string = "0%";
+	local sGRStatusTT:string = "LOC_HUD_REPORTS_STATUS_NORMAL";
 	local sGRColor:string = "";
-	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED"; sGRColor = "[COLOR:200,62,52,255]"; -- Error
-	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:200,146,52,255]"; -- WarningMajor "LOC_HUD_REPORTS_STATUS_SLOWED"; 
-	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:206,199,91,255]"; -- WarningMinor "LOC_HUD_REPORTS_STATUS_SLOWED";
-	elseif kCityData.HappinessGrowthModifier > 0                  then sGRStatus = "LOC_HUD_REPORTS_STATUS_ACCELERATED"; sGRColor = "[COLOR_White]"; end -- GS addition
+	if     kCityData.HousingMultiplier == 0 or kCityData.Occupied then sGRStatus = "LOC_HUD_REPORTS_STATUS_HALTED";                        sGRColor = "[COLOR:200,62,52,255]";  sGRStatusTT = sGRStatus; -- Error
+	elseif kCityData.HousingMultiplier <= 0.25                    then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:200,146,52,255]"; sGRStatusTT = "LOC_HUD_REPORTS_STATUS_SLOWED";
+	elseif kCityData.HousingMultiplier <= 0.5                     then sGRStatus = tostring(100 * kCityData.HousingMultiplier - 100).."%"; sGRColor = "[COLOR:206,199,91,255]"; sGRStatusTT = "LOC_HUD_REPORTS_STATUS_SLOWED";
+	elseif kCityData.HappinessGrowthModifier > 0                  then sGRStatus = "+"..tostring(kCityData.HappinessGrowthModifier).."%";  sGRColor = "[COLOR_White]";          sGRStatusTT = "LOC_HUD_REPORTS_STATUS_ACCELERATED"; end -- GS addition
 	pCityInstance.GrowthRateStatus:SetText( sGRColor..Locale.Lookup(sGRStatus)..(sGRColor~="" and "[ENDCOLOR]" or "") );
+	pCityInstance.GrowthRateStatus:SetToolTipString(Locale.Lookup(sGRStatusTT));
 	--if sGRColor ~= "" then pCityInstance.GrowthRateStatus:SetColorByName( sGRColor ); end
 
 	-- Amenities
@@ -3964,6 +4032,204 @@ end
 
 
 -- ===========================================================================
+-- CITIES 2 PAGE - GATHERING STORM
+-- ===========================================================================
+
+-- helpers
+
+function city2_fields( kCityData, pCityInstance )
+
+	local function ColorRed(text) return("[COLOR_Red]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
+	local function ColorGreen(text) return("[COLOR_Green]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
+	local function ColorWhite(text) return("[COLOR_White]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
+	local sText:string = "";
+	local tToolTip:table = {};
+
+	-- Status
+	if kCityData.IsNuclearRisk then
+		sText = sText.."[ICON_RESOURCE_URANIUM]"; table.insert(tToolTip, Locale.Lookup("LOC_EMERGENCY_NAME_NUCLEAR"));
+	end
+	if kCityData.IsUnderpowered then
+		sText = sText.."[ICON_PowerInsufficient]"; table.insert(tToolTip, Locale.Lookup("LOC_POWER_STATUS_UNPOWERED_NAME"));
+	end
+	pCityInstance.Status:SetText( sText );
+	pCityInstance.Status:SetToolTipString( table.concat(tToolTip, "[NEWLINE]") );
+	
+	-- Icon
+	-- not used
+	
+	-- CityName
+	TruncateStringWithTooltip(pCityInstance.CityName, 178, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
+	
+	-- Population
+	pCityInstance.Population:SetText(ColorWhite(kCityData.Population));
+	pCityInstance.Population:SetToolTipString("");
+
+	-- Power consumption [number]
+	pCityInstance.PowerConsumed:SetText(tostring(kCityData.PowerConsumed));
+	pCityInstance.PowerConsumed:SetToolTipString(kCityData.PowerConsumedTT);
+
+	-- Power produced [number]
+	pCityInstance.PowerProduced:SetText(tostring(kCityData.PowerProduced));
+	pCityInstance.PowerProduced:SetToolTipString(kCityData.PowerProducedTT);
+
+	-- CO2 footprint [number]
+	pCityInstance.CO2Footprint:SetText(tostring(kCityData.CO2Footprint));
+	pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
+
+	-- Nuclear power plant [nuclear icon / num turns]
+	if kCityData.HasNuclearPowerPlant then sText = "[ICON_RESOURCE_URANIUM] / "..tostring(kCityData.NumTurnsSinceRecommission);
+	else                                   sText = "[ICON_Bullet]"; end
+	pCityInstance.NuclearPowerPlant:SetText(sText);
+	pCityInstance.NuclearPowerPlant:SetToolTipString(kCityData.NuclearPowerPlantTT);
+
+	-- Dam district & Flood info [num tiles / dam icon]
+	sText = tostring(kCityData.NumRiverFloodTiles);
+	if kCityData.HasDamDistrict then sText = sText.." [ICON_Checkmark]"; end
+	pCityInstance.RiverFloodDam:SetText(sText);
+	pCityInstance.RiverFloodDam:SetToolTipString(kCityData.RiverFloodDamTT);
+
+	-- Info about Flood barrier. [num tiles / flood barrier icon]
+	sText = tostring(kCityData.NumFloodTiles);
+	if kCityData.HasFloodBarrier then sText = sText.." [ICON_Checkmark]"; end
+	pCityInstance.FloodBarrier:SetText(sText);
+	pCityInstance.FloodBarrier:SetToolTipString(kCityData.FloodTilesTT);
+
+	-- Flood Barrier Per turn maintenance [number]
+	pCityInstance.BarrierMaintenance:SetText(tostring(kCityData.FloodBarrierMaintenance));
+	pCityInstance.BarrierMaintenance:SetToolTipString(kCityData.FloodBarrierMaintenanceTT);
+	
+	-- Number of RR tiles in the city borders [number]
+	pCityInstance.Railroads:SetText(tostring(kCityData.NumRailroads));
+	pCityInstance.Railroads:SetToolTipString(kCityData.NumRailroadsTT);
+	
+end
+
+function sort_cities2( type, instance )
+
+	local i = 0
+	
+	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( instance.Descend, type, t, a, b ); end ) do
+		i = i + 1
+		local cityInstance = instance.Children[i]
+
+		city_fields( kCityData, cityInstance )
+
+		-- go to the city after clicking
+		cityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		cityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
+	end
+	
+end
+
+function city2_sortFunction( descend, type, t, a, b )
+
+	local aCity = 0
+	local bCity = 0
+	
+	if type == "name" then
+		aCity = Locale.Lookup( t[a].CityName );
+		bCity = Locale.Lookup( t[b].CityName );
+	elseif type == "pop" then
+		aCity = t[a].Population;
+		bCity = t[b].Population;
+	elseif type == "status" then
+		if t[a].IsUnderpowered then aCity = aCity + 20; else aCity = aCity + 10; end
+		if t[b].IsUnderpowered then bCity = bCity + 20; else bCity = bCity + 10; end
+		if t[a].IsNuclearRisk then aCity = aCity + 20; else aCity = aCity + 10; end
+		if t[b].IsNuclearRisk then bCity = bCity + 20; else bCity = bCity + 10; end
+	elseif type == "icon" then
+		-- not used
+	elseif type == "powcon" then
+		aCity = t[a].PowerConsumed;
+		bCity = t[b].PowerConsumed;
+	elseif type == "pwprod" then
+		aCity = t[a].PowerProduced;
+		bCity = t[b].PowerProduced;
+	elseif type == "co2" then
+		aCity = t[a].CO2Footprint;
+		bCity = t[b].CO2Footprint;
+	elseif type == "nuclear" then
+		aCity = t[a].NumTurnsSinceRecommission;
+		bCity = t[b].NumTurnsSinceRecommission;
+	elseif type == "dam" then
+		aCity = t[a].NumRiverFloodTiles;
+		bCity = t[b].NumRiverFloodTiles;
+	elseif type == "barrier" then
+		aCity = t[a].NumFloodTiles;
+		bCity = t[b].NumFloodTiles;
+	elseif type == "fbcost" then
+		aCity = t[a].FloodBarrierMaintenance;
+		bCity = t[b].FloodBarrierMaintenance;
+	elseif type == "numrr" then
+		aCity = t[a].NumRailroads;
+		bCity = t[b].NumRailroads;
+	else
+		-- nothing to do here
+	end
+	
+	if descend then return bCity > aCity; else return bCity < aCity; end
+	
+end
+
+function ViewCities2Page()	
+
+	ResetTabForNewPageContent();
+
+	local instance:table = m_simpleIM:GetInstance();
+	instance.Top:DestroyAllChildren();
+	
+	instance.Children = {}
+	instance.Descend = true
+	
+	local pHeaderInstance:table = {};
+	ContextPtr:BuildInstanceForControl( "CityStatus2HeaderInstance", pHeaderInstance, instance.Top );
+	
+	pHeaderInstance.CityStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "status", instance ) end )
+	pHeaderInstance.CityIconButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "icon", instance ) end )
+	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "name", instance ) end )
+	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pop", instance ) end )
+	pHeaderInstance.CityPowerConsumedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "powcon", instance ) end )
+	pHeaderInstance.CityPowerProducedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pwprod", instance ) end )
+	pHeaderInstance.CityCO2FootprintButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "co2", instance ) end )
+	pHeaderInstance.CityNuclearPowerPlantButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "nuclear", instance ) end )
+	pHeaderInstance.CityRiverFloodDamButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "dam", instance ) end )
+	pHeaderInstance.CityFloodBarrierButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "barrier", instance ) end )
+	pHeaderInstance.CityBarrierMaintenanceButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "fbcost", instance ) end );
+	pHeaderInstance.CityRailroadsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "numrr", instance ) end );
+
+	-- 
+	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
+
+		local pCityInstance:table = {}
+
+		ContextPtr:BuildInstanceForControl( "CityStatus2EntryInstance", pCityInstance, instance.Top );
+		table.insert( instance.Children, pCityInstance );
+		
+		city2_fields( kCityData, pCityInstance );
+
+		-- go to the city after clicking
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
+
+	end
+
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	Controls.CollapseAll:SetHide( true );
+	Controls.BottomYieldTotals:SetHide( true );
+	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 8;
+end
+
+
+
+-- ===========================================================================
 --
 -- ===========================================================================
 function AddTabSection( name:string, populateCallback:ifunction )
@@ -4043,11 +4309,12 @@ function LateInitialize()
 	--AddTabSection( "Test2",								ViewTestPage );			--TRONSTER debug
 	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_CITY_STATUS",	ViewCityStatusPage );
+	AddTabSection( "LOC_HUD_REPORTS_TAB_CITIES",	ViewCityStatusPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_MINORS",		ViewMinorPage );
+	if bIsGatheringStorm then AddTabSection( "LOC_HUD_REPORTS_TAB_CITIES2", ViewCities2Page ); end
 
 	m_tabs.SameSizedTabs(20);
 	m_tabs.CenterAlignTabs(-10);
@@ -4212,6 +4479,7 @@ function Initialize()
 	LuaEvents.ReportsList_OpenUnits.Add(      function() Open(5); end );
 	LuaEvents.ReportsList_OpenPolicies.Add(   function() Open(6); end );
 	LuaEvents.ReportsList_OpenMinors.Add(     function() Open(7); end );
+	if bIsGatheringStorm then LuaEvents.ReportsList_OpenCities2.Add( function() Open(8); end ); end
 	
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
 	Events.InputActionTriggered.Add( OnInputActionTriggered );
