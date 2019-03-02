@@ -52,6 +52,7 @@
 			<File>Text/BetterReportScreen_Text_de_DE.xml</File>
 			<File>Text/BetterReportScreen_Text_es_ES.xml</File>
 			<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
+			<File>Text/BetterReportScreen_Text_it_IT.xml</File>
 			<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
 			<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
 			<File>Text/BetterReportScreen_Text_pl_PL.xml</File>
@@ -115,6 +116,7 @@
 		<File>Text/BetterReportScreen_Text_de_DE.xml</File>
 		<File>Text/BetterReportScreen_Text_es_ES.xml</File>
 		<File>Text/BetterReportScreen_Text_fr_FR.xml</File>
+		<File>Text/BetterReportScreen_Text_it_IT.xml</File>
 		<File>Text/BetterReportScreen_Text_ja_JP.xml</File>
 		<File>Text/BetterReportScreen_Text_ko_KR.xml</File>
 		<File>Text/BetterReportScreen_Text_pl_PL.xml</File>

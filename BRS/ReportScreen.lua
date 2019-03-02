@@ -1388,7 +1388,30 @@ end
 
 -- ===========================================================================
 -- Gathering Storm City Data
+
+local tPowerImprovements:table = {
+	IMPROVEMENT_GEOTHERMAL_PLANT   = 4, -- GEOTHERMAL_GENERATE_POWER
+	IMPROVEMENT_SOLAR_FARM         = 2, -- SOLAR_FARM_GENERATE_POWER
+	IMPROVEMENT_WIND_FARM          = 2, -- WIND_FARM_GENERATE_POWER
+	IMPROVEMENT_OFFSHORE_WIND_FARM = 2, -- OFFSHORE_WIND_FARM_GENERATE_POWER
+};
+-- fill improvements from MODIFIER_SINGLE_CITY_ADJUST_FREE_POWER modifiers
+function InitializePowerImprovements()
+end
+
+local tPowerBuildings:table = {
+	BUILDING_COAL_POWER_PLANT = 4,
+	BUILDING_FOSSIL_FUEL_POWER_PLANT = 4,
+	BUILDING_POWER_PLANT = 16,
+	BUILDING_HYDROELECTRIC_DAM = 6,
+};
+-- fill buildings from Buildings_XP2 and MODIFIER_SINGLE_CITY_ADJUST_FREE_POWER modifiers
+function InitializePowerBuildings()
+end
+
 function AppendXP2CityData(data:table) -- data is the main city data record filled with tons of info
+
+	local pCity:table = data.City;
 
 	-- status column
 	data.IsNuclearRisk = false; -- could be more levels here?
@@ -1408,10 +1431,15 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	
 	-- Power produced [number]
 	-- buildings, improvements. Details in tooltip.
-	data.PowerProduced = -1; -- sort by
-	data.PowerProducedTT = "not yet implemented"; -- list of buildings
+	data.PowerProduced = 0; -- sort by
+	data.PowerProducedTT = ""; -- list of buildings and improvements
 	-- Resource_Consumption.PowerProvided
-	-- improvements???
+	for building,power in pairs(tPowerBuildings) do
+		if GameInfo.Buildings[building] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings[building].Index ) then
+			data.PowerProduced = data.PowerProduced + power;
+			data.PowerProducedTT = data.PowerProducedTT..string.format("[NEWLINE][ICON_Power]%d %s", power, Locale.Lookup(GameInfo.Buildings[building].Name));
+		end
+	end
 
 	-- Cities: CO2 footprint calculation? Is it possible?
 	--"Resource_Consumption" table has a field "CO2perkWh" INTEGER NOT NULL DEFAULT 0,
@@ -1423,19 +1451,21 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	-- timer? Disaster risk? Maybe show how many turns since last recomm project?
 	-- Check what is possible actually - Recommision Project displays some info
 	data.HasNuclearPowerPlant = false;
+	if GameInfo.Buildings["BUILDING_POWER_PLANT"] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings["BUILDING_POWER_PLANT"].Index ) then data.HasNuclearPowerPlant = true; end
 	data.NumTurnsSinceRecommission = -1; -- sort by
 	data.NuclearPowerPlantTT = "not yet implemented";
 
 	-- Dam district & Flood info [num tiles / dam icon]
 	-- Flood indicator, dam yes/no.
-	data.NumRiverFloodTiles = -1; -- sort by
-	data.HasDamDistrict = false;
+	data.NumRiverFloodTiles = 0; -- sort by
+	data.HasDamDistrict = HasCityDistrict(data, "DISTRICT_DAM");
 	data.RiverFloodDamTT = "not yet implemented";
 
 	-- Info about Flood barrier. [num tiles / flood barrier icon]
 	-- Num of endangered tiles, per level. Tooltip - info about features (improvement, district, etc).
-	data.NumFloodTiles = -1; -- sort by
-	data.HasFloodBarrier = false;
+	data.NumFloodTiles = 0; -- sort by
+	data.HasFloodBarrier = false; 
+	if GameInfo.Buildings["BUILDING_FLOOD_BARRIER"] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings["BUILDING_FLOOD_BARRIER"].Index ) then data.HasFloodBarrier = true; end
 	data.FloodTilesTT = "not yet implemented"
 
 	-- Flood Barrier Per turn maintenance. [number]
@@ -1445,8 +1475,53 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	
 	-- Cities: Number of RR tiles in the city borders [number]
 	-- this seems easy - iterate through tiles and use Plot:GetRouteType()
-	data.NumRailroads = -1; -- sort by
+	data.NumRailroads = 0; -- sort by
 	data.NumRailroadsTT = "not yet implemented";
+	
+	-- iterate through city plots and check tiles
+	local cityPlots:table = Map.GetCityPlots():GetPurchasedPlots(pCity);
+	for _, plotID in ipairs(cityPlots) do
+		local plot:table = Map.GetPlotByIndex(plotID);
+		local plotX			: number = plot:GetX()
+		local plotY			: number = plot:GetY()
+		-- power sources from improvements
+		-- they are all done via modifiers - add later more dynamic approach
+		local eImprovementType:number = plot:GetImprovementType();
+		if eImprovementType > -1 then
+			local imprInfo:table = GameInfo.Improvements[eImprovementType];
+			if imprInfo ~= nil and tPowerImprovements[imprInfo.ImprovementType] ~= nil then
+				data.PowerProduced = data.PowerProduced + tPowerImprovements[imprInfo.ImprovementType];
+				data.PowerProducedTT = data.PowerProducedTT..string.format("[NEWLINE][ICON_Power]%d %s", tPowerImprovements[imprInfo.ImprovementType], Locale.Lookup(imprInfo.Name));
+			end
+		end
+		-- tiles that can be flooded by a river LOC_FLOOD_WARNING_ICON_TOOLTIP
+		if RiverManager.CanBeFlooded(plot) then
+			data.NumRiverFloodTiles = data.NumRiverFloodTiles + 1;
+		end
+		-- tiles that can be submerged
+		local eCoastalLowland:number = TerrainManager.GetCoastalLowlandType(plot);
+		if eCoastalLowland ~= -1 then
+			--data.Flooded = TerrainManager.IsFlooded(plot);
+			--data.Submerged = TerrainManager.IsSubmerged(plot);
+			data.NumFloodTiles = data.NumFloodTiles + 1;
+		end
+				--[[
+				if not TerrainManager.IsProtected(kPlot) then
+				-- Determine if we need to show a coastal flood warning
+				local eCoastalLowlandType:number = TerrainManager.GetCoastalLowlandType(kPlot);
+				if eCoastalLowlandType > -1 then
+					local typeRow:table = GameInfo.CoastalLowlands[eCoastalLowlandType];
+					if typeRow then
+						local icon:string = "ICON_ENVIRONMENTAL_EFFECTS_" .. typeRow.CoastalLowlandType;
+						pInstance = GetWarningInstanceAt(pInstance, plotID, icon, typeRow.Description);
+					end
+				end
+				--]]
+		-- railroads
+		local eRoute:number = plot:GetRouteType()
+		if eRoute ~= -1 and GameInfo.Routes[eRoute] ~= nil and GameInfo.Routes[eRoute].RouteType == "ROUTE_RAILROAD" then data.NumRailroads = data.NumRailroads + 1; end
+	end
+	
 end
 
 -- ===========================================================================
@@ -4113,7 +4188,7 @@ function sort_cities2( type, instance )
 		i = i + 1
 		local cityInstance = instance.Children[i]
 
-		city_fields( kCityData, cityInstance )
+		city2_fields( kCityData, cityInstance )
 
 		-- go to the city after clicking
 		cityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
