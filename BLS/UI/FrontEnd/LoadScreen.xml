@@ -16,29 +16,33 @@
 					</Container>
 				</Container>
 
-				<Image						ID="Banner"						Anchor="C,C" Offset="-300,0"	Size="560,987"				Texture="Controls_BannerWideTint" Alpha="0.8" >
-          <Grid				    ID="BannerShadow"			Anchor="C,C"  	SliceCorner="6,6" Size="610,parent" SliceSize="16,16"	  SliceTextureSize="28,28"	      Texture="Controls_DropShadow5"  />
+				<Image						ID="Banner"						Anchor="C,C" Offset="-220,0"	Size="600,987"				Texture="Controls_BannerWideTint" Alpha="0.8" >
+					<Grid				    ID="BannerShadow"			Anchor="C,C"  	SliceCorner="6,6" Size="610,parent" SliceSize="16,16"	  SliceTextureSize="28,28"	      Texture="Controls_DropShadow5"  />
 					<Image																															Size="parent,parent" 	Texture="Loading_Map" Alpha="0.8"/>
 					<Image					ID="BannerBarLeft"		Anchor="L,C" Offset="5,0"			Size="5,987"					Texture="Controls_BannerWideTint" TextureOffset="5,0" Color="255,255,255,50" />
 					<Image					ID="BannerBarRight"		Anchor="R,C" Offset="5,0"			Size="5,987"					Texture="Controls_BannerWideTint" TextureOffset="5,0" Color="255,255,255,50" />
 					<Image																Anchor="C,C"									Size="parent,parent"	Texture="Controls_Gradient" Color="0,0,0,100"/>
 					<Image																Anchor="C,C"									Size="parent,parent"	Texture="Controls_Gradient" Color="0,0,0,255"/>
-					<Container														Anchor="C,C"									Size="parent,800">
-						<Image				ID="LogoContainer"		Anchor="C,C"									Size="256,256"				Texture="CircleBacking256" Alpha="0.4" >
-							<Image			ID="Logo"							Anchor="C,C"									Size="200,200"				Texture="CivSymbols200"		 Alpha="0.5" />
+					<Container														Anchor="C,C"	Offset="45,0"	Size="parent,765">
+						<Image				ID="LogoContainer"		Anchor="C,C"	Offset="-45,0"					Size="256,256"				Texture="CircleBacking256" Alpha="0.4" >
+							<Image			ID="Logo"				Anchor="C,C"									Size="200,200"				Texture="CivSymbols200"		 Alpha="0.5" />
 						</Image>
 						<Stack				ID="MainStack"				Anchor="C,T" StackGrowth="Down" StackPadding="10">
 							<!--<Line															Start="0,0"	 End="470,0"			Width="2"							Color="200,200,200,100" />-->
-							<Label			ID="CivName"					Anchor="C,T"									Style="FontFlair18"		String="$Civ" SmallCapsType="EveryWord" SmallCaps="24" />
+							<Label			ID="CivName"				Anchor="C,T"	Offset="-45,0"						Style="FontFlair18"		String="$Civ" SmallCapsType="EveryWord" SmallCaps="24" />
 							<!--<Label														Anchor="C,T"									Style="FontFlair14"		String="{LOC_LOADING_JOIN_THE_WORLD_STAGE:upper}" SmallCapsType="EveryWord" SmallCaps="20" />-->
 							<Line															Start="0,0"	 End="510,0"			Width="2"							Color="200,200,200,100" />
-							<Label			ID="EraInfo"					Anchor="L,T" Offset="10,0"		WrapWidth="500"				Style="DawnText" String="$EraInfo$"  />
-							<Label			ID="LeaderName"				Anchor="C,T" Offset="0,10"		Style="FontFlair18"		String="$LeaderName" SmallCapsType="EveryWord" SmallCaps="24" />
+							<Label			ID="EraInfo"				Anchor="L,T" Offset="10,0"		WrapWidth="500"				Style="DawnText" String="$EraInfo$"  />
+							<Label			ID="LeaderName"				Anchor="C,T" Offset="-45,10"		Style="FontFlair18"		String="$LeaderName" SmallCapsType="EveryWord" SmallCaps="24" />
 							<Line															Start="0,0"	 End="510,0"			Width="2"							Color="200,200,200,100" />
 							<Label			ID="LeaderInfo"				Anchor="L,T" Offset="10,0"		WrapWidth="500"				Style="DawnText" String="$LeaderInfo$"  />
-							<Label														Anchor="C,T" Offset="0,10"		Style="FontFlair14"		String="{LOC_LOADING_FEATURES_ABILITIES:upper}" SmallCapsType="EveryWord" SmallCaps="20" />
+							<Label										Anchor="C,T" Offset="-45,10"		Style="FontFlair14"		String="{LOC_LOADING_FEATURES_ABILITIES:upper}" SmallCapsType="EveryWord" SmallCaps="20" />
 							<Line															Start="0,0"	 End="510,0"			Width="2"							Color="200,200,200,100" />
-							<Stack			ID="FeaturesStack"		Anchor="L,T" Offset="10,0"		StackGrowth="Down" Padding="15"/>
+							<!-- 2019-03-03: scrolled listed of features -->
+							<ScrollPanel ID="FeaturesScrollPanel" Anchor="L,T" Offset="10,0" Size="parent,parent-300" Vertical="1" > <!--AutoScrollBar="1" >-->
+								<Stack			ID="FeaturesStack"		Anchor="L,T" Offset="0,5"		StackGrowth="Down" Padding="15"/>
+								<ScrollBar 								Anchor="R,T" AnchorSide="O,I"  Offset="-62,0"  Style="ScrollVerticalBarHighContrast" Size="8,parent-4"/> <!-- Style="ScrollVerticalBarHighContrast" ScrollVerticalBarAlt/> -->
+							</ScrollPanel>
 						</Stack>
 					</Container>
 
@@ -75,7 +79,7 @@
 
 	<Instance			Name="IconInfoInstance">
 		<Container	ID="Top"				 Size="230,auto">
-			<Image		ID="Icon"					Size="38,38" Offset="-5,-2" />
+			<Image		ID="Icon"					Size="38,38" Offset="-6,-5" />
 			<Stack		ID="TextStack"		Offset="36,0"		StackGrowth="Bottom" StackPadding="4">
 				<Label	ID="Header"				WrapWidth="460" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$"/>
 				<Label	ID="Description"	WrapWidth="460"	Style="DawnText"	String="$Description$" />

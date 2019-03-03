@@ -346,8 +346,9 @@ function OnLoadScreenContentReady()
 			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
 			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name )); 
 			instance.Header:SetText( headerText );
-			instance.Description:SetText( Locale.Lookup( item.Description ) );
-			instance.Icon:SetToolTipString(Locale.Lookup(item.Description)); -- add description also as tool tip to icon
+			--item.Description = string.gsub(item.Description, "[NEWLINE][NEWLINE]", "[NEWLINE]");
+			instance.Description:SetText( Locale.Lookup(item.Description) );
+			instance.Icon:SetToolTipString( Locale.Lookup(item.Description) ); -- add description also as tool tip to icon
 		end
 
 		-- Unique Units
@@ -365,6 +366,7 @@ function OnLoadScreenContentReady()
 			if itemInfo.PrereqCivic ~= nil then sDescription = GetUnlockCivicDesc(itemInfo.PrereqCivic); end
 			if itemInfo.PrereqTech  ~= nil then sDescription = GetUnlockTechDesc(itemInfo.PrereqTech); end
 			sDescription = sDescription.."[NEWLINE]"..Locale.Lookup(item.Description);
+			sDescription = string.gsub(sDescription, "%[NEWLINE%]%[NEWLINE%]", "[NEWLINE]");
 			instance.Description:SetText(sDescription);
 			instance.Icon:SetToolTipString(sDescription); -- add description also as tool tip to icon
 		end
@@ -374,7 +376,6 @@ function OnLoadScreenContentReady()
 			--print( "ub:", item.TraitType, item.Name, item.Description, Locale.Lookup(item.Description));	--debug
 			local instance:table = {};
 			ContextPtr:BuildInstanceForControl("IconInfoInstance", instance, Controls.FeaturesStack );
-			--instance.Icon:SetSizeVal(38,38);
 			iconAtlas = "ICON_"..item.Type;
 			instance.Icon:SetIcon(iconAtlas);
 			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
@@ -387,9 +388,11 @@ function OnLoadScreenContentReady()
 			if itemInfo.PrereqCivic ~= nil then sDescription = GetUnlockCivicDesc(itemInfo.PrereqCivic); end
 			if itemInfo.PrereqTech  ~= nil then sDescription = GetUnlockTechDesc(itemInfo.PrereqTech); end
 			sDescription = sDescription.."[NEWLINE]"..Locale.Lookup(item.Description);
+			sDescription = string.gsub(sDescription, "%[NEWLINE%]%[NEWLINE%]", "[NEWLINE]");
 			instance.Description:SetText(sDescription);
 			instance.Icon:SetToolTipString(sDescription); -- add description also as tool tip to icon
 		end
+
 	end
 end
 
