@@ -1400,83 +1400,179 @@ function InitializePowerImprovements()
 end
 
 local tPowerBuildings:table = {
-	BUILDING_COAL_POWER_PLANT = 4,
+	BUILDING_COAL_POWER_PLANT        = 4,
 	BUILDING_FOSSIL_FUEL_POWER_PLANT = 4,
-	BUILDING_POWER_PLANT = 16,
-	BUILDING_HYDROELECTRIC_DAM = 6,
+	BUILDING_POWER_PLANT             =16,
+	BUILDING_HYDROELECTRIC_DAM       = 6,
 };
 -- fill buildings from Buildings_XP2 and MODIFIER_SINGLE_CITY_ADJUST_FREE_POWER modifiers
 function InitializePowerBuildings()
 end
 
+-- Re: Power from CityPanelPower
+-- Consumed - these are sources that give power - here PowerProduced!
+-- Required - these are buildings that require power - here PowerConsumed!
+-- Generated - seems to be empty
+
 function AppendXP2CityData(data:table) -- data is the main city data record filled with tons of info
 
 	local pCity:table = data.City;
+	local pCityPower:table = pCity:GetPower();
 
-	-- status column
-	data.IsNuclearRisk = false; -- could be more levels here?
-	data.IsUnderpowered = false; -- check City Panel
-	
-	-- icon? - seems not needed
-	-- city name & population
+	-- Power consumption [icon required_number / consumed_number]
+	data.IsUnderpowered = false;
+	data.PowerIcon = "";
+	data.PowerRequired = 0;
+	data.PowerConsumed = 0;
+	data.PowerConsumedTT = {};
 
-	-- new column: num buildings
-	--data.NumBuildings = -1; -- sort by
-	--data.NumBuildingsTT = "not yet implemented";
+	-- Power: Status from CityPanelPower
+	local freePower:number = pCityPower:GetFreePower();
+	local temporaryPower:number = pCityPower:GetTemporaryPower();
+	local currentPower:number = freePower + temporaryPower;
+	local requiredPower:number = pCityPower:GetRequiredPower();
+	local powerStatusName:string = "LOC_POWER_STATUS_POWERED_NAME"; -- [ICON_Power] Powered
+	local powerStatusDescription:string = "LOC_POWER_STATUS_POWERED_DESCRIPTION"; -- Buildings or Projects which require [ICON_Power] Power are fully effective.
+	data.PowerIcon = "[ICON_Power]";
+	if (requiredPower == 0) then
+		powerStatusName = "LOC_POWER_STATUS_NO_POWER_NEEDED_NAME"; -- Normal
+		powerStatusDescription = "LOC_POWER_STATUS_NO_POWER_NEEDED_DESCRIPTION"; -- This city does not require any [ICON_Power] Power.
+		data.PowerIcon = "";
+	elseif (not pCityPower:IsFullyPowered()) then
+		powerStatusName = "LOC_POWER_STATUS_UNPOWERED_NAME"; -- [ICON_PowerInsufficient] Unpowered
+		powerStatusDescription = "LOC_POWER_STATUS_UNPOWERED_DESCRIPTION";
+		data.PowerIcon = "[ICON_PowerInsufficient]";
+		data.IsUnderpowered = true;
+	elseif (pCityPower:IsFullyPoweredByActiveProject()) then
+		currentPower = requiredPower;
+		data.PowerIcon = "[ICON_Power][COLOR_Green]![ENDCOLOR]"
+	end
 	
-	-- Power consumption [number]
-	data.PowerConsumed = -1; -- sort by
-	data.PowerConsumedTT = "not yet implemented"; -- list of buildings
-	-- Buildings_XP2.RequiredPower
+	table.insert(data.PowerConsumedTT, Locale.Lookup(powerStatusName));
+	table.insert(data.PowerConsumedTT, Locale.Lookup(powerStatusDescription));
+	
+	----Required from CityPanelPower.lua
+	if requiredPower > 0 then
+		table.insert(data.PowerConsumedTT, "");
+		table.insert(data.PowerConsumedTT, Locale.Lookup("LOC_POWER_PANEL_REQUIRED_POWER")); --..Round(requiredPower, 1)); -- [SIZE:16]{1_PowerAmount} [SIZE:12]Required
+	end
+	local requiredPowerBreakdown:table = pCityPower:GetRequiredPowerSources();
+	for _,innerTable in ipairs(requiredPowerBreakdown) do
+		local scoreSource, scoreValue = next(innerTable);
+		table.insert(data.PowerConsumedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", scoreValue, scoreSource));
+	end
+
+	-----Consumed from CityPanelPower.lua
+	if currentPower > 0 then
+		table.insert(data.PowerConsumedTT, "");
+		table.insert(data.PowerConsumedTT, Locale.Lookup("LOC_POWER_PANEL_CONSUMED_POWER")); --..Round(currentPower, 1)); -- [SIZE:16]{1_PowerAmount} [SIZE:12]Consumed
+	end
+	local temporaryPowerBreakdown:table = pCityPower:GetTemporaryPowerSources();
+	for _,innerTable in ipairs(temporaryPowerBreakdown) do
+		local scoreSource, scoreValue = next(innerTable);
+		table.insert(data.PowerConsumedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", scoreValue, scoreSource));
+	end
+	local freePowerBreakdown:table = pCityPower:GetFreePowerSources();
+	for _,innerTable in ipairs(freePowerBreakdown) do
+		local scoreSource, scoreValue = next(innerTable);
+		table.insert(data.PowerConsumedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", scoreValue, scoreSource));
+	end
+	
+	data.PowerRequired = requiredPower;
+	data.PowerConsumed = currentPower;
+	data.PowerConsumedTT = table.concat(data.PowerConsumedTT, "[NEWLINE]");
 	
 	-- Power produced [number]
 	-- buildings, improvements. Details in tooltip.
 	data.PowerProduced = 0; -- sort by
-	data.PowerProducedTT = ""; -- list of buildings and improvements
+	data.PowerProducedTT = {}; -- list of buildings and improvements
 	-- Resource_Consumption.PowerProvided
+	table.insert(data.PowerProducedTT, Locale.Lookup("LOC_POWER_PANEL_GENERATED_POWER")); --..Round(data.PowerProduced, 1)); -- [SIZE:16]{1_PowerAmount} [SIZE:12]Required
+	-- buildings
 	for building,power in pairs(tPowerBuildings) do
 		if GameInfo.Buildings[building] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings[building].Index ) then
 			data.PowerProduced = data.PowerProduced + power;
-			data.PowerProducedTT = data.PowerProducedTT..string.format("[NEWLINE][ICON_Power]%d %s", power, Locale.Lookup(GameInfo.Buildings[building].Name));
+			table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", power, Locale.Lookup(GameInfo.Buildings[building].Name)));
 		end
 	end
-
+	
 	-- Cities: CO2 footprint calculation? Is it possible?
 	--"Resource_Consumption" table has a field "CO2perkWh" INTEGER NOT NULL DEFAULT 0,
 	--GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index );
-	data.CO2Footprint = -1; -- must be calculated manually; sort by
-	data.CO2FootprintTT = "not yet implemented";
+	--data.CO2Footprint = -1; -- must be calculated manually; sort by
+	--data.CO2FootprintTT = "not yet implemented";
 
-	-- Cities: Nuclear power plant [nuclear icon / num turns]
-	-- timer? Disaster risk? Maybe show how many turns since last recomm project?
-	-- Check what is possible actually - Recommision Project displays some info
+	-- Cities: Nuclear power plant [risk_icon / nuclear icon / num turns]
 	data.HasNuclearPowerPlant = false;
 	if GameInfo.Buildings["BUILDING_POWER_PLANT"] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings["BUILDING_POWER_PLANT"].Index ) then data.HasNuclearPowerPlant = true; end
-	data.NumTurnsSinceRecommission = -1; -- sort by
-	data.NuclearPowerPlantTT = "not yet implemented";
+	data.ReactorAge = -1;
+	data.NuclearAccidentIcon = "[ICON_CheckmarkBlue]";
+	data.NuclearPowerPlantTT = {};
+	
+	-- code from ToolTipLoader_Expansion2
+	local kFalloutManager = Game.GetFalloutManager();
+	local iReactorAge:number = kFalloutManager:GetReactorAge(pCity);
+	if (iReactorAge ~= nil) then
+		data.ReactorAge = iReactorAge;
+		table.insert(data.NuclearPowerPlantTT, Locale.Lookup("LOC_TOOLTIP_PROJECT_REACTOR_AGE", iReactorAge));
+	end
+	local iAccidentThreshold:number = kFalloutManager:GetReactorAccidentThreshold(pCity);
+	if (iAccidentThreshold ~= nil) then
+		if (iAccidentThreshold > 0) then
+			data.NuclearAccidentIcon = "[COLOR_Red]![ENDCOLOR]";
+			table.insert(data.NuclearPowerPlantTT, Locale.Lookup("LOC_TOOLTIP_PROJECT_REACTOR_ACCIDENT1_POSSIBLE"));
+		end
+		if (iAccidentThreshold > 1) then
+			data.NuclearAccidentIcon = "[COLOR_Red]!![ENDCOLOR]";
+			table.insert(data.NuclearPowerPlantTT, Locale.Lookup("LOC_TOOLTIP_PROJECT_REACTOR_ACCIDENT2_POSSIBLE"));
+		end
+		if (iAccidentThreshold > 2) then
+			data.NuclearAccidentIcon = "[COLOR_Red]!!![ENDCOLOR]";
+			table.insert(data.NuclearPowerPlantTT, Locale.Lookup("LOC_TOOLTIP_PROJECT_REACTOR_ACCIDENT3_POSSIBLE"));
+		end
+	end
+	data.NuclearPowerPlantTT = table.concat(data.NuclearPowerPlantTT, "[NEWLINE]");
 
 	-- Dam district & Flood info [num tiles / dam icon]
 	-- Flood indicator, dam yes/no.
 	data.NumRiverFloodTiles = 0; -- sort by
 	data.HasDamDistrict = HasCityDistrict(data, "DISTRICT_DAM");
-	data.RiverFloodDamTT = "not yet implemented";
+	data.RiverFloodDamTT = {};
 
 	-- Info about Flood barrier. [num tiles / flood barrier icon]
 	-- Num of endangered tiles, per level. Tooltip - info about features (improvement, district, etc).
 	data.NumFloodTiles = 0; -- sort by
 	data.HasFloodBarrier = false; 
 	if GameInfo.Buildings["BUILDING_FLOOD_BARRIER"] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings["BUILDING_FLOOD_BARRIER"].Index ) then data.HasFloodBarrier = true; end
-	data.FloodTilesTT = "not yet implemented"
+	data.FloodTilesTT = {};
 
 	-- Flood Barrier Per turn maintenance. [number]
 	-- probably manually calculated?
-	data.FloodBarrierMaintenance = -1; -- sort by
-	data.FloodBarrierMaintenanceTT = "not yet implemented";
+	local iBaseMaintenance:number = 0;
+	if GameInfo.Buildings.BUILDING_FLOOD_BARRIER ~= nil then iBaseMaintenance = GameInfo.Buildings.BUILDING_FLOOD_BARRIER.Maintenance; end
+	data.FloodBarrierMaintenance = 0;
+	data.FloodBarrierMaintenanceTT = "";
+	
+	-- from ClimateScreen.lua
+	local m_firstSeaLevelEvent = -1;
+	local m_currentSeaLevelEvent, m_currentSeaLevelPhase = -1, 0;
+	local iCurrentClimateChangePoints = GameClimate.GetClimateChangeForLastSeaLevelEvent();
+	for row in GameInfo.RandomEvents() do
+		if (row.EffectOperatorType == "SEA_LEVEL") then
+			if (m_firstSeaLevelEvent == -1) then
+				m_firstSeaLevelEvent = row.Index;
+			end
+			if (row.ClimateChangePoints == iCurrentClimateChangePoints) then
+				m_currentSeaLevelEvent = row.Index; 
+				m_currentSeaLevelPhase = m_currentSeaLevelEvent - m_firstSeaLevelEvent + 1;
+			end
+		end
+	end
 	
 	-- Cities: Number of RR tiles in the city borders [number]
 	-- this seems easy - iterate through tiles and use Plot:GetRouteType()
 	data.NumRailroads = 0; -- sort by
-	data.NumRailroadsTT = "not yet implemented";
+	data.NumRailroadsTT = "";
 	
 	-- iterate through city plots and check tiles
 	local cityPlots:table = Map.GetCityPlots():GetPurchasedPlots(pCity);
@@ -1491,36 +1587,47 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 			local imprInfo:table = GameInfo.Improvements[eImprovementType];
 			if imprInfo ~= nil and tPowerImprovements[imprInfo.ImprovementType] ~= nil then
 				data.PowerProduced = data.PowerProduced + tPowerImprovements[imprInfo.ImprovementType];
-				data.PowerProducedTT = data.PowerProducedTT..string.format("[NEWLINE][ICON_Power]%d %s", tPowerImprovements[imprInfo.ImprovementType], Locale.Lookup(imprInfo.Name));
+				table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", tPowerImprovements[imprInfo.ImprovementType], Locale.Lookup(imprInfo.Name)));
 			end
 		end
 		-- tiles that can be flooded by a river LOC_FLOOD_WARNING_ICON_TOOLTIP
+		local function CheckPlotContent(plot:table, tooltip:table, extra:string)
+			if plot:GetDistrictType()    ~= -1 then table.insert(tooltip, string.format("%s %s", Locale.Lookup(GameInfo.Districts[plot:GetDistrictType()].Name), extra)); end
+			if plot:GetImprovementType() ~= -1 then table.insert(tooltip, string.format("%s %s", Locale.Lookup(GameInfo.Improvements[plot:GetImprovementType()].Name), extra)); end
+		end
 		if RiverManager.CanBeFlooded(plot) then
 			data.NumRiverFloodTiles = data.NumRiverFloodTiles + 1;
+			CheckPlotContent(plot, data.RiverFloodDamTT, "");
 		end
 		-- tiles that can be submerged
 		local eCoastalLowland:number = TerrainManager.GetCoastalLowlandType(plot);
 		if eCoastalLowland ~= -1 then
-			--data.Flooded = TerrainManager.IsFlooded(plot);
-			--data.Submerged = TerrainManager.IsSubmerged(plot);
+			local extra:string = "";
+			if TerrainManager.IsFlooded(plot)   then extra = Locale.Lookup("LOC_COASTAL_LOWLAND_FLOODED"); end
+			if TerrainManager.IsSubmerged(plot) then extra = Locale.Lookup("LOC_COASTAL_LOWLAND_SUBMERGED"); end
 			data.NumFloodTiles = data.NumFloodTiles + 1;
+			CheckPlotContent(plot, data.FloodTilesTT, extra);
 		end
-				--[[
-				if not TerrainManager.IsProtected(kPlot) then
-				-- Determine if we need to show a coastal flood warning
-				local eCoastalLowlandType:number = TerrainManager.GetCoastalLowlandType(kPlot);
-				if eCoastalLowlandType > -1 then
-					local typeRow:table = GameInfo.CoastalLowlands[eCoastalLowlandType];
-					if typeRow then
-						local icon:string = "ICON_ENVIRONMENTAL_EFFECTS_" .. typeRow.CoastalLowlandType;
-						pInstance = GetWarningInstanceAt(pInstance, plotID, icon, typeRow.Description);
-					end
-				end
-				--]]
 		-- railroads
 		local eRoute:number = plot:GetRouteType()
 		if eRoute ~= -1 and GameInfo.Routes[eRoute] ~= nil and GameInfo.Routes[eRoute].RouteType == "ROUTE_RAILROAD" then data.NumRailroads = data.NumRailroads + 1; end
 	end
+	data.RiverFloodDamTT = table.concat(data.RiverFloodDamTT, "[NEWLINE]");
+	data.FloodTilesTT = table.concat(data.FloodTilesTT, "[NEWLINE]");
+	data.FloodBarrierMaintenance = iBaseMaintenance * (m_currentSeaLevelPhase+1) * data.NumFloodTiles;
+	--data.FloodBarrierMaintenanceTT = string.format("%d %d %d", iBaseMaintenance, m_currentSeaLevelPhase, data.NumFloodTiles);
+
+	-----Generated from CityPanelPower
+	local generatedPowerBreakdown:table = pCityPower:GetGeneratedPowerSources();
+	if #generatedPowerBreakdown > 0 then
+	end
+	for _,innerTable in ipairs(generatedPowerBreakdown) do
+		local scoreSource, scoreValue = next(innerTable);
+		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%s [ICON_Power]%d", scoreSource, scoreValue));
+	end
+	
+	if #data.PowerProducedTT == 1 then data.PowerProducedTT = "";
+	else                               data.PowerProducedTT = table.concat(data.PowerProducedTT, "[NEWLINE]"); end
 	
 end
 
@@ -2786,10 +2893,10 @@ function city_fields( kCityData, pCityInstance )
 	local iNumTurnsLoyalty:number = 0;
 	if loyaltyPerTurn > 0 then
 		iNumTurnsLoyalty = math.ceil((maxLoyalty-currentLoyalty)/loyaltyPerTurn);
-		pCityInstance.Loyalty:SetText( loyaltyFontIcon.." "..toPlusMinusString(loyaltyPerTurn).."/"..( iNumTurnsLoyalty == 0 and tostring(iNumTurnsLoyalty) or ColorGreen(iNumTurnsLoyalty) ) );
+		pCityInstance.Loyalty:SetText( loyaltyFontIcon..""..toPlusMinusString(loyaltyPerTurn).."/"..( iNumTurnsLoyalty == 0 and tostring(iNumTurnsLoyalty) or ColorGreen(iNumTurnsLoyalty) ) );
 	elseif loyaltyPerTurn < 0 then
 		iNumTurnsLoyalty = math.ceil(currentLoyalty/(-loyaltyPerTurn));
-		pCityInstance.Loyalty:SetText( loyaltyFontIcon.." "..ColorRed(toPlusMinusString(loyaltyPerTurn).."/"..iNumTurnsLoyalty) );
+		pCityInstance.Loyalty:SetText( loyaltyFontIcon..""..ColorRed(toPlusMinusString(loyaltyPerTurn).."/"..iNumTurnsLoyalty) );
 	else
 		pCityInstance.Loyalty:SetText( loyaltyFontIcon.." 0" );
 	end
@@ -4121,12 +4228,12 @@ function city2_fields( kCityData, pCityInstance )
 	local tToolTip:table = {};
 
 	-- Status
-	if kCityData.IsNuclearRisk then
-		sText = sText.."[ICON_RESOURCE_URANIUM]"; table.insert(tToolTip, Locale.Lookup("LOC_EMERGENCY_NAME_NUCLEAR"));
-	end
-	if kCityData.IsUnderpowered then
-		sText = sText.."[ICON_PowerInsufficient]"; table.insert(tToolTip, Locale.Lookup("LOC_POWER_STATUS_UNPOWERED_NAME"));
-	end
+	--if kCityData.IsNuclearRisk then
+		--sText = sText.."[ICON_RESOURCE_URANIUM]"; table.insert(tToolTip, Locale.Lookup("LOC_EMERGENCY_NAME_NUCLEAR"));
+	--end
+	--if kCityData.IsUnderpowered then
+		--sText = sText.."[ICON_PowerInsufficient]"; table.insert(tToolTip, Locale.Lookup("LOC_POWER_STATUS_UNPOWERED_NAME"));
+	--end
 	pCityInstance.Status:SetText( sText );
 	pCityInstance.Status:SetToolTipString( table.concat(tToolTip, "[NEWLINE]") );
 	
@@ -4140,8 +4247,11 @@ function city2_fields( kCityData, pCityInstance )
 	pCityInstance.Population:SetText(ColorWhite(kCityData.Population));
 	pCityInstance.Population:SetToolTipString("");
 
-	-- Power consumption [number]
-	pCityInstance.PowerConsumed:SetText(tostring(kCityData.PowerConsumed));
+	-- Power consumption [icon required_number / consumed_number]
+	pCityInstance.PowerConsumed:SetText(string.format("%s %s / %s",
+		kCityData.PowerIcon,
+		kCityData.PowerRequired > 0 and ColorWhite(kCityData.PowerRequired) or tostring(kCityData.PowerRequired),
+		kCityData.IsUnderpowered and ColorRed(kCityData.PowerConsumed) or tostring(kCityData.PowerConsumed)));
 	pCityInstance.PowerConsumed:SetToolTipString(kCityData.PowerConsumedTT);
 
 	-- Power produced [number]
@@ -4149,11 +4259,11 @@ function city2_fields( kCityData, pCityInstance )
 	pCityInstance.PowerProduced:SetToolTipString(kCityData.PowerProducedTT);
 
 	-- CO2 footprint [number]
-	pCityInstance.CO2Footprint:SetText(tostring(kCityData.CO2Footprint));
-	pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
+	--pCityInstance.CO2Footprint:SetText(tostring(kCityData.CO2Footprint));
+	--pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
 
 	-- Nuclear power plant [nuclear icon / num turns]
-	if kCityData.HasNuclearPowerPlant then sText = "[ICON_RESOURCE_URANIUM] / "..tostring(kCityData.NumTurnsSinceRecommission);
+	if kCityData.HasNuclearPowerPlant then sText = kCityData.NuclearAccidentIcon.."[ICON_RESOURCE_URANIUM]"..ColorWhite(kCityData.ReactorAge);
 	else                                   sText = "[ICON_Bullet]"; end
 	pCityInstance.NuclearPowerPlant:SetText(sText);
 	pCityInstance.NuclearPowerPlant:SetToolTipString(kCityData.NuclearPowerPlantTT);
@@ -4171,7 +4281,7 @@ function city2_fields( kCityData, pCityInstance )
 	pCityInstance.FloodBarrier:SetToolTipString(kCityData.FloodTilesTT);
 
 	-- Flood Barrier Per turn maintenance [number]
-	pCityInstance.BarrierMaintenance:SetText(tostring(kCityData.FloodBarrierMaintenance));
+	pCityInstance.BarrierMaintenance:SetText(kCityData.HasFloodBarrier and ColorWhite(kCityData.FloodBarrierMaintenance) or tostring(kCityData.FloodBarrierMaintenance));
 	pCityInstance.BarrierMaintenance:SetToolTipString(kCityData.FloodBarrierMaintenanceTT);
 	
 	-- Number of RR tiles in the city borders [number]
@@ -4209,24 +4319,28 @@ function city2_sortFunction( descend, type, t, a, b )
 		aCity = t[a].Population;
 		bCity = t[b].Population;
 	elseif type == "status" then
-		if t[a].IsUnderpowered then aCity = aCity + 20; else aCity = aCity + 10; end
-		if t[b].IsUnderpowered then bCity = bCity + 20; else bCity = bCity + 10; end
-		if t[a].IsNuclearRisk then aCity = aCity + 20; else aCity = aCity + 10; end
-		if t[b].IsNuclearRisk then bCity = bCity + 20; else bCity = bCity + 10; end
+		--if t[a].IsUnderpowered then aCity = aCity + 20; else aCity = aCity + 10; end
+		--if t[b].IsUnderpowered then bCity = bCity + 20; else bCity = bCity + 10; end
+		--if t[a].IsNuclearRisk then aCity = aCity + 20; else aCity = aCity + 10; end
+		--if t[b].IsNuclearRisk then bCity = bCity + 20; else bCity = bCity + 10; end
 	elseif type == "icon" then
 		-- not used
 	elseif type == "powcon" then
-		aCity = t[a].PowerConsumed;
-		bCity = t[b].PowerConsumed;
+		aCity = t[a].PowerRequired;
+		bCity = t[b].PowerRequired;
+		if aCity == bCity then
+			aCity = t[a].PowerConsumed;
+			bCity = t[b].PowerConsumed;
+		end
 	elseif type == "pwprod" then
 		aCity = t[a].PowerProduced;
 		bCity = t[b].PowerProduced;
 	elseif type == "co2" then
-		aCity = t[a].CO2Footprint;
-		bCity = t[b].CO2Footprint;
+		--aCity = t[a].CO2Footprint;
+		--bCity = t[b].CO2Footprint;
 	elseif type == "nuclear" then
-		aCity = t[a].NumTurnsSinceRecommission;
-		bCity = t[b].NumTurnsSinceRecommission;
+		aCity = t[a].ReactorAge;
+		bCity = t[b].ReactorAge;
 	elseif type == "dam" then
 		aCity = t[a].NumRiverFloodTiles;
 		bCity = t[b].NumRiverFloodTiles;
@@ -4266,7 +4380,7 @@ function ViewCities2Page()
 	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pop", instance ) end )
 	pHeaderInstance.CityPowerConsumedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "powcon", instance ) end )
 	pHeaderInstance.CityPowerProducedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pwprod", instance ) end )
-	pHeaderInstance.CityCO2FootprintButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "co2", instance ) end )
+	--pHeaderInstance.CityCO2FootprintButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "co2", instance ) end )
 	pHeaderInstance.CityNuclearPowerPlantButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "nuclear", instance ) end )
 	pHeaderInstance.CityRiverFloodDamButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "dam", instance ) end )
 	pHeaderInstance.CityFloodBarrierButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "barrier", instance ) end )
