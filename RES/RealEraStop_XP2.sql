@@ -2,6 +2,7 @@
 -- Real Era Stop - Gathering Storm changes
 -- Author: Infixo
 -- 2019-02-21: Created
+-- 2019-03-08: Version 2.7 Flood Barrier fix
 -- ===========================================================================
 
 -- Table Resolutions
@@ -38,3 +39,16 @@ DELETE FROM AgendaTags WHERE AgendaTagType = 'AGENDA_LATE_ERA_ONLY' AND
 -- Game crashes with Kristina and last era before Modern.
 
 --DELETE FROM EmergencyAlliances WHERE TargetRequirementSet = 'NOBEL_PRIZE_TARGET_REQUIREMENTS' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value < '6');
+
+
+--------------------------------------------------------------
+-- 2019-03-08 Version 2.7
+-- For Industrial and Modern - move Flood Barrier earlier. Industrial - Sanitation. Modern - Electricity. Also adjust cost.
+
+UPDATE Buildings
+SET PrereqTech = 'TECH_SANITATION', Cost = 0.70 * Cost
+WHERE BuildingType = 'BUILDING_FLOOD_BARRIER' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '5');
+
+UPDATE Buildings
+SET PrereqTech = 'TECH_ELECTRICITY', Cost = 0.85 * Cost
+WHERE BuildingType = 'BUILDING_FLOOD_BARRIER' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '6');
