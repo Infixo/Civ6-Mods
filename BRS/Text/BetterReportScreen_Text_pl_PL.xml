@@ -18,6 +18,12 @@
 	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="pl_PL"> <!-- LOC_CITY_STATES_CITY_STATES -->
 		<Text>Miasta-państwa</Text>
 	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_CITIES" Language="pl_PL">
+		<Text>Miasta</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_CITIES2" Language="pl_PL">
+		<Text>[ICON_Power]Miasta</Text>
+	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="pl_PL">
 		<Text>Nazwa budowli/dzielnicy</Text>
@@ -170,7 +176,17 @@
 		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
 		<Text>Dzięki posiadaniu {1_Num} {1_Num: plural 1?dzielnicy; other?dzielnic;}</Text>
     </Replace>
-
+	<!-- Gathering Storm -->
+    <Replace Tag="LOC_BRS_CO2" Language="pl_PL">
+		<Text>CO2</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_BARRIER" Language="pl_PL">
+		<Text>Zapora</Text>
+    </Replace>
+    <Replace Tag="" Language="pl_PL">
+		<Text>Koszt utrzymania zapory przeciwpowodziowej</Text>
+    </Replace>
+	
 </LocalizedText>
 
 </GameData>

@@ -14,15 +14,14 @@ include("TabSupport");
 if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
 
--- ===========================================================================
--- Rise & Fall check
--- ===========================================================================
-
+-- Expansions check
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 print("Rise & Fall    :", (bIsRiseFall and "YES" or "no"));
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 
+-- configuration options
+local bOptionModifiers:boolean = ( GlobalParameters.BRS_OPTION_MODIFIERS == 1 );
 
 -- ===========================================================================
 --	DEBUG
@@ -1400,10 +1399,10 @@ function InitializePowerImprovements()
 end
 
 local tPowerBuildings:table = {
-	BUILDING_COAL_POWER_PLANT        = 4,
-	BUILDING_FOSSIL_FUEL_POWER_PLANT = 4,
-	BUILDING_POWER_PLANT             =16,
-	BUILDING_HYDROELECTRIC_DAM       = 6,
+	BUILDING_COAL_POWER_PLANT        = 4, --RESOURCE_COAL
+	BUILDING_FOSSIL_FUEL_POWER_PLANT = 4, --RESOURCE_OIL
+	BUILDING_POWER_PLANT             =16, --RESOURCE_URANIUM
+	--BUILDING_HYDROELECTRIC_DAM       = 6, -- separately
 };
 -- fill buildings from Buildings_XP2 and MODIFIER_SINGLE_CITY_ADJUST_FREE_POWER modifiers
 function InitializePowerBuildings()
@@ -1486,21 +1485,61 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	-- buildings, improvements. Details in tooltip.
 	data.PowerProduced = 0; -- sort by
 	data.PowerProducedTT = {}; -- list of buildings and improvements
+	data.PowerPlantResType = "Bullet";
+	data.PowerPlantResUsed = 0;
 	-- Resource_Consumption.PowerProvided
 	table.insert(data.PowerProducedTT, Locale.Lookup("LOC_POWER_PANEL_GENERATED_POWER")); --..Round(data.PowerProduced, 1)); -- [SIZE:16]{1_PowerAmount} [SIZE:12]Required
 	-- buildings
 	for building,power in pairs(tPowerBuildings) do
 		if GameInfo.Buildings[building] ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings[building].Index ) then
-			data.PowerProduced = data.PowerProduced + power;
-			table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", power, Locale.Lookup(GameInfo.Buildings[building].Name)));
+			--data.PowerProduced = data.PowerProduced + power;
+			data.PowerPlantResType = GameInfo.Buildings_XP2[building].ResourceTypeConvertedToPower;
+			table.insert(data.PowerProducedTT, string.format("[ICON_Bullet][ICON_%s]%s", data.PowerPlantResType, Locale.Lookup(GameInfo.Buildings[building].Name)));
+			break; -- there can be only one!
 		end
+	end
+	-----Generated from CityPanelPower
+	local generatedPowerBreakdown:table = pCityPower:GetGeneratedPowerSources();
+	--if #generatedPowerBreakdown > 0 then
+	--end
+	local iPlantPower:number = 0;
+	for _,innerTable in ipairs(generatedPowerBreakdown) do
+		local scoreSource, scoreValue = next(innerTable);
+		--print("powerplant", data.PowerPlantRes, "score", scoreSource, scoreValue);
+		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%s [ICON_Power]%d", scoreSource, scoreValue));
+		if string.find(scoreSource, data.PowerPlantResType) ~= nil then
+			iPlantPower = iPlantPower + scoreValue; -- sum up all places where power goes
+		end
+	end
+	-- calculate how many resources are consumed
+	if data.PowerPlantResType ~= "Bullet" then
+		local iPowerProvided:number = GameInfo.Resource_Consumption[data.PowerPlantResType].PowerProvided;
+		data.PowerPlantResUsed = math.floor(iPlantPower/iPowerProvided);
+		if data.PowerPlantResUsed * iPowerProvided < iPlantPower then data.PowerPlantResUsed = data.PowerPlantResUsed + 1; end
+		data.PowerProduced = data.PowerProduced + data.PowerPlantResUsed * iPowerProvided;
+		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%s %d[ICON_%s] [Icon_GoingTo] %d[ICON_Power]",
+			Locale.Lookup("LOC_UI_PEDIA_POWER_COST"),
+			data.PowerPlantResUsed, data.PowerPlantResType,
+			data.PowerPlantResUsed * iPowerProvided));
+	end
+	
+	-- treat Hydroelectric Dam separately for now
+	if GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index ) then
+		local power = 6;
+		data.PowerProduced = data.PowerProduced + power;
+		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", power, Locale.Lookup(GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Name)));
 	end
 	
 	-- Cities: CO2 footprint calculation? Is it possible?
 	--"Resource_Consumption" table has a field "CO2perkWh" INTEGER NOT NULL DEFAULT 0,
 	--GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index );
-	--data.CO2Footprint = -1; -- must be calculated manually; sort by
-	--data.CO2FootprintTT = "not yet implemented";
+	data.CO2Footprint = 0; -- must be calculated manually; sort by
+	data.CO2FootprintTT = "";
+	if data.PowerPlantResUsed > 0 then
+		local resConsInfo = GameInfo.Resource_Consumption[data.PowerPlantResType];
+		data.CO2Footprint = data.PowerPlantResUsed * resConsInfo.PowerProvided * resConsInfo.CO2perkWh / 1000;
+		data.CO2FootprintTT = string.format("%d[ICON_%s] @ %d", data.PowerPlantResUsed, data.PowerPlantResType, resConsInfo.CO2perkWh);
+	end
 
 	-- Cities: Nuclear power plant [risk_icon / nuclear icon / num turns]
 	data.HasNuclearPowerPlant = false;
@@ -1586,9 +1625,13 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 		if eImprovementType > -1 then
 			local imprInfo:table = GameInfo.Improvements[eImprovementType];
 			if imprInfo ~= nil and tPowerImprovements[imprInfo.ImprovementType] ~= nil then
-				data.PowerProduced = data.PowerProduced + tPowerImprovements[imprInfo.ImprovementType];
-				table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", tPowerImprovements[imprInfo.ImprovementType], Locale.Lookup(imprInfo.Name)));
-			end
+				if plot:IsImprovementPillaged() then
+					table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s %s", 0, Locale.Lookup(imprInfo.Name), Locale.Lookup("LOC_TOOLTIP_PLOT_PILLAGED_TEXT")));
+				else
+					data.PowerProduced = data.PowerProduced + tPowerImprovements[imprInfo.ImprovementType];
+					table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", tPowerImprovements[imprInfo.ImprovementType], Locale.Lookup(imprInfo.Name)));
+				end
+ 			end
 		end
 		-- tiles that can be flooded by a river LOC_FLOOD_WARNING_ICON_TOOLTIP
 		local function CheckPlotContent(plot:table, tooltip:table, extra:string)
@@ -1616,19 +1659,9 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	data.FloodTilesTT = table.concat(data.FloodTilesTT, "[NEWLINE]");
 	data.FloodBarrierMaintenance = iBaseMaintenance * (m_currentSeaLevelPhase+1) * data.NumFloodTiles;
 	--data.FloodBarrierMaintenanceTT = string.format("%d %d %d", iBaseMaintenance, m_currentSeaLevelPhase, data.NumFloodTiles);
-
-	-----Generated from CityPanelPower
-	local generatedPowerBreakdown:table = pCityPower:GetGeneratedPowerSources();
-	if #generatedPowerBreakdown > 0 then
-	end
-	for _,innerTable in ipairs(generatedPowerBreakdown) do
-		local scoreSource, scoreValue = next(innerTable);
-		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%s [ICON_Power]%d", scoreSource, scoreValue));
-	end
 	
 	if #data.PowerProducedTT == 1 then data.PowerProducedTT = "";
 	else                               data.PowerProducedTT = table.concat(data.PowerProducedTT, "[NEWLINE]"); end
-	
 end
 
 -- ===========================================================================
@@ -1911,6 +1944,7 @@ function ViewYieldsPage()
 		local kCurrentProduction:table = kCityData.ProductionQueue[1]; -- this returns a table from GetCurrentProductionInfoOfCity() modified a bit in CitySupport.lua
 		pCityInstance.CurrentProduction:SetHide( kCurrentProduction == nil );
 		if kCurrentProduction ~= nil then
+			--print("**********", cityName); dshowrectable(kCurrentProduction);
 			local tooltip:string = kCurrentProduction.Name.." [ICON_Turn]"..tostring(kCurrentProduction.Turns)..string.format(" (%d%%)", kCurrentProduction.PercentComplete*100);
 			if kCurrentProduction.Description ~= nil then
 				tooltip = tooltip .. "[NEWLINE]" .. Locale.Lookup(kCurrentProduction.Description);
@@ -2623,6 +2657,8 @@ function GetFontIconForDistrict(sDistrictType:string)
 	if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
 	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT]"; end -- no need to check for mutuals with that
 	if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
+	if sDistrictType == "DISTRICT_CANAL"                       then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a canal
+	if sDistrictType == "DISTRICT_DAM"                         then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a dam
 	-- default icon last
 	return "[ICON_"..sDistrictType.."]";
 end
@@ -3445,7 +3481,7 @@ function group_military( unit, unitInstance, group, parent, type )
 			UnitManager.RequestCommand( unit, UnitCommandTypes.UPGRADE );
 		end )
 		-- tooltip
-		local upgradeToUnit:table = GameInfo.Units[tResults[UnitOperationResults.UNIT_TYPE]];
+		local upgradeToUnit:table = GameInfo.Units[tResults[UnitCommandResults.UNIT_TYPE]];
 		local toolTipString:string = Locale.Lookup( "LOC_UNITOPERATION_UPGRADE_INFO", Locale.Lookup(upgradeToUnit.Name), unit:GetUpgradeCost() ); -- Upgrade to {1_Unit}: {2_Amount} [ICON_Gold]Gold
 		-- Gathering Storm
 		if bIsGatheringStorm then toolTipString = toolTipString .. AddUpgradeResourceCost(unit, upgradeToUnit); end
@@ -3907,7 +3943,7 @@ function ViewPolicyPage()
 			local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
 			if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
 			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, sPolicyImpact);
-			pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP_NEWLINE..policy.ImpactToolTip);
+			if bOptionModifiers then pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP_NEWLINE..policy.ImpactToolTip); end
 			
 			-- fill out yields
 			for yield,value in pairs(policy.Yields) do
@@ -4178,7 +4214,7 @@ function ViewMinorPage()
 				if sActualInfo ~= "" then sMinorImpact = sMinorImpact.."  ("..sActualInfo..")"; end
 			end
 			TruncateString(pMinorInstance.PolicyEntryImpact, 218, sMinorImpact);
-			pMinorInstance.PolicyEntryImpact:SetToolTipString(minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait..TOOLTIP_SEP_NEWLINE..minor.ImpactToolTip);
+			if bOptionModifiers then pMinorInstance.PolicyEntryImpact:SetToolTipString(minor.CivType.." / "..minor.LeaderType.."[NEWLINE]"..minor.Trait..TOOLTIP_SEP_NEWLINE..minor.ImpactToolTip); end
 			
 			-- fill out yields
 			for yield,value in pairs(minor.Yields) do
@@ -4255,12 +4291,17 @@ function city2_fields( kCityData, pCityInstance )
 	pCityInstance.PowerConsumed:SetToolTipString(kCityData.PowerConsumedTT);
 
 	-- Power produced [number]
-	pCityInstance.PowerProduced:SetText(tostring(kCityData.PowerProduced));
+	pCityInstance.PowerProduced:SetText(string.format("[ICON_%s] %d", kCityData.PowerPlantResType, kCityData.PowerProduced));
 	pCityInstance.PowerProduced:SetToolTipString(kCityData.PowerProducedTT);
 
-	-- CO2 footprint [number]
-	--pCityInstance.CO2Footprint:SetText(tostring(kCityData.CO2Footprint));
-	--pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
+	-- CO2 footprint [resource number]
+	--if kCityData.CO2Footprint > 0 then
+		pCityInstance.CO2Footprint:SetText(string.format("[ICON_%s] %.1f", kCityData.PowerPlantResType, kCityData.CO2Footprint));
+		pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
+	--else
+		--pCityInstance.CO2Footprint:SetText("0");
+		--pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
+	--end
 
 	-- Nuclear power plant [nuclear icon / num turns]
 	if kCityData.HasNuclearPowerPlant then sText = kCityData.NuclearAccidentIcon.."[ICON_RESOURCE_URANIUM]"..ColorWhite(kCityData.ReactorAge);

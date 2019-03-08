@@ -21,6 +21,12 @@
       <!-- LOC_CITY_STATES_CITY_STATES -->
       <Text>Città Stato</Text>
     </Replace>
+    <Replace Tag="LOC_HUD_REPORTS_TAB_CITIES" Language="it_IT"> <!-- Gathering Storm -->
+		<Text>Città</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_CITIES2" Language="it_IT"> <!-- Gathering Storm -->
+		<Text>[ICON_Power]Città</Text>
+	</Replace>
     <!-- Column headers -->
     <Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="it_IT">
       <Text>Nome Edificio/Distretto</Text>
@@ -177,6 +183,16 @@
       <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
       <!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
       <Text>Dall'avere {1_Num : plural 1?{1} distretto; other?{1} distretti;}</Text>
+    </Replace>
+    <!-- Gathering Storm -->
+    <Replace Tag="LOC_BRS_CO2" Language="it_IT">
+		<Text>CO2</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_BARRIER" Language="it_IT">
+		<Text>Barriera</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_BARRIER_MAINTENANCE" Language="it_IT">
+		<Text>Costo mantenimento Barriera anti inondazione</Text>
     </Replace>
   </LocalizedText>
 </GameData>

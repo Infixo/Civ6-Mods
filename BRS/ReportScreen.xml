@@ -2024,14 +2024,12 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<!--
-				<Container		Size="50,parent">
+				<Container		Size="60,parent">
 					<GridButton		ID="CityCO2FootprintButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_CO2" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				-->
 				<Container		Size="80,parent">
 					<GridButton		ID="CityNuclearPowerPlantButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UNITNAME_ROCK_BAND_PREFIX_NUCLEAR" />
@@ -2097,12 +2095,10 @@
 					<Label			ID="PowerProduced"			Style="ReportValueText"		String="$PowerProduced$" />
 				</Container>
 				<Box 											Size="2,parent" Color="46,70,95,128" />
-				<!--
-				<Container		Size="50,parent">
+				<Container		Size="60,parent">
 					<Label			ID="CO2Footprint"			Style="ReportValueText"		String="$CO2Footprint$" />
 				</Container>
 				<Box											Size="2,parent"	Color="46,70,95,128" />
-				-->
 				<Container		Size="80,parent">
 					<Label			ID="NuclearPowerPlant"		Style="ReportValueText"		String="$NuclearPP$" />
 				</Container>
