@@ -183,7 +183,7 @@
     <Replace Tag="LOC_BRS_BARRIER" Language="pl_PL">
 		<Text>Zapora</Text>
     </Replace>
-    <Replace Tag="" Language="pl_PL">
+    <Replace Tag="LOC_BRS_BARRIER_MAINTENANCE" Language="pl_PL">
 		<Text>Koszt utrzymania zapory przeciwpowodziowej</Text>
     </Replace>
 	
