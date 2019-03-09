@@ -10,6 +10,10 @@ print("Loading RealStrategy_InGameExp.lua from Real Strategy version "..GlobalPa
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
 local RST = ExposedMembers.RST;
 
+-- Expansions check
+local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
+
 
 function PlayerGetWMDWeaponCount(ePlayerID:number, sWeaponType:string)
 	--print("FUN GetWMDWeaponCount", ePlayerID, sWeaponType);
@@ -189,6 +193,25 @@ function GameGetAverageMilitaryStrength(ePlayerID:number) --, bIncludeMe:boolean
 end
 
 
+-- Science Victory in GS, returns 3 values
+function PlayerGetScienceVictoryProgress(ePlayerID)
+	--print("FUN PlayerGetScienceVictoryProgress");
+	local pPlayer:table = Players[ePlayerID];
+	local lightYears:number        = pPlayer:GetStats():GetScienceVictoryPoints();
+	local totalLightYears:number   = pPlayer:GetStats():GetScienceVictoryPointsTotalNeeded();
+	local lightYearsPerTurn:number = pPlayer:GetStats():GetScienceVictoryPointsPerTurn();
+	return lightYears, totalLightYears, lightYearsPerTurn;
+end
+
+
+-- Diplomatic Victory progress in % (0..100)
+local iTotalDiploPoints:number = GlobalParameters.DIPLOMATIC_VICTORY_POINTS_REQUIRED;
+function PlayerGetDiploVictoryProgress(ePlayerID:number)
+	--print("FUN PlayerGetDiploVictoryProgress", ePlayerID);
+	return Players[ePlayerID]:GetStats():GetDiplomaticVictoryPoints() / iTotalDiploPoints * 100;
+end
+
+
 -- Culture Victory progress in % (0..100)
 -- Determine number of tourist needed for victory
 -- Has to be one more than every other players number of domestic tourists
@@ -313,6 +336,12 @@ function Initialize()
 	RST.PlayerGetReligionTypeCreated = PlayerGetReligionTypeCreated;
 	RST.PlayerGetNumBeliefsEarned    = PlayerGetNumBeliefsEarned;
 	RST.PlayerGetBeliefs             = PlayerGetBeliefs;
+	
+	-- Gathering Storm
+	if bIsGatheringStorm then
+		RST.PlayerGetScienceVictoryProgress = PlayerGetScienceVictoryProgress;
+		RST.PlayerGetDiploVictoryProgress   = PlayerGetDiploVictoryProgress;
+	end
 	
 	-- objects
 	--RND.Calendar				= Calendar;

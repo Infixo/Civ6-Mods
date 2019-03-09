@@ -26,7 +26,7 @@
     <Row AllowedMoveType="Attack District" Value="16" IsTactical="true" />
     <Row AllowedMoveType="Attack Camps" Value="17" IsTactical="true" />
     <Row AllowedMoveType="Explore Land" Value="18" IsHomeland="true" />
-    <Row AllowedMoveType="Make Military Formation" Value="19" isTactical="true" /> <!-- fixed -->
+    <Row AllowedMoveType="Make Military Formation" Value="19" isTactical="true" /> <!-- fixed; "Make Military Formation" is set as IsHomeland, but used in Tactics lists for both Majors and Minors -->
     <Row AllowedMoveType="Leader Formation" Value="20" isTactical="true" />
     <Row AllowedMoveType="Support Formation" Value="21" isTactical="true" /> <!-- Support units not in use by an operation should try to move close to allied military -->
     <Row AllowedMoveType="Attack Civilians" Value="22" IsTactical="true" isHomeland="true" />

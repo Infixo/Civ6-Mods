@@ -2,6 +2,7 @@ print("Loading RealStrategy.lua from Real Strategy version "..GlobalParameters.R
 -- ===========================================================================
 -- Real Strategy
 -- 2018-12-14: Created by Infixo
+-- 2019-03-09: Gathering Storm update
 -- ===========================================================================
 
 include("Serialize");
@@ -10,9 +11,11 @@ include("Serialize");
 if not ExposedMembers.RST then ExposedMembers.RST = {} end;
 local RST = ExposedMembers.RST;
 
--- Rise & Fall check
---local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
---print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
+-- Expansions check
+local bIsRiseFall:boolean = (Game.ChangePlayerEraScore ~= nil); --Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
+local bIsGatheringStorm:boolean = (GameClimate ~= nil); --Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
+print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 
 -- logging options
 local bLogDebug:boolean = ( GlobalParameters.RST_OPTION_LOG_DEBUG == 1 );
@@ -42,7 +45,7 @@ local tValidVictories:table = {};
 local iMinimumPriority:number = 0;
 local iBetterThanUsNerf:number = 0;
 
-local tShowStrat:table = { "CONQUEST", "SCIENCE", "CULTURE", "RELIGION" }; -- only these will be shown in logs and debugs
+local tShowStrat:table = { "CONQUEST", "SCIENCE", "CULTURE", "RELIGION", "DIPLO" }; -- only these will be shown in logs and debugs
 
 local tData:table = {}; -- a table of data sets, one for each player
 RST.Data = tData; -- to access data in FireTuner
@@ -444,18 +447,31 @@ function PlayerGetNumProjectsSpaceRace(ePlayerID:number)
 	-- count space race projects
 	local iTot:number, iNum:number = 0, 0;
 	for row in GameInfo.Projects() do
-		if row.SpaceRace then
+		if row.SpaceRace and row.MaxPlayerInstances == 1 then -- in GS laser projects can be executed more than once
 			iTot = iTot + 1;
 			iNum = iNum + RST.PlayerGetNumProjectsAdvanced(ePlayerID, row.Index);
 		end
+	end
+	if bIsGatheringStorm then
+		-- we will treat the flight as 2 projects
+		iTot = iTot + 2;
+		local lightYears:number, totalLightYears:number, lightYearsPerTurn:number = RST.PlayerGetScienceVictoryProgress(ePlayerID);
+		if lightYears >= totalLightYears * 0.5 then iNum = iNum + 1; end
+		if lightYears >= totalLightYears       then iNum = iNum + 1; end
 	end
 	--print("space race player, num/tot", ePlayerID, iNum, iTot);
 	return iNum;
 end
 
+-- Gathering Storm - science victory is changed
+-- Vanilla is 5 projects, GS is 4 projects + 50 turns of flight
 function PlayerIsCloseToScienceVictory(ePlayerID:number)
 	--print("FUN PlayerIsCloseToScienceVictory", ePlayerID);
-	return PlayerGetNumProjectsSpaceRace(ePlayerID) >= 2; -- 2 out of 5
+	if bIsGatheringStorm then
+		return PlayerGetNumProjectsSpaceRace(ePlayerID) >= 3; -- there is 50 turn flight, so we can give more slack at the begining
+	else
+		return PlayerGetNumProjectsSpaceRace(ePlayerID) >= 2; -- 2 out of 5
+	end
 end
 
 function PlayerIsCloseToCultureVictory(ePlayerID:number)
@@ -472,8 +488,10 @@ function PlayerIsCloseToReligionVictory(ePlayerID:number)
 end
 
 function PlayerIsCloseToDiploVictory(ePlayerID:number)
-	--print("FUN PlayerIsCloseToDiploVictory", ePlayerID);
-	return false;
+	print("FUN PlayerIsCloseToDiploVictory", ePlayerID);
+	if not bIsGatheringStorm then return false; end
+	-- DV Points >= 70%
+	return RST.PlayerGetDiploVictoryProgress(ePlayerID) >= 70;
 end
 
 function PlayerIsCloseToAnyVictory(ePlayerID:number)
@@ -486,7 +504,6 @@ end
 function GetPriorityConquest(data:table)
 	--print("FUN GetPriorityConquest", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	--if not RST.GameIsVictoryEnabled("VICTORY_CONQUEST") then return -200; end
 	if tValidVictories.CONQUEST == 0 then return -200; end
 	
 	local iPriority:number = 0;
@@ -596,7 +613,6 @@ end
 function GetPriorityScience(data:table)
 	--print("FUN GetPriorityScience", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	--if not RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then return -200; end
 	if tValidVictories.SCIENCE == 0 then return -200; end
 	
 	local iPriority:number = 0;
@@ -663,7 +679,6 @@ end
 function GetPriorityCulture(data:table)
 	--print("FUN GetPriorityCulture", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	--if not RST.GameIsVictoryEnabled("VICTORY_CULTURE") then return -200; end
 	if tValidVictories.CULTURE == 0 then return -200; end
 	
 	local iPriority:number = 0;
@@ -727,7 +742,6 @@ end
 function GetPriorityReligion(data:table)
 	--print("FUN GetPriorityReligion", data.PlayerID, data.LeaderType);
 	-- check if this victory type is enabled
-	--if not RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS") then return -200; end
 	if tValidVictories.RELIGION == 0 then return -200; end
 	
 	local iPriority:number = 0;
@@ -826,8 +840,30 @@ end
 
 ------------------------------------------------------------------------------
 -- Specific: DIPLO
+--[[
+
+I am not sure if scoring for Diplo should start immediately. Maybe in Medieval Era, together with WC?
+if Game.GetEras():GetCurrentEra() >= GlobalParameters.WORLD_CONGRESS_INITIAL_ERA then
+
+Things to score
+Big milestones (like cities captured) are DV points.
+7 and more = close to victory.
+Suzerain of a CS - it is in general however. Maybe give it more?
+Alliances and their level.
+Maybe ae should add this to „general section”. Certainly cultural, scientific and religious are helpful for respective victories.
+Yield here is Favor per turn. It is rather rare, 20-30 is a lot.
+Money is important. Maybe count TRs and even GPT?
+Careful with GPT, crazy values possible.
+--]]
+
 function GetPriorityDiplo(data:table)
-	--print("FUN GetPriorityDiplo");
+	print("FUN GetPriorityDiplo", data.PlayerID, data.LeaderType);
+	-- check if this victory type is enabled
+	if tValidVictories.DIPLO == 0 then return -200; end
+	
+	local iPriority:number = 0;
+	local ePlayerID:number = data.PlayerID;
+	local pPlayer:table = Players[ePlayerID];
 	
 	-- VP alorithm
 	-- Add in our base gold value. iPriorityBonus += (m_pPlayer->GetTreasury()->CalculateBaseNetGold() / 25);
@@ -838,12 +874,29 @@ function GetPriorityDiplo(data:table)
 	-- calculates votes needed to win
 	-- if we control >50%, then boosts *5, >75% boosts *10
 
-	return 0;
-end
-
-function GetPriorityDefense(data:table)
-	--print("FUN GetPriorityDefense");
-	return 0;
+	--Big milestones (like cities captured) are DV points.
+	--7 and more = close to victory.
+	local progress:number = RST.PlayerGetDiploVictoryProgress(ePlayerID);
+	iPriority = iPriority + progress * 5; -- 0.100, so each DPV = 50
+	print("...diplo progress", progress, iPriority);
+	
+	--Suzerain of a CS - it is in general however. Maybe give it more?
+	
+	--Alliances and their level.
+	--Maybe ae should add this to „general section”. Certainly cultural, scientific and religious are helpful for respective victories.
+	-- NO. Alliance is only 1 of the type. What matters is level. However this and suzerain boils down do FPT value (favor per turn).
+	
+	--Yield here is Favor per turn (FPT). It is rather rare, 20-30 is a lot.
+	local totalFavor:number   = pPlayer:GetDiplomaticFavor(); 
+	local favorPerTurn:number = pPlayer:GetDiplomaticFavorPerTurn();
+	iPriority = iPriority + favorPerTurn * 6;
+	print("...favor per turn", favorPerTurn, iPriority);
+	
+	--Money is important. Maybe count TRs and even GPT?
+	--Careful with GPT, crazy values possible.
+	-- AI sells favor easily unless you have a lot, and are a threat. They are not willing to sell any more. Money is not a good measure here???
+	
+	return iPriority;
 end
 
 
@@ -1271,6 +1324,22 @@ end
 
 
 ------------------------------------------------------------------------------
+-- try to reuse original function
+function GetOtherPlayerPriorityDiplo(data:table, eOtherID:number)
+	print("FUN GetOtherPlayerPriorityDiplo", data.LeaderType, eOtherID);
+	-- check if this victory type is enabled
+	if tValidVictories.DIPLO == 0 then return -200; end
+
+	local iPriority:number = 0;
+	local ePlayerID:number = data.PlayerID;
+	local pOther:table = Players[eOtherID];
+		
+	--print("GetOtherPlayerPriorityReligion:", iPriority);
+	return iPriority;
+end
+
+
+------------------------------------------------------------------------------
 function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	if bLogDebug then print(Game.GetCurrentGameTurn(), "FUN GuessOtherPlayerStrategy", data.PlayerID, eOtherID); end
 	
@@ -1282,7 +1351,7 @@ function GuessOtherPlayerStrategy(data:table, eOtherID:number)
 	tSpecificPriorities.SCIENCE  = GetOtherPlayerPriorityScience(data, eOtherID);
 	tSpecificPriorities.CULTURE  = GetOtherPlayerPriorityCulture(data, eOtherID);
 	tSpecificPriorities.RELIGION = GetOtherPlayerPriorityReligion(data, eOtherID);
-	--tSpecificPriorities.DIPLO    = GetPriorityDiplo(data);
+	tSpecificPriorities.DIPLO    = GetOtherPlayerPriorityDiplo(data, eOtherID);
 	dshowpriorities(tSpecificPriorities, "*** specific priorities "..sLeaderType);
 	-- no turn adjustment because we don't have the base priorities
 	
@@ -1404,7 +1473,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iCultureThem:number = math.max(1, Players[eOtherID]:GetCulture():GetCultureYield());
 		--local iTourismUs:number   = math.max(1, RST.PlayerGetTourism(ePlayerID));
 		--local iTourismThem:number = math.max(1, RST.PlayerGetTourism(eOtherID));
-		if bLogDebug then print("progress us/them", iProgressUs, iProgressThem, "tourism us/them", iTourismUs, iTourismThem); end
+		if bLogDebug then print("progress us/them", iProgressUs, iProgressThem, "culture us/them", iCultureUs, iCultureThem); end
 		-- compare actual victory progress, however we are considered equal if difference is less than 5pp
 		if (iProgressThem - iProgressUs) > 5 then return true; end
 		-- otherwise, compare coulture output, again with 5% slack
@@ -1424,8 +1493,19 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		return iFaithThem / iFaithUs > 1.05; -- allow for 5% slack
 	------------------------------------------------------------------------------
 	elseif sStrategy == "DIPLO" then
-		-- compare number of secured votes
-		return false;
+		-- compare number of diplo victory points
+		local iProgressUs:number   = RST.PlayerGetDiploVictoryProgress(ePlayerID);
+		local iProgressThem:number = RST.PlayerGetDiploVictoryProgress(eOtherID);
+		-- calculate how much favor players gonna have during the next voting
+		local pCongressMeetingData:table = Game.GetWorldCongress():GetMeetingStatus();
+		local iNumTurnsWC:number = pCongressMeetingData.TurnsLeft + 1; -- num turns to the next world congress
+		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomaticFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomaticFavorPerTurn();
+		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomaticFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomaticFavorPerTurn();
+		print("progress us/them", iProgressUs, iProgressThem, "favor us/them", iFavorUs, iFavorThem);
+		-- compare actual victory progress, however we are considered equal if difference is less than 15pp
+		if (iProgressThem - iProgressUs) > 15 then return true; end
+		-- otherwise, compare favor poll; to safely outvote the opponent, we need 20-50% more favor (favor => votes relation is not linear)
+		return (iFavorThem / iFavorUs) > 1.25;
 	------------------------------------------------------------------------------
 	else
 		print("WARNING: OtherPlayerDoingBetterThanUs, unknown strategy", sStrategy);
@@ -1502,6 +1582,14 @@ function ActiveStrategyReligion(ePlayerID:number, iThreshold:number)
 end
 GameEvents.ActiveStrategyReligion.Add(ActiveStrategyReligion);
 
+function ActiveStrategyDiplo(ePlayerID:number, iThreshold:number)
+	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyDiplo", ePlayerID, iThreshold);
+	RefreshAndProcessData(ePlayerID);
+	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "DIPLO");
+	return tData[ePlayerID].ActiveStrategy == "DIPLO";
+end
+GameEvents.ActiveStrategyReligion.Add(ActiveStrategyReligion);
+
 -- for testing purposes only
 function CheckTurnNumber(iPlayerID:number, iThreshold:number)
 	print(Game.GetCurrentGameTurn(), "FUN CheckTurnNumber", iPlayerID, iThreshold);
@@ -1523,6 +1611,8 @@ function PlayerGetNumWars(ePlayerID:number)
 	return iNumWars, iOpponentPower;
 end
 
+
+------------------------------------------------------------------------------
 -- DEFENSE
 -- Lua doesn't provide direct information on who has started the war.
 -- There is an event that can be used Events.DiplomacyDeclareWar.Add( OnDiplomacyDeclareWar(actingPlayer, reactingPlayer) );
@@ -1562,6 +1652,8 @@ end
 GameEvents.ActiveStrategyDefense.Add(ActiveStrategyDefense);
 
 
+------------------------------------------------------------------------------
+-- CATCHING
 -- will activate if our power falls below iThreshold% of the World average (known civs)
 -- this should be approx. 40% because it includes also us and we are low
 -- use data.Data.AvgMilStr
@@ -1582,6 +1674,8 @@ end
 GameEvents.ActiveStrategyCatching.Add(ActiveStrategyCatching);
 
 
+------------------------------------------------------------------------------
+-- ENOUGH
 -- will activate if our power will rise above iThreshold% of the World average (known civs)
 -- this should be approx. 250% because it includes also us and we are high
 -- use data.Data.AvgMilStr
@@ -1602,6 +1696,8 @@ end
 GameEvents.ActiveStrategyEnough.Add(ActiveStrategyEnough);
 
 
+------------------------------------------------------------------------------
+-- PEACE
 function ActiveStrategyPeace(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyPeace", ePlayerID, iThreshold);
 	--local pPlayer:table = Players[ePlayerID];
@@ -1616,6 +1712,8 @@ end
 GameEvents.ActiveStrategyPeace.Add(ActiveStrategyPeace);
 
 
+------------------------------------------------------------------------------
+-- WAR
 function ActiveStrategyAtWar(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyAtWar", ePlayerID, iThreshold);
 	--local pPlayer:table = Players[ePlayerID];
@@ -1838,7 +1936,7 @@ GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
 --		ii. Current game state.
 --   2c. LoadScreenClose - basically nothing to do?
 
-local iDataVersion = 1; -- internal number for versioning data stored in save files
+local iDataVersion = 2; -- internal number for versioning data stored in save files; version 1 was pre-GS (no diplo)
 
 ------------------------------------------------------------------------------
 -- Save player and game related data into Game and Player Values
@@ -2022,13 +2120,13 @@ function InitializeData()
 		data.Priorities[flavor.Strategy] = flavor.Value;
 	end
 	
-	--[[
+	
 	print("Table of priorities:"); -- debug
 	for objType,data in pairs(tPriorities) do
 		--print("object,type,subtype", data.ObjectType, data.Type, data.Subtype);
 		dshowpriorities(data.Priorities, data.ObjectType);
 	end
-	--]]
+	
 end
 
 
@@ -2073,7 +2171,7 @@ function InitializeRandomFlavors()
 			dshowpriorities(randomFlavors, "...randomizing "..data.ObjectType);
 			PriorityTableAdd(data.Priorities, randomFlavors);
 			PriorityTableMinMax(data.Priorities, 1, 9);
-			--dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
+			dshowpriorities(data.Priorities, "...leader "..data.ObjectType);
 		else
 			print("WARNING: InitializeRandomFlavors Priorities table for leader", leaderType, "not defined.");
 		end
@@ -2090,7 +2188,7 @@ function InitializeValidVictories()
 	if RST.GameIsVictoryEnabled("VICTORY_TECHNOLOGY") then tValidVictories.SCIENCE  = 1; iNumV = iNumV + 1; end
 	if RST.GameIsVictoryEnabled("VICTORY_CULTURE")    then tValidVictories.CULTURE  = 1; iNumV = iNumV + 1; end
 	if RST.GameIsVictoryEnabled("VICTORY_RELIGIOUS")  then tValidVictories.RELIGION = 1; iNumV = iNumV + 1; end
-	--if RST.GameIsVictoryEnabled("VICTORY_DIPLO") then tValidVictories.DIPLO = 1; end
+	if RST.GameIsVictoryEnabled("VICTORY_DIPLOMATIC") then tValidVictories.DIPLO    = 1; iNumV = iNumV + 1; end
 	dshowpriorities(tValidVictories, "Valid Victories");
 	iMinimumPriority  = GlobalParameters.RST_STRATEGY_MINIMUM_PRIORITY * iNumV;
 	iBetterThanUsNerf = GlobalParameters.RST_STRATEGY_BETTER_THAN_US_NERF * (iNumV+1);

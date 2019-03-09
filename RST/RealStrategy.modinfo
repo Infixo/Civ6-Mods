@@ -2,11 +2,12 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall and all DLCs, in any configuration. Compatible with iOS.[NEWLINE]Version 1.0.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS.[NEWLINE]Version 1.1.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<SupportsMultiplayer>1</SupportsMultiplayer>
+		<CompatibleVersions>2.0</CompatibleVersions>
 	</Properties>
 	<References>
 		<Mod id="02A8BDDE-67EA-4D38-9540-26E685E3156E" title="DLC: Aztec Civilization Pack" /> 
@@ -17,26 +18,35 @@
 		<Mod id="1F367231-A040-4793-BDBB-088816853683" title="DLC: Khmer and Indonesia Civilization Pack" />
 	</References>
 	<ActionCriteria>
-		<Criteria id="Expansion1">			<!-- 2018-02-08 -->
+		<Criteria id="Expansion1">		<!-- 2018-02-08 -->
 			<GameCoreInUse>Expansion1</GameCoreInUse> 
 		</Criteria>
-		<Criteria id="DLCAztec">			<!-- 2016-11-19 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_MONTEZUMA,StandardPlayers::LEADER_MONTEZUMA,Players:Expansion1_Players::LEADER_MONTEZUMA</LeaderPlayable>
+		<Criteria id="Expansion2">		<!-- 2019-02-14 -->
+			<GameCoreInUse>Expansion2</GameCoreInUse> 
 		</Criteria>
-		<Criteria id="DLCPoland">			<!-- 2016-12-20 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_JADWIGA,StandardPlayers::LEADER_JADWIGA,Players:Expansion1_Players::LEADER_JADWIGA</LeaderPlayable>
+		<Criteria id="DLCAztec" any="1">			<!-- 2016-11-19 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_MONTEZUMA,StandardPlayers::LEADER_MONTEZUMA,Players:Expansion1_Players::LEADER_MONTEZUMA,Players:Expansion2_Players::LEADER_MONTEZUMA</LeaderPlayable>
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCAustralia">		<!-- 2017-02-23 -->
-  			<LeaderPlayable>Players:StandardPlayers::LEADER_JOHN_CURTIN,StandardPlayers::LEADER_JOHN_CURTIN,Players:Expansion1_Players::LEADER_JOHN_CURTIN</LeaderPlayable>
+		<Criteria id="DLCPoland" any="1">			<!-- 2016-12-20 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_JADWIGA,StandardPlayers::LEADER_JADWIGA,Players:Expansion1_Players::LEADER_JADWIGA,Players:Expansion2_Players::LEADER_JADWIGA</LeaderPlayable>
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCMacedoniaPersia">	<!-- 2017-03-28 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion1_Players::LEADER_CYRUS</LeaderPlayable>
+		<Criteria id="DLCAustralia" any="1">		<!-- 2017-02-23 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_JOHN_CURTIN,StandardPlayers::LEADER_JOHN_CURTIN,Players:Expansion1_Players::LEADER_JOHN_CURTIN,Players:Expansion2_Players::LEADER_JOHN_CURTIN</LeaderPlayable>
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCNubia">			<!-- 2017-07-27 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_AMANITORE,StandardPlayers::LEADER_AMANITORE,Players:Expansion1_Players::LEADER_AMANITORE</LeaderPlayable>
+		<Criteria id="DLCMacedoniaPersia" any="1">	<!-- 2017-03-28 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS,Players:Expansion2_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS</LeaderPlayable>
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCIndonesiaKhmer">	<!-- 2017-10-19 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion1_Players::LEADER_JAYAVARMAN</LeaderPlayable>
+		<Criteria id="DLCNubia" any="1">			<!-- 2017-07-27 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_AMANITORE,StandardPlayers::LEADER_AMANITORE,Players:Expansion1_Players::LEADER_AMANITORE,Players:Expansion2_Players::LEADER_AMANITORE</LeaderPlayable>
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
+		</Criteria>
+		<Criteria id="DLCIndonesiaKhmer" any="1">	<!-- 2017-10-19 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN,Players:Expansion2_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN</LeaderPlayable>
+			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
@@ -49,9 +59,9 @@
 			<File>RealStrategy_Main.sql</File>
 			<File>RealStrategy_Naval.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
-			<File>RealStrategy_Tactics.sql</File>
 			<File>RealStrategy_Moves.xml</File>
-			<File>RealStrategy_Trees.xml</File>
+			<!--<File>RealStrategy_Tactics.sql</File> -- Temporarily switched off-->
+			<!--<File>RealStrategy_Trees.xml</File> -- Temporarily switched off-->
 			<File>RealStrategy_FastPillage.xml</File>
 		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Aztec" criteria="DLCAztec">
@@ -62,11 +72,11 @@
 			<Properties><LoadOrder>220</LoadOrder></Properties>
 			<File>RealStrategy_Poland.sql</File>
 		</UpdateDatabase>
-		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCAustralia">
+		<UpdateDatabase id="RST_DB_Australia" criteria="DLCAustralia">
 			<Properties><LoadOrder>230</LoadOrder></Properties>
 			<File>RealStrategy_Australia.sql</File>
 		</UpdateDatabase>
-		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCMacedoniaPersia">
+		<UpdateDatabase id="RST_DB_MacedoniaPersia" criteria="DLCMacedoniaPersia">
 			<Properties><LoadOrder>240</LoadOrder></Properties>
 			<File>RealStrategy_MacedoniaPersia.sql</File>
 		</UpdateDatabase>
@@ -74,7 +84,7 @@
 			<Properties><LoadOrder>250</LoadOrder></Properties>
 			<File>RealStrategy_Nubia.sql</File>
 		</UpdateDatabase>
-		<UpdateDatabase id="RST_DB_Nubia" criteria="DLCIndonesiaKhmer">
+		<UpdateDatabase id="RST_DB_IndonesiaKhmer" criteria="DLCIndonesiaKhmer">
 			<Properties><LoadOrder>260</LoadOrder></Properties>
 			<File>RealStrategy_IndonesiaKhmer.sql</File>
 		</UpdateDatabase>
@@ -82,10 +92,15 @@
 			<Properties><LoadOrder>270</LoadOrder></Properties>
 			<File>RealStrategy_RiseAndFall.sql</File>
 		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Expansion2" criteria="Expansion2">
+			<Properties><LoadOrder>280</LoadOrder></Properties>
+			<File Priority="1">RealStrategy_RiseAndFall.sql</File>
+			<File>RealStrategy_GatheringStorm.sql</File>
+		</UpdateDatabase>
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Lua/RealStrategy_InGameExp.xml</File>
-			<File>Lua/RealStrategy_GreatPeople.xml</File>
+			<!--<File>Lua/RealStrategy_GreatPeople.xml</File> -- Temporarily switched off-->
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
 			<File>Lua/RealStrategy.lua</File>
@@ -107,6 +122,7 @@
 		<File>RealStrategy_Nubia.sql</File>
 		<File>RealStrategy_IndonesiaKhmer.sql</File>
 		<File>RealStrategy_RiseAndFall.sql</File>
+		<File>RealStrategy_GatheringStorm.sql</File>
 		<File>Lua/RealStrategy.lua</File>
 		<File>Lua/RealStrategy_GreatPeople.lua</File>
 		<File>Lua/RealStrategy_GreatPeople.xml</File>
