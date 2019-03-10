@@ -1510,8 +1510,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iProgressUs:number   = RST.PlayerGetDiploVictoryProgress(ePlayerID);
 		local iProgressThem:number = RST.PlayerGetDiploVictoryProgress(eOtherID);
 		-- calculate how much favor players gonna have during the next voting
-		local pCongressMeetingData:table = Game.GetWorldCongress():GetMeetingStatus();
-		local iNumTurnsWC:number = pCongressMeetingData.TurnsLeft + 1; -- num turns to the next world congress
+		local iNumTurnsWC:number = RST.WorldCongressGetTurnsLeft(); -- num turns to the next world congress
 		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomaticFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomaticFavorPerTurn();
 		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomaticFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomaticFavorPerTurn();
 		print("progress us/them", iProgressUs, iProgressThem, "favor us/them", iFavorUs, iFavorThem);

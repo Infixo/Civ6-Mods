@@ -303,6 +303,11 @@ function PlayerConfigurationGetValue(ePlayerID:number, sSlot:string)
 	--return GameConfiguration.GetValue(sSlot..tostring(ePlayerID));
 end
 
+-- wrapper
+function WorldCongressGetTurnsLeft()
+	return Game.GetWorldCongress():GetMeetingStatus().TurnsLeft;
+end
+
 
 function Initialize()
 	-- functions: Game
@@ -312,6 +317,8 @@ function Initialize()
 	RST.GameGetMaxGameTurns          = GameGetMaxGameTurns;
 	RST.GameGetAverageMilitaryStrength = GameGetAverageMilitaryStrength;
 	RST.GameGetAverageNumTechsResearched = GameGetAverageNumTechsResearched;
+	-- functions: WorldCongress
+	RST.WorldCongressGetTurnsLeft    = WorldCongressGetTurnsLeft;
 	-- functions: City
 	RST.CityGetGreatWorkObjectType   = CityGetGreatWorkObjectType;
 	-- functions: Player
