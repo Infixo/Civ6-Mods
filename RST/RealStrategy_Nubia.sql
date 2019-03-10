@@ -21,6 +21,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('LEADER_AMANITORE', 'LEADER', '', 'SCIENCE',  4),
 ('LEADER_AMANITORE', 'LEADER', '', 'CULTURE',  4),
 ('LEADER_AMANITORE', 'LEADER', '', 'RELIGION', 6),
+('LEADER_AMANITORE', 'LEADER', '', 'DIPLO',    1),
 ('BUILDING_JEBEL_BARKAL', 'Wonder', '', 'CONQUEST', 3),
 ('BUILDING_JEBEL_BARKAL', 'Wonder', '', 'RELIGION', 4);
 

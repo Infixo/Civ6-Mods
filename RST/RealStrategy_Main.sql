@@ -52,7 +52,7 @@ UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'DefaultCitySettlement' AN
 --UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_PRODUCTION'; -- 25
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_SCIENCE'; -- 10
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_CULTURE'; -- 10
-UPDATE AiFavoredItems SET Value = -15 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_GOLD';  -- 20
+UPDATE AiFavoredItems SET Value = -10 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_GOLD';  -- 20
 --UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_FAITH'; -- -25
 
 
@@ -718,7 +718,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RenaissanceYields', 'YIELD_CULTURE',    1, 15),
 ('RenaissanceYields', 'YIELD_FAITH',      1,-20),
 ('RenaissanceYields', 'YIELD_FOOD',       1,-15),
-('RenaissanceYields', 'YIELD_GOLD',       1, 10),
+('RenaissanceYields', 'YIELD_GOLD',       1, 15),
 ('RenaissanceYields', 'YIELD_PRODUCTION', 1,-10),
 ('RenaissanceYields', 'YIELD_SCIENCE',    1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50),
@@ -734,7 +734,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- INDUSTRIAL
 ('IndustrialYields', 'YIELD_CULTURE',	1, -10),
 ('IndustrialYields', 'YIELD_FAITH',	1, -10),
-('IndustrialYields', 'YIELD_GOLD',	1, -10),
 ('IndustrialYields', 'YIELD_PRODUCTION', 1, 20),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
 ('IndustrialPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
@@ -761,6 +760,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ModernPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -15),
 -- ATOMIC
 ('AtomicYields', 'YIELD_FOOD', 1, -10),
+('AtomicYields', 'YIELD_GOLD', 1, 15),
 ('AtomicYields', 'YIELD_SCIENCE', 1, 15),
 ('AtomicYields', 'YIELD_PRODUCTION', 1, 10),
 ('AtomicPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10),

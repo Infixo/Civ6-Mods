@@ -8,7 +8,8 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('LEADER_JADWIGA', 'LEADER', '', 'CONQUEST', 4),
 ('LEADER_JADWIGA', 'LEADER', '', 'SCIENCE',  1),
 ('LEADER_JADWIGA', 'LEADER', '', 'CULTURE',  4),
-('LEADER_JADWIGA', 'LEADER', '', 'RELIGION', 7);
+('LEADER_JADWIGA', 'LEADER', '', 'RELIGION', 7),
+('LEADER_JADWIGA', 'LEADER', '', 'DIPLO',    2);
 
 
 -- JADWIGA / POLAND

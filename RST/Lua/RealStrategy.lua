@@ -877,7 +877,8 @@ function GetPriorityDiplo(data:table)
 	--Big milestones (like cities captured) are DV points.
 	--7 and more = close to victory.
 	local progress:number = RST.PlayerGetDiploVictoryProgress(ePlayerID);
-	iPriority = iPriority + progress * 5; -- 0.100, so each DPV = 50
+	iPriority = iPriority + progress * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; -- 0.100, so each DPV = 50
+	if progress > 50 then iPriority = iPriority + (progress - 50) * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; end
 	print("...diplo progress", progress, iPriority);
 	
 	--Suzerain of a CS - it is in general however. Maybe give it more?
@@ -889,7 +890,7 @@ function GetPriorityDiplo(data:table)
 	--Yield here is Favor per turn (FPT). It is rather rare, 20-30 is a lot.
 	local totalFavor:number   = pPlayer:GetDiplomaticFavor(); 
 	local favorPerTurn:number = pPlayer:GetDiplomaticFavorPerTurn();
-	iPriority = iPriority + favorPerTurn * 6;
+	iPriority = iPriority + favorPerTurn * GlobalParameters.RST_DIPLO_FAVOR_PER_TURN_WEIGHT;
 	print("...favor per turn", favorPerTurn, iPriority);
 	
 	--Money is important. Maybe count TRs and even GPT?
@@ -1324,7 +1325,6 @@ end
 
 
 ------------------------------------------------------------------------------
--- try to reuse original function
 function GetOtherPlayerPriorityDiplo(data:table, eOtherID:number)
 	print("FUN GetOtherPlayerPriorityDiplo", data.LeaderType, eOtherID);
 	-- check if this victory type is enabled
@@ -1333,8 +1333,21 @@ function GetOtherPlayerPriorityDiplo(data:table, eOtherID:number)
 	local iPriority:number = 0;
 	local ePlayerID:number = data.PlayerID;
 	local pOther:table = Players[eOtherID];
-		
-	--print("GetOtherPlayerPriorityReligion:", iPriority);
+
+	--Big milestones (like cities captured) are DV points.
+	--7 and more = close to victory.
+	local progress:number = RST.PlayerGetDiploVictoryProgress(eOtherID);
+	iPriority = iPriority + progress * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; -- 0.100, so each DPV = 50
+	if progress > 50 then iPriority = iPriority + (progress - 50) * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; end
+	print("...diplo progress", progress, iPriority);
+	
+	--Yield here is Favor per turn (FPT). It is rather rare, 20-30 is a lot.
+	local totalFavor:number   = pOther:GetDiplomaticFavor(); 
+	local favorPerTurn:number = pOther:GetDiplomaticFavorPerTurn();
+	iPriority = iPriority + favorPerTurn * GlobalParameters.RST_DIPLO_FAVOR_PER_TURN_WEIGHT;
+	print("...favor per turn", favorPerTurn, iPriority);
+	
+	print("GetOtherPlayerPriorityDiplo:", iPriority);
 	return iPriority;
 end
 

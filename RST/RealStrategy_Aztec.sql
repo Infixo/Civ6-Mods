@@ -9,6 +9,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 ('LEADER_MONTEZUMA', 'LEADER', '', 'SCIENCE',  2),
 ('LEADER_MONTEZUMA', 'LEADER', '', 'CULTURE',  2),
 ('LEADER_MONTEZUMA', 'LEADER', '', 'RELIGION', 4),
+('LEADER_MONTEZUMA', 'LEADER', '', 'DIPLO',    1),
 ('BUILDING_HUEY_TEOCALLI', 'Wonder', '', 'CONQUEST', 2),
 ('BUILDING_HUEY_TEOCALLI', 'Wonder', '', 'SCIENCE',  2),
 ('BUILDING_HUEY_TEOCALLI', 'Wonder', '', 'CULTURE',  1),
