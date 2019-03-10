@@ -60,8 +60,10 @@
 			<File>RealStrategy_Naval.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Moves.xml</File>
-			<!--<File>RealStrategy_Tactics.sql</File> -- Temporarily switched off-->
-			<!--<File>RealStrategy_Trees.xml</File> -- Temporarily switched off-->
+			<!-- Temporarily switched off
+			<File>RealStrategy_Tactics.sql</File>
+			<File>RealStrategy_Trees.xml</File>
+			-->
 			<File>RealStrategy_FastPillage.xml</File>
 		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Aztec" criteria="DLCAztec">
@@ -100,7 +102,9 @@
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Lua/RealStrategy_InGameExp.xml</File>
-			<!--<File>Lua/RealStrategy_GreatPeople.xml</File> -- Temporarily switched off-->
+			<!-- Temporarily switched off
+			<File>Lua/RealStrategy_GreatPeople.xml</File>
+			-->
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
 			<File>Lua/RealStrategy.lua</File>
