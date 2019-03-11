@@ -308,6 +308,7 @@ function CanShowImprovement(sImprovementType:string)
 	if imprInfo.TraitType == "TRAIT_CIVILIZATION_NO_PLAYER" then return true; end -- generic for all players
 	if string.find(imprInfo.TraitType, "MINOR_CIV") then return true; end -- we may acquire that! ugly hack, but I don't to iterate LeaderTraits to check for 1 instance (Colossal Head)
 	-- find civ
+	if Game.GetLocalPlayer() == -1 then return true; end
 	local sLocalPlayerCivType:string = PlayerConfigurations[ Game.GetLocalPlayer() ]:GetCivilizationTypeName();
 	--print("checking trait for",sLocalPlayerCivType);
 	for row in GameInfo.CivilizationTraits() do
