@@ -227,7 +227,7 @@ PageLayouts["Civic" ] = function(page)
 				-- Infixo: start
 				--s:AddLabel(b.TriggerDescription);
 				if CanShowTrigger(civic.Index, true) then s:AddLabel(b.TriggerDescription);
-				else s:AddLabel("LOC_REUR_QUOTE_"..math.random(22)); end
+				else s:AddLabel(GetRandomQuote(civic.Index)); end
 				-- Infixo: end
 			end
 			s:AddSeparator();

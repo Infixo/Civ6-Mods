@@ -11,7 +11,6 @@ REU_BASE_RealizeMeterAndBoosts = RealizeMeterAndBoosts; -- TechAndCivicSupport m
 
 local MAX_BEFORE_TRUNC_BOOST_MSG:number = 220;			-- Size in which boost messages will be truncated and tooltipified
 
-
 -- ===========================================================================
 --	Show the meters and boost information for a given tech or civic.
 -- ===========================================================================
@@ -23,7 +22,7 @@ function RealizeMeterAndBoosts( kControl:table, kData:table )
 
 		local boostText:string;
 		if CanShowTrigger(kData.ID, kData.CivicType ~= nil) then boostText = Locale.Lookup(kData.TriggerDesc);
-		else boostText = Locale.Lookup("LOC_REUR_QUOTE_"..math.random(22)); end
+		else boostText = GetRandomQuote(kData.ID); end
 
 		local boostString :string = "[NEWLINE]" .. boostText;
 		if  kData.BoostTriggered then

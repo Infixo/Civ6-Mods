@@ -2,6 +2,7 @@
 -- ===========================================================================
 -- Real Eurekas - function to check if a trigger description can be shown
 -- 2019-02-20: Created by Infixo
+-- 2019-03-16: Support for MP and new randomization method
 -- ===========================================================================
 
 local eTVP:number = GameConfiguration.GetValue("TriggerVisibilityParam");
@@ -26,6 +27,13 @@ function CanShowTrigger(iTechID:number, bCivic:boolean)
 	-- eTVP == 2, only after some progress has been made (last option remaining)
 	if bCivic then return pPlayerTechs:GetCulturalProgress(iTechID) > 0;
 	else           return pPlayerTechs:GetResearchProgress(iTechID) > 0; end
+end
+
+
+local iRandomSeed:number = GlobalParameters.REU_RANDOM_SEED;
+
+function GetRandomQuote(iIndex:number)
+	return Locale.Lookup("LOC_REUR_QUOTE_"..tostring(1+(iRandomSeed+iIndex)%22));
 end
 
 --print("OK loaded RealEurekasCanShow.lua from Real Eurekas version ");

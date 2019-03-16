@@ -27,6 +27,7 @@
   <InGameActions>
     <UpdateDatabase id="REU_Database_Init">
       <Properties><LoadOrder>1</LoadOrder></Properties>
+      <File>RealEurekas_0_Setup.sql</File>
       <File>RealEurekas_1_Init.sql</File>
     </UpdateDatabase>
     <UpdateDatabase id="REU_Database_XP1" criteria="Expansion1">
@@ -187,6 +188,7 @@
     <File>Config/RealEurekas_Config.xml</File>
     <File>Config/RealEurekas_Config_Text.xml</File>
     <File>Lua/RealEurekas.lua</File>
+    <File>RealEurekas_0_Setup.sql</File>
     <File>RealEurekas_1_Init.sql</File>
     <File>RealEurekas_2_XP1.sql</File> <!-- Rise & Fall -->
     <File>RealEurekas_3_XP2.sql</File> <!-- Gathering Storm -->

@@ -62,11 +62,18 @@ function GetGreatWorkObjectType(iCityX:number, iCityY:number, iGreatWorkIndex:nu
 end
 
 
+-- wrapper
+function PlayerUnitGetLevel(ePlayerID:number, iUnitID:number)
+	return Players[ePlayerID]:GetUnits():FindID(iUnitID):GetExperience():GetLevel();
+end
+
+
 function Initialize()
 	-- functions
 	ExposedMembers.REU.GetWMDWeaponCount		= GetWMDWeaponCount;
 	ExposedMembers.REU.GetGreatWorkCount		= GetGreatWorkCount;
 	ExposedMembers.REU.GetGreatWorkObjectType	= GetGreatWorkObjectType;
+	ExposedMembers.REU.PlayerUnitGetLevel		= PlayerUnitGetLevel;
 	-- objects
 	--ExposedMembers.RND.Calendar				= Calendar;
 end

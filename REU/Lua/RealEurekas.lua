@@ -5,6 +5,7 @@ print("Loading RealEurekas.lua from Real Eurekas version "..GlobalParameters.REU
 -- 2018-02-13: Version 2.3, Hills
 -- 2018-02-21: Version 2.4, Meet CS, Meet-X-CS, Train Unit, Great Person, Suzerain a City-State
 -- 2018-04-04: Version 2.5, Projects, Great Works, Governments
+-- 2019-03-16: Version 4.0, Unit Promoted, Unit Removed From Map, Improvement Pillaged
 -- ===========================================================================
 
 
@@ -741,6 +742,62 @@ function ProcessBoostHaveGreatWorks(ePlayerID:number, iCityX:number, iCityY:numb
 end
 
 
+function ProcessBoostImprovementPillaged(ePlayerID:number, iX:number, iY:number, eImprovement:number, eImprOwner:number)
+	print("FUN ProcessBoostImprovementPillaged",ePlayerID,iX,iY,eImprovement,eImprOwner);
+	
+	-- BOOST: PILLAGE_WITH_UNIT
+	tBoostClass = tBoostClasses["PILLAGE_WITH_UNIT"];
+	if tBoostClass ~= nil then
+		for _,unit in pairs(Units.GetUnitsInPlotLayerID(iX, iY, MapLayers.PRIMARY)) do -- check all units in the plot
+			local sUnitType:string = GameInfo.Units[unit:GetType()].UnitType;
+			for id,boost in pairs(tBoostClass.Boosts) do
+				print("  ...processing boost (class,id,unittype,unit)", "PILLAGE_WITH_UNIT", id, boost.Unit1Type, sUnitType);
+				if not HasBoostBeenTriggered(ePlayerID, boost) and sUnitType == boost.Unit1Type then TriggerBoost(ePlayerID, boost); end
+			end
+		end
+	end
+
+end
+
+
+-- can't use that boost - event is called AFTER the unit is removed, so it doesn't exist and we cannot check what it was
+--[[
+function ProcessBoostUnitRemovedFromMap(ePlayerID, iUnitID)
+	print("FUN ProcessBoostUnitRemovedFromMap",ePlayerID,iUnitID);
+	
+	-- BOOST: UNIT_LOST
+	tBoostClass = tBoostClasses["UNIT_LOST"];
+	if tBoostClass ~= nil then
+		local pUnit:table = Players[ePlayerID]:GetUnits():FindID(iUnitID);
+		local sUnitType:string = GameInfo.Units[pUnit:GetType()].UnitType;
+		for id,boost in pairs(tBoostClass.Boosts) do
+			print("  ...processing boost (class,id,unittype,unit)", "UNIT_LOST", id, boost.Unit1Type, sUnitType);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and sUnitType == boost.Unit1Type then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+	
+end
+--]]
+
+function ProcessBoostUnitPromoted(ePlayerID, iUnitID, eUnitPromotion)
+	print("FUN ProcessBoostUnitPromoted",ePlayerID,iUnitID,eUnitPromotion);
+
+	-- BOOST: UNIT_LEVEL_X
+	tBoostClass = tBoostClasses["UNIT_LEVEL_X"];
+	if tBoostClass ~= nil then
+		local iLevel:number = ExposedMembers.REU.PlayerUnitGetLevel(ePlayerID, iUnitID) + 1; -- event is called BEFORE actual promotion, so level is not yet increased
+		local pUnit:table = Players[ePlayerID]:GetUnits():FindID(iUnitID);
+		local sUnitType:string = GameInfo.Units[pUnit:GetType()].UnitType;
+		for id,boost in pairs(tBoostClass.Boosts) do
+			--local sUnitType:string = boost.Helper;
+			print("  ...processing boost (class,id,unittype,level,unit,level)", "UNIT_LEVEL_X", id, boost.Unit1Type, boost.NumItems2, sUnitType, iLevel);
+			if not HasBoostBeenTriggered(ePlayerID, boost) and sUnitType == boost.Unit1Type and iLevel == boost.NumItems2 then TriggerBoost(ePlayerID, boost); end
+		end
+	end
+
+end
+
+
 -- ===========================================================================
 -- GAME EVENTS
 -- ===========================================================================
@@ -919,6 +976,45 @@ end
 function OnDiplomacyRelationshipChanged(ePlayerID:number, eToPlayerID:number, eDiploRelType:number, iXX:number)
 end
 
+
+-- ===========================================================================
+-- ImprovementChanged = 		{ "iX", "iY", "Improvement", "player", "Resource", "iIsPillaged", "iIsWorked" },
+function OnImprovementChanged(iX:number, iY:number, eImprovement:number, ePlayerID:number, eResource:number, iIsPillaged:number, iIsWorked:number)
+	dprint("FUN OnImprovementChanged(iX,iY,eImprovement,ePlayerID,eResource,iIsPillaged,iIsWorked)",iX,iY,eImprovement,ePlayerID,eResource,iIsPillaged,iIsWorked);
+	--if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	if iIsPillaged == 1 then
+		for _,unit in pairs(Units.GetUnitsInPlotLayerID(iX, iY, MapLayers.PRIMARY)) do
+			if IsPlayerBoostable(unit:GetOwner()) then
+				ProcessBoostImprovementPillaged(unit:GetOwner(), iX, iY, eImprovement, ePlayerID);
+				break; -- process only single unit!
+			end
+		end -- for
+	end -- if
+end
+
+
+-- ===========================================================================
+-- UnitRemovedFromMap =		{ "player", "iUnitID" },
+--[[
+function OnUnitRemovedFromMap(ePlayerID:number, iUnitID:number)
+	print("FUN OnUnitRemovedFromMap(ePlayerID,iUnitID)",ePlayerID,iUnitID);
+	if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	ProcessBoostUnitRemovedFromMap(ePlayerID, iUnitID);
+end
+--]]
+
+-- ===========================================================================
+-- UnitPromoted = 				{ "player", "iUnitID", "UnitPromotion" },
+function OnUnitPromoted(ePlayerID:number, iUnitID:number, eUnitPromotion:number)
+	print("FUN OnUnitPromoted(ePlayerID,iUnitID,eUnitPromotion)",ePlayerID,iUnitID,eUnitPromotion);
+	if not IsPlayerBoostable(ePlayerID) then return; end
+	-- BOOST CLASS DISPATCHER
+	ProcessBoostUnitPromoted(ePlayerID, iUnitID, eUnitPromotion);
+end
+
+
 -- ===========================================================================
 function OnLoadScreenClose()
 	dprint("FUN OnLoadScreenClose");
@@ -951,6 +1047,10 @@ function Initialize()
 	--Events.CityReligionFollowersChanged.Add( OnCityReligionFollowersChanged ); -- this event fires every turn, for each city, very often!
 	Events.GreatWorkCreated.Add( OnGreatWorkCreated );
 	Events.GovernmentChanged.Add( OnGovernmentChanged );
+	-- 2019-03-16
+	Events.ImprovementChanged.Add( OnImprovementChanged );
+	--Events.UnitRemovedFromMap.Add( OnUnitRemovedFromMap );
+	Events.UnitPromoted.Add( OnUnitPromoted );
 	
 	InitializeBoosts();
 	--dprint("List of BoostClasses:");

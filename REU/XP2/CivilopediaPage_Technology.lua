@@ -213,7 +213,7 @@ PageLayouts["Technology" ] = function(page)
 				-- Infixo: start
 				--s:AddLabel(b.TriggerDescription);
 				if CanShowTrigger(tech.Index, false) then s:AddLabel(b.TriggerDescription);
-				else s:AddLabel("LOC_REUR_QUOTE_"..math.random(22)); end
+				else s:AddLabel(GetRandomQuote(tech.Index)); end
 				-- Infixo: end
 			end
 			s:AddSeparator();

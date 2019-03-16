@@ -12,6 +12,7 @@ CREATE TABLE REurFinalMapping (
 	BoostTypeID	INTEGER NOT NULL DEFAULT 0, -- final Boost to use
 	BoostSeq	INTEGER NOT NULL DEFAULT 0, -- randomly generated number 0..BoostSeqMax-1
 	BoostSeqMax INTEGER NOT NULL DEFAULT 1, -- number of available boosts for a given Tech/Civic
+	RandSeed    INTEGER NOT NULL DEFAULT 0,
 	FOREIGN KEY (BoostID) REFERENCES Boosts(BoostID) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (BoostTypeID) REFERENCES REurBoostDefs(BoostTypeID) ON DELETE CASCADE ON UPDATE CASCADE);
 	
@@ -34,8 +35,11 @@ INSERT INTO REurFinalMapping (BoostID, BoostSeqMax)
 SELECT BoostID, COUNT(*)
 FROM REurMapping
 GROUP BY BoostID;
+-- 1a. retrieve rand seed
+UPDATE REurFinalMapping SET RandSeed = (SELECT Value FROM GlobalParameters WHERE Name = 'REU_RANDOM_SEED');
 -- 2. assign random seq nums based on actual number of possible boosts
-UPDATE REurFinalMapping SET BoostSeq = ABS( RANDOM() % BoostSeqMax );
+--UPDATE REurFinalMapping SET BoostSeq = ABS( RANDOM() % BoostSeqMax );
+UPDATE REurFinalMapping SET BoostSeq = (((RandSeed * ROWID) % 79) * 53) % BoostSeqMax;
 -- 3. get BoostTypeIDs from the mapping table
 UPDATE REurFinalMapping
 SET BoostTypeID = (

@@ -8,6 +8,7 @@
 -- 2018-02-21: Version 2.4, New boosts related to: meet city-state type, train unit
 -- 2018-04-04: Version 2.5, New boosts related to: projects, great works, followers, governments
 -- 2019-02-20: Version 3.0, Gathering Storm update
+-- 2019-03-16: Version 4.0, Unit Promoted, Improvement Pillaged, new randomization method
 --------------------------------------------------------------
 
 -- just to make versioning easier
@@ -58,7 +59,9 @@ INSERT INTO REurBoostCodes (BoostClass, BoostCode) VALUES
 ('SETTLE_CITY2_HILLS_X',	14100),
 ('SETTLE_CAPITAL_HILLS',	14200),
 ('SETTLE_CITY1_LAKE_X',		14300),
-('SETTLE_CITY2_LAKE_X',		14400);
+('SETTLE_CITY2_LAKE_X',		14400),
+('PILLAGE_WITH_UNIT',		14500),
+('UNIT_LEVEL_X',			14600);
 
 -- New columns in game's Boosts table needed for custom boosts
 ALTER TABLE Boosts ADD COLUMN NumItems2 INTEGER DEFAULT 0;
