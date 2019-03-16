@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS.[NEWLINE]Version 1.1.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS.[NEWLINE]Version 1.1.1.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -24,29 +24,23 @@
 		<Criteria id="Expansion2">		<!-- 2019-02-14 -->
 			<GameCoreInUse>Expansion2</GameCoreInUse> 
 		</Criteria>
-		<Criteria id="DLCAztec" any="1">			<!-- 2016-11-19 -->
+		<Criteria id="DLCAztec">			<!-- 2016-11-19 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_MONTEZUMA,StandardPlayers::LEADER_MONTEZUMA,Players:Expansion1_Players::LEADER_MONTEZUMA,Players:Expansion2_Players::LEADER_MONTEZUMA</LeaderPlayable>
-			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCPoland" any="1">			<!-- 2016-12-20 -->
+		<Criteria id="DLCPoland">			<!-- 2016-12-20 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_JADWIGA,StandardPlayers::LEADER_JADWIGA,Players:Expansion1_Players::LEADER_JADWIGA,Players:Expansion2_Players::LEADER_JADWIGA</LeaderPlayable>
-			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCAustralia" any="1">		<!-- 2017-02-23 -->
+		<Criteria id="DLCAustralia">		<!-- 2017-02-23 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_JOHN_CURTIN,StandardPlayers::LEADER_JOHN_CURTIN,Players:Expansion1_Players::LEADER_JOHN_CURTIN,Players:Expansion2_Players::LEADER_JOHN_CURTIN</LeaderPlayable>
-			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCMacedoniaPersia" any="1">	<!-- 2017-03-28 -->
+		<Criteria id="DLCMacedoniaPersia">	<!-- 2017-03-28 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS,Players:Expansion2_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS</LeaderPlayable>
-			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCNubia" any="1">			<!-- 2017-07-27 -->
+		<Criteria id="DLCNubia">			<!-- 2017-07-27 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_AMANITORE,StandardPlayers::LEADER_AMANITORE,Players:Expansion1_Players::LEADER_AMANITORE,Players:Expansion2_Players::LEADER_AMANITORE</LeaderPlayable>
-			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
-		<Criteria id="DLCIndonesiaKhmer" any="1">	<!-- 2017-10-19 -->
+		<Criteria id="DLCIndonesiaKhmer">	<!-- 2017-10-19 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN,Players:Expansion2_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN</LeaderPlayable>
-			<RuleSetInUse>RULESET_STANDARD,RULESET_EXPANSION_1,RULESET_EXPANSION_2</RuleSetInUse>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>

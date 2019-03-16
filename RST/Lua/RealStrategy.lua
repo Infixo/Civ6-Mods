@@ -228,13 +228,27 @@ function GameGetNumTurnsScaled(iNumTurns:number)
 	return iNumTurns * 100 / iCostMultiplier;
 end
 
+
 -- adjust table of priorities according to game turn
 -- it scales lineary from _START to _STOP value during the game
+local iMaxGameTurns:number = 0;
 function TurnAdjustPriorities(tPriorities:table, iStartPerc:number, iStopPerc:number)
-	local iMaxTurn:number = RST.GameGetMaxGameTurns();
+	-- late init
+	if iMaxGameTurns == 0 then
+		iMaxGameTurns = RST.GameGetMaxGameTurns();
+		if iMaxGameTurns == 0 then
+			-- no turn limit, must get data from DB
+			print("MaxGameTurns: getting from DB");
+			local sGameSpeedType:string = GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()].GameSpeedType;
+			for _,row in ipairs(DB.Query("select sum(TurnsPerIncrement) as MaxGameTurns from GameSpeed_Turns where GameSpeedType = ?", sGameSpeedType)) do
+				iMaxGameTurns = row.MaxGameTurns;
+			end
+		end
+		print("MaxGameTurns:", iMaxGameTurns);
+	end
 	local iCurrentTurn:number = Game.GetCurrentGameTurn();
-	local fTurnAdjust:number = iStartPerc + (iStopPerc - iStartPerc) * iCurrentTurn / iMaxTurn;
-	if bLogDebug then print(Game.GetCurrentGameTurn(), string.format("turn adjust %d..%d (iMaxT=%d,iCurT=%d,perc=%5.1f)", iStartPerc, iStopPerc, iMaxTurn, iCurrentTurn, fTurnAdjust)); end
+	local fTurnAdjust:number = iStartPerc + (iStopPerc - iStartPerc) * iCurrentTurn / iMaxGameTurns;
+	if bLogDebug then print(Game.GetCurrentGameTurn(), string.format("turn adjust %d..%d (iMaxT=%d,iCurT=%d,perc=%5.1f)", iStartPerc, iStopPerc, iMaxGameTurns, iCurrentTurn, fTurnAdjust)); end
 	PriorityTableMultiply(tPriorities, fTurnAdjust/100.0);
 	dshowpriorities(tPriorities, "after turn adjust");
 end
