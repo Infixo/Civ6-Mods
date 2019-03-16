@@ -43,8 +43,9 @@
 	<Row DefnId="0" NodeId="3" TreeName="Simple City Defense" DefaultData="20" /> <!-- int: AutoProtect 20% -->
 	<!-- 4: Recruit Units -->
 	<Row DefnId="0" NodeId="4" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Already in progress -->
-	<Row DefnId="2" NodeId="4" TreeName="Simple City Defense" DefaultData="5" /> <!-- int: Recruit Range -->
+	<Row DefnId="2" NodeId="4" TreeName="Simple City Defense" DefaultData="6" /> <!-- int: Recruit Range -->
 	<Row DefnId="6" NodeId="4" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Allow Stealing -->
+	<Row DefnId="7" NodeId="4" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Allow Levying *GS -->
 	<!-- 5: Operation Attack Units -->
 	<Row DefnId="0" NodeId="5" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Attack Nearby Units -->
 	<Row DefnId="1" NodeId="5" TreeName="Simple City Defense" DefaultData="true" /> <!-- bool: Attack Along March -->
@@ -97,9 +98,9 @@
 	<!-- "Priority" -->
 	<!-- Find Unit Targets -->
     <Row DefnId="0" NodeId="5" TreeName="Manage Great Person" DefaultData="true" />
-    <Row DefnId="1" NodeId="5" TreeName="Manage Great Person" Tag="GP District" DefaultData="DISTRICT_THEATER" />
+    <Row DefnId="1" NodeId="5" TreeName="Manage Great Person" Tag="GP District" DefaultData="DISTRICT_HOLY_SITE" />
     <Row DefnId="2" NodeId="5" TreeName="Manage Great Person" Tag="GP Buildings" />
-    <Row DefnId="3" NodeId="5" TreeName="Manage Great Person" Tag="Great Work Value" DefaultData="100" />
+    <Row DefnId="3" NodeId="5" TreeName="Manage Great Person" Tag="Great Work Value" DefaultData="300" /> <!-- TEST - MORE VALUE -->
 	<!-- "Contract Manager Decorator" -->
     <Row DefnId="0" NodeId="6" TreeName="Manage Great Person" Tag="Great Work Contract" />
     <Row DefnId="1" NodeId="6" TreeName="Manage Great Person" />
@@ -144,7 +145,6 @@
 		<Row NodeType="Concurrent" NodeId="7" TreeName="Naval Superiority Tree" JumpTo="16" />
 			<Row NodeType="Recruit Units" NodeId="8" TreeName="Naval Superiority Tree" />
 			<Row NodeType="Operation Defend Units" NodeId="9" TreeName="Naval Superiority Tree" />
-			<!--<Row NodeType="Operation Attack Units" NodeId="5" TreeName="Naval Superiority Tree" />-->
 			<Row NodeType="Naval Choose Target" NodeId="10" TreeName="Naval Superiority Tree" JumpTo="14" /> <!-- decorator node Choose a naval superiority target. If none available, don't run child. -->
 				<Row NodeType="Concurrent" NodeId="11" TreeName="Naval Superiority Tree" JumpTo="14" />
 					<Row NodeType="Operation Move" NodeId="12" TreeName="Naval Superiority Tree" />
@@ -168,16 +168,16 @@
     <Row DefnId="7" NodeId="1" TreeName="Naval Superiority Tree" />
     <Row DefnId="8" NodeId="1" TreeName="Naval Superiority Tree" Tag="Present Value" /> <!-- Note: this always gives 100, thus units here are not high priority! -->
 	<!-- "Operation Defend Units" -->
-    <Row DefnId="0" NodeId="3" TreeName="Naval Superiority Tree" DefaultData="40" />
+    <Row DefnId="0" NodeId="3" TreeName="Naval Superiority Tree" DefaultData="50" /> <!-- def. 60 -->
 	<!-- Contract Manager Decorator -->
     <Row DefnId="0" NodeId="4" TreeName="Naval Superiority Tree" Tag="Naval Force Contract" /> <!-- req, contract -->
     <Row DefnId="1" NodeId="4" TreeName="Naval Superiority Tree" /> <!-- req, multi -->
-    <Row DefnId="2" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="7" /> <!-- turn limit, due to low priority it gets stuck here often! better to reset faster -->
+    <Row DefnId="2" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="10" /> <!-- turn limit, due to low priority it gets stuck here often! better to reset faster; GS patch increased priority -->
     <Row DefnId="3" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- block while running -->
 	<!-- "Recruit Units" -->
     <Row DefnId="0" NodeId="5" TreeName="Naval Superiority Tree" DefaultData="false" /> <!-- not in progress -->
     <Row DefnId="1" NodeId="5" TreeName="Naval Superiority Tree" Tag="Naval Force Contract" /> <!-- missing contract id -->
-    <!--<Row DefnId="3" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="false" />--> <!-- commented out to Allow Creation -->
+    <Row DefnId="3" NodeId="4" TreeName="Naval Superiority Tree" DefaultData="true" /> <!-- commented out to Allow Creation; GS patch sets this to TRUE! -->
     <Row DefnId="4" NodeId="5" TreeName="Naval Superiority Tree" Tag="Present Value" />
 	<!-- "Operation Attack Units" -->
     <Row DefnId="0" NodeId="6" TreeName="Naval Superiority Tree" DefaultData="true" />
@@ -212,21 +212,23 @@
 <!-- Siege City Assault -->
 <TreeData>
 	<!-- 8:Contract Manager -->
+	<!--
 	<Update>
-		<Where DefnId="2" NodeId="8" TreeName="Siege City Assault" /> <!-- contract manager, turns -->
+		<Where DefnId="2" NodeId="8" TreeName="Siege City Assault" /> -- contract manager, turns; GS has 10... not a big difference
 		<Set DefaultData="7" />
 	</Update>
+	-->
 	<!-- 9:"Recruit Units" - the only node without Par0 set -->
-    <Row DefnId="0" NodeId="9" TreeName="Siege City Assault" DefaultData="false" /> <!-- not in progress -->
-	<Delete DefnId="5" NodeId="9" TreeName="Siege City Assault" /> <!-- 10 turns, not needed -->
+    <Row DefnId="0" NodeId="12" TreeName="Siege City Assault" DefaultData="false" /> <!-- not in progress -->
+	<Delete DefnId="5" NodeId="12" TreeName="Siege City Assault" /> <!-- 10 turns, not needed -->
 	<!-- 20:"Recrut Units" This contract is undefined Tag="Ongoing Recruits" -->
-	<Delete DefnId="1" NodeId="20" TreeName="Siege City Assault" /> 
+	<Delete DefnId="1" NodeId="23" TreeName="Siege City Assault" /> 
 </TreeData>
 
 
 <!-- Nuclear Assault -->
 <TreeData>
-	<!-- 7:Contract Manager Decorator  “Initial Recruits” not defined -->
+	<!-- 7:Contract Manager Decorator  "Initial Recruits" not defined -->
 	<Update>
 		<Where DefnId="0" NodeId="7" TreeName="Nuclear Assault" /> <!-- contract manager, contract id -->
 		<Set Tag="Initial Recruits" />

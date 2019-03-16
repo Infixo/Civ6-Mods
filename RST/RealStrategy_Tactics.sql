@@ -31,10 +31,12 @@ DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_GREAT_SCIENTIST' AND AiType = 'UN
 -- ships are registered in that way, too
 -- siege units like Catapult, Artillery are also Ranged
 
+/* PLANES TODO
 INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT UnitType, 'UNITTYPE_RANGED'
 FROM Units
 WHERE Domain = 'DOMAIN_AIR';
+*/
 
 -- UNITTYPE_SIEGE - core - used in Simple City Attack Force, City Attack Force, City Defense and Aid Ally Attack Force
 
@@ -45,9 +47,10 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 ('UNIT_JET_BOMBER', 'UNITTYPE_SIEGE');
 
 -- UNITTYPE_SIEGE_ALL - core + UNIT_BATTERING_RAM, UNIT_SIEGE_TOWER, UNIT_ANTIAIR_GUN, UNIT_MOBILE_SAM, UNIT_SUPPLY_CONVOY - used only ONCE in "City Attack Force" team def, min. 1
+-- 2019-03-16: They removed UNIT_SUPPLY_CONVOY in GS patch!
+--DELETE FROM UnitAiInfos WHERE AiType = 'UNITTYPE_SIEGE_ALL' AND UnitType = 'UNIT_SUPPLY_CONVOY';
 
-DELETE FROM UnitAiInfos WHERE AiType = 'UNITTYPE_SIEGE_ALL' AND UnitType = 'UNIT_SUPPLY_CONVOY';
-
+/* PLANES TODO
 INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT 'UNIT_BOMBER', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
 FROM UnitAiTypes
@@ -57,7 +60,7 @@ INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT 'UNIT_JET_BOMBER', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
 FROM UnitAiTypes
 WHERE AiType = 'UNITTYPE_SIEGE_ALL';
-
+*/
 
 -- UNITTYPE_SIEGE_SUPPORT - ram, tower, medic, engi, baloon, drone, etc.
 -- needs to stay this way until BH is modified - it uses this to make a formation
@@ -83,7 +86,7 @@ WHERE AntiAirCombat > 0;
 
 -- ===========================================================================
 -- OP DEFINITIONS
--- Make probabilities a git higher, so AI will try to perform more successful attacks
+-- Make probabilities a bit higher, so AI will try to perform more successful attacks
 -- Lower MaxTargetDistInArea so AI won't try to attack targets half across the map
 -- Strengthen teams a bit
 -- ===========================================================================
@@ -93,9 +96,9 @@ UPDATE AiOperationDefs SET MaxTargetDistInRegion = 10, MaxTargetDistInArea = 10,
 UPDATE AiOperationDefs SET MaxTargetDistInRegion =  8, MaxTargetDistInArea =  8, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.7, MustHaveUnits =10 WHERE OperationName = 'Attack Walled City'; -- 60%, 10
 UPDATE AiOperationDefs SET MaxTargetDistInRegion =  8, MaxTargetDistInArea =  8, MaxTargetDistInWorld = 12, MinOddsOfSuccess = 0.5, MustHaveUnits = 7 WHERE OperationName = 'Wartime Attack Walled City'; -- 40%, 6
 
-UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 4 WHERE OperationName = 'City Defense'; -- 0%, 6
+UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 4 WHERE OperationName = 'City Defense'; -- 0%, -1
 
-UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.4, MustHaveUnits = 3, EnemyType = 'WAR' WHERE OperationName = 'Naval Superiority'; -- 0%, -1 -- this is NOT city attack, just naval wars and patrol?
+UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 3, EnemyType = 'WAR' WHERE OperationName = 'Naval Superiority'; -- 0%, -1 -- this is NOT city attack, just naval wars and patrol?
 
 ------------------------------------------------------------------------------
 -- A new op - City Defense Unwalled
@@ -114,7 +117,7 @@ INSERT INTO AiFavoredItems (ListType, Item, StringVal) VALUES
 -- A new op - Naval Op Early - this is Naval Superiority but with Ranged ships optional (they are available in Ancient, and difficult to get in Classical)
 
 INSERT INTO AiOperationDefs (   OperationName,                 TargetType, TargetParameter, EnemyType,             BehaviorTree, Priority, MaxTargetDistInRegion, MaxTargetDistInArea, MaxTargetDistInWorld, MinOddsOfSuccess, SelfStart, MustHaveUnits,    OperationType)
-VALUES                      ('Naval Op Early', 'TARGET_NAVAL_SUPERIORITY',               0,     'WAR', 'Naval Superiority Tree',        2,                    -1,                  -1,                   -1,              0.5,         1,             2, 'NAVAL_OP_EARLY');
+VALUES                      ('Naval Op Early', 'TARGET_NAVAL_SUPERIORITY',               0,     'WAR', 'Naval Superiority Tree',        2,                    -1,                  -1,                   -1,              0.4,         1,             2, 'NAVAL_OP_EARLY');
 
 INSERT INTO AllowedOperations (ListType, OperationDef) VALUES
 ('Default_List', 'Naval Op Early');
@@ -177,9 +180,10 @@ UPDATE AiOperationTeams SET InitialStrengthAdvantage = 1.0, OngoingStrengthAdvan
 UPDATE AiOperationTeams SET InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.0 WHERE TeamName = 'City Naval Attack Force' AND OperationName = 'Wartime Attack Enemy City'; -- AND Condition = 'IsCoastalTarget';
 -- composition
 INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber, MinPercentage, MaxPercentage) VALUES
-('City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',  0, 3, 0, 0.5);
-UPDATE OpTeamRequirements SET MinNumber = 3, MaxNumber = 7, MinPercentage = 0.5 WHERE TeamName = 'City Naval Attack Force' AND AiType = 'UNITTYPE_NAVAL';
+('City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',  0, 3, 0, 0.4);
+UPDATE OpTeamRequirements SET MinNumber = 3, MaxNumber = 7, MinPercentage = 0.6 WHERE TeamName = 'City Naval Attack Force' AND AiType = 'UNITTYPE_NAVAL';
 UPDATE OpTeamRequirements SET MinNumber = 2, MaxNumber = 6                      WHERE TeamName = 'City Naval Attack Force' AND AiType = 'UNITTYPE_MELEE';
+UPDATE OpTeamRequirements SET MinNumber = 1, MaxNumber = 4                      WHERE TeamName = 'City Naval Attack Force' AND AiType = 'UNITTYPE_RANGED';
 
 /*
 Walled City Naval Attack Force
@@ -190,8 +194,8 @@ INSERT INTO AiTeams (TeamName) VALUES
 UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force', InitialStrengthAdvantage = 1.0, OngoingStrengthAdvantage = 2.5 WHERE OperationName = 'Attack Walled City'         AND Condition = 'IsCoastalTarget';
 UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force', InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.5 WHERE OperationName = 'Wartime Attack Walled City' AND Condition = 'IsCoastalTarget';
 INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentage,MaxPercentage) VALUES
-('Walled City Naval Attack Force', 'UNITTYPE_NAVAL',           3, 9, 0.5, 1), -- some naval
-('Walled City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',     0, 5, 0, 0.5), -- some land
+('Walled City Naval Attack Force', 'UNITTYPE_NAVAL',           3, 9, 0.6, 1), -- some naval
+('Walled City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',     0, 5, 0, 0.4), -- some land
 ('Walled City Naval Attack Force', 'UNITTYPE_CIVILIAN_LEADER', 0, 1, 0, 1), -- admiral/general
 ('Walled City Naval Attack Force', 'UNITTYPE_MELEE',           2, 4, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_RANGED',          4, 9, 0, 1),
