@@ -64,7 +64,7 @@ end
 
 
 function LeaderIcon:UpdateIcon(iconName: string, playerID: number, isUniqueLeader: boolean, ttDetails: string)
-	print("LeaderIcon:UpdateIcon", iconName, playerID, ttDetails);
+	--print("LeaderIcon:UpdateIcon", iconName, playerID, ttDetails);
 	
 	local pPlayer:table = Players[playerID];
 	local pPlayerConfig:table = PlayerConfigurations[playerID];
@@ -98,7 +98,7 @@ function LeaderIcon:UpdateIcon(iconName: string, playerID: number, isUniqueLeade
 end
 
 function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqueLeader: boolean, ttDetails: string)
-	print("LeaderIcon:UpdateIconSimple", iconName, playerID, ttDetails);
+	--print("LeaderIcon:UpdateIconSimple", iconName, playerID, ttDetails);
 	local localPlayerID:number = Game.GetLocalPlayer();
 
 	self.Controls.Portrait:SetIcon(iconName);
@@ -135,14 +135,15 @@ function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqu
 end
 
 function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
-	print("LeaderIcon:UpdateTeamAndRelationship", playerID);
+	--print("LeaderIcon:UpdateTeamAndRelationship", playerID);
 	local pPlayer:table = Players[playerID];
 	local pPlayerConfig:table = PlayerConfigurations[playerID];
 	local localPlayerID:number = Game.GetLocalPlayer();
 	local isHuman:boolean = pPlayerConfig:IsHuman();
+	local bHasMet:boolean = Players[localPlayerID]:GetDiplomacy():HasMet(playerID)
 
 	-- Team Ribbon
-	if(playerID == localPlayerID or Players[localPlayerID]:GetDiplomacy():HasMet(playerID)) then
+	if(playerID == localPlayerID or bHasMet) then
 		-- Show team ribbon for ourselves and civs we've met
 		local teamID:number = pPlayerConfig:GetTeam();
 		if #Teams[teamID] > 1 then
@@ -172,6 +173,20 @@ function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 	else
 		self.Controls.Relationship:SetHide(true);
 	end
+	
+	-- Player's Era (dark, normal, etc.)
+	if (bIsRiseAndFall or bIsGatheringStorm) and (playerID == localPlayerID or bHasMet) then
+		self.Controls.CivEra:SetHide(false);
+		local pGameEras:table = Game.GetEras();
+		if     pGameEras:HasHeroicGoldenAge(playerID) then self.Controls.CivEra:SetText("[ICON_GLORY_SUPER_GOLDEN_AGE]"); self.Controls.CivEra:SetToolTipString(LL("LOC_ERA_PROGRESS_HEROIC_AGE"));
+		elseif pGameEras:HasGoldenAge(playerID)       then self.Controls.CivEra:SetText("[ICON_GLORY_GOLDEN_AGE]");       self.Controls.CivEra:SetToolTipString(LL("LOC_ERA_PROGRESS_GOLDEN_AGE"));
+		elseif pGameEras:HasDarkAge(playerID)         then self.Controls.CivEra:SetText("[ICON_GLORY_DARK_AGE]");         self.Controls.CivEra:SetToolTipString(LL("LOC_ERA_PROGRESS_DARK_AGE"));
+		else                                               self.Controls.CivEra:SetText("[ICON_GLORY_NORMAL_AGE]");       self.Controls.CivEra:SetToolTipString(LL("LOC_ERA_PROGRESS_NORMAL_AGE"));
+		end
+	else
+		self.Controls.CivEra:SetHide(true);
+	end
+
 end
 
 
@@ -186,7 +201,7 @@ Line 5..7. Agendas
 --]]
 
 function LeaderIcon:GetRelationToolTipString(playerID:number)
-	print("FUN LeaderIcon:GetRelationToolTipString", playerID);
+	--print("FUN LeaderIcon:GetRelationToolTipString", playerID);
 	
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == -1 then return ""; end
@@ -245,7 +260,7 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 				--local scoreText:string = string.format("%+ 3d", score);
 				if score > 0 then scoreText = "[COLOR_Green]"..scoreText.."[ENDCOLOR]";
 				else              scoreText = "[COLOR_Red]"..scoreText.."[ENDCOLOR]"; end
-				print("score, text", score, text);
+				--print("score, text", score, text);
 				if text == LL("LOC_TOOLTIP_DIPLOMACY_UNKNOWN_REASON") then scoreText = scoreText.." - [COLOR_Grey]"..text.."[ENDCOLOR]";
 				else                                                       scoreText = scoreText.." - "..text; end
 				table.insert(tTT, scoreText);
@@ -297,12 +312,14 @@ function LeaderIcon:GetToolTipString(playerID:number)
 		if GameConfiguration.IsAnyMultiplayer() and isHuman then
 			if(playerID ~= localPlayerID and not Players[localPlayerID]:GetDiplomacy():HasMet(playerID)) then
 				result = Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER") .. " (" .. pPlayerConfig:GetPlayerName() .. ")";
+				return result;
 			else
 				result = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc) .. " (" .. pPlayerConfig:GetPlayerName() .. ")";
 			end
 		else
 			if(playerID ~= localPlayerID and not Players[localPlayerID]:GetDiplomacy():HasMet(playerID)) then
 				result = Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER");
+				return result;
 			else
 				result = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc);
 			end
@@ -310,17 +327,6 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	end
 	--return result;
 	table.insert(tTT, result);
-
-	-- Player's Era
-	local sEras = "";
-	if bIsRiseAndFall or bIsGatheringStorm then
-		local pGameEras:table = Game.GetEras();
-		if     pGameEras:HasHeroicGoldenAge(playerID) then table.insert(tTT, "[ICON_GLORY_SUPER_GOLDEN_AGE] "..LL("LOC_ERA_PROGRESS_HEROIC_AGE"));
-		elseif pGameEras:HasGoldenAge(playerID)       then table.insert(tTT, "[ICON_GLORY_GOLDEN_AGE] "..LL("LOC_ERA_PROGRESS_GOLDEN_AGE"));
-		elseif pGameEras:HasDarkAge(playerID)         then table.insert(tTT, "[ICON_GLORY_DARK_AGE] "..LL("LOC_ERA_PROGRESS_DARK_AGE"));
-		else                                               table.insert(tTT, "[ICON_GLORY_NORMAL_AGE] "..LL("LOC_ERA_PROGRESS_NORMAL_AGE"));
-		end
-	end
 	
 	-- Government
 	local eGovernment:number = Players[playerID]:GetCulture():GetCurrentGovernment();
@@ -347,7 +353,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	table.insert(tTT, "[ICON_Capital] " ..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_SCORE", pPlayer:GetScore()));
 	table.insert(tTT, "[ICON_Strength] "..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_MILITARY_STRENGTH", "[COLOR_Military]"..tostring(pPlayer:GetStats():GetMilitaryStrengthWithoutTreasury()).."[ENDCOLOR]"));
 	--table.insert(tTT, string.format("[ICON_Gold] %s: [COLOR_Gold]%d[ENDCOLOR] (%+.1f)", LL("LOC_YIELD_GOLD_NAME"), iGoldBalance, iGoldPerTurn));
-	table.insert(tTT, "[ICON_Gold] "..LL("LOC_YIELD_GOLD_NAME")..": [COLOR_Gold]"..tostring(Round(iGoldBalance,1)).."[ENDCOLOR]");
+	table.insert(tTT, "[ICON_Gold] "..LL("LOC_YIELD_GOLD_NAME")..": [COLOR_GoldDark]"..tostring(Round(iGoldBalance,0)).."[ENDCOLOR]");
 	--.."[NEWLINE][ICON_Gold] "..goldBalance.."   ( " .. "[COLOR_GoldMetalDark]" .. (iGoldPerTurn>0 and "+" or "") .. (iGoldPerTurn>0 and iGoldPerTurn or "-?") .. "[ENDCOLOR]  )"
 	table.insert(tTT, "[ICON_Science] "..LL("LOC_WORLD_RANKINGS_OVERVIEW_SCIENCE_NUM_TECHS", "[COLOR_Science]" ..tostring(pPlayer:GetStats():GetNumTechsResearched()).. "[ENDCOLOR]"));
 	table.insert(tTT, LL("LOC_WORLD_RANKINGS_OVERVIEW_SCIENCE_SCIENCE_RATE", "[COLOR_Science]"..tostring(Round(pPlayer:GetTechs():GetScienceYield(),1)).."[ENDCOLOR]"));
