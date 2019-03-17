@@ -532,14 +532,14 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 50), -- base 50 +50%
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -25), -- -25% - this is quite a lot, should trigger more wars
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -20), -- base 80, -20%
-('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -25), -- base 100, leave that as an option
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -50), -- base 100, leave that as an option
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 15), -- base 1.5, agenda lover uses +5%
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10), -- base 0.7
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25), -- base 0.8
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10), -- base 0.5
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 20), -- base 0.6
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -50), -- base 1
---('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_TECHNOLOGY', 1, 50), -- base 5
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 15), -- amenities
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 15), -- def. 1
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, 25), -- def. 0.1
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -50), -- base 4
@@ -940,7 +940,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_WONDER', 1, -100), -- these cost too much
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -100), -- these cost too much
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, -100), -- no districts
-('RSTDefensePseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, -100), -- no zoos, etc.
+('RSTDefensePseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, -50), -- no zoos, etc.
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -100), -- no builders
 ('RSTDefensePseudoYields', 'PSEUDOYIELD_TOURISM', 1, -100), -- base 1
 --('RSTDefensePseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 25), -- we might need him! - without a settle spot there is no use
@@ -968,7 +968,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_WONDER', 1, -50), -- slow down
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -50), -- slow down other builds
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, -50), -- slow down
-('RSTCatchingPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, -50), -- slow down
+--('RSTCatchingPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, -50), -- slow down
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -50), -- slow down
 ('RSTCatchingPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
 -- Enough

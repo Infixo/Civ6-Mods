@@ -42,7 +42,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AmanitoreYields', 'YIELD_FOOD', 1, 15),
 ('AmanitorePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
-('AmanitorePseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
+('AmanitorePseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('AmanitorePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- nubian pyramid
 ('AmanitoreWonders', 'BUILDING_JEBEL_BARKAL', 1, 0); -- who else?
 --('AmanitoreUnits', 'UNIT_BUILDER', 1, 20); -- more improvements - should be handled by PSEUDOYIELD_IMPROVEMENT

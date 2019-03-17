@@ -45,11 +45,9 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('DiploVictoryAlliances'), -- AI can be set to favor or disfavor specific alliances by leader or civ trait - very rarely used
 ('DiploVictoryCivics'),
 ('DiploVictoryDiplomacy'),
-('DiploVictoryDiscussions'),
 ('DiploVictoryCommemorations'),
 ('DiploVictoryProjects'),
 ('DiploVictoryPseudoYields'),
-('DiploVictoryResolutions'),
 ('DiploVictoryTechs'),
 ('DiploVictoryWonders'),
 ('DiploVictoryYields');
@@ -59,11 +57,9 @@ INSERT INTO AiLists (ListType, System) VALUES
 ('DiploVictoryAlliances',    'Alliances'),
 ('DiploVictoryCivics',       'Civics'),
 ('DiploVictoryDiplomacy',    'DiplomaticActions'),
-('DiploVictoryDiscussions',  'Discussions'),
 ('DiploVictoryCommemorations', 'Commemorations'),
 ('DiploVictoryProjects',     'Projects'),
 ('DiploVictoryPseudoYields', 'PseudoYields'),
-('DiploVictoryResolutions',  'Resolutions'),
 ('DiploVictoryTechs',        'Technologies'),
 ('DiploVictoryWonders',      'Buildings'),
 ('DiploVictoryYields',       'Yields');
@@ -73,11 +69,9 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryAlliances'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryCivics'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryDiplomacy'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryDiscussions'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryCommemorations'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryProjects'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryPseudoYields'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryResolutions'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryTechs'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryWonders'),
 ('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryYields');
@@ -94,7 +88,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('DiploVictoryDiplomacy', 'DIPLOACTION_RESIDENT_EMBASSY', 1, 0),
 ('DiploVictoryDiplomacy', 'DIPLOACTION_RENEW_ALLIANCE',   1, 0),
 ('DiploVictoryDiplomacy', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV', 0, 0),
---('DiploVictoryDiscussions'),
 --('DiploVictoryCommemorations'),
 -- Projects
 ('DiploVictoryProjects', 'PROJECT_CARBON_RECAPTURE', 1, 0),
@@ -104,7 +97,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('DiploVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 25),
 ('DiploVictoryPseudoYields', 'PSEUDOYIELD_INFLUENCE',        1, 25),
 ('DiploVictoryPseudoYields', 'PSEUDOYIELD_UNIT_TRADE',       1, 15),
---('DiploVictoryResolutions'),
+('DiploVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE',       1,-50),
 --('DiploVictoryTechs'),
 -- Wonders & Buildings
 ('DiploVictoryWonders', 'BUILDING_ORSZAGHAZ',      1, 0),
@@ -119,22 +112,123 @@ SELECT 'DiploVictoryCivics', PrereqCivic, 1, 0
 FROM Governments
 WHERE GovernmentType = 'GOVERNMENT_MONARCHY';
 
-
-
 -- support for Government Plaza buildings - uses Wonders because it is easy - it is the same system
-/*
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- Tier 1 BUILDING_GOV_TALL BUILDING_GOV_WIDE BUILDING_GOV_CONQUEST
-('MilitaryVictoryWonders', 'BUILDING_GOV_TALL', 0, 0), --  tall play, more housing when governor
-('MilitaryVictoryWonders', 'BUILDING_GOV_CONQUEST', 1, 0),
+('DiploVictoryWonders', 'BUILDING_GOV_CONQUEST', 0, 0),
 -- Tier 2 BUILDING_GOV_CITYSTATES BUILDING_GOV_SPIES BUILDING_GOV_FAITH
-('ReligiousVictoryWonders', 'BUILDING_GOV_FAITH', 1, 0),
+('DiploVictoryWonders', 'BUILDING_GOV_CITYSTATES', 1, 0),
 -- Tier 3 BUILDING_GOV_MILITARY BUILDING_GOV_CULTURE BUILDING_GOV_SCIENCE
-('MilitaryVictoryWonders', 'BUILDING_GOV_MILITARY', 1, 0),
-('CultureVictoryWonders', 'BUILDING_GOV_CULTURE', 1, 0),
-('ScienceVictoryWonders', 'BUILDING_GOV_SCIENCE', 1, 0);
-*/
+('DiploVictoryWonders', 'BUILDING_GOV_MILITARY', 0, 0);
 
+
+
+-- ===========================================================================
+-- STRATEGIES - new GS systems
+-- ===========================================================================
+
+INSERT INTO AiListTypes (ListType) VALUES
+('CultureVictoryDiscussions'),
+('CultureVictoryResolutions'),
+('DiploVictoryDiscussions'),
+('DiploVictoryResolutions'),
+('MilitaryVictoryDiscussions'),
+('MilitaryVictoryResolutions'),
+('ReligiousVictoryDiscussions'),
+('ReligiousVictoryResolutions'),
+('ScienceVictoryDiscussions'),
+('ScienceVictoryResolutions');
+
+INSERT INTO AiLists (ListType, System) VALUES
+('CultureVictoryDiscussions', 'Discussions'),
+('CultureVictoryResolutions', 'Resolutions'),
+('DiploVictoryDiscussions',  'Discussions'),
+('DiploVictoryResolutions',  'Resolutions'),
+('MilitaryVictoryDiscussions', 'Discussions'),
+('MilitaryVictoryResolutions', 'Resolutions'),
+('ReligiousVictoryDiscussions', 'Discussions'),
+('ReligiousVictoryResolutions', 'Resolutions'),
+('ScienceVictoryDiscussions', 'Discussions'),
+('ScienceVictoryResolutions', 'Resolutions');
+
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryDiscussions'),
+('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryResolutions'),
+('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryDiscussions'),
+('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryResolutions'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryDiscussions'),
+('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryResolutions'),
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryDiscussions'),
+('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryResolutions'),
+('VICTORY_STRATEGY_SCIENCE_VICTORY', 'ScienceVictoryDiscussions'),
+('VICTORY_STRATEGY_SCIENCE_VICTORY', 'ScienceVictoryResolutions');
+
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
+-- Discussions
+('MilitaryVictoryDiscussions',  'WC_EMERGENCY_MILITARY', 0),
+('DiploVictoryDiscussions',     'WC_EMERGENCY_CITY_STATE', 1),
+('ReligiousVictoryDiscussions', 'WC_EMERGENCY_RELIGIOUS', 0),
+('CultureVictoryDiscussions',   'WC_EMERGENCY_NUCLEAR', 1),
+('DiploVictoryDiscussions',     'WC_EMERGENCY_NUCLEAR', 1),
+('ReligiousVictoryDiscussions', 'WC_EMERGENCY_NUCLEAR', 1),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_NUCLEAR', 1),
+('CultureVictoryDiscussions',   'WC_EMERGENCY_BACKSTAB', 1),
+('DiploVictoryDiscussions',     'WC_EMERGENCY_BACKSTAB', 1),
+('ReligiousVictoryDiscussions', 'WC_EMERGENCY_BACKSTAB', 1),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_BACKSTAB', 1),
+('DiploVictoryDiscussions',     'WC_EMERGENCY_REQUEST_AID', 1),
+('CultureVictoryDiscussions',   'WC_EMERGENCY_NOBEL_PRIZE_LITERATURE', 1),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_NOBEL_PRIZE_LITERATURE', 0),
+('MilitaryVictoryDiscussions',  'WC_EMERGENCY_NOBEL_PRIZE_LITERATURE', 0),
+('DiploVictoryDiscussions',     'WC_EMERGENCY_NOBEL_PRIZE_PEACE', 1),
+('MilitaryVictoryDiscussions',  'WC_EMERGENCY_NOBEL_PRIZE_PEACE', 0),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_NOBEL_PRIZE_PHYSICS', 1),
+('CultureVictoryDiscussions',   'WC_EMERGENCY_NOBEL_PRIZE_PHYSICS', 0),
+('ReligiousVictoryDiscussions', 'WC_EMERGENCY_NOBEL_PRIZE_PHYSICS', 0),
+-- WC_EMERGENCY_CLIMATE_ACCORDS let AIs decide
+('CultureVictoryDiscussions',   'WC_EMERGENCY_WORLD_GAMES', 1),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_WORLD_GAMES', 0),
+('MilitaryVictoryDiscussions',  'WC_EMERGENCY_WORLD_GAMES', 0),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_SPACE_STATION', 1),
+('CultureVictoryDiscussions',   'WC_EMERGENCY_SPACE_STATION', 0),
+('ReligiousVictoryDiscussions', 'WC_EMERGENCY_SPACE_STATION', 0),
+('CultureVictoryDiscussions',   'WC_EMERGENCY_WORLD_FAIR', 1),
+('ScienceVictoryDiscussions',   'WC_EMERGENCY_WORLD_FAIR', 1),
+('ReligiousVictoryDiscussions', 'WC_EMERGENCY_WORLD_FAIR', 0),
+('MilitaryVictoryDiscussions',  'WC_EMERGENCY_WORLD_FAIR', 0),
+-- Resolutions
+('DiploVictoryResolutions',     'WC_RES_DIPLOVICTORY', 1), -- +2 DVP
+-- WC_RES_LUXURY  can't ban crabs... :(
+('ReligiousVictoryResolutions', 'WC_RES_WORLD_RELIGION', 1), -- world religion
+('ScienceVictoryResolutions',   'WC_RES_WORLD_RELIGION', 0), -- condemn religion
+('MilitaryVictoryResolutions',  'WC_RES_MERCENARY_COMPANIES', 0), -- OptionA +100% cost of units, OptionB -50%
+('DiploVictoryResolutions',     'WC_RES_MERCENARY_COMPANIES', 1), -- units +100% cost
+('CultureVictoryResolutions',   'WC_RES_MERCENARY_COMPANIES', 1), -- units +100% cost
+('DiploVictoryResolutions',     'WC_RES_ARMS_CONTROL', 0), -- no nukes
+('CultureVictoryResolutions',   'WC_RES_ARMS_CONTROL', 0), -- no nukes
+('CultureVictoryResolutions',   'WC_RES_HERITAGE_ORG', 1), -- tourism x2
+('ScienceVictoryResolutions',   'WC_RES_HERITAGE_ORG', 0), -- no tourism
+('DiploVictoryResolutions',     'WC_RES_POLICY_TREATY', 1), -- favor from policy
+-- WC_RES_WORLD_IDEOLOGY too generic
+-- WC_RES_URBAN_DEVELOPMENT too generic
+-- WC_RES_BORDER_CONTROL too generic
+('DiploVictoryResolutions',     'WC_RES_PUBLIC_WORKS', 1), -- +100% for the project
+('ScienceVictoryResolutions',   'WC_RES_PUBLIC_WORKS', 1),
+('CultureVictoryResolutions',   'WC_RES_PATRONAGE', 1), -- 2x GPP
+('ScienceVictoryResolutions',   'WC_RES_PATRONAGE', 1),
+('ReligiousVictoryResolutions', 'WC_RES_PATRONAGE', 0), -- no GPP
+('DiploVictoryResolutions',     'WC_RES_PATRONAGE', 0), -- no GPP
+('DiploVictoryResolutions',     'WC_RES_TREATY_ORGANIZATION', 1), -- 2x favor from CS
+('MilitaryVictoryResolutions',  'WC_RES_TREATY_ORGANIZATION', 0), -- no favor from CS
+('DiploVictoryResolutions',     'WC_RES_GOVERNANCE_DOCTRINE', 1), -- 15 favor from governors
+-- WC_RES_GLOBAL_ENERGY_TREATY -- only Power Plants are considered
+('ReligiousVictoryResolutions', 'WC_RES_GLOBAL_ENERGY_TREATY', 0), -- ban production
+('MilitaryVictoryResolutions',  'WC_RES_GLOBAL_ENERGY_TREATY', 0), -- ban production
+('ScienceVictoryResolutions',   'WC_RES_GLOBAL_ENERGY_TREATY', 0), -- 50% discount
+-- WC_RES_SOVEREIGNTY too generic
+('MilitaryVictoryResolutions',  'WC_RES_MIGRATION_TREATY', 0); -- +5 loyalty helps with conquest
+-- WC_RES_DEFORESTATION_TREATY too generic
 
 
 
@@ -249,8 +343,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('EleanorPseudoYields', 'TRAIT_LEADER_ELEANOR_LOYALTY', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('EleanorYields', 'YIELD_FOOD', 1, 15), -- more people -> more loyalty
-('EleanorPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 15),
-('EleanorPseudoYields', 'PSEUDOYIELD_GOLDENAGE_POINT', 0, 50); -- more loyalty pressure
+('EleanorPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
+('EleanorPseudoYields', 'PSEUDOYIELD_GOLDENAGE_POINT', 1, 50); -- more loyalty pressure
 
 
 -- LEADER_KRISTINA

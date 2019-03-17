@@ -31,12 +31,10 @@ DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_GREAT_SCIENTIST' AND AiType = 'UN
 -- ships are registered in that way, too
 -- siege units like Catapult, Artillery are also Ranged
 
-/* PLANES TODO
 INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT UnitType, 'UNITTYPE_RANGED'
 FROM Units
 WHERE Domain = 'DOMAIN_AIR';
-*/
 
 -- UNITTYPE_SIEGE - core - used in Simple City Attack Force, City Attack Force, City Defense and Aid Ally Attack Force
 
@@ -50,7 +48,6 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 -- 2019-03-16: They removed UNIT_SUPPLY_CONVOY in GS patch!
 --DELETE FROM UnitAiInfos WHERE AiType = 'UNITTYPE_SIEGE_ALL' AND UnitType = 'UNIT_SUPPLY_CONVOY';
 
-/* PLANES TODO
 INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT 'UNIT_BOMBER', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
 FROM UnitAiTypes
@@ -60,7 +57,7 @@ INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT 'UNIT_JET_BOMBER', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
 FROM UnitAiTypes
 WHERE AiType = 'UNITTYPE_SIEGE_ALL';
-*/
+
 
 -- UNITTYPE_SIEGE_SUPPORT - ram, tower, medic, engi, baloon, drone, etc.
 -- needs to stay this way until BH is modified - it uses this to make a formation
@@ -70,7 +67,7 @@ WHERE AiType = 'UNITTYPE_SIEGE_ALL';
 
 -- 2018-01-06: UNIT_WARRIOR_MONK is not in UnitAiInfos, so he is basically chilling around, doing nothing
 INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
-('UNIT_RANGER', 'UNITAI_COMBAT'),
+--('UNIT_RANGER', 'UNITAI_COMBAT'), -- 2019-03-17 removed, AIs tend to build too many of them to perform attacks (no resources needed? because they are NOT cheap)
 ('UNIT_WARRIOR_MONK', 'UNITAI_EXPLORE'),
 ('UNIT_WARRIOR_MONK', 'UNITAI_COMBAT'),
 ('UNIT_WARRIOR_MONK', 'UNITTYPE_LAND_COMBAT'),
@@ -82,6 +79,21 @@ INSERT INTO UnitAiInfos (UnitType, AiType)
 SELECT UnitType, 'UNITTYPE_ANTIAIR'
 FROM Units
 WHERE AntiAirCombat > 0;
+
+-- 2019-03-17: Naval siege - used only for coastal cities
+INSERT INTO UnitAiTypes(AiType) VALUES ('UNITTYPE_NAVAL_SIEGE');
+INSERT INTO UnitAiInfos (UnitType, AiType)
+SELECT UnitType, 'UNITTYPE_NAVAL_SIEGE'
+FROM Units
+WHERE Domain = 'DOMAIN_SEA' AND PromotionClass = 'PROMOTION_CLASS_NAVAL_RANGED' AND Range >= 2;
+
+-- 2019-03-17: Naval melee - used only for coastal cities
+INSERT INTO UnitAiTypes(AiType) VALUES ('UNITTYPE_NAVAL_MELEE');
+INSERT INTO UnitAiInfos (UnitType, AiType)
+SELECT UnitType, 'UNITTYPE_NAVAL_MELEE'
+FROM Units
+WHERE Domain = 'DOMAIN_SEA' AND PromotionClass = 'PROMOTION_CLASS_NAVAL_MELEE';
+
 
 
 -- ===========================================================================
@@ -103,6 +115,8 @@ UPDATE AiOperationDefs SET MinOddsOfSuccess = 0.3, MustHaveUnits = 3, EnemyType 
 ------------------------------------------------------------------------------
 -- A new op - City Defense Unwalled
 
+/* 2019-03-17 This operation is executed for cities with Walls; apparently TargetParameter is only valid for attack operations
+
 INSERT INTO AiOperationDefs (OperationName,TargetType,TargetParameter,EnemyType,BehaviorTree,Priority,MaxTargetDistInRegion,MaxTargetDistInArea,MaxTargetDistInWorld,MinOddsOfSuccess,SelfStart,MustHaveUnits,OperationType) VALUES
 ('City Defense Unwalled', 'TARGET_FRIENDLY_CITY', 0, 'NONE', 'Simple City Defense', 4, -1, -1, 0, 0.2, 0, 3, 'OP_DEFENSE');
 
@@ -112,6 +126,7 @@ INSERT INTO AllowedOperations (ListType, OperationDef) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, StringVal) VALUES
 ('DefaultCityBuilds',  'CITY_UNDER_THREAT', 'City Defense Unwalled'),
 ('MinorCivCityBuilds', 'CITY_UNDER_THREAT', 'City Defense Unwalled');
+*/
 
 ------------------------------------------------------------------------------
 -- A new op - Naval Op Early - this is Naval Superiority but with Ranged ships optional (they are available in Ancient, and difficult to get in Classical)
@@ -194,11 +209,13 @@ INSERT INTO AiTeams (TeamName) VALUES
 UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force', InitialStrengthAdvantage = 1.0, OngoingStrengthAdvantage = 2.5 WHERE OperationName = 'Attack Walled City'         AND Condition = 'IsCoastalTarget';
 UPDATE  AiOperationTeams SET TeamName = 'Walled City Naval Attack Force', InitialStrengthAdvantage = 0.5, OngoingStrengthAdvantage = 1.5 WHERE OperationName = 'Wartime Attack Walled City' AND Condition = 'IsCoastalTarget';
 INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentage,MaxPercentage) VALUES
-('Walled City Naval Attack Force', 'UNITTYPE_NAVAL',           3, 9, 0.6, 1), -- some naval
-('Walled City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',     0, 5, 0, 0.4), -- some land
+('Walled City Naval Attack Force', 'UNITTYPE_NAVAL',           4, 9, 0.6, 1), -- more naval
+('Walled City Naval Attack Force', 'UNITTYPE_NAVAL_MELEE',     1, 3, 0, 1), -- 2019-03-17
+('Walled City Naval Attack Force', 'UNITTYPE_NAVAL_SIEGE',     2, 5, 0, 1), -- 2019-03-17
+('Walled City Naval Attack Force', 'UNITTYPE_LAND_COMBAT',     0, 5, 0, 0.4), -- less land
 ('Walled City Naval Attack Force', 'UNITTYPE_CIVILIAN_LEADER', 0, 1, 0, 1), -- admiral/general
 ('Walled City Naval Attack Force', 'UNITTYPE_MELEE',           2, 4, 0, 1),
-('Walled City Naval Attack Force', 'UNITTYPE_RANGED',          4, 9, 0, 1),
+('Walled City Naval Attack Force', 'UNITTYPE_RANGED',          3, 9, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_SIEGE',           0, 2, 0, 1),
 ('Walled City Naval Attack Force', 'UNITTYPE_SIEGE_SUPPORT',   0, 1, 0, 1);
 INSERT INTO OpTeamRequirements (TeamName,AiType,MinNumber,MaxNumber,MinPercentage,MaxPercentage)
@@ -227,6 +244,7 @@ UPDATE OpTeamRequirements SET MinNumber = 0, MaxNumber = 3    WHERE TeamName = '
 City Defense Unwalled
 -- (new) special team for unwalled cities - more melee
 */
+/* 2019-03-17 It is working but also for Walled cities :(
 
 INSERT INTO AiTeams (TeamName) VALUES
 ('City Defense Unwalled');
@@ -241,6 +259,7 @@ INSERT INTO OpTeamRequirements (TeamName, AiType, MinNumber, MaxNumber) VALUES
 ('City Defense Unwalled', 'UNITTYPE_CAVALRY',  0, 2),
 ('City Defense Unwalled', 'UNITTYPE_CIVILIAN', 0, 0),
 ('City Defense Unwalled', 'UNITTYPE_CIVILIAN_LEADER', 0, 1);
+*/
 
 /*
 Naval Superiority Force - used for:

@@ -274,7 +274,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PeacekeeperWarLimits', 'DIPLOACTION_RESIDENT_EMBASSY', 1, 0), -- peace
 ('GandhiPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -100), -- do NOT conquer neighbors
 ('GandhiPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -100), -- do NOT conquer neighbors
-('GandhiPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
+('GandhiPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('GandhiPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 10),
 ('GandhiPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -15), -- obvious
 ('GandhiPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 15), -- to differ from CHANDRAGUPTA
@@ -425,10 +425,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HoJoYields', 'YIELD_PRODUCTION', 1, 10),
 ('HoJoYields', 'YIELD_GOLD',       1,-15), -- balance
 ('HoJoYields', 'YIELD_SCIENCE',    1,-10), -- balance
-('HoJoPseudoYields', 'PSEUDOYIELD_DISTRICT', 0, 15),
-('HoJoPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 0, 20),
-('HoJoPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
-('HoJoPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 0, 15);
+('HoJoPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15),
+('HoJoPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
+('HoJoPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
+('HoJoPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15);
 
 
 -- LEADER_MVEMBA / KONGO
@@ -600,7 +600,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, -50),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15),
 ('TrajanPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -15),
-('TrajanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25),
+('TrajanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('TrajanPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10); -- more crappy cities
 
 -- Rise & Fall
@@ -794,7 +794,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('PreferHappinessPseudoYields', 'TRAIT_AGENDA_PREFER_HAPPINESS', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('PreferHappinessPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 50);
+('PreferHappinessPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
 
 
 -- AGENDA_GREAT_PERSON_ADVOCATE / TRAIT_AGENDA_GREAT_PERSON_ADVOCATE / OK

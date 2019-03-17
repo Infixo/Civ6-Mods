@@ -12,7 +12,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '2');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '1'); -- log supporting (other) strategies
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
 
 -- random numbers - support for Multi Player
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); -- 0 - turned OFF / 1 - turned ON, using math.rand / 2 - turned ON, using Game.GetRandNum

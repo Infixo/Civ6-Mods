@@ -100,7 +100,7 @@ end
 
 -- wrapper
 function PlayerGetCurrentGovernment(ePlayerID:number)
-	return Players[ePlayerID]:GetCulture():GetCurrentGovernment();
+	return math.max(Players[ePlayerID]:GetCulture():GetCurrentGovernment(),0); -- for some reasons SOMETIMES a civ doesn't take a gov immediately
 end
 
 --  get a list of slotted (active) policies

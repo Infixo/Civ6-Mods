@@ -81,7 +81,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JayavarmanYields', 'YIELD_GOLD',    1,-10),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, 20),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_GREATWORK_RELIC', 0, 25),
-('JayavarmanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 0, 25),
+('JayavarmanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, -10),
 ('JayavarmanPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -10);
 

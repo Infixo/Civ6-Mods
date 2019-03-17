@@ -289,7 +289,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_EXPLORER', 1, 10),
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 50),
 ('PoundmakerPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- mekewap
-('PoundmakerPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
+('PoundmakerPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20);
 
 
 -- LEADER_ROBERT_THE_BRUCE / SCOTLAND
@@ -344,7 +344,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 20),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- polder
-('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 25);
+('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20);
 
 
 -- ===========================================================================
