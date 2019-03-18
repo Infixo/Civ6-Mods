@@ -6,6 +6,8 @@
     <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
+    <AffectsSavedGames>1</AffectsSavedGames>
+    <SupportsMultiplayer>1</SupportsMultiplayer>
 	<CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
   <ActionCriteria>
@@ -15,6 +17,30 @@
     <Criteria id="Expansion2">
       <GameCoreInUse>Expansion2</GameCoreInUse>
     </Criteria>
+	<Criteria id="DLCAztec">			<!-- 2016-11-19 -->
+	  <LeaderPlayable>Players:StandardPlayers::LEADER_MONTEZUMA,StandardPlayers::LEADER_MONTEZUMA,Players:Expansion1_Players::LEADER_MONTEZUMA,Players:Expansion2_Players::LEADER_MONTEZUMA</LeaderPlayable>
+	</Criteria>
+	<Criteria id="DLCPoland">			<!-- 2016-12-20 -->
+	  <LeaderPlayable>Players:StandardPlayers::LEADER_JADWIGA,StandardPlayers::LEADER_JADWIGA,Players:Expansion1_Players::LEADER_JADWIGA,Players:Expansion2_Players::LEADER_JADWIGA</LeaderPlayable>
+	</Criteria>
+	<Criteria id="DLCAustralia">		<!-- 2017-02-23 -->
+	  <LeaderPlayable>Players:StandardPlayers::LEADER_JOHN_CURTIN,StandardPlayers::LEADER_JOHN_CURTIN,Players:Expansion1_Players::LEADER_JOHN_CURTIN,Players:Expansion2_Players::LEADER_JOHN_CURTIN</LeaderPlayable>
+	</Criteria>
+	<Criteria id="DLCPersiaMacedon">	<!-- 2017-03-28 -->
+	  <LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS,Players:Expansion2_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS</LeaderPlayable>
+	</Criteria>
+	<Criteria id="DLCNubia">			<!-- 2017-07-27 -->
+	  <LeaderPlayable>Players:StandardPlayers::LEADER_AMANITORE,StandardPlayers::LEADER_AMANITORE,Players:Expansion1_Players::LEADER_AMANITORE,Players:Expansion2_Players::LEADER_AMANITORE</LeaderPlayable>
+	</Criteria>
+	<Criteria id="DLCIndonesiaKhmer">	<!-- 2017-10-19 -->
+	  <LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN,Players:Expansion2_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN</LeaderPlayable>
+	</Criteria>
+	<Criteria id="XP1Genghis">
+	  <LeaderPlayable>Players:Expansion1_Players::LEADER_GENGHIS_KHAN,Players:Expansion2_Players::LEADER_GENGHIS_KHAN</LeaderPlayable>
+	</Criteria>
+	<Criteria id="XP1Tamar">
+	  <LeaderPlayable>Players:Expansion1_Players::LEADER_TAMAR,Players:Expansion2_Players::LEADER_TAMAR</LeaderPlayable>
+	</Criteria>
   </ActionCriteria>
   <FrontEndActions />
   <InGameActions>
@@ -26,8 +52,24 @@
       <File Priority="1">RBU_Init.sql</File>
       <File>Base/RBU_Base.sql</File>
     </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_DLC_Aztec" criteria="DLCAztec">
+      <Properties><LoadOrder>51</LoadOrder></Properties>
+      <File>Base/RBU_DLC_Aztec.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_DLC_Khmer" criteria="DLCIndonesiaKhmer">
+      <Properties><LoadOrder>51</LoadOrder></Properties>
+      <File>Base/RBU_DLC_Khmer.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_DLC_Macedon" criteria="DLCPersiaMacedon">
+      <Properties><LoadOrder>51</LoadOrder></Properties>
+      <File>Base/RBU_DLC_Macedon.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_DLC_Poland" criteria="DLCPoland">
+      <Properties><LoadOrder>51</LoadOrder></Properties>
+      <File>Base/RBU_DLC_Poland.sql</File>
+    </UpdateDatabase>
     <UpdateText id="RBU_Text">
-      <File>Text/RBU_Base_Text.xml</File>
+      <File>Base/Text/RBU_Base_Text.xml</File>
     </UpdateText>
     <ImportFiles id="RBU_Imports">
       <File>Base/Icons/RBU_Buildings32.dds</File>
@@ -45,9 +87,17 @@
       <Properties><LoadOrder>60</LoadOrder></Properties>
       <File>XP1/Icons/RBU_XP1_Icons.xml</File>
     </UpdateIcons>
-    <UpdateDatabase id="RBU_Database_XP1" criteria="Expansion1">
+    <UpdateDatabase id="RBU_DB_XP1" criteria="Expansion1">
       <Properties><LoadOrder>60</LoadOrder></Properties>
       <File>XP1/RBU_XP1.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_XP1_Genghis" criteria="XP1Genghis">
+      <Properties><LoadOrder>61</LoadOrder></Properties>
+      <File>XP1/RBU_XP1_Genghis.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_XP1_Tamar" criteria="XP1Tamar">
+      <Properties><LoadOrder>61</LoadOrder></Properties>
+      <File>XP1/RBU_XP1_Tamar.sql</File>
     </UpdateDatabase>
     <UpdateText id="RBU_Text_XP1" criteria="Expansion1">
       <Properties><LoadOrder>60</LoadOrder></Properties>
@@ -91,6 +141,10 @@
     <File>Lua/RBU_Main.lua</File>
 	<!-- base game -->
     <File>Base/RBU_Base.sql</File>
+    <File>Base/RBU_DLC_Aztec.sql</File>
+    <File>Base/RBU_DLC_Khmer.sql</File>
+    <File>Base/RBU_DLC_Macedon.sql</File>
+    <File>Base/RBU_DLC_Poland.sql</File>
     <File>Base/Icons/RBU_Base_Icons.xml</File>
     <File>Base/Icons/RBU_Buildings32.dds</File>
     <File>Base/Icons/RBU_Buildings38.dds</File>
@@ -101,6 +155,8 @@
     <File>Base/Text/RBU_Base_Text.xml</File>
 	<!-- Rise & Fall -->
     <File>XP1/RBU_XP1.sql</File>
+    <File>XP1/RBU_XP1_Genghis.sql</File>
+    <File>XP1/RBU_XP1_Tamar.sql</File>
     <File>XP1/Icons/RBU_XP1_Icons.xml</File>
     <File>XP1/Icons/RBU_RF_Buildings32.dds</File>
     <File>XP1/Icons/RBU_RF_Buildings38.dds</File>

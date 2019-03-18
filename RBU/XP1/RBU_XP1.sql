@@ -7,52 +7,6 @@
 
 
 --------------------------------------------------------------
--- ORDU
-
-INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
-('BUILDING_ORDU_UPGRADE', 'BUILDING_STABLE_UPGRADE');
-	
-UPDATE Buildings SET TraitType = (SELECT TraitType FROM Buildings WHERE BuildingType = 'BUILDING_ORDU') -- TRAIT_CIVILIZATION_BUILDING_ORDU
-WHERE BuildingType = 'BUILDING_ORDU_UPGRADE';
-
--- 2018-03-05 Mutually exclusive buildings (so they won't appear in production list)
-INSERT INTO MutuallyExclusiveBuildings (Building, MutuallyExclusiveBuilding) VALUES
-('BUILDING_ORDU_UPGRADE', 'BUILDING_BARRACKS'),
-('BUILDING_ORDU_UPGRADE', 'BUILDING_BARRACKS_UPGRADE');
-
--- +1 Production
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
-('BUILDING_ORDU_UPGRADE', 'YIELD_PRODUCTION', 1);
-
--- +1 GGP
-INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, PointsPerTurn) VALUES
-('BUILDING_ORDU_UPGRADE', 'GREAT_PERSON_CLASS_GENERAL', 1);
-
--- +2 Production from Pastures
-INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
-('BUILDING_ORDU_UPGRADE', 'STABLEUPGRADE_ADDPASTUREPRODUCTION'); -- the same effect as Stable Upgrade
-
-
---------------------------------------------------------------
--- TSIKHE
-
-INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
-('BUILDING_TSIKHE_UPGRADE', 'BUILDING_STAR_FORT_UPGRADE');
-
-UPDATE Buildings SET TraitType = (SELECT TraitType FROM Buildings WHERE BuildingType = 'BUILDING_TSIKHE') -- TRAIT_CIVILIZATION_BUILDING_TSIKHE
-WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
-
--- +1 Amenity & Housing, +25 Defense
-UPDATE Buildings
-SET PurchaseYield = NULL, OuterDefenseHitPoints = 25, OuterDefenseStrength = 1, Entertainment = 1, Housing = 1
-WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
-
--- +1 Faith
-INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES -- generated from Excel
-('BUILDING_TSIKHE_UPGRADE', 'YIELD_FAITH', 1);
-
-
---------------------------------------------------------------
 -- 2018-12-15 Neighborhood
 --------------------------------------------------------------
 
@@ -303,10 +257,3 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('SEAPORT_UPGRADE_ADD_FISHERY_GOLD', 'YieldType', 'YIELD_GOLD'),
 ('SEAPORT_UPGRADE_ADD_FISHERY_GOLD', 'Amount',    '1');
-
-
---------------------------------------------------------------
--- AI
--- System Buildings contains only Wonders
--- Will use AiBuildSpecializations that contains only one list: DefaultCitySpecialization
---------------------------------------------------------------
