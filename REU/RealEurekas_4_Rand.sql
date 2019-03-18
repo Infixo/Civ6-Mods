@@ -67,6 +67,7 @@ UPDATE Boosts SET ResourceType = 	(SELECT CASE WHEN RType  IS NULL THEN NULL ELS
 UPDATE Boosts SET FeatureType = 	(SELECT CASE WHEN FType  IS NULL THEN NULL ELSE 'FEATURE_'||FType END 	FROM REurBoostsView WHERE Boosts.BoostID = REurBoostsView.BoostID); -- custom boosts
 UPDATE Boosts SET DistrictType = 	(SELECT CASE WHEN DType  IS NULL THEN NULL ELSE 'DISTRICT_'||DType END 	FROM REurBoostsView WHERE Boosts.BoostID = REurBoostsView.BoostID);
 UPDATE Boosts SET BoostingCivicType=(SELECT CASE WHEN BCType IS NULL THEN NULL ELSE 'CIVIC_'||BCType END 	FROM REurBoostsView WHERE Boosts.BoostID = REurBoostsView.BoostID);
+UPDATE Boosts SET GovernmentTierType=(SELECT CASE WHEN GovTier IS NULL THEN NULL ELSE GovTier END 	        FROM REurBoostsView WHERE Boosts.BoostID = REurBoostsView.BoostID); -- added in GS
 UPDATE Boosts SET Helper = 			(SELECT Hlpr FROM REurBoostsView WHERE Boosts.BoostID = REurBoostsView.BoostID); -- custom boosts
 
 --------------------------------------------------------------
