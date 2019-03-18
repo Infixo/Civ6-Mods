@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Tech Tree</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.3.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.4.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>

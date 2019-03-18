@@ -39,7 +39,7 @@ function PopulateNode(uiNode, playerTechData)
 	if item.IsBoostable and status ~= ITEM_STATUS.RESEARCHED and status ~= ITEM_STATUS.UNREVEALED then
 		local boostText:string;
 		if CanShowTrigger(item.Index, true) then boostText = TXT_TO_BOOST.." "..item.BoostText;
-		else boostText = Locale.Lookup("LOC_REUR_QUOTE_"..math.random(22)); end
+		else boostText = GetRandomQuote(item.Index); end
 		TruncateStringWithTooltip(uiNode.BoostText, MAX_BEFORE_TRUNC_TO_BOOST, boostText);
 	end
 end
