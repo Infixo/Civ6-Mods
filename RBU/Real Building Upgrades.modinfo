@@ -44,9 +44,29 @@
   </ActionCriteria>
   <FrontEndActions />
   <InGameActions>
+    <AddGameplayScripts id="RBU_Scripts">
+      <File>Lua/RBU_Main.lua</File>
+    </AddGameplayScripts>
+	<!-- all icons are unique so can be loaded with no extra conditions -->
     <UpdateIcons id="RBU_Icons">
       <File>Base/Icons/RBU_Base_Icons.xml</File>
+      <File>XP1/Icons/RBU_XP1_Icons.xml</File>
     </UpdateIcons>
+    <ImportFiles id="RBU_Imports">
+      <File>Base/Icons/RBU_Buildings32.dds</File>
+      <File>Base/Icons/RBU_Buildings38.dds</File>
+      <File>Base/Icons/RBU_Buildings50.dds</File>
+      <File>Base/Icons/RBU_Buildings80.dds</File>
+      <File>Base/Icons/RBU_Buildings128.dds</File>
+      <File>Base/Icons/RBU_Buildings256.dds</File>
+      <File>XP1/Icons/RBU_RF_Buildings32.dds</File>
+      <File>XP1/Icons/RBU_RF_Buildings38.dds</File>
+      <File>XP1/Icons/RBU_RF_Buildings50.dds</File>
+      <File>XP1/Icons/RBU_RF_Buildings80.dds</File>
+      <File>XP1/Icons/RBU_RF_Buildings128.dds</File>
+      <File>XP1/Icons/RBU_RF_Buildings256.dds</File>
+    </ImportFiles>
+	<!-- base game -->
     <UpdateDatabase id="RBU_Database">
       <Properties><LoadOrder>50</LoadOrder></Properties> <!-- needed for Gold Resource mod -->
       <File Priority="1">RBU_Init.sql</File>
@@ -71,22 +91,7 @@
     <UpdateText id="RBU_Text">
       <File>Base/Text/RBU_Base_Text.xml</File>
     </UpdateText>
-    <ImportFiles id="RBU_Imports">
-      <File>Base/Icons/RBU_Buildings32.dds</File>
-      <File>Base/Icons/RBU_Buildings38.dds</File>
-      <File>Base/Icons/RBU_Buildings50.dds</File>
-      <File>Base/Icons/RBU_Buildings80.dds</File>
-      <File>Base/Icons/RBU_Buildings128.dds</File>
-      <File>Base/Icons/RBU_Buildings256.dds</File>
-    </ImportFiles>
-    <AddGameplayScripts id="RBU_Scripts">
-      <File>Lua/RBU_Main.lua</File>
-    </AddGameplayScripts>
 	<!-- Rise & Fall -->
-    <UpdateIcons id="RBU_Icons_XP1" criteria="Expansion1">
-      <Properties><LoadOrder>60</LoadOrder></Properties>
-      <File>XP1/Icons/RBU_XP1_Icons.xml</File>
-    </UpdateIcons>
     <UpdateDatabase id="RBU_DB_XP1" criteria="Expansion1">
       <Properties><LoadOrder>60</LoadOrder></Properties>
       <File>XP1/RBU_XP1.sql</File>
@@ -103,21 +108,8 @@
       <Properties><LoadOrder>60</LoadOrder></Properties>
       <File>XP1/Text/RBU_XP1_Text.xml</File>
     </UpdateText>
-    <ImportFiles id="RBU_Imports_XP1" criteria="Expansion1">
-      <Properties><LoadOrder>60</LoadOrder></Properties>
-      <File>XP1/Icons/RBU_RF_Buildings32.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings38.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings50.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings80.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings128.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings256.dds</File>
-    </ImportFiles>
 	<!-- Gathering Storm -->
-    <UpdateIcons id="RBU_Icons_XP2" criteria="Expansion2">
-      <Properties><LoadOrder>70</LoadOrder></Properties>
-      <File>XP1/Icons/RBU_XP1_Icons.xml</File>
-    </UpdateIcons>
-    <UpdateDatabase id="RBU_Database_XP2" criteria="Expansion2">
+    <UpdateDatabase id="RBU_DB_XP2" criteria="Expansion2">
       <Properties><LoadOrder>70</LoadOrder></Properties>
       <File Priority="2">XP1/RBU_XP1.sql</File>
       <File Priority="1">XP2/RBU_XP2.sql</File>
@@ -126,15 +118,6 @@
       <Properties><LoadOrder>70</LoadOrder></Properties>
       <File>XP1/Text/RBU_XP1_Text.xml</File>
     </UpdateText>
-    <ImportFiles id="RBU_Imports_XP2" criteria="Expansion2">
-      <Properties><LoadOrder>70</LoadOrder></Properties>
-      <File>XP1/Icons/RBU_RF_Buildings32.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings38.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings50.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings80.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings128.dds</File>
-      <File>XP1/Icons/RBU_RF_Buildings256.dds</File>
-    </ImportFiles>
   </InGameActions>
   <Files>
     <File>RBU_Init.sql</File>
