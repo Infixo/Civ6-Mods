@@ -1,4 +1,4 @@
-print("Loading CivilopediaPage_BCP.lua from Better Civilopedia version "..GlobalParameters.BCP_VERSION_MAJOR.."."..GlobalParameters.BCP_VERSION_MINOR);
+print("Loading CivilopediaPage_BCP_Base.lua from Better Civilopedia version "..GlobalParameters.BCP_VERSION_MAJOR.."."..GlobalParameters.BCP_VERSION_MINOR);
 --------------------------------------------------------------
 -- Better Civilopedia
 -- Author: Infixo
@@ -342,4 +342,4 @@ PageLayouts["UnitAbility"] = function(page)
 end
 
 
-print("OK loaded CivilopediaPage_BCP.lua from Better Civilopedia");
+print("OK loaded CivilopediaPage_BCP_Base.lua from Better Civilopedia");

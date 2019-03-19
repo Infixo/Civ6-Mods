@@ -2,7 +2,7 @@
 <Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
 	<Properties>
 		<Name>Better Civilopedia</Name>
-		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE]Remembers visited pages (back/next buttons).[NEWLINE][NEWLINE]Version 1.5.</Description>
+		<Description>More information in Civilopedia![NEWLINE]Remembers the last visited page.[NEWLINE]Remembers visited pages (back/next buttons).[NEWLINE][NEWLINE]Version 1.6.</Description>
 		<Teaser>More information in Civilopedia!</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -20,14 +20,16 @@
 		<UpdateDatabase id="BCP_Database">
 			<Properties><LoadOrder>10</LoadOrder></Properties>
 			<File>BetterCivilopedia_Database.sql</File>
-			<File>Civilopedia_BCP.xml</File>
+			<File>Base/Civilopedia_BCP_Base.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports">
+			<Properties><LoadOrder>10</LoadOrder></Properties>
 			<File>CivilopediaScreen.xml</File>
-			<File>CivilopediaPage_BCP.lua</File>
+			<File>Base/CivilopediaPage_BCP_Base.lua</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BCP_Replace_CivilopediaScreen">
 			<Properties>
+				<LoadOrder>10</LoadOrder>
 				<LuaContext>CivilopediaScreen</LuaContext>
 				<LuaReplace>CivilopediaScreen_BCP.lua</LuaReplace>
 			</Properties>
@@ -35,29 +37,39 @@
 		<!-- Rise & Fall -->
 		<UpdateDatabase id="BCP_Database_XP1" criteria="Expansion1">
 			<Properties><LoadOrder>10</LoadOrder></Properties>
-			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
+			<File>XP1/Civilopedia_BCP_XP1.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports_XP1" criteria="Expansion1">
-			<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
+			<File>XP1/CivilopediaPage_BCP_XP1.lua</File>
 		</ImportFiles>
 		<!-- Gathering Storm -->
 		<UpdateDatabase id="BCP_Database_XP2" criteria="Expansion2">
 			<Properties><LoadOrder>10</LoadOrder></Properties>
-			<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
+			<File>XP1/Civilopedia_BCP_XP1.xml</File>
+			<File>XP2/Civilopedia_BCP_XP2.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports_XP2" criteria="Expansion2">
-			<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
+			<File>XP1/CivilopediaPage_BCP_XP1.lua</File>
+			<File>XP2/CivilopediaPage_BCP_XP2.lua</File>
 		</ImportFiles>
+		<UpdateText id="BCP_Text_XP2" criteria="Expansion2">
+			<File>XP2/Civilopedia_BCP_XP2_Text.xml</File>
+		</UpdateText>
 	</InGameActions>
 	<Files>
 		<!-- shared -->
 		<File>BetterCivilopedia_Database.sql</File>
-		<File>Civilopedia_BCP.xml</File>
-		<File>CivilopediaPage_BCP.lua</File>
 		<File>CivilopediaScreen.xml</File>
 		<File>CivilopediaScreen_BCP.lua</File>
+		<!-- base game -->
+		<File>Base/Civilopedia_BCP_Base.xml</File>
+		<File>Base/CivilopediaPage_BCP_Base.lua</File>
 		<!-- Rise & Fall -->
-		<File>RiseFall/Civilopedia_BCP_RiseFall.xml</File>
-		<File>RiseFall/CivilopediaPage_BCP_RiseFall.lua</File>
+		<File>XP1/Civilopedia_BCP_XP1.xml</File>
+		<File>XP1/CivilopediaPage_BCP_XP1.lua</File>
+		<!-- Gathering Storm -->
+		<File>XP2/Civilopedia_BCP_XP2.xml</File>
+		<File>XP2/CivilopediaPage_BCP_XP2.lua</File>
+		<File>XP2/Civilopedia_BCP_XP2_Text.xml</File>
 	</Files>
 </Mod>
