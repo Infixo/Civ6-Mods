@@ -209,7 +209,30 @@ function Open( tabToOpen:number )
 	m_tabs.SelectTab( m_kCurrentTab );
 	
 	-- show number of cities in the title bar
+	local tTT:table = {};
+	local iWon:number, iDis:number, iBul:number, iPop:number = 0, 0, 0, 0;
+	for _,city in pairs(m_kCityData) do
+		iWon = iWon + #city.Wonders;
+		iDis = iDis + city.DistrictsNum;
+		iBul = iBul + city.BuildingsNum;
+		iPop = iPop + city.Population;
+	end
+	local iCiv:number, iMil:number = 0, 0;
+	local playerID:number = Game.GetLocalPlayer();
+	if playerID ~= PlayerTypes.NONE and playerID ~= PlayerTypes.OBSERVER then
+		for _,unit in Players[playerID]:GetUnits():Members() do
+			if GameInfo.Units[unit:GetUnitType()].FormationClass == "FORMATION_CLASS_CIVILIAN" then iCiv = iCiv + 1; else iMil = iMil + 1; end
+		end -- for
+	end -- if
 	Controls.TotalsLabel:SetText( Locale.Lookup("LOC_DIPLOMACY_DEAL_CITIES").." "..tostring(Players[Game.GetLocalPlayer()]:GetCities():GetCount()) );
+	table.insert(tTT, Locale.Lookup("LOC_RAZE_CITY_POPULATION_LABEL").." "..tostring(iPop));
+	table.insert(tTT, Locale.Lookup("LOC_TECH_FILTER_WONDERS")..": "..tostring(iWon));
+	table.insert(tTT, Locale.Lookup("LOC_DEAL_CITY_DISTRICTS_TOOLTIP").." "..tostring(iDis));
+	table.insert(tTT, Locale.Lookup("LOC_TOOLTIP_PLOT_BUILDINGS_TEXT").." "..tostring(iBul));
+	table.insert(tTT, Locale.Lookup("LOC_TECH_FILTER_UNITS")..": "..tostring(iCiv+iMil));
+	table.insert(tTT, Locale.Lookup("LOC_MILITARY")..": "..tostring(iMil));
+	table.insert(tTT, Locale.Lookup("LOC_FORMATION_CLASS_CIVILIAN_NAME")..": "..tostring(iCiv));
+	Controls.TotalsLabel:SetToolTipString( table.concat(tTT, "[NEWLINE]") );
 end
 
 
@@ -350,7 +373,7 @@ function GetData()
 	local tUnitsDist:table = {}; -- temp table for calculating units' distance from cities
 
 	for _, unit in player:GetUnits():Members() do
-		local unitInfo : table = GameInfo.Units[unit:GetUnitType()];
+		local unitInfo:table = GameInfo.Units[unit:GetUnitType()];
 		local formationClass:string = unitInfo.FormationClass; -- FORMATION_CLASS_CIVILIAN, FORMATION_CLASS_LAND_COMBAT, FORMATION_CLASS_NAVAL, FORMATION_CLASS_SUPPORT, FORMATION_CLASS_AIR
 		-- categorize
 		group_name = string.gsub(formationClass, "FORMATION_CLASS_", "");
@@ -398,6 +421,15 @@ function GetData()
 			if unitInfoXP2 ~= nil and unitInfoXP2.ResourceMaintenanceType ~= nil then
 				unit.ResMaint = "[ICON_"..unitInfoXP2.ResourceMaintenanceType.."]";
 			end
+		end
+		-- Rock Band
+		unit.IsRockBand = false;
+		unit.RockBandAlbums = 0;
+		unit.RockBandLevel = 0;
+		if bIsGatheringStorm and unitInfo.PromotionClass == "PROMOTION_CLASS_ROCK_BAND" then
+			unit.IsRockBand = true;
+			unit.RockBandAlbums = unit:GetRockBand():GetAlbumSales();
+			unit.RockBandLevel = unit:GetRockBand():GetRockBandLevel();
 		end
 		table.insert( tUnitsDist, unit );
 	end
@@ -2806,7 +2838,7 @@ function city_fields( kCityData, pCityInstance )
 	
 	-- CityName
 	--pCityInstance.CityName:SetText( Locale.Lookup( kCityData.CityName ) );
-	TruncateStringWithTooltip(pCityInstance.CityName, 178, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
+	TruncateStringWithTooltip(pCityInstance.CityName, 178, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName)..((kCityData.DistrictsNum < kCityData.DistrictsPossibleNum) and "[COLOR_Green]![ENDCOLOR]" or ""));
 	
 	-- Population and Housing
 	-- a bit more complicated due to real housing from improvements
@@ -3183,8 +3215,8 @@ function unit_sortFunction( descend, type, t, a, b )
 		aUnit = UnitManager.GetActivityType( t[a] )
 		bUnit = UnitManager.GetActivityType( t[b] )
 	elseif type == "level" then
-		aUnit = t[a]:GetExperience():GetLevel()
-		bUnit = t[b]:GetExperience():GetLevel()
+		aUnit = t[a]:GetExperience():GetLevel();
+		bUnit = t[b]:GetExperience():GetLevel();
 	elseif type == "exp" then
 		aUnit = t[a]:GetExperience():GetExperiencePoints()
 		bUnit = t[b]:GetExperience():GetExperiencePoints()
@@ -3240,6 +3272,17 @@ function unit_sortFunction( descend, type, t, a, b )
 			if     aUnit == "" then return false;
 			elseif bUnit == "" then return true;
 			else                    return false; end
+		end
+		--]]
+	elseif type == "albums" then
+		aUnit = t[a].RockBandAlbums;
+		bUnit = t[b].RockBandAlbums;
+		--[[
+		if bIsGatheringStorm and GameInfo.Units[t[a]:GetUnitType()].PromotionClass == "PROMOTION_CLASS_ROCK_BAND" then
+			aUnit = t[a]:GetRockBand():GetAlbumSales();
+		end
+		if bIsGatheringStorm and GameInfo.Units[t[b]:GetUnitType()].PromotionClass == "PROMOTION_CLASS_ROCK_BAND" then
+			bUnit = t[b]:GetRockBand():GetAlbumSales();
 		end
 		--]]
 	else
@@ -3527,7 +3570,14 @@ end
 
 function group_civilian( unit, unitInstance, group, parent, type )
 
-	unitInstance.UnitCharges:SetText( tostring( unit:GetBuildCharges() ) )
+	ShowUnitPromotions(unit, unitInstance);
+	unitInstance.UnitCharges:SetText( tostring(unit:GetBuildCharges()) );
+	unitInstance.UnitAlbums:SetText("");
+	
+	if unit.IsRockBand then
+		unitInstance.UnitCharges:SetText("");
+		unitInstance.UnitAlbums:SetText( tostring(unit.RockBandAlbums) );
+	end
 	
 end
 
@@ -3543,9 +3593,11 @@ function ShowUnitPromotions(unit:table, unitInstance:table)
 	for _,promo in ipairs(unit:GetExperience():GetPromotions()) do
 		table.insert(tPromoTT, Locale.Lookup(GameInfo.UnitPromotions[promo].Name)..": "..Locale.Lookup(GameInfo.UnitPromotions[promo].Description));
 	end
-	if     #tPromoTT == 0 then unitInstance.UnitLevel:SetText("");
-	elseif #tPromoTT == 1 then unitInstance.UnitLevel:SetText("[ICON_Promotion]");
-	else                       unitInstance.UnitLevel:SetText("[ICON_Promotion]"..string.rep("*", #tPromoTT-1) ); end
+	local sLevel:string = "";
+	if unit.IsRockBand then sLevel = tostring(unit.RockBandLevel); end
+	if     #tPromoTT == 0 then unitInstance.UnitLevel:SetText(sLevel);
+	elseif #tPromoTT == 1 then unitInstance.UnitLevel:SetText(sLevel.." [ICON_Promotion]");
+	else                       unitInstance.UnitLevel:SetText(sLevel.." [ICON_Promotion]"..string.rep("*", #tPromoTT-1) ); end
 	unitInstance.UnitLevel:SetToolTipString( table.concat(tPromoTT, "[NEWLINE]") );
 end
 
@@ -3669,6 +3721,13 @@ function ViewUnitsPage()
 		if pHeaderInstance.UnitTurnsButton then    pHeaderInstance.UnitTurnsButton:RegisterCallback(   Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "turns", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitCityButton then     pHeaderInstance.UnitCityButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "city", iUnitGroup, instance ) end ) end
 		if pHeaderInstance.UnitMaintenanceButton then pHeaderInstance.UnitMaintenanceButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "maintenance", iUnitGroup, instance ) end ) end
+		if pHeaderInstance.UnitAlbumsButton then
+			if bIsGatheringStorm then
+				pHeaderInstance.UnitAlbumsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "albums", iUnitGroup, instance ) end );
+			else
+				pHeaderInstance.UnitAlbumsLabel:SetText("");
+			end
+		end
 
 		instance.Descend = false;
 		for _,unit in spairs( kUnitGroup.units, function( t, a, b ) return unit_sortFunction( false, "name", t, a, b ) end ) do -- initial sort by name ascending

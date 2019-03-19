@@ -741,7 +741,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="75,parent">
+				<Container																										Size="80,parent">
 					<GridButton		ID="CityLoyaltyButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_REPORTS_LOYALTY" />
 					</GridButton>
@@ -762,7 +762,7 @@
 				</Container>
 				-->
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="70,parent">
 					<GridButton		ID="CityGrowthButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_GROWTH" />
 					</GridButton>
@@ -774,7 +774,7 @@
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="85,parent">
 					<GridButton		ID="CityHappinessButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_HAPPINESS" />
 					</GridButton>
@@ -846,8 +846,8 @@
 					<Label				ID="Governor"	Offset="0,3"																Style="ReportValueText"	String="$Housing$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="75,parent">
-					<Label				ID="Loyalty"																		Style="ReportValueText"	String="$Status$" />
+				<Container																										Size="80,parent">
+					<Label				ID="Loyalty"													Offset="-2,0"	Style="ReportValueText"	String="$Status$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
 				-->
@@ -861,7 +861,7 @@
 				</Container>
 				-->
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="70,parent">
 					<Label				ID="GrowthRateStatus"													Style="ReportValueText"	String="$GrowthRateStatus$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -869,7 +869,7 @@
 					<Label				ID="Amenities"																Style="ReportValueText"	String="$Amenities$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
-				<Container																										Size="80,parent">
+				<Container																										Size="85,parent">
 					<Label				ID="CitizenHappiness"													Style="ReportValueText"	String="$CitizenHappiness$" />
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,128" />
@@ -1041,13 +1041,21 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
+					<GridButton		ID="UnitLevelButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_LEVEL"/>
+					</GridButton>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
 					<GridButton		ID="UnitChargeButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label Style="ReportHeaderSmallText" String="LOC_BRS_HEADER_NUM_CHARGES"/>
 					</GridButton>
 				</Container>
 				
-				<Container Offset="1,0" Size="200,parent">
-					<!-- empty --><GridButton	  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C"/>
+				<Container Offset="1,0" Size="100,parent">
+					<GridButton		ID="UnitAlbumsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label ID="UnitAlbumsLabel" Style="ReportHeaderSmallText" String="LOC_ROCK_CONCERT_RESULT_ALBUMS"/>
+					</GridButton>
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
@@ -1448,11 +1456,15 @@
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitLevel" Style="ReportValueText" String="$Lvl$" Align="Center" Anchor="C,C" Offset="0,0"/>
+				</Container>
+				
+				<Container Offset="1,0" Size="100,parent">
 					<Label ID="UnitCharges" Style="ReportValueText" String="0/0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
-				<Container Offset="1,0" Size="200,parent">
-					<!-- empty -->
+				<Container Offset="1,0" Size="100,parent">
+					<Label ID="UnitAlbums" Style="ReportValueText" String="Alb.0" Align="Center" Anchor="C,C" Offset="0,0"/>
 				</Container>
 				
 				<Container Offset="1,0" Size="100,parent">
