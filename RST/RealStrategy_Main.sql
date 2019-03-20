@@ -52,7 +52,7 @@ UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'DefaultCitySettlement' AN
 --UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_PRODUCTION'; -- 25
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_SCIENCE'; -- 10
 --UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_CULTURE'; -- 10
-UPDATE AiFavoredItems SET Value = -10 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_GOLD';  -- 20
+UPDATE AiFavoredItems SET Value = 0 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_GOLD';  -- 20
 --UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'DefaultYieldBias' AND Item = 'YIELD_FAITH'; -- -25
 
 
@@ -123,9 +123,9 @@ UPDATE PseudoYields SET DefaultValue =  0.5 WHERE PseudoYieldType = 'PSEUDOYIELD
 UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ARTIST'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_ENGINEER'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_GENERAL'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.5 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MERCHANT'; -- 	0.5, AI+ 1.5 - why so high?
+UPDATE PseudoYields SET DefaultValue =  0.6 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MERCHANT'; -- 	0.5, AI+ 1.5 - why so high?
 UPDATE PseudoYields SET DefaultValue =  0.5 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_MUSICIAN'; -- 	0.5
-UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_PROPHET'; -- 	0.5
+UPDATE PseudoYields SET DefaultValue =  0.5 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_PROPHET'; -- 	0.5
 UPDATE PseudoYields SET DefaultValue =  0.7 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_SCIENTIST'; -- 	0.5, 1.6 vs. 0.75 disproportion Sci vs. Cul - not many Theater Districts
 UPDATE PseudoYields SET DefaultValue =  0.8 WHERE PseudoYieldType = 'PSEUDOYIELD_GPP_WRITER'; -- 	0.5
 
@@ -336,12 +336,14 @@ UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CultureVictoryPseudoYield
 UPDATE AiFavoredItems SET Value = 35 WHERE ListType = 'CultureVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TOURISM'; -- def. 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('CultureVictoryYields', 'YIELD_GOLD', 1, -10),
+('CultureVictoryYields', 'YIELD_GOLD',    1, -10),
 ('CultureVictoryYields', 'YIELD_SCIENCE', 1, -10),
+('CultureVictoryYields', 'YIELD_FAITH',   1, -10),
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50), -- base 350
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 15), -- base 300
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, 15), -- base 80
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 15), -- base 0.25
+('CultureVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -15),
 --('CultureVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, 100), -- see explaination above
 --('CultureVictoryPseudoYields', 'PSEUDOYIELD_TECHNOLOGY', 1, -100), -- base 5
 ('CultureVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -50), -- base 50
@@ -406,14 +408,14 @@ UPDATE AiFavoredItems SET Value =  35 WHERE ListType = 'ScienceVictoryPseudoYiel
 --UPDATE AiFavoredItems SET Value = 100 WHERE ListType = 'ScienceVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TECHNOLOGY'; -- def 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ScienceVictoryYields', 'YIELD_FAITH', 1, -20),
+('ScienceVictoryYields', 'YIELD_FAITH', 1, -25),
 ('ScienceVictoryYields', 'YIELD_CULTURE', 1, -10),
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -25), -- base 350
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- base 300 -10%
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -15), -- base 100 -10%
 --('ScienceVictoryPseudoYields', 'PSEUDOYIELD_CIVIC', 1, -100), -- see explanation above
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20), -- need for infra
-('ScienceVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25), -- base 0.8
+('ScienceVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -30),
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
 ('ScienceVictoryPseudoYields', 'PSEUDOYIELD_UNIT_ARCHAEOLOGIST', 1, -50), -- base 4
 ('ScienceVictoryTechs', 'TECH_WRITING', 1, 0), -- !BUGGED!
@@ -526,9 +528,9 @@ UPDATE AiFavoredItems SET Value = -50 WHERE ListType = 'MilitaryVictoryPseudoYie
 UPDATE AiFavoredItems SET Value = -25 WHERE ListType = 'MilitaryVictoryPseudoYields' AND Item = 'PSEUDOYIELD_DIPLOMATIC_BONUS'; -- def. -50
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('MilitaryVictoryYields', 'YIELD_SCIENCE', 1,  5),
-('MilitaryVictoryYields', 'YIELD_CULTURE', 1, -5),
-('MilitaryVictoryYields', 'YIELD_FAITH',   1,-15),
+('MilitaryVictoryYields', 'YIELD_SCIENCE', 1, 10),
+('MilitaryVictoryYields', 'YIELD_CULTURE', 1,-10),
+('MilitaryVictoryYields', 'YIELD_FAITH',   1,-25),
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- +100%
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 50), -- base 50 +50%
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -25), -- -25% - this is quite a lot, should trigger more wars
@@ -536,7 +538,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -50), -- base 100, leave that as an option
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 15), -- base 1.5, agenda lover uses +5%
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 10), -- base 0.7
-('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25), -- base 0.8
+('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -30), -- base 0.8
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10), -- base 0.5
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 20), -- base 0.6
 ('MilitaryVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -50), -- base 1
@@ -693,16 +695,16 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ClassicalYields', 'YIELD_CULTURE',  1, 15),
 ('ClassicalYields', 'YIELD_FAITH', 1, 10),
 ('ClassicalYields', 'YIELD_FOOD',  1, 10),
-('ClassicalYields', 'YIELD_GOLD',  1, 15),
+('ClassicalYields', 'YIELD_GOLD',  1, 20),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
-('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
+('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -10),
 -- MEDIEVAL
 --('MedievalSensitivity',	'YIELD_CULTURE', 1, 10),
 ('MedievalYields', 'YIELD_CULTURE',    1,-15),
-('MedievalYields', 'YIELD_FAITH',      1, 20),
+('MedievalYields', 'YIELD_FAITH',      1, 15),
 ('MedievalYields', 'YIELD_FOOD',       1, 20),
 ('MedievalYields', 'YIELD_GOLD',       1,-10),
 ('MedievalYields', 'YIELD_PRODUCTION', 1, 10),
@@ -711,15 +713,15 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25),
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 10),
-('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 10),
+('MedievalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 15),
 ('MedievalPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, -15),
 ('MedievalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -10),
 ('MedievalPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -15),
 -- RENAISSANCE
 ('RenaissanceYields', 'YIELD_CULTURE',    1, 15),
-('RenaissanceYields', 'YIELD_FAITH',      1,-20),
+('RenaissanceYields', 'YIELD_FAITH',      1,-25),
 ('RenaissanceYields', 'YIELD_FOOD',       1,-15),
-('RenaissanceYields', 'YIELD_GOLD',       1, 15),
+('RenaissanceYields', 'YIELD_GOLD',       1, 20),
 ('RenaissanceYields', 'YIELD_PRODUCTION', 1,-10),
 ('RenaissanceYields', 'YIELD_SCIENCE',    1, 10),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50),

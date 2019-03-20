@@ -502,7 +502,7 @@ function PlayerIsCloseToReligionVictory(ePlayerID:number)
 end
 
 function PlayerIsCloseToDiploVictory(ePlayerID:number)
-	print("FUN PlayerIsCloseToDiploVictory", ePlayerID);
+	--print("FUN PlayerIsCloseToDiploVictory", ePlayerID);
 	if not bIsGatheringStorm then return false; end
 	-- DV Points >= 70%
 	return RST.PlayerGetDiploVictoryProgress(ePlayerID) >= 70;
@@ -871,7 +871,7 @@ Careful with GPT, crazy values possible.
 --]]
 
 function GetPriorityDiplo(data:table)
-	print("FUN GetPriorityDiplo", data.PlayerID, data.LeaderType);
+	if bLogDebug then print("FUN GetPriorityDiplo", data.PlayerID, data.LeaderType); end
 	-- check if this victory type is enabled
 	if tValidVictories.DIPLO == 0 then return -200; end
 	
@@ -893,7 +893,7 @@ function GetPriorityDiplo(data:table)
 	local progress:number = RST.PlayerGetDiploVictoryProgress(ePlayerID);
 	iPriority = iPriority + progress * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; -- 0.100, so each DPV = 50
 	if progress > 50 then iPriority = iPriority + (progress - 50) * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; end
-	print("...diplo progress", progress, iPriority);
+	if bLogDebug then print("...diplo progress", progress, iPriority); end
 	
 	--Suzerain of a CS - it is in general however. Maybe give it more?
 	
@@ -905,7 +905,7 @@ function GetPriorityDiplo(data:table)
 	local totalFavor:number   = pPlayer:GetDiplomaticFavor(); 
 	local favorPerTurn:number = pPlayer:GetDiplomaticFavorPerTurn();
 	iPriority = iPriority + favorPerTurn * GlobalParameters.RST_DIPLO_FAVOR_PER_TURN_WEIGHT;
-	print("...favor per turn", favorPerTurn, iPriority);
+	if bLogDebug then print("...favor per turn", favorPerTurn, iPriority); end
 	
 	--Money is important. Maybe count TRs and even GPT?
 	--Careful with GPT, crazy values possible.
@@ -1340,7 +1340,7 @@ end
 
 ------------------------------------------------------------------------------
 function GetOtherPlayerPriorityDiplo(data:table, eOtherID:number)
-	print("FUN GetOtherPlayerPriorityDiplo", data.LeaderType, eOtherID);
+	if bLogDebug then print("FUN GetOtherPlayerPriorityDiplo", data.LeaderType, eOtherID); end
 	-- check if this victory type is enabled
 	if tValidVictories.DIPLO == 0 then return -200; end
 
@@ -1353,15 +1353,17 @@ function GetOtherPlayerPriorityDiplo(data:table, eOtherID:number)
 	local progress:number = RST.PlayerGetDiploVictoryProgress(eOtherID);
 	iPriority = iPriority + progress * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; -- 0.100, so each DPV = 50
 	if progress > 50 then iPriority = iPriority + (progress - 50) * GlobalParameters.RST_DIPLO_PROGRESS_WEIGHT; end
-	print("...diplo progress", progress, iPriority);
+	if bLogDebug then print("...diplo progress", progress, iPriority); end
 	
 	--Yield here is Favor per turn (FPT). It is rather rare, 20-30 is a lot.
 	local totalFavor:number   = pOther:GetDiplomaticFavor(); 
 	local favorPerTurn:number = pOther:GetDiplomaticFavorPerTurn();
 	iPriority = iPriority + favorPerTurn * GlobalParameters.RST_DIPLO_FAVOR_PER_TURN_WEIGHT;
-	print("...favor per turn", favorPerTurn, iPriority);
+	if bLogDebug then print("...favor per turn", favorPerTurn, iPriority); end
 	
-	print("GetOtherPlayerPriorityDiplo:", iPriority);
+	iPriority = iPriority * GlobalParameters.RST_GUESS_SCALER_DIPLO / 100;
+	
+	if bLogDebug then print("GetOtherPlayerPriorityDiplo:", iPriority); end
 	return iPriority;
 end
 
@@ -1809,22 +1811,27 @@ GameEvents.ActiveStrategyMoreCulture.Add(ActiveStrategyMoreCulture);
 function ActiveStrategyAntiConquest(ePlayerID:number, iThreshold:number)
 	return tValidVictories.CONQUEST == 0;
 end
+GameEvents.ActiveStrategyAntiConquest.Add(ActiveStrategyAntiConquest);
 
 function ActiveStrategyAntiCulture(ePlayerID:number, iThreshold:number)
 	return tValidVictories.CULTURE == 0;
 end
+GameEvents.ActiveStrategyAntiCulture.Add(ActiveStrategyAntiCulture);
 
 function ActiveStrategyAntiReligion(ePlayerID:number, iThreshold:number)
 	return tValidVictories.RELIGION == 0;
 end
+GameEvents.ActiveStrategyAntiReligion.Add(ActiveStrategyAntiReligion);
 
 function ActiveStrategyAntiScience(ePlayerID:number, iThreshold:number)
 	return tValidVictories.SCIENCE == 0;
 end
+GameEvents.ActiveStrategyAntiScience.Add(ActiveStrategyAntiScience);
 
 function ActiveStrategyAntiDiplo(ePlayerID:number, iThreshold:number)
 	return tValidVictories.DIPLO == 0;
 end
+GameEvents.ActiveStrategyAntiDiplo.Add(ActiveStrategyAntiDiplo);
 
 
 -- ===========================================================================
@@ -1970,6 +1977,29 @@ function ActiveStrategyThreat(ePlayerID:number, iThreshold:number)
 	return data.ActiveThreat;
 end
 GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
+
+
+------------------------------------------------------------------------------
+-- 2019-03-20 GameEvents not available in UI context
+function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
+	if RST.ActiveStrategyMoreGreatWorkSlots == nil then
+		print(Game.GetCurrentGameTurn(), "Warning! ActiveStrategyMoreGreatWorkSlots not connected.", ePlayerID, iThreshold);
+		return false;
+	end -- not connected
+	return RST.ActiveStrategyMoreGreatWorkSlots(ePlayerID, iThreshold);
+end
+GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
+
+
+------------------------------------------------------------------------------
+-- MoveUnit from Gameplay context
+function MoveUnitToPlot(ePlayerID:number, iUnitID:number, iX:number, iY:number)
+	--print("FUN MoveUnitToPlot", ePlayerID, iUnitID, iX, iY);
+	local pUnit:table = UnitManager.GetUnit(ePlayerID, iUnitID);
+	if pUnit ~= nil then UnitManager.MoveUnit(pUnit, iX, iY); end
+end
+RST.MoveUnitToPlot = MoveUnitToPlot;
+
 
 
 -- ===========================================================================

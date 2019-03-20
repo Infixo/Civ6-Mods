@@ -93,6 +93,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('DiploVictoryProjects', 'PROJECT_CARBON_RECAPTURE', 1, 0),
 ('DiploVictoryProjects', 'PROJECT_SEND_AID',         1, 0),
 -- PseudoYields
+('DiploVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET',      1,-15),
 ('DiploVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, 50),
 ('DiploVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 25),
 ('DiploVictoryPseudoYields', 'PSEUDOYIELD_INFLUENCE',        1, 25),
@@ -543,14 +544,18 @@ UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'SuliemanUnits' AND Item =
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('SuliemanDiplomacy'),
+('SuliemanYields');
 ('SuliemanPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
-('SuliemanDiplomacy', 'TRAIT_LEADER_SULEIMAN_GOVERNOR', 'DiplomaticActions'),
+('SuliemanDiplomacy',    'TRAIT_LEADER_SULEIMAN_GOVERNOR', 'DiplomaticActions'),
+('SuliemanYields',       'TRAIT_LEADER_SULEIMAN_GOVERNOR', 'Yields'),
 ('SuliemanPseudoYields', 'TRAIT_LEADER_SULEIMAN_GOVERNOR', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('SuliemanDiplomacy', 'DIPLOACTION_DECLARE_TERRITORIAL_WAR', 1, 0),
 ('SuliemanDiplomacy', 'DIPLOACTION_DECLARE_FORMAL_WAR', 1, 0),
 ('SuliemanDiplomacy', 'DIPLOACTION_DECLARE_IDEOLOGICAL_WAR', 1, 0),
+('SuliemanYields', 'YIELD_FAITH', 1, -20),
+('SuliemanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -20),
 ('SuliemanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('SuliemanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- siege cities
 ('SuliemanPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15), -- we have bombards

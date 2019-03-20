@@ -95,9 +95,7 @@
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Lua/RealStrategy_InGameExp.xml</File>
-			<!-- Temporarily switched off
 			<File>Lua/RealStrategy_GreatPeople.xml</File>
-			-->
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
 			<File>Lua/RealStrategy.lua</File>

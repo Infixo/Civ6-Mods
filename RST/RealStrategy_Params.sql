@@ -9,7 +9,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '1');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '3');
 
 -- logging
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
@@ -83,12 +83,13 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', 0), -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
-('RST_DIPLO_PROGRESS_WEIGHT', 5), -- points for 1%; now DVP = 10%, so 1 DVP = 50 points
-('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 7),
+('RST_DIPLO_PROGRESS_WEIGHT', 4), -- points for 1%; now DVP = 10%, so 1 DVP = 50 points
+('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 10),
 -- guess others scalers
 ('RST_GUESS_SCALER_CONQUEST', 100),
 ('RST_GUESS_SCALER_SCIENCE',  100),
 ('RST_GUESS_SCALER_CULTURE',  115),
+('RST_GUESS_SCALER_DIPLO',    125),
 ('RST_GUESS_SCALER_RELIGION', 75); -- religion has 4 items scored, always getting a bit much
 
 

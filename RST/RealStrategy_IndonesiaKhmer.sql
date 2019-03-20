@@ -75,7 +75,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('JayavarmanDistricts', 'DISTRICT_AQUEDUCT', 1, 0), -- risky???
 ('JayavarmanDistricts', 'DISTRICT_HOLY_SITE', 1, 0), -- risky???
-('JayavarmanYields', 'YIELD_FAITH',   1, 10),
+('JayavarmanYields', 'YIELD_FAITH',   1, 15),
 ('JayavarmanYields', 'YIELD_FOOD',    1, 15),
 ('JayavarmanYields', 'YIELD_SCIENCE', 1, -5),
 ('JayavarmanYields', 'YIELD_GOLD',    1,-10),

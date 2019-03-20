@@ -195,9 +195,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('BarbarossaCivics', 'CIVIC_GUILDS', 1, 0),
 ('BarbarossaCivics', 'CIVIC_EXPLORATION', 1, 0),
 ('BarbarossaCivics', 'CIVIC_URBANIZATION', 1, 0),
-('BarbarossaYields', 'YIELD_FAITH', 1, -15),
-('BarbarossaYields', 'YIELD_GOLD', 1, 5),
-('BarbarossaYields', 'YIELD_PRODUCTION', 1, 5),
+('BarbarossaYields', 'YIELD_FAITH',      1,-20),
+('BarbarossaYields', 'YIELD_GOLD',       1, 10),
+('BarbarossaYields', 'YIELD_PRODUCTION', 1, 10),
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -25),
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 100), -- more focus on Minors
 ('BarbarossaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
@@ -381,17 +381,20 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('LastVikingKingCoastSettlement', 'Foreign Continent', 0, 20,             NULL), -- try to settle other continents before others
 ('LastVikingKingCoastSettlement', 'Specific Feature',  0,  3, 'FEATURE_FOREST'); -- close to forests
 
-UPDATE AiFavoredItems SET Value = 25 WHERE ListType = 'LastVikingKingNavalPreference' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 100
+UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'LastVikingKingNavalPreference' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 100
 
 INSERT INTO AiListTypes (ListType) VALUES
+('HaraldUnits'),
 ('HaraldYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('HaraldUnits',  'TRAIT_AGENDA_LAST_VIKING_KING', 'Units'),
 ('HaraldYields', 'TRAIT_AGENDA_LAST_VIKING_KING', 'Yields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HaraldTechs', 'TECH_MINING', 1, 0), -- !BUGGED!
 ('HaraldCivics', 'CIVIC_MYSTICISM', 1, 0),
 ('HaraldCivics', 'CIVIC_FOREIGN_TRADE', 1, 0),
 ('HaraldYields', 'YIELD_FAITH', 1, 10),
+('HaraldUnits', 'UNIT_NORWEGIAN_LONGSHIP', 1, -20), -- 2019-03-20 GS patch added this to PSEUDOYIELD_UNIT_NAVAL_COMBAT, so he creates way too many now
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 15), -- get rid of barb ships asap
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_GPP_PROPHET', 1, 10), -- get the Holy Site asap
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- don't chop forests
@@ -575,7 +578,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('ScythiaFavorStable', 'TRAIT_CIVILIZATION_EXTRA_LIGHT_CAVALRY', 'Buildings');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TomyrisDiplomacy', 'DIPLOACTION_DECLARE_FRIENDSHIP', 1, 0),
-('TomyrisTechs', 'TECH_ASTROLOGY', 1, 0), -- religion as a backup plan -- !BUGGED!
+--('TomyrisTechs', 'TECH_ASTROLOGY', 1, 0), -- 2019-03-20 disabled religion as a backup plan -- !BUGGED!
 ('ScythiaFavorStable', 'BUILDING_STABLE', 1, 0);
 
 

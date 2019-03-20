@@ -157,10 +157,12 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	end
 	local iTotWorks = iNumGWWriting + iNumGWArt + iNumGWMusic;
 	if bLogDebug then print(Game.GetCurrentGameTurn(), "...num of works to create", iNumGWWriting, iNumGWArt, iNumGWMusic); end
+	--print(Game.GetCurrentGameTurn(), "...num of works to create", iNumGWWriting, iNumGWArt, iNumGWMusic);
 
 	-- Check on each GW class separately - this is safe approach to avoid blocking, i.e. when we have slots for Art but not for Writing
 	local iNumSlotWriting:number, iNumSlotArt:number, iNumSlotMusic:number = GetNumEmptyGreatWorkSlots(ePlayerID);
 	if bLogDebug then print(Game.GetCurrentGameTurn(), "...num of available slots", iNumSlotWriting, iNumSlotArt, iNumSlotMusic); end
+	--print(Game.GetCurrentGameTurn(), "...num of available slots", iNumSlotWriting, iNumSlotArt, iNumSlotMusic);
 	local iTotSlots = iNumSlotWriting + iNumSlotArt + iNumSlotMusic;
 	
 	data.ActiveMoreGWSlots = false;
@@ -170,10 +172,12 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	data.TurnRefreshSlots = Game.GetCurrentGameTurn();
 	
 	if bLogOther then print(Game.GetCurrentGameTurn(),"RSTMGWSL", ePlayerID, iThreshold, "...works/slots", iTotWorks, iTotSlots, "active?", data.ActiveMoreGWSlots); end
+	--print(Game.GetCurrentGameTurn(),"RSTMGWSL", ePlayerID, iThreshold, "...works/slots", iTotWorks, iTotSlots, "active?", data.ActiveMoreGWSlots);
 	return data.ActiveMoreGWSlots;
 end
-GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
-
+-- 2019-03-20 GameEvents not available in UI context
+--GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
+RST.ActiveStrategyMoreGreatWorkSlots = ActiveStrategyMoreGreatWorkSlots;
 
 
 ------------------------------------------------------------------------------
@@ -251,7 +255,8 @@ function ManualManageGWAM(ePlayerID:number)
 	-- move units separately to avoid deadlocks
 	for _,move in ipairs(tMoves) do
 		--print("...moving", move.Unit:GetID(), "to", move.ToX, move.ToY);
-		MoveUnitToPlot(move.Unit, move.ToX, move.ToY);
+		--MoveUnitToPlot(move.Unit, move.ToX, move.ToY);
+		RST.MoveUnitToPlot(ePlayerID, move.Unit:GetID(), move.ToX, move.ToY);
 		-- if by chance we arrived, then activate - never happens
 		--if move.Unit:GetX() == move.ToX and move.Unit:GetY() == move.ToY then
 			--print("...unit arrived and be activated");
@@ -262,7 +267,7 @@ end
 
 function OnPlayerTurnActivated(ePlayerID:number, bIsFirstTime:boolean)
 	if not Players[ePlayerID]:IsMajor() then return; end -- only majors
-	if Game.GetLocalPlayer() == ePlayerID then return; end -- don't do for a local player
+	if Game.GetLocalPlayer() == ePlayerID and not AutoplayManager.IsActive() then return; end -- don't do for a local player
 	ManualManageGWAM(ePlayerID);
 end
 

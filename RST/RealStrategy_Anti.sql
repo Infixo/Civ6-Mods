@@ -118,7 +118,7 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('RST_STRATEGY_ANTI_RELIGIOUS', 'AntiReligiousWonders'),
 ('RST_STRATEGY_ANTI_RELIGIOUS', 'AntiReligiousUnits');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AntiReligiousYields', 'YIELD_FAITH', 1, -20),
+('AntiReligiousYields', 'YIELD_FAITH', 1, -25),
 ('AntiReligiousPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -50), -- not to "0", religion may help a bit in other areas
 --('AntiReligiousPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -25), -- there are still naturalists and rock bands :(
 ('AntiReligiousWonders', 'BUILDING_STONEHENGE',       0, 0),
