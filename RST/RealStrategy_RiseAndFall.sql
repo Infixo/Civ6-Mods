@@ -63,6 +63,24 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ScienceVictoryWonders', 'BUILDING_GOV_SCIENCE', 1, 0);
 
 
+------------------------------------------------------------------------------
+-- Anti-Strategies
+
+-- RST_STRATEGY_ANTI_SCIENCE
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
+SELECT 'AntiScienceWonders', 'BUILDING_AMUNDSEN_SCOTT_RESEARCH_STATION', 0, 0
+FROM Types WHERE Type = 'BUILDING_AMUNDSEN_SCOTT_RESEARCH_STATION';
+
+-- support for Government Plaza buildings - opposites of strategies
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+-- Tier 1 BUILDING_GOV_TALL BUILDING_GOV_WIDE BUILDING_GOV_CONQUEST
+('AntiMilitaryWonders', 'BUILDING_GOV_CONQUEST', 0, 0),
+-- Tier 2 BUILDING_GOV_CITYSTATES BUILDING_GOV_SPIES BUILDING_GOV_FAITH
+('AntiReligiousWonders', 'BUILDING_GOV_FAITH', 0, 0),
+-- Tier 3 BUILDING_GOV_MILITARY BUILDING_GOV_CULTURE BUILDING_GOV_SCIENCE
+('AntiMilitaryWonders', 'BUILDING_GOV_MILITARY', 0, 0),
+('AntiCultureWonders', 'BUILDING_GOV_CULTURE', 0, 0),
+('AntiScienceWonders', 'BUILDING_GOV_SCIENCE', 0, 0);
 
 
 
@@ -387,3 +405,5 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- AGENDA_SYMPATHIZER / TRAIT_AGENDA_SYMPATHIZER / OK (R&F)
 -- Feels bad for those going through Dark Ages. Dislikes those in Golden Ages.
 -- Can't influence anything here
+
+

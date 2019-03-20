@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS.[NEWLINE]Version 1.2.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS (v1.0).[NEWLINE]Version 1.3.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -51,6 +51,7 @@
 			<Properties><LoadOrder>200</LoadOrder></Properties> <!-- loads after all official content -->
 			<File>RealStrategy_Params.sql</File>
 			<File>RealStrategy_Main.sql</File>
+			<File>RealStrategy_Anti.sql</File>
 			<File>RealStrategy_Naval.sql</File>
 			<File>RealStrategy_Leaders.sql</File>
 			<File>RealStrategy_Moves.xml</File>
@@ -105,6 +106,7 @@
 	<Files>
 		<File>RealStrategy_Params.sql</File>
 		<File>RealStrategy_Main.sql</File>
+		<File>RealStrategy_Anti.sql</File>
 		<File>RealStrategy_Naval.sql</File>
 		<File>RealStrategy_Leaders.sql</File>
 		<File>RealStrategy_Tactics.sql</File>

@@ -1614,7 +1614,7 @@ function ActiveStrategyDiplo(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "...strategy is", tData[ePlayerID].ActiveStrategy, tData[ePlayerID].ActiveStrategy == "DIPLO");
 	return tData[ePlayerID].ActiveStrategy == "DIPLO";
 end
-GameEvents.ActiveStrategyReligion.Add(ActiveStrategyReligion);
+GameEvents.ActiveStrategyDiplo.Add(ActiveStrategyDiplo);
 
 -- for testing purposes only
 function CheckTurnNumber(iPlayerID:number, iThreshold:number)
@@ -1799,6 +1799,32 @@ function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 	SavePlayerData(ePlayerID, "ActiveStrategyMoreCulture");
 end
 GameEvents.ActiveStrategyMoreCulture.Add(ActiveStrategyMoreCulture);
+
+
+-- ===========================================================================
+-- ANTI STRATEGIES
+-- Activation conditions are very simple. They are global.
+-- ===========================================================================
+
+function ActiveStrategyAntiConquest(ePlayerID:number, iThreshold:number)
+	return tValidVictories.CONQUEST == 0;
+end
+
+function ActiveStrategyAntiCulture(ePlayerID:number, iThreshold:number)
+	return tValidVictories.CULTURE == 0;
+end
+
+function ActiveStrategyAntiReligion(ePlayerID:number, iThreshold:number)
+	return tValidVictories.RELIGION == 0;
+end
+
+function ActiveStrategyAntiScience(ePlayerID:number, iThreshold:number)
+	return tValidVictories.SCIENCE == 0;
+end
+
+function ActiveStrategyAntiDiplo(ePlayerID:number, iThreshold:number)
+	return tValidVictories.DIPLO == 0;
+end
 
 
 -- ===========================================================================
@@ -2207,7 +2233,7 @@ end
 
 ------------------------------------------------------------------------------
 function InitializeValidVictories()
-	print("FUN InitializeValidVictories");
+	--print("FUN InitializeValidVictories");
 	tValidVictories = PriorityTableNew();
 	local iNumV:number = 0;
 	if RST.GameIsVictoryEnabled("VICTORY_CONQUEST")   then tValidVictories.CONQUEST = 1; iNumV = iNumV + 1; end

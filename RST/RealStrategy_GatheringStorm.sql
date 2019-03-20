@@ -231,6 +231,79 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
 -- WC_RES_DEFORESTATION_TREATY too generic
 
 
+-- ===========================================================================
+-- STRATEGIES - changes to existing ones
+-- ===========================================================================
+
+
+------------------------------------------------------------------------------
+-- VICTORY_STRATEGY_SCIENCE_VICTORY
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ScienceVictoryProjects', 'PROJECT_ORBITAL_LASER',     1, 0),
+('ScienceVictoryProjects', 'PROJECT_TERRESTRIAL_LASER', 1, 0);
+
+
+------------------------------------------------------------------------------
+-- RST_STRATEGY_ANTI_SCIENCE
+
+DELETE FROM AiFavoredItems WHERE ListType = 'AntiScienceProjects' AND Item IN ('PROJECT_LAUNCH_MARS_REACTOR', 'PROJECT_LAUNCH_MARS_HABITATION', 'PROJECT_LAUNCH_MARS_HYDROPONICS');
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+-- projects, disfavored all except Satellite (knowing the map is good) PROJECT_LAUNCH_EARTH_SATELLITE
+('AntiScienceProjects', 'PROJECT_LAUNCH_MARS_BASE',  0, 0), -- well, I actually don't know if "disfavor" works here
+('AntiScienceProjects', 'PROJECT_LAUNCH_EXOPLANET_EXPEDITION', 0, 0),
+('AntiScienceProjects', 'PROJECT_ORBITAL_LASER',     0, 0),
+('AntiScienceProjects', 'PROJECT_TERRESTRIAL_LASER', 0, 0);
+
+
+------------------------------------------------------------------------------
+-- RST_STRATEGY_ANTI_RELIGIOUS
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('AntiReligiousPseudoYields', 'PSEUDOYIELD_RELIGIOUS_CONVERT_EMPIRE', 1, -50);
+
+
+------------------------------------------------------------------------------
+-- RST_STRATEGY_ANTI_DIPLO
+
+INSERT INTO Types (Type, Kind) VALUES
+('RST_STRATEGY_ANTI_DIPLO', 'KIND_VICTORY_STRATEGY');
+
+INSERT INTO Strategies (StrategyType, VictoryType, NumConditionsNeeded) VALUES
+('RST_STRATEGY_ANTI_DIPLO', NULL, 1);
+
+INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue) VALUES
+('RST_STRATEGY_ANTI_DIPLO', 'Call Lua Function', 'ActiveStrategyAntiDiplo');
+
+INSERT INTO AiListTypes (ListType) VALUES
+('AntiDiploYields'),
+('AntiDiploPseudoYields'),
+('AntiDiploProjects'),
+('AntiDiploWonders');
+
+INSERT INTO AiLists (ListType, System) VALUES
+('AntiDiploYields',       'Yields'),
+('AntiDiploPseudoYields', 'PseudoYields'),
+('AntiDiploProjects',     'Projects'),
+('AntiDiploWonders',      'Buildings');
+
+INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
+('RST_STRATEGY_ANTI_DIPLO', 'AntiDiploYields'),
+('RST_STRATEGY_ANTI_DIPLO', 'AntiDiploPseudoYields'),
+('RST_STRATEGY_ANTI_DIPLO', 'AntiDiploProjects'),
+('RST_STRATEGY_ANTI_DIPLO', 'AntiDiploWonders');
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('AntiDiploYields', 'YIELD_GOLD', 1, -10),
+('AntiDiploPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, -25),
+('AntiDiploPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, -10),
+('AntiDiploPseudoYields', 'PSEUDOYIELD_INFLUENCE', 1, -15),
+('AntiDiploProjects', 'PROJECT_CARBON_RECAPTURE', 0, 0),
+('AntiDiploWonders', 'BUILDING_ORSZAGHAZ',      0, 0),
+('AntiDiploWonders', 'BUILDING_STATUE_LIBERTY', 0, 0);
+
+
 
 -- ===========================================================================
 -- PARAMETERS

@@ -458,9 +458,9 @@ FROM Types WHERE Type = 'BUILDING_AMUNDSEN_SCOTT_RESEARCH_STATION';
 --ReligiousVictoryBehaviors
 -- ===========================================================================
 
-UPDATE AiFavoredItems SET Value = 40 WHERE ListType = 'ReligiousVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 75
-
-UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_PROPHET'; -- base 0.8
+UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryYields' AND Item = 'YIELD_FAITH'; -- def. 75
+UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYields' AND Item = 'PSEUDOYIELD_GPP_PROPHET'; -- def. 25
+--UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'ReligiousVictoryPseudoYields' AND Item = 'PSEUDOYIELD_UNIT_RELIGIOUS'; -- def. 50
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ReligiousVictoryYields', 'YIELD_GOLD', 1, -10),
@@ -469,8 +469,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_ALLIANCE_RELIGIOUS', 1, 0),
 ('ReligiousVictoryDiplomacy',    'DIPLOACTION_DECLARE_HOLY_WAR', 1, 0),
 ('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE', 1, -50), -- base 100
-('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10), -- base 1
-('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 25); -- base 0.8 -- this includes Guru and Naturalist!
+('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_TOURISM', 1, -10); -- base 1
+-- 2019-03-20 Added in GS
+--('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 25); -- base 0.8 -- this includes Guru and Naturalist!
 
 
 INSERT INTO AiListTypes (ListType) VALUES
