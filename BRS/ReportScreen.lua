@@ -771,7 +771,7 @@ function GetData()
 		data.TotalFoodSurplus = 0; -- line 9, as displayed in City Details
 		-- line 10, data.TurnsUntilGrowth
 		-- growth changes related to Loyalty
-		if bIsRiseFall then
+		if bIsRiseFall or bIsGatheringStorm then
 			data.LoyaltyGrowthModifier = Round( 100 * pCity:GetGrowth():GetLoyaltyGrowthModifier() - 100, 0 );
 			data.LoyaltyLevelName = GameInfo.LoyaltyLevels[ pCity:GetCulturalIdentity():GetLoyaltyLevel() ].Name;
 		end
@@ -803,7 +803,7 @@ function GetData()
 			-- occupied
 			if data.Occupied then data.TotalFoodSurplus = data.FoodPerTurnModified * data.OccupationMultiplier; end
 			AddGrowthToolTip("LOC_HUD_CITY_OCCUPATION_MULTIPLIER", (data.Occupied and data.OccupationMultiplier * 100) or nil, "%"); -- line 8a
-			if bIsRiseFall then
+			if bIsRiseFall or bIsGatheringStorm then
 				if data.LoyaltyGrowthModifier ~= 0 then AddGrowthToolTip(data.LoyaltyLevelName, data.LoyaltyGrowthModifier, "%"); -- line 8b
 				else table.insert(tGrowthTT, Locale.Lookup(data.LoyaltyLevelName)..": "..Locale.Lookup("LOC_CULTURAL_IDENTITY_LOYALTY_NO_GROWTH_PENALTY")); end -- line 8b
 			end
@@ -821,7 +821,7 @@ function GetData()
 			AddGrowthToolTip("LOC_HUD_CITY_MODIFIED_GROWTH_FOOD_PER_TURN", data.FoodPerTurnModified); -- line 6: modified food per turn
 			AddGrowthToolTip("LOC_HUD_CITY_HOUSING_MULTIPLIER"); -- line 7: housing multiplier
 			AddGrowthToolTip("LOC_HUD_CITY_OCCUPATION_MULTIPLIER", (data.Occupied and data.OccupationMultiplier * 100) or nil, "%"); -- line 8a
-			if bIsRiseFall then AddGrowthToolTip(data.LoyaltyLevelName); end -- line 8b
+			if bIsRiseFall or bIsGatheringStorm then AddGrowthToolTip(data.LoyaltyLevelName); end -- line 8b
 			AddGrowthToolTipSeparator();
 			data.TotalFoodSurplus = data.FoodPerTurnModified; -- line 9
 			AddGrowthToolTip("LOC_HUD_CITY_TOTAL_FOOD_DEFICIT", data.TotalFoodSurplus, "[ICON_FoodDeficit]"); -- line 9
@@ -2950,7 +2950,7 @@ function city_fields( kCityData, pCityInstance )
 	-- Districts
 	pCityInstance.Districts:SetText( GetDistrictsForCity(kCityData) );
 	
-	if not bIsRiseFall then return end -- the 2 remaining fields are for Rise & Fall only
+	if not (bIsRiseFall or bIsGatheringStorm) then return end -- the 2 remaining fields are for Rise & Fall only
 	
 	-- Loyalty -- Infixo: this is not stored - try to store it for sorting later!
 	local pCulturalIdentity = kCityData.City:GetCulturalIdentity();
@@ -3128,8 +3128,8 @@ function ViewCityStatusPage()
 	
 	pHeaderInstance.CityReligionButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "religion", instance ) end )
 	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "name", instance ) end )
-	if bIsRiseFall then pHeaderInstance.CityGovernorButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "gover", instance ) end ) end -- Infixo
-	if bIsRiseFall then pHeaderInstance.CityLoyaltyButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "loyal", instance ) end ) end -- Infixo
+	if bIsRiseFall or bIsGatheringStorm then pHeaderInstance.CityGovernorButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "gover", instance ) end ) end -- Infixo
+	if bIsRiseFall or bIsGatheringStorm then pHeaderInstance.CityLoyaltyButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "loyal", instance ) end ) end -- Infixo
 	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "pop", instance ) end )
 	--pHeaderInstance.CityHousingButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "house", instance ) end ) end -- Infixo
 	pHeaderInstance.CityGrowthButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities( "growth", instance ) end )
@@ -3869,7 +3869,7 @@ function InitializePolicyData()
 	tPolicyGroupNames.SLOT_PANTHEON     = Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_PANTHEON_BELIEFS_NAME");
 	tPolicyGroupNames.SLOT_FOLLOWER     = Locale.Lookup("LOC_PEDIA_RELIGIONS_PAGEGROUP_FOLLOWER_BELIEFS_NAME");
 	-- Rise & Fall
-	if not bIsRiseFall then
+	if not (bIsRiseFall or bIsGatheringStorm) then
 		--tPolicyOrder.SLOT_WILDCARD = nil; -- 2019-01-26: Nubia Scenario uses SLOT_WILDCARD
 		tPolicyOrder.SLOT_DARKAGE = nil;
 	end
@@ -3961,7 +3961,7 @@ function ViewPolicyPage()
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
 		if policyGroup == "SLOT_PANTHEON" or policyGroup == "SLOT_FOLLOWER" then pHeaderInstance.PolicyHeaderLabelName:SetText( Locale.Lookup("LOC_BELIEF_NAME") ); end
 		local iNumRows:number = 0;
-		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
+		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not (bIsRiseFall or bIsGatheringStorm) );
 		
 		-- set sorting callbacks
 		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
@@ -3980,7 +3980,7 @@ function ViewPolicyPage()
 			--table.insert( instance.Children, unitInstance )
 			
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pPolicyInstance, instance.ContentStack ) -- instance ID, pTable, stack
-			pPolicyInstance.PolicyEntryYieldLOYALTY:SetHide( not bIsRiseFall );
+			pPolicyInstance.PolicyEntryYieldLOYALTY:SetHide( not (bIsRiseFall or bIsGatheringStorm) );
 			iNumRows = iNumRows + 1;
 			
 			--common_unit_fields( unit, unitInstance ) -- fill a single entry
@@ -4226,7 +4226,7 @@ function ViewMinorPage()
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
 		pHeaderInstance.PolicyHeaderLabelName:SetText( Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE") );
 		local iNumRows:number = 0;
-		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not bIsRiseFall );
+		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not (bIsRiseFall or bIsGatheringStorm) );
 		
 		-- set sorting callbacks
 		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
@@ -4243,7 +4243,7 @@ function ViewMinorPage()
 		
 			local pMinorInstance:table = {}
 			ContextPtr:BuildInstanceForControl( "PolicyEntryInstance", pMinorInstance, instance.ContentStack ) -- instance ID, pTable, stack
-			pMinorInstance.PolicyEntryYieldLOYALTY:SetHide( not bIsRiseFall );
+			pMinorInstance.PolicyEntryYieldLOYALTY:SetHide( not (bIsRiseFall or bIsGatheringStorm) );
 			if minor.NumTokens == 0 then iNumRows = iNumRows + 1; end
 			
 			-- status with tooltip

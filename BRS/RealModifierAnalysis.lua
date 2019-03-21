@@ -10,8 +10,9 @@ if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
 -- insert functions/objects into RMA in Initialize()
 
--- Rise & Fall check
+-- Expansions check
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -2364,6 +2365,10 @@ if bIsRiseFall then
 	tModifiersTables["GovernorPromotion"] = "GovernorPromotionModifiers"; -- GovernorPromotionType
 end
 
+if bIsGatheringStorm then
+	tModifiersTables["Resolution"] = "ResolutionEffects"; -- no Pedia page for that!
+end
+
 -- Tables with objects
 local tObjectsTables:table = {
 	["Belief"] = "Beliefs", -- BeliefType
@@ -2389,6 +2394,11 @@ if bIsRiseFall then
 	tObjectsTables["Commemoration"] = "CommemorationTypes"; -- no Pedia page for that!
 	tObjectsTables["Governor"] = "Governors"; -- currently empty
 	tObjectsTables["GovernorPromotion"] = "GovernorPromotions"; -- GovernorPromotionType
+end
+
+if bIsGatheringStorm then
+	tObjectsTables["Resolution"] = "Resolutions"; -- no Pedia page for that!
+	--tObjectsTables["Discussion"] = "Discussions"; -- no Pedia page for that!
 end
 
 
