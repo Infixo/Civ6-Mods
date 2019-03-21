@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS (v1.0).[NEWLINE]Version 1.3.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration. Compatible with iOS (v1.0).[NEWLINE]Version 1.3.1.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -18,10 +18,10 @@
 		<Mod id="1F367231-A040-4793-BDBB-088816853683" title="DLC: Khmer and Indonesia Civilization Pack" />
 	</References>
 	<ActionCriteria>
-		<Criteria id="Expansion1">		<!-- 2018-02-08 -->
+		<Criteria id="Expansion1">
 			<GameCoreInUse>Expansion1</GameCoreInUse> 
 		</Criteria>
-		<Criteria id="Expansion2">		<!-- 2019-02-14 -->
+		<Criteria id="Expansion2">
 			<GameCoreInUse>Expansion2</GameCoreInUse> 
 		</Criteria>
 		<Criteria id="DLCAztec">			<!-- 2016-11-19 -->
@@ -41,6 +41,12 @@
 		</Criteria>
 		<Criteria id="DLCIndonesiaKhmer">	<!-- 2017-10-19 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN,Players:Expansion2_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN</LeaderPlayable>
+		</Criteria>
+		<Criteria id="Expansion1Leaders">	<!-- 2018-02-08 -->
+			<LeaderPlayable>Players:Expansion1_Players::LEADER_CHANDRAGUPTA,Players:Expansion1_Players::LEADER_GENGHIS_KHAN,Players:Expansion1_Players::LEADER_LAUTARO,Players:Expansion1_Players::LEADER_POUNDMAKER,Players:Expansion1_Players::LEADER_ROBERT_THE_BRUCE,Players:Expansion1_Players::LEADER_SEONDEOK,Players:Expansion1_Players::LEADER_SHAKA,Players:Expansion1_Players::LEADER_TAMAR,Players:Expansion1_Players::LEADER_WILHELMINA,Players:Expansion2_Players::LEADER_CHANDRAGUPTA,Players:Expansion2_Players::LEADER_GENGHIS_KHAN,Players:Expansion2_Players::LEADER_LAUTARO,Players:Expansion2_Players::LEADER_POUNDMAKER,Players:Expansion2_Players::LEADER_ROBERT_THE_BRUCE,Players:Expansion2_Players::LEADER_SEONDEOK,Players:Expansion2_Players::LEADER_SHAKA,Players:Expansion2_Players::LEADER_TAMAR,Players:Expansion2_Players::LEADER_WILHELMINA</LeaderPlayable>
+		</Criteria>
+		<Criteria id="Expansion2Leaders">	<!-- 2019-02-14 -->
+			<LeaderPlayable>Players:Expansion2_Players::LEADER_DIDO,Players:Expansion2_Players::LEADER_ELEANOR_ENGLAND,Players:Expansion2_Players::LEADER_ELEANOR_FRANCE,Players:Expansion2_Players::LEADER_KRISTINA,Players:Expansion2_Players::LEADER_KUPE,Players:Expansion2_Players::LEADER_LAURIER,Players:Expansion2_Players::LEADER_MANSA_MUSA,Players:Expansion2_Players::LEADER_MATTHIAS_CORVINUS,Players:Expansion2_Players::LEADER_PACHACUTI,Players:Expansion2_Players::LEADER_SULEIMAN</LeaderPlayable>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
@@ -87,10 +93,18 @@
 			<Properties><LoadOrder>270</LoadOrder></Properties>
 			<File>RealStrategy_RiseAndFall.sql</File>
 		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Leaders_XP1" criteria="Expansion1Leaders">
+			<Properties><LoadOrder>271</LoadOrder></Properties>
+			<File>RealStrategy_Leaders_XP1.sql</File>
+		</UpdateDatabase>
 		<UpdateDatabase id="RST_DB_Expansion2" criteria="Expansion2">
 			<Properties><LoadOrder>280</LoadOrder></Properties>
 			<File Priority="1">RealStrategy_RiseAndFall.sql</File>
 			<File>RealStrategy_GatheringStorm.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Leaders_XP2" criteria="Expansion2Leaders">
+			<Properties><LoadOrder>281</LoadOrder></Properties>
+			<File>RealStrategy_Leaders_XP2.sql</File>
 		</UpdateDatabase>
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
@@ -118,7 +132,9 @@
 		<File>RealStrategy_Nubia.sql</File>
 		<File>RealStrategy_IndonesiaKhmer.sql</File>
 		<File>RealStrategy_RiseAndFall.sql</File>
+		<File>RealStrategy_Leaders_XP1.sql</File>
 		<File>RealStrategy_GatheringStorm.sql</File>
+		<File>RealStrategy_Leaders_XP2.sql</File>
 		<File>Lua/RealStrategy.lua</File>
 		<File>Lua/RealStrategy_GreatPeople.lua</File>
 		<File>Lua/RealStrategy_GreatPeople.xml</File>
