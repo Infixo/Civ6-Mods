@@ -220,8 +220,8 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 		for _,tip in pairs(toolTips) do iDiploChange = iDiploChange + tip.Score; end
 	end
 	local sFormat:string = "%s ([COLOR_Grey]0[ENDCOLOR])";
-	if iDiploChange > 0 then sFormat = "%s ([COLOR_Civ6Green]%+d[ENDCOLOR])"; end
-	if iDiploChange < 0 then sFormat = "%s ([COLOR_Civ6Red]%+d[ENDCOLOR])"; end
+	if iDiploChange > 0 then sFormat = "%s ([COLOR_Green]%+d[ENDCOLOR])"; end
+	if iDiploChange < 0 then sFormat = "%s ([COLOR_Red]%+d[ENDCOLOR])"; end
 	table.insert(tTT, string.format(sFormat, Locale.Lookup(GameInfo.DiplomaticStates[ourRelationship].Name), iDiploChange));
 	
 	-- Alliance
@@ -350,7 +350,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	table.insert(tTT, "--------------------------------------------------"); -- 50 chars
 
 	-- Statistics
-	table.insert(tTT, "[ICON_Capital] " ..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_SCORE", pPlayer:GetScore()));
+	table.insert(tTT, "[ICON_Capital] " ..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_SCORE", tostring(pPlayer:GetScore())));
 	table.insert(tTT, "[ICON_Strength] "..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_MILITARY_STRENGTH", "[COLOR_Military]"..tostring(pPlayer:GetStats():GetMilitaryStrengthWithoutTreasury()).."[ENDCOLOR]"));
 	--table.insert(tTT, string.format("[ICON_Gold] %s: [COLOR_Gold]%d[ENDCOLOR] (%+.1f)", LL("LOC_YIELD_GOLD_NAME"), iGoldBalance, iGoldPerTurn));
 	table.insert(tTT, "[ICON_Gold] "..LL("LOC_YIELD_GOLD_NAME")..": [COLOR_GoldDark]"..tostring(Round(iGoldBalance,0)).."[ENDCOLOR]");
@@ -362,7 +362,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	table.insert(tTT, LL("LOC_WORLD_RANKINGS_OVERVIEW_RELIGION_FAITH_RATE", "[COLOR_FaithDark]"..tostring(Round(pPlayer:GetReligion():GetFaithYield(),1)).."[ENDCOLOR]"));
 	table.insert(tTT, "[ICON_Faith] "..LL("LOC_WORLD_RANKINGS_OVERVIEW_RELIGION_CITIES_FOLLOWING_RELIGION", "[COLOR_FaithDark]"..tostring(pPlayer:GetStats():GetNumCitiesFollowingReligion()).."[ENDCOLOR]"));
 	if bIsGatheringStorm then
-		table.insert(tTT, "[ICON_Favor] "..LL("LOC_DIPLOMATIC_FAVOR_NAME")..": [COLOR_GoldDark]"..tostring(pPlayer:GetFavor()).."[ENDCOLOR]");
+		table.insert(tTT, " [ICON_Favor]  "..LL("LOC_DIPLOMATIC_FAVOR_NAME")..": [COLOR_GoldDark]"..tostring(pPlayer:GetFavor()).."[ENDCOLOR]"); -- ICON_Favor_Large is too big
 	end
 
 	-- Victories
