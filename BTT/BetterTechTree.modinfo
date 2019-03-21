@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better Tech Tree</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.4.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.4.1.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
@@ -23,7 +23,7 @@
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BTT_ImportFiles">
 			<Properties>
-				<LoadOrder>100</LoadOrder>
+				<LoadOrder>1000</LoadOrder>
 			</Properties>
             <Items>
 				<File>Icons/BTTUnlockFrames.dds</File>
@@ -41,14 +41,14 @@
 		<!-- Vanilla actions -->
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree">
 			<Properties>
-				<LoadOrder>100</LoadOrder>
+				<LoadOrder>1000</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>TechTree_BTT.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree">
 			<Properties>
-				<LoadOrder>100</LoadOrder>
+				<LoadOrder>1000</LoadOrder>
 				<LuaContext>CivicsTree</LuaContext>
 				<LuaReplace>CivicsTree_BTT.lua</LuaReplace>
 			</Properties>
@@ -56,7 +56,7 @@
 		<!-- Rise&Fall actions - replace lua only for TechTree, Civics tree was not updated in R&F! -->
         <ImportFiles id="BTT_ImportFiles_XP1" criteria="Expansion1">
 			<Properties>
-                <LoadOrder>101</LoadOrder>
+                <LoadOrder>1010</LoadOrder>
             </Properties>
             <Items>
 				<File>XP1/TechTree_BTT_XP1.lua</File>
@@ -64,7 +64,7 @@
         </ImportFiles>
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP1" criteria="Expansion1">
 			<Properties>
-                <LoadOrder>101</LoadOrder>
+                <LoadOrder>1010</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>XP1/TechTree_BTT_XP1.lua</LuaReplace>
 			</Properties>
@@ -72,7 +72,7 @@
 		<!-- Gathering Storm actions - replace lua for both trees -->
         <ImportFiles id="BTT_ImportFiles_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>102</LoadOrder>
+                <LoadOrder>1020</LoadOrder>
             </Properties>
             <Items>
 				<File>XP2/TechTree_BTT_XP2.lua</File>
@@ -81,14 +81,14 @@
         </ImportFiles>
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>102</LoadOrder>
+                <LoadOrder>1020</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>XP2/TechTree_BTT_XP2.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>102</LoadOrder>
+                <LoadOrder>1020</LoadOrder>
 				<LuaContext>CivicsTree</LuaContext>
 				<LuaReplace>XP2/CivicsTree_BTT_XP2.lua</LuaReplace>
 			</Properties>
