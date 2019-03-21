@@ -38,7 +38,7 @@
 		<!-- Vanilla actions - simply import lua and xml -->
         <ImportFiles id="BRS_ImportFiles">
 			<Properties>
-                <LoadOrder>100</LoadOrder>
+                <LoadOrder>1000</LoadOrder>
             </Properties>		
             <Items>
                 <File>ReportScreen.lua</File>
@@ -64,7 +64,7 @@
 		<!-- Vanilla actions -->
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportsList">
 			<Properties>
-                <LoadOrder>100</LoadOrder>
+                <LoadOrder>1000</LoadOrder>
 				<LuaContext>ReportsList</LuaContext>
 				<LuaReplace>ReportsList_BRS.lua</LuaReplace>
 			</Properties>
@@ -72,7 +72,7 @@
 		<!-- Rise&Fall actions - replace lua and import xml (there's no 'replace' for xml) -->
         <ImportFiles id="BRS_ImportFiles_XP1" criteria="Expansion1">
 			<Properties>
-                <LoadOrder>101</LoadOrder>
+                <LoadOrder>1010</LoadOrder>
             </Properties>		
             <Items>
 				<File>RiseFall/ReportScreen.xml</File>
@@ -80,7 +80,7 @@
         </ImportFiles>
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_XP1" criteria="Expansion1">
 			<Properties>
-                <LoadOrder>101</LoadOrder>
+                <LoadOrder>1010</LoadOrder>
 				<LuaContext>ReportScreen</LuaContext>
 				<LuaReplace>ReportScreen.lua</LuaReplace>
 			</Properties>
@@ -88,7 +88,7 @@
 		<!-- Gathering Storm actions - replace lua and import xml (there's no 'replace' for xml) -->
         <ImportFiles id="BRS_ImportFiles_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>102</LoadOrder>
+                <LoadOrder>1020</LoadOrder>
             </Properties>		
             <Items>
 				<File>RiseFall/ReportScreen.xml</File> <!-- no layout changes in GS -->
@@ -96,7 +96,7 @@
         </ImportFiles>
 		<ReplaceUIScript id="BRS_ReplaceUI_ReportScreen_XP2" criteria="Expansion2">
 			<Properties>
-                <LoadOrder>102</LoadOrder>
+                <LoadOrder>1020</LoadOrder>
 				<LuaContext>ReportScreen</LuaContext>
 				<LuaReplace>ReportScreen.lua</LuaReplace> <!-- we'll try to use the same file -->
 			</Properties>
