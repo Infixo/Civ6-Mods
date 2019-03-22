@@ -1,4 +1,10 @@
-print("Loading LeaderIcon.lua from Better Leader Icon v1.0");
+print("Loading LeaderIcon.lua from Better Leader Icon version "..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+-- ===========================================================================
+-- Better Leader Icon
+-- Author: Infixo
+-- 2019-03-21: Created
+-- ===========================================================================
+
 --[[
 -- Created by Luigi Mangione on Monday Jun 5 2017
 -- Copyright (c) Firaxis Games
@@ -19,7 +25,6 @@ function Round(num:number, idp:number)
 	if num >= 0 then return math.floor(num * mult + 0.5) / mult; end
 	return math.ceil(num * mult - 0.5) / mult;
 end
-
 
 local COLOR_GREEN:string = "[COLOR:0,127,0,255]";
 local COLOR_RED:string = "[COLOR:127,0,0,255]";
@@ -380,6 +385,9 @@ end
 function LeaderIcon:GetToolTipString(playerID:number)
 	--print("LeaderIcon:GetToolTipString", playerID);
 
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then return ""; end
+
 	local tTT:table = {};
 	local result:string = "";
 	local pPlayer:table = Players[playerID];
@@ -387,7 +395,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 
 	if pPlayerConfig and pPlayerConfig:GetLeaderTypeName() then
 		local isHuman:boolean = pPlayerConfig:IsHuman();
-		local localPlayerID:number = Game.GetLocalPlayer();
+		--local localPlayerID:number = Game.GetLocalPlayer();
 		local leaderDesc:string = pPlayerConfig:GetLeaderName();
 		local civDesc:string = pPlayerConfig:GetCivilizationDescription();
 		
@@ -460,9 +468,45 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	end,
 	--]]
 	
-	--local canTrade, tooltip = CheckTrades(playerID, 0, EDR_showAllResources);
+	if localPlayerID == playerID then return table.concat(tTT, "[NEWLINE]"); end -- don't show deals for a local player
+	
+	-- Possible resource deals
+	local function CheckResourceDeals(fromPlayer:number, toPlayer:number, sLine:string)
+		-- For other players, use deal manager to see what the local player can trade for.
+		local pForDeal			:table = DealManager.GetWorkingDeal(DealDirection.OUTGOING, fromPlayer, toPlayer); -- order of players is not important here
+		local possibleResources	:table = DealManager.GetPossibleDealItems(fromPlayer, toPlayer, DealItemTypes.RESOURCES, pForDeal); -- from, to, type, forDeal
+		--[[ values returned by GetPossibleDealItems
+		 InGame: 1	ForTypeName	LOC_RESOURCE_FURS_NAME
+		 InGame: 1	Type	-1069574269
+		 InGame: 1	ForType	16
+		 InGame: 1	SubType	0
+		 InGame: 1	ValidationResult	1
+		 InGame: 1	IsValid	true
+		 InGame: 1	MaxAmount	2
+		 InGame: 1	Duration	30
+		--]]
+		local toResources = Players[toPlayer]:GetResources();
+		local tDealItems:table = {};
+		for i, entry in ipairs(possibleResources) do
+			local infoRes:table = GameInfo.Resources[entry.ForType];
+			if infoRes ~= nil and entry.MaxAmount > 0 then
+				--local sResDeal:string = string.format("%d [ICON_%s] %s", entry.MaxAmount, infoRes.ResourceType, LL(infoRes.Name));
+				-- show only items that toPlayer doesn't have and fromPlayer has surplus (>1)
+				if not toResources:HasResource(infoRes.Index) and entry.MaxAmount > 1 then
+					table.insert(tDealItems, string.format("%d[ICON_%s]", entry.MaxAmount, infoRes.ResourceType)); --LL(infoRes.Name)
+				end
+			end
+		end
+		if #tDealItems > 0 then table.insert(tTT, LL(sLine)..": "..table.concat(tDealItems, " "));
+		else                    table.insert(tTT, LL(sLine)..": -"); end
+	end -- function
+	
+	-- Separator
+	table.insert(tTT, "--------------------------------------------------"); -- 50 chars
+	CheckResourceDeals(localPlayerID, playerID, "LOC_DIPLOMACY_DEAL_YOUR_ITEMS");
+	CheckResourceDeals(playerID, localPlayerID, "LOC_DIPLOMACY_DEAL_THEIR_ITEMS");
 	
 	return table.concat(tTT, "[NEWLINE]");
 end
 
-print("OK loaded LeaderIcon.lua from Better Leader Icon v1.0");
+print("OK loaded LeaderIcon.lua from Better Leader Icon");
