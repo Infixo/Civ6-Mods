@@ -27,12 +27,12 @@
 			</Properties>
             <Items>
 				<File>Icons/BTTUnlockFrames.dds</File>
-				<File>RealEurekasCanShowBTT.lua</File>
+				<File>Base/RealEurekasCanShow.lua</File>
 				<!-- core files, will be included in wrappers -->
-				<File>TechAndCivicSupport_BTT.lua</File>
+				<File>Base/TechAndCivicSupport_BTT.lua</File>
 				<!-- wrappers -->
-				<File>TechTree_BTT.lua</File>
-				<File>CivicsTree_BTT.lua</File>
+				<File>Base/TechTree_BTT_Base.lua</File>
+				<File>Base/CivicsTree_BTT_Base.lua</File>
             </Items>
         </ImportFiles>
 		<UpdateIcons id="BTT_Icons">
@@ -43,14 +43,14 @@
 			<Properties>
 				<LoadOrder>1000</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
-				<LuaReplace>TechTree_BTT.lua</LuaReplace>
+				<LuaReplace>Base/TechTree_BTT_Base.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree">
 			<Properties>
 				<LoadOrder>1000</LoadOrder>
 				<LuaContext>CivicsTree</LuaContext>
-				<LuaReplace>CivicsTree_BTT.lua</LuaReplace>
+				<LuaReplace>Base/CivicsTree_BTT_Base.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Rise&Fall actions - replace lua only for TechTree, Civics tree was not updated in R&F! -->
@@ -97,13 +97,13 @@
     <Files>
 		<!-- Shared files -->
 		<File>BetterTechTree_Database.sql</File>
-		<File>TechAndCivicSupport_BTT.lua</File>
 		<File>Icons/BTT_Icons.xml</File>
 		<File>Icons/BTTUnlockFrames.dds</File>
-		<File>RealEurekasCanShowBTT.lua</File> <!-- file from Real Eurekas mod -->
-		<!-- Vanilla files -->
-		<File>TechTree_BTT.lua</File>
-		<File>CivicsTree_BTT.lua</File>
+		<!-- base game files -->
+		<File>Base/RealEurekasCanShow.lua</File> <!-- file from Real Eurekas mod -->
+		<File>Base/TechAndCivicSupport_BTT.lua</File>
+		<File>Base/TechTree_BTT_Base.lua</File>
+		<File>Base/CivicsTree_BTT_Base.lua</File>
 		<!-- Rise & Fall files -->
 		<File>XP1/TechTree_BTT_XP1.lua</File>
 		<!-- Gahtering Storm files -->
