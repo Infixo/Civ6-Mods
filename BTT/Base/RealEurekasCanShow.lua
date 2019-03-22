@@ -1,14 +1,14 @@
---print("Loading RealEurekasCanShow.lua from Real Eurekas version "..GlobalParameters.REU_VERSION_MAJOR.."."..GlobalParameters.REU_VERSION_MINOR);
+--print("Loading RealEurekasCanShow.lua from Better Tech Tree version "..GlobalParameters.BTT_VERSION_MAJOR.."."..GlobalParameters.BTT_VERSION_MINOR);
 -- ===========================================================================
 -- Real Eurekas - function to check if a trigger description can be shown
 -- 2019-02-20: Created by Infixo
 -- 2019-03-16: Support for MP and new randomization method
 -- ===========================================================================
 
-local eTVP:number = GameConfiguration.GetValue("TriggerVisibilityParam");
+eTVP = GameConfiguration.GetValue("TriggerVisibilityParam");
+if eTVP == nil then eTVP = 0; end
 
 function CanShowTrigger(iTechID:number, bCivic:boolean)
-	if eTVP == nil then eTVP = 0; end
 	-- alway visible, nothing more to check
 	if eTVP == 0 then return true; end
 	local pPlayerTechs = Players[Game.GetLocalPlayer()]:GetTechs();
@@ -36,4 +36,4 @@ function GetRandomQuote(iIndex:number)
 	return Locale.Lookup("LOC_REUR_QUOTE_"..tostring(1+(iRandomSeed+iIndex)%22));
 end
 
---print("OK loaded RealEurekasCanShow.lua from Real Eurekas version ");
+--print("OK loaded RealEurekasCanShow.lua from Better Tech Tree version ");

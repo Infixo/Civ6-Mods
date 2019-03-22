@@ -10,6 +10,11 @@ print("Loading TechAndCivicSupport_BTT.lua from Better Tech Tree version "..Glob
 --local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 --print("Rise & Fall", (bIsRiseFall and "YES" or "no"));
 
+-- Support for Real Eurekas mod
+include("RealEurekasCanShow"); -- file taken from Real Eurekas
+bIsREU = Modding.IsModActive("4a8aa030-69f0-4677-9a43-2772088ea041"); -- Real Eurekas
+print("Real Eurekas:", bIsREU and "YES" or "no");
+
 -- configuration options
 local bOptionHarvests:boolean = ( GlobalParameters.BTT_OPTION_HARVESTS == 1 );
 
@@ -200,6 +205,10 @@ end
 -- simple version first, only for direct Civic/Tech boosts
 -- TODO: add support for Units, Districts and Buildings
 function PopulateBoosts()
+
+	-- Real Eurekas
+	if bIsREU and eTVP ~= 0 then return; end -- boosts will be shown only when option "Always visible" is chosen
+
 	local sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sDescBoost:string, sPediaKey:string, objectInfo:table;
 	
 	for row in GameInfo.Boosts() do
