@@ -204,6 +204,8 @@ Line 5..7. Agendas
 (reasons for current diplo state) - sorted by modifier, from high to low
 --]]
 
+local iDenounceTimeLimit:number = Game.GetGameDiplomacy():GetDenounceTimeLimit();
+
 -- icons for various types of alliances
 local tAllianceIcons:table = {
 	ALLIANCE_RESEARCH = "[ICON_Science]",
@@ -218,7 +220,7 @@ local iAccessAgendas:number = 999;
 for row in GameInfo.Visibilities() do
 	if row.RevealAgendas then iAccessAgendas = row.Index; break; end
 end
-print("iAccessAgendas", iAccessAgendas);
+--print("iAccessAgendas", iAccessAgendas);
 
 function LeaderIcon:GetRelationToolTipString(playerID:number)
 	--print("FUN LeaderIcon:GetRelationToolTipString", playerID);
@@ -232,17 +234,51 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	
 	local tTT:table = {};
 	
-	-- DiplomaticState
-	local ourRelationship = pPlayerDiplomaticAI:GetDiplomaticStateIndex(localPlayerID);
-	local toolTips = pPlayerDiplomaticAI:GetDiplomaticModifiers(localPlayerID);
+	-- DiplomaticState (what do they think of us?)
+	local iState:number = pPlayerDiplomaticAI:GetDiplomaticStateIndex(localPlayerID);
+	local infoState:table = GameInfo.DiplomaticStates[iState];
+	
+	-- Remaining turns for Denounced and Declared Friend
+	local iRemainingTurns:number = -1;
+	if infoState.StateType == "DIPLO_STATE_DECLARED_FRIEND" then
+		iRemainingTurns = localPlayerDiplomacy:GetDeclaredFriendshipTurn(playerID) + iDenounceTimeLimit - Game.GetCurrentGameTurn();
+	end
+	if infoState.StateType == "DIPLO_STATE_DENOUNCED" then
+		local iOurDenounceTurn = localPlayerDiplomacy:GetDenounceTurn(playerID);
+		local iTheirDenounceTurn = pPlayer:GetDiplomacy():GetDenounceTurn(localPlayerID);
+		local iPlayerOrderAdjustment = 0;
+		if iTheirDenounceTurn >= iOurDenounceTurn then
+			if playerID > localPlayerID then iPlayerOrderAdjustment = 1; end
+		else
+			if localPlayerID > playerID then iPlayerOrderAdjustment = 1; end
+		end
+		iRemainingTurns = 1 + math.max(iOurDenounceTurn, iTheirDenounceTurn) + iDenounceTimeLimit - Game.GetCurrentGameTurn() + iPlayerOrderAdjustment;
+	end
+	
+	local sDiploTT:string = LL(infoState.Name);
+	if iRemainingTurns ~= -1 then
+		sDiploTT = sDiploTT.."  [ICON_TURN]"..LL("LOC_ESPIONAGEPOPUP_TURNS_REMAINING", iRemainingTurns);
+	end
+	table.insert(tTT, sDiploTT);
+	
+	-- relationship change LOC_DIPLOMACY_INTEL_RELATIONSHIP
 	local iDiploChange:number = 0;
+	local toolTips = pPlayerDiplomaticAI:GetDiplomaticModifiers(localPlayerID);
 	if toolTips then
 		for _,tip in pairs(toolTips) do iDiploChange = iDiploChange + tip.Score; end
 	end
-	local sFormat:string = "%s ([COLOR_Grey]0[ENDCOLOR])";
-	if iDiploChange > 0 then sFormat = "%s ("..COLOR_GREEN.."%+d[ENDCOLOR])"; end
-	if iDiploChange < 0 then sFormat = "%s ("..COLOR_RED.."%+d[ENDCOLOR])"; end
-	table.insert(tTT, string.format(sFormat, Locale.Lookup(GameInfo.DiplomaticStates[ourRelationship].Name), iDiploChange));
+	if iDiploChange ~= 0 then
+		local sDiploChange:string = "0";
+		if iDiploChange > 0 then sDiploChange = "[ICON_PressureUp]"  ..COLOR_GREEN.."+"..tostring(iDiploChange).."[ENDCOLOR]"; end
+		if iDiploChange < 0 then sDiploChange = "[ICON_PressureDown]"..COLOR_RED       ..tostring(iDiploChange).."[ENDCOLOR]"; end
+		table.insert(tTT, sDiploChange);
+	end
+
+	-- impact of the diplo relation on yields
+	local sYields:string = "%+d%%";
+	if infoState.DiplomaticYieldBonus > 0 then sYields = COLOR_GREEN..sYields.."[ENDCOLOR]"; end
+	if infoState.DiplomaticYieldBonus < 0 then sYields = COLOR_RED  ..sYields.."[ENDCOLOR]"; end
+	table.insert(tTT, string.format("%s: "..sYields, LL("LOC_HUD_REPORTS_TAB_YIELDS"), infoState.DiplomaticYieldBonus));
 	
 	-- Alliance
 	if bIsRiseAndFall or bIsGatheringStorm then
@@ -263,7 +299,6 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	-- Grievances
 	-- GRIEVANCE, STAT_GRIEVANCE, GRIEVANCE_TT
 	-- "[COLOR:80,255,90,160]%s[ENDCOLOR]"; end -- StatGoodCS   Color0="80,255,90,240"
-
 	if bIsGatheringStorm and playerID ~= localPlayerID then
 		local iGrievances:number = localPlayerDiplomacy:GetGrievancesAgainst(playerID);
 		--if     iGrievances > 0 then table.insert(tTT, "[COLOR_Green]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_THEM_SIMPLE", iGrievances).."[ENDCOLOR]");
@@ -276,9 +311,9 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	end
 	
 	-- Access level
+	-- ICON_VisLimited, VisOpen, VisSecret, VisTopSecret
 	local iAccessLevel = localPlayerDiplomacy:GetVisibilityOn(playerID);
 	table.insert(tTT, string.format("%s %s [COLOR_Grey](%d)[ENDCOLOR]", LL("LOC_DIPLOMACY_INTEL_ACCESS_LEVEL"), LL(GameInfo.Visibilities[iAccessLevel].Name), iAccessLevel));
-	-- ICON_VisLimited, VisOpen, VisSecret, VisTopSecret
 	
 	-- Agendas
 	-- GetAgendaTypes() returns ALL of my agendas, including the historical agenda.
