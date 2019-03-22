@@ -21,6 +21,10 @@ function Round(num:number, idp:number)
 end
 
 
+local COLOR_GREEN:string = "[COLOR:0,127,0,255]";
+local COLOR_RED:string = "[COLOR:127,0,0,255]";
+
+
 ------------------------------------------------------------------
 -- Class Table
 ------------------------------------------------------------------
@@ -200,6 +204,22 @@ Line 5..7. Agendas
 (reasons for current diplo state) - sorted by modifier, from high to low
 --]]
 
+-- icons for various types of alliances
+local tAllianceIcons:table = {
+	ALLIANCE_RESEARCH = "[ICON_Science]",
+	ALLIANCE_CULTURAL = "[ICON_Culture]",
+	ALLIANCE_ECONOMIC = "[ICON_Gold]",
+	ALLIANCE_MILITARY = "[ICON_Strength]",
+	ALLIANCE_RELIGIOUS = "[ICON_Faith]",
+};
+
+-- detect the visibility level that grants access to random agendas
+local iAccessAgendas:number = 999;
+for row in GameInfo.Visibilities() do
+	if row.RevealAgendas then iAccessAgendas = row.Index; break; end
+end
+print("iAccessAgendas", iAccessAgendas);
+
 function LeaderIcon:GetRelationToolTipString(playerID:number)
 	--print("FUN LeaderIcon:GetRelationToolTipString", playerID);
 	
@@ -220,32 +240,59 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 		for _,tip in pairs(toolTips) do iDiploChange = iDiploChange + tip.Score; end
 	end
 	local sFormat:string = "%s ([COLOR_Grey]0[ENDCOLOR])";
-	if iDiploChange > 0 then sFormat = "%s ([COLOR_Green]%+d[ENDCOLOR])"; end
-	if iDiploChange < 0 then sFormat = "%s ([COLOR_Red]%+d[ENDCOLOR])"; end
+	if iDiploChange > 0 then sFormat = "%s ("..COLOR_GREEN.."%+d[ENDCOLOR])"; end
+	if iDiploChange < 0 then sFormat = "%s ("..COLOR_RED.."%+d[ENDCOLOR])"; end
 	table.insert(tTT, string.format(sFormat, Locale.Lookup(GameInfo.DiplomaticStates[ourRelationship].Name), iDiploChange));
 	
 	-- Alliance
 	if bIsRiseAndFall or bIsGatheringStorm then
 		local allianceType = localPlayerDiplomacy:GetAllianceType(playerID);
 		if allianceType ~= -1 then
-			table.insert(tTT, LL(GameInfo.Alliances[allianceType].Name).." "..LL("LOC_DIPLOACTION_ALLIANCE_LEVEL", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			local info:table = GameInfo.Alliances[allianceType];
+			table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..LL("LOC_DIPLOACTION_ALLIANCE_LEVEL", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			--table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..string.rep("[ICON_Alliance]", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			local iTurns:number = localPlayerDiplomacy:GetAllianceTurnsUntilExpiration(playerID);
+			local sExpires:string = tAllianceIcons[info.AllianceType]..LL("LOC_DIPLOACTION_EXPIRES_IN_X_TURNS", iTurns);
+			sExpires = string.gsub(sExpires, "%(", "");
+			sExpires = string.gsub(sExpires, "%)", "");
+			if iTurns < 4 then sExpires = "[COLOR_Red]"..sExpires.."[ENDCOLOR]"; end
+			table.insert(tTT, sExpires);
 		end
 	end
 	
 	-- Grievances
-	if bIsGatheringStorm and playerID ~= localPlayerID then
-		local iGrievances:number = Players[Game.GetLocalPlayer()]:GetDiplomacy():GetGrievancesAgainst(playerID);
-		if     iGrievances > 0 then table.insert(tTT, "[COLOR_Green]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_THEM_SIMPLE", iGrievances).."[ENDCOLOR]");
-		elseif iGrievances < 0 then table.insert(tTT, "[COLOR_Red]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_US_SIMPLE", -iGrievances).."[ENDCOLOR]");
-		else                        table.insert(tTT, LL("LOC_DIPLOMACY_GRIEVANCES_NONE_SIMPLE"));
-		end
-	end
 	-- GRIEVANCE, STAT_GRIEVANCE, GRIEVANCE_TT
+	-- "[COLOR:80,255,90,160]%s[ENDCOLOR]"; end -- StatGoodCS   Color0="80,255,90,240"
+
+	if bIsGatheringStorm and playerID ~= localPlayerID then
+		local iGrievances:number = localPlayerDiplomacy:GetGrievancesAgainst(playerID);
+		--if     iGrievances > 0 then table.insert(tTT, "[COLOR_Green]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_THEM_SIMPLE", iGrievances).."[ENDCOLOR]");
+		--elseif iGrievances < 0 then table.insert(tTT, "[COLOR_Red]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_US_SIMPLE", -iGrievances).."[ENDCOLOR]");
+		--else                        table.insert(tTT, "[ICON_GRIEVANCE][ICON_GRIEVANCE_TT]"..LL("LOC_DIPLOMACY_GRIEVANCES_NONE_SIMPLE")); end
+		local sGrievances:string = "[ICON_GRIEVANCE_TT]"..LL("LOC_DIPLOMACY_GRIEVANCES_NONE_SIMPLE");
+		if iGrievances > 0 then sGrievances = "[ICON_GRIEVANCE_TT]"..COLOR_GREEN..LL("LOC_GRIEVANCE_LOG_AGAINST_THEM")..tostring( iGrievances).."[ENDCOLOR]"; end
+		if iGrievances < 0 then sGrievances = "[ICON_GRIEVANCE_TT]"..COLOR_RED..  LL("LOC_GRIEVANCE_LOG_AGAINST_YOU").. tostring(-iGrievances).."[ENDCOLOR]"; end
+		table.insert(tTT, sGrievances);
+	end
 	
 	-- Access level
 	local iAccessLevel = localPlayerDiplomacy:GetVisibilityOn(playerID);
 	table.insert(tTT, string.format("%s %s [COLOR_Grey](%d)[ENDCOLOR]", LL("LOC_DIPLOMACY_INTEL_ACCESS_LEVEL"), LL(GameInfo.Visibilities[iAccessLevel].Name), iAccessLevel));
 	-- ICON_VisLimited, VisOpen, VisSecret, VisTopSecret
+	
+	-- Agendas
+	-- GetAgendaTypes() returns ALL of my agendas, including the historical agenda.
+	-- To retrieve only the randomly assigned agendas, delete the first entry from the table.
+	table.insert(tTT, "----------------------------------------"); -- 40 chars
+	table.insert(tTT, LL("LOC_DIPLOMACY_INTEL_ADGENDAS"));
+	local tAgendaTypes:table = pPlayer:GetAgendaTypes();
+	for i, agendaType in ipairs(tAgendaTypes) do
+		local bHidden:boolean = true;
+		if iAccessLevel >= iAccessAgendas then bHidden = false; end
+		if i == 1 then bHidden = false; end
+		if bHidden then table.insert(tTT, "- "..LL("LOC_DIPLOMACY_HIDDEN_AGENDAS", 1, false));
+		else            table.insert(tTT, "- "..LL( GameInfo.Agendas[agendaType].Name )); end
+	end
 	
 	-- Diplo modifiers, from DiplomacyActionView.lua
 	--[[
