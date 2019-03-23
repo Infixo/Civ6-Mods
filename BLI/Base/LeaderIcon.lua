@@ -102,17 +102,8 @@ function LeaderIcon:UpdateIcon(iconName: string, playerID: number, isUniqueLeade
 	-- Set leader portrait and hide overlay if not local player
 	self.Controls.Portrait:SetIcon(iconName);
 	self.Controls.YouIndicator:SetHide(playerID ~= localPlayerID);
-
-	-- Set the tooltip and deal flags
-	local tooltip:string, bYourItems:boolean, bTheirItems:boolean = self:GetToolTipString(playerID);
-	if (ttDetails ~= nil and ttDetails ~= "") then
-		tooltip = tooltip .. "[NEWLINE]" .. ttDetails;
-	end
-	self.Controls.Portrait:SetToolTipString(tooltip);
-	self.Controls.YourItems:SetHide(not bYourItems);
-	self.Controls.TheirItems:SetHide(not bTheirItems);
-
-	self:UpdateTeamAndRelationship(playerID);
+	
+	self:UpdateAllToolTips(playerID, ttDetails);
 end
 
 function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqueLeader: boolean, ttDetails: string)
@@ -141,7 +132,12 @@ function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqu
 		self.Controls.Portrait:SetToolTipString("");
 		return;
 	end
+	
+	self:UpdateAllToolTips(playerID, ttDetails);
+end
 
+
+function LeaderIcon:UpdateAllToolTips(playerID:number, ttDetails: string)
 	-- Set the tooltip and deal flags
 	local tooltip:string, bYourItems:boolean, bTheirItems:boolean = self:GetToolTipString(playerID);
 	if (ttDetails ~= nil and ttDetails ~= "") then
@@ -153,6 +149,7 @@ function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqu
 
 	self:UpdateTeamAndRelationship(playerID);
 end
+
 
 function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 	--print("LeaderIcon:UpdateTeamAndRelationship", playerID);
