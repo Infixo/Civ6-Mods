@@ -96,12 +96,14 @@ function LeaderIcon:UpdateIcon(iconName: string, playerID: number, isUniqueLeade
 	self.Controls.Portrait:SetIcon(iconName);
 	self.Controls.YouIndicator:SetHide(playerID ~= localPlayerID);
 
-	-- Set the tooltip
-	local tooltip:string = self:GetToolTipString(playerID);
+	-- Set the tooltip and deal flags
+	local tooltip:string, bYourItems:boolean, bTheirItems:boolean = self:GetToolTipString(playerID);
 	if (ttDetails ~= nil and ttDetails ~= "") then
 		tooltip = tooltip .. "[NEWLINE]" .. ttDetails;
 	end
 	self.Controls.Portrait:SetToolTipString(tooltip);
+	self.Controls.YourItems:SetHide(not bYourItems);
+	self.Controls.TheirItems:SetHide(not bTheirItems);
 
 	self:UpdateTeamAndRelationship(playerID);
 end
@@ -133,12 +135,14 @@ function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqu
 		return;
 	end
 
-	-- Set the tooltip
-	local tooltip:string = self:GetToolTipString(playerID);
+	-- Set the tooltip and deal flags
+	local tooltip:string, bYourItems:boolean, bTheirItems:boolean = self:GetToolTipString(playerID);
 	if (ttDetails ~= nil and ttDetails ~= "") then
 		tooltip = tooltip .. "[NEWLINE]" .. ttDetails;
 	end
 	self.Controls.Portrait:SetToolTipString(tooltip);
+	self.Controls.YourItems:SetHide(not bYourItems);
+	self.Controls.TheirItems:SetHide(not bTheirItems);
 
 	self:UpdateTeamAndRelationship(playerID);
 end
@@ -468,13 +472,21 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	end,
 	--]]
 	
-	if localPlayerID == playerID then return table.concat(tTT, "[NEWLINE]"); end -- don't show deals for a local player
+	if localPlayerID == playerID then return table.concat(tTT, "[NEWLINE]"), false, false; end -- don't show deals for a local player
 	
 	-- Possible resource deals
 	local function CheckResourceDeals(fromPlayer:number, toPlayer:number, sLine:string)
 		-- For other players, use deal manager to see what the local player can trade for.
 		local pForDeal			:table = DealManager.GetWorkingDeal(DealDirection.OUTGOING, fromPlayer, toPlayer); -- order of players is not important here
 		local possibleResources	:table = DealManager.GetPossibleDealItems(fromPlayer, toPlayer, DealItemTypes.RESOURCES, pForDeal); -- from, to, type, forDeal
+		local function SortDealItems(a,b)
+			local classA:string = GameInfo.Resources[a.ForType].ResourceClassType;
+			local classB:string = GameInfo.Resources[b.ForType].ResourceClassType;
+			if classA == "RESOURCECLASS_LUXURY"    and classB == "RESOURCECLASS_STRATEGIC" then return false; end
+			if classA == "RESOURCECLASS_STRATEGIC" and classB == "RESOURCECLASS_LUXURY"    then return true;  end
+			return GameInfo.Resources[a.ForType].ResourceType < GameInfo.Resources[b.ForType].ResourceType;
+		end
+		table.sort(possibleResources, SortDealItems);
 		--[[ values returned by GetPossibleDealItems
 		 InGame: 1	ForTypeName	LOC_RESOURCE_FURS_NAME
 		 InGame: 1	Type	-1069574269
@@ -487,26 +499,38 @@ function LeaderIcon:GetToolTipString(playerID:number)
 		--]]
 		local toResources = Players[toPlayer]:GetResources();
 		local tDealItems:table = {};
+		local bDealFlag:boolean = false;
 		for i, entry in ipairs(possibleResources) do
 			local infoRes:table = GameInfo.Resources[entry.ForType];
 			if infoRes ~= nil and entry.MaxAmount > 0 then
+				local sColor:string = COLOR_GREEN; -- default
+				if infoRes.ResourceClassType == "RESOURCECLASS_STRATEGIC" then sColor = COLOR_RED; end
 				--local sResDeal:string = string.format("%d [ICON_%s] %s", entry.MaxAmount, infoRes.ResourceType, LL(infoRes.Name));
-				-- show only items that toPlayer doesn't have and fromPlayer has surplus (>1)
-				if not toResources:HasResource(infoRes.Index) and entry.MaxAmount > 1 then
-					table.insert(tDealItems, string.format("%d[ICON_%s]", entry.MaxAmount, infoRes.ResourceType)); --LL(infoRes.Name)
+				if bIsGatheringStorm and infoRes.ResourceClassType == "RESOURCECLASS_STRATEGIC" then
+					-- new logic for strategic resources in GS - calculate how many we can sell
+					local iNumCanBuy:number = toResources:GetResourceStockpileCap(entry.ForType) - toResources:GetResourceAmount(entry.ForType);
+					if iNumCanBuy > 0 then
+						table.insert(tDealItems, string.format(sColor.."%d[ICON_%s][ENDCOLOR]", math.min(entry.MaxAmount, iNumCanBuy), infoRes.ResourceType)); -- no limit here, can sell all as they are accumulated per turn
+					end
+				else
+					-- show only items that toPlayer doesn't have and fromPlayer has surplus (>1)
+					if not toResources:HasResource(infoRes.Index) and entry.MaxAmount > 1 then
+						table.insert(tDealItems, string.format(sColor.."%d[ICON_%s][ENDCOLOR]", entry.MaxAmount-1, infoRes.ResourceType)); --LL(infoRes.Name)
+						bDealFlag = true;
+					end
 				end
 			end
 		end
-		if #tDealItems > 0 then table.insert(tTT, LL(sLine)..": "..table.concat(tDealItems, " "));
-		else                    table.insert(tTT, LL(sLine)..": -"); end
+		if #tDealItems > 0 then table.insert(tTT, LL(sLine)..": "..table.concat(tDealItems, " ")); return bDealFlag;
+		else                    table.insert(tTT, LL(sLine)..": -");                               return bDealFlag; end
 	end -- function
 	
 	-- Separator
 	table.insert(tTT, "--------------------------------------------------"); -- 50 chars
-	CheckResourceDeals(localPlayerID, playerID, "LOC_DIPLOMACY_DEAL_YOUR_ITEMS");
-	CheckResourceDeals(playerID, localPlayerID, "LOC_DIPLOMACY_DEAL_THEIR_ITEMS");
+	local bYourItems:boolean  = CheckResourceDeals(localPlayerID, playerID, "LOC_DIPLOMACY_DEAL_YOUR_ITEMS");
+	local bTheirItems:boolean = CheckResourceDeals(playerID, localPlayerID, "LOC_DIPLOMACY_DEAL_THEIR_ITEMS");
 	
-	return table.concat(tTT, "[NEWLINE]");
+	return table.concat(tTT, "[NEWLINE]"), bYourItems, bTheirItems;
 end
 
 print("OK loaded LeaderIcon.lua from Better Leader Icon");

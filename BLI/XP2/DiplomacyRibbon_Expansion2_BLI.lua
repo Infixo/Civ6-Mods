@@ -9,4 +9,4 @@ print("Loading DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon versio
 include("DiplomacyRibbon_Expansion2");
 
 
-print("Loading DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon");
+print("OK loaded DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon");

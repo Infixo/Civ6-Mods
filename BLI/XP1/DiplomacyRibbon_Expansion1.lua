@@ -28,4 +28,4 @@ function AddLeader(iconName : string, playerID : number, isUniqueLeader: boolean
 	return leaderIcon, instance;
 end
 
-print("Loading DiplomacyRibbon_Expansion1.lua from Better Leader Icon");
+print("OK loaded DiplomacyRibbon_Expansion1.lua from Better Leader Icon");

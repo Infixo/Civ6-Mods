@@ -5,8 +5,8 @@
 -- ===========================================================================
 
 -- just to make versioning easier
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BLI_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BLI_VERSION_MINOR', '9');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BLI_VERSION_MAJOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BLI_VERSION_MINOR', '0');
 
 -- options
 --INSERT INTO GlobalParameters (Name, Value) VALUES ('BCP_OPTION_MODIFIERS', '1');

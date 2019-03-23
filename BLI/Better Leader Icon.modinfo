@@ -2,7 +2,7 @@
 <Mod id="60A6CFAE-34CE-5D53-3640-15B122B9955B" version="1">
 	<Properties>
 		<Name>Better Leader Icon</Name>
-		<Description>Leader Icon with extended tooltips and relationship info.[NEWLINE][NEWLINE]Version 0.9.</Description>
+		<Description>Leader Icon with extended tooltips and relationship info.[NEWLINE][NEWLINE]Version 1.0.</Description>
 		<Teaser>Leader Icon with extended tooltips and relationship info.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -39,6 +39,7 @@
 		<ImportFiles id="BLI_Imports_XP1" criteria="Expansion1">
 			<Properties><LoadOrder>510</LoadOrder></Properties>
 			<File>XP1/DiplomacyRibbon_Expansion1.lua</File>
+			<File>XP1/DiplomacyActionView_Expansion1_BLI.lua</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BLI_Replace_DiplomacyRibbon_XP1" criteria="Expansion1">
 			<Properties>
@@ -47,18 +48,33 @@
 				<LuaReplace>XP1/DiplomacyRibbon_Expansion1.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
+		<ReplaceUIScript id="BLI_Replace_DiplomacyActionView_XP1" criteria="Expansion1">
+			<Properties>
+				<LoadOrder>510</LoadOrder>
+				<LuaContext>DiplomacyActionView</LuaContext>
+				<LuaReplace>XP1/DiplomacyActionView_Expansion1_BLI.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
 		<!-- Gathering Storm -->
 		<ImportFiles id="BLI_Imports_XP2" criteria="Expansion2">
 			<Properties><LoadOrder>520</LoadOrder></Properties>
 			<File>XP2/DiplomacyRibbon.xml</File>
 			<File>XP1/DiplomacyRibbon_Expansion1.lua</File>
 			<File>XP2/DiplomacyRibbon_Expansion2_BLI.lua</File>
+			<File>XP2/DiplomacyActionView_Expansion2_BLI.lua</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BLI_Replace_DiplomacyRibbon_XP2" criteria="Expansion2">
 			<Properties>
 				<LoadOrder>520</LoadOrder>
 				<LuaContext>DiplomacyRibbon</LuaContext>
 				<LuaReplace>XP2/DiplomacyRibbon_Expansion2_BLI.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<ReplaceUIScript id="BLI_Replace_DiplomacyActionView_XP2" criteria="Expansion2">
+			<Properties>
+				<LoadOrder>520</LoadOrder>
+				<LuaContext>DiplomacyActionView</LuaContext>
+				<LuaReplace>XP2/DiplomacyActionView_Expansion2_BLI.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 	</InGameActions>
@@ -69,7 +85,9 @@
 		<File>Base/DiplomacyRibbon.xml</File>
 		<File>Base/DiplomacyRibbon_BLI.lua</File>
 		<File>XP1/DiplomacyRibbon_Expansion1.lua</File>
+		<File>XP1/DiplomacyActionView_Expansion1_BLI.lua</File>
 		<File>XP2/DiplomacyRibbon.xml</File>
 		<File>XP2/DiplomacyRibbon_Expansion2_BLI.lua</File>
+		<File>XP2/DiplomacyActionView_Expansion2_BLI.lua</File>
 	</Files>
 </Mod>
