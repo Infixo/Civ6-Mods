@@ -19,15 +19,22 @@ local bIsRiseAndFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D138
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 local LL = Locale.Lookup;
 
+-- configuration options
+local bOptionRelationship:boolean = ( GlobalParameters.BLI_OPTION_RELATIONSHIP == 1 );
+
+-- colors with better visibility in the tooltip
+local ENDCOLOR:string = "[ENDCOLOR]";
+local COLOR_GREEN:string = "[COLOR:0,127,0,255]";
+local COLOR_RED:string   = "[COLOR:127,0,0,255]";
+function ColorGREEN(s:string) return COLOR_GREEN..s..ENDCOLOR; end
+function ColorRED(s:string)   return COLOR_RED  ..s..ENDCOLOR; end
+
 --	Round() from SupportFunctions.lua, fixed for negative numbers
 function Round(num:number, idp:number)
 	local mult:number = 10^(idp or 0);
 	if num >= 0 then return math.floor(num * mult + 0.5) / mult; end
 	return math.ceil(num * mult - 0.5) / mult;
 end
-
-local COLOR_GREEN:string = "[COLOR:0,127,0,255]";
-local COLOR_RED:string = "[COLOR:127,0,0,255]";
 
 
 ------------------------------------------------------------------
@@ -153,7 +160,7 @@ function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 	local pPlayerConfig:table = PlayerConfigurations[playerID];
 	local localPlayerID:number = Game.GetLocalPlayer();
 	local isHuman:boolean = pPlayerConfig:IsHuman();
-	local bHasMet:boolean = Players[localPlayerID]:GetDiplomacy():HasMet(playerID)
+	local bHasMet:boolean = Players[localPlayerID]:GetDiplomacy():HasMet(playerID);
 
 	-- Team Ribbon
 	if(playerID == localPlayerID or bHasMet) then
@@ -214,6 +221,7 @@ Line 5..7. Agendas
 --]]
 
 local iDenounceTimeLimit:number = Game.GetGameDiplomacy():GetDenounceTimeLimit();
+local iMinPeaceDuration:number  = Game.GetGameDiplomacy():GetMinPeaceDuration(); -- this is also min. war duration
 
 -- icons for various types of alliances
 local tAllianceIcons:table = {
@@ -263,9 +271,21 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 		end
 		iRemainingTurns = 1 + math.max(iOurDenounceTurn, iTheirDenounceTurn) + iDenounceTimeLimit - Game.GetCurrentGameTurn() + iPlayerOrderAdjustment;
 	end
+	-- Remaining turns for peace deal if at war
+	local bIsAtWar:boolean = false;
+	local bIsPeaceDeal:boolean = false;
+	if infoState.StateType == "DIPLO_STATE_WAR" then
+		bIsAtWar = true;
+		local bValidAction, tResults = localPlayerDiplomacy:IsDiplomaticActionValid("DIPLOACTION_PROPOSE_PEACE_DEAL", playerID, true);
+		bIsPeaceDeal = bValidAction;
+		iRemainingTurns = iMinPeaceDuration + localPlayerDiplomacy:GetAtWarChangeTurn(playerID) - Game.GetCurrentGameTurn();
+	end
 	
 	local sDiploTT:string = LL(infoState.Name);
-	if iRemainingTurns ~= -1 then
+	if bIsAtWar then
+		if bIsPeaceDeal then sDiploTT = sDiploTT.."  "..ColorGREEN(LL("LOC_DIPLOACTION_MAKE_PEACE_NAME"));
+		else                 sDiploTT = sDiploTT.."  "..ColorRED(tostring(iRemainingTurns)).."[ICON_TURN] "..LL("LOC_DIPLOACTION_MAKE_PEACE_NAME"); end
+	elseif iRemainingTurns ~= -1 then
 		sDiploTT = sDiploTT.."  [ICON_TURN]"..LL("LOC_ESPIONAGEPOPUP_TURNS_REMAINING", iRemainingTurns);
 	end
 	table.insert(tTT, sDiploTT);
@@ -278,16 +298,16 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	end
 	if iDiploChange ~= 0 then
 		local sDiploChange:string = "0";
-		if iDiploChange > 0 then sDiploChange = "[ICON_PressureUp]"  ..COLOR_GREEN.."+"..tostring(iDiploChange).."[ENDCOLOR]"; end
-		if iDiploChange < 0 then sDiploChange = "[ICON_PressureDown]"..COLOR_RED       ..tostring(iDiploChange).."[ENDCOLOR]"; end
+		if iDiploChange > 0 then sDiploChange = "[ICON_PressureUp]"  ..ColorGREEN("+"..tostring(iDiploChange)); end
+		if iDiploChange < 0 then sDiploChange = "[ICON_PressureDown]"..ColorRED(       tostring(iDiploChange)); end
 		table.insert(tTT, sDiploChange);
 	end
 
 	-- impact of the diplo relation on yields
-	local sYields:string = "%+d%%";
-	if infoState.DiplomaticYieldBonus > 0 then sYields = COLOR_GREEN..sYields.."[ENDCOLOR]"; end
-	if infoState.DiplomaticYieldBonus < 0 then sYields = COLOR_RED  ..sYields.."[ENDCOLOR]"; end
-	table.insert(tTT, string.format("%s: "..sYields, LL("LOC_HUD_REPORTS_TAB_YIELDS"), infoState.DiplomaticYieldBonus));
+	local sYields:string = tostring(infoState.DiplomaticYieldBonus).."%";
+	if infoState.DiplomaticYieldBonus > 0 then sYields = ColorGREEN("+"..sYields); end
+	if infoState.DiplomaticYieldBonus < 0 then sYields = ColorRED(       sYields); end
+	table.insert(tTT, LL("LOC_HUD_REPORTS_TAB_YIELDS")..": "..sYields);
 	
 	-- Alliance
 	if bIsRiseAndFall or bIsGatheringStorm then
@@ -300,33 +320,34 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 			local sExpires:string = tAllianceIcons[info.AllianceType]..LL("LOC_DIPLOACTION_EXPIRES_IN_X_TURNS", iTurns);
 			sExpires = string.gsub(sExpires, "%(", "");
 			sExpires = string.gsub(sExpires, "%)", "");
-			if iTurns < 4 then sExpires = "[COLOR_Red]"..sExpires.."[ENDCOLOR]"; end
+			if iTurns < 4 then sExpires = ColorRED(sExpires); end
 			table.insert(tTT, sExpires);
 		end
 	end
 	
-	-- Grievances
-	-- GRIEVANCE, STAT_GRIEVANCE, GRIEVANCE_TT
-	-- "[COLOR:80,255,90,160]%s[ENDCOLOR]"; end -- StatGoodCS   Color0="80,255,90,240"
+	-- Grievances  ICON_GRIEVANCE, ICON_STAT_GRIEVANCE, ICON_GRIEVANCE_TT
 	if bIsGatheringStorm and playerID ~= localPlayerID then
 		local iGrievances:number = localPlayerDiplomacy:GetGrievancesAgainst(playerID);
-		--if     iGrievances > 0 then table.insert(tTT, "[COLOR_Green]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_THEM_SIMPLE", iGrievances).."[ENDCOLOR]");
-		--elseif iGrievances < 0 then table.insert(tTT, "[COLOR_Red]"..LL("LOC_DIPLOMACY_GRIEVANCES_WITH_US_SIMPLE", -iGrievances).."[ENDCOLOR]");
-		--else                        table.insert(tTT, "[ICON_GRIEVANCE][ICON_GRIEVANCE_TT]"..LL("LOC_DIPLOMACY_GRIEVANCES_NONE_SIMPLE")); end
-		local sGrievances:string = "[ICON_GRIEVANCE_TT]"..LL("LOC_DIPLOMACY_GRIEVANCES_NONE_SIMPLE");
-		if iGrievances > 0 then sGrievances = "[ICON_GRIEVANCE_TT]"..COLOR_GREEN..LL("LOC_GRIEVANCE_LOG_AGAINST_THEM")..tostring( iGrievances).."[ENDCOLOR]"; end
-		if iGrievances < 0 then sGrievances = "[ICON_GRIEVANCE_TT]"..COLOR_RED..  LL("LOC_GRIEVANCE_LOG_AGAINST_YOU").. tostring(-iGrievances).."[ENDCOLOR]"; end
+		local iGrievancePerTurn:number = Game.GetGameDiplomacy():GetGrievanceChangePerTurn(playerID, localPlayerID);
+		local sGrievances:string = "[ICON_STAT_GRIEVANCE] "..LL("LOC_DIPLOMACY_GRIEVANCES_NONE_SIMPLE");
+		if iGrievances > 0 then
+			sGrievances = ColorGREEN(LL("LOC_DIPLOMACY_GRIEVANCES_WITH_THEM_SIMPLE", iGrievances));
+			if iGrievancePerTurn > 0 then sGrievances = sGrievances..ColorGREEN("  ( +"..tostring(iGrievancePerTurn).." )"); end
+			if iGrievancePerTurn < 0 then sGrievances = sGrievances..ColorRED(  "  ( " ..tostring(iGrievancePerTurn).." )"); end
+		end
+		if iGrievances < 0 then
+			sGrievances = ColorRED(LL("LOC_DIPLOMACY_GRIEVANCES_WITH_US_SIMPLE", -iGrievances));
+			if iGrievancePerTurn > 0 then sGrievances = sGrievances..ColorRED(  "  ( +"..tostring(iGrievancePerTurn).." )"); end
+			if iGrievancePerTurn < 0 then sGrievances = sGrievances..ColorGREEN("  ( " ..tostring(iGrievancePerTurn).." )"); end
+		end
 		table.insert(tTT, sGrievances);
 	end
 	
-	-- Access level
-	-- ICON_VisLimited, VisOpen, VisSecret, VisTopSecret
+	-- Access level  ICON_VisLimited, VisOpen, VisSecret, VisTopSecret
 	local iAccessLevel = localPlayerDiplomacy:GetVisibilityOn(playerID);
 	table.insert(tTT, string.format("%s %s [COLOR_Grey](%d)[ENDCOLOR]", LL("LOC_DIPLOMACY_INTEL_ACCESS_LEVEL"), LL(GameInfo.Visibilities[iAccessLevel].Name), iAccessLevel));
 	
 	-- Agendas
-	-- GetAgendaTypes() returns ALL of my agendas, including the historical agenda.
-	-- To retrieve only the randomly assigned agendas, delete the first entry from the table.
 	table.insert(tTT, "----------------------------------------"); -- 40 chars
 	table.insert(tTT, LL("LOC_DIPLOMACY_INTEL_ADGENDAS"));
 	local tAgendaTypes:table = pPlayer:GetAgendaTypes();
@@ -334,36 +355,30 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 		local bHidden:boolean = true;
 		if iAccessLevel >= iAccessAgendas then bHidden = false; end
 		if i == 1 then bHidden = false; end
-		if bHidden then table.insert(tTT, "- "..LL("LOC_DIPLOMACY_HIDDEN_AGENDAS", 1, false));
+		if bHidden then table.insert(tTT, "- "..LL("LOC_DIPLOMACY_HIDDEN_AGENDAS", 1, false)..ENDCOLOR);
 		else            table.insert(tTT, "- "..LL( GameInfo.Agendas[agendaType].Name )); end
 	end
 	
 	-- Diplo modifiers, from DiplomacyActionView.lua
-	--[[
-	if toolTips then
+	if bOptionRelationship and toolTips then
 		table.insert(tTT, "----------------------------------------"); -- 40 chars
+		table.insert(tTT, LL("LOC_DIPLOMACY_INTEL_OUR_RELATIONSHIP"));
 		table.sort(toolTips, function(a,b) return a.Score > b.Score; end);
 		for _,tip in ipairs(toolTips) do
-			local score = tip.Score;
-			local text = tip.Text;
 			if score ~= 0 then
-				local scoreText = Locale.Lookup("{1_Score : number +#,###.##;-#,###.##}", score);
-				--local scoreText:string = string.format("%+ 3d", score);
-				if score > 0 then scoreText = "[COLOR_Green]"..scoreText.."[ENDCOLOR]";
-				else              scoreText = "[COLOR_Red]"..scoreText.."[ENDCOLOR]"; end
-				--print("score, text", score, text);
-				if text == LL("LOC_TOOLTIP_DIPLOMACY_UNKNOWN_REASON") then scoreText = scoreText.." - [COLOR_Grey]"..text.."[ENDCOLOR]";
-				else                                                       scoreText = scoreText.." - "..text; end
+				--local scoreText = Locale.Lookup("{1_Score : number +#,###.##;-#,###.##}", score);
+				local scoreText:string = string.format("%+d", tip.Score);
+				--local scoreText:string = tostring(tip.Score);
+				if tip.Score > 0 then scoreText = ColorGREEN(scoreText); else scoreText = ColorRED(scoreText); end
+				if tip.Text == LL("LOC_TOOLTIP_DIPLOMACY_UNKNOWN_REASON") then scoreText = scoreText.."  [COLOR_Grey]"..tip.Text.."[ENDCOLOR]";
+				else                                                           scoreText = scoreText.."  "..tip.Text; end
 				table.insert(tTT, scoreText);
 			end -- if
 		end -- for
 	end -- if
-	--]]
+
 	return table.concat(tTT, "[NEWLINE]");
 end
-
-
--- bottom-right - age (normal, dark, etc.)
 
 --Resets instances we retrieve
 function LeaderIcon:Reset()
@@ -419,7 +434,6 @@ function LeaderIcon:GetToolTipString(playerID:number)
 			end
 		end
 	end
-	--return result;
 	table.insert(tTT, result);
 	
 	-- Government
@@ -438,7 +452,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	-- Gold
 	local playerTreasury:table = pPlayer:GetTreasury();
 	local iGoldBalance:number = playerTreasury:GetGoldBalance();
-	--local iGoldPerTurn:number = playerTreasury:GetGoldYield() - playerTreasury:GetTotalMaintenance();
+	local iGoldPerTurn:number = playerTreasury:GetGoldYield() - playerTreasury:GetTotalMaintenance();
 
 	-- Separator
 	table.insert(tTT, "--------------------------------------------------"); -- 50 chars
@@ -446,9 +460,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	-- Statistics
 	table.insert(tTT, "[ICON_Capital] " ..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_SCORE", tostring(pPlayer:GetScore())));
 	table.insert(tTT, "[ICON_Strength] "..LL("LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_MILITARY_STRENGTH", "[COLOR_Military]"..tostring(pPlayer:GetStats():GetMilitaryStrengthWithoutTreasury()).."[ENDCOLOR]"));
-	--table.insert(tTT, string.format("[ICON_Gold] %s: [COLOR_Gold]%d[ENDCOLOR] (%+.1f)", LL("LOC_YIELD_GOLD_NAME"), iGoldBalance, iGoldPerTurn));
-	table.insert(tTT, "[ICON_Gold] "..LL("LOC_YIELD_GOLD_NAME")..": [COLOR_GoldDark]"..tostring(Round(iGoldBalance,0)).."[ENDCOLOR]");
-	--.."[NEWLINE][ICON_Gold] "..goldBalance.."   ( " .. "[COLOR_GoldMetalDark]" .. (iGoldPerTurn>0 and "+" or "") .. (iGoldPerTurn>0 and iGoldPerTurn or "-?") .. "[ENDCOLOR]  )"
+	table.insert(tTT, string.format("[ICON_Gold] %s: [COLOR_GoldDark]%d (%+.1f)[ENDCOLOR]", LL("LOC_YIELD_GOLD_NAME"), iGoldBalance, iGoldPerTurn));
 	table.insert(tTT, "[ICON_Science] "..LL("LOC_WORLD_RANKINGS_OVERVIEW_SCIENCE_NUM_TECHS", "[COLOR_Science]" ..tostring(pPlayer:GetStats():GetNumTechsResearched()).. "[ENDCOLOR]"));
 	table.insert(tTT, LL("LOC_WORLD_RANKINGS_OVERVIEW_SCIENCE_SCIENCE_RATE", "[COLOR_Science]"..tostring(Round(pPlayer:GetTechs():GetScienceYield(),1)).."[ENDCOLOR]"));
 	table.insert(tTT, LL("LOC_WORLD_RANKINGS_OVERVIEW_CULTURE_TOURISM_RATE", "[COLOR_Tourism]"..tostring(Round(pPlayer:GetStats():GetTourism(),1)).."[ENDCOLOR]"));
@@ -458,22 +470,9 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	if bIsGatheringStorm then
 		table.insert(tTT, " [ICON_Favor]  "..LL("LOC_DIPLOMATIC_FAVOR_NAME")..": [COLOR_GoldDark]"..tostring(pPlayer:GetFavor()).."[ENDCOLOR]"); -- ICON_Favor_Large is too big
 	end
-
-	-- Victories
-	--[[
-	GetText = function(p) 
-		local total = GlobalParameters.DIPLOMATIC_VICTORY_POINTS_REQUIRED;
-		local current = 0;
-		if (p:IsAlive()) then
-			current = p:GetStats():GetDiplomaticVictoryPoints();
-		end
-
-		return Locale.Lookup("LOC_WORLD_RANKINGS_DIPLOMATIC_POINTS_TT", current, total);
-	end,
-	--]]
 	
 	if localPlayerID == playerID then return table.concat(tTT, "[NEWLINE]"), false, false; end -- don't show deals for a local player
-	
+
 	-- Possible resource deals
 	local function CheckResourceDeals(fromPlayer:number, toPlayer:number, sLine:string)
 		-- For other players, use deal manager to see what the local player can trade for.
@@ -527,8 +526,15 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	
 	-- Separator
 	table.insert(tTT, "--------------------------------------------------"); -- 50 chars
-	local bYourItems:boolean  = CheckResourceDeals(localPlayerID, playerID, "LOC_DIPLOMACY_DEAL_YOUR_ITEMS");
-	local bTheirItems:boolean = CheckResourceDeals(playerID, localPlayerID, "LOC_DIPLOMACY_DEAL_THEIR_ITEMS");
+	local bYourItems:boolean, bTheirItems:boolean = false, false;
+	if pPlayer:GetDiplomacy():IsAtWarWith(localPlayerID) then
+		-- no deals when at war
+		table.insert(tTT, LL("LOC_DIPLOMACY_DEAL_YOUR_ITEMS") ..": "..ColorRED(LL("LOC_DIPLO_STATE_WAR_NAME")));
+		table.insert(tTT, LL("LOC_DIPLOMACY_DEAL_THEIR_ITEMS")..": "..ColorRED(LL("LOC_DIPLO_STATE_WAR_NAME")));
+	else
+		bYourItems  = CheckResourceDeals(localPlayerID, playerID, "LOC_DIPLOMACY_DEAL_YOUR_ITEMS");
+		bTheirItems = CheckResourceDeals(playerID, localPlayerID, "LOC_DIPLOMACY_DEAL_THEIR_ITEMS");
+	end
 	
 	return table.concat(tTT, "[NEWLINE]"), bYourItems, bTheirItems;
 end
