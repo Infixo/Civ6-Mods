@@ -10,8 +10,8 @@
 			<Image ID="TargetIcon" Offset="0,0" Texture="Emergency_Target44" Color="255,0,0,255" Size="44,44" Anchor="C,C"/>
 			<Image ID="TeamRibbon" Anchor="C,T" Offset="0,8" Texture="TeamRibbon32" Size="32,32"/>
 			<Label ID="CivEra" String="[ICON_GLORY_NORMAL_AGE]" Anchor="R,B" Offset="5,-1" Hidden="1"/>
-			<Label ID="TheirItems" String="[ICON_Bolt]" Anchor="L,T" Offset="-1,-1" Hidden="1"/>
-			<Label ID="YourItems"  String="[ICON_Bolt]" Anchor="R,T" Offset="-1,-1" Hidden="1"/>
+			<Label ID="TheirItems" String="[ICON_Bolt]" Anchor="L,T" Offset="-2,-2" Hidden="1"/>
+			<Label ID="YourItems"  String="[ICON_Bolt]" Anchor="R,T" Offset="-2,-2" Hidden="1"/>
 			<Button ID="Relationship" Style="DiplomacyRelationshipPips" Anchor="L,B" Disabled="1" ConsumeMouse="0" Offset="-10,-5"/>
 			<Image ID="CivIndicator" Anchor="R,T" Texture="CircleBacking22" Size="22,22" Offset="-5,-2" Hidden="1">
 				<Image ID="CivIcon" Anchor="C,C" Texture="CivSymbols22" Size="22,22"/>
@@ -26,8 +26,8 @@
       <Image ID="Portrait" Anchor="C,C" Size="32,32" Texture="Leaders32" />
       <Image ID="TeamRibbon" Anchor="C,T" Offset="0,8" Texture="TeamRibbon32" Size="32,32"/>
 	  <Label ID="CivEra" String="[ICON_GLORY_NORMAL_AGE]" Anchor="R,B" Offset="-5,-1" Hidden="1"/>
-	  <Label ID="TheirItems" String="[ICON_Bolt]" Anchor="L,T" Offset="-1,-1" Hidden="1"/>
-	  <Label ID="YourItems"  String="[ICON_Bolt]" Anchor="R,T" Offset="-1,-1" Hidden="1"/>
+	  <Label ID="TheirItems" String="[ICON_Bolt]" Anchor="L,T" Offset="-2,-2" Hidden="1"/>
+	  <Label ID="YourItems"  String="[ICON_Bolt]" Anchor="R,T" Offset="-2,-2" Hidden="1"/>
       <Button ID="Relationship" Style="DiplomacyRelationshipPips" Anchor="L,B" Disabled="1" ConsumeMouse="0" Offset="-10,-5"/>
       <Image ID="CivIndicator" Anchor="R,T" Texture="CircleBacking22" Size="22,22" Offset="-5,-2" Hidden="1">
         <Image ID="CivIcon" Anchor="C,C" Texture="CivSymbols22" Size="22,22"/>
@@ -58,8 +58,8 @@
 			<Image  ID="Portrait" Anchor="C,C" Size="55,55" Texture="Leaders55" />
 			<Image ID="TeamRibbon" Anchor="C,B" Offset="0,-4" Texture="TeamRibbon53" Size="53,53"/>
 			<Label ID="CivEra" String="[ICON_GLORY_NORMAL_AGE]" Anchor="R,B" Offset="0,4" Hidden="1"/>
-			<Label ID="TheirItems" String="[ICON_Bolt]" Anchor="L,T" Offset="0,0" Hidden="1"/>
-			<Label ID="YourItems"  String="[ICON_Bolt]" Anchor="R,T" Offset="0,0" Hidden="1"/>
+			<Label ID="TheirItems" String="[ICON_Bolt]" Anchor="L,T" Offset="1,1" Hidden="1"/>
+			<Label ID="YourItems"  String="[ICON_Bolt]" Anchor="R,T" Offset="1,1" Hidden="1"/>
 			<Button ID="Relationship" Style="DiplomacyRelationshipPips" Anchor="L,B" Disabled="1" ConsumeMouse="0"/>
 			<Image ID="CivIndicator" Anchor="L,T" Texture="CircleBacking22" Size="22,22" Offset="0,0" Hidden="1">
 				<Image ID="CivIcon" Anchor="C,C" Texture="CivSymbols22" Size="22,22"/>
