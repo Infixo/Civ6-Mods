@@ -5,7 +5,7 @@ print("Loading RealStrategy_GreatPeople.lua from Real Strategy version "..Global
 -- 2019-01-12: Created
 -- ===========================================================================
 
-include( "Civ6Common" ); -- contains easy to use MoveUnitToPlot()
+--include( "Civ6Common" ); -- contains easy to use MoveUnitToPlot()
 
 
 -- InGame functions exposed here
@@ -56,7 +56,7 @@ function GetNumEmptyGreatWorkSlots(ePlayerID:number)
 
 	for _,city in Players[ePlayerID]:GetCities():Members() do
 		--print("..checking city", city:GetName());
-		
+		local iCityX:number, iCityY:number = city:GetX(), city:GetY();
 		-- check existing buildings -- just iterate through buildings that can have GWs -- nope, Modifiers can give slots anywhere, e.g. Medici gives  2 slots to a bank
 		local cityBuildings:table = city:GetBuildings();
 		for building in GameInfo.Buildings() do
@@ -65,11 +65,12 @@ function GetNumEmptyGreatWorkSlots(ePlayerID:number)
 			local eBuilding:number = building.Index;
 			if cityBuildings:HasBuilding(eBuilding) then
 				--print("   ...checking building", building.BuildingType);
-				for i = 0, cityBuildings:GetNumGreatWorkSlots(eBuilding)-1 do
+				for i = 0, RST.CityGetNumGreatWorkSlots(iCityX, iCityY, eBuilding)-1 do
 					--print("      ...checking slot", i);
 					-- get great work
-					local eGWIndex:number = cityBuildings:GetGreatWorkInSlot(eBuilding, i);
-					local eGWSlotType:number = cityBuildings:GetGreatWorkSlotType(eBuilding, i);
+					--local eGWIndex:number = cityBuildings:GetGreatWorkInSlot(eBuilding, i);
+					--local eGWSlotType:number = cityBuildings:GetGreatWorkSlotType(eBuilding, i);
+					local eGWIndex:number, eGWSlotType:number = RST.CityGetGreatWorkInSlot(iCityX, iCityY, eBuilding, i);
 					--print("      ...slot", i, "type", eGWSlotType, "gw_index", eGWIndex, "building", building.BuildingType);
 					if eGWIndex == -1 then -- empty slot
 						AddSlotType( GameInfo.GreatWorkSlotTypes[eGWSlotType].GreatWorkSlotType );
@@ -79,14 +80,14 @@ function GetNumEmptyGreatWorkSlots(ePlayerID:number)
 		end -- all buildings
 		
 		-- check production queue - districts and buildings
-		local currentProductionHash:number = city:GetBuildQueue():GetCurrentProductionTypeHash();
-		local pBuildingDef:table;
-		local pDistrictDef:table;
+		local currentProduction:string = city:GetBuildQueue():CurrentlyBuilding(); -- this one returns TypeName (string) or "NONE"
+		local pBuildingDef:table = GameInfo.Buildings[currentProduction];
+		local pDistrictDef:table = GameInfo.Districts[currentProduction];
 		-- Attempt to obtain a hash for each item
-		if currentProductionHash ~= 0 then
-			pBuildingDef = GameInfo.Buildings[currentProductionHash];
-			pDistrictDef = GameInfo.Districts[currentProductionHash];
-		end
+		--if currentProduction ~= "NONE" then
+			--pBuildingDef = 
+			--pDistrictDef = 
+		--end
 		if pBuildingDef ~= nil then
 			-- ok, we're building a building
 			AddSlotTypesFromBuilding(pBuildingDef.BuildingType);
@@ -107,27 +108,12 @@ function GetNumEmptyGreatWorkSlots(ePlayerID:number)
 end
 
 
--- helper - check if great work has been created
--- awfully complex, Lua support is minimal here
--- there is no function that simply says if a GW was created or not - must review all GWs
--- assumption here is that if the GW is created, then it has an index
-
-function GetPlayerWhoCreatedGreatWork(eGWType:number)
-	--print("FUN GetPlayerWhoCreatedGreatWork", eGWType, GameInfo.GreatWorks[eGWType].GreatWorkType);
-	local iGWIndex:number = 0;
-	while Game.GetGreatWorkPlayer(iGWIndex) ~= -1 do
-		if Game.GetGreatWorkTypeFromIndex(iGWIndex) == eGWType then return Game.GetGreatWorkPlayer(iGWIndex), iGWIndex; end
-		iGWIndex = iGWIndex + 1;
-	end
-	return -1;
-end
-
 function GetNumGreatWorksToCreate(eGPIndividual:number)
 	--print("FUN GetNumGreatWorksToCreate", eGPIndividual, GameInfo.GreatPersonIndividuals[eGPIndividual].GreatPersonIndividualType);
 	local sGPIndType:string = GameInfo.GreatPersonIndividuals[eGPIndividual].GreatPersonIndividualType;
 	local iNum:number = 0;
 	for row in GameInfo.GreatWorks() do
-		if row.GreatPersonIndividualType == sGPIndType and GetPlayerWhoCreatedGreatWork(row.Index) == -1 then iNum = iNum + 1; end
+		if row.GreatPersonIndividualType == sGPIndType and RST.GreatWorkGetPlayerWhoCreated(row.Index) == -1 then iNum = iNum + 1; end
 	end
 	return iNum;
 end
@@ -144,8 +130,8 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	-- Iterate through units and look for GWs to be created
 	local iNumGWWriting:number, iNumGWArt:number, iNumGWMusic:number = 0, 0, 0; -- note that we don't bother with Artifacts - game assures that number of slots matches number of Archaelogists
 	for _,unit in Players[ePlayerID]:GetUnits():Members() do
-		local pUnitGP:table = unit:GetGreatPerson();
-		if pUnitGP ~= nil and pUnitGP:IsGreatPerson() then
+		if unit:IsGreatPerson() then
+			local pUnitGP:table = unit:GetGreatPerson();
 			local sGPClass:string = GameInfo.GreatPersonClasses[ pUnitGP:GetClass() ].GreatPersonClassType;
 			--print("...found GP of class", sGPClass);
 			if     sGPClass == "GREAT_PERSON_CLASS_WRITER"   then iNumGWWriting = iNumGWWriting + GetNumGreatWorksToCreate(pUnitGP:GetIndividual());
@@ -166,7 +152,7 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	local iTotSlots = iNumSlotWriting + iNumSlotArt + iNumSlotMusic;
 	
 	data.ActiveMoreGWSlots = false;
-	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWWriting > iNumSlotWriting + 2) ); -- enabler, need it quickly; will acivate if 2 works
+	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWWriting > iNumSlotWriting + 1) ); -- enabler, need it quickly; will acivate if 2 works
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWArt > iNumSlotArt + 2) ); -- they come in 3, so missing only 1 is not enough; will activate if 3 works
 	data.ActiveMoreGWSlots = ( data.ActiveMoreGWSlots or (iNumGWMusic > iNumSlotMusic + 2) ); -- music comes late, maybe it is not worth it to build a district just for 1 GW of Music; will activate if 3 works
 	data.TurnRefreshSlots = Game.GetCurrentGameTurn();
@@ -176,8 +162,8 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	return data.ActiveMoreGWSlots;
 end
 -- 2019-03-20 GameEvents not available in UI context
---GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
-RST.ActiveStrategyMoreGreatWorkSlots = ActiveStrategyMoreGreatWorkSlots;
+GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
+--RST.ActiveStrategyMoreGreatWorkSlots = ActiveStrategyMoreGreatWorkSlots;
 
 
 ------------------------------------------------------------------------------
@@ -188,32 +174,6 @@ RST.ActiveStrategyMoreGreatWorkSlots = ActiveStrategyMoreGreatWorkSlots;
 -- Find out where is the nearest place to activate him
 --   - if we are on it - activate
 --   - if we are not on it - go there
-
--- find out at what turn a GP was recruited
---Game	GetGreatPeople GetPastTimeline
----> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
-function GetTurnRecruited(eIndividual:number)
-	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
-		if pastGP.Individual == eIndividual then return pastGP.TurnGranted; end
-	end
-	return Game.GetCurrentGameTurn();
-end
-
--- find out where is the nearest place to activate a GP
--- Unit:GetGreatPerson():GetActivationHighlightPlots()
----> table of Plot Indices
-function GetNearestActivationPlotIndex(pUnit:table)
-	local iUnitX:number, iUnitY:number = pUnit:GetX(), pUnit:GetY();
-	--print("looking for neareast activation for unit in plot", iUnitX, iUnitY);
-	local iNearestIdx:number, iMinDist:number = -1, 9999;
-	for _,idx in ipairs(pUnit:GetGreatPerson():GetActivationHighlightPlots()) do
-		local pPlot:table = Map.GetPlotByIndex(idx);
-		local iDist:number = Map.GetPlotDistance(iUnitX, iUnitY, pPlot:GetX(), pPlot:GetY());
-		--print("plot", idx, pPlot:GetX(), pPlot:GetY(), "dist", iDist);
-		if iDist < iMinDist then iMinDist = iDist; iNearestIdx = idx; end
-	end
-	return iNearestIdx;
-end
 
 
 -- main function - should be run every few turns
@@ -226,46 +186,47 @@ function ManualManageGWAM(ePlayerID:number)
 	-- Iterate through GPs and find the stuck ones - must be recruited more than 10 turns earlier
 	local tMoves:table = {}; -- we move units separately to avoid deadlocks
 	for _,unit in Players[ePlayerID]:GetUnits():Members() do
-		local pUnitGP:table = unit:GetGreatPerson();
-		if pUnitGP ~= nil and pUnitGP:IsGreatPerson() then
+		if unit:IsGreatPerson() then
+			local pUnitGP:table = unit:GetGreatPerson();
 			local sGPClass:string = GameInfo.GreatPersonClasses[ pUnitGP:GetClass() ].GreatPersonClassType;
 			--print("...found GP of class", sGPClass, "type", GameInfo.GreatPersonIndividuals[pUnitGP:GetIndividual()].GreatPersonIndividualType);
 			if sGPClass == "GREAT_PERSON_CLASS_WRITER" or sGPClass == "GREAT_PERSON_CLASS_ARTIST" or sGPClass == "GREAT_PERSON_CLASS_MUSICIAN" then
 				-- find the stuck ones - must be recruited more than 10 turns earlier
-				local iTurnRecruited:number = GetTurnRecruited(pUnitGP:GetIndividual());
+				local iTurnRecruited:number = RST.GreatPersonGetTurnRecruited(pUnitGP:GetIndividual());
 				--print("...GWAM", GameInfo.GreatPersonIndividuals[pUnitGP:GetIndividual()].GreatPersonIndividualType, "recruited on turn", iTurnRecruited, Game.GetCurrentGameTurn()-iTurnRecruited);
 				if Game.GetCurrentGameTurn()-iTurnRecruited > 7 then
 					-- Find out where is the nearest place to activate him
-					local iUnitPlotIdx:number = unit:GetPlotId();
-					local iNearestIdx:number = GetNearestActivationPlotIndex(unit);
-					if iNearestIdx == iUnitPlotIdx then
-						--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...ACTIVATE UNIT HERE");
-						UnitManager.RequestCommand(unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
-					elseif iNearestIdx > -1 then
-						local iNearestX:number, iNearestY:number = Map.GetPlotByIndex(iNearestIdx):GetX(), Map.GetPlotByIndex(iNearestIdx):GetY();
-						--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...MOVE UNIT TO", iNearestX, iNearestY);
-						table.insert(tMoves, { Unit = unit, ToX = iNearestX, ToY = iNearestY });
-					else
-						--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...NO VALID PLACE");
-					end
+					local pPlot:table = Map.GetPlot(unit:GetX(), unit:GetY());
+					if pPlot ~= nil then -- this is weird - sometimes the unit DISAPPEARS here from activation, wtf?
+						local iUnitPlotIdx:number = pPlot:GetIndex();
+						local iNearestIdx:number = RST.GreatPersonGetNearestActivationPlotIndex(ePlayerID, unit:GetID());
+						if iNearestIdx == iUnitPlotIdx and iNearestIdx ~= -1 then
+							--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...ACTIVATE UNIT HERE");
+							--UnitManager.RequestCommand(unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
+							RST.GreatPersonActivate(ePlayerID, unit:GetID());
+						elseif iNearestIdx > -1 then
+							local iNearestX:number, iNearestY:number = Map.GetPlotByIndex(iNearestIdx):GetX(), Map.GetPlotByIndex(iNearestIdx):GetY();
+							--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...MOVE UNIT TO", iNearestX, iNearestY);
+							table.insert(tMoves, { Unit = unit, ToX = iNearestX, ToY = iNearestY });
+						else
+							--print("plot/nearest", iUnitPlotIdx, iNearestIdx, "...NO VALID PLACE");
+						end
+					end -- plot ~= nil
 				end -- >=10 turns
 			end -- is GWAM
 		end -- is GP
 	end -- units
 	-- move units separately to avoid deadlocks
 	for _,move in ipairs(tMoves) do
-		--print("...moving", move.Unit:GetID(), "to", move.ToX, move.ToY);
+		if bLogDebug then print(Game.GetCurrentGameTurn(), "...GWAM moving", ePlayerID, move.Unit:GetID(), "to", move.ToX, move.ToY); end
 		--MoveUnitToPlot(move.Unit, move.ToX, move.ToY);
-		RST.MoveUnitToPlot(ePlayerID, move.Unit:GetID(), move.ToX, move.ToY);
-		-- if by chance we arrived, then activate - never happens
-		--if move.Unit:GetX() == move.ToX and move.Unit:GetY() == move.ToY then
-			--print("...unit arrived and be activated");
-			--UnitManager.RequestCommand(move.Unit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
-		--end
+		UnitManager.MoveUnit(move.Unit, move.ToX, move.ToY);
+		UnitManager.RestoreMovement(move.Unit); -- in case AI would actually tried to move it
 	end
 end
 
 function OnPlayerTurnActivated(ePlayerID:number, bIsFirstTime:boolean)
+	--print("FUN OnPlayerTurnActivated", ePlayerID, bIsFirstTime);
 	if not Players[ePlayerID]:IsMajor() then return; end -- only majors
 	if Game.GetLocalPlayer() == ePlayerID and not AutoplayManager.IsActive() then return; end -- don't do for a local player
 	ManualManageGWAM(ePlayerID);

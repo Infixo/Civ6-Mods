@@ -109,10 +109,10 @@
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Lua/RealStrategy_InGameExp.xml</File>
-			<File>Lua/RealStrategy_GreatPeople.xml</File>
 		</AddUserInterfaces>
 		<AddGameplayScripts id="RST_Scripts">
 			<File>Lua/RealStrategy.lua</File>
+			<File>Lua/RealStrategy_GreatPeople.lua</File>
 		</AddGameplayScripts>
 	</InGameActions>
 	<Files>
@@ -137,7 +137,7 @@
 		<File>RealStrategy_Leaders_XP2.sql</File>
 		<File>Lua/RealStrategy.lua</File>
 		<File>Lua/RealStrategy_GreatPeople.lua</File>
-		<File>Lua/RealStrategy_GreatPeople.xml</File>
+		<!--<File>Lua/RealStrategy_GreatPeople.xml</File>-->
 		<File>Lua/RealStrategy_InGameExp.lua</File>
 		<File>Lua/RealStrategy_InGameExp.xml</File>
 		<File>Lua/Serialize.lua</File>

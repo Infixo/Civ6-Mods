@@ -73,6 +73,82 @@ function CityGetGreatWorkObjectType(iCityX:number, iCityY:number, iGreatWorkInde
 	return greatWorkInfo.GreatWorkObjectType;
 end
 
+
+-- get num of slots in a building
+function CityGetNumGreatWorkSlots(iCityX:number, iCityY:number, eBuilding:number)
+	--print("FUN CityGetNumGreatWorkSlots", iCityX, iCityY, eBuilding);
+	-- get city
+	local pCity:table = Cities.GetCityInPlot(iCityX, iCityY);
+	if pCity == nil then return 0; end
+	return pCity:GetBuildings():GetNumGreatWorkSlots(eBuilding);
+end
+
+-- get great work in slot and its type
+function CityGetGreatWorkInSlot(iCityX:number, iCityY:number, eBuilding:number, iSlotIndex:number)
+	--print("FUN CityGetGreatWorkInSlot", iCityX, iCityY, eBuilding, iSlotIndex);
+	-- get city
+	local pCity:table = Cities.GetCityInPlot(iCityX, iCityY);
+	if pCity == nil then return -1, -1; end
+	-- get GW info
+	local eGWIndex:number    = pCity:GetBuildings():GetGreatWorkInSlot(eBuilding, iSlotIndex);
+	local eGWSlotType:number = pCity:GetBuildings():GetGreatWorkSlotType(eBuilding, iSlotIndex);
+	return eGWIndex, eGWSlotType;
+end
+
+
+-- helper - check if great work has been created
+-- awfully complex, Lua support is minimal here
+-- there is no function that simply says if a GW was created or not - must review all GWs
+-- assumption here is that if the GW is created, then it has an index
+function GreatWorkGetPlayerWhoCreated(eGWType:number)
+	--print("FUN GreatWorkGetPlayerWhoCreated", eGWType, GameInfo.GreatWorks[eGWType].GreatWorkType);
+	local iGWIndex:number = 0;
+	while Game.GetGreatWorkPlayer(iGWIndex) ~= -1 do
+		if Game.GetGreatWorkTypeFromIndex(iGWIndex) == eGWType then return Game.GetGreatWorkPlayer(iGWIndex), iGWIndex; end
+		iGWIndex = iGWIndex + 1;
+	end
+	return -1;
+end
+
+
+-- find out at what turn a GP was recruited
+--Game	GetGreatPeople GetPastTimeline
+---> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
+function GreatPersonGetTurnRecruited(eIndividual:number)
+	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
+		if pastGP.Individual == eIndividual then return pastGP.TurnGranted; end
+	end
+	return Game.GetCurrentGameTurn();
+end
+
+-- find out where is the nearest place to activate a GP
+-- Unit:GetGreatPerson():GetActivationHighlightPlots()
+---> table of Plot Indices
+function GreatPersonGetNearestActivationPlotIndex(ePlayerID:number, iUnitID:number)
+	--print("FUN GreatPersonGetNearestActivationPlotIndex", ePlayerID, iUnitID);
+	local pUnit:table = Players[ePlayerID]:GetUnits():FindID(iUnitID);
+	if pUnit == nil then return -1; end
+	local iUnitX:number, iUnitY:number = pUnit:GetX(), pUnit:GetY();
+	--print("looking for neareast activation for unit in plot", iUnitX, iUnitY);
+	local iNearestIdx:number, iMinDist:number = -1, 9999;
+	for _,idx in ipairs(pUnit:GetGreatPerson():GetActivationHighlightPlots()) do
+		local pPlot:table = Map.GetPlotByIndex(idx);
+		local iDist:number = Map.GetPlotDistance(iUnitX, iUnitY, pPlot:GetX(), pPlot:GetY());
+		--print("plot", idx, pPlot:GetX(), pPlot:GetY(), "dist", iDist);
+		if iDist < iMinDist then iMinDist = iDist; iNearestIdx = idx; end
+	end
+	return iNearestIdx;
+end
+
+-- activate GP
+function GreatPersonActivate(ePlayerID:number, iUnitID:number)
+	--print("FUN GreatPersonActivate", ePlayerID, iUnitID);
+	local pUnit:table = Players[ePlayerID]:GetUnits():FindID(iUnitID);
+	if pUnit == nil then print("GreatPersonActivate ERROR: cannot retrieve unit"); return; end
+	UnitManager.RequestCommand(pUnit, GameInfo.UnitCommands.UNITCOMMAND_ACTIVATE_GREAT_PERSON.Hash);
+end
+
+
 -- wrapper - get number of researched techs
 -- accounts also for the tech currently in progress
 function PlayerGetNumTechsResearched(ePlayerID:number)
@@ -321,6 +397,13 @@ function Initialize()
 	RST.WorldCongressGetTurnsLeft    = WorldCongressGetTurnsLeft;
 	-- functions: City
 	RST.CityGetGreatWorkObjectType   = CityGetGreatWorkObjectType;
+	RST.CityGetNumGreatWorkSlots     = CityGetNumGreatWorkSlots;
+	RST.CityGetGreatWorkInSlot       = CityGetGreatWorkInSlot;
+	RST.GreatWorkGetPlayerWhoCreated = GreatWorkGetPlayerWhoCreated;
+	-- functions: Great Person
+	RST.GreatPersonGetTurnRecruited  = GreatPersonGetTurnRecruited;
+	RST.GreatPersonGetNearestActivationPlotIndex = GreatPersonGetNearestActivationPlotIndex;
+	RST.GreatPersonActivate          = GreatPersonActivate;
 	-- functions: Player
 	RST.PlayerConfigurationSetValue  = PlayerConfigurationSetValue;
 	RST.PlayerConfigurationGetValue  = PlayerConfigurationGetValue;

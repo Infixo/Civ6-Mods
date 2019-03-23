@@ -31,14 +31,14 @@ DELETE FROM UnitAiInfos WHERE UnitType = 'UNIT_GREAT_SCIENTIST' AND AiType = 'UN
 -- ships are registered in that way, too
 -- siege units like Catapult, Artillery are also Ranged
 
-INSERT INTO UnitAiInfos (UnitType, AiType)
+INSERT OR REPLACE INTO UnitAiInfos (UnitType, AiType)
 SELECT UnitType, 'UNITTYPE_RANGED'
 FROM Units
 WHERE Domain = 'DOMAIN_AIR';
 
 -- UNITTYPE_SIEGE - core - used in Simple City Attack Force, City Attack Force, City Defense and Aid Ally Attack Force
 
-INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
+INSERT OR REPLACE INTO UnitAiInfos (UnitType, AiType) VALUES
 ('UNIT_BATTERING_RAM', 'UNITTYPE_SIEGE'),
 ('UNIT_SIEGE_TOWER', 'UNITTYPE_SIEGE'),
 ('UNIT_BOMBER', 'UNITTYPE_SIEGE'),
@@ -48,12 +48,12 @@ INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
 -- 2019-03-16: They removed UNIT_SUPPLY_CONVOY in GS patch!
 --DELETE FROM UnitAiInfos WHERE AiType = 'UNITTYPE_SIEGE_ALL' AND UnitType = 'UNIT_SUPPLY_CONVOY';
 
-INSERT INTO UnitAiInfos (UnitType, AiType)
+INSERT OR REPLACE INTO UnitAiInfos (UnitType, AiType)
 SELECT 'UNIT_BOMBER', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
 FROM UnitAiTypes
 WHERE AiType = 'UNITTYPE_SIEGE_ALL';
 
-INSERT INTO UnitAiInfos (UnitType, AiType)
+INSERT OR REPLACE INTO UnitAiInfos (UnitType, AiType)
 SELECT 'UNIT_JET_BOMBER', 'UNITTYPE_SIEGE_ALL' -- iOS compatibility
 FROM UnitAiTypes
 WHERE AiType = 'UNITTYPE_SIEGE_ALL';
@@ -66,7 +66,7 @@ WHERE AiType = 'UNITTYPE_SIEGE_ALL';
 
 
 -- 2018-01-06: UNIT_WARRIOR_MONK is not in UnitAiInfos, so he is basically chilling around, doing nothing
-INSERT INTO UnitAiInfos (UnitType, AiType) VALUES
+INSERT OR REPLACE INTO UnitAiInfos (UnitType, AiType) VALUES
 --('UNIT_RANGER', 'UNITAI_COMBAT'), -- 2019-03-17 removed, AIs tend to build too many of them to perform attacks (no resources needed? because they are NOT cheap)
 ('UNIT_WARRIOR_MONK', 'UNITAI_EXPLORE'),
 ('UNIT_WARRIOR_MONK', 'UNITAI_COMBAT'),

@@ -1529,7 +1529,7 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iNumTurnsWC:number = RST.WorldCongressGetTurnsLeft(); -- num turns to the next world congress
 		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomaticFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomaticFavorPerTurn();
 		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomaticFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomaticFavorPerTurn();
-		print("progress us/them", iProgressUs, iProgressThem, "favor us/them", iFavorUs, iFavorThem);
+		if bLogDebug then print("progress us/them", iProgressUs, iProgressThem, "favor us/them", iFavorUs, iFavorThem); end
 		-- compare actual victory progress, however we are considered equal if difference is less than 15pp
 		if (iProgressThem - iProgressUs) > 15 then return true; end
 		-- otherwise, compare favor poll; to safely outvote the opponent, we need 20-50% more favor (favor => votes relation is not linear)
@@ -1691,6 +1691,7 @@ function ActiveStrategyCatching(ePlayerID:number, iThreshold:number)
 	--local pPlayer:table = Players[ePlayerID];
 	--if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end -- have faith in the engine
 	local data:table = tData[ePlayerID];
+	if data == nil or data.Data == nil then return false; end
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
@@ -1713,6 +1714,7 @@ function ActiveStrategyEnough(ePlayerID:number, iThreshold:number)
 	--local pPlayer:table = Players[ePlayerID];
 	--if not (pPlayer:IsAlive() and pPlayer:IsMajor() and pPlayer:GetCities():GetCapitalCity() ~= nil) then return false; end -- have faith in the engine
 	local data:table = tData[ePlayerID];
+	if data == nil or data.Data == nil then return false; end
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgMilStr == nil then return false; end -- not calculated yet
 	local iOurPower:number = RST.PlayerGetMilitaryStrength(ePlayerID);
@@ -1763,6 +1765,7 @@ GameEvents.ActiveStrategyAtWar.Add(ActiveStrategyAtWar);
 function ActiveStrategyMoreScience(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreScience", ePlayerID, iThreshold);
 	local data:table = tData[ePlayerID];
+	if data == nil or data.Data == nil then return false; end
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgTechs == nil then return false; end -- not calculated yet
 	if IsPlayerBuilding(ePlayerID, "DISTRICT_CAMPUS") or IsPlayerBuilding(ePlayerID, "DISTRICT_SEOWON") then
@@ -1787,6 +1790,7 @@ GameEvents.ActiveStrategyMoreScience.Add(ActiveStrategyMoreScience);
 function ActiveStrategyMoreCulture(ePlayerID:number, iThreshold:number)
 	--print(Game.GetCurrentGameTurn(), "FUN ActiveStrategyMoreCulture", ePlayerID, iThreshold);
 	local data:table = tData[ePlayerID];
+	if data == nil or data.Data == nil then return false; end
 	if data.Data.ElapsedTurns < GlobalParameters.RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS then return false; end -- don't compare yet
 	if data.Data.AvgCulture == nil then return false; end -- not calculated yet
 	if IsPlayerBuilding(ePlayerID, "DISTRICT_THEATER") or IsPlayerBuilding(ePlayerID, "DISTRICT_ACROPOLIS") then
@@ -1981,6 +1985,7 @@ GameEvents.ActiveStrategyThreat.Add(ActiveStrategyThreat);
 
 ------------------------------------------------------------------------------
 -- 2019-03-20 GameEvents not available in UI context
+--[[ 2019-03-23
 function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	if RST.ActiveStrategyMoreGreatWorkSlots == nil then
 		print(Game.GetCurrentGameTurn(), "Warning! ActiveStrategyMoreGreatWorkSlots not connected.", ePlayerID, iThreshold);
@@ -1989,17 +1994,19 @@ function ActiveStrategyMoreGreatWorkSlots(ePlayerID:number, iThreshold:number)
 	return RST.ActiveStrategyMoreGreatWorkSlots(ePlayerID, iThreshold);
 end
 GameEvents.ActiveStrategyMoreGreatWorkSlots.Add(ActiveStrategyMoreGreatWorkSlots);
+--]]
 
 
 ------------------------------------------------------------------------------
 -- MoveUnit from Gameplay context
+--[[
 function MoveUnitToPlot(ePlayerID:number, iUnitID:number, iX:number, iY:number)
 	--print("FUN MoveUnitToPlot", ePlayerID, iUnitID, iX, iY);
 	local pUnit:table = UnitManager.GetUnit(ePlayerID, iUnitID);
 	if pUnit ~= nil then UnitManager.MoveUnit(pUnit, iX, iY); end
 end
 RST.MoveUnitToPlot = MoveUnitToPlot;
-
+--]]
 
 
 -- ===========================================================================
