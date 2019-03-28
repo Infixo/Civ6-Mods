@@ -1,4 +1,4 @@
-print("Loading LoadScreen.lua from Better Loading Screen v1.4");
+print("Loading LoadScreen.lua from Better Loading Screen v1.5");
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.

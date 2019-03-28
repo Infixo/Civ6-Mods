@@ -2,7 +2,7 @@
 <Mod id="38C7FAFB-58EB-0C14-7377-92A810E9860B" version="1">
 	<Properties>
 		<Name>Better Loading Screen</Name>
-		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.4.</Description>
+		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.5.</Description>
 		<Teaser>Displays detailed information about uniques.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -10,24 +10,42 @@
 		<SubscriptionID>1579019534</SubscriptionID>
 	</Properties>
 	<FrontEndActions>
-		<ImportFiles id="BLS_ImportFiles">
+		<ImportFiles id="BLS_ImportFiles_FrontEnd">
 			<Properties>
-				<LoadOrder>2</LoadOrder>
+				<LoadOrder>1</LoadOrder>
 			</Properties>
-			<File>UI/FrontEnd/LoadScreen.lua</File>
-			<File>UI/FrontEnd/LoadScreen.xml</File>
+			<File>UI/LoadScreen.lua</File>
+			<File>UI/LoadScreen.xml</File>
 		</ImportFiles>
 		<!-- new font icons -->
 		<ImportFiles id="RMI_Imports">
 			<File>Icons/FontIconsRMI.dds</File>
 		</ImportFiles>
 		<UpdateIcons id="RMI_Icons">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
 			<File>Icons/FontIconsRMI.xml</File>
 		</UpdateIcons>
 	</FrontEndActions>
+	<InGameActions>
+		<ImportFiles id="BLS_ImportFiles_InGame">
+			<Properties>
+				<LoadOrder>1</LoadOrder>
+			</Properties>
+			<File>UI/LoadScreen.lua</File>
+			<File>UI/LoadScreen.xml</File>
+		</ImportFiles>
+		<!-- new font icons -->
+		<ImportFiles id="RMI_Imports">
+			<File>Icons/FontIconsRMI.dds</File>
+		</ImportFiles>
+		<UpdateIcons id="RMI_Icons">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
+			<File>Icons/FontIconsRMI.xml</File>
+		</UpdateIcons>
+	</InGameActions>
 	<Files>
-		<File>UI/FrontEnd/LoadScreen.lua</File>
-		<File>UI/FrontEnd/LoadScreen.xml</File>
+		<File>UI/LoadScreen.lua</File>
+		<File>UI/LoadScreen.xml</File>
 		<!-- new font icons -->
 		<File>Icons/FontIconsRMI.dds</File>
 		<File>Icons/FontIconsRMI.xml</File>
