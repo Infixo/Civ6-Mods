@@ -29,6 +29,9 @@ local COLOR_RED:string   = "[COLOR:127,0,0,255]";
 function ColorGREEN(s:string) return COLOR_GREEN..s..ENDCOLOR; end
 function ColorRED(s:string)   return COLOR_RED  ..s..ENDCOLOR; end
 
+local DIPLO_VISIBILITY_COMBAT_MODIFIER:number = 3; -- in XP1 it is via a modifier but I don't know how Base game handles this
+
+
 --	Round() from SupportFunctions.lua, fixed for negative numbers
 function Round(num:number, idp:number)
 	local mult:number = 10^(idp or 0);
@@ -156,6 +159,7 @@ function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 	local pPlayer:table = Players[playerID];
 	local pPlayerConfig:table = PlayerConfigurations[playerID];
 	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then return; end -- for auto-play
 	local isHuman:boolean = pPlayerConfig:IsHuman();
 	local bHasMet:boolean = Players[localPlayerID]:GetDiplomacy():HasMet(playerID);
 
@@ -311,8 +315,8 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 		local allianceType = localPlayerDiplomacy:GetAllianceType(playerID);
 		if allianceType ~= -1 then
 			local info:table = GameInfo.Alliances[allianceType];
-			table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..LL("LOC_DIPLOACTION_ALLIANCE_LEVEL", localPlayerDiplomacy:GetAllianceLevel(playerID)));
-			--table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..string.rep("[ICON_Alliance]", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			--table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..LL("LOC_DIPLOACTION_ALLIANCE_LEVEL", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..string.rep("[ICON_AllianceBlue]", localPlayerDiplomacy:GetAllianceLevel(playerID)));
 			local iTurns:number = localPlayerDiplomacy:GetAllianceTurnsUntilExpiration(playerID);
 			local sExpires:string = tAllianceIcons[info.AllianceType]..LL("LOC_DIPLOACTION_EXPIRES_IN_X_TURNS", iTurns);
 			sExpires = string.gsub(sExpires, "%(", "");
@@ -341,8 +345,16 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	end
 	
 	-- Access level  ICON_VisLimited, VisOpen, VisSecret, VisTopSecret
-	local iAccessLevel = localPlayerDiplomacy:GetVisibilityOn(playerID);
-	table.insert(tTT, string.format("%s %s [COLOR_Grey](%d)[ENDCOLOR]", LL("LOC_DIPLOMACY_INTEL_ACCESS_LEVEL"), LL(GameInfo.Visibilities[iAccessLevel].Name), iAccessLevel));
+	local iAccessLevel:number = localPlayerDiplomacy:GetVisibilityOn(playerID);
+	local sAccessLevel:string = string.format("%s %s [COLOR_Grey](%d)[ENDCOLOR]", LL("LOC_DIPLOMACY_INTEL_ACCESS_LEVEL"), LL(GameInfo.Visibilities[iAccessLevel].Name), iAccessLevel);
+	-- combat strength diff
+	local iAccessLevelTheirs:number = pPlayer:GetDiplomacy():GetVisibilityOn(localPlayerID);
+	if iAccessLevel ~= iAccessLevelTheirs then
+		local iCombatDiff:number = iAccessLevel - iAccessLevelTheirs;
+		if iCombatDiff > 0 then sAccessLevel = sAccessLevel..ColorGREEN(string.format("  %+d[ICON_Strength]", iCombatDiff * DIPLO_VISIBILITY_COMBAT_MODIFIER));
+		else                    sAccessLevel = sAccessLevel..ColorRED(  string.format("  %d[ICON_Strength]",  iCombatDiff * DIPLO_VISIBILITY_COMBAT_MODIFIER)); end
+	end
+	table.insert(tTT, sAccessLevel);
 	
 	-- Agendas
 	table.insert(tTT, "----------------------------------------"); -- 40 chars
@@ -494,31 +506,39 @@ function LeaderIcon:GetToolTipString(playerID:number)
 		 InGame: 1	Duration	30
 		--]]
 		local toResources = Players[toPlayer]:GetResources();
-		local tDealItems:table = {};
+		local tDealItemsS:table = {};
+		local tDealItemsL:table = {};
 		local bDealFlag:boolean = false;
 		for i, entry in ipairs(possibleResources) do
 			local infoRes:table = GameInfo.Resources[entry.ForType];
 			if infoRes ~= nil and entry.MaxAmount > 0 then
+				local pDealItems = tDealItemsL;
 				local sColor:string = COLOR_GREEN; -- default
-				if infoRes.ResourceClassType == "RESOURCECLASS_STRATEGIC" then sColor = COLOR_RED; end
+				if infoRes.ResourceClassType == "RESOURCECLASS_STRATEGIC" then sColor = COLOR_RED; pDealItems = tDealItemsS; end
 				--local sResDeal:string = string.format("%d [ICON_%s] %s", entry.MaxAmount, infoRes.ResourceType, LL(infoRes.Name));
 				if bIsGatheringStorm and infoRes.ResourceClassType == "RESOURCECLASS_STRATEGIC" then
 					-- new logic for strategic resources in GS - calculate how many we can sell
 					local iNumCanBuy:number = toResources:GetResourceStockpileCap(entry.ForType) - toResources:GetResourceAmount(entry.ForType);
 					if iNumCanBuy > 0 then
-						table.insert(tDealItems, string.format(sColor.."%d[ICON_%s][ENDCOLOR]", math.min(entry.MaxAmount, iNumCanBuy), infoRes.ResourceType)); -- no limit here, can sell all as they are accumulated per turn
+						table.insert(pDealItems, string.format(sColor.."%d[ICON_%s][ENDCOLOR]", math.min(entry.MaxAmount, iNumCanBuy), infoRes.ResourceType)); -- no limit here, can sell all as they are accumulated per turn
 					end
 				else
 					-- show only items that toPlayer doesn't have and fromPlayer has surplus (>1)
 					if not toResources:HasResource(infoRes.Index) and entry.MaxAmount > 1 then
-						table.insert(tDealItems, string.format(sColor.."%d[ICON_%s][ENDCOLOR]", entry.MaxAmount-1, infoRes.ResourceType)); --LL(infoRes.Name)
+						table.insert(pDealItems, string.format(sColor.."%d[ICON_%s][ENDCOLOR]", entry.MaxAmount-1, infoRes.ResourceType)); --LL(infoRes.Name)
 						bDealFlag = true;
 					end
 				end
 			end
 		end
-		if #tDealItems > 0 then table.insert(tTT, LL(sLine)..": "..table.concat(tDealItems, " ")); return bDealFlag;
-		else                    table.insert(tTT, LL(sLine)..": -");                               return bDealFlag; end
+		if #tDealItemsS + #tDealItemsL > 0 then 
+			table.insert(tTT, LL(sLine)..":");
+			if #tDealItemsS > 0 then table.insert(tTT, table.concat(tDealItemsS, " ")); end
+			if #tDealItemsL > 0 then table.insert(tTT, table.concat(tDealItemsL, " ")); end
+		else
+			table.insert(tTT, LL(sLine)..": -");
+		end
+		return bDealFlag;
 	end -- function
 	
 	-- Separator

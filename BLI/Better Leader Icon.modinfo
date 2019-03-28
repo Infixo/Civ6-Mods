@@ -2,11 +2,12 @@
 <Mod id="60A6CFAE-34CE-5D53-3640-15B122B9955B" version="1">
 	<Properties>
 		<Name>Better Leader Icon</Name>
-		<Description>Leader Icon with extended tooltips and relationship info.[NEWLINE][NEWLINE]Version 1.0.</Description>
+		<Description>Leader Icon with extended tooltips and relationship info.[NEWLINE][NEWLINE]Version 1.1.</Description>
 		<Teaser>Leader Icon with extended tooltips and relationship info.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
+		<SubscriptionID>1691629919</SubscriptionID>
 	</Properties>
 	<ActionCriteria>
 		<Criteria id="Expansion1">
@@ -77,6 +78,14 @@
 				<LuaReplace>XP2/DiplomacyActionView_Expansion2_BLI.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
+		<!-- new font icons -->
+		<ImportFiles id="RMI_Imports">
+			<File>Icons/FontIconsRMI.dds</File>
+		</ImportFiles>
+		<UpdateIcons id="RMI_Icons">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
+			<File>Icons/FontIconsRMI.xml</File>
+		</UpdateIcons>
 	</InGameActions>
 	<Files>
 		<File>BetterLeaderIcon_Database.sql</File>
@@ -89,5 +98,8 @@
 		<File>XP2/DiplomacyRibbon.xml</File>
 		<File>XP2/DiplomacyRibbon_Expansion2_BLI.lua</File>
 		<File>XP2/DiplomacyActionView_Expansion2_BLI.lua</File>
+		<!-- new font icons -->
+		<File>Icons/FontIconsRMI.dds</File>
+		<File>Icons/FontIconsRMI.xml</File>
 	</Files>
 </Mod>

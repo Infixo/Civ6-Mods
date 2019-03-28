@@ -7,14 +7,23 @@ print("Loading DiplomacyRibbon_BLI.lua from Better Leader Icon version "..Global
 
 include("DiplomacyRibbon");
 
+local BASE_ResetLeaders = ResetLeaders;
 local BASE_AddLeader = AddLeader;
+
+local tInstances:table = {};
+
+
+-- ===========================================================================
+--	Cleanup leaders
+-- ===========================================================================
+function ResetLeaders()
+	BASE_ResetLeaders();
+	tInstances = {};
+end
 
 -- ===========================================================================
 --	Add a leader (from right to left)
 -- ===========================================================================
-
-local tInstances:table = {};
-
 function AddLeader(iconName : string, playerID : number, isUniqueLeader: boolean)
 	local leaderIcon, instance = BASE_AddLeader(iconName, playerID, isUniqueLeader);
 	tInstances[playerID] = instance;
