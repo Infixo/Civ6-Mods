@@ -350,9 +350,14 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	-- combat strength diff
 	local iAccessLevelTheirs:number = pPlayer:GetDiplomacy():GetVisibilityOn(localPlayerID);
 	if iAccessLevel ~= iAccessLevelTheirs then
-		local iCombatDiff:number = iAccessLevel - iAccessLevelTheirs;
-		if iCombatDiff > 0 then sAccessLevel = sAccessLevel..ColorGREEN(string.format("  %+d[ICON_Strength]", iCombatDiff * DIPLO_VISIBILITY_COMBAT_MODIFIER));
-		else                    sAccessLevel = sAccessLevel..ColorRED(  string.format("  %d[ICON_Strength]",  iCombatDiff * DIPLO_VISIBILITY_COMBAT_MODIFIER)); end
+		local iCombatDiff:number = (iAccessLevel - iAccessLevelTheirs) * DIPLO_VISIBILITY_COMBAT_MODIFIER;
+		if iCombatDiff > 0 then 
+			if PlayerConfigurations[localPlayerID]:GetCivilizationTypeName() == "CIVILIZATION_MONGOLIA" then iCombatDiff = iCombatDiff * 2; end
+			sAccessLevel = sAccessLevel..ColorGREEN(string.format("  %+d[ICON_Strength]", iCombatDiff));
+		else                    
+			if PlayerConfigurations[playerID]:GetCivilizationTypeName() == "CIVILIZATION_MONGOLIA" then iCombatDiff = iCombatDiff * 2; end
+			sAccessLevel = sAccessLevel..ColorRED(  string.format("  %d[ICON_Strength]",  iCombatDiff));
+		end
 	end
 	table.insert(tTT, sAccessLevel);
 	
