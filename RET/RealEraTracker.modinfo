@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" version="1">
+	<Properties>
+		<Name>Real Era Tracker</Name>
+		<Teaser>Shows a list of historic moments not yet earned.</Teaser>
+		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.0.</Description>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>2.0</CompatibleVersions>
+		<!--<SubscriptionID>1312585482</SubscriptionID>-->
+	</Properties>
+	<ActionCriteria>
+		<Criteria id="Expansion1">
+			<GameCoreInUse>Expansion1</GameCoreInUse>
+		</Criteria>
+		<Criteria id="Expansion2">
+			<GameCoreInUse>Expansion2</GameCoreInUse>
+		</Criteria>
+	</ActionCriteria>
+	<InGameActions>
+		<UpdateDatabase id="RET_UpdateDatabase">
+			<File>RealEraTracker_Database.sql</File>
+		</UpdateDatabase>
+		<AddUserInterfaces id="RET_Main">
+			<Properties>
+				<Context>InGame</Context>
+			</Properties>
+			<File>RealEraTracker.xml</File>
+		</AddUserInterfaces>
+        <ImportFiles id="RET_ImportFiles">
+			<Properties>
+                <LoadOrder>1100</LoadOrder>
+            </Properties>		
+            <Items>
+				<File>ReportsList_RET.lua</File>
+            </Items>
+        </ImportFiles>
+		<ReplaceUIScript id="RET_ReplaceUI_ReportsList">
+			<Properties>
+                <LoadOrder>1100</LoadOrder>
+				<LuaContext>ReportsList</LuaContext>
+				<LuaReplace>ReportsList_RET.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<UpdateText id="RET_UpdateText">
+			<File>Text/RealEraTracker_Text.xml</File>
+		</UpdateText>
+		<!-- new font icons -->
+		<ImportFiles id="RMI_Imports">
+			<File>Icons/FontIconsRMI.dds</File>
+		</ImportFiles>
+		<UpdateIcons id="RMI_Icons">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
+			<File>Icons/FontIconsRMI.xml</File>
+		</UpdateIcons>
+    </InGameActions>
+    <Files>
+		<File>RealEraTracker_Database.sql</File>
+        <File>RealEraTracker.lua</File>
+        <File>RealEraTracker.xml</File>
+		<File>ReportsList_RET.lua</File>
+		<File>Text/RealEraTracker_Text.xml</File>
+		<!-- new font icons -->
+		<File>Icons/FontIconsRMI.dds</File>
+		<File>Icons/FontIconsRMI.xml</File>
+    </Files>
+</Mod>

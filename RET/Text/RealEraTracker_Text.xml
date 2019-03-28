@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterReportScreen_Text -->
+<!-- Author: Infixo -->
+<!-- 2019-03-28: Created -->
+<GameData>
+
+<BaseGameText>
+
+	<!-- Tab names -->
+	<Row Tag="LOC_RET_HUD_REPORTS_TAB_DEALS"> <!-- LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS -->
+		<Text>Deals</Text>
+	</Row>
+	<Row Tag="LOC_RET_HUD_REPORTS_TAB_UNITS"> <!-- LOC_PEDIA_UNITS_TITLE -->
+		<Text>Units</Text>
+	</Row>
+	<Row Tag="LOC_RET_HUD_REPORTS_TAB_POLICIES"> <!-- LOC_PEDIA_CONCEPTS_PAGE_GOVT_2_CHAPTER_CONTENT_TITLE -->
+		<Text>Policies</Text>
+	</Row>
+
+</BaseGameText>
+
+</GameData>

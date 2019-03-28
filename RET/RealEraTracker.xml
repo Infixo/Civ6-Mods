@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context>
+
+	<Container Style="FullScreenVignetteConsumer" />
+
+	<Box 		ID="Main"	Anchor="C,C"	Size="1015,711"		Color="11,27,40,255">
+		<Grid							Anchor="C,C"					Size="parent+9,parent+9"		Style="WindowFrameTopOnly" />
+		
+		<!-- Window Header -->
+		<Button		ID="CloseButton"	Anchor="R,T"	Offset="-3,-1"	Size="44,44"					Texture="Controls_CloseLarge" />
+		<Image							Anchor="C,T"					Size="parent,44"		Color="61,112,154,255"	Texture="Controls_Gradient_HalfRadial" />
+		<!--<GridButton		ID="CollapseAll"									Offset="48,13"	SizeToText="80,12"				Style="RoundedButton"		String="LOC_HUD_REPORTS_COLLAPSE_ALL"  Hidden="0" />-->
+		<Label                  Anchor="C,T" Offset="0,16"  Style="FontFlair20" String="{LOC_RET_WINDOW_TITLE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCapsType="EveryWord" SmallCaps="28" />
+		<Label ID="TotalsLabel" Anchor="R,T" Offset="70,16" Style="FontFlair20" String="$Totals$"                     FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCapsType="EveryWord" />
+		<Grid							Anchor="C,T"	Offset="0,44"	Size="parent-6,8"				Style="Divider3Grid" />
+		
+		<!-- Tab Header -->
+		<Container		ID="TabArea"	Anchor="C,T"	Offset="0,44"	Size="parent,42" >
+			<Image							Anchor="C,T"	Offset="0,4"	Size="parent-8,22"	Color="0,0,0,255"	Texture="Controls_GradientSmall" />
+			<Container	ID="TabContainer"					Offset="0,0"	Size="parent,34" />
+			<Grid							Anchor="C,B"	Offset="0,0"	Size="parent-6,8"	Style="Divider3Grid" />
+		</Container>
+		<Container						Anchor="C,T"	Offset="0,44"	Size="parent,36">
+			<SlideAnim	ID="TabAnim"		Begin="0,0" End="0,0" Cycle="Once" Speed="3.5" Function="OutQuint" Size="67,68">
+				<Image		ID="TabArrow"		Texture="Controls_TabSelectArrow" Size="42,11"/>
+			</SlideAnim>
+		</Container>
+
+		<!-- Contents -->
+		<ScrollPanel	ID="Scroll"												Offset="4,84"		Size="parent-8,parent-188"				Vertical="1" AutoScrollBar="1" >
+			<Stack			ID="Stack"					Anchor="L,T"	Offset="0,1"		StackPadding="4" />
+			<ScrollBar											Anchor="R,C"	Offset="2,0"		Size="11,parent" AnchorSide="I,I"					Style="ScrollVerticalBarAlt" />
+		</ScrollPanel>
+		<Image														Anchor="C,T"	Offset="0,83"		Size="parent-8,22"				Color="0,0,0,255" Texture="Controls_GradientSmall" />
+
+		<!-- Filters -->
+		<Container ID="BottomFilters" Anchor="C,B" Offset="0,0" Size="parent-6,50">
+			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
+			<Image Anchor="C,B" Offset="0,2" Size="parent,parent" Texture="Controls_Gradient" Color="255,255,255,32">
+				<Label Anchor="L,T" Offset="10,10" Style="FontFlair20" String="LOC_ERA_PROGRESS_ERA_SCORE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
+				<GridButton ID="EraScore1Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="110,10" Size="50,26" String="1" Hidden="0"/>
+				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="160,10" Size="50,26" String="2" Hidden="0"/>
+				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="210,10" Size="50,26" String="3" Hidden="0"/>
+				<GridButton ID="EraScore4Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="260,10" Size="50,26" String="4+" Hidden="0"/>
+				<GridButton ID="HideNotActiveCheckbox"    Style="CheckBoxControl" Anchor="C,B" Offset="-170,2" Size="200,26" String="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE" Hidden="0"/>
+				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="C,B" Offset="170,2" Size="200,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE" Hidden="0"/>
+			</Image>
+		</Container>
+		
+	</Box>
+
+
+	<!-- Tab Instance -->
+	<Instance Name="TabInstance">
+		<GridButton		ID="Button"						Size="50,34" Style="TabButton" FontSize="14" TextOffset="0,2">
+			<AlphaAnim		ID="Selection"	Offset="-2,0"	Size="parent+3,parent" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton										Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
+			</AlphaAnim>
+		</GridButton>
+	</Instance>
+
+	<!-- Non-Collapsable Rows -->
+	<Instance					Name="SimpleInstance">
+		<Stack					ID="Top"	StackGrowth="Down" />
+	</Instance>
+
+	<!-- Collapsable Row(s) area -->
+	<Instance						Name="GroupInstance">
+		<Container				ID="Top"																					Size="1123,10"	AutoSize="V">
+			<GridButton			ID="RowHeaderButton"								Offset="0,0"	Size="parent,30"		Style="RowButton"		String="$RowHeaderButton" >
+				<Label ID="RowHeaderLabel" Anchor="R,C" Offset="50,0" Style="RowButton" String="$RowHeaderString$" Hidden="1" />
+			</GridButton>
+			<Image					ID="RowExpandCheck"		Anchor="R,T"	Offset="5,5"	Size="22,22"				Texture="Controls_ExpandButton" />
+			<ScrollPanel		ID="CollapseScroll"									Offset="0,31"	Size="parent,20"		StackGrowth="Bottom" FullClip="1" >
+				<SlideAnim		ID="CollapseAnim"			Start="0,0"	EndOffset="0,0" Speed="4" Cycle="Once" Stopped="1">
+					<Stack			ID="ContentStack"										Offset="0,0"	StackGrowth="Bottom" />
+				</SlideAnim>
+			</ScrollPanel>
+			<!-- Resources specific, hidden for other uses -->
+			<Grid ID="AmenitiesContainer" Style="SubContainerSmall" Size="48,24" Anchor="L,T" Offset="200,4" AutoSizePadding="3,0" Hidden="1">
+				<Label ID="Amenities" Anchor="C,C" Style="ReportTotalText" String="$[ICON_Amenities] X Cities$"/>
+			</Grid>
+		</Container>
+	</Instance>
+
+	
+
+
+	<!-- CITY STATUS -->
+
+	<Instance					Name="CityStatusHeaderInstance">
+		<Container			ID="Top"														Offset="8,0" Size="1123,22">
+			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack	StackGrowth="Right" >
+				<Box																													Size="2,parent"	Color="46,70,95,255" />
+				<!-- Infixo: in R&F status is removed, let's use in both versions for more -->
+				<Container																										Size="55,parent">
+					<GridButton		ID="CityStatusButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_STATUS" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="24,parent">
+					<GridButton		ID="CityReligionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Religion]" ToolTip="LOC_HUD_CITY_RELIGION" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="180,parent">
+					<GridButton		ID="CityNameButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<!-- VANILLA
+				<Container																										Size="30,parent">
+					<GridButton		ID="CityGovernorButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_REPORTS_GOVERNOR">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_Governor]" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="80,parent">
+					<GridButton		ID="CityLoyaltyButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_REPORTS_LOYALTY" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				-->
+				<Container																										Size="80,parent">
+					<GridButton		ID="CityPopulationButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_POPULATION" />
+					</GridButton>
+				</Container>
+				<!-- Infixo: in R&F housing is shown together with population
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="80,parent">
+					<GridButton		ID="CityHousingButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_HOUSING" />
+					</GridButton>
+				</Container>
+				-->
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="70,parent">
+					<GridButton		ID="CityGrowthButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_GROWTH" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="60,parent">
+					<GridButton		ID="CityAmenitiesButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_AMENITIES" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="85,parent">
+					<GridButton		ID="CityHappinessButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_BRS_HEADER_HAPPINESS" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<!-- merged with damage
+				<Container																										Size="100,parent">
+					<GridButton		ID="CityWarButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_WAR_WEARINESS" />
+					</GridButton>
+				</Container>
+				-->
+				<Container																										Size="58,parent">
+					<GridButton		ID="CityStrengthButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_STRENGTH" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="53,parent">
+					<GridButton		ID="CityDamageButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_DAMAGE" ToolTip="{LOC_HUD_REPORTS_HEADER_DAMAGE} / {LOC_HUD_REPORTS_HEADER_WAR_WEARINESS}" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<GridButton		ID="CityTradingPostButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_TradingPost]" ToolTip="LOC_TRADE_OVERVIEW_TOOLTIP_TRADE_POST_ESTABLISHED" /> <!-- LOC_HUD_CITY_TRADING_POSTS -->
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<GridButton		ID="CityTradeRoutesButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_TradeRoute]" ToolTip="LOC_TOP_PANEL_TRADE_ROUTES" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="265,parent">
+					<GridButton		ID="CityDistrictsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_DISTRICTS" />
+					</GridButton>
+				</Container>
+				<!--<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />-->
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance					Name="CityStatusEntryInstance">
+		<Container			ID="Top"														Offset="8,0" Size="1123,28">
+			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack	StackGrowth="Right" >
+				<Box																													Size="2,parent"	Color="46,70,95,255" />
+				<!-- Infixo: in R&F status is removed, let's use in both versions for more -->
+				<Container																										Size="55,parent">
+					<Label				ID="Status"	Offset="0,5"																	Style="ReportValueText"	String="$Status$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container 																										Size="24,parent">
+					<Image ID="ReligionIcon" Anchor="C,C" Size="22,22" Texture="Religions22"/>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="180,parent">
+					<GridButton ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_BRS_TOOLTIP_GOTOCITY" >
+						<Label ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<!-- VANILLA
+				<Container																										Size="30,parent">
+					<Label				ID="Governor"	Offset="0,3"																Style="ReportValueText"	String="$Housing$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="80,parent">
+					<Label				ID="Loyalty"													Offset="-2,0"	Style="ReportValueText"	String="$Status$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				-->
+				<Container																										Size="80,parent">
+					<Label				ID="Population"																Style="ReportValueText"	String="$Population$" />
+				</Container>
+				<!-- Infixo: in R&F housing is shown together with population
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="80,parent">
+					<Label				ID="Housing"																	Style="ReportValueText"	String="$Housing$" />
+				</Container>
+				-->
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="70,parent">
+					<Label				ID="GrowthRateStatus"													Style="ReportValueText"	String="$GrowthRateStatus$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="60,parent">
+					<Label				ID="Amenities"																Style="ReportValueText"	String="$Amenities$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="85,parent">
+					<Label				ID="CitizenHappiness"													Style="ReportValueText"	String="$CitizenHappiness$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<!-- merged with damage
+				<Container																										Size="100,parent">
+					<Label				ID="WarWeariness"															Style="ReportValueText"	String="$WarWeariness$" />
+				</Container>
+				-->
+				<Container																										Size="58,parent">
+					<Label				ID="Strength"																	Style="ReportValueText"	String="$Strength$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="53,parent">
+					<Label				ID="Damage"																		Style="ReportValueText"	String="$Damage$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<Label				ID="TradingPost"																	Style="ReportValueText"	String="[ICON_TradingPost]" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="25,parent">
+					<Label				ID="TradeRoutes"																	Style="ReportValueText"	String="$0$" />
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container																										Size="265,parent">
+					<Label				ID="Districts" Offset="2,3"														Style="ReportValueText"	String="$Districts$" />
+				</Container>
+				<!--<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,128" />-->
+			</Stack>
+		</Container>
+	</Instance>
+
+	
+
+
+	<!-- MOMENTS -->
+
+	<Instance					Name="CityStatus2HeaderInstance">
+		<Container			ID="Top"														Offset="8,0" Size="1123,22">
+			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack	StackGrowth="Right" >
+				<Box			Size="2,parent"	Color="46,70,95,255" />
+				<Container		Size="50,parent">
+					<GridButton		ID="GroupButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_UNITNAME_SUFFIX_STRIKE_GROUP" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="EraScoreButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_CATEGORY_ERA_SCORE_NAME" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="DescriptionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_DESCRIPTION" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="ObjectButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_APPLIES_TO" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="StatusButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_STATUS" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="TurnButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_TURN" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="CountButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_RET_COUNT" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="PlayerButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CIVILIZATION" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="ExtraButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_GAMESUMMARY_CATEGORY_EXTRA" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="EraMinButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="{LOC_ERA_NAME}[ICON_GoingTo]" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="50,parent">
+					<GridButton		ID="EraMaxButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="[ICON_GoingTo]{LOC_ERA_NAME}" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,255" />
+			</Stack>
+		</Container>
+	</Instance>
+
+	<!-- Columns: name, object, era score, status, count, era min, era max, civilization -->
+	<Instance Name="MomentEntryInstance">
+		<Container	ID="Top"									Offset="8,0" Size="1015,28">
+			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack	StackGrowth="Right" >
+				<Box									Size="2,parent"	Color="46,70,95,255" />
+				<Container	Size="50,parent">
+					<Label		ID="Group"	Style="ReportValueText"		String="$Group$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="EraScore"	Style="ReportValueText"		String="$Score$" />
+				</Container>
+				<Box 									Size="2,parent" Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Description" Style="ReportValueText"		String="$Description$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Object"		Style="ReportValueText"		String="$Object$" />
+				</Container>
+				<Box 									Size="2,parent" Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Status"		Style="ReportValueText"		String="$Status$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Turn"		Style="ReportValueText"		String="$Turn$" />
+				</Container>
+				<Box 									Size="2,parent" Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Count"		Style="ReportValueText"		String="$Count$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Player"		Style="ReportValueText"		String="$Player$" />
+				</Container>
+				<Box							Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="Extra"		Style="ReportValueText"		String="$Extra$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="EraMin"		Style="ReportValueText"		String="$EraMin$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="50,parent">
+					<Label		ID="EraMax"		Style="ReportValueText"		String="$EraMax$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,255" />
+			</Stack>
+		</Container>
+	</Instance>
+
+</Context>
