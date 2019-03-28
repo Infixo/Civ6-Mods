@@ -2067,7 +2067,13 @@
 						<Label													Style="ReportHeaderSmallText"		String="LOC_ROUTE_RAILROAD_NAME" />
 					</GridButton>
 				</Container>
-				<Box																						Offset="1,0"	Size="2,parent"	Color="46,70,95,255" />
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="60,parent">
+					<GridButton		ID="CityCanalsButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_DISTRICT_CANAL_NAME" />
+					</GridButton>
+				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,255" />
 			</Stack>
 		</Container>
 	</Instance>
@@ -2125,6 +2131,10 @@
 				<Box											Size="2,parent"	Color="46,70,95,128" />
 				<Container		Size="50,parent">
 					<Label			ID="Railroads"				Style="ReportValueText"		String="$Railroads$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="60,parent">
+					<Label			ID="Canals"	Offset="0,3"	Style="ReportValueText"		String="$Canals$" />
 				</Container>
 				<Box											Size="2,parent"	Color="46,70,95,255" />
 			</Stack>

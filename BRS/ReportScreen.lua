@@ -23,6 +23,7 @@ print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 -- configuration options
 local bOptionModifiers:boolean = ( GlobalParameters.BRS_OPTION_MODIFIERS == 1 );
 
+
 -- ===========================================================================
 --	DEBUG
 --	Toggle these for temporary debugging help.
@@ -35,6 +36,8 @@ local m_debugNumResourcesLuxuries	:number = 0;			-- (0) number of extra luxuries
 -- ===========================================================================
 --	CONSTANTS
 -- ===========================================================================
+local LL = Locale.Lookup;
+local ENDCOLOR									:string = "[ENDCOLOR]";
 local DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y		:number = 6;
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
@@ -1694,6 +1697,12 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	
 	if #data.PowerProducedTT == 1 then data.PowerProducedTT = "";
 	else                               data.PowerProducedTT = table.concat(data.PowerProducedTT, "[NEWLINE]"); end
+	
+	-- Canals
+	data.NumCanals = 0;
+	for _,district in ipairs(data.BuildingsAndDistricts) do
+		if district.isBuilt and district.Type == "DISTRICT_CANAL" then data.NumCanals = data.NumCanals + 1; end
+	end
 end
 
 -- ===========================================================================
@@ -2685,12 +2694,13 @@ end
 
 function GetFontIconForDistrict(sDistrictType:string)
 	-- exceptions first
-	if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLYSITE]";      end
-	if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
+	--if sDistrictType == "DISTRICT_HOLY_SITE"                   then return "[ICON_DISTRICT_HOLYSITE]";      end
+	--if sDistrictType == "DISTRICT_ENTERTAINMENT_COMPLEX"       then return "[ICON_DISTRICT_ENTERTAINMENT]"; end
 	if sDistrictType == "DISTRICT_WATER_ENTERTAINMENT_COMPLEX" then return "[ICON_DISTRICT_ENTERTAINMENT]"; end -- no need to check for mutuals with that
-	if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
-	if sDistrictType == "DISTRICT_CANAL"                       then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a canal
-	if sDistrictType == "DISTRICT_DAM"                         then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a dam
+	--if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
+	--if sDistrictType == "DISTRICT_CANAL"                       then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a canal
+	--if sDistrictType == "DISTRICT_DAM"                         then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a dam
+	--if sDistrictType == "DISTRICT_GOVERNMENT"                  then return "[ICON_DISTRICT_GOVPLAZA]";      end
 	-- default icon last
 	return "[ICON_"..sDistrictType.."]";
 end
@@ -2763,19 +2773,19 @@ function city_fields( kCityData, pCityInstance )
 	local sStatusText:string = "";
 	local tStatusToolTip:table = {};
 	if kCityData.Population > kCityData.Housing then
-		sStatusText = sStatusText.."[ICON_HousingInsufficient]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_CITY_BANNER_HOUSING_INSUFFICIENT"));
+		sStatusText = sStatusText.."[ICON_HousingInsufficient]"; table.insert(tStatusToolTip, ColorRed(LL("LOC_CITY_BANNER_HOUSING_INSUFFICIENT")));
 	end -- insufficient housing   
 	if kCityData.AmenitiesNum < kCityData.AmenitiesRequiredNum then
-		sStatusText = sStatusText.."[ICON_AmenitiesInsufficient]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_CITY_BANNER_AMENITIES_INSUFFICIENT"));
+		sStatusText = sStatusText.."[ICON_AmenitiesInsufficient]"; table.insert(tStatusToolTip, ColorRed(LL("LOC_CITY_BANNER_AMENITIES_INSUFFICIENT")));
 	end -- insufficient amenities
 	if kCityData.IsUnderSiege then
-		sStatusText = sStatusText.."[ICON_UnderSiege]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_HUD_REPORTS_STATUS_UNDER_SEIGE"));
+		sStatusText = sStatusText.."[ICON_UnderSiege]"; table.insert(tStatusToolTip, ColorRed(LL("LOC_HUD_REPORTS_STATUS_UNDER_SEIGE")));
 	end -- under siege
 	if kCityData.Occupied then
-		sStatusText = sStatusText.."[ICON_Occupied]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_HUD_CITY_GROWTH_OCCUPIED"));
+		sStatusText = sStatusText.."[ICON_Occupied]"; table.insert(tStatusToolTip, ColorRed(LL("LOC_HUD_CITY_GROWTH_OCCUPIED")));
 	end -- occupied
 	if HasCityDistrict(kCityData, "DISTRICT_GOVERNMENT") then
-		sStatusText = sStatusText.."[ICON_DISTRICT_GOVERNMENT]"; table.insert(tStatusToolTip, Locale.Lookup("LOC_DISTRICT_GOVERNMENT_NAME"));
+		sStatusText = sStatusText.."[ICON_DISTRICT_GOVERNMENT]"; table.insert(tStatusToolTip, "[COLOR:111,15,143,255]"..Locale.Lookup("LOC_DISTRICT_GOVERNMENT_NAME")..ENDCOLOR); -- ICON_DISTRICT_GOVERNMENT
 	end
 	local bHasWonder:boolean = false;
 	for _,wonder in ipairs(kCityData.Wonders) do
@@ -4388,6 +4398,8 @@ function city2_fields( kCityData, pCityInstance )
 	pCityInstance.Railroads:SetText(tostring(kCityData.NumRailroads));
 	pCityInstance.Railroads:SetToolTipString(kCityData.NumRailroadsTT);
 	
+	-- Number of Canal districts [icons]
+	pCityInstance.Canals:SetText(string.rep("[ICON_DISTRICT_CANAL]", kCityData.NumCanals));
 end
 
 function sort_cities2( type, instance )
