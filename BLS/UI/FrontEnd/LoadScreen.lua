@@ -1,4 +1,4 @@
-print("Loading LoadScreen.lua from Better Load Screen v1.1");
+print("Loading LoadScreen.lua from Better Loading Screen v1.4");
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.
@@ -399,13 +399,13 @@ end
 function GetUnlockCivicDesc(sCivic:string)
 	local civicInfo:table = GameInfo.Civics[sCivic];
 	local eraInfo:table = GameInfo.Eras[civicInfo.EraType];
-	return string.format("[ICON_GoingTo] %s (%s)", Locale.Lookup(civicInfo.Name), Locale.Lookup(eraInfo.Name));
+	return string.format("[ICON_GoingToPink] %s (%s)", Locale.Lookup(civicInfo.Name), Locale.Lookup(eraInfo.Name));
 end
 
 function GetUnlockTechDesc(sTech:string)
 	local techInfo:table = GameInfo.Technologies[sTech];
 	local eraInfo:table = GameInfo.Eras[techInfo.EraType];
-	return string.format("[ICON_GoingTo] %s (%s)", Locale.Lookup(techInfo.Name), Locale.Lookup(eraInfo.Name));
+	return string.format("[ICON_GoingToBlue] %s (%s)", Locale.Lookup(techInfo.Name), Locale.Lookup(eraInfo.Name));
 end
 
 
@@ -482,4 +482,4 @@ function Initialize()
 end
 Initialize();
 
-print("OK loaded LoadScreen.lua from Better Load Screen v1.1");
+print("OK loaded LoadScreen.lua from Better Loading Screen");

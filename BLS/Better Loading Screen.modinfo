@@ -2,11 +2,12 @@
 <Mod id="38C7FAFB-58EB-0C14-7377-92A810E9860B" version="1">
 	<Properties>
 		<Name>Better Loading Screen</Name>
-		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.3.</Description>
+		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.4.</Description>
 		<Teaser>Displays detailed information about uniques.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
+		<SubscriptionID>1579019534</SubscriptionID>
 	</Properties>
 	<FrontEndActions>
 		<ImportFiles id="BLS_ImportFiles">
@@ -16,9 +17,19 @@
 			<File>UI/FrontEnd/LoadScreen.lua</File>
 			<File>UI/FrontEnd/LoadScreen.xml</File>
 		</ImportFiles>
+		<!-- new font icons -->
+		<ImportFiles id="RMI_Imports">
+			<File>Icons/FontIconsRMI.dds</File>
+		</ImportFiles>
+		<UpdateIcons id="RMI_Icons">
+			<File>Icons/FontIconsRMI.xml</File>
+		</UpdateIcons>
 	</FrontEndActions>
 	<Files>
 		<File>UI/FrontEnd/LoadScreen.lua</File>
 		<File>UI/FrontEnd/LoadScreen.xml</File>
+		<!-- new font icons -->
+		<File>Icons/FontIconsRMI.dds</File>
+		<File>Icons/FontIconsRMI.xml</File>
 	</Files>
 </Mod>

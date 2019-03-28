@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+-- Real Mods Icons
+-- Author: Infixo
+-- 2019-03-24: Created
+-->
+
+<GameInfo>
+	<IconTextureAtlases>
+		<!-- Font Icons require special Baseline attribute (so keep separate) -->
+		<Row Name="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Baseline="4" IconSize="22" IconsPerRow="6" IconsPerColumn="3" Filename="FontIconsRMI.dds"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+		<!-- vanilla -->
+		<Row Name="DISTRICT_HOLY_SITE"             Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="180"/>
+		<Row Name="DISTRICT_ENTERTAINMENT_COMPLEX" Atlas="ICON_ATLAS_FONT_ICON_BASELINE_4" Index="188"/>
+		<!-- Row 0 -->
+		<Row Name="DISTRICT_AERODROME"  Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="0"/>
+		<Row Name="DISTRICT_DAM"        Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="1"/>
+		<Row Name="DISTRICT_CANAL"      Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="2"/>
+		<Row Name="DISTRICT_GOVPLAZA"   Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="3"/> <!-- cannot use GOVERNMENT -->
+		<!-- Row 1 -->
+		<Row Name="PressureDownGreen" Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="6"/>
+		<Row Name="PressureUpRed"     Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="7"/>
+		<Row Name="GoingToRed"        Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="8"/>
+		<Row Name="GoingToBlue"       Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="9"/>
+		<Row Name="GoingToPink"       Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="10"/>
+		<!-- Row 2 -->
+		<Row Name="AllianceBlue"      Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="12"/>
+		<Row Name="Favor22"           Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="13"/>
+		<Row Name="VoteUp"            Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="14"/>
+		<Row Name="VoteDown"          Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="15"/>
+	</IconDefinitions>
+</GameInfo>
