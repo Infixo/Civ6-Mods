@@ -6,15 +6,26 @@
 
 <BaseGameText>
 
-	<!-- Tab names -->
-	<Row Tag="LOC_RET_HUD_REPORTS_TAB_DEALS"> <!-- LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS -->
-		<Text>Deals</Text>
+	<Row Tag="LOC_RET_WINDOW_TITLE">
+		<Text>Real Era Tracker</Text>
 	</Row>
-	<Row Tag="LOC_RET_HUD_REPORTS_TAB_UNITS"> <!-- LOC_PEDIA_UNITS_TITLE -->
-		<Text>Units</Text>
+	<Row Tag="LOC_RET_MOMENTS">
+		<Text>Era Tracker</Text>
 	</Row>
-	<Row Tag="LOC_RET_HUD_REPORTS_TAB_POLICIES"> <!-- LOC_PEDIA_CONCEPTS_PAGE_GOVT_2_CHAPTER_CONTENT_TITLE -->
-		<Text>Policies</Text>
+	<Row Tag="LOC_RET_WORLD">
+		<Text>World</Text>
+	</Row>
+	<Row Tag="LOC_RET_REPEATABLE">
+		<Text>Repeatable</Text>
+	</Row>
+	<Row Tag="LOC_RET_COUNT">
+		<Text>Count</Text>
+	</Row>
+	<Row Tag="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE">
+		<Text>Hide not active (already triggered)</Text>
+	</Row>
+	<Row Tag="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE">
+		<Text>Hide from different eras and currently not available</Text>
 	</Row>
 
 </BaseGameText>

@@ -4,10 +4,10 @@ print("Loading RealEraTracker.lua from Real Era Tracker version "..GlobalParamet
 --	Author: Infixo
 --  2019-03-28: Created
 -- ===========================================================================
---include("CitySupport");
---include("Civ6Common");
+include("CitySupport");
+include("Civ6Common");
 include("InstanceManager");
---include("SupportFunctions");
+include("SupportFunctions");
 include("TabSupport");
 
 -- exposing functions and variables
@@ -50,20 +50,14 @@ Moment data
 		sometimes DataType gives nil - probably when no extra data is actually recorded but the record still exists, weird
 --]]
 
--- ===========================================================================
---	DEBUG
---	Toggle these for temporary debugging help.
--- ===========================================================================
-local m_debugNumResourcesStrategic	:number = 0;			-- (0) number of extra strategics to show for screen testing.
-local m_debugNumBonuses				:number = 0;			-- (0) number of extra bonuses to show for screen testing.
-local m_debugNumResourcesLuxuries	:number = 0;			-- (0) number of extra luxuries to show for screen testing.
-
 
 -- ===========================================================================
 --	CONSTANTS
 -- ===========================================================================
 local LL = Locale.Lookup;
-local ENDCOLOR									:string = "[ENDCOLOR]";
+local ENDCOLOR:string = "[ENDCOLOR]";
+
+
 local DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y		:number = 6;
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
@@ -219,25 +213,26 @@ end
 --	Single entry point for display
 -- ===========================================================================
 function Open( tabToOpen:number )
-	--print("FUN Open()", tabToOpen);
+	print("FUN Open()", tabToOpen);
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
 	UI.PlaySound("UI_Screen_Open");
-	LuaEvents.ReportScreen_Opened();
+	--LuaEvents.ReportScreen_Opened();
 
 	-- BRS !! new line to add new variables 
-	Timer2Start()
-	m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
-	UpdatePolicyData();
-	UpdateMinorData();
-	Timer2Tick("GetData")
+	--Timer2Start()
+	--m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
+	--UpdatePolicyData();
+	--UpdateMinorData();
+	--Timer2Tick("GetData")
 	
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
 	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
 	m_tabs.SelectTab( m_kCurrentTab );
 	
 	-- show number of cities in the title bar
+	--[[
 	local tTT:table = {};
 	local iWon:number, iDis:number, iBul:number, iPop:number = 0, 0, 0, 0;
 	for _,city in pairs(m_kCityData) do
@@ -262,6 +257,7 @@ function Open( tabToOpen:number )
 	table.insert(tTT, Locale.Lookup("LOC_MILITARY")..": "..tostring(iMil));
 	table.insert(tTT, Locale.Lookup("LOC_FORMATION_CLASS_CIVILIAN_NAME")..": "..tostring(iCiv));
 	Controls.TotalsLabel:SetToolTipString( table.concat(tTT, "[NEWLINE]") );
+	--]]
 end
 
 
@@ -696,39 +692,6 @@ function GetData()
 		data.IncomingRoutes = pCity:GetTrade():GetIncomingRoutes();
 
 		-- Add resources
-		if m_debugNumResourcesStrategic > 0 or m_debugNumResourcesLuxuries > 0 or m_debugNumBonuses > 0 then
-			for debugRes=1,m_debugNumResourcesStrategic,1 do
-				kResources[debugRes] = {
-					CityList	= { CityName="Kangaroo", Amount=(10+debugRes) },
-					Icon		= "[ICON_"..GameInfo.Resources[debugRes].ResourceType.."]",
-					IsStrategic	= true,
-					IsLuxury	= false,
-					IsBonus		= false,
-					Total		= 88
-				};
-			end
-			for debugRes=1,m_debugNumResourcesLuxuries,1 do
-				kResources[debugRes] = {
-					CityList	= { CityName="Kangaroo", Amount=(10+debugRes) },
-					Icon		= "[ICON_"..GameInfo.Resources[debugRes].ResourceType.."]",
-					IsStrategic	= false,
-					IsLuxury	= true,
-					IsBonus		= false,
-					Total		= 88
-				};
-			end
-			for debugRes=1,m_debugNumBonuses,1 do
-				kResources[debugRes] = {
-					CityList	= { CityName="Kangaroo", Amount=(10+debugRes) },
-					Icon		= "[ICON_"..GameInfo.Resources[debugRes].ResourceType.."]",
-					IsStrategic	= false,
-					IsLuxury	= false,
-					IsBonus		= true,
-					Total		= 88
-				};
-			end
-		end
-
 		for eResourceType,amount in pairs(data.Resources) do
 			AddResourceData(kResources, eResourceType, cityName, "LOC_HUD_REPORTS_TRADE_OWNED", amount);
 		end
@@ -1797,7 +1760,7 @@ function ResetTabForNewPageContent()
 	m_simpleIM:ResetInstances();
 	m_groupIM:ResetInstances();
 	m_isCollapsing = true;
-	Controls.CollapseAll:LocalizeAndSetText("LOC_HUD_REPORTS_COLLAPSE_ALL");
+	--Controls.CollapseAll:LocalizeAndSetText("LOC_HUD_REPORTS_COLLAPSE_ALL");
 	Controls.Scroll:SetScrollValue( 0 );	
 end
 
@@ -4343,6 +4306,122 @@ function ViewMinorPage()
 end
 
 
+-- ===========================================================================
+-- MOMENTS PAGE
+--.ID	310
+--.Type	-77408354  => Hash for GameInfo.Moments[]
+--.InstanceDescription	The discovery of Apprenticeship by Korea sets the world stage for future discoveries in the Medieval Era!
+--.ActingPlayer	0
+--.EraScore	2
+--.GameEra	1
+--.Turn	101
+--.HasEverBeenCommemorated	false => seems to be false always
+--.ActionPlotX	-9999
+--.ActionPlotY	-9999
+--.ExtraData	table: 000000006221F3C0 => (ipairs) table of { .DataType and .DataValue }
+-- ===========================================================================
+
+-- fills a single instance with the data of the moment
+function ShowMoment(pMoment:table, pInstance:table)
+	print("FUN ShowMoment", pMoment.ID, pMoment.EraScore, pMoment.ActingPlayer, pMoment.Turn);
+	
+	--if pMoment.EraScore < 1 then return; end
+	
+	-- test data
+	local iGroup = math.random(1,3);
+	if     iGroup == 1 then pInstance.Group:SetText("[ICON_CapitalLarge]"); pInstance.Group:SetOffsetY(4);
+	elseif iGroup == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(1);
+	else                    pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(2); end
+	--pInstance.EraScore:SetText(string.rep("[ICON_Bolt]", pMoment.EraScore));
+	pInstance.EraScore:SetText("[COLOR_White]"..tostring(pMoment.EraScore)..ENDCOLOR);
+	TruncateStringWithTooltip(pInstance.Description, 245, pMoment.InstanceDescription);
+	pInstance.Object:SetText(string.sub(string.gsub(GameInfo.Moments[pMoment.Type].MomentType, "MOMENT_", ""),1,10));
+	pInstance.Status:SetText(pMoment.HasEverBeenCommemorated);
+	pInstance.Turn:SetText(pMoment.Turn);
+	pInstance.Count:SetText(tostring(-1));
+	pInstance.Player:SetText(LL(PlayerConfigurations[pMoment.ActingPlayer]:GetCivilizationShortDescription()));
+	pInstance.Extra:SetText(tostring(pMoment.ID));
+	pInstance.EraMin:SetText(LL(GameInfo.Eras[pMoment.GameEra].Name));
+	pInstance.EraMax:SetText("-");
+end
+
+-- sort function
+function MomentsSortFunction(bDesc:boolean, sType:string, t, a, b)
+end
+
+-- shows all moments, sorted
+function SortAndShowMoments(sType:string, pInstance:table)
+end
+
+-- main function
+function ViewMomentsPage(eGroup:number)
+	print("FUN ViewMomentsPage", eGroup);
+	if eGroup == nil then eGroup = m_kCurrentTab; end
+	-- Remember this tab when report is next opened
+	m_kCurrentTab = eGroup;
+	
+	ResetTabForNewPageContent();
+
+	local instance:table = m_simpleIM:GetInstance();
+	instance.Top:DestroyAllChildren();
+	
+	instance.Children = {}
+	instance.Descend = true;
+	
+	local pHeaderInstance:table = {};
+	ContextPtr:BuildInstanceForControl( "CityStatus2HeaderInstance", pHeaderInstance, instance.Top );
+	--[[
+	pHeaderInstance.CityStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "status", instance ) end )
+	pHeaderInstance.CityIconButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "icon", instance ) end )
+	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "name", instance ) end )
+	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pop", instance ) end )
+	pHeaderInstance.CityPowerConsumedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "powcon", instance ) end )
+	pHeaderInstance.CityPowerProducedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pwprod", instance ) end )
+	--pHeaderInstance.CityCO2FootprintButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "co2", instance ) end )
+	pHeaderInstance.CityNuclearPowerPlantButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "nuclear", instance ) end )
+	pHeaderInstance.CityRiverFloodDamButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "dam", instance ) end )
+	pHeaderInstance.CityFloodBarrierButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "barrier", instance ) end )
+	pHeaderInstance.CityBarrierMaintenanceButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "fbcost", instance ) end );
+	pHeaderInstance.CityRailroadsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "numrr", instance ) end );
+	--]]
+	-- 
+	--for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
+	--print("...num momements to show", Game.GetHistoryManager():GetMomentCount());
+	--local num = 0;
+	--for i = 0, Game.GetHistoryManager():GetMomentCount()-1 do
+	for _,moment in ipairs(Game.GetHistoryManager():GetAllMomentsData(Game.GetLocalPlayer(),1)) do
+		-- test fill
+		--local pMoment:table = Game.GetHistoryManager():GetMomentData(i);
+		if moment.EraScore > 0 then
+			local pMomentInstance:table = {};
+			ContextPtr:BuildInstanceForControl( "MomentEntryInstance", pMomentInstance, instance.Top );
+			table.insert( instance.Children, pCityInstance );
+			ShowMoment( moment, pMomentInstance );
+			--num = num + 1;
+		end
+		-- go to the city after clicking
+		--pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
+		--pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
+	end
+	--print("...completed the loop with", num);
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	--Controls.CollapseAll:SetHide( true );
+	--Controls.BottomYieldTotals:SetHide( true );
+	--Controls.BottomResourceTotals:SetHide( true );
+	--Controls.BottomPoliciesFilters:SetHide( true );
+	--Controls.BottomMinorsFilters:SetHide( true );
+	--Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
+	
+end
+
+
+-- one-time call to init all necessary data
+function InitializeMomentsData()
+end
+
 
 -- ===========================================================================
 -- CITIES 2 PAGE - GATHERING STORM
@@ -4560,21 +4639,21 @@ end
 --
 -- ===========================================================================
 function AddTabSection( name:string, populateCallback:ifunction )
-	local kTab		:table				= m_tabIM:GetInstance();	
-	kTab.Button[DATA_FIELD_SELECTION]	= kTab.Selection;
+	local kTab:table = m_tabIM:GetInstance();
+	kTab.Button[DATA_FIELD_SELECTION] = kTab.Selection;
 
-	local callback	:ifunction	= function()
+	local callback:ifunction = function()
 		if m_tabs.prevSelectedControl ~= nil then
 			m_tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
 		end
 		kTab.Selection:SetHide(false);
-		Timer1Start();
+		--Timer1Start();
 		populateCallback();
-		Timer1Tick("Section "..Locale.Lookup(name).." populated");
+		--Timer1Tick("Section "..Locale.Lookup(name).." populated");
 	end
 
 	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );
-	kTab.Button:SetSizeToText( 0, 20 ); -- default 40,20
+	kTab.Button:SetSizeToText( 40, 20 ); -- default 40,20
     kTab.Button:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
 	m_tabs.AddTab( kTab.Button, callback );
@@ -4598,6 +4677,7 @@ function OnInputHandler( pInputStruct:table )
 	return false;
 end
 
+--[[
 local m_ToggleReportsId:number = Input.GetActionId("ToggleReports");
 --print("ToggleReports key is", m_ToggleReportsId);
 
@@ -4608,15 +4688,16 @@ function OnInputActionTriggered( actionId )
 		if ContextPtr:IsHidden() then Open(); else Close(); end
 	end
 end
+--]]
 
 -- ===========================================================================
 function Resize()
 	local topPanelSizeY:number = 30;
-
 	x,y = UIManager:GetScreenSizeVal();
 	Controls.Main:SetSizeY( y - topPanelSizeY );
 	Controls.Main:SetOffsetY( topPanelSizeY * 0.5 );
 end
+
 
 -- ===========================================================================
 --	Game Event Callback
@@ -4627,25 +4708,18 @@ function OnLocalPlayerTurnEnd()
 	end
 end
 
+
 -- ===========================================================================
 function LateInitialize()
-	Resize();
-
+	--Resize();
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
-	--AddTabSection( "Test",								ViewTestPage );			--TRONSTER debug
-	--AddTabSection( "Test2",								ViewTestPage );			--TRONSTER debug
-	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_CITIES",	ViewCityStatusPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
-	AddTabSection( "LOC_HUD_REPORTS_TAB_MINORS",		ViewMinorPage );
-	if bIsGatheringStorm then AddTabSection( "LOC_HUD_REPORTS_TAB_CITIES2", ViewCities2Page ); end
-
+	AddTabSection( "LOC_RET_WORLD",	                      function() ViewMomentsPage(1); end );
+	AddTabSection( "LOC_HUD_REPORTS_HEADER_CIVILIZATION", function() ViewMomentsPage(2); end );
+	AddTabSection( "LOC_RET_REPEATABLE",                  function() ViewMomentsPage(3); end );
 	m_tabs.SameSizedTabs(20);
 	m_tabs.CenterAlignTabs(-10);
 end
+
 
 -- ===========================================================================
 --	UI Event
@@ -4665,152 +4739,85 @@ end
 -- CHECKBOXES
 -- ===========================================================================
 
--- Checkboxes for hiding city details and free units/buildings
-
-function OnToggleHideCityBuildings()
-	local isChecked = Controls.HideCityBuildingsCheckbox:IsSelected();
-	Controls.HideCityBuildingsCheckbox:SetSelected( not isChecked );
-	ViewYieldsPage()
+function OnToggleEraScore1Checkbox()
+	local isChecked = Controls.EraScore1Checkbox:IsSelected();
+	Controls.EraScore1Checkbox:SetSelected( not isChecked );
+	ViewMomentsPage();
 end
 
-function OnToggleHideFreeBuildings()
-	local isChecked = Controls.HideFreeBuildingsCheckbox:IsSelected();
-	Controls.HideFreeBuildingsCheckbox:SetSelected( not isChecked );
-	ViewYieldsPage()
+function OnToggleEraScore2Checkbox()
+	local isChecked = Controls.EraScore2Checkbox:IsSelected();
+	Controls.EraScore2Checkbox:SetSelected( not isChecked );
+	ViewMomentsPage();
 end
 
-function OnToggleHideFreeUnits()
-	local isChecked = Controls.HideFreeUnitsCheckbox:IsSelected();
-	Controls.HideFreeUnitsCheckbox:SetSelected( not isChecked );
-	ViewYieldsPage()
+function OnToggleEraScore3Checkbox()
+	local isChecked = Controls.EraScore3Checkbox:IsSelected();
+	Controls.EraScore3Checkbox:SetSelected( not isChecked );
+	ViewMomentsPage();
 end
 
--- Checkboxes for different resources in Resources tab
-
-function OnToggleStrategic()
-	local isChecked = Controls.StrategicCheckbox:IsSelected();
-	Controls.StrategicCheckbox:SetSelected( not isChecked );
-	ViewResourcesPage();
+function OnToggleEraScore4Checkbox()
+	local isChecked = Controls.EraScore4Checkbox:IsSelected();
+	Controls.EraScore4Checkbox:SetSelected( not isChecked );
+	ViewMomentsPage();
 end
 
-function OnToggleLuxury()
-	local isChecked = Controls.LuxuryCheckbox:IsSelected();
-	Controls.LuxuryCheckbox:SetSelected( not isChecked );
-	ViewResourcesPage();
+function OnToggleHideNotActiveCheckbox()
+	local isChecked = Controls.HideNotActiveCheckbox:IsSelected();
+	Controls.HideNotActiveCheckbox:SetSelected( not isChecked );
+	ViewMomentsPage();
 end
 
-function OnToggleBonus()
-	local isChecked = Controls.BonusCheckbox:IsSelected();
-	Controls.BonusCheckbox:SetSelected( not isChecked );
-	ViewResourcesPage();
-end
-
--- Checkboxes for policy filters
-
-function OnToggleInactivePolicies()
-	local isChecked = Controls.HideInactivePoliciesCheckbox:IsSelected();
-	Controls.HideInactivePoliciesCheckbox:SetSelected( not isChecked );
-	ViewPolicyPage();
-end
-
-function OnToggleNoImpactPolicies()
-	local isChecked = Controls.HideNoImpactPoliciesCheckbox:IsSelected();
-	Controls.HideNoImpactPoliciesCheckbox:SetSelected( not isChecked );
-	ViewPolicyPage();
-end
-
--- Checkboxes for minors filters
-
-function OnToggleNotMetMinors()
-	local isChecked = Controls.HideNotMetMinorsCheckbox:IsSelected();
-	Controls.HideNotMetMinorsCheckbox:SetSelected( not isChecked );
-	ViewMinorPage();
-end
-
-function OnToggleNoImpactMinors()
-	local isChecked = Controls.HideNoImpactMinorsCheckbox:IsSelected();
-	Controls.HideNoImpactMinorsCheckbox:SetSelected( not isChecked );
-	ViewMinorPage();
+function OnToggleHideNotAvailableCheckbox()
+	local isChecked = Controls.HideNotAvailableCheckbox:IsSelected();
+	Controls.HideNotAvailableCheckbox:SetSelected( not isChecked );
+	ViewMomentsPage();
 end
 
 
 -- ===========================================================================
 function Initialize()
 
-	InitializePolicyData();
+	InitializeMomentsData();
 
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );
 	ContextPtr:SetInputHandler( OnInputHandler, true );
 
-	Events.UnitUpgraded.Add(
-		function()
-			if not tUnitSort.parent then return; end
-			-- refresh data and re-sort group which upgraded unit was from
-			m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
-			UpdatePolicyData();
-			UpdateMinorData();
-			sort_units( tUnitSort.type, tUnitSort.group, tUnitSort.parent );
-		end );
-
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnCloseButton );
 	Controls.CloseButton:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-	Controls.CollapseAll:RegisterCallback( Mouse.eLClick, OnCollapseAllButton );
-	Controls.CollapseAll:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	--Controls.CollapseAll:RegisterCallback( Mouse.eLClick, OnCollapseAllButton );
+	--Controls.CollapseAll:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
-	--BRS Yields tab toggle
-	Controls.HideCityBuildingsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideCityBuildings )
-	Controls.HideCityBuildingsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
-	Controls.HideCityBuildingsCheckbox:SetSelected( true );
-	Controls.HideFreeBuildingsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideFreeBuildings )
-	Controls.HideFreeBuildingsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
-	Controls.HideFreeBuildingsCheckbox:SetSelected( true );
-	Controls.HideFreeUnitsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideFreeUnits )
-	Controls.HideFreeUnitsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end )
-	Controls.HideFreeUnitsCheckbox:SetSelected( true );
-	
-	--ARISTOS: Resources toggle
-	Controls.LuxuryCheckbox:RegisterCallback( Mouse.eLClick, OnToggleLuxury );
-	Controls.LuxuryCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.LuxuryCheckbox:SetSelected( true );
-	Controls.StrategicCheckbox:RegisterCallback( Mouse.eLClick, OnToggleStrategic );
-	Controls.StrategicCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.StrategicCheckbox:SetSelected( true );
-	Controls.BonusCheckbox:RegisterCallback( Mouse.eLClick, OnToggleBonus );
-	Controls.BonusCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.BonusCheckbox:SetSelected( false ); -- not so important
-
-	-- Polices Filters
-	Controls.HideInactivePoliciesCheckbox:RegisterCallback( Mouse.eLClick, OnToggleInactivePolicies );
-	Controls.HideInactivePoliciesCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideInactivePoliciesCheckbox:SetSelected( true );
-	Controls.HideNoImpactPoliciesCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNoImpactPolicies );
-	Controls.HideNoImpactPoliciesCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNoImpactPoliciesCheckbox:SetSelected( false );
-
-	-- Minors Filters
-	Controls.HideNotMetMinorsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNotMetMinors );
-	Controls.HideNotMetMinorsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNotMetMinorsCheckbox:SetSelected( true );
-	Controls.HideNoImpactMinorsCheckbox:RegisterCallback( Mouse.eLClick, OnToggleNoImpactMinors );
-	Controls.HideNoImpactMinorsCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNoImpactMinorsCheckbox:SetSelected( false );
+	-- Filters
+	Controls.EraScore1Checkbox:RegisterCallback( Mouse.eLClick, OnToggleEraScore1Checkbox );
+	Controls.EraScore1Checkbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.EraScore1Checkbox:SetSelected( true );
+	Controls.EraScore2Checkbox:RegisterCallback( Mouse.eLClick, OnToggleEraScore2Checkbox );
+	Controls.EraScore2Checkbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.EraScore2Checkbox:SetSelected( true );
+	Controls.EraScore3Checkbox:RegisterCallback( Mouse.eLClick, OnToggleEraScore3Checkbox );
+	Controls.EraScore3Checkbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.EraScore3Checkbox:SetSelected( true );
+	Controls.EraScore4Checkbox:RegisterCallback( Mouse.eLClick, OnToggleEraScore4Checkbox );
+	Controls.EraScore4Checkbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.EraScore4Checkbox:SetSelected( true );
+	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotActiveCheckbox );
+	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.HideNotActiveCheckbox:SetSelected( true );
+	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotAvailableCheckbox );
+	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.HideNotAvailableCheckbox:SetSelected( true );
 
 	-- Events
-	LuaEvents.TopPanel_OpenReportsScreen.Add(  function() Open();  end );
-	LuaEvents.TopPanel_CloseReportsScreen.Add( function() Close(); end );
-	LuaEvents.ReportsList_OpenYields.Add(     function() Open(1); end );
-	LuaEvents.ReportsList_OpenResources.Add(  function() Open(2); end );
-	LuaEvents.ReportsList_OpenCityStatus.Add( function() Open(3); end );
-	LuaEvents.ReportsList_OpenDeals.Add(      function() Open(4); end );
-	LuaEvents.ReportsList_OpenUnits.Add(      function() Open(5); end );
-	LuaEvents.ReportsList_OpenPolicies.Add(   function() Open(6); end );
-	LuaEvents.ReportsList_OpenMinors.Add(     function() Open(7); end );
-	if bIsGatheringStorm then LuaEvents.ReportsList_OpenCities2.Add( function() Open(8); end ); end
+	LuaEvents.ReportsList_OpenEraTracker.Add( function() Open(); end );
 	
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
-	Events.InputActionTriggered.Add( OnInputActionTriggered );
+	--Events.InputActionTriggered.Add( OnInputActionTriggered );
 end
-Initialize();
+if bIsRiseAndFall or bIsGatheringStorm then
+	Initialize();
+end
 
 print("OK loaded RealEraTracker.lua from Real Era Tracker");

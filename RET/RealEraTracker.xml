@@ -34,16 +34,16 @@
 		<Image														Anchor="C,T"	Offset="0,83"		Size="parent-8,22"				Color="0,0,0,255" Texture="Controls_GradientSmall" />
 
 		<!-- Filters -->
-		<Container ID="BottomFilters" Anchor="C,B" Offset="0,0" Size="parent-6,50">
+		<Container ID="BottomFilters" Anchor="C,B" Offset="0,0" Size="parent-6,80">
 			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
 			<Image Anchor="C,B" Offset="0,2" Size="parent,parent" Texture="Controls_Gradient" Color="255,255,255,32">
-				<Label Anchor="L,T" Offset="10,10" Style="FontFlair20" String="LOC_ERA_PROGRESS_ERA_SCORE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
-				<GridButton ID="EraScore1Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="110,10" Size="50,26" String="1" Hidden="0"/>
-				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="160,10" Size="50,26" String="2" Hidden="0"/>
-				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="210,10" Size="50,26" String="3" Hidden="0"/>
-				<GridButton ID="EraScore4Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="260,10" Size="50,26" String="4+" Hidden="0"/>
-				<GridButton ID="HideNotActiveCheckbox"    Style="CheckBoxControl" Anchor="C,B" Offset="-170,2" Size="200,26" String="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE" Hidden="0"/>
-				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="C,B" Offset="170,2" Size="200,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE" Hidden="0"/>
+				<!--<Label Anchor="L,T" Offset="10,10" Style="FontFlair20" String="LOC_ERA_PROGRESS_ERA_SCORE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />-->
+				<GridButton ID="EraScore1Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="40,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 1" Hidden="0"/>
+				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="200,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 2" Hidden="0"/>
+				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="360,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 3" Hidden="0"/>
+				<GridButton ID="EraScore4Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="520,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 4+" Hidden="0"/>
+				<GridButton ID="HideNotActiveCheckbox"    Style="CheckBoxControl" Anchor="L,B" Offset="40,10" Size="300,26" String="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE" Hidden="0"/>
+				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="L,B" Offset="360,10" Size="400,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE" Hidden="0"/>
 			</Image>
 		</Container>
 		
@@ -302,13 +302,13 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
+				<Container		Size="250,parent">
 					<GridButton		ID="DescriptionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_DESCRIPTION" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
+				<Container		Size="100,parent">
 					<GridButton		ID="ObjectButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_APPLIES_TO" />
 					</GridButton>
@@ -333,26 +333,26 @@
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
 				<Container		Size="50,parent">
-					<GridButton		ID="PlayerButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CIVILIZATION" />
-					</GridButton>
-				</Container>
-				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
 					<GridButton		ID="ExtraButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_GAMESUMMARY_CATEGORY_EXTRA" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
+				<Container		Size="100,parent">
 					<GridButton		ID="EraMinButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="{LOC_ERA_NAME}[ICON_GoingTo]" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
+				<Container		Size="30,parent">
 					<GridButton		ID="EraMaxButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="[ICON_GoingTo]{LOC_ERA_NAME}" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="100,parent">
+					<GridButton		ID="PlayerButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CIVILIZATION" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -374,12 +374,12 @@
 					<Label		ID="EraScore"	Style="ReportValueText"		String="$Score$" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
-				<Container	Size="50,parent">
-					<Label		ID="Description" Style="ReportValueText"		String="$Description$" />
+				<Container	Size="250,parent">
+					<Label		ID="Description"	Style="ReportValueLeftName"		String="$Description$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="50,parent">
-					<Label		ID="Object"		Style="ReportValueText"		String="$Object$" />
+				<Container	Size="100,parent">
+					<Label		ID="Object"		Style="ReportValueLeftName"	String="$Object$" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
 				<Container	Size="50,parent">
@@ -393,21 +393,21 @@
 				<Container	Size="50,parent">
 					<Label		ID="Count"		Style="ReportValueText"		String="$Count$" />
 				</Container>
-				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="50,parent">
-					<Label		ID="Player"		Style="ReportValueText"		String="$Player$" />
-				</Container>
 				<Box							Size="2,parent"	Color="46,70,95,128" />
 				<Container	Size="50,parent">
 					<Label		ID="Extra"		Style="ReportValueText"		String="$Extra$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="50,parent">
+				<Container	Size="100,parent">
 					<Label		ID="EraMin"		Style="ReportValueText"		String="$EraMin$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="50,parent">
+				<Container	Size="30,parent">
 					<Label		ID="EraMax"		Style="ReportValueText"		String="$EraMax$" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="100,parent">
+					<Label		ID="Player"		Style="ReportValueText"		String="$Player$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,255" />
 			</Stack>
