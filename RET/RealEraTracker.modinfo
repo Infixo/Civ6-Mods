@@ -18,7 +18,12 @@
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
-		<UpdateDatabase id="RET_UpdateDatabase">
+		<UpdateDatabase id="RET_UpdateDatabase_XP1" criteria="Expansion1">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
+			<File>RealEraTracker_Database.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RET_UpdateDatabase_XP2" criteria="Expansion2">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
 			<File>RealEraTracker_Database.sql</File>
 		</UpdateDatabase>
 		<AddUserInterfaces id="RET_Main">
@@ -35,14 +40,14 @@
 				<File>ReportsList_RET.lua</File>
             </Items>
         </ImportFiles>
-		<ReplaceUIScript id="RET_ReplaceUI_ReportsList" criteria="Expansion1">
+		<ReplaceUIScript id="RET_ReplaceUI_ReportsList_XP1" criteria="Expansion1">
 			<Properties>
                 <LoadOrder>1110</LoadOrder>
 				<LuaContext>ReportsList</LuaContext>
 				<LuaReplace>ReportsList_RET.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
-		<ReplaceUIScript id="RET_ReplaceUI_ReportsList" criteria="Expansion2">
+		<ReplaceUIScript id="RET_ReplaceUI_ReportsList_XP2" criteria="Expansion2">
 			<Properties>
                 <LoadOrder>1120</LoadOrder>
 				<LuaContext>ReportsList</LuaContext>

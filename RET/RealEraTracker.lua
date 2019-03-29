@@ -24,31 +24,6 @@ print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 local bOptionIncludeOthers:boolean = ( GlobalParameters.RET_OPTION_INCLUDE_OTHERS == 1 );
 
 
---[[
--- ===========================================================================
-HISTORIC MOMENTS
-
-Game.GetHistoryManager():GetAllMomentsData(playerID, iMinInterestLevel) -> interest level is different than score! just use 1 for all valid moments
--> returns a simple (ipairs) table with moments
-Game:GetHistoryManager():GetMomentData(momentID)
--> returns a table with a single moment
-
-Moment data
------------
-.ID	310
-.Type	-77408354  => Hash for GameInfo.Moments[]
-.InstanceDescription	The discovery of Apprenticeship by Korea sets the world stage for future discoveries in the Medieval Era!
-.ActingPlayer	0
-.EraScore	2
-.GameEra	1
-.Turn	101
-.HasEverBeenCommemorated	false => seems to be false always
-.ActionPlotX	-9999
-.ActionPlotY	-9999
-.ExtraData	table: 000000006221F3C0 => (ipairs) table of { .DataType and .DataValue }
-        .DataType => GameInfo.Types[hash].Type, e.g. MOMENT_DATA_DISTRICT, MOMENT_DATA_PLAYER_ERA
-		sometimes DataType gives nil - probably when no extra data is actually recorded but the record still exists, weird
---]]
 
 
 -- ===========================================================================
@@ -104,6 +79,11 @@ end
 --	VARIABLES
 -- ===========================================================================
 
+local m_kCurrentTab:number = 1; -- last active tab which will be also used as a moment category
+
+
+
+
 m_simpleIM							= InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
 m_tabIM								= InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
 m_strategicResourcesIM				= InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.StrategicResources);
@@ -128,10 +108,6 @@ local m_kPolicyData		:table = nil;
 local m_kMinorData		:table = nil;
 local m_kModifiers		:table = nil; -- to calculate yield per pop and other modifier-ralated effects on the city level
 local m_kModifiersUnits	:table = nil; -- to show various abilities and effects
--- !!
--- Remember last tab variable: ARISTOS
-m_kCurrentTab = 1;
--- !!
 
 -- ===========================================================================
 -- Time helpers and debug routines
@@ -213,51 +189,24 @@ end
 --	Single entry point for display
 -- ===========================================================================
 function Open( tabToOpen:number )
-	print("FUN Open()", tabToOpen);
+	print("FUN Open()", tabToOpen, m_kCurrentTab);
+	
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
 	UI.PlaySound("UI_Screen_Open");
-	--LuaEvents.ReportScreen_Opened();
 
-	-- BRS !! new line to add new variables 
-	--Timer2Start()
+	Timer2Start();
 	--m_kCityData, m_kCityTotalData, m_kResourceData, m_kUnitData, m_kDealData, m_kCurrentDeals, m_kUnitDataReport = GetData();
-	--UpdatePolicyData();
-	--UpdateMinorData();
-	--Timer2Tick("GetData")
+	UpdateMomentsData();
+	Timer2Tick("UpdateMomentsData");
 	
-	-- To remember the last opened tab when the report is re-opened: ARISTOS
+	-- To remember the last opened tab when the report is re-opened
 	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
 	m_tabs.SelectTab( m_kCurrentTab );
 	
-	-- show number of cities in the title bar
-	--[[
-	local tTT:table = {};
-	local iWon:number, iDis:number, iBul:number, iPop:number = 0, 0, 0, 0;
-	for _,city in pairs(m_kCityData) do
-		iWon = iWon + #city.Wonders;
-		iDis = iDis + city.DistrictsNum;
-		iBul = iBul + city.BuildingsNum;
-		iPop = iPop + city.Population;
-	end
-	local iCiv:number, iMil:number = 0, 0;
-	local playerID:number = Game.GetLocalPlayer();
-	if playerID ~= PlayerTypes.NONE and playerID ~= PlayerTypes.OBSERVER then
-		for _,unit in Players[playerID]:GetUnits():Members() do
-			if GameInfo.Units[unit:GetUnitType()].FormationClass == "FORMATION_CLASS_CIVILIAN" then iCiv = iCiv + 1; else iMil = iMil + 1; end
-		end -- for
-	end -- if
-	Controls.TotalsLabel:SetText( Locale.Lookup("LOC_DIPLOMACY_DEAL_CITIES").." "..tostring(Players[Game.GetLocalPlayer()]:GetCities():GetCount()) );
-	table.insert(tTT, Locale.Lookup("LOC_RAZE_CITY_POPULATION_LABEL").." "..tostring(iPop));
-	table.insert(tTT, Locale.Lookup("LOC_TECH_FILTER_WONDERS")..": "..tostring(iWon));
-	table.insert(tTT, Locale.Lookup("LOC_DEAL_CITY_DISTRICTS_TOOLTIP").." "..tostring(iDis));
-	table.insert(tTT, Locale.Lookup("LOC_TOOLTIP_PLOT_BUILDINGS_TEXT").." "..tostring(iBul));
-	table.insert(tTT, Locale.Lookup("LOC_TECH_FILTER_UNITS")..": "..tostring(iCiv+iMil));
-	table.insert(tTT, Locale.Lookup("LOC_MILITARY")..": "..tostring(iMil));
-	table.insert(tTT, Locale.Lookup("LOC_FORMATION_CLASS_CIVILIAN_NAME")..": "..tostring(iCiv));
-	Controls.TotalsLabel:SetToolTipString( table.concat(tTT, "[NEWLINE]") );
-	--]]
+	-- show number of moments and total era score
+	Controls.TotalsLabel:SetText( LL("LOC_ERAS_CURRENT_SCORE").." "..tostring(Game.GetEras():GetPlayerCurrentScore(Game.GetLocalPlayer())) );
 end
 
 
@@ -4306,6 +4255,58 @@ function ViewMinorPage()
 end
 
 
+
+--[[
+-- ===========================================================================
+HISTORIC MOMENTS
+
+Game.GetHistoryManager():GetAllMomentsData(playerID, iMinInterestLevel) -> interest level is different than score! just use 1 for all valid moments
+-> returns a simple (ipairs) table with moments
+Game:GetHistoryManager():GetMomentData(momentID)
+-> returns a table with a single moment
+
+Moment data
+-----------
+.ID	310
+.Type	-77408354  => Hash for GameInfo.Moments[]
+.InstanceDescription	The discovery of Apprenticeship by Korea sets the world stage for future discoveries in the Medieval Era!
+.ActingPlayer	0
+.EraScore	2
+.GameEra	1
+.Turn	101
+.HasEverBeenCommemorated	false => seems to be false always
+.ActionPlotX	-9999
+.ActionPlotY	-9999
+.ExtraData	table: 000000006221F3C0 => (ipairs) table of { .DataType and .DataValue }
+        .DataType => GameInfo.Types[hash].Type, e.g. MOMENT_DATA_DISTRICT, MOMENT_DATA_PLAYER_ERA
+		sometimes DataType gives nil - probably when no extra data is actually recorded but the record still exists, weird
+		"MomentDataType" TEXT NOT NULL REFERENCES MomentDataTypes(MomentDataType)
+		"GameDataType"   TEXT NOT NULL REFERENCES Types(Type)
+--]]
+
+
+-- one-time call to init all necessary data
+-- it will create all possible moments in a separate table
+function InitializeMomentsData()
+end
+
+
+-- resets the data to the situation "just after init"
+--function ResetMomentsData()
+--end
+
+
+function UpdateMomentsData()
+	print("FUN UpdateMomentsData");
+	
+	-- reset the data
+	
+	-- update for the current local player
+	
+end
+
+
+
 -- ===========================================================================
 -- MOMENTS PAGE
 --.ID	310
@@ -4323,7 +4324,7 @@ end
 
 -- fills a single instance with the data of the moment
 function ShowMoment(pMoment:table, pInstance:table)
-	print("FUN ShowMoment", pMoment.ID, pMoment.EraScore, pMoment.ActingPlayer, pMoment.Turn);
+	--print("FUN ShowMoment", pMoment.ID, pMoment.EraScore, pMoment.ActingPlayer, pMoment.Turn);
 	
 	--if pMoment.EraScore < 1 then return; end
 	
@@ -4415,11 +4416,6 @@ function ViewMomentsPage(eGroup:number)
 	--Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	
-end
-
-
--- one-time call to init all necessary data
-function InitializeMomentsData()
 end
 
 
@@ -4711,6 +4707,7 @@ end
 
 -- ===========================================================================
 function LateInitialize()
+	InitializeMomentsData();
 	--Resize();
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
 	AddTabSection( "LOC_RET_WORLD",	                      function() ViewMomentsPage(1); end );
@@ -4778,8 +4775,6 @@ end
 
 -- ===========================================================================
 function Initialize()
-
-	InitializeMomentsData();
 
 	-- UI Callbacks
 	ContextPtr:SetInitHandler( OnInit );
