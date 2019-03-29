@@ -31,6 +31,7 @@ local bOptionIncludeOthers:boolean = ( GlobalParameters.RET_OPTION_INCLUDE_OTHER
 -- ===========================================================================
 local LL = Locale.Lookup;
 local ENDCOLOR:string = "[ENDCOLOR]";
+local NEWLINE:string  = "[NEWLINE]";
 
 
 local DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y		:number = 6;
@@ -150,6 +151,17 @@ function dshowrectable(tTable:table, iLevel:number)
 		print(string.rep("---:",level), k, type(v), tostring(v));
 		if type(v) == "table" and level < 5 then dshowrectable(v, level+1); end
 	end
+end
+
+-- based on a function from SupportFunctions.lua
+function TruncateStringWithExtraTooltip(control, resultSize, longStr, trailingText)
+	local isTruncated = TruncateString( control, resultSize, longStr, trailingText );
+	if isTruncated then
+		control:SetToolTipString( longStr );
+	else
+		control:SetToolTipString( nil );
+	end
+	return isTruncated;
 end
 
 
@@ -4300,13 +4312,14 @@ function InitializeMomentsData()
 	print("FUN InitializeMomentsData");
 	
 	local function RegisterOneMoment(sKey:string, moment:table, sObject:string, sValidFor:string)
-		print("FUN RegisterOneMoment",sKey,sObject,sValidFor);
+		--print("FUN RegisterOneMoment",sKey,sObject,sValidFor);
 		if moment.EraScore == nil then return nil; end
 		local data:table = {
 			MomentType = moment.MomentType,
 			Category = moment.Category,
 			EraScore = moment.EraScore,
-			Description = LL(moment.Name), -- Description
+			Description = LL(moment.Name),
+			LongDesc = LL(moment.Description),
 			Object = sObject,
 			ValidFor = sValidFor, -- either LEADER_x or CIVILIZATION_x
 			MinEra = moment.MinEra,
@@ -4317,6 +4330,7 @@ function InitializeMomentsData()
 			Count = 0,
 			Player = "",
 			TT = {}, -- tooltip
+			ExtraData = {}, -- for future uses
 		};
 		m_kMoments[ sKey ] = data;
 		--dshowtable(data); -- debug
@@ -4386,7 +4400,7 @@ function InitializeMomentsData()
 			RegisterOneMoment(moment.MomentType, moment, "", "");
 		end
 	end
-	dshowrectable(m_kMoments); -- debug
+	--dshowrectable(m_kMoments); -- debug
 end
 
 
@@ -4406,9 +4420,34 @@ function ProcessHistoricMoment(sKey:string, pMoment:table)
 	trackedMoment.Turn = pMoment.Turn;
 	trackedMoment.Count = trackedMoment.Count + 1;
 	trackedMoment.Player = LL(PlayerConfigurations[pMoment.ActingPlayer]:GetCivilizationShortDescription());
-	table.insert(trackedMoment.TT, string.format("%d [ICON_Turn]%d: %s", pMoment.ID, pMoment.Turn, pMoment.InstanceDescription));
+	table.insert(trackedMoment.TT, string.format("[ICON_Turn]%d: %s", pMoment.Turn, pMoment.InstanceDescription));
+	trackedMoment.ExtraData = pMoment.ExtraData;
 end
 
+
+function RetrieveFromExtraData(moment:table, sType:string)
+	print("FUN RetrieveFromExtraData", GameInfo.Moments[moment.Type].MomentType, sType);
+	--dshowrectable(moment);
+	local sValue;
+	if moment.ExtraData[1] ~= nil and GameInfo.Types[ moment.ExtraData[1].DataType ].Type == sType then
+		sValue = moment.ExtraData[1].DataValue;
+	end
+	if moment.ExtraData[2] ~= nil and GameInfo.Types[ moment.ExtraData[2].DataType ].Type == sType then
+		sValue = moment.ExtraData[2].DataValue;
+	end
+	if sValue == nil then
+		print("ERROR RetrieveFromExtraData: can't find", sType); dshowrectable(moment); return "";
+	end
+	print("...retrieved", sValue);
+	-- get the actual value
+	if sType == "MOMENT_DATA_BUILDING"    then return GameInfo.Buildings[ sValue ].BuildingType; end
+	if sType == "MOMENT_DATA_DISTRICT"    then return GameInfo.Districts[ sValue ].DistrictType; end
+	if sType == "MOMENT_DATA_IMPROVEMENT" then return GameInfo.Improvements[ sValue ].ImprovementType; end
+	if sType == "MOMENT_DATA_PLAYER_ERA"  then return GameInfo.Eras[ sValue ].EraType; end
+	if sType == "MOMENT_DATA_RESOURCE"    then return GameInfo.Resources[ sValue ].ResourceType; end
+	if sType == "MOMENT_DATA_UNIT"        then return GameInfo.Units[ sValue ].UnitType; end
+	print("ERROR RetrieveFromExtraData: data type not supported", sType); return "";
+end
 
 
 function UpdateMomentsData()
@@ -4421,6 +4460,7 @@ function UpdateMomentsData()
 		moment.Count = 0;
 		moment.Player = "";
 		moment.TT = {};
+		moment.ExtraData = {};
 	end
 	
 	-- civ and leader for uniques
@@ -4433,13 +4473,35 @@ function UpdateMomentsData()
 	for _,moment in ipairs(Game.GetHistoryManager():GetAllMomentsData()) do
 		local momentInfo:table = GameInfo.Moments[moment.Type];
 		-- process only local player or others if cheating option is on and category is World
-		if momentInfo ~= nil and ( moment.ActingPlayer == localPlayerID or (bOptionIncludeOthers and momentInfo.Category == 1) ) then
+		if moment.EraScore ~= nil and moment.EraScore > 0 and momentInfo ~= nil and ( moment.ActingPlayer == localPlayerID or (bOptionIncludeOthers and momentInfo.Category == 1) ) then
 			if momentInfo.Special == nil then
 				ProcessHistoricMoment(momentInfo.MomentType, moment);
 			else
-				-- special moment
-				print("*** special moment data ***");
-				dshowrectable(moment);
+				-- special moments
+				if momentInfo.Special == "STRATEGIC" then
+					local sExtra:string = RetrieveFromExtraData(moment, "MOMENT_DATA_RESOURCE"); -- extra data contains MOMENT_DATA_RESOURCE
+					if sExtra ~= "" then
+						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment);
+					end
+				end
+				if momentInfo.Special == "ERA" then
+					local sExtra:string = RetrieveFromExtraData(moment, "MOMENT_DATA_PLAYER_ERA"); -- extra data contains MOMENT_DATA_PLAYER_ERA
+					if sExtra ~= "" then
+						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment);
+					end
+				end
+				if momentInfo.Special == "UNIQUE" then
+					local sType:string = "(error)";
+					if     momentInfo.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_BUILDING"    then sType = "MOMENT_DATA_BUILDING";
+					elseif momentInfo.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_DISTRICT"    then sType = "MOMENT_DATA_DISTRICT";
+					elseif momentInfo.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_IMPROVEMENT" then sType = "MOMENT_DATA_IMPROVEMENT";
+					elseif momentInfo.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_UNIT"        then sType = "MOMENT_DATA_UNIT"; end
+					local sExtra:string = RetrieveFromExtraData(moment, sType);
+					if sExtra ~= "" then
+						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment);
+					end
+				end
+				--print("*** special moment data ***"); dshowrectable(moment);
 			end
 		end
 	end
@@ -4464,7 +4526,7 @@ end
 
 -- fills a single instance with the data of the moment
 function ShowMoment(pMoment:table, pInstance:table)
-	--print("FUN ShowMoment", pMoment.ID, pMoment.EraScore, pMoment.ActingPlayer, pMoment.Turn);
+	--print("FUN ShowMoment", pMoment.MomentType);
 	
 	--if pMoment.EraScore < 1 then return; end
 	
@@ -4492,15 +4554,51 @@ function ShowMoment(pMoment:table, pInstance:table)
 	elseif pMoment.Category == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(1);
 	else                              pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(2); end
 	pInstance.EraScore:SetText("[COLOR_White]"..tostring(pMoment.EraScore)..ENDCOLOR);
-	TruncateStringWithTooltip(pInstance.Description, 245, pMoment.Description);
+	-- description
+	local isTruncated:boolean = TruncateString(pInstance.Description, 270, pMoment.Description);
+	if isTruncated then pInstance.Description:SetToolTipString( pMoment.Description..NEWLINE..pMoment.LongDesc );
+	else                pInstance.Description:SetToolTipString( pMoment.LongDesc ); end
+	-- object & valid for
 	pInstance.Object:SetText(pMoment.Object);
+	pInstance.Object:SetToolTipString("");
+	if pMoment.ValidFor ~= "" then
+		if     GameInfo.Civilizations[pMoment.ValidFor] ~= nil then pInstance.Object:SetToolTipString( LL(GameInfo.Civilizations[pMoment.ValidFor].Name) );
+		elseif GameInfo.Leaders[pMoment.ValidFor]       ~= nil then pInstance.Object:SetToolTipString( LL(GameInfo.Leaders[pMoment.ValidFor].Name) );
+		else                                                        pInstance.Object:SetToolTipString(pMoment.ValidFor); end
+	end
+	-- status and tooltips
 	pInstance.Status:SetText(pMoment.Status and "[ICON_CheckmarkBlue]" or "[ICON_Bullet]");
+	pInstance.Status:SetToolTipString("");
+	if #pMoment.TT > 0 then pInstance.Status:SetToolTipString(table.concat(pMoment.TT, NEWLINE)); end
+	-- turn, count, player
 	pInstance.Turn:SetText(tostring(pMoment.Turn));
 	pInstance.Count:SetText(tostring(pMoment.Count));
-	pInstance.Player:SetText(pMoment.ValidFor);
-	pInstance.Extra:SetText(pMoment.Player);
-	pInstance.EraMin:SetText(pMoment.MinEra == nil and "-" or LL(GameInfo.Eras[pMoment.MinEra].Name));
-	pInstance.EraMax:SetText(pMoment.MaxEra == nil and "-" or LL(GameInfo.Eras[pMoment.MaxEra].Name));
+	pInstance.Player:SetText(pMoment.Player);
+	-- era info
+	pInstance.Eras:SetText("");
+	if pMoment.MinEra ~= nil or pMoment.MaxEra ~= nil then
+		pInstance.Eras:SetText("[ICON_Turn]");
+		local sEras:string = " [ICON_GoingTo] ";
+		if pMoment.MinEra ~= nil then sEras = LL(GameInfo.Eras[pMoment.MinEra].Name)..sEras; end
+		if pMoment.MaxEra ~= nil then sEras = sEras..LL(GameInfo.Eras[pMoment.MaxEra].Name); end
+		pInstance.Eras:SetToolTipString(sEras);
+	end
+	-- debug extra tooltip
+	pInstance.Extra:SetText("---");
+	local tTT:table = {};
+	for k,v in pairs(pMoment) do
+		table.insert(tTT, tostring(k)..": "..tostring(v));
+	end
+	-- ExtraData (ipairs) table of { .DataType and .DataValue }
+	for i,extra in ipairs(pMoment.ExtraData) do
+		if GameInfo.Types[extra.DataType] == nil then
+			table.insert(tTT, string.format("[%d] %s", i, tostring(extra.DataType)));
+		else
+			table.insert(tTT, string.format("[%d] %s", i, GameInfo.Types[extra.DataType].Type));
+		end
+		table.insert(tTT, string.format("[%d] %s", i, tostring(extra.DataValue)));
+	end
+	pInstance.Extra:SetToolTipString(table.concat(tTT, NEWLINE));
 end
 
 -- sort function
@@ -4513,10 +4611,6 @@ function MomentsSortFunction(t, a, b)
 		return t[a].Description < t[b].Description;
 	end
 	return t[a].EraScore > t[b].EraScore;
-end
-
--- shows all moments, sorted
-function SortAndShowMoments(sType:string, pInstance:table)
 end
 
 -- main function
@@ -4553,6 +4647,7 @@ function ViewMomentsPage(eGroup:number)
 	-- 
 	-- civ and leader for uniques
 	local localPlayerID:number = Game.GetLocalPlayer();
+	print("...localPlayerID", localPlayerID);
 	if localPlayerID == -1 then return; end
 	local sCivilization:string = PlayerConfigurations[localPlayerID]:GetCivilizationTypeName();
 	local sLeader:string       = PlayerConfigurations[localPlayerID]:GetLeaderTypeName();
@@ -4574,6 +4669,7 @@ function ViewMomentsPage(eGroup:number)
 	-- filter out loop
 	local tShow:table = {};
 	for key,moment in pairs(m_kMoments) do
+		--print("...filtering key", key);
 		-- filters
 		local bShow:boolean = true;
 		-- harcoded
@@ -4593,6 +4689,7 @@ function ViewMomentsPage(eGroup:number)
 	end
 	
 	-- show loop
+	print("...filtering done, before show");
 	for _,moment in spairs(tShow, MomentsSortFunction) do
 		local pMomentInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "MomentEntryInstance", pMomentInstance, instance.Top );
@@ -4602,7 +4699,7 @@ function ViewMomentsPage(eGroup:number)
 		--pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
 		--pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 	end
-	
+	print("...show loop completed");
 	--print("...completed the loop with", num);
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
@@ -4616,218 +4713,6 @@ function ViewMomentsPage(eGroup:number)
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	
 end
-
-
--- ===========================================================================
--- CITIES 2 PAGE - GATHERING STORM
--- ===========================================================================
-
--- helpers
-
-function city2_fields( kCityData, pCityInstance )
-
-	local function ColorRed(text) return("[COLOR_Red]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
-	local function ColorGreen(text) return("[COLOR_Green]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
-	local function ColorWhite(text) return("[COLOR_White]"..tostring(text).."[ENDCOLOR]"); end -- Infixo: helper
-	local sText:string = "";
-	local tToolTip:table = {};
-
-	-- Status
-	--if kCityData.IsNuclearRisk then
-		--sText = sText.."[ICON_RESOURCE_URANIUM]"; table.insert(tToolTip, Locale.Lookup("LOC_EMERGENCY_NAME_NUCLEAR"));
-	--end
-	--if kCityData.IsUnderpowered then
-		--sText = sText.."[ICON_PowerInsufficient]"; table.insert(tToolTip, Locale.Lookup("LOC_POWER_STATUS_UNPOWERED_NAME"));
-	--end
-	pCityInstance.Status:SetText( sText );
-	pCityInstance.Status:SetToolTipString( table.concat(tToolTip, "[NEWLINE]") );
-	
-	-- Icon
-	-- not used
-	
-	-- CityName
-	TruncateStringWithTooltip(pCityInstance.CityName, 178, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName));
-	
-	-- Population
-	pCityInstance.Population:SetText(ColorWhite(kCityData.Population));
-	pCityInstance.Population:SetToolTipString("");
-
-	-- Power consumption [icon required_number / consumed_number]
-	pCityInstance.PowerConsumed:SetText(string.format("%s %s / %s",
-		kCityData.PowerIcon,
-		kCityData.PowerRequired > 0 and ColorWhite(kCityData.PowerRequired) or tostring(kCityData.PowerRequired),
-		kCityData.IsUnderpowered and ColorRed(kCityData.PowerConsumed) or tostring(kCityData.PowerConsumed)));
-	pCityInstance.PowerConsumed:SetToolTipString(kCityData.PowerConsumedTT);
-
-	-- Power produced [number]
-	pCityInstance.PowerProduced:SetText(string.format("[ICON_%s] %d", kCityData.PowerPlantResType, kCityData.PowerProduced));
-	pCityInstance.PowerProduced:SetToolTipString(kCityData.PowerProducedTT);
-
-	-- CO2 footprint [resource number]
-	--if kCityData.CO2Footprint > 0 then
-		pCityInstance.CO2Footprint:SetText(string.format("[ICON_%s] %.1f", kCityData.PowerPlantResType, kCityData.CO2Footprint));
-		pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
-	--else
-		--pCityInstance.CO2Footprint:SetText("0");
-		--pCityInstance.CO2Footprint:SetToolTipString(kCityData.CO2FootprintTT);
-	--end
-
-	-- Nuclear power plant [nuclear icon / num turns]
-	if kCityData.HasNuclearPowerPlant then sText = kCityData.NuclearAccidentIcon.."[ICON_RESOURCE_URANIUM]"..ColorWhite(kCityData.ReactorAge);
-	else                                   sText = "[ICON_Bullet]"; end
-	pCityInstance.NuclearPowerPlant:SetText(sText);
-	pCityInstance.NuclearPowerPlant:SetToolTipString(kCityData.NuclearPowerPlantTT);
-
-	-- Dam district & Flood info [num tiles / dam icon]
-	sText = tostring(kCityData.NumRiverFloodTiles);
-	if kCityData.HasDamDistrict then sText = sText.." [ICON_Checkmark]"; end
-	pCityInstance.RiverFloodDam:SetText(sText);
-	pCityInstance.RiverFloodDam:SetToolTipString(kCityData.RiverFloodDamTT);
-
-	-- Info about Flood barrier. [num tiles / flood barrier icon]
-	sText = tostring(kCityData.NumFloodTiles);
-	if kCityData.HasFloodBarrier then sText = sText.." [ICON_Checkmark]"; end
-	pCityInstance.FloodBarrier:SetText(sText);
-	pCityInstance.FloodBarrier:SetToolTipString(kCityData.FloodTilesTT);
-
-	-- Flood Barrier Per turn maintenance [number]
-	pCityInstance.BarrierMaintenance:SetText(kCityData.HasFloodBarrier and ColorWhite(kCityData.FloodBarrierMaintenance) or tostring(kCityData.FloodBarrierMaintenance));
-	pCityInstance.BarrierMaintenance:SetToolTipString(kCityData.FloodBarrierMaintenanceTT);
-	
-	-- Number of RR tiles in the city borders [number]
-	pCityInstance.Railroads:SetText(tostring(kCityData.NumRailroads));
-	pCityInstance.Railroads:SetToolTipString(kCityData.NumRailroadsTT);
-	
-	-- Number of Canal districts [icons]
-	pCityInstance.Canals:SetText(string.rep("[ICON_DISTRICT_CANAL]", kCityData.NumCanals));
-end
-
-function sort_cities2( type, instance )
-
-	local i = 0
-	
-	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( instance.Descend, type, t, a, b ); end ) do
-		i = i + 1
-		local cityInstance = instance.Children[i]
-
-		city2_fields( kCityData, cityInstance )
-
-		-- go to the city after clicking
-		cityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
-		cityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
-	end
-	
-end
-
-function city2_sortFunction( descend, type, t, a, b )
-
-	local aCity = 0
-	local bCity = 0
-	
-	if type == "name" then
-		aCity = Locale.Lookup( t[a].CityName );
-		bCity = Locale.Lookup( t[b].CityName );
-	elseif type == "pop" then
-		aCity = t[a].Population;
-		bCity = t[b].Population;
-	elseif type == "status" then
-		--if t[a].IsUnderpowered then aCity = aCity + 20; else aCity = aCity + 10; end
-		--if t[b].IsUnderpowered then bCity = bCity + 20; else bCity = bCity + 10; end
-		--if t[a].IsNuclearRisk then aCity = aCity + 20; else aCity = aCity + 10; end
-		--if t[b].IsNuclearRisk then bCity = bCity + 20; else bCity = bCity + 10; end
-	elseif type == "icon" then
-		-- not used
-	elseif type == "powcon" then
-		aCity = t[a].PowerRequired;
-		bCity = t[b].PowerRequired;
-		if aCity == bCity then
-			aCity = t[a].PowerConsumed;
-			bCity = t[b].PowerConsumed;
-		end
-	elseif type == "pwprod" then
-		aCity = t[a].PowerProduced;
-		bCity = t[b].PowerProduced;
-	elseif type == "co2" then
-		--aCity = t[a].CO2Footprint;
-		--bCity = t[b].CO2Footprint;
-	elseif type == "nuclear" then
-		aCity = t[a].ReactorAge;
-		bCity = t[b].ReactorAge;
-	elseif type == "dam" then
-		aCity = t[a].NumRiverFloodTiles;
-		bCity = t[b].NumRiverFloodTiles;
-	elseif type == "barrier" then
-		aCity = t[a].NumFloodTiles;
-		bCity = t[b].NumFloodTiles;
-	elseif type == "fbcost" then
-		aCity = t[a].FloodBarrierMaintenance;
-		bCity = t[b].FloodBarrierMaintenance;
-	elseif type == "numrr" then
-		aCity = t[a].NumRailroads;
-		bCity = t[b].NumRailroads;
-	else
-		-- nothing to do here
-	end
-	
-	if descend then return bCity > aCity; else return bCity < aCity; end
-	
-end
-
-function ViewCities2Page()	
-
-	ResetTabForNewPageContent();
-
-	local instance:table = m_simpleIM:GetInstance();
-	instance.Top:DestroyAllChildren();
-	
-	instance.Children = {}
-	instance.Descend = true
-	
-	local pHeaderInstance:table = {};
-	ContextPtr:BuildInstanceForControl( "CityStatus2HeaderInstance", pHeaderInstance, instance.Top );
-	
-	pHeaderInstance.CityStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "status", instance ) end )
-	pHeaderInstance.CityIconButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "icon", instance ) end )
-	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "name", instance ) end )
-	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pop", instance ) end )
-	pHeaderInstance.CityPowerConsumedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "powcon", instance ) end )
-	pHeaderInstance.CityPowerProducedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pwprod", instance ) end )
-	--pHeaderInstance.CityCO2FootprintButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "co2", instance ) end )
-	pHeaderInstance.CityNuclearPowerPlantButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "nuclear", instance ) end )
-	pHeaderInstance.CityRiverFloodDamButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "dam", instance ) end )
-	pHeaderInstance.CityFloodBarrierButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "barrier", instance ) end )
-	pHeaderInstance.CityBarrierMaintenanceButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "fbcost", instance ) end );
-	pHeaderInstance.CityRailroadsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "numrr", instance ) end );
-
-	-- 
-	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
-
-		local pCityInstance:table = {}
-
-		ContextPtr:BuildInstanceForControl( "CityStatus2EntryInstance", pCityInstance, instance.Top );
-		table.insert( instance.Children, pCityInstance );
-		
-		city2_fields( kCityData, pCityInstance );
-
-		-- go to the city after clicking
-		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
-		pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
-
-	end
-
-	Controls.Stack:CalculateSize();
-	Controls.Scroll:CalculateSize();
-
-	Controls.CollapseAll:SetHide( true );
-	Controls.BottomYieldTotals:SetHide( true );
-	Controls.BottomResourceTotals:SetHide( true );
-	Controls.BottomPoliciesFilters:SetHide( true );
-	Controls.BottomMinorsFilters:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
-	-- Remember this tab when report is next opened: ARISTOS
-	m_kCurrentTab = 8;
-end
-
 
 
 -- ===========================================================================

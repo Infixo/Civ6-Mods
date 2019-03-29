@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BetterReportScreen_Text -->
-<!-- Author: Infixo -->
-<!-- 2019-03-28: Created -->
+<!-- Real Era Tracker     -->
+<!-- Author: Infixo       -->
+<!-- 2019-03-28: Created  -->
+
 <GameData>
 
 <BaseGameText>
@@ -9,7 +10,7 @@
 	<Row Tag="LOC_RET_WINDOW_TITLE">
 		<Text>Real Era Tracker</Text>
 	</Row>
-	<Row Tag="LOC_RET_MOMENTS">
+	<Row Tag="LOC_RET_BUTTON_LABEL">
 		<Text>Era Tracker</Text>
 	</Row>
 	<Row Tag="LOC_RET_WORLD">

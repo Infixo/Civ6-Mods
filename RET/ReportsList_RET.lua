@@ -13,7 +13,7 @@ function OnRaiseEraTracker() Close(); LuaEvents.ReportsList_OpenEraTracker(); en
 
 function LateInitialize()
 	BRS_LateInitialize();
-	AddReport("LOC_RET_MOMENTS", OnRaiseEraTracker, Controls.GlobalReportsStack);
+	AddReport("LOC_RET_BUTTON_LABEL", OnRaiseEraTracker, Controls.GlobalReportsStack);
 end
 
 print("OK loaded ReportsList_RET.lua from Real Era Tracker");

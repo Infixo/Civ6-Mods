@@ -296,19 +296,19 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
+				<Container		Size="55,parent">
 					<GridButton		ID="EraScoreButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_CATEGORY_ERA_SCORE_NAME" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="250,parent">
+				<Container		Size="275,parent">
 					<GridButton		ID="DescriptionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_DESCRIPTION" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="100,parent">
+				<Container		Size="120,parent">
 					<GridButton		ID="ObjectButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_APPLIES_TO" />
 					</GridButton>
@@ -338,21 +338,15 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="80,parent">
-					<GridButton		ID="EraMinButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="{LOC_ERA_NAME}[ICON_GoingTo]" />
+				<Container		Size="60,parent">
+					<GridButton		ID="ErasButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_ERA_NAME" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="80,parent">
-					<GridButton		ID="EraMaxButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="[ICON_GoingTo]{LOC_ERA_NAME}" />
-					</GridButton>
-				</Container>
-				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="100,parent">
+				<Container		Size="120,parent">
 					<GridButton		ID="PlayerButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_HEADER_CIVILIZATION" />
+						<Label													Style="ReportHeaderSmallText"		String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -370,20 +364,20 @@
 					<Label		ID="Group"	Style="ReportValueText"		String="$Group$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="50,parent">
+				<Container	Size="55,parent">
 					<Label		ID="EraScore"	Style="ReportValueText"		String="$Score$" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
-				<Container	Size="250,parent">
+				<Container	Size="275,parent">
 					<Label		ID="Description"	Style="ReportValueLeftName"		String="$Description$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="100,parent">
+				<Container	Size="120,parent">
 					<Label		ID="Object"		Style="ReportValueLeftName"	String="$Object$" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
 				<Container	Size="50,parent">
-					<Label		ID="Status"		Style="ReportValueText"		String="$Status$" Offset="0,3" />
+					<Label		ID="Status"		Style="ReportValueText"		String="$Status$" Offset="0,2" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container	Size="50,parent">
@@ -398,15 +392,11 @@
 					<Label		ID="Extra"		Style="ReportValueText"		String="$Extra$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="80,parent">
-					<Label		ID="EraMin"		Style="ReportValueText"		String="$EraMin$" />
+				<Container	Size="60,parent">
+					<Label		ID="Eras"		Style="ReportValueText"		String="$Eras$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="80,parent">
-					<Label		ID="EraMax"		Style="ReportValueText"		String="$EraMax$" />
-				</Container>
-				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="100,parent">
+				<Container	Size="120,parent">
 					<Label		ID="Player"		Style="ReportValueText"		String="$Player$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,255" />
