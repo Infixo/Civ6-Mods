@@ -55,25 +55,30 @@ local tUnitSort = { type = "", group = "", parent = nil };
 
 -- Infixo: this is an iterator to replace pairs
 -- it sorts t and returns its elements one by one
+-- source: https://stackoverflow.com/questions/15706270/sort-a-table-in-lua
 function spairs( t, order_function )
+	-- collect the keys
 	local keys:table = {}; -- actual table of keys that will bo sorted
 	for key,_ in pairs(t) do table.insert(keys, key); end
 	
+	-- if order_function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys 
 	if order_function then
 		table.sort(keys, function(a,b) return order_function(t, a, b) end)
 	else
 		table.sort(keys)
 	end
-	-- iterator here
+	
+	-- return the iterator function
 	local i:number = 0;
 	return function()
 		i = i + 1;
 		if keys[i] then
-			return keys[i], t[keys[i]]
+			return keys[i], t[keys[i]];
 		end
 	end
 end
--- !! end of function
+
 
 -- ===========================================================================
 --	VARIABLES
@@ -4285,24 +4290,159 @@ Moment data
 --]]
 
 
+local m_iMaxEraIndex:number = #GameInfo.Eras;
+
+m_kMoments = {};
+
 -- one-time call to init all necessary data
 -- it will create all possible moments in a separate table
 function InitializeMomentsData()
+	print("FUN InitializeMomentsData");
+	
+	local function RegisterOneMoment(sKey:string, moment:table, sObject:string, sValidFor:string)
+		print("FUN RegisterOneMoment",sKey,sObject,sValidFor);
+		if moment.EraScore == nil then return nil; end
+		local data:table = {
+			MomentType = moment.MomentType,
+			Category = moment.Category,
+			EraScore = moment.EraScore,
+			Description = LL(moment.Name), -- Description
+			Object = sObject,
+			ValidFor = sValidFor, -- either LEADER_x or CIVILIZATION_x
+			MinEra = moment.MinEra,
+			MaxEra = moment.MaxEra,
+			-- op data
+			Status = false,
+			Turn = 0,
+			Count = 0,
+			Player = "",
+			TT = {}, -- tooltip
+		};
+		m_kMoments[ sKey ] = data;
+		--dshowtable(data); -- debug
+		return data;
+	end
+	
+	for moment in GameInfo.Moments() do
+		if     moment.Special == "ERA" then
+			-- register separate moments for each era (exceot Ancient)
+			for era in GameInfo.Eras() do
+				if era.EraType ~= "ERA_ANCIENT" then 
+					local pMoment:table = RegisterOneMoment(moment.MomentType.."_"..era.EraType, moment, LL(era.Name), "");
+					-- adjust eras for -2..+1 range
+					pMoment.MinEra = math.max(era.Index-2, 0); 
+					pMoment.MaxEra = math.min(era.Index+1, m_iMaxEraIndex);
+				end -- ancient
+			end -- for
+		
+		elseif moment.Special == "STRATEGIC" then
+			-- register separate moments for each strategic resource that is used to create a standard unit
+			local sql:string = "select distinct StrategicResource from Units where StrategicResource is not null order by StrategicResource";
+			for _,row in ipairs(DB.Query(sql)) do
+				RegisterOneMoment(moment.MomentType.."_"..row.StrategicResource, moment, LL(GameInfo.Resources[row.StrategicResource].Name), "");
+			end
+		
+		elseif moment.Special == "UNIQUE" then
+			-- register separate moments for all uniques
+			local function RegisterMomentsForUniques(sTable:string, sField:string)
+				for row in GameInfo[sTable]() do
+					-- helper - check if trait is valid for a leader or a civ
+					-- only majors are valid
+					local function GetValidFor(sTrait:string)
+						-- check civilizations
+						for row in GameInfo.CivilizationTraits() do
+							if row.TraitType == sTrait then
+								local civ = GameInfo.Civilizations[row.CivilizationType];
+								if civ ~= nil then
+									if civ.StartingCivilizationLevelType == "CIVILIZATION_LEVEL_FULL_CIV" then return civ.CivilizationType; else return ""; end
+								end
+							end -- traits
+						end -- for
+						-- check leaders
+						for row in GameInfo.LeaderTraits() do
+							if row.TraitType == sTrait then
+								local leader = GameInfo.Leaders[row.LeaderType];
+								if leader ~= nil then
+									if leader.InheritFrom == "LEADER_DEFAULT" then return leader.LeaderType; else return ""; end
+								end
+							end -- traits
+						end -- for
+						return "";
+					end
+					if row.TraitType ~= nil and row.TraitType ~= "" then
+						local sValidFor:string = GetValidFor(row.TraitType);
+						if sValidFor ~= "" then RegisterOneMoment(moment.MomentType.."_"..row[sField], moment, LL(row.Name), sValidFor); end
+					end
+				end
+			end
+			if     moment.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_BUILDING"    then RegisterMomentsForUniques("Buildings",    "BuildingType");
+			elseif moment.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_DISTRICT"    then RegisterMomentsForUniques("Districts",    "DistrictType");
+			elseif moment.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_IMPROVEMENT" then RegisterMomentsForUniques("Improvements", "ImprovementType");
+			elseif moment.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_UNIT"        then RegisterMomentsForUniques("Units",        "UnitType");
+			end
+			
+		else
+			-- standard moment
+			RegisterOneMoment(moment.MomentType, moment, "", "");
+		end
+	end
+	dshowrectable(m_kMoments); -- debug
 end
 
 
 -- resets the data to the situation "just after init"
---function ResetMomentsData()
---end
+function ResetMomentsData()
+	--print();
+	--for 
+end
+
+
+-- main function for registering historic moments
+function ProcessHistoricMoment(sKey:string, pMoment:table)
+	print("FUN ProcessHistoricMoment", sKey, pMoment.ID, pMoment.EraScore, pMoment.ActingPlayer, pMoment.Turn);
+	local trackedMoment:table = m_kMoments[sKey];
+	if trackedMoment == nil then print("ERROR ProcessHistoricMoment: cannot find moment for key", sKey); return; end
+	trackedMoment.Status = true;
+	trackedMoment.Turn = pMoment.Turn;
+	trackedMoment.Count = trackedMoment.Count + 1;
+	trackedMoment.Player = LL(PlayerConfigurations[pMoment.ActingPlayer]:GetCivilizationShortDescription());
+	table.insert(trackedMoment.TT, string.format("%d [ICON_Turn]%d: %s", pMoment.ID, pMoment.Turn, pMoment.InstanceDescription));
+end
+
 
 
 function UpdateMomentsData()
 	print("FUN UpdateMomentsData");
 	
-	-- reset the data
+	-- reset the operational data
+	for _,moment in pairs(m_kMoments) do
+		moment.Status = false;
+		moment.Turn = 0;
+		moment.Count = 0;
+		moment.Player = "";
+		moment.TT = {};
+	end
 	
+	-- civ and leader for uniques
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then return; end
+	local sCivilization:string = PlayerConfigurations[localPlayerID]:GetCivilizationTypeName();
+	local sLeader:string       = PlayerConfigurations[localPlayerID]:GetLeaderTypeName();
+
 	-- update for the current local player
-	
+	for _,moment in ipairs(Game.GetHistoryManager():GetAllMomentsData()) do
+		local momentInfo:table = GameInfo.Moments[moment.Type];
+		-- process only local player or others if cheating option is on and category is World
+		if momentInfo ~= nil and ( moment.ActingPlayer == localPlayerID or (bOptionIncludeOthers and momentInfo.Category == 1) ) then
+			if momentInfo.Special == nil then
+				ProcessHistoricMoment(momentInfo.MomentType, moment);
+			else
+				-- special moment
+				print("*** special moment data ***");
+				dshowrectable(moment);
+			end
+		end
+	end
 end
 
 
@@ -4328,7 +4468,8 @@ function ShowMoment(pMoment:table, pInstance:table)
 	
 	--if pMoment.EraScore < 1 then return; end
 	
-	-- test data
+	-- test data from Moments
+	--[[
 	local iGroup = math.random(1,3);
 	if     iGroup == 1 then pInstance.Group:SetText("[ICON_CapitalLarge]"); pInstance.Group:SetOffsetY(4);
 	elseif iGroup == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(1);
@@ -4344,10 +4485,34 @@ function ShowMoment(pMoment:table, pInstance:table)
 	pInstance.Extra:SetText(tostring(pMoment.ID));
 	pInstance.EraMin:SetText(LL(GameInfo.Eras[pMoment.GameEra].Name));
 	pInstance.EraMax:SetText("-");
+	--]]
+	
+	-- data from m_kMoments
+	if     pMoment.Category == 1 then pInstance.Group:SetText("[ICON_CapitalLarge]"); pInstance.Group:SetOffsetY(4);
+	elseif pMoment.Category == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(1);
+	else                              pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(2); end
+	pInstance.EraScore:SetText("[COLOR_White]"..tostring(pMoment.EraScore)..ENDCOLOR);
+	TruncateStringWithTooltip(pInstance.Description, 245, pMoment.Description);
+	pInstance.Object:SetText(pMoment.Object);
+	pInstance.Status:SetText(pMoment.Status and "[ICON_CheckmarkBlue]" or "[ICON_Bullet]");
+	pInstance.Turn:SetText(tostring(pMoment.Turn));
+	pInstance.Count:SetText(tostring(pMoment.Count));
+	pInstance.Player:SetText(pMoment.ValidFor);
+	pInstance.Extra:SetText(pMoment.Player);
+	pInstance.EraMin:SetText(pMoment.MinEra == nil and "-" or LL(GameInfo.Eras[pMoment.MinEra].Name));
+	pInstance.EraMax:SetText(pMoment.MaxEra == nil and "-" or LL(GameInfo.Eras[pMoment.MaxEra].Name));
 end
 
 -- sort function
-function MomentsSortFunction(bDesc:boolean, sType:string, t, a, b)
+function MomentsSortFunction(t, a, b)
+	if t[a].EraScore == t[b].EraScore then
+		-- sort by descripion
+		if t[a].Description == t[b].Description then
+			return t[a].Object < t[b].Object;
+		end
+		return t[a].Description < t[b].Description;
+	end
+	return t[a].EraScore > t[b].EraScore;
 end
 
 -- shows all moments, sorted
@@ -4386,24 +4551,58 @@ function ViewMomentsPage(eGroup:number)
 	pHeaderInstance.CityRailroadsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "numrr", instance ) end );
 	--]]
 	-- 
+	-- civ and leader for uniques
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then return; end
+	local sCivilization:string = PlayerConfigurations[localPlayerID]:GetCivilizationTypeName();
+	local sLeader:string       = PlayerConfigurations[localPlayerID]:GetLeaderTypeName();
+	
+	-- checkboxes
+	local bEraScore1:boolean = Controls.EraScore1Checkbox:IsSelected();
+	local bEraScore2:boolean = Controls.EraScore2Checkbox:IsSelected();
+	local bEraScore3:boolean = Controls.EraScore3Checkbox:IsSelected();
+	local bEraScore4:boolean = Controls.EraScore4Checkbox:IsSelected();
+	local bHideNotActive:boolean    = Controls.HideNotActiveCheckbox:IsSelected();
+	local bHideNotAvailable:boolean = Controls.HideNotAvailableCheckbox:IsSelected();
+	
+	
 	--for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
 	--print("...num momements to show", Game.GetHistoryManager():GetMomentCount());
 	--local num = 0;
 	--for i = 0, Game.GetHistoryManager():GetMomentCount()-1 do
-	for _,moment in ipairs(Game.GetHistoryManager():GetAllMomentsData(Game.GetLocalPlayer(),1)) do
-		-- test fill
-		--local pMoment:table = Game.GetHistoryManager():GetMomentData(i);
-		if moment.EraScore > 0 then
-			local pMomentInstance:table = {};
-			ContextPtr:BuildInstanceForControl( "MomentEntryInstance", pMomentInstance, instance.Top );
-			table.insert( instance.Children, pCityInstance );
-			ShowMoment( moment, pMomentInstance );
-			--num = num + 1;
+	--for _,moment in ipairs(Game.GetHistoryManager():GetAllMomentsData(Game.GetLocalPlayer(),1)) do
+	-- filter out loop
+	local tShow:table = {};
+	for key,moment in pairs(m_kMoments) do
+		-- filters
+		local bShow:boolean = true;
+		-- harcoded
+		if moment.EraScore == nil or moment.EraScore == 0 then bShow = false; end
+		if moment.ValidFor ~= nil and moment.ValidFor ~= "" then
+			if not( moment.ValidFor == sCivilization or moment.ValidFor == sLeader ) then bShow = false; end
 		end
+		if moment.Category ~= eGroup then bShow = false; end
+		-- checkboxes
+		if moment.EraScore == 1 and not bEraScore1 then bShow = false; end
+		if moment.EraScore == 2 and not bEraScore2 then bShow = false; end
+		if moment.EraScore == 3 and not bEraScore3 then bShow = false; end
+		if moment.EraScore >= 4 and not bEraScore4 then bShow = false; end
+		if bHideNotActive and moment.Status == true then bShow = false; end
+		-- avaialble & eras
+		if bShow then table.insert(tShow, moment); end
+	end
+	
+	-- show loop
+	for _,moment in spairs(tShow, MomentsSortFunction) do
+		local pMomentInstance:table = {};
+		ContextPtr:BuildInstanceForControl( "MomentEntryInstance", pMomentInstance, instance.Top );
+		table.insert( instance.Children, pMomentInstance );
+		ShowMoment( moment, pMomentInstance );
 		-- go to the city after clicking
 		--pCityInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( kCityData.City:GetX(), kCityData.City:GetY() ); UI.SelectCity( kCityData.City ); end );
 		--pCityInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 	end
+	
 	--print("...completed the loop with", num);
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
@@ -4800,10 +4999,10 @@ function Initialize()
 	Controls.EraScore4Checkbox:SetSelected( true );
 	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotActiveCheckbox );
 	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNotActiveCheckbox:SetSelected( true );
+	Controls.HideNotActiveCheckbox:SetSelected( false );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotAvailableCheckbox );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNotAvailableCheckbox:SetSelected( true );
+	Controls.HideNotAvailableCheckbox:SetSelected( false );
 
 	-- Events
 	LuaEvents.ReportsList_OpenEraTracker.Add( function() Open(); end );

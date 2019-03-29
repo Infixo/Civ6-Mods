@@ -19,7 +19,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', 
 -- These are the events to track
 -- I don't use 'moment' to not get confused with actual moments
 -- ===========================================================================
-
+/*
 CREATE TABLE RETEvents (
 	EventType      TEXT NOT NULL,
 	Description    TEXT NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE RETEvents (
 	FOREIGN KEY (MinimumGameEra) REFERENCES Eras(EraType)                   ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (MaximumGameEra) REFERENCES Eras(EraType)                   ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+*/
 
 
 																					  
@@ -52,8 +52,13 @@ ALTER TABLE Moments ADD COLUMN MaxEra TEXT REFERENCES Eras (EraType) ON DELETE C
 
 -- category WORLD
 UPDATE Moments SET Category = 1 WHERE MomentType LIKE '%FIRST_IN_WORLD';
-UPDATE Moments SET Category = 1 WHERE MomentType = 'MOMENT_UNIT_CREATED_FIRST_DOMAIN_AIR_IN_WORLD';
-UPDATE Moments SET Category = 1 WHERE MomentType = 'MOMENT_UNIT_CREATED_FIRST_DOMAIN_SEA_IN_WORLD';
+UPDATE Moments SET Category = 1 WHERE MomentType IN (
+'MOMENT_UNIT_CREATED_FIRST_DOMAIN_AIR_IN_WORLD';
+'MOMENT_UNIT_CREATED_FIRST_DOMAIN_SEA_IN_WORLD';
+'MOMENT_UNIT_CREATED_FIRST_REQUIRING_STRATEGIC_IN_WORLD'
+);
+
+
 
 -- category Repeat - must be set manually
 UPDATE Moments SET Category = 3 WHERE MomentType IN (

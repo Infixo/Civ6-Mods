@@ -338,13 +338,13 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="100,parent">
+				<Container		Size="80,parent">
 					<GridButton		ID="EraMinButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="{LOC_ERA_NAME}[ICON_GoingTo]" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="30,parent">
+				<Container		Size="80,parent">
 					<GridButton		ID="EraMaxButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="[ICON_GoingTo]{LOC_ERA_NAME}" />
 					</GridButton>
@@ -383,7 +383,7 @@
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
 				<Container	Size="50,parent">
-					<Label		ID="Status"		Style="ReportValueText"		String="$Status$" />
+					<Label		ID="Status"		Style="ReportValueText"		String="$Status$" Offset="0,3" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container	Size="50,parent">
@@ -398,11 +398,11 @@
 					<Label		ID="Extra"		Style="ReportValueText"		String="$Extra$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="100,parent">
+				<Container	Size="80,parent">
 					<Label		ID="EraMin"		Style="ReportValueText"		String="$EraMin$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="30,parent">
+				<Container	Size="80,parent">
 					<Label		ID="EraMax"		Style="ReportValueText"		String="$EraMax$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
