@@ -189,7 +189,7 @@ function InitializeMomentsData()
 			-- register separate moments for each era (exceot Ancient)
 			for era in GameInfo.Eras() do
 				if era.EraType ~= "ERA_ANCIENT" then 
-					local pMoment:table = RegisterOneMoment(moment.MomentType.."_"..era.EraType, moment, LL(era.Name), "");
+					local pMoment:table = RegisterOneMoment(era.EraType.."_"..moment.MomentType, moment, LL(era.Name), "");
 					-- adjust eras for -2..+1 range
 					pMoment.MinEra = GameInfo.Eras[ math.max(era.Index-2, 0) ].EraType; 
 					pMoment.MaxEra = GameInfo.Eras[ math.min(era.Index+1, m_iMaxEraIndex) ].EraType;
@@ -200,7 +200,7 @@ function InitializeMomentsData()
 			-- register separate moments for each strategic resource that is used to create a standard unit
 			local sql:string = "select distinct StrategicResource from Units where StrategicResource is not null order by StrategicResource";
 			for _,row in ipairs(DB.Query(sql)) do
-				RegisterOneMoment(moment.MomentType.."_"..row.StrategicResource, moment, LL(GameInfo.Resources[row.StrategicResource].Name), "");
+				RegisterOneMoment(row.StrategicResource.."_"..moment.MomentType, moment, LL(GameInfo.Resources[row.StrategicResource].Name), "");
 			end
 		
 		elseif moment.Special == "UNIQUE" then
@@ -232,7 +232,7 @@ function InitializeMomentsData()
 					end
 					if row.TraitType ~= nil and row.TraitType ~= "" then
 						local sValidFor:string = GetValidFor(row.TraitType);
-						if sValidFor ~= "" then RegisterOneMoment(moment.MomentType.."_"..row[sField], moment, LL(row.Name), sValidFor); end
+						if sValidFor ~= "" then RegisterOneMoment(row[sField].."_"..moment.MomentType, moment, LL(row.Name), sValidFor); end
 					end
 				end
 			end
@@ -254,30 +254,67 @@ end
 -- main function for registering historic moments
 function ProcessHistoricMoment(sKey:string, pMoment:table, eCategory:number, localPlayerID:number)
 	--print("FUN ProcessHistoricMoment", sKey, pMoment.ID, eCategory, pMoment.ActingPlayer, localPlayerID);
+	
+	local sPlayer:string = LL(PlayerConfigurations[pMoment.ActingPlayer]:GetCivilizationShortDescription());
+	local sUnknown:string = LL("LOC_MULTIPLAYER_UNKNOWN");
+	
+	-- fill the data using the earned moment
+	local function FillTrackedMoment(trackedMoment:table, eStatus:number, sPlayer:string)
+		trackedMoment.Status = eStatus;
+		trackedMoment.Turn = pMoment.Turn;
+		trackedMoment.Count = trackedMoment.Count + 1;
+		trackedMoment.Player = sPlayer;
+		table.insert(trackedMoment.TT, string.format("[ICON_Turn]%d: %s", pMoment.Turn, pMoment.InstanceDescription));
+		trackedMoment.ExtraData = pMoment.ExtraData;
+	end
+	
 	local trackedMoment:table = m_kMoments[sKey];
 	if trackedMoment == nil then print("ERROR ProcessHistoricMoment: cannot find moment for key", sKey); return; end
-	trackedMoment.Status = 1;
-	trackedMoment.Turn = pMoment.Turn;
-	trackedMoment.Count = trackedMoment.Count + 1;
-	trackedMoment.Player = LL(PlayerConfigurations[pMoment.ActingPlayer]:GetCivilizationShortDescription());
-	table.insert(trackedMoment.TT, string.format("[ICON_Turn]%d: %s", pMoment.Turn, pMoment.InstanceDescription));
-	trackedMoment.ExtraData = pMoment.ExtraData;
+	FillTrackedMoment(trackedMoment, 1, sPlayer); -- set as "earned"
+	
+	-- if the player is not local, then nothing more to do
+	if pMoment.ActingPlayer ~= localPlayerID then return; end
+	
 	-- this is the tweak to invalidate a local moment in case there is a world-version earned
 	-- it uses a strong assumption that world type has "_IN_WORLD" added to the local version
 	-- this is only applied to moments earned by a local player (because we have to invalidate a local version)
-	if eCategory == 1 and pMoment.ActingPlayer == localPlayerID then
+	if eCategory == 1 then
 		local sKey2:string = string.gsub(sKey, "_IN_WORLD", "");
 		--print("...checking world moment", sKey, sKey2);
 		local trackedMoment2:table = m_kMoments[sKey2];
 		if trackedMoment2 ~= nil then
 			--print("...invalidating", sKey2, "because of", sKey);
-			-- fill the data using world moment
-			trackedMoment2.Status = -1;
-			trackedMoment2.Turn = pMoment.Turn;
-			trackedMoment2.Count = trackedMoment2.Count + 1;
-			trackedMoment2.Player = trackedMoment.Player;
-			table.insert(trackedMoment2.TT, string.format("[ICON_Turn]%d: %s", pMoment.Turn, pMoment.InstanceDescription));
-			trackedMoment2.ExtraData = pMoment.ExtraData;
+			FillTrackedMoment(trackedMoment2, -1, sPlayer);
+		end
+		sKey2 = string.gsub(sKey, "_FIRST_IN_WORLD", "");
+		local trackedMoment2:table = m_kMoments[sKey2];
+		if trackedMoment2 ~= nil and trackedMoment2.Category == 2 then
+			FillTrackedMoment(trackedMoment2, -1, sPlayer);
+		end
+		return;
+	end
+	
+	-- the other way around
+	-- local or repeat, if earned and world is NOT, then invalidate
+	if eCategory == 2 then
+		local sKey2:string = sKey.."_IN_WORLD";
+		local trackedMoment2:table = m_kMoments[sKey2];
+		if trackedMoment2 ~= nil and trackedMoment2.Category == 1 and trackedMoment2.Status == 0 then
+			FillTrackedMoment(trackedMoment2, -1, sUnknown);
+		end
+		sKey2 = sKey.."_FIRST_IN_WORLD";
+		trackedMoment2 = m_kMoments[sKey2];
+		if trackedMoment2 ~= nil and trackedMoment2.Category == 1 and trackedMoment2.Status == 0 then
+			FillTrackedMoment(trackedMoment2, -1, sUnknown);
+		end
+		return;
+	end
+	
+	-- the only case for Repeat - National Park
+	if pMoment.MomentType == "MOMENT_NATIONAL_PARK_CREATED" then
+		local trackedMoment2:table = m_kMoments["MOMENT_NATIONAL_PARK_CREATED_FIRST_IN_WORLD"];
+		if trackedMoment2 ~= nil and trackedMoment2.Status == 0 then
+			FillTrackedMoment(trackedMoment2, -1, sUnknown);
 		end
 	end
 end
@@ -339,13 +376,13 @@ function UpdateMomentsData()
 				if momentInfo.Special == "STRATEGIC" then
 					local sExtra:string = RetrieveFromExtraData(moment, "MOMENT_DATA_RESOURCE"); -- extra data contains MOMENT_DATA_RESOURCE
 					if sExtra ~= "" then
-						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment, momentInfo.Category, localPlayerID);
+						ProcessHistoricMoment(sExtra.."_"..momentInfo.MomentType, moment, momentInfo.Category, localPlayerID);
 					end
 				end
 				if momentInfo.Special == "ERA" then
 					local sExtra:string = RetrieveFromExtraData(moment, "MOMENT_DATA_PLAYER_ERA"); -- extra data contains MOMENT_DATA_PLAYER_ERA
 					if sExtra ~= "" then
-						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment, momentInfo.Category, localPlayerID);
+						ProcessHistoricMoment(sExtra.."_"..momentInfo.MomentType, moment, momentInfo.Category, localPlayerID);
 					end
 				end
 				if momentInfo.Special == "UNIQUE" then
@@ -356,7 +393,7 @@ function UpdateMomentsData()
 					elseif momentInfo.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_UNIT"        then sType = "MOMENT_DATA_UNIT"; end
 					local sExtra:string = RetrieveFromExtraData(moment, sType);
 					if sExtra ~= "" then
-						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment, momentInfo.Category, localPlayerID);
+						ProcessHistoricMoment(sExtra.."_"..momentInfo.MomentType, moment, momentInfo.Category, localPlayerID);
 					end
 				end
 				--print("*** special moment data ***"); dshowrectable(moment);
