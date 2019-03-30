@@ -18,30 +18,6 @@ INSERT OR REPLACE INTO RLLReports (ReportType, ButtonLabel, LuaEvent, StackID, S
 ('REPORT_ERA_TRACKER', 'LOC_RET_BUTTON_LABEL', 'ReportsList_OpenEraTracker', 'GlobalReportsStack', 520, 1);
 
 
--- ===========================================================================
--- EVENTS
--- These are the events to track
--- I don't use 'moment' to not get confused with actual moments
--- ===========================================================================
-/*
-CREATE TABLE RETEvents (
-	EventType      TEXT NOT NULL,
-	Description    TEXT NOT NULL,
-	EventDataType  TEXT,    -- type of the object associated (e.g. MOMENT_DATA_DISTRICT)
-	DataType       TEXT,    -- actual type of the object (e.g. DISTRICT_CAMPUS)
-	Category       INTEGER NOT NULL CHECK (Category IN (1,2,3)) DEFAULT 1, -- 1:world, 2: local, 3:repeatable
-	EraScore       INTEGER NOT NULL DEFAULT 0,
-	MinimumGameEra TEXT,
-	MaximumGameEra TEXT,
-	PRIMARY KEY (EventType),
-	FOREIGN KEY (EventDataType)  REFERENCES MomentDataTypes(MomentDataType) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (DataType)       REFERENCES Types(Type)                     ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (MinimumGameEra) REFERENCES Eras(EraType)                   ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (MaximumGameEra) REFERENCES Eras(EraType)                   ON DELETE CASCADE ON UPDATE CASCADE
-);
-*/
-
-
 																					  
 -- ===========================================================================
 -- EXTRA DATA IN MOMENTS TABLE
@@ -49,10 +25,12 @@ CREATE TABLE RETEvents (
 -- In some cases the call will be infused with extra data.
 -- ===========================================================================
 
-ALTER TABLE Moments ADD COLUMN Category INTEGER NOT NULL CHECK (Category IN (1,2,3)) DEFAULT 2; -- 1:world, 2: local, 3:repeatable
-ALTER TABLE Moments ADD COLUMN Special TEXT; -- marks moments that need special treatment (usually will be dynamically generated)
-ALTER TABLE Moments ADD COLUMN MinEra TEXT REFERENCES Eras (EraType) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE Moments ADD COLUMN MaxEra TEXT REFERENCES Eras (EraType) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE Moments ADD COLUMN Category   INTEGER NOT NULL CHECK (Category IN (1,2,3)) DEFAULT 2; -- 1:world, 2: local, 3:repeatable
+ALTER TABLE Moments ADD COLUMN Special    TEXT; -- marks moments that need special treatment (usually will be dynamically generated)
+ALTER TABLE Moments ADD COLUMN ObjectType TEXT; -- info that will be displayed in the Object column
+ALTER TABLE Moments ADD COLUMN MinEra     TEXT REFERENCES Eras (EraType) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE Moments ADD COLUMN MaxEra     TEXT REFERENCES Eras (EraType) ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 -- category WORLD
 UPDATE Moments SET Category = 1 WHERE MomentType LIKE '%FIRST_IN_WORLD';
@@ -61,8 +39,6 @@ UPDATE Moments SET Category = 1 WHERE MomentType IN (
 'MOMENT_UNIT_CREATED_FIRST_DOMAIN_SEA_IN_WORLD',
 'MOMENT_UNIT_CREATED_FIRST_REQUIRING_STRATEGIC_IN_WORLD'
 );
-
-
 
 -- category Repeat - must be set manually
 UPDATE Moments SET Category = 3 WHERE MomentType IN (
@@ -124,26 +100,26 @@ UPDATE Moments SET MaxEra = MaximumGameEra WHERE MinimumGameEra IS NOT NULL;
 -- special cases?
 
 
-/*
--- by default, EventType is the same as MomentType
-UPDATE Moments SET EventType = MomentType;
+-- projects
+UPDATE Moments SET ObjectType = 'PROJECT_MANHATTAN_PROJECT' WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_MANHATTEN';
+UPDATE Moments SET ObjectType = 'PROJECT_OPERATION_IVY'     WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_OPERATION_IVY';
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_EARTH_SATELLITE' WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_SATELLITE_LAUNCH';
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_EARTH_SATELLITE' WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_SATELLITE_LAUNCH_FIRST_IN_WORLD';
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_MOON_LANDING'    WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_MOON_LANDING';
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_MOON_LANDING'    WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_MOON_LANDING_FIRST_IN_WORLD';
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_MARS_BASE'       WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_MARS'                AND EXISTS (SELECT * FROM Projects WHERE ProjectType = 'PROJECT_LAUNCH_MARS_BASE');
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_MARS_BASE'       WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_MARS_FIRST_IN_WORLD' AND EXISTS (SELECT * FROM Projects WHERE ProjectType = 'PROJECT_LAUNCH_MARS_BASE');
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_EXOPLANET_EXPEDITION' WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_EXOPLANET';
+UPDATE Moments SET ObjectType = 'PROJECT_LAUNCH_EXOPLANET_EXPEDITION' WHERE MomentType = 'MOMENT_PROJECT_FOUNDED_EXOPLANET_FIRST_IN_WORLD';
 
--- process exceptions
+-- districts
+UPDATE Moments SET ObjectType = 'DISTRICT_AERODROME'  WHERE MomentType = 'MOMENT_BUILDING_CONSTRUCTED_FULL_AERODROME_FIRST';
+UPDATE Moments SET ObjectType = 'DISTRICT_ENCAMPMENT' WHERE MomentType = 'MOMENT_BUILDING_CONSTRUCTED_FULL_ENCAMPMENT_FIRST';
+UPDATE Moments SET ObjectType = 'DISTRICT_ENTERTAINMENT_COMPLEX'       WHERE MomentType = 'MOMENT_BUILDING_CONSTRUCTED_FULL_ENTERTAINMENT_COMPLEX_FIRST';
+UPDATE Moments SET ObjectType = 'DISTRICT_WATER_ENTERTAINMENT_COMPLEX' WHERE MomentType = 'MOMENT_BUILDING_CONSTRUCTED_FULL_WATER_ENTERTAINMENT_COMPLEX_FIRST';
 
--- full districts
-UPDATE Moments SET EventType = 'MOMENT_RET_FULL_DISTRICT_FIRST', EventDataType = 'MOMENT_DATA_DISTRICT', DataType = 'DISTRICT_AERODROME'                   WHERE MomentType = 'BUILDING_CONSTRUCTED_FULL_AERODROME_FIRST';
-UPDATE Moments SET EventType = 'MOMENT_RET_FULL_DISTRICT_FIRST', EventDataType = 'MOMENT_DATA_DISTRICT', DataType = 'DISTRICT_ENCAMPMENT'                  WHERE MomentType = 'BUILDING_CONSTRUCTED_FULL_ENCAMPMENT_FIRST';
-UPDATE Moments SET EventType = 'MOMENT_RET_FULL_DISTRICT_FIRST', EventDataType = 'MOMENT_DATA_DISTRICT', DataType = 'DISTRICT_ENTERTAINMENT_COMPLEX'       WHERE MomentType = 'BUILDING_CONSTRUCTED_FULL_ENTERTAINMENT_COMPLEX_FIRST';
-UPDATE Moments SET EventType = 'MOMENT_RET_FULL_DISTRICT_FIRST', EventDataType = 'MOMENT_DATA_DISTRICT', DataType = 'DISTRICT_WATER_ENTERTAINMENT_COMPLEX' WHERE MomentType = 'BUILDING_CONSTRUCTED_FULL_WATER_ENTERTAINMENT_COMPLEX_FIRST';
-
-
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-UPDATE Moments SET EventType = '', EventDataType = '', DataType = '' WHERE MomentType = '';
-*/
+-- improvements
+UPDATE Moments SET ObjectType = 'IMPROVEMENT_BEACH_RESORT'    WHERE MomentType = 'MOMENT_IMPROVEMENT_CONSTRUCTED_SEASIDE_RESORT_FIRST';
+UPDATE Moments SET ObjectType = 'IMPROVEMENT_BEACH_RESORT'    WHERE MomentType = 'MOMENT_IMPROVEMENT_CONSTRUCTED_SEASIDE_RESORT_FIRST_IN_WORLD';
+UPDATE Moments SET ObjectType = 'IMPROVEMENT_MOUNTAIN_TUNNEL' WHERE MomentType = 'MOMENT_IMPROVEMENT_CONSTRUCTED_MOUNTAIN_TUNNEL_FIRST';
+UPDATE Moments SET ObjectType = 'IMPROVEMENT_MOUNTAIN_TUNNEL' WHERE MomentType = 'MOMENT_IMPROVEMENT_CONSTRUCTED_MOUNTAIN_TUNNEL_FIRST_IN_WORLD';
