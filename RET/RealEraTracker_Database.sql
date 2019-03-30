@@ -2,16 +2,20 @@
 -- Real Era Tracker
 -- Author: Infixo
 -- 2019-03-28: Created
+-- 2019-03-30: Added ReportsList Loader
 -- ===========================================================================
 
 -- just to make versioning easier
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MAJOR', '0');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MAJOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '0');
 
 -- options
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', '1'); -- set to 1 to detect historic moments that other players earned 
 																					  -- please note that this is technically cheating as the game doesn't inform you about them (with few exceptions)
 
+-- ReportsList Loader
+INSERT OR REPLACE INTO RLLReports (ReportType, ButtonLabel, LuaEvent, StackID, SortOrder, RequiresXP1) VALUES
+('REPORT_ERA_TRACKER', 'LOC_RET_BUTTON_LABEL', 'ReportsList_OpenEraTracker', 'GlobalReportsStack', 520, 1);
 
 
 -- ===========================================================================

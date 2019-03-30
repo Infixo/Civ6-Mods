@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Real Era Tracker</Name>
 		<Teaser>Shows a list of historic moments not yet earned.</Teaser>
-		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.0.</Description>
+		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Rise &amp; Fall[ENDCOLOR] or [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.0.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
@@ -32,28 +32,6 @@
 			</Properties>
 			<File>RealEraTracker.xml</File>
 		</AddUserInterfaces>
-        <ImportFiles id="RET_ImportFiles">
-			<Properties>
-                <LoadOrder>1100</LoadOrder>
-            </Properties>		
-            <Items>
-				<File>ReportsList_RET.lua</File>
-            </Items>
-        </ImportFiles>
-		<ReplaceUIScript id="RET_ReplaceUI_ReportsList_XP1" criteria="Expansion1">
-			<Properties>
-                <LoadOrder>1110</LoadOrder>
-				<LuaContext>ReportsList</LuaContext>
-				<LuaReplace>ReportsList_RET.lua</LuaReplace>
-			</Properties>
-		</ReplaceUIScript>
-		<ReplaceUIScript id="RET_ReplaceUI_ReportsList_XP2" criteria="Expansion2">
-			<Properties>
-                <LoadOrder>1120</LoadOrder>
-				<LuaContext>ReportsList</LuaContext>
-				<LuaReplace>ReportsList_RET.lua</LuaReplace>
-			</Properties>
-		</ReplaceUIScript>
 		<UpdateText id="RET_UpdateText">
 			<File>Text/RealEraTracker_Text.xml</File>
 		</UpdateText>
@@ -65,15 +43,31 @@
 			<Properties><LoadOrder>1</LoadOrder></Properties>
 			<File>Icons/FontIconsRMI.xml</File>
 		</UpdateIcons>
+		<!-- reports list loader -->
+		<UpdateDatabase id="RLL_Database">
+			<File>RLL/ReportsListLoader.sql</File>
+		</UpdateDatabase>
+		<ImportFiles id="RLL_Imports">
+			<File>RLL/ReportsListLoader.lua</File>
+		</ImportFiles>
+		<ReplaceUIScript id="RLL_ReplaceUI_ReportsList">
+			<Properties>
+                <LoadOrder>99999</LoadOrder>
+				<LuaContext>ReportsList</LuaContext>
+				<LuaReplace>RLL/ReportsListLoader.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
     </InGameActions>
     <Files>
 		<File>RealEraTracker_Database.sql</File>
         <File>RealEraTracker.lua</File>
         <File>RealEraTracker.xml</File>
-		<File>ReportsList_RET.lua</File>
 		<File>Text/RealEraTracker_Text.xml</File>
 		<!-- new font icons -->
 		<File>Icons/FontIconsRMI.dds</File>
 		<File>Icons/FontIconsRMI.xml</File>
+		<!-- reports list loader -->
+		<File>RLL/ReportsListLoader.sql</File>
+		<File>RLL/ReportsListLoader.lua</File>
     </Files>
 </Mod>
