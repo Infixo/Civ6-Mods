@@ -4,21 +4,16 @@ print("Loading RealEraTracker.lua from Real Era Tracker version "..GlobalParamet
 --	Author: Infixo
 --  2019-03-28: Created
 -- ===========================================================================
---include("CitySupport");
---include("Civ6Common");
 include("InstanceManager");
 include("SupportFunctions"); -- TruncateString
 include("TabSupport");
 
--- exposing functions and variables
---if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
---local RMA = ExposedMembers.RMA;
 
 -- Expansions check
 local bIsRiseAndFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
-print("Rise & Fall    :", (bIsRiseAndFall and "YES" or "no"));
+--print("Rise & Fall    :", (bIsRiseAndFall and "YES" or "no"));
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
-print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
+--print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 
 -- configuration options
 local bOptionIncludeOthers:boolean = ( GlobalParameters.RET_OPTION_INCLUDE_OTHERS == 1 );
@@ -34,37 +29,9 @@ local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
 
 
--- Infixo: this is an iterator to replace pairs
--- it sorts t and returns its elements one by one
--- source: https://stackoverflow.com/questions/15706270/sort-a-table-in-lua
-function spairs( t, order_function )
-	-- collect the keys
-	local keys:table = {}; -- actual table of keys that will bo sorted
-	for key,_ in pairs(t) do table.insert(keys, key); end
-	
-	-- if order_function given, sort by it by passing the table and keys a, b,
-    -- otherwise just sort the keys 
-	if order_function then
-		table.sort(keys, function(a,b) return order_function(t, a, b) end)
-	else
-		table.sort(keys)
-	end
-	
-	-- return the iterator function
-	local i:number = 0;
-	return function()
-		i = i + 1;
-		if keys[i] then
-			return keys[i], t[keys[i]];
-		end
-	end
-end
-
-
 -- ===========================================================================
 --	VARIABLES
 -- ===========================================================================
-
 local m_kCurrentTab:number = 1; -- last active tab which will be also used as a moment category
 local m_iMaxEraIndex:number = #GameInfo.Eras-1;
 m_kMoments = {};
@@ -73,34 +40,6 @@ m_tabIM    = InstanceManager:new("TabInstance",    "Button", Controls.TabContain
 m_tabs     = nil;
 
 
--- ===========================================================================
--- Time helpers and debug routines
--- ===========================================================================
-local fStartTime1:number = 0.0
-local fStartTime2:number = 0.0
-function Timer1Start()
-	fStartTime1 = Automation.GetTime()
-	--print("Timer1 Start", fStartTime1)
-end
-function Timer2Start()
-	fStartTime2 = Automation.GetTime()
-	--print("Timer2 Start() (start)", fStartTime2)
-end
-function Timer1Tick(txt:string)
-	print("Timer1 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime1))
-end
-function Timer2Tick(txt:string)
-	print("Timer2 Tick", txt, string.format("%5.3f", Automation.GetTime()-fStartTime2))
-end
-
--- debug routine - prints a table (no recursion)
-function dshowtable(tTable:table)
-	if tTable == nil then print("dshowtable: table is nil"); return; end
-	for k,v in pairs(tTable) do
-		print(k, type(v), tostring(v));
-	end
-end
-
 -- debug routine - prints a table, and tables inside recursively (up to 5 levels)
 function dshowrectable(tTable:table, iLevel:number)
 	local level:number = 0;
@@ -108,6 +47,29 @@ function dshowrectable(tTable:table, iLevel:number)
 	for k,v in pairs(tTable) do
 		print(string.rep("---:",level), k, type(v), tostring(v));
 		if type(v) == "table" and level < 5 then dshowrectable(v, level+1); end
+	end
+end
+
+
+-- Infixo: this is an iterator to replace pairs
+-- it sorts t and returns its elements one by one
+-- source: https://stackoverflow.com/questions/15706270/sort-a-table-in-lua
+function spairs( t, order_function )
+	local keys:table = {}; -- actual table of keys that will bo sorted
+	for key,_ in pairs(t) do table.insert(keys, key); end
+	
+	if order_function then
+		table.sort(keys, function(a,b) return order_function(t, a, b) end)
+	else
+		table.sort(keys)
+	end
+	-- iterator here
+	local i:number = 0;
+	return function()
+		i = i + 1;
+		if keys[i] then
+			return keys[i], t[keys[i]]
+		end
 	end
 end
 
@@ -137,16 +99,14 @@ end
 --	Single entry point for display
 -- ===========================================================================
 function Open( tabToOpen:number )
-	print("FUN Open()", tabToOpen, m_kCurrentTab);
+	--print("FUN Open()", tabToOpen, m_kCurrentTab);
 	
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
 	UI.PlaySound("UI_Screen_Open");
 
-	Timer2Start();
 	UpdateMomentsData();
-	Timer2Tick("UpdateMomentsData");
 	
 	-- To remember the last opened tab when the report is re-opened
 	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
@@ -196,7 +156,7 @@ Moment data
 -- one-time call to init all necessary data
 -- it will create all possible moments in a separate table
 function InitializeMomentsData()
-	print("FUN InitializeMomentsData");
+	--print("FUN InitializeMomentsData");
 	
 	local function RegisterOneMoment(sKey:string, moment:table, sObject:string, sValidFor:string)
 		--print("FUN RegisterOneMoment",sKey,sObject,sValidFor);
@@ -221,7 +181,6 @@ function InitializeMomentsData()
 		};
 		if moment.ObjectType ~= nil and data.Object == "" then data.Object = LL("LOC_"..moment.ObjectType.."_NAME"); end
 		m_kMoments[ sKey ] = data;
-		--dshowtable(data); -- debug
 		return data;
 	end
 	
@@ -294,7 +253,7 @@ end
 
 -- main function for registering historic moments
 function ProcessHistoricMoment(sKey:string, pMoment:table, eCategory:number, localPlayerID:number)
-	print("FUN ProcessHistoricMoment", sKey, pMoment.ID, eCategory, pMoment.ActingPlayer, localPlayerID);
+	--print("FUN ProcessHistoricMoment", sKey, pMoment.ID, eCategory, pMoment.ActingPlayer, localPlayerID);
 	local trackedMoment:table = m_kMoments[sKey];
 	if trackedMoment == nil then print("ERROR ProcessHistoricMoment: cannot find moment for key", sKey); return; end
 	trackedMoment.Status = 1;
@@ -308,10 +267,10 @@ function ProcessHistoricMoment(sKey:string, pMoment:table, eCategory:number, loc
 	-- this is only applied to moments earned by a local player (because we have to invalidate a local version)
 	if eCategory == 1 and pMoment.ActingPlayer == localPlayerID then
 		local sKey2:string = string.gsub(sKey, "_IN_WORLD", "");
-		print("...checking world moment", sKey, sKey2);
+		--print("...checking world moment", sKey, sKey2);
 		local trackedMoment2:table = m_kMoments[sKey2];
 		if trackedMoment2 ~= nil then
-			print("...invalidating", sKey2, "because of", sKey);
+			--print("...invalidating", sKey2, "because of", sKey);
 			-- fill the data using world moment
 			trackedMoment2.Status = -1;
 			trackedMoment2.Turn = pMoment.Turn;
@@ -325,7 +284,7 @@ end
 
 
 function RetrieveFromExtraData(moment:table, sType:string)
-	print("FUN RetrieveFromExtraData", GameInfo.Moments[moment.Type].MomentType, sType);
+	--print("FUN RetrieveFromExtraData", GameInfo.Moments[moment.Type].MomentType, sType);
 	--dshowrectable(moment);
 	local sValue;
 	if moment.ExtraData[1] ~= nil and GameInfo.Types[ moment.ExtraData[1].DataType ].Type == sType then
@@ -337,7 +296,7 @@ function RetrieveFromExtraData(moment:table, sType:string)
 	if sValue == nil then
 		print("ERROR RetrieveFromExtraData: can't find", sType); dshowrectable(moment); return "";
 	end
-	print("...retrieved", sValue);
+	--print("...retrieved", sValue);
 	-- get the actual value
 	if sType == "MOMENT_DATA_BUILDING"    then return GameInfo.Buildings[ sValue ].BuildingType; end
 	if sType == "MOMENT_DATA_DISTRICT"    then return GameInfo.Districts[ sValue ].DistrictType; end
@@ -350,7 +309,7 @@ end
 
 
 function UpdateMomentsData()
-	print("FUN UpdateMomentsData");
+	--print("FUN UpdateMomentsData");
 	
 	-- reset the operational data
 	for _,moment in pairs(m_kMoments) do
@@ -497,7 +456,7 @@ end
 
 -- main function
 function ViewMomentsPage(eGroup:number)
-	print("FUN ViewMomentsPage", eGroup);
+	--print("FUN ViewMomentsPage", eGroup);
 	if eGroup == nil then eGroup = m_kCurrentTab; end
 	-- Remember this tab when report is next opened
 	m_kCurrentTab = eGroup;
@@ -563,14 +522,14 @@ function ViewMomentsPage(eGroup:number)
 	end
 	
 	-- show loop
-	print("...filtering done, before show");
+	--print("...filtering done, before show");
 	for _,moment in spairs(tShow, MomentsSortFunction) do
 		local pMomentInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "MomentEntryInstance", pMomentInstance, instance.Top );
 		table.insert( instance.Children, pMomentInstance );
 		ShowMoment( moment, pMomentInstance );
 	end
-	print("...show loop completed");
+	--print("...show loop completed");
 
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
@@ -590,9 +549,7 @@ function AddTabSection( name:string, populateCallback:ifunction )
 			m_tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
 		end
 		kTab.Selection:SetHide(false);
-		Timer1Start();
 		populateCallback();
-		Timer1Tick("Section "..Locale.Lookup(name).." populated");
 	end
 
 	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );

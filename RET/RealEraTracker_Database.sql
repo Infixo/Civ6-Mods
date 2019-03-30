@@ -10,7 +10,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MAJOR', '1');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '0');
 
 -- options
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', '1'); -- set to 1 to detect historic moments that other players earned 
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', '0'); -- set to 1 to detect historic moments that other players earned 
 																					  -- please note that this is technically cheating as the game doesn't inform you about them (with few exceptions)
 
 -- ReportsList Loader
