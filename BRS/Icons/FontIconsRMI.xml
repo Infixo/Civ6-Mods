@@ -18,10 +18,7 @@
 		<Replace Name="DISTRICT_AERODROME"  Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="0"/>
 		<Replace Name="DISTRICT_DAM"        Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="1"/>
 		<Replace Name="DISTRICT_CANAL"      Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="2"/>
-		<Update>
-			<Where Name="DISTRICT_GOVERNMENT"/>
-			<Set Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="3"/>
-		</Update>
+		<Replace Name="DISTRICT_GOVPLAZA"   Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="3"/>
 		<!-- Row 1 -->
 		<Replace Name="PressureDownGreen" Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="6"/>
 		<Replace Name="PressureUpRed"     Atlas="ICON_ATLAS_FONT_ICON_RMI_BASELINE_4" Index="7"/>

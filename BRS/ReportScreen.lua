@@ -60,6 +60,7 @@ local tUnitSort = { type = "", group = "", parent = nil };
 
 -- Infixo: this is an iterator to replace pairs
 -- it sorts t and returns its elements one by one
+-- source: https://stackoverflow.com/questions/15706270/sort-a-table-in-lua
 function spairs( t, order_function )
 	local keys:table = {}; -- actual table of keys that will bo sorted
 	for key,_ in pairs(t) do table.insert(keys, key); end
@@ -2700,7 +2701,7 @@ function GetFontIconForDistrict(sDistrictType:string)
 	--if sDistrictType == "DISTRICT_AERODROME"                   then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for an aerodrome
 	--if sDistrictType == "DISTRICT_CANAL"                       then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a canal
 	--if sDistrictType == "DISTRICT_DAM"                         then return "[ICON_DISTRICT_WONDER]";        end -- no unique font icon for a dam
-	--if sDistrictType == "DISTRICT_GOVERNMENT"                  then return "[ICON_DISTRICT_GOVPLAZA]";      end
+	if sDistrictType == "DISTRICT_GOVERNMENT"                  then return "[ICON_DISTRICT_GOVPLAZA]";      end
 	-- default icon last
 	return "[ICON_"..sDistrictType.."]";
 end
@@ -2785,7 +2786,7 @@ function city_fields( kCityData, pCityInstance )
 		sStatusText = sStatusText.."[ICON_Occupied]"; table.insert(tStatusToolTip, ColorRed(LL("LOC_HUD_CITY_GROWTH_OCCUPIED")));
 	end -- occupied
 	if HasCityDistrict(kCityData, "DISTRICT_GOVERNMENT") then
-		sStatusText = sStatusText.."[ICON_DISTRICT_GOVERNMENT]"; table.insert(tStatusToolTip, "[COLOR:111,15,143,255]"..Locale.Lookup("LOC_DISTRICT_GOVERNMENT_NAME")..ENDCOLOR); -- ICON_DISTRICT_GOVERNMENT
+		sStatusText = sStatusText.."[ICON_DISTRICT_GOVPLAZA]"; table.insert(tStatusToolTip, "[COLOR:111,15,143,255]"..Locale.Lookup("LOC_DISTRICT_GOVERNMENT_NAME")..ENDCOLOR); -- ICON_DISTRICT_GOVERNMENT
 	end
 	local bHasWonder:boolean = false;
 	for _,wonder in ipairs(kCityData.Wonders) do
