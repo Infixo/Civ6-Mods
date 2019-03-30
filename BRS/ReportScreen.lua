@@ -198,7 +198,7 @@ function Open( tabToOpen:number )
 	Controls.ScreenAnimIn:SetToBeginning();
 	Controls.ScreenAnimIn:Play();
 	UI.PlaySound("UI_Screen_Open");
-	LuaEvents.ReportScreen_Opened();
+	--LuaEvents.ReportScreen_Opened();
 
 	-- BRS !! new line to add new variables 
 	Timer2Start()
