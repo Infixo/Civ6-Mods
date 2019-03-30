@@ -35,14 +35,6 @@
 		<UpdateText id="RET_UpdateText">
 			<File>Text/RealEraTracker_Text.xml</File>
 		</UpdateText>
-		<!-- new font icons -->
-		<ImportFiles id="RMI_Imports">
-			<File>Icons/FontIconsRMI.dds</File>
-		</ImportFiles>
-		<UpdateIcons id="RMI_Icons">
-			<Properties><LoadOrder>1</LoadOrder></Properties>
-			<File>Icons/FontIconsRMI.xml</File>
-		</UpdateIcons>
 		<!-- reports list loader -->
 		<UpdateDatabase id="RLL_Database">
 			<File>RLL/ReportsListLoader.sql</File>
@@ -63,9 +55,6 @@
         <File>RealEraTracker.lua</File>
         <File>RealEraTracker.xml</File>
 		<File>Text/RealEraTracker_Text.xml</File>
-		<!-- new font icons -->
-		<File>Icons/FontIconsRMI.dds</File>
-		<File>Icons/FontIconsRMI.xml</File>
 		<!-- reports list loader -->
 		<File>RLL/ReportsListLoader.sql</File>
 		<File>RLL/ReportsListLoader.lua</File>

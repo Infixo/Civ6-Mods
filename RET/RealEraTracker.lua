@@ -293,8 +293,8 @@ end
 
 
 -- main function for registering historic moments
-function ProcessHistoricMoment(sKey:string, pMoment:table)
-	print("FUN ProcessHistoricMoment", sKey, pMoment.ID, pMoment.EraScore, pMoment.ActingPlayer, pMoment.Turn);
+function ProcessHistoricMoment(sKey:string, pMoment:table, eCategory:number, localPlayerID:number)
+	print("FUN ProcessHistoricMoment", sKey, pMoment.ID, eCategory, pMoment.ActingPlayer, localPlayerID);
 	local trackedMoment:table = m_kMoments[sKey];
 	if trackedMoment == nil then print("ERROR ProcessHistoricMoment: cannot find moment for key", sKey); return; end
 	trackedMoment.Status = 1;
@@ -303,6 +303,24 @@ function ProcessHistoricMoment(sKey:string, pMoment:table)
 	trackedMoment.Player = LL(PlayerConfigurations[pMoment.ActingPlayer]:GetCivilizationShortDescription());
 	table.insert(trackedMoment.TT, string.format("[ICON_Turn]%d: %s", pMoment.Turn, pMoment.InstanceDescription));
 	trackedMoment.ExtraData = pMoment.ExtraData;
+	-- this is the tweak to invalidate a local moment in case there is a world-version earned
+	-- it uses a strong assumption that world type has "_IN_WORLD" added to the local version
+	-- this is only applied to moments earned by a local player (because we have to invalidate a local version)
+	if eCategory == 1 and pMoment.ActingPlayer == localPlayerID then
+		local sKey2:string = string.gsub(sKey, "_IN_WORLD", "");
+		print("...checking world moment", sKey, sKey2);
+		local trackedMoment2:table = m_kMoments[sKey2];
+		if trackedMoment2 ~= nil then
+			print("...invalidating", sKey2, "because of", sKey);
+			-- fill the data using world moment
+			trackedMoment2.Status = -1;
+			trackedMoment2.Turn = pMoment.Turn;
+			trackedMoment2.Count = trackedMoment2.Count + 1;
+			trackedMoment2.Player = trackedMoment.Player;
+			table.insert(trackedMoment2.TT, string.format("[ICON_Turn]%d: %s", pMoment.Turn, pMoment.InstanceDescription));
+			trackedMoment2.ExtraData = pMoment.ExtraData;
+		end
+	end
 end
 
 
@@ -356,19 +374,19 @@ function UpdateMomentsData()
 		-- process only local player or others if cheating option is on and category is World
 		if moment.EraScore ~= nil and moment.EraScore > 0 and momentInfo ~= nil and ( moment.ActingPlayer == localPlayerID or (bOptionIncludeOthers and momentInfo.Category == 1) ) then
 			if momentInfo.Special == nil then
-				ProcessHistoricMoment(momentInfo.MomentType, moment);
+				ProcessHistoricMoment(momentInfo.MomentType, moment, momentInfo.Category, localPlayerID);
 			else
 				-- special moments
 				if momentInfo.Special == "STRATEGIC" then
 					local sExtra:string = RetrieveFromExtraData(moment, "MOMENT_DATA_RESOURCE"); -- extra data contains MOMENT_DATA_RESOURCE
 					if sExtra ~= "" then
-						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment);
+						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment, momentInfo.Category, localPlayerID);
 					end
 				end
 				if momentInfo.Special == "ERA" then
 					local sExtra:string = RetrieveFromExtraData(moment, "MOMENT_DATA_PLAYER_ERA"); -- extra data contains MOMENT_DATA_PLAYER_ERA
 					if sExtra ~= "" then
-						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment);
+						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment, momentInfo.Category, localPlayerID);
 					end
 				end
 				if momentInfo.Special == "UNIQUE" then
@@ -379,7 +397,7 @@ function UpdateMomentsData()
 					elseif momentInfo.MomentIllustrationType == "MOMENT_ILLUSTRATION_UNIQUE_UNIT"        then sType = "MOMENT_DATA_UNIT"; end
 					local sExtra:string = RetrieveFromExtraData(moment, sType);
 					if sExtra ~= "" then
-						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment);
+						ProcessHistoricMoment(momentInfo.MomentType.."_"..sExtra, moment, momentInfo.Category, localPlayerID);
 					end
 				end
 				--print("*** special moment data ***"); dshowrectable(moment);
@@ -414,19 +432,24 @@ function ShowMoment(pMoment:table, pInstance:table)
 	else                              pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(2); end
 	pInstance.EraScore:SetText("[COLOR_White]"..tostring(pMoment.EraScore)..ENDCOLOR);
 	-- description
-	local isTruncated:boolean = TruncateString(pInstance.Description, 295, pMoment.Description);
+	local isTruncated:boolean = TruncateString(pInstance.Description, 305, pMoment.Description);
 	if isTruncated then pInstance.Description:SetToolTipString( pMoment.Description..NEWLINE..pMoment.LongDesc );
 	else                pInstance.Description:SetToolTipString( pMoment.LongDesc ); end
 	-- object & valid for
-	pInstance.Object:SetText(pMoment.Object);
-	pInstance.Object:SetToolTipString("");
+	isTruncated = TruncateString(pInstance.Object, 155, pMoment.Object);
+	local sStatusTT:string = "";
+	if isTruncated then sStatusTT = pMoment.Object; end
 	if pMoment.ValidFor ~= "" then
-		if     GameInfo.Civilizations[pMoment.ValidFor] ~= nil then pInstance.Object:SetToolTipString( LL(GameInfo.Civilizations[pMoment.ValidFor].Name) );
-		elseif GameInfo.Leaders[pMoment.ValidFor]       ~= nil then pInstance.Object:SetToolTipString( LL(GameInfo.Leaders[pMoment.ValidFor].Name) );
-		else                                                        pInstance.Object:SetToolTipString(pMoment.ValidFor); end
+		if sStatusTT ~= "" then sStatusTT = sStatusTT..NEWLINE; end
+		if     GameInfo.Civilizations[pMoment.ValidFor] ~= nil then sStatusTT = sStatusTT..LL(GameInfo.Civilizations[pMoment.ValidFor].Name);
+		elseif GameInfo.Leaders[pMoment.ValidFor]       ~= nil then sStatusTT = sStatusTT..LL(GameInfo.Leaders[pMoment.ValidFor].Name);
+		else                                                        sStatusTT = sStatusTT..pMoment.ValidFor; end
 	end
+	pInstance.Object:SetToolTipString(sStatusTT);
 	-- status and tooltips
-	pInstance.Status:SetText(pMoment.Status == 1 and "[ICON_CheckmarkBlue]" or (pMoment.Status == 0 and "[ICON_Bullet]" or "[ICON_CheckFail]"));
+	if     pMoment.Status == 0 then pInstance.Status:SetText("[ICON_Bullet]");        pInstance.Status:SetOffsetY(0);
+	elseif pMoment.Status == 1 then pInstance.Status:SetText("[ICON_CheckmarkBlue]"); pInstance.Status:SetOffsetY(0);
+	else                            pInstance.Status:SetText("[ICON_Not]");           pInstance.Status:SetOffsetY(4); end
 	pInstance.Status:SetToolTipString("");
 	if #pMoment.TT > 0 then pInstance.Status:SetToolTipString(table.concat(pMoment.TT, NEWLINE)); end
 	-- turn, count, player
@@ -530,7 +553,7 @@ function ViewMomentsPage(eGroup:number)
 		if moment.EraScore == 2 and not bEraScore2 then bShow = false; end
 		if moment.EraScore == 3 and not bEraScore3 then bShow = false; end
 		if moment.EraScore >= 4 and not bEraScore4 then bShow = false; end
-		if bHideNotActive and moment.Status == 1 then bShow = false; end
+		if bHideNotActive and moment.Status ~= 0 then bShow = false; end
 		-- available & eras
 		local iMinEra:number, iMaxEra:number = 0, m_iMaxEraIndex;
 		if moment.MinEra ~= nil then iMinEra = GameInfo.Eras[moment.MinEra].Index; end
@@ -707,10 +730,10 @@ function Initialize()
 	Controls.EraScore4Checkbox:SetSelected( true );
 	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotActiveCheckbox );
 	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNotActiveCheckbox:SetSelected( false );
+	Controls.HideNotActiveCheckbox:SetSelected( true );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotAvailableCheckbox );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.HideNotAvailableCheckbox:SetSelected( false );
+	Controls.HideNotAvailableCheckbox:SetSelected( true );
 	-- Events
 	LuaEvents.ReportsList_OpenEraTracker.Add( function() Open(); end );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );

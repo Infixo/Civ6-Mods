@@ -17,7 +17,6 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', 
 INSERT OR REPLACE INTO RLLReports (ReportType, ButtonLabel, LuaEvent, StackID, SortOrder, RequiresXP1) VALUES
 ('REPORT_ERA_TRACKER', 'LOC_RET_BUTTON_LABEL', 'ReportsList_OpenEraTracker', 'GlobalReportsStack', 520, 1);
 
-
 																					  
 -- ===========================================================================
 -- EXTRA DATA IN MOMENTS TABLE

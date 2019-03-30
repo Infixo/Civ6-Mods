@@ -67,7 +67,7 @@
 	<!-- MOMENTS -->
 
 	<Instance					Name="CityStatus2HeaderInstance">
-		<Container			ID="Top"														Offset="8,0" Size="1123,22">
+		<Container			ID="Top"														Offset="8,0" Size="990,22">
 			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box			Size="2,parent"	Color="46,70,95,255" />
@@ -83,13 +83,13 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="300,parent">
+				<Container		Size="310,parent">
 					<GridButton		ID="DescriptionButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_DESCRIPTION" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="150,parent">
+				<Container		Size="160,parent">
 					<GridButton		ID="ObjectButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_UI_PEDIA_APPLIES_TO" />
 					</GridButton>
@@ -125,7 +125,7 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="120,parent">
+				<Container		Size="130,parent">
 					<GridButton		ID="PlayerButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER" />
 					</GridButton>
@@ -137,7 +137,7 @@
 
 	<!-- Columns: name, object, era score, status, count, era min, era max, civilization -->
 	<Instance Name="MomentEntryInstance">
-		<Container	ID="Top"									Offset="8,0" Size="1015,28">
+		<Container	ID="Top"									Offset="8,0" Size="990,28">
 			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box									Size="2,parent"	Color="46,70,95,255" />
@@ -149,11 +149,11 @@
 					<Label		ID="EraScore"	Style="ReportValueText"		String="$Score$" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
-				<Container	Size="300,parent">
+				<Container	Size="310,parent">
 					<Label		ID="Description"	Style="ReportValueLeftName"		String="$Description$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="150,parent">
+				<Container	Size="160,parent">
 					<Label		ID="Object"		Style="ReportValueLeftName"	String="$Object$" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
@@ -177,7 +177,7 @@
 					<Label		ID="Eras"		Style="ReportValueText"		String="$Eras$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="120,parent">
+				<Container	Size="130,parent">
 					<Label		ID="Player"		Style="ReportValueText"		String="$Player$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,255" />
