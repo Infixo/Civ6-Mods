@@ -109,6 +109,7 @@
 	</ReplaceUIScript>
 	<ReplaceUIScript id="REU_ReplaceUI_BoostUnlockedPopup">
 	  <Properties>
+        <LoadOrder>300</LoadOrder>
 	    <LuaContext>BoostUnlockedPopup</LuaContext>
 		<LuaReplace>UI/BoostUnlockedPopup_REU.lua</LuaReplace>
 	  </Properties>
