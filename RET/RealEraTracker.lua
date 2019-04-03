@@ -1,4 +1,4 @@
-print("Loading RealEraTracker.lua from Real Era Tracker version "..GlobalParameters.RET_VERSION_MAJOR.."."..GlobalParameters.RET_VERSION_MINOR);
+print("Loading RealEraTracker.lua from Real Era Tracker version "..(GlobalParameters.RET_VERSION_MAJOR and GlobalParameters.RET_VERSION_MAJOR or "0").."."..(GlobalParameters.RET_VERSION_MINOR and GlobalParameters.RET_VERSION_MINOR or "0"));
 -- ===========================================================================
 --	Real Era Tracker
 --	Author: Infixo
@@ -112,8 +112,52 @@ function Open( tabToOpen:number )
 	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
 	m_tabs.SelectTab( m_kCurrentTab );
 	
-	-- show number of moments and total era score
-	Controls.TotalsLabel:SetText( LL("LOC_ERAS_CURRENT_SCORE").." "..tostring(Game.GetEras():GetPlayerCurrentScore(Game.GetLocalPlayer())) );
+	-- show era score info
+	local pGameEras:table = Game.GetEras();
+	local currentEraIndex:number = pGameEras:GetCurrentEra();
+	local currentEraDef:table = GameInfo.Eras[currentEraIndex];
+	local currentTurn:number = Game.GetCurrentGameTurn();
+
+	-- current era
+	Controls.EraNameLabel:SetText( LL("LOC_ERA_PROGRESS_THE_ERA", GameInfo.Eras[ pGameEras:GetCurrentEra() ].Name) );
+	-- turns till next
+
+	Controls.TurnsLabel:SetHide( pGameEras:GetCurrentEra() == pGameEras:GetFinalEra() );
+	
+	
+	local nextEraCountdown = pGameEras:GetNextEraCountdown() + 1; -- 0 turns remaining is the last turn, shift by 1 to make sense to non-programmers
+	if nextEraCountdown > 0 then
+		-- If the era countdown has started only show that number
+		m_EraData.NextEraMinTurn = nextEraCountdown;
+		m_EraData.NextEraMaxTurn = nextEraCountdown;
+	else
+		local inactiveCountdownLength = GlobalParameters.NEXT_ERA_TURN_COUNTDOWN; -- Even though the countdown has not started yet, account for it in our time estimates
+		m_EraData.NextEraMinTurn = pGameEras:GetCurrentEraMinimumEndTurn() - currentTurn;
+		if (m_EraData.NextEraMinTurn < inactiveCountdownLength) then
+			m_EraData.NextEraMinTurn = inactiveCountdownLength;
+		end
+		m_EraData.NextEraMaxTurn = pGameEras:GetCurrentEraMaximumEndTurn() - currentTurn;
+		if (m_EraData.NextEraMaxTurn < 0) then
+			m_EraData.NextEraMaxTurn = 0;
+		end
+	end
+
+	
+	
+	if m_EraData.NextEraMinTurn == m_EraData.NextEraMaxTurn then
+		Controls.TurnsLabel:SetText(m_EraData.NextEraMaxTurn);
+	else
+		Controls.TurnsLabel:SetText(m_EraData.NextEraMinTurn .. " - " .. m_EraData.NextEraMaxTurn);
+	end
+	
+	-- total era score
+	Controls.TotalsLabel:SetText( tostring(pGameEras:GetPlayerCurrentScore(Game.GetLocalPlayer())) );
+	-- thresholds
+	m_EraData.DarkAgeThreshold = pGameEras:GetPlayerDarkAgeThreshold(m_EraData.PlayerID);
+	m_EraData.DarkAgeThresholdTooltip = GetDarkAgeThresholdTooltip(m_EraData.PlayerID);
+	m_EraData.GoldenAgeThreshold = pGameEras:GetPlayerGoldenAgeThreshold(m_EraData.PlayerID);
+	m_EraData.GoldenAgeThresholdTooltip = GetGoldenAgeThresholdTooltip(m_EraData.PlayerID);
+	
 end
 
 
