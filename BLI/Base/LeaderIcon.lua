@@ -14,6 +14,10 @@ include("LuaClass");
 include("TeamSupport");
 include("DiplomacyRibbonSupport");
 
+-- 2019-04-03: fix to show the relationship tooltip
+table.insert(Relationship.m_kValidAIRelationships, "DIPLO_STATE_NEUTRAL");
+
+
 -- Expansions check
 local bIsRiseAndFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
@@ -153,50 +157,55 @@ function LeaderIcon:UpdateAllToolTips(playerID:number, ttDetails: string)
 	self:UpdateTeamAndRelationship(playerID);
 end
 
-
+-- ===========================================================================
+--	playerID, Index of the player to compare a relationship.  (May be self.)
+-- ===========================================================================
 function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 	--print("LeaderIcon:UpdateTeamAndRelationship", playerID);
-	local pPlayer:table = Players[playerID];
-	local pPlayerConfig:table = PlayerConfigurations[playerID];
-	local localPlayerID:number = Game.GetLocalPlayer();
-	if localPlayerID == -1 then return; end -- for auto-play
-	local isHuman:boolean = pPlayerConfig:IsHuman();
-	local bHasMet:boolean = Players[localPlayerID]:GetDiplomacy():HasMet(playerID);
+	
+	if playerID < 0 then 
+		UI.DataError("Invalid playerID="..tostring(playerID).." to check against for UpdateTeamAndRelationship().");
+		return; 
+	end	
+	
+	local localPlayerID	:number = Game.GetLocalPlayer();
+	if localPlayerID < 0 then return; end		--  Local player is auto-play.
+	
+	local pPlayer		:table = Players[playerID];
+	local pPlayerConfig	:table = PlayerConfigurations[playerID];	
+	local isHuman		:boolean = pPlayerConfig:IsHuman();
+	local isSelf		:boolean = (playerID == localPlayerID);
+	local isMet			:boolean = Players[localPlayerID]:GetDiplomacy():HasMet(playerID);
 
 	-- Team Ribbon
-	if(playerID == localPlayerID or bHasMet) then
+	local isTeamRibbonHidden:boolean = true;
+	if(isSelf or isMet) then
 		-- Show team ribbon for ourselves and civs we've met
 		local teamID:number = pPlayerConfig:GetTeam();
 		if #Teams[teamID] > 1 then
 			local teamRibbonName:string = self.TEAM_RIBBON_PREFIX .. tostring(teamID);
 			self.Controls.TeamRibbon:SetIcon(teamRibbonName);
 			self.Controls.TeamRibbon:SetColor(GetTeamColor(teamID));
-			self.Controls.TeamRibbon:SetHide(false);
-		else
-			-- Hide team ribbon if team only contains one player
-			self.Controls.TeamRibbon:SetHide(true);
+			isTeamRibbonHidden = false;
 		end
-	else
-		-- Hide team ribbon for civs we haven't met
-		self.Controls.TeamRibbon:SetHide(true);
 	end
-
+	self.Controls.TeamRibbon:SetHide(isTeamRibbonHidden);
+	
 	-- Relationship status (Humans don't show anything, unless we are at war)
-	local ourRelationship = pPlayer:GetDiplomaticAI():GetDiplomaticStateIndex(localPlayerID);
-	if (not isHuman or IsValidRelationship(GameInfo.DiplomaticStates[ourRelationship].StateType)) then
-		self.Controls.Relationship:SetHide(false);
-		self.Controls.Relationship:SetVisState(ourRelationship);
-		--if (GameInfo.DiplomaticStates[ourRelationship].Hash ~= DiplomaticStates.NEUTRAL) then
-			--local sRelationTT:string = Locale.Lookup(GameInfo.DiplomaticStates[ourRelationship].Name);
-			--sRelationTT = sRelationTT .. "[NEWLINE][NEWLINE]MORE DIPLO INFO HERE";
+	local eRelationship :number = pPlayer:GetDiplomaticAI():GetDiplomaticStateIndex(localPlayerID);
+	local relationType	:string = GameInfo.DiplomaticStates[eRelationship].StateType;
+	local isValid		:boolean= (isHuman and Relationship.IsValidWithHuman( relationType )) or (not isHuman and Relationship.IsValidWithAI( relationType ));
+	if isValid then		
+		self.Controls.Relationship:SetVisState(eRelationship);
+		--if (GameInfo.DiplomaticStates[eRelationship].Hash ~= DiplomaticStates.NEUTRAL) then
+			--self.Controls.Relationship:SetToolTipString(Locale.Lookup(GameInfo.DiplomaticStates[eRelationship].Name));
 			self.Controls.Relationship:SetToolTipString( self:GetRelationToolTipString(playerID) );
 		--end
-	else
-		self.Controls.Relationship:SetHide(true);
 	end
+	self.Controls.Relationship:SetHide( not isValid );
 	
 	-- Player's Era (dark, normal, etc.)
-	if (bIsRiseAndFall or bIsGatheringStorm) and (playerID == localPlayerID or bHasMet) then
+	if (bIsRiseAndFall or bIsGatheringStorm) and (isSelf or isMet) then
 		self.Controls.CivEra:SetHide(false);
 		local pGameEras:table = Game.GetEras();
 		if     pGameEras:HasHeroicGoldenAge(playerID) then self.Controls.CivEra:SetText("[ICON_GLORY_SUPER_GOLDEN_AGE]"); self.Controls.CivEra:SetToolTipString(LL("LOC_ERA_PROGRESS_HEROIC_AGE"));
@@ -395,6 +404,7 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 end
 
 --Resets instances we retrieve
+-- ===========================================================================
 function LeaderIcon:Reset()
 	self.Controls.TeamRibbon:SetHide(true);
  	self.Controls.Relationship:SetHide(true);
@@ -406,13 +416,11 @@ function LeaderIcon:RegisterCallback(event: number, func: ifunction)
 	self.Controls.SelectButton:RegisterCallback(event, func);
 end
 
---[[ EXTENDED TOOLTIP - more or less from EDR, however Victories section
+--[[ EXTENDED TOOLTIP
 - add religion! civs & cities converted
 - add Diplo Points
 - add Exoplanet Expedition %
 - add Culture% (and turns)
-
-- num of civics? it is visible in Score (2p/civic)
 --]]
 ------------------------------------------------------------------
 function LeaderIcon:GetToolTipString(playerID:number)
