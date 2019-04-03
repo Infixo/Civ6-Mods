@@ -10,13 +10,14 @@
 		<Button		ID="CloseButton"	Anchor="R,T"	Offset="-3,-1"	Size="44,44"					Texture="Controls_CloseLarge" />
 		<Image							Anchor="C,T"					Size="parent,44"		Color="61,112,154,255"	Texture="Controls_Gradient_HalfRadial" />
 		<!--<GridButton		ID="CollapseAll"									Offset="48,13"	SizeToText="80,12"				Style="RoundedButton"		String="LOC_HUD_REPORTS_COLLAPSE_ALL"  Hidden="0" />-->
-		<Label ID="EraNameLabel"    Anchor="L,T" Offset="50,8" Style="FontFlair16" String="$CurrentEra$"                      FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />
-		<Label ID="TurnsLabel"  Anchor="L,T" Offset="50,26" Style="FontFlair16" String="LOC_ERA_PROGRESS_TIME_TO_NEXT_ERA" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
-		<Label                  Anchor="C,T" Offset="0,16"  Style="FontFlair20" String="{LOC_RET_WINDOW_TITLE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCapsType="EveryWord" SmallCaps="28" />
-		<Label                  Anchor="L,T" Offset="690,17" Style="FontFlair16" String="{LOC_ERA_PROGRESS_ERA_SCORE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />
-		<Label ID="TotalsLabel" Anchor="L,T" Offset="785,16" Style="FontFlair18" String="$score$"                     FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
-		<Label ID="NormalLabel" Anchor="L,T" Offset="850,10" Style="FontFlair16" String="LOC_ERA_PROGRESS_NORMAL_AGE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
-		<Label ID="GoldenLabel" Anchor="L,T" Offset="850,26" Style="FontFlair16" String="LOC_ERA_PROGRESS_GOLDEN_AGE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
+		<Label ID="EraNameLabel" Anchor="L,T" Offset="60,8"  Style="FontFlair16" String="$CurrentEra$" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />
+		<Label ID="TurnsLabel"   Anchor="L,T" Offset="58,26" Style="FontFlair16" String="$turns$"      FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
+		<Label                   Anchor="C,T" Offset="0,16"  Style="FontFlair20" String="{LOC_RET_WINDOW_TITLE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCapsType="EveryWord" SmallCaps="26" />
+		<Label                      Anchor="L,T" Offset="810,8"  Style="FontFlair16" String="{LOC_ERA_PROGRESS_ERA_SCORE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />
+		<Label ID="TotalsLabel"     Anchor="L,T" Offset="910,7"  Style="FontFlair18" String="$score$"      FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
+		<Label ID="ThresholdsLabel" Anchor="L,T" Offset="810,26" Style="FontFlair16" String="$thresholds$" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
+		<!-- Taj Mahal -->
+		<Image ID="TajMahalImage" Anchor="L,T" Offset="770,8" Size="32,32" Icon="ICON_BUILDING_TAJ_MAHAL" IconSize="32" ToolTip="{LOC_BUILDING_TAJ_MAHAL_NAME}[NEWLINE]{LOC_BUILDING_TAJ_MAHAL_DESCRIPTION}"/>
 		<Grid							Anchor="C,T"	Offset="0,44"	Size="parent-6,8"				Style="Divider3Grid" />
 		
 		<!-- Tab Header -->
@@ -43,17 +44,16 @@
 			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
 			<Image Anchor="C,B" Offset="0,2" Size="parent,parent" Texture="Controls_Gradient" Color="255,255,255,32">
 				<!--<Label Anchor="L,T" Offset="10,10" Style="FontFlair20" String="LOC_ERA_PROGRESS_ERA_SCORE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />-->
-				<GridButton ID="EraScore1Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="40,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 1" Hidden="0"/>
-				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="200,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 2" Hidden="0"/>
-				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="360,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 3" Hidden="0"/>
-				<GridButton ID="EraScore4Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="520,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 4+" Hidden="0"/>
-				<GridButton ID="HideNotActiveCheckbox"    Style="CheckBoxControl" Anchor="L,B" Offset="40,10" Size="300,26" String="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE" Hidden="0"/>
-				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="L,B" Offset="360,10" Size="400,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE" Hidden="0"/>
+				<GridButton ID="EraScore1Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="40,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 1"/>
+				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="200,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 2"/>
+				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="360,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 3"/>
+				<GridButton ID="EraScore4Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="520,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 4+"/>
+				<GridButton ID="HideNotActiveCheckbox"    Style="CheckBoxControl" Anchor="L,B" Offset="40,10"  Size="220,26" String="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE"/>
+				<GridButton ID="ShowOnlyEarnedCheckbox"   Style="CheckBoxControl" Anchor="L,B" Offset="280,10" Size="220,26" String="LOC_RET_CHECKBOX_SHOW_ONLY_EARNED"/>
+				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="L,B" Offset="520,10" Size="400,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE"/>
 			</Image>
 		</Container>
 		
-		<!-- Mahabodi Temple -->
-		<Image Anchor="L,B" Offset="20,10" Icon="ICON_BUILDING_TAJ_MAHAL" IconSize="50" Hidden="0" ToolTip="{LOC_BUILDING_TAJ_MAHAL_NAME}[NEWLINE]{LOC_BUILDING_TAJ_MAHAL_DESCRIPTION}"/>
 	</Box>
 
 	<!-- Tab Instance -->
@@ -78,9 +78,9 @@
 			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box			Size="2,parent"	Color="46,70,95,255" />
-				<Container		Size="50,parent">
+				<Container		Size="70,parent">
 					<GridButton		ID="GroupButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_UNITNAME_SUFFIX_STRIKE_GROUP" />
+						<Label													Style="ReportHeaderSmallText"		String="LOC_RET_FAVORED" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
@@ -120,12 +120,6 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="50,parent">
-					<GridButton		ID="ExtraButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label													Style="ReportHeaderSmallText"		String="LOC_GAMESUMMARY_CATEGORY_EXTRA" />
-					</GridButton>
-				</Container>
-				<Box			Size="2,parent"	Color="46,70,95,128" />
 				<Container		Size="60,parent">
 					<GridButton		ID="ErasButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_ERA_NAME" />
@@ -135,6 +129,12 @@
 				<Container		Size="130,parent">
 					<GridButton		ID="PlayerButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportHeaderSmallText"		String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="30,parent">
+					<GridButton		ID="ExtraButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_GAMESUMMARY_CATEGORY_EXTRA" />
 					</GridButton>
 				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
@@ -148,8 +148,9 @@
 			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box									Size="2,parent"	Color="46,70,95,255" />
-				<Container	Size="50,parent">
-					<Label		ID="Group"	Style="ReportValueText"		String="$Group$" />
+				<Container	Size="70,parent">
+					<GridButton ID="Favored"    Style="CheckBoxControl" Anchor="R,C" Offset="0,-1" Size="70,26"/>
+					<Label		ID="Group"		Style="ReportValueText"	Anchor="L,T" Offset="13,0" String="$Group$"/>
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container	Size="55,parent">
@@ -175,10 +176,6 @@
 				<Container	Size="50,parent">
 					<Label		ID="Count"		Style="ReportValueText"		String="$Count$" />
 				</Container>
-				<Box							Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="50,parent">
-					<Label		ID="Extra"		Style="ReportValueText"		String="$Extra$" />
-				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container	Size="60,parent">
 					<Label		ID="Eras"		Style="ReportValueText"		String="$Eras$" />
@@ -186,6 +183,10 @@
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container	Size="130,parent">
 					<Label		ID="Player"		Style="ReportValueText"		String="$Player$" />
+				</Container>
+				<Box							Size="2,parent"	Color="46,70,95,128" />
+				<Container	Size="30,parent">
+					<Label		ID="Extra"		Style="ReportValueText"		String="$Extra$" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,255" />
 			</Stack>

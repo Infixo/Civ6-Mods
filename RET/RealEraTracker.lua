@@ -8,6 +8,7 @@ include("InstanceManager");
 include("SupportFunctions"); -- TruncateString
 include("TabSupport");
 
+include("Serialize");
 
 -- Expansions check
 local bIsRiseAndFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
@@ -28,12 +29,17 @@ local NEWLINE:string  = "[NEWLINE]";
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
 
+function ColorGREEN(s) return "[COLOR_Green]"..tostring(s)..ENDCOLOR; end
+function ColorRED(s)   return "[COLOR_Red]"  ..tostring(s)..ENDCOLOR; end
+
 
 -- ===========================================================================
 --	VARIABLES
 -- ===========================================================================
 local m_kCurrentTab:number = 1; -- last active tab which will be also used as a moment category
 local m_iMaxEraIndex:number = #GameInfo.Eras-1;
+local m_iTajMahalIndex:number = (GameInfo.Buildings.BUILDING_TAJ_MAHAL and GameInfo.Buildings.BUILDING_TAJ_MAHAL.Index or -1);
+local m_bIsTajMahal:boolean = false;
 m_kMoments = {};
 m_simpleIM = InstanceManager:new("SimpleInstance", "Top",    Controls.Stack); -- Non-Collapsable, simple
 m_tabIM    = InstanceManager:new("TabInstance",    "Button", Controls.TabContainer);
@@ -114,50 +120,47 @@ function Open( tabToOpen:number )
 	
 	-- show era score info
 	local pGameEras:table = Game.GetEras();
-	local currentEraIndex:number = pGameEras:GetCurrentEra();
-	local currentEraDef:table = GameInfo.Eras[currentEraIndex];
-	local currentTurn:number = Game.GetCurrentGameTurn();
 
 	-- current era
 	Controls.EraNameLabel:SetText( LL("LOC_ERA_PROGRESS_THE_ERA", GameInfo.Eras[ pGameEras:GetCurrentEra() ].Name) );
 	-- turns till next
-
-	Controls.TurnsLabel:SetHide( pGameEras:GetCurrentEra() == pGameEras:GetFinalEra() );
-	
-	
-	local nextEraCountdown = pGameEras:GetNextEraCountdown() + 1; -- 0 turns remaining is the last turn, shift by 1 to make sense to non-programmers
-	if nextEraCountdown > 0 then
-		-- If the era countdown has started only show that number
-		m_EraData.NextEraMinTurn = nextEraCountdown;
-		m_EraData.NextEraMaxTurn = nextEraCountdown;
+	if pGameEras:GetCurrentEra() == pGameEras:GetFinalEra() then
+		Controls.TurnsLabel:SetHide( true );
 	else
-		local inactiveCountdownLength = GlobalParameters.NEXT_ERA_TURN_COUNTDOWN; -- Even though the countdown has not started yet, account for it in our time estimates
-		m_EraData.NextEraMinTurn = pGameEras:GetCurrentEraMinimumEndTurn() - currentTurn;
-		if (m_EraData.NextEraMinTurn < inactiveCountdownLength) then
-			m_EraData.NextEraMinTurn = inactiveCountdownLength;
-		end
-		m_EraData.NextEraMaxTurn = pGameEras:GetCurrentEraMaximumEndTurn() - currentTurn;
-		if (m_EraData.NextEraMaxTurn < 0) then
-			m_EraData.NextEraMaxTurn = 0;
+		Controls.TurnsLabel:SetHide( false );
+		local nextEraCountdown:number = pGameEras:GetNextEraCountdown() + 1; -- 0 turns remaining is the last turn, shift by 1 to make sense to non-programmers
+		if nextEraCountdown > 0 then
+			-- If the era countdown has started only show that number
+			Controls.TurnsLabel:SetText( string.format("[ICON_Turn] %d", nextEraCountdown) );
+		else
+			local inactiveCountdownLength:number = GlobalParameters.NEXT_ERA_TURN_COUNTDOWN; -- Even though the countdown has not started yet, account for it in our time estimates
+			local currentTurn:number = Game.GetCurrentGameTurn();
+			local iNextEraMinTurn:number = math.max(pGameEras:GetCurrentEraMinimumEndTurn() - currentTurn, inactiveCountdownLength);
+			local iNextEraMaxTurn:number = math.max(pGameEras:GetCurrentEraMaximumEndTurn() - currentTurn, inactiveCountdownLength);
+			Controls.TurnsLabel:SetText( string.format("[ICON_Turn] %d - %d", iNextEraMinTurn, iNextEraMaxTurn) );
 		end
 	end
-
 	
+	-- player data
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then return; end
 	
-	if m_EraData.NextEraMinTurn == m_EraData.NextEraMaxTurn then
-		Controls.TurnsLabel:SetText(m_EraData.NextEraMaxTurn);
-	else
-		Controls.TurnsLabel:SetText(m_EraData.NextEraMinTurn .. " - " .. m_EraData.NextEraMaxTurn);
-	end
+	-- thresholds
+	local iDarkAgeThreshold:number   = pGameEras:GetPlayerDarkAgeThreshold(localPlayerID);
+	local iGoldenAgeThreshold:number = pGameEras:GetPlayerGoldenAgeThreshold(localPlayerID);
+	--Controls.ThresholdsLabel:SetText( string.format("[ICON_GLORY_DARK_AGE] %s [ICON_GLORY_NORMAL_AGE] %s [ICON_GLORY_GOLDEN_AGE]", ColorRED(iDarkAgeThreshold), ColorGREEN(iGoldenAgeThreshold)) );
+	Controls.ThresholdsLabel:SetText( string.format("[ICON_GLORY_DARK_AGE]  %d  [ICON_GLORY_NORMAL_AGE]  %d  [ICON_GLORY_GOLDEN_AGE]", iDarkAgeThreshold, iGoldenAgeThreshold) );
 	
 	-- total era score
-	Controls.TotalsLabel:SetText( tostring(pGameEras:GetPlayerCurrentScore(Game.GetLocalPlayer())) );
-	-- thresholds
-	m_EraData.DarkAgeThreshold = pGameEras:GetPlayerDarkAgeThreshold(m_EraData.PlayerID);
-	m_EraData.DarkAgeThresholdTooltip = GetDarkAgeThresholdTooltip(m_EraData.PlayerID);
-	m_EraData.GoldenAgeThreshold = pGameEras:GetPlayerGoldenAgeThreshold(m_EraData.PlayerID);
-	m_EraData.GoldenAgeThresholdTooltip = GetGoldenAgeThresholdTooltip(m_EraData.PlayerID);
+	local iCurrentScore:number = pGameEras:GetPlayerCurrentScore(localPlayerID);
+	local sAge:string = "[ICON_GLORY_DARK_AGE]";
+	if iCurrentScore >= iDarkAgeThreshold   then sAge = "[ICON_GLORY_NORMAL_AGE]"; end
+	if iCurrentScore >= iGoldenAgeThreshold then sAge = "[ICON_GLORY_GOLDEN_AGE]"; end
+	Controls.TotalsLabel:SetText( tostring(iCurrentScore).." "..sAge );
 	
+	-- Taj Mahal
+	m_bIsTajMahal = (Players[localPlayerID]:GetStats():GetNumBuildingsOfType(m_iTajMahalIndex) > 0);
+	Controls.TajMahalImage:SetHide(not m_bIsTajMahal);
 end
 
 
@@ -216,6 +219,7 @@ function InitializeMomentsData()
 			MinEra = moment.MinEra,
 			MaxEra = moment.MaxEra,
 			-- op data
+			Favored = false,
 			Status = 0, -- 0: not earned, 1: earned, -1: invalid (e.g. earned on world level and this is local level)
 			Turn = 0,
 			Count = 0,
@@ -466,11 +470,17 @@ end
 function ShowMoment(pMoment:table, pInstance:table)
 	--print("FUN ShowMoment", pMoment.MomentType);
 	
+	-- favored
+	pInstance.Favored:SetSelected( pMoment.Favored );
+	pInstance.Favored:RegisterCallback( Mouse.eLClick, function() pMoment.Favored = not pMoment.Favored; ViewMomentsPage(); end );
 	-- category, era score
-	if     pMoment.Category == 1 then pInstance.Group:SetText("[ICON_CapitalLarge]"); pInstance.Group:SetOffsetY(4);
-	elseif pMoment.Category == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(1);
-	else                              pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(2); end
-	pInstance.EraScore:SetText("[COLOR_White]"..tostring(pMoment.EraScore)..ENDCOLOR);
+	if     pMoment.Category == 1 then pInstance.Group:SetText("[ICON_CapitalLarge]"); pInstance.Group:SetOffsetY(10);
+	elseif pMoment.Category == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(7);
+	else                              pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(8); end
+	-- score
+	local iScore:number = pMoment.EraScore;
+	if m_bIsTajMahal and iScore >= 2 then iScore = iScore + 1; end
+	pInstance.EraScore:SetText("[COLOR_White]"..tostring(iScore)..ENDCOLOR);
 	-- description
 	local isTruncated:boolean = TruncateString(pInstance.Description, 305, pMoment.Description);
 	if isTruncated then pInstance.Description:SetToolTipString( pMoment.Description..NEWLINE..pMoment.LongDesc );
@@ -525,6 +535,11 @@ end
 
 -- sort function
 function MomentsSortFunction(t, a, b)
+	-- favored always first
+	if t[a].Favored ~= t[b].Favored then
+		return t[a].Favored;
+	end
+	-- favored are either both true or both false
 	if t[a].EraScore == t[b].EraScore then
 		-- sort by descripion
 		if t[a].Description == t[b].Description then
@@ -543,23 +558,12 @@ function ViewMomentsPage(eGroup:number)
 	m_kCurrentTab = eGroup;
 	
 	ResetTabForNewPageContent();
-
 	local instance:table = m_simpleIM:GetInstance();
 	instance.Top:DestroyAllChildren();
-	
-	instance.Children = {}
-	instance.Descend = true;
-	
+	--instance.Children = {}
+	--instance.Descend = true;
 	local pHeaderInstance:table = {};
 	ContextPtr:BuildInstanceForControl( "CityStatus2HeaderInstance", pHeaderInstance, instance.Top );
-	--[[
-	pHeaderInstance.CityStatusButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "status", instance ) end )
-	pHeaderInstance.CityIconButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "icon", instance ) end )
-	pHeaderInstance.CityNameButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "name", instance ) end )
-	pHeaderInstance.CityPopulationButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pop", instance ) end )
-	pHeaderInstance.CityPowerConsumedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "powcon", instance ) end )
-	pHeaderInstance.CityPowerProducedButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "pwprod", instance ) end )
-	--]]
 
 	-- civ and leader for uniques
 	local localPlayerID:number = Game.GetLocalPlayer();
@@ -573,11 +577,13 @@ function ViewMomentsPage(eGroup:number)
 	local bEraScore3:boolean = Controls.EraScore3Checkbox:IsSelected();
 	local bEraScore4:boolean = Controls.EraScore4Checkbox:IsSelected();
 	local bHideNotActive:boolean    = Controls.HideNotActiveCheckbox:IsSelected();
+	local bShowOnlyEarned:boolean   = Controls.ShowOnlyEarnedCheckbox:IsSelected();
 	local bHideNotAvailable:boolean = Controls.HideNotAvailableCheckbox:IsSelected();
 
 	-- filter out loop
 	local tShow:table = {};
 	local iCurrentEra:number = Game.GetEras():GetCurrentEra();
+	local tSaveData:table = {}; -- save current favored moments
 	for key,moment in pairs(m_kMoments) do
 		--print("...filtering key", key);
 		-- filters
@@ -588,18 +594,26 @@ function ViewMomentsPage(eGroup:number)
 			if not( moment.ValidFor == sCivilization or moment.ValidFor == sLeader ) then bShow = false; end
 		end
 		if moment.Category ~= eGroup then bShow = false; end
-		-- checkboxes
-		if moment.EraScore == 1 and not bEraScore1 then bShow = false; end
-		if moment.EraScore == 2 and not bEraScore2 then bShow = false; end
-		if moment.EraScore == 3 and not bEraScore3 then bShow = false; end
-		if moment.EraScore >= 4 and not bEraScore4 then bShow = false; end
-		if bHideNotActive and moment.Status ~= 0 then bShow = false; end
-		-- available & eras
-		local iMinEra:number, iMaxEra:number = 0, m_iMaxEraIndex;
-		if moment.MinEra ~= nil then iMinEra = GameInfo.Eras[moment.MinEra].Index; end
-		if moment.MaxEra ~= nil then iMaxEra = GameInfo.Eras[moment.MaxEra].Index; end
-		if bHideNotAvailable and (iCurrentEra < iMinEra or iCurrentEra > iMaxEra) then bShow = false; end
+		
+		if not moment.Favored then -- favored are ALWAYS shown
+		
+			-- checkboxes
+			if moment.EraScore == 1 and not bEraScore1 then bShow = false; end
+			if moment.EraScore == 2 and not bEraScore2 then bShow = false; end
+			if moment.EraScore == 3 and not bEraScore3 then bShow = false; end
+			if moment.EraScore >= 4 and not bEraScore4 then bShow = false; end
+			if bHideNotActive  and moment.Status ~= 0 then bShow = false; end
+			if bShowOnlyEarned and moment.Status ~= 1 then bShow = false; end
+			-- available & eras
+			local iMinEra:number, iMaxEra:number = 0, m_iMaxEraIndex;
+			if moment.MinEra ~= nil then iMinEra = GameInfo.Eras[moment.MinEra].Index; end
+			if moment.MaxEra ~= nil then iMaxEra = GameInfo.Eras[moment.MaxEra].Index; end
+			if bHideNotAvailable and (iCurrentEra < iMinEra or iCurrentEra > iMaxEra) then bShow = false; end
+		
+		end -- not favored
+		
 		if bShow then table.insert(tShow, moment); end
+		if moment.Favored then table.insert(tSaveData, key); end
 	end
 	
 	-- show loop
@@ -607,14 +621,17 @@ function ViewMomentsPage(eGroup:number)
 	for _,moment in spairs(tShow, MomentsSortFunction) do
 		local pMomentInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "MomentEntryInstance", pMomentInstance, instance.Top );
-		table.insert( instance.Children, pMomentInstance );
+		--table.insert( instance.Children, pMomentInstance );
 		ShowMoment( moment, pMomentInstance );
 	end
 	--print("...show loop completed");
 
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );
+	
+	-- save current favored moments
+	SaveDataToPlayerSlot(localPlayerID, "RETFavoredMoments", tSaveData);
 end
 
 
@@ -679,6 +696,77 @@ end
 
 
 -- ===========================================================================
+-- SAVING/LOADING PERSISTENT DATA
+-- ===========================================================================
+
+------------------------------------------------------------------------------
+-- Save player and game related data into Game and Player Values
+-- Serialize values using serialize()
+
+function SaveDataToGameSlot(sSlotName:string, data)
+	--print("FUN SaveDataToGameSlot() (slot,type)", sSlotName, type(data));
+	--dshowrectable(data);
+	local sData = serialize(data);
+	--print("-->>", sData);
+	GameConfiguration.SetValue(sSlotName, sData);
+	--local sCheck:string = GameConfiguration.GetValue(sSlotName);
+	--print("check:", sCheck == sData);
+end
+
+function SaveDataToPlayerSlot(ePlayerID:number, sSlotName:string, data)
+	--print("FUN SaveDataToPlayerSlot (pid,slot,type)", ePlayerID, sSlotName, type(data));
+	--dshowrectable(data);
+	local sData = serialize(data);
+	--print("-->>", sData);
+	PlayerConfigurations[ePlayerID]:SetValue(sSlotName, sData);
+	--local sCheck:string = PlayerConfigurations[ePlayerID]:GetValue(sSlotName);
+	--print("check:", sCheck == sData);
+end
+
+
+------------------------------------------------------------------------------
+-- Load persistent data (careful - it is BEFORE OnLoadScreenClose)
+-- Deserialize values using loadstring()
+
+function LoadDataFromGameSlot(sSlotName:string)
+	--print("FUN LoadDataFromGameSlot() (slot)", sSlotName);
+	local sData:string = GameConfiguration.GetValue(sSlotName);
+	--print("<<--", sData);
+	if sData == nil then print("WARNING: LoadDataFromGameSlot no data in slot", sSlotName); return nil; end
+	local tTable = loadstring(sData)();
+	--dshowrectable(tTable);
+	return tTable;
+end
+
+function LoadDataFromPlayerSlot(ePlayerID:number, sSlotName:string)
+	--print("FUN LoadDataFromPlayerSlot() (pid,slot)", ePlayerID, sSlotName);
+	local sData:string = PlayerConfigurations[ePlayerID]:GetValue(sSlotName);
+	--print("<<--", sData);
+	if sData == nil then print("WARNING: LoadDataFromPlayerSlot no data in slot", sSlotName, "for player", ePlayerID); return nil; end
+	local tTable = loadstring(sData)();
+	--dshowrectable(tTable);
+	return tTable;
+end
+
+
+-- this event is called ONLY when loading a save file
+function OnLoadComplete()
+	--print("FUN OnLoadComplete");
+	-- get favored moments from a save file
+	--print("--- LOADING FAVORED MOMENTS ---");
+	--for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
+		local data:table = LoadDataFromPlayerSlot(Game.GetLocalPlayer(), "RETFavoredMoments");
+		if data ~= nil then -- but make sure we really loaded the data
+			for _,key in ipairs(data) do
+				if m_kMoments[key] then m_kMoments[key].Favored = true; end
+			end
+		end
+	--end
+	--print("--- END LOADING FAVORED ---");
+end
+
+
+-- ===========================================================================
 function LateInitialize()
 	InitializeMomentsData();
 	--Resize();
@@ -736,6 +824,14 @@ end
 function OnToggleHideNotActiveCheckbox()
 	local isChecked = Controls.HideNotActiveCheckbox:IsSelected();
 	Controls.HideNotActiveCheckbox:SetSelected( not isChecked );
+	if not isChecked then Controls.ShowOnlyEarnedCheckbox:SetSelected( isChecked ); end
+	ViewMomentsPage();
+end
+
+function OnToggleShowOnlyEarnedCheckbox()
+	local isChecked = Controls.ShowOnlyEarnedCheckbox:IsSelected();
+	Controls.ShowOnlyEarnedCheckbox:SetSelected( not isChecked );
+	if not isChecked then Controls.HideNotActiveCheckbox:SetSelected( isChecked ); end
 	ViewMomentsPage();
 end
 
@@ -769,12 +865,17 @@ function Initialize()
 	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotActiveCheckbox );
 	Controls.HideNotActiveCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.HideNotActiveCheckbox:SetSelected( true );
+	Controls.ShowOnlyEarnedCheckbox:RegisterCallback( Mouse.eLClick, OnToggleShowOnlyEarnedCheckbox );
+	Controls.ShowOnlyEarnedCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
+	Controls.ShowOnlyEarnedCheckbox:SetSelected( false );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotAvailableCheckbox );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.HideNotAvailableCheckbox:SetSelected( true );
 	-- Events
 	LuaEvents.ReportsList_OpenEraTracker.Add( function() Open(); end );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+	-- loading persistent data
+	Events.LoadComplete.Add( OnLoadComplete ); -- fires ONLY when loading a game from a save file, when it's ready to start (i.e. circle button appears)
 end
 if bIsRiseAndFall or bIsGatheringStorm then
 	Initialize();

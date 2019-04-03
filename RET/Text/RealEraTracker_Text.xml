@@ -19,11 +19,17 @@
 	<Row Tag="LOC_RET_REPEATABLE">
 		<Text>Repeatable</Text>
 	</Row>
+	<Row Tag="LOC_RET_FAVORED">
+		<Text>Favored</Text>
+	</Row>
 	<Row Tag="LOC_RET_COUNT">
 		<Text>Count</Text>
 	</Row>
 	<Row Tag="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE">
-		<Text>Hide not active (already triggered)</Text>
+		<Text>Hide not active</Text>
+	</Row>
+	<Row Tag="LOC_RET_CHECKBOX_SHOW_ONLY_EARNED">
+		<Text>Show only earned</Text>
 	</Row>
 	<Row Tag="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE">
 		<Text>Hide from different eras and currently not available</Text>
