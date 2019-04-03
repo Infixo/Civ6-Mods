@@ -593,7 +593,11 @@ function ViewMomentsPage(eGroup:number)
 		if moment.ValidFor ~= nil and moment.ValidFor ~= "" then
 			if not( moment.ValidFor == sCivilization or moment.ValidFor == sLeader ) then bShow = false; end
 		end
-		if moment.Category ~= eGroup then bShow = false; end
+		if eGroup == 0 then
+			if not moment.Favored then bShow = false; end
+		else
+			if moment.Category ~= eGroup then bShow = false; end
+		end
 		
 		if not moment.Favored then -- favored are ALWAYS shown
 		
@@ -771,6 +775,7 @@ function LateInitialize()
 	InitializeMomentsData();
 	--Resize();
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
+	AddTabSection( "LOC_RET_FAVORED",	                  function() ViewMomentsPage(0); end );
 	AddTabSection( "LOC_RET_WORLD",	                      function() ViewMomentsPage(1); end );
 	AddTabSection( "LOC_HUD_REPORTS_HEADER_CIVILIZATION", function() ViewMomentsPage(2); end );
 	AddTabSection( "LOC_RET_REPEATABLE",                  function() ViewMomentsPage(3); end );
