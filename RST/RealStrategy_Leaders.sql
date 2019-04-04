@@ -170,6 +170,81 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 
 -- ===========================================================================
+-- 2019-04-04 Changes to existing Major Leader Traits
+-- ===========================================================================
+
+-- TRAIT_LEADER_AGGRESSIVE_MILITARY - a new Trait added in April 2019 patch but only for XP1 and XP2
+-- It is given basically to all CONQUEST civs, thus increasing their affinity for Military Victory even more
+-- To balance it, the Trait is toned down a bit
+--<Row LeaderType="LEADER_MONTEZUMA" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_GORGO" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_HARDRADA" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_CHANDRAGUPTA" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_SHAKA" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_GENGHIS_KHAN" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_MATTHIAS_CORVINUS" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_SULEIMAN" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_ALEXANDER" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+--<Row LeaderType="LEADER_CYRUS" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
+
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES
+('TRAIT_LEADER_AGGRESSIVE_MILITARY', 'KIND_TRAIT');
+
+INSERT OR REPLACE INTO Traits (TraitType, InternalOnly) VALUES
+('TRAIT_LEADER_AGGRESSIVE_MILITARY', 1);
+
+INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
+('AgressiveDiplomacy'),
+('AggressivePseudoYields');
+
+INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
+('AgressiveDiplomacy',     'TRAIT_LEADER_AGGRESSIVE_MILITARY', 'DiplomaticActions'),
+('AggressivePseudoYields', 'TRAIT_LEADER_AGGRESSIVE_MILITARY', 'PseudoYields');
+
+INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('AgressiveDiplomacy', 'DIPLOACTION_DENOUNCE', 1, 0),
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15), -- 25
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15), -- 25
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15), -- 25
+('AggressivePseudoYields', 'PSEUDOYIELD_CITY_BASE',            1,  50), -- 40
+('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10), -- -10
+('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -15), -- -25
+('AggressivePseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10), -- 50 naval warfare is still not good, no point to have more of them
+('AggressivePseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15); -- 50
+
+
+
+-- ===========================================================================
+-- LEADERS
+-- 1..2 - no specific predisposition to a victory, basically a leader should never go for such a victory
+-- 3..4 - one element helping, minor predisposition, usually a fallback victory (should be 1-2 like this)
+-- 5..6 - two elements, major predisposition, can go for a different victory (should be 2 like this)
+-- 7..9 - 3 and more elements, basically designed for such a victory, rarely goes for a different victory (should be 1 like this)
+-- ===========================================================================
+
+INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
+('LEADER_BARBAROSSA', 'LEADER', '', 'CONQUEST', 6),	('LEADER_BARBAROSSA', 'LEADER', '', 'SCIENCE', 7),	('LEADER_BARBAROSSA', 'LEADER', '', 'CULTURE', 4),	('LEADER_BARBAROSSA', 'LEADER', '', 'RELIGION', 2),	('LEADER_BARBAROSSA', 'LEADER', '', 'DIPLO', 2),
+('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'CONQUEST', 4),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'SCIENCE', 4),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'CULTURE', 7),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'RELIGION', 2),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'DIPLO', 2),
+('LEADER_GANDHI', 'LEADER', '', 'CONQUEST', 1),	('LEADER_GANDHI', 'LEADER', '', 'SCIENCE', 4),	('LEADER_GANDHI', 'LEADER', '', 'CULTURE', 5),	('LEADER_GANDHI', 'LEADER', '', 'RELIGION', 8),	('LEADER_GANDHI', 'LEADER', '', 'DIPLO', 3),
+('LEADER_CLEOPATRA', 'LEADER', '', 'CONQUEST', 1),	('LEADER_CLEOPATRA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_CLEOPATRA', 'LEADER', '', 'CULTURE', 7),	('LEADER_CLEOPATRA', 'LEADER', '', 'RELIGION', 5),	('LEADER_CLEOPATRA', 'LEADER', '', 'DIPLO', 5),
+('LEADER_GILGAMESH', 'LEADER', '', 'CONQUEST', 5),	('LEADER_GILGAMESH', 'LEADER', '', 'SCIENCE', 8),	('LEADER_GILGAMESH', 'LEADER', '', 'CULTURE', 3),	('LEADER_GILGAMESH', 'LEADER', '', 'RELIGION', 1),	('LEADER_GILGAMESH', 'LEADER', '', 'DIPLO', 3),
+('LEADER_GORGO', 'LEADER', '', 'CONQUEST', 7),	('LEADER_GORGO', 'LEADER', '', 'SCIENCE', 2),	('LEADER_GORGO', 'LEADER', '', 'CULTURE', 6),	('LEADER_GORGO', 'LEADER', '', 'RELIGION', 1),	('LEADER_GORGO', 'LEADER', '', 'DIPLO', 3),
+('LEADER_PERICLES', 'LEADER', '', 'CONQUEST', 3),	('LEADER_PERICLES', 'LEADER', '', 'SCIENCE', 2),	('LEADER_PERICLES', 'LEADER', '', 'CULTURE', 8),	('LEADER_PERICLES', 'LEADER', '', 'RELIGION', 1),	('LEADER_PERICLES', 'LEADER', '', 'DIPLO', 8),
+('LEADER_HARDRADA', 'LEADER', '', 'CONQUEST', 7),	('LEADER_HARDRADA', 'LEADER', '', 'SCIENCE', 3),	('LEADER_HARDRADA', 'LEADER', '', 'CULTURE', 1),	('LEADER_HARDRADA', 'LEADER', '', 'RELIGION', 5),	('LEADER_HARDRADA', 'LEADER', '', 'DIPLO', 1),
+('LEADER_HOJO', 'LEADER', '', 'CONQUEST', 4),	('LEADER_HOJO', 'LEADER', '', 'SCIENCE', 2),	('LEADER_HOJO', 'LEADER', '', 'CULTURE', 6),	('LEADER_HOJO', 'LEADER', '', 'RELIGION', 6),	('LEADER_HOJO', 'LEADER', '', 'DIPLO', 1),
+('LEADER_MVEMBA', 'LEADER', '', 'CONQUEST', 2),	('LEADER_MVEMBA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_MVEMBA', 'LEADER', '', 'CULTURE', 8),	('LEADER_MVEMBA', 'LEADER', '', 'RELIGION', 1),	('LEADER_MVEMBA', 'LEADER', '', 'DIPLO', 2),
+('LEADER_PEDRO', 'LEADER', '', 'CONQUEST', 1),	('LEADER_PEDRO', 'LEADER', '', 'SCIENCE', 6),	('LEADER_PEDRO', 'LEADER', '', 'CULTURE', 8),	('LEADER_PEDRO', 'LEADER', '', 'RELIGION', 3),	('LEADER_PEDRO', 'LEADER', '', 'DIPLO', 1),
+('LEADER_PETER_GREAT', 'LEADER', '', 'CONQUEST', 3),	('LEADER_PETER_GREAT', 'LEADER', '', 'SCIENCE', 2),	('LEADER_PETER_GREAT', 'LEADER', '', 'CULTURE', 6),	('LEADER_PETER_GREAT', 'LEADER', '', 'RELIGION', 7),	('LEADER_PETER_GREAT', 'LEADER', '', 'DIPLO', 4),
+('LEADER_PHILIP_II', 'LEADER', '', 'CONQUEST', 5),	('LEADER_PHILIP_II', 'LEADER', '', 'SCIENCE', 4),	('LEADER_PHILIP_II', 'LEADER', '', 'CULTURE', 2),	('LEADER_PHILIP_II', 'LEADER', '', 'RELIGION', 7),	('LEADER_PHILIP_II', 'LEADER', '', 'DIPLO', 2),
+('LEADER_QIN', 'LEADER', '', 'CONQUEST', 3),	('LEADER_QIN', 'LEADER', '', 'SCIENCE', 5),	('LEADER_QIN', 'LEADER', '', 'CULTURE', 7),	('LEADER_QIN', 'LEADER', '', 'RELIGION', 1),	('LEADER_QIN', 'LEADER', '', 'DIPLO', 2),
+('LEADER_SALADIN', 'LEADER', '', 'CONQUEST', 2),	('LEADER_SALADIN', 'LEADER', '', 'SCIENCE', 6),	('LEADER_SALADIN', 'LEADER', '', 'CULTURE', 4),	('LEADER_SALADIN', 'LEADER', '', 'RELIGION', 7),	('LEADER_SALADIN', 'LEADER', '', 'DIPLO', 1),
+('LEADER_TOMYRIS', 'LEADER', '', 'CONQUEST', 6),	('LEADER_TOMYRIS', 'LEADER', '', 'SCIENCE', 1),	('LEADER_TOMYRIS', 'LEADER', '', 'CULTURE', 1),	('LEADER_TOMYRIS', 'LEADER', '', 'RELIGION', 4),	('LEADER_TOMYRIS', 'LEADER', '', 'DIPLO', 3),
+('LEADER_TRAJAN', 'LEADER', '', 'CONQUEST', 5),	('LEADER_TRAJAN', 'LEADER', '', 'SCIENCE', 3),	('LEADER_TRAJAN', 'LEADER', '', 'CULTURE', 4),	('LEADER_TRAJAN', 'LEADER', '', 'RELIGION', 1),	('LEADER_TRAJAN', 'LEADER', '', 'DIPLO', 2),
+('LEADER_T_ROOSEVELT', 'LEADER', '', 'CONQUEST', 4),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'SCIENCE', 4),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'CULTURE', 7),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'RELIGION', 1),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'DIPLO', 7),
+('LEADER_VICTORIA', 'LEADER', '', 'CONQUEST', 5),	('LEADER_VICTORIA', 'LEADER', '', 'SCIENCE', 3),	('LEADER_VICTORIA', 'LEADER', '', 'CULTURE', 7),	('LEADER_VICTORIA', 'LEADER', '', 'RELIGION', 1),	('LEADER_VICTORIA', 'LEADER', '', 'DIPLO', 1);
+
+
+-- ===========================================================================
 -- Changes to existing leaders and civs
 -- ===========================================================================
 
@@ -287,6 +362,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GandhiProjects', 'PROJECT_BUILD_NUCLEAR_DEVICE', 1, 0),
 ('GandhiProjects', 'PROJECT_BUILD_THERMONUCLEAR_DEVICE', 1, 0);
 
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_INDIA', TerrainType, 5
+FROM Improvement_ValidTerrains
+WHERE ImprovementType = 'IMPROVEMENT_STEPWELL' AND TerrainType <> 'TERRAIN_SNOW';
+
 
 -- LEADER_CLEOPATRA / EGYPT
 -- TRAIT_RST_MORE_IMPROVEMENTS
@@ -344,7 +425,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GilgameshCivics', 'CIVIC_FOREIGN_TRADE' , 1, 0), -- joint war
 ('GilgameshCivics', 'CIVIC_CIVIL_SERVICE' , 1, 0), -- alliance
 ('GilgameshPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST' , 1, 25),
-('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 25), -- +15%
+('GilgameshPseudoYields', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS' , 1, 25),
 ('GilgameshPseudoYields', 'PSEUDOYIELD_IMPROVEMENT' , 1, -15), -- he builds Ziggurats EVERYWHERE
 ('GilgameshPseudoYields', 'PSEUDOYIELD_INFLUENCE' , 1, 15); -- friend of CS
 
@@ -353,11 +434,20 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
 SELECT 'GilgameshWonders', 'BUILDING_KILWA_KISIWANI', 1, 0
 FROM Types WHERE Type = 'BUILDING_KILWA_KISIWANI';
 
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_SUMERIA', TerrainType, 5
+FROM Improvement_ValidTerrains
+WHERE ImprovementType = 'IMPROVEMENT_ZIGGURAT' AND TerrainType <> 'TERRAIN_SNOW';
+
 
 -- LEADER_GORGO & LEADER_PERICLES / GREECE
 -- GREECE has an extra Wildcard slot & Acropolis, boosted Culture - nothing to add here
 -- GORGO seems OK
 -- PERICLES seems OK, CS ally, low faith
+
+-- 2019-04-04 AggressivePseudoYields for non-XP leaders
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_GORGO', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
 
 -- There is a mixup with Pericles's lists
 UPDATE AiFavoredItems SET Item = 'BUILDING_POTALA_PALACE' WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
@@ -372,6 +462,9 @@ FROM Types WHERE Type = 'BUILDING_KILWA_KISIWANI';
 -- LEADER_HARDRADA / NORWAY
 -- high forest & coast, 
 
+-- 2019-04-04 AggressivePseudoYields for non-XP leaders
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_HARDRADA', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
+
 -- 2018-12-25: Norwegian Longship has no PseudoYield assigned and Harald has a boost for that in his strategy!
 UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitType = 'UNIT_NORWEGIAN_LONGSHIP';
 
@@ -381,7 +474,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('LastVikingKingCoastSettlement', 'Foreign Continent', 0, 20,             NULL), -- try to settle other continents before others
 ('LastVikingKingCoastSettlement', 'Specific Feature',  0,  3, 'FEATURE_FOREST'); -- close to forests
 
-UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'LastVikingKingNavalPreference' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 100
+UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'LastVikingKingNavalPreference' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- def. 100
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('HaraldUnits'),
@@ -394,13 +487,19 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HaraldCivics', 'CIVIC_MYSTICISM', 1, 0),
 ('HaraldCivics', 'CIVIC_FOREIGN_TRADE', 1, 0),
 ('HaraldYields', 'YIELD_FAITH', 1, 10),
-('HaraldUnits', 'UNIT_NORWEGIAN_LONGSHIP', 1, -20), -- 2019-03-20 GS patch added this to PSEUDOYIELD_UNIT_NAVAL_COMBAT, so he creates way too many now
+('HaraldUnits', 'UNIT_NORWEGIAN_LONGSHIP', 1, -10), -- 2019-03-20 GS patch added this to PSEUDOYIELD_UNIT_NAVAL_COMBAT, so he creates way too many now
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_CLEAR_BANDIT_CAMPS', 1, 15), -- get rid of barb ships asap
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_GPP_PROPHET', 1, 10), -- get the Holy Site asap
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_ENVIRONMENT', 1, 20), -- don't chop forests
-('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_COMBAT', 1, -15), -- more ships, less land
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_COMBAT', 1, -10), -- more ships, less land, balance TRAIT_LEADER_AGGRESSIVE_MILITARY
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_GPP_GENERAL', 1, -15), -- more ships, less land, balance TRAIT_LEADER_AGGRESSIVE_MILITARY
+('LastVikingKingNavalPreference', 'PSEUDOYIELD_GPP_ADMIRAL', 1,  15), -- more ships, less land, balance TRAIT_LEADER_AGGRESSIVE_MILITARY
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, 10),
 ('LastVikingKingNavalPreference', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10); -- more cities
+
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasFeatures (CivilizationType, FeatureType, Tier) VALUES
+('CIVILIZATION_NORWAY', 'FEATURE_FOREST', 5);
 
 
 -- LEADER_HOJO / JAPAN
@@ -432,6 +531,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HoJoPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 1, 20),
 ('HoJoPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('HoJoPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15);
+
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES
+('CIVILIZATION_JAPAN', 'TERRAIN_COAST', 5);
 
 
 -- LEADER_MVEMBA / KONGO
@@ -537,6 +640,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
 SELECT 'PhilipWonders', 'BUILDING_STATUE_LIBERTY', 1, 0
 FROM Types WHERE Type = 'BUILDING_STATUE_LIBERTY';
 
+-- 2019-04-04 start bias
+UPDATE StartBiasTerrains SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_SPAIN' AND TerrainType = 'TERRAIN_COAST';
+
 
 -- LEADER_QIN / CHINA
 
@@ -546,7 +652,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('QinPseudoYields', 'FIRST_EMPEROR_TRAIT', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('QinCivics', 'CIVIC_CRAFTSMANSHIP', 1, 0),
-('QinPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 25), -- great wall
+('QinPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- great wall
 ('QinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 15);
 
 
@@ -580,6 +686,9 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('TomyrisDiplomacy', 'DIPLOACTION_DECLARE_FRIENDSHIP', 1, 0),
 --('TomyrisTechs', 'TECH_ASTROLOGY', 1, 0), -- 2019-03-20 disabled religion as a backup plan -- !BUGGED!
 ('ScythiaFavorStable', 'BUILDING_STABLE', 1, 0);
+
+-- 2019-04-04 start bias
+UPDATE StartBiasResources SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_SCYTHIA' AND ResourceType = 'RESOURCE_HORSES';
 
 
 -- LEADER_TRAJAN / ROME

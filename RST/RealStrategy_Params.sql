@@ -6,7 +6,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '1');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '3');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '4');
 
 -- logging
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
@@ -39,10 +39,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_STRATEGY_ADJUST_GENERIC_START', 125), -- [x100] generic priorities scale lineary, value at turn 0
 ('RST_STRATEGY_ADJUST_GENERIC_STOP', 50), -- [x100] generic priorities scale lineary, value at the last turn
 ('RST_STRATEGY_NUM_TURNS_MUST_BE_ACTIVE', 7), -- how many turns a strategy must be active before checking for new priorities, def. 10
-('RST_STRATEGY_MINIMUM_PRIORITY', 25), -- minimum priority to activate a strategy (per active victory)
+('RST_STRATEGY_MINIMUM_PRIORITY', 20), -- minimum priority to activate a strategy (per active victory)
 ('RST_STRATEGY_CURRENT_PRIORITY', 40), -- how much current strategy adds to the priority
 ('RST_STRATEGY_RANDOM_PRIORITY', 30), -- random part of the priority, can be switched off via an option
-('RST_STRATEGY_BETTER_THAN_US_NERF', -6), -- [x100] each player better than us decreases our priority by this percent, for each active victory type (1 vic = -12, 4 vic = -30)
+('RST_STRATEGY_BETTER_THAN_US_NERF', -5), -- [x100] each player better than us decreases our priority by this percent, for each active victory type (1 vic = -10, 5 vic = -25)
 ('RST_STRATEGY_COMPARE_OTHERS_NUM_TURNS', 40), -- def. 60, generic parameter for all strategies, we will start comparing with other known civs after this many turns
 -- conquest
 ('RST_CONQUEST_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
@@ -83,8 +83,8 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', 0), -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
-('RST_DIPLO_PROGRESS_WEIGHT', 4), -- points for 1%; now DVP = 10%, so 1 DVP = 50 points
-('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 10),
+('RST_DIPLO_PROGRESS_WEIGHT', 4), -- points for 1%; now DVP = 10%, so 1 DVP = 40 points
+('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 9),
 -- guess others scalers
 ('RST_GUESS_SCALER_CONQUEST', 100),
 ('RST_GUESS_SCALER_SCIENCE',  100),
@@ -110,31 +110,6 @@ CREATE TABLE RSTFlavors (
 	PRIMARY KEY (ObjectType, Strategy)
 );
 
--- LEADERS
--- 1..2 - no specific predisposition to a victory, basically a leader should never go for such a victory
--- 3..4 - one element helping, minor predisposition, usually a fallback victory (should be 1-2 like this)
--- 5..6 - two elements, major predisposition, can go for a different victory (should be 2 like this)
--- 7..9 - 3 and more elements, basically designed for such a victory, rarely goes for a different victory (should be 1 like this)
-INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
-('LEADER_BARBAROSSA', 'LEADER', '', 'CONQUEST', 6),	('LEADER_BARBAROSSA', 'LEADER', '', 'SCIENCE', 7),	('LEADER_BARBAROSSA', 'LEADER', '', 'CULTURE', 4),	('LEADER_BARBAROSSA', 'LEADER', '', 'RELIGION', 2),	('LEADER_BARBAROSSA', 'LEADER', '', 'DIPLO', 2),
-('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'CONQUEST', 4),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'SCIENCE', 4),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'CULTURE', 7),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'RELIGION', 2),	('LEADER_CATHERINE_DE_MEDICI', 'LEADER', '', 'DIPLO', 2),
-('LEADER_GANDHI', 'LEADER', '', 'CONQUEST', 1),	('LEADER_GANDHI', 'LEADER', '', 'SCIENCE', 4),	('LEADER_GANDHI', 'LEADER', '', 'CULTURE', 5),	('LEADER_GANDHI', 'LEADER', '', 'RELIGION', 7),	('LEADER_GANDHI', 'LEADER', '', 'DIPLO', 3),
-('LEADER_CLEOPATRA', 'LEADER', '', 'CONQUEST', 1),	('LEADER_CLEOPATRA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_CLEOPATRA', 'LEADER', '', 'CULTURE', 7),	('LEADER_CLEOPATRA', 'LEADER', '', 'RELIGION', 5),	('LEADER_CLEOPATRA', 'LEADER', '', 'DIPLO', 5),
-('LEADER_GILGAMESH', 'LEADER', '', 'CONQUEST', 5),	('LEADER_GILGAMESH', 'LEADER', '', 'SCIENCE', 8),	('LEADER_GILGAMESH', 'LEADER', '', 'CULTURE', 3),	('LEADER_GILGAMESH', 'LEADER', '', 'RELIGION', 1),	('LEADER_GILGAMESH', 'LEADER', '', 'DIPLO', 3),
-('LEADER_GORGO', 'LEADER', '', 'CONQUEST', 6),	('LEADER_GORGO', 'LEADER', '', 'SCIENCE', 2),	('LEADER_GORGO', 'LEADER', '', 'CULTURE', 6),	('LEADER_GORGO', 'LEADER', '', 'RELIGION', 1),	('LEADER_GORGO', 'LEADER', '', 'DIPLO', 3),
-('LEADER_PERICLES', 'LEADER', '', 'CONQUEST', 3),	('LEADER_PERICLES', 'LEADER', '', 'SCIENCE', 2),	('LEADER_PERICLES', 'LEADER', '', 'CULTURE', 8),	('LEADER_PERICLES', 'LEADER', '', 'RELIGION', 1),	('LEADER_PERICLES', 'LEADER', '', 'DIPLO', 6),
-('LEADER_HARDRADA', 'LEADER', '', 'CONQUEST', 5),	('LEADER_HARDRADA', 'LEADER', '', 'SCIENCE', 3),	('LEADER_HARDRADA', 'LEADER', '', 'CULTURE', 1),	('LEADER_HARDRADA', 'LEADER', '', 'RELIGION', 5),	('LEADER_HARDRADA', 'LEADER', '', 'DIPLO', 1),
-('LEADER_HOJO', 'LEADER', '', 'CONQUEST', 4),	('LEADER_HOJO', 'LEADER', '', 'SCIENCE', 2),	('LEADER_HOJO', 'LEADER', '', 'CULTURE', 6),	('LEADER_HOJO', 'LEADER', '', 'RELIGION', 6),	('LEADER_HOJO', 'LEADER', '', 'DIPLO', 1),
-('LEADER_MVEMBA', 'LEADER', '', 'CONQUEST', 2),	('LEADER_MVEMBA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_MVEMBA', 'LEADER', '', 'CULTURE', 8),	('LEADER_MVEMBA', 'LEADER', '', 'RELIGION', 1),	('LEADER_MVEMBA', 'LEADER', '', 'DIPLO', 2),
-('LEADER_PEDRO', 'LEADER', '', 'CONQUEST', 1),	('LEADER_PEDRO', 'LEADER', '', 'SCIENCE', 6),	('LEADER_PEDRO', 'LEADER', '', 'CULTURE', 8),	('LEADER_PEDRO', 'LEADER', '', 'RELIGION', 3),	('LEADER_PEDRO', 'LEADER', '', 'DIPLO', 1),
-('LEADER_PETER_GREAT', 'LEADER', '', 'CONQUEST', 3),	('LEADER_PETER_GREAT', 'LEADER', '', 'SCIENCE', 2),	('LEADER_PETER_GREAT', 'LEADER', '', 'CULTURE', 6),	('LEADER_PETER_GREAT', 'LEADER', '', 'RELIGION', 6),	('LEADER_PETER_GREAT', 'LEADER', '', 'DIPLO', 4),
-('LEADER_PHILIP_II', 'LEADER', '', 'CONQUEST', 5),	('LEADER_PHILIP_II', 'LEADER', '', 'SCIENCE', 4),	('LEADER_PHILIP_II', 'LEADER', '', 'CULTURE', 2),	('LEADER_PHILIP_II', 'LEADER', '', 'RELIGION', 7),	('LEADER_PHILIP_II', 'LEADER', '', 'DIPLO', 2),
-('LEADER_QIN', 'LEADER', '', 'CONQUEST', 3),	('LEADER_QIN', 'LEADER', '', 'SCIENCE', 5),	('LEADER_QIN', 'LEADER', '', 'CULTURE', 7),	('LEADER_QIN', 'LEADER', '', 'RELIGION', 1),	('LEADER_QIN', 'LEADER', '', 'DIPLO', 2),
-('LEADER_SALADIN', 'LEADER', '', 'CONQUEST', 2),	('LEADER_SALADIN', 'LEADER', '', 'SCIENCE', 6),	('LEADER_SALADIN', 'LEADER', '', 'CULTURE', 4),	('LEADER_SALADIN', 'LEADER', '', 'RELIGION', 7),	('LEADER_SALADIN', 'LEADER', '', 'DIPLO', 1),
-('LEADER_TOMYRIS', 'LEADER', '', 'CONQUEST', 6),	('LEADER_TOMYRIS', 'LEADER', '', 'SCIENCE', 1),	('LEADER_TOMYRIS', 'LEADER', '', 'CULTURE', 1),	('LEADER_TOMYRIS', 'LEADER', '', 'RELIGION', 4),	('LEADER_TOMYRIS', 'LEADER', '', 'DIPLO', 4),
-('LEADER_TRAJAN', 'LEADER', '', 'CONQUEST', 5),	('LEADER_TRAJAN', 'LEADER', '', 'SCIENCE', 3),	('LEADER_TRAJAN', 'LEADER', '', 'CULTURE', 4),	('LEADER_TRAJAN', 'LEADER', '', 'RELIGION', 1),	('LEADER_TRAJAN', 'LEADER', '', 'DIPLO', 2),
-('LEADER_T_ROOSEVELT', 'LEADER', '', 'CONQUEST', 4),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'SCIENCE', 4),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'CULTURE', 7),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'RELIGION', 1),	('LEADER_T_ROOSEVELT', 'LEADER', '', 'DIPLO', 7),
-('LEADER_VICTORIA', 'LEADER', '', 'CONQUEST', 5),	('LEADER_VICTORIA', 'LEADER', '', 'SCIENCE', 3),	('LEADER_VICTORIA', 'LEADER', '', 'CULTURE', 7),	('LEADER_VICTORIA', 'LEADER', '', 'RELIGION', 1),	('LEADER_VICTORIA', 'LEADER', '', 'DIPLO', 1);
 
 -- GOVERNMENTS
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
@@ -356,7 +331,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 			('BUILDING_HAGIA_SOPHIA', 'Wonder', '', 'RELIGION', 7),	
 ('BUILDING_HANGING_GARDENS', 'Wonder', '', 'CONQUEST', 2),	('BUILDING_HANGING_GARDENS', 'Wonder', '', 'SCIENCE', 2),	('BUILDING_HANGING_GARDENS', 'Wonder', '', 'CULTURE', 1),	('BUILDING_HANGING_GARDENS', 'Wonder', '', 'RELIGION', 2),	
 		('BUILDING_HERMITAGE', 'Wonder', '', 'CULTURE', 8),		
-			('BUILDING_MAHABODHI_TEMPLE', 'Wonder', '', 'RELIGION', 5),	
+			('BUILDING_MAHABODHI_TEMPLE', 'Wonder', '', 'RELIGION', 5),	('BUILDING_MAHABODHI_TEMPLE', 'Wonder', '', 'DIPLO', 8),
 		('BUILDING_MONT_ST_MICHEL', 'Wonder', '', 'CULTURE', 5),	('BUILDING_MONT_ST_MICHEL', 'Wonder', '', 'RELIGION', 4),	
 	('BUILDING_ORACLE', 'Wonder', '', 'SCIENCE', 3),	('BUILDING_ORACLE', 'Wonder', '', 'CULTURE', 4),		
 	('BUILDING_OXFORD_UNIVERSITY', 'Wonder', '', 'SCIENCE', 6),	('BUILDING_OXFORD_UNIVERSITY', 'Wonder', '', 'CULTURE', 2),		

@@ -18,11 +18,11 @@ INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 ('LEADER_AMANITORE', 'LEADER', '', 'CONQUEST', 5),
-('LEADER_AMANITORE', 'LEADER', '', 'SCIENCE',  4),
-('LEADER_AMANITORE', 'LEADER', '', 'CULTURE',  4),
-('LEADER_AMANITORE', 'LEADER', '', 'RELIGION', 6),
+('LEADER_AMANITORE', 'LEADER', '', 'SCIENCE',  7),
+('LEADER_AMANITORE', 'LEADER', '', 'CULTURE',  3),
+('LEADER_AMANITORE', 'LEADER', '', 'RELIGION', 5),
 ('LEADER_AMANITORE', 'LEADER', '', 'DIPLO',    1),
-('BUILDING_JEBEL_BARKAL', 'Wonder', '', 'CONQUEST', 3),
+('BUILDING_JEBEL_BARKAL', 'Wonder', '', 'CONQUEST', 5),
 ('BUILDING_JEBEL_BARKAL', 'Wonder', '', 'RELIGION', 4);
 
 
@@ -40,10 +40,12 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('AmanitorePseudoYields', 'TRAIT_LEADER_KANDAKE_OF_MEROE', 'PseudoYields');
 --('AmanitoreUnits',        'TRAIT_LEADER_KANDAKE_OF_MEROE', 'Units');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AmanitoreYields', 'YIELD_FOOD', 1, 15),
+('AmanitoreYields', 'YIELD_FOOD', 1, 10),
+('AmanitoreYields', 'YIELD_SCIENCE', 1, 10), -- 2019-04-04 Firaxis wants her more sciency
 ('AmanitorePseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
 ('AmanitorePseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
 ('AmanitorePseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- nubian pyramid
+('AmanitorePseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15), -- 2019-04-04 Firaxis wants her more sciency
 ('AmanitoreWonders', 'BUILDING_JEBEL_BARKAL', 1, 0); -- who else?
 --('AmanitoreUnits', 'UNIT_BUILDER', 1, 20); -- more improvements - should be handled by PSEUDOYIELD_IMPROVEMENT
 
@@ -51,3 +53,15 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
 SELECT 'AmanitoreWonders', 'BUILDING_KOTOKU_IN', 1, 0
 FROM Types WHERE Type = 'BUILDING_KOTOKU_IN';
+
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasFeatures (CivilizationType, FeatureType, Tier)
+SELECT CivilizationType, 'FEATURE_FLOODPLAINS', 5
+FROM Civilizations
+WHERE CivilizationType = 'CIVILIZATION_NUBIA';
+--
+DELETE FROM StartBiasResources WHERE CivilizationType = 'CIVILIZATION_NUBIA';
+INSERT INTO StartBiasResources (CivilizationType, ResourceType, Tier)
+SELECT 'CIVILIZATION_NUBIA', ResourceType, 5
+FROM Improvement_ValidResources
+WHERE ImprovementType = 'IMPROVEMENT_MINE';

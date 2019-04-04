@@ -2,6 +2,7 @@
 -- Real Strategy - main file for Gathering Storm Expansion Pack
 -- Author: Infixo
 -- 2019-03-09: Created
+-- 2019-04-04: Updated for VICTORY_STRATEGY_DIPLOMATIC_VICTORY from April 2019 Patch
 -- ===========================================================================
 
 
@@ -26,18 +27,19 @@
 -- Peaceful play - go for alliances.
 -- ===========================================================================
 
+/* not needed
 INSERT OR REPLACE INTO Types (Type, Kind) VALUES
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'KIND_VICTORY_STRATEGY');
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'KIND_VICTORY_STRATEGY');
 
 INSERT OR REPLACE INTO Strategies (StrategyType,VictoryType,NumConditionsNeeded) VALUES
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'VICTORY_DIPLOMATIC', 1);
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'VICTORY_DIPLOMATIC', 1);
 
 -- not for minors
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, Disqualifier) VALUES
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'Is Not Major', 1);
-
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'Is Not Major', 1);
+*/
 INSERT INTO StrategyConditions (StrategyType, ConditionFunction, StringValue) VALUES
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'Call Lua Function', 'ActiveStrategyDiplo');
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'Call Lua Function', 'ActiveStrategyDiplo');
 
 
 INSERT INTO AiListTypes (ListType) VALUES
@@ -47,7 +49,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('DiploVictoryDiplomacy'),
 ('DiploVictoryCommemorations'),
 ('DiploVictoryProjects'),
-('DiploVictoryPseudoYields'),
+--('DiploVictoryPseudoYields'), -- DiplomaticPseudoYieldPreferences
 ('DiploVictoryTechs'),
 ('DiploVictoryWonders'),
 ('DiploVictoryYields');
@@ -59,22 +61,22 @@ INSERT INTO AiLists (ListType, System) VALUES
 ('DiploVictoryDiplomacy',    'DiplomaticActions'),
 ('DiploVictoryCommemorations', 'Commemorations'),
 ('DiploVictoryProjects',     'Projects'),
-('DiploVictoryPseudoYields', 'PseudoYields'),
+--('DiploVictoryPseudoYields', 'PseudoYields'), -- DiplomaticPseudoYieldPreferences
 ('DiploVictoryTechs',        'Technologies'),
 ('DiploVictoryWonders',      'Buildings'),
 ('DiploVictoryYields',       'Yields');
 
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryAgendas'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryAlliances'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryCivics'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryDiplomacy'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryCommemorations'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryProjects'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryPseudoYields'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryTechs'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryWonders'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryYields');
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryAgendas'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryAlliances'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryCivics'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryDiplomacy'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryCommemorations'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryProjects'),
+--('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryPseudoYields'), -- DiplomaticPseudoYieldPreferences
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryTechs'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryWonders'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryYields');
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --('DiploVictoryAgendas'), -- Victory strategies can now add a preference to various random agendas. This only applies if the agenda can be chosen (era or civic)
@@ -93,12 +95,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('DiploVictoryProjects', 'PROJECT_CARBON_RECAPTURE', 1, 0),
 ('DiploVictoryProjects', 'PROJECT_SEND_AID',         1, 0),
 -- PseudoYields
-('DiploVictoryPseudoYields', 'PSEUDOYIELD_GPP_PROPHET',      1,-15),
-('DiploVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, 50),
-('DiploVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 25),
-('DiploVictoryPseudoYields', 'PSEUDOYIELD_INFLUENCE',        1, 25),
-('DiploVictoryPseudoYields', 'PSEUDOYIELD_UNIT_TRADE',       1, 15),
-('DiploVictoryPseudoYields', 'PSEUDOYIELD_SPACE_RACE',       1,-50),
+('DiplomaticPseudoYieldPreferences', 'PSEUDOYIELD_GPP_PROPHET',      1,-25),
+--('DiplomaticPseudoYieldPreferences', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, 50),
+('DiplomaticPseudoYieldPreferences', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, 25),
+('DiplomaticPseudoYieldPreferences', 'PSEUDOYIELD_INFLUENCE',        1, 25),
+('DiplomaticPseudoYieldPreferences', 'PSEUDOYIELD_UNIT_TRADE',       1, 15),
+('DiplomaticPseudoYieldPreferences', 'PSEUDOYIELD_SPACE_RACE',       1,-50),
 --('DiploVictoryTechs'),
 -- Wonders & Buildings
 ('DiploVictoryWonders', 'BUILDING_ORSZAGHAZ',      1, 0),
@@ -125,8 +127,14 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 
 -- ===========================================================================
--- STRATEGIES - new GS systems
+-- STRATEGIES - new GS systems and PSEUDOYIELD_DIPLOMATIC_VICTORY_POINT
 -- ===========================================================================
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('CultureVictoryPseudoYields',   'PSEUDOYIELD_DIPLOMATIC_VICTORY_POINT', 1,  25),
+('MilitaryVictoryPseudoYields',  'PSEUDOYIELD_DIPLOMATIC_VICTORY_POINT', 1, -50),
+('ReligiousVictoryPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_VICTORY_POINT', 1, -50),
+('ScienceVictoryPseudoYields',   'PSEUDOYIELD_DIPLOMATIC_VICTORY_POINT', 1, -50);
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('CultureVictoryDiscussions'),
@@ -155,8 +163,8 @@ INSERT INTO AiLists (ListType, System) VALUES
 INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryDiscussions'),
 ('VICTORY_STRATEGY_CULTURAL_VICTORY', 'CultureVictoryResolutions'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryDiscussions'),
-('VICTORY_STRATEGY_DIPLO_VICTORY', 'DiploVictoryResolutions'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryDiscussions'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryResolutions'),
 ('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryDiscussions'),
 ('VICTORY_STRATEGY_MILITARY_VICTORY', 'MilitaryVictoryResolutions'),
 ('VICTORY_STRATEGY_RELIGIOUS_VICTORY', 'ReligiousVictoryDiscussions'),
@@ -297,6 +305,7 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AntiDiploYields', 'YIELD_GOLD', 1, -10),
+('AntiDiploPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_VICTORY_POINT', 1, -100),
 ('AntiDiploPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, -25),
 ('AntiDiploPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, -10),
 ('AntiDiploPseudoYields', 'PSEUDOYIELD_INFLUENCE', 1, -15),
@@ -331,7 +340,9 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 				('POLICY_FUTURE_VICTORY_DIPLOMATIC', 'POLICY', 'WILDCARD', 'DIPLO', 9),
 	('POLICY_FUTURE_COUNTER_DIPLOMATIC', 'POLICY', 'WILDCARD', 'SCIENCE', 3),	('POLICY_FUTURE_COUNTER_DIPLOMATIC', 'POLICY', 'WILDCARD', 'CULTURE', 3),		('POLICY_FUTURE_COUNTER_DIPLOMATIC', 'POLICY', 'WILDCARD', 'DIPLO', 6),
 ('POLICY_EQUESTRIAN_ORDERS', 'POLICY', 'MILITARY', 'CONQUEST', 5),				
-('POLICY_DRILL_MANUALS', 'POLICY', 'MILITARY', 'CONQUEST', 5);
+('POLICY_DRILL_MANUALS', 'POLICY', 'MILITARY', 'CONQUEST', 5),
+('POLICY_FORCE_MODERNIZATION', 'POLICY', 'MILITARY', 'CONQUEST', 5),
+('POLICY_RETINUES', 'POLICY', 'MILITARY', 'CONQUEST', 5);
 
 
 -- GOVERNMENTS

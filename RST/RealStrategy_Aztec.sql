@@ -18,6 +18,9 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 
 -- LEADER_MONTEZUMA / AZTEC
 
+-- 2019-04-04 AggressivePseudoYields for non-XP leaders
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_MONTEZUMA', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
+
 DELETE FROM AiFavoredItems WHERE ListType = 'MontezumaTechs' AND Item = 'TECH_ASTROLOGY';
 
 INSERT INTO AiListTypes (ListType) VALUES
@@ -31,16 +34,16 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('MontezumaUnits',        'TRAIT_LEADER_GIFTS_FOR_TLATOANI', 'Units'),
 ('MontezumaUnitBuilds',   'TRAIT_LEADER_GIFTS_FOR_TLATOANI', 'UnitPromotionClasses');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('MontezumaTechs', 'TECH_MINING', 1, 0), -- most luxes are here -- !BUGGED!
+('MontezumaTechs', 'TECH_MINING',     1, 0), -- most luxes are here -- !BUGGED!
 ('MontezumaTechs', 'TECH_IRRIGATION', 1, 0), -- most luxes are here -- !BUGEGD!
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- this.. is.. MONTY! +100%
-('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -25), -- we need those builders -25%
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- this.. is.. MONTY!
+('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10), -- we need those builders, TRAIT_LEADER_AGGRESSIVE_MILITARY
 --('MontezumaPseudoYields', 'PSEUDOYIELD_CITY_ORIGINAL_CAPITAL', 1, 50),
-('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
-('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
-('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
-('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15),
-('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25),
+-- ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- TRAIT_LEADER_AGGRESSIVE_MILITARY
+('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -25), -- to balance TRAIT_LEADER_AGGRESSIVE_MILITARY
+('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -25), -- to balance TRAIT_LEADER_AGGRESSIVE_MILITARY
+--('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15), -- TRAIT_LEADER_AGGRESSIVE_MILITARY
+('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -50),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10), -- vanilla 1, RFX 1.2
 ('MontezumaWonders',      'BUILDING_HUEY_TEOCALLI', 1, 0), -- who else?

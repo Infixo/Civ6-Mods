@@ -5,9 +5,9 @@
 -- ===========================================================================
 
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
-('LEADER_JOHN_CURTIN', 'LEADER', '', 'CONQUEST', 4),
-('LEADER_JOHN_CURTIN', 'LEADER', '', 'SCIENCE',  5),
-('LEADER_JOHN_CURTIN', 'LEADER', '', 'CULTURE',  6),
+('LEADER_JOHN_CURTIN', 'LEADER', '', 'CONQUEST', 3),
+('LEADER_JOHN_CURTIN', 'LEADER', '', 'SCIENCE',  7),
+('LEADER_JOHN_CURTIN', 'LEADER', '', 'CULTURE',  5),
 ('LEADER_JOHN_CURTIN', 'LEADER', '', 'RELIGION', 1),
 ('LEADER_JOHN_CURTIN', 'LEADER', '', 'DIPLO',    3);
 
@@ -29,5 +29,13 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_RECONQUEST_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_LIBERATE_CITY', 1, 0),
 ('CurtinPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- outback station
-('CurtinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),
+--('CurtinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),     -- 2019-04-04 Firaxis wants him more sciency
+('CurtinPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15), -- 2019-04-04 Firaxis wants him more sciency
 ('CurtinPseudoYields', 'PSEUDOYIELD_ENVIRONMENT', 1, 20);
+
+-- 2019-04-04 start bias
+UPDATE StartBiasResources SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_AUSTRALIA'; -- IMPROVEMENT_PASTURE: RESOURCE_CATTLE, RESOURCE_HORSES, RESOURCE_SHEEP
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_AUSTRALIA', TerrainType, 5
+FROM Improvement_ValidTerrains
+WHERE ImprovementType = 'IMPROVEMENT_OUTBACK_STATION';

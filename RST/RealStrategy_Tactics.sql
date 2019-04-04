@@ -14,8 +14,8 @@ UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DE
 -- 2019-01-01: "Plunder Trader" is only used by Barbarians, Majors and Minors don't use it
 -- I am not sure if this is an error, as apparently majors DO plunder TRs nonetheless
 -- BH trees have nodes for Pillaging but only for Districts and Improvements
-INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored) VALUES
-('Default Tactical', 'Plunder Trader', 1);
+--INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored) VALUES
+--('Default Tactical', 'Plunder Trader', 1); -- 2019-04-04 Moved to .xml
 --('Minor Civ Tactical', 'Plunder Trader', 1); -- later
 --('FreeCitiesTactics', 'Plunder Trader', 1); R&F
 

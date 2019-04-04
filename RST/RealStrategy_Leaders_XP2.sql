@@ -17,30 +17,86 @@ DELETE FROM RSTFlavors WHERE ObjectType IN ('LEADER_TAMAR', 'LEADER_VICTORIA');
 
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
 -- pre-GS
-('LEADER_TAMAR', 'LEADER', '', 'CONQUEST', 4),	('LEADER_TAMAR', 'LEADER', '', 'SCIENCE', 1),	('LEADER_TAMAR', 'LEADER', '', 'CULTURE', 5),	('LEADER_TAMAR', 'LEADER', '', 'RELIGION', 7),	('LEADER_TAMAR', 'LEADER', '', 'DIPLO', 5),
-('LEADER_VICTORIA', 'LEADER', '', 'CONQUEST', 6),	('LEADER_VICTORIA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_VICTORIA', 'LEADER', '', 'CULTURE', 3),	('LEADER_VICTORIA', 'LEADER', '', 'RELIGION', 1),	('LEADER_VICTORIA', 'LEADER', '', 'DIPLO', 2),
+('LEADER_TAMAR', 'LEADER', '', 'CONQUEST', 3),
+('LEADER_TAMAR', 'LEADER', '', 'SCIENCE',  1),
+('LEADER_TAMAR', 'LEADER', '', 'CULTURE',  3),
+('LEADER_TAMAR', 'LEADER', '', 'RELIGION', 6),
+('LEADER_TAMAR', 'LEADER', '', 'DIPLO',    7),
+('LEADER_VICTORIA', 'LEADER', '', 'CONQUEST', 6),
+('LEADER_VICTORIA', 'LEADER', '', 'SCIENCE',  4),
+('LEADER_VICTORIA', 'LEADER', '', 'CULTURE',  3),
+('LEADER_VICTORIA', 'LEADER', '', 'RELIGION', 1),
+('LEADER_VICTORIA', 'LEADER', '', 'DIPLO',    2),
 -- Gathering Storm
-('LEADER_DIDO', 'LEADER', '', 'CONQUEST', 5),	('LEADER_DIDO', 'LEADER', '', 'SCIENCE', 5),	('LEADER_DIDO', 'LEADER', '', 'CULTURE', 3),	('LEADER_DIDO', 'LEADER', '', 'RELIGION', 1),	('LEADER_DIDO', 'LEADER', '', 'DIPLO', 4),
-('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'CONQUEST', 3),	('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'SCIENCE', 4),	('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'CULTURE', 5),	('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'RELIGION', 1),	('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'DIPLO', 3),
-('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'CONQUEST', 2),	('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'SCIENCE', 3),	('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'CULTURE', 8),	('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'RELIGION', 3),	('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'DIPLO', 4),
-('LEADER_KRISTINA', 'LEADER', '', 'CONQUEST', 2),	('LEADER_KRISTINA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_KRISTINA', 'LEADER', '', 'CULTURE', 6),	('LEADER_KRISTINA', 'LEADER', '', 'RELIGION', 2),	('LEADER_KRISTINA', 'LEADER', '', 'DIPLO', 7),
-('LEADER_KUPE', 'LEADER', '', 'CONQUEST', 4),	('LEADER_KUPE', 'LEADER', '', 'SCIENCE', 1),	('LEADER_KUPE', 'LEADER', '', 'CULTURE', 5),	('LEADER_KUPE', 'LEADER', '', 'RELIGION', 4),	('LEADER_KUPE', 'LEADER', '', 'DIPLO', 4),
-('LEADER_LAURIER', 'LEADER', '', 'CONQUEST', 1),	('LEADER_LAURIER', 'LEADER', '', 'SCIENCE', 4),	('LEADER_LAURIER', 'LEADER', '', 'CULTURE', 7),	('LEADER_LAURIER', 'LEADER', '', 'RELIGION', 1),	('LEADER_LAURIER', 'LEADER', '', 'DIPLO', 7),
-('LEADER_MANSA_MUSA', 'LEADER', '', 'CONQUEST', 3),	('LEADER_MANSA_MUSA', 'LEADER', '', 'SCIENCE', 4),	('LEADER_MANSA_MUSA', 'LEADER', '', 'CULTURE', 3),	('LEADER_MANSA_MUSA', 'LEADER', '', 'RELIGION', 3),	('LEADER_MANSA_MUSA', 'LEADER', '', 'DIPLO', 5),
-('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'CONQUEST', 6),	('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'SCIENCE', 2),	('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'CULTURE', 3),	('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'RELIGION', 2),	('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'DIPLO', 6),
-('LEADER_PACHACUTI', 'LEADER', '', 'CONQUEST', 5),	('LEADER_PACHACUTI', 'LEADER', '', 'SCIENCE', 6),	('LEADER_PACHACUTI', 'LEADER', '', 'CULTURE', 3),	('LEADER_PACHACUTI', 'LEADER', '', 'RELIGION', 1),	('LEADER_PACHACUTI', 'LEADER', '', 'DIPLO', 1),
-('LEADER_SULEIMAN', 'LEADER', '', 'CONQUEST', 8),	('LEADER_SULEIMAN', 'LEADER', '', 'SCIENCE', 4),	('LEADER_SULEIMAN', 'LEADER', '', 'CULTURE', 4),	('LEADER_SULEIMAN', 'LEADER', '', 'RELIGION', 2),	('LEADER_SULEIMAN', 'LEADER', '', 'DIPLO', 1);
+('LEADER_DIDO', 'LEADER', '', 'CONQUEST', 5),
+('LEADER_DIDO', 'LEADER', '', 'SCIENCE',  5),
+('LEADER_DIDO', 'LEADER', '', 'CULTURE',  3),
+('LEADER_DIDO', 'LEADER', '', 'RELIGION', 1),
+('LEADER_DIDO', 'LEADER', '', 'DIPLO',    4),
+('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'CONQUEST', 3),
+('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'SCIENCE',  4),
+('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'CULTURE',  5),
+('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'RELIGION', 1),
+('LEADER_ELEANOR_ENGLAND', 'LEADER', '', 'DIPLO',    3),
+('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'CONQUEST', 2),
+('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'SCIENCE',  3),
+('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'CULTURE',  8),
+('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'RELIGION', 3),
+('LEADER_ELEANOR_FRANCE', 'LEADER', '', 'DIPLO',    4),
+('LEADER_KRISTINA', 'LEADER', '', 'CONQUEST', 2),
+('LEADER_KRISTINA', 'LEADER', '', 'SCIENCE',  4),
+('LEADER_KRISTINA', 'LEADER', '', 'CULTURE',  7),
+('LEADER_KRISTINA', 'LEADER', '', 'RELIGION', 2),
+('LEADER_KRISTINA', 'LEADER', '', 'DIPLO',    8),
+('LEADER_KUPE', 'LEADER', '', 'CONQUEST', 4),
+('LEADER_KUPE', 'LEADER', '', 'SCIENCE',  1),
+('LEADER_KUPE', 'LEADER', '', 'CULTURE',  7),
+('LEADER_KUPE', 'LEADER', '', 'RELIGION', 4),
+('LEADER_KUPE', 'LEADER', '', 'DIPLO',    4),
+('LEADER_LAURIER', 'LEADER', '', 'CONQUEST', 1),
+('LEADER_LAURIER', 'LEADER', '', 'SCIENCE',  4),
+('LEADER_LAURIER', 'LEADER', '', 'CULTURE',  7),
+('LEADER_LAURIER', 'LEADER', '', 'RELIGION', 1),
+('LEADER_LAURIER', 'LEADER', '', 'DIPLO',    7),
+('LEADER_MANSA_MUSA', 'LEADER', '', 'CONQUEST', 3),
+('LEADER_MANSA_MUSA', 'LEADER', '', 'SCIENCE',  4),
+('LEADER_MANSA_MUSA', 'LEADER', '', 'CULTURE',  3),
+('LEADER_MANSA_MUSA', 'LEADER', '', 'RELIGION', 3),
+('LEADER_MANSA_MUSA', 'LEADER', '', 'DIPLO',    5),
+('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'CONQUEST', 7),
+('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'SCIENCE',  2),
+('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'CULTURE',  3),
+('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'RELIGION', 2),
+('LEADER_MATTHIAS_CORVINUS', 'LEADER', '', 'DIPLO',    5),
+('LEADER_PACHACUTI', 'LEADER', '', 'CONQUEST', 5),
+('LEADER_PACHACUTI', 'LEADER', '', 'SCIENCE',  7),
+('LEADER_PACHACUTI', 'LEADER', '', 'CULTURE',  3),
+('LEADER_PACHACUTI', 'LEADER', '', 'RELIGION', 1),
+('LEADER_PACHACUTI', 'LEADER', '', 'DIPLO',    1),
+('LEADER_SULEIMAN', 'LEADER', '', 'CONQUEST', 8),
+('LEADER_SULEIMAN', 'LEADER', '', 'SCIENCE',  4),
+('LEADER_SULEIMAN', 'LEADER', '', 'CULTURE',  4),
+('LEADER_SULEIMAN', 'LEADER', '', 'RELIGION', 2),
+('LEADER_SULEIMAN', 'LEADER', '', 'DIPLO',    1);
 
 
 -- Wonders
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
-('BUILDING_GREAT_BATH', 'Wonder', '', 'CONQUEST', 1),	('BUILDING_GREAT_BATH', 'Wonder', '', 'SCIENCE', 1),	('BUILDING_GREAT_BATH', 'Wonder', '', 'CULTURE', 1),	('BUILDING_GREAT_BATH', 'Wonder', '', 'RELIGION', 5),	('BUILDING_GREAT_BATH', 'Wonder', '', 'DIPLO', 1),
-('BUILDING_MACHU_PICCHU', 'Wonder', '', 'CONQUEST', 1),	('BUILDING_MACHU_PICCHU', 'Wonder', '', 'SCIENCE', 1),	('BUILDING_MACHU_PICCHU', 'Wonder', '', 'CULTURE', 2),		
-			('BUILDING_MEENAKSHI_TEMPLE', 'Wonder', '', 'RELIGION', 7),	
-	('BUILDING_UNIVERSITY_SANKORE', 'Wonder', '', 'SCIENCE', 7),		('BUILDING_UNIVERSITY_SANKORE', 'Wonder', '', 'RELIGION', 2),	
-		('BUILDING_ORSZAGHAZ', 'Wonder', '', 'CULTURE', 1),		('BUILDING_ORSZAGHAZ', 'Wonder', '', 'DIPLO', 7),
-('BUILDING_PANAMA_CANAL', 'Wonder', '', 'CONQUEST', 1),				
-		('BUILDING_GOLDEN_GATE_BRIDGE', 'Wonder', '', 'CULTURE', 5);
+('BUILDING_GREAT_BATH', 'Wonder', '', 'CONQUEST', 1),
+('BUILDING_GREAT_BATH', 'Wonder', '', 'SCIENCE',  1),
+('BUILDING_GREAT_BATH', 'Wonder', '', 'CULTURE',  1),
+('BUILDING_GREAT_BATH', 'Wonder', '', 'RELIGION', 5),
+('BUILDING_GREAT_BATH', 'Wonder', '', 'DIPLO',    1),
+('BUILDING_MACHU_PICCHU', 'Wonder', '', 'CONQUEST', 1),
+('BUILDING_MACHU_PICCHU', 'Wonder', '', 'SCIENCE',  1),
+('BUILDING_MACHU_PICCHU', 'Wonder', '', 'CULTURE',  2),		
+('BUILDING_MEENAKSHI_TEMPLE', 'Wonder', '', 'RELIGION', 7),	
+('BUILDING_UNIVERSITY_SANKORE', 'Wonder', '', 'SCIENCE',  7),
+('BUILDING_UNIVERSITY_SANKORE', 'Wonder', '', 'RELIGION', 2),
+('BUILDING_ORSZAGHAZ', 'Wonder', '', 'CULTURE', 1),
+('BUILDING_ORSZAGHAZ', 'Wonder', '', 'DIPLO',   7),
+('BUILDING_PANAMA_CANAL', 'Wonder', '', 'CONQUEST', 1),
+('BUILDING_GOLDEN_GATE_BRIDGE', 'Wonder', '', 'CULTURE', 5);
 
 
 -- ===========================================================================
@@ -104,8 +160,11 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('KristinaDiplomacy', 'DIPLOACTION_RESIDENT_EMBASSY', 1, 0),
 ('KristinaDiplomacy', 'DIPLOACTION_ALLIANCE', 1, 0), -- alliances give favor
 ('KristinaDiplomacy', 'DIPLOACTION_RENEW_ALLIANCE', 1, 0),
-('KristinaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER', 0, 25),
-('KristinaPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 0, 25),
+('KristinaPseudoYields', 'PSEUDOYIELD_GPP_ENGINEER',  0, 20),
+('KristinaPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 0, 20),
+('KristinaPseudoYields', 'PSEUDOYIELD_GPP_WRITER',    0, 20), -- 2019-04-04 more cultural
+('KristinaPseudoYields', 'PSEUDOYIELD_GPP_ARTIST',    0, 20), -- 2019-04-04 more cultura
+('KristinaPseudoYields', 'PSEUDOYIELD_GPP_MUSICIAN',  0, 20), -- 2019-04-04 more cultural
 ('KristinaPseudoYields', 'PSEUDOYIELD_INFLUENCE', 0, 25); -- envoys -> favor
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
@@ -154,6 +213,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('LaurierDiplomacy', 'DIPLOACTION_RESIDENT_EMBASSY', 1, 0),
 ('LaurierPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, 25);
 
+-- 2019-04-04 start bias late-game strategic resources
+INSERT OR REPLACE INTO StartBiasResources (CivilizationType, ResourceType, Tier)
+SELECT 'CIVILIZATION_CANADA', ResourceType, 5
+FROM Resources
+WHERE ResourceType IN ('RESOURCE_URANIUM', 'RESOURCE_OIL', 'RESOURCE_NITER');
+
 
 -- LEADER_MANSA_MUSA
 -- golden ages, int. TRs, gold, GPP merchant, faith
@@ -173,9 +238,19 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MansaMusaPseudoYields', 'PSEUDOYIELD_GOLDENAGE_POINT', 1, 25),
 ('MansaMusaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 25);
 
+-- 2019-04-04 start bias
+DELETE FROM StartBiasResources WHERE CivilizationType = 'CIVILIZATION_MALI';
+INSERT INTO StartBiasResources (CivilizationType, ResourceType, Tier)
+SELECT 'CIVILIZATION_MALI', ResourceType, 5
+FROM Improvement_ValidResources
+WHERE ImprovementType = 'IMPROVEMENT_MINE';
+
 
 -- LEADER_MATTHIAS_CORVINUS
 -- across river, geothermal fissure, alliances
+
+-- 2019-04-04 AggressivePseudoYields
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_MATTHIAS_CORVINUS', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('MatthiasSettlement'),
@@ -194,13 +269,25 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('MatthiasSettlement', 'Specific Feature', 0, 8, 'FEATURE_GEOTHERMAL_FISSURE'),
 ('MatthiasSettlement', 'Fresh Water',      0, 8, NULL);
 
+-- 2019-04-04 start bias
+UPDATE StartBiasFeatures SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_HUNGARY' AND FeatureType = 'FEATURE_GEOTHERMAL_FISSURE';
+
 
 -- LEADER_PACHACUTI
 -- hmmm... nothing special here...
 
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_INCA', TerrainType, 5
+FROM Improvement_ValidTerrains
+WHERE ImprovementType = 'IMPROVEMENT_TERRACE_FARM';
+
 
 -- LEADER_SULEIMAN
 -- happiness, loyalty
+
+-- 2019-04-04 AggressivePseudoYields
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_SULEIMAN', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
 
 UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'SuliemanUnits' AND Item = 'PROMOTION_CLASS_SIEGE';
 
@@ -217,8 +304,14 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('SuliemanDiplomacy', 'DIPLOACTION_DECLARE_FORMAL_WAR', 1, 0),
 ('SuliemanDiplomacy', 'DIPLOACTION_DECLARE_IDEOLOGICAL_WAR', 1, 0),
 ('SuliemanYields', 'YIELD_FAITH', 1, -20),
-('SuliemanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -20),
+('SuliemanPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -25),
 ('SuliemanPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20),
-('SuliemanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- siege cities
-('SuliemanPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -15), -- we have bombards
-('SuliemanPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15);
+--('SuliemanPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 100), -- siege cities, AggresivePseudoYields
+('SuliemanPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10); -- we have bombards
+--('SuliemanPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15); -- AggresivePseudoYields
+
+
+-- LEADER_VICTORIA / ENGLAND
+
+-- 2019-04-04 start bias
+UPDATE StartBiasResources SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_ENGLAND'; -- RESOURCE_COAL, RESOURCE_IRON

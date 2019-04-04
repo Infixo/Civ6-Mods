@@ -17,14 +17,14 @@
     <Row AllowedMoveType="Heal" Value="8" IsTactical="true" />
     <Row AllowedMoveType="Charge Heal" Value="9" isHomeland="true"/> <!-- At this point, this only applies to the Guru, leaving open to future heal charge units, though -->
     <Row AllowedMoveType="Coastal Raid" Value="10" IsTactical="true" />
-    <Row AllowedMoveType="Pillage Improvement" Value="11" IsTactical="true" />
-    <Row AllowedMoveType="Pillage District" Value="12" IsTactical="true" />
+    <Row AllowedMoveType="Pillage District" Value="11" IsTactical="true" />
+    <Row AllowedMoveType="Pillage Improvement" Value="12" IsTactical="true" />
     <Row AllowedMoveType="Plunder Trader" Value="13" IsTactical="true" isHomeland="true" />
     <Row AllowedMoveType="Air Rebase" Value="14" isTactical="true" />
 	<!-- military - low -->
-    <Row AllowedMoveType="Attack Low Priority" Value="15" IsTactical="true" />
-    <Row AllowedMoveType="Attack District" Value="16" IsTactical="true" />
-    <Row AllowedMoveType="Attack Camps" Value="17" IsTactical="true" />
+    <Row AllowedMoveType="Attack Camps" Value="15" IsTactical="true" />
+    <Row AllowedMoveType="Attack Low Priority" Value="16" IsTactical="true" />
+    <Row AllowedMoveType="Attack District" Value="17" IsTactical="true" />
     <Row AllowedMoveType="Explore Land" Value="18" IsHomeland="true" />
     <Row AllowedMoveType="Make Military Formation" Value="19" isTactical="true" /> <!-- fixed; "Make Military Formation" is set as IsHomeland, but used in Tactics lists for both Majors and Minors -->
     <Row AllowedMoveType="Leader Formation" Value="20" isTactical="true" />
@@ -47,4 +47,33 @@
 	<!-- end -->
     <Row AllowedMoveType="End Turn" Value="34" IsHomeland="true" />
   </AllowedMoves>
+  
+  <!-- 2019-04-04 Apparently order here is important! -->
+  <AiFavoredItems>
+	<Delete ListType="Default Tactical"/>
+	<Row ListType="Default Tactical" Item="Leader Formation"/>
+	<Row ListType="Default Tactical" Item="Support Formation"/>
+	<Row ListType="Default Tactical" Item="Move to Safety"/>
+	<Row ListType="Default Tactical" Item="Promotion"/>
+	<Row ListType="Default Tactical" Item="Gather Goody Hut"/>
+	<Row ListType="Default Tactical" Item="Air Assault"/>
+	<Row ListType="Default Tactical" Item="Attack High Priority"/>
+	<Row ListType="Default Tactical" Item="Attack Medium Priority"/>
+	<Row ListType="Default Tactical" Item="Air Deploy"/>
+	<Row ListType="Default Tactical" Item="Coastal Raid"/>
+	<Row ListType="Default Tactical" Item="Make Military Formation"/>
+	<Row ListTYpe="Default Tactical" Item="Pillage District"/>
+	<Row ListTYpe="Default Tactical" Item="Pillage Improvement"/>
+	<Row ListTYpe="Default Tactical" Item="Plunder Trader"/>
+	<Row ListType="Default Tactical" Item="Heal"/>
+	<Row ListType="Default Tactical" Item="Air Rebase"/>
+	<Row ListType="Default Tactical" Item="Attack Camps"/>
+	<Row ListType="Default Tactical" Item="Attack Low Priority"/>
+	<Row ListTYpe="Default Tactical" Item="Attack District"/>
+	<Row ListType="Default Tactical" Item="Attack Civilians"/>
+	<Row ListType="Default Tactical" Item="Chase Target"/>
+	<Row ListType="Default Tactical" Item="Wander Near City"/>
+	<Row ListType="Default Tactical" Item="Wander"/>
+  </AiFavoredItems>
+  
 </GameInfo>

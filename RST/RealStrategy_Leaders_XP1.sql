@@ -22,10 +22,10 @@ FROM Types WHERE Type = 'BUILDING_AMUNDSEN_SCOTT_RESEARCH_STATION';
 
 -- LEADERS
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- generated from Excel
-('LEADER_CHANDRAGUPTA', 'LEADER', '', 'CONQUEST', 6),
+('LEADER_CHANDRAGUPTA', 'LEADER', '', 'CONQUEST', 7),
 ('LEADER_CHANDRAGUPTA', 'LEADER', '', 'SCIENCE',  4),
 ('LEADER_CHANDRAGUPTA', 'LEADER', '', 'CULTURE',  4),
-('LEADER_CHANDRAGUPTA', 'LEADER', '', 'RELIGION', 4),
+('LEADER_CHANDRAGUPTA', 'LEADER', '', 'RELIGION', 5),
 ('LEADER_CHANDRAGUPTA', 'LEADER', '', 'DIPLO',    1),
 ('LEADER_GENGHIS_KHAN', 'LEADER', '', 'CONQUEST', 8),
 ('LEADER_GENGHIS_KHAN', 'LEADER', '', 'SCIENCE',  4),
@@ -103,22 +103,28 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 -- CHANDRAGUPTA: does not like his neighbors :(
 -- TODO: similar expansionist trait to Trajan, to forward settle a bit more maybe?
 
+-- 2019-04-04 AggressivePseudoYields
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_CHANDRAGUPTA', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('ChandraguptaPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('ChandraguptaPseudoYields', 'TRAIT_LEADER_ARTHASHASTRA', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- conquer neighbors
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 50), -- conquer neighbors
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- conquer neighbors
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15), -- obvious
-('ChandraguptaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -10),
+--('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_BASE',       1, 50), -- conquer neighbors, TRAIT_LEADER_AGGRESSIVE_MILITARY
+--('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 50), -- conquer neighbors, TRAIT_LEADER_AGGRESSIVE_MILITARY
+--('ChandraguptaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',   1,-10), -- conquer neighbors, TRAIT_LEADER_AGGRESSIVE_MILITARY
+--('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',     1, 15), -- obvious, TRAIT_LEADER_AGGRESSIVE_MILITARY
+('ChandraguptaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -20),
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_UNIT_RELIGIOUS', 1, -15), -- to differ from Gandhi
 ('ChandraguptaPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_BONUS', 1, -25); -- conquer neighbors
 
 
--- GENGHIS_KHAN / MONGOLIA
+-- LEADER_GENGHIS_KHAN / MONGOLIA
 -- TRAIT_RST_PREFER_TRADE_ROUTES
+
+-- 2019-04-04 AggressivePseudoYields
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_GENGHIS_KHAN', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
 
 DELETE FROM AiFavoredItems WHERE ListType = 'GenghisCivics' AND Item = 'CIVIC_DIVINE_RIGHT';
 
@@ -130,10 +136,20 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('MongoliaDisfavorBarracks', 'TRAIT_CIVILIZATION_BUILDING_ORDU', 'Buildings');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MongoliaDisfavorBarracks', 'BUILDING_BARRACKS', 0, 0), -- let him not build Barracks, so he will build Ordu
-('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50), -- DO conquer neighbors
-('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10), -- DO conquer neighbors
+('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0),
 ('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 50),
-('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0);
+-- to balance AggressivePseudoYields, similar to Shaka
+('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15),
+('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1,-10),
+('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15),
+('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE',            1, 100), -- DO conquer neighbors
+('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
+('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -15), -- DO conquer neighbors
+('GenghisPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
+('GenghisPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
+
+-- 2019-04-04 start bias
+UPDATE StartBiasResources SET Tier = 3 WHERE CivilizationType = 'CIVILIZATION_MONGOLIA' AND ResourceType = 'RESOURCE_HORSES';
 
 
 -- LEADER_LAUTARO / MAPUCHE
@@ -175,14 +191,42 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- one of few leaders that have Favored PSEUDOYIELD_DISTRICT (Campus, Industrial Zone)
 -- Golf Course
 
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_SCOTLAND', TerrainType, 4
+FROM Terrains
+WHERE Hills = 1 AND TerrainType <> 'TERRAIN_SNOW_HILLS';
+--
+INSERT OR REPLACE INTO StartBiasFeatures (CivilizationType, FeatureType, Tier)
+SELECT CivilizationType, 'FEATURE_FOREST', 5
+FROM Civilizations
+WHERE CivilizationType = 'CIVILIZATION_SCOTLAND';
+
 
 -- LEADER_SEONDEOK / KOREA
 -- OK! science boosted, mines, etc.
 
 
 -- LEADER_SHAKA / ZULU
--- OK!
 -- UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'AggressivePseudoYields' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- used by Shaka & Genghis
+
+-- 2019-04-04 AggressivePseudoYields
+INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_SHAKA', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
+
+-- balance for toned down AggressivePseudoYields
+INSERT INTO AiListTypes (ListType) VALUES
+('ShakaPseudoYields');
+INSERT INTO AiLists (ListType, LeaderType, System) VALUES
+('ShakaPseudoYields', 'TRAIT_LEADER_AMABUTHO', 'PseudoYields');
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15),
+('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1,-10),
+('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15),
+('ShakaPseudoYields', 'PSEUDOYIELD_CITY_BASE',            1, 100),
+('ShakaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
+('ShakaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -15),
+('ShakaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
+('ShakaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
 
 
 -- LEADER_TAMAR / GEORGIA
@@ -193,13 +237,6 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --TamarCivics	CIVIC_DIVINE_RIGHT - I suppose this is for Monarchy!
 UPDATE AiFavoredItems SET Item = (SELECT PrereqCivic FROM Governments WHERE GovernmentType = 'GOVERNMENT_MONARCHY')
 WHERE ListType = 'TamarCivics' AND Item = 'CIVIC_DIVINE_RIGHT';
-
--- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
-DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
-INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES
-('CIVILIZATION_GEORGIA', 'TERRAIN_DESERT_HILLS', 3),
-('CIVILIZATION_GEORGIA', 'TERRAIN_GRASS_HILLS',  3),
-('CIVILIZATION_GEORGIA', 'TERRAIN_PLAINS_HILLS', 3);
 
 --INSERT INTO AiListTypes (ListType) VALUES
 --('TamarPseudoYields');
@@ -212,6 +249,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ProtectorateWarriorList', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV', 0, 0), -- for now only Tamar uses it, might change in the future
 ('ProtectorateWarriorList', 'DIPLOACTION_DECLARE_LIBERATION_WAR', 1, 0);
 
+-- 2019-04-04 start bias
+INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
+SELECT 'CIVILIZATION_GEORGIA', TerrainType, 4
+FROM Terrains
+WHERE Hills = 1 AND TerrainType <> 'TERRAIN_SNOW_HILLS';
+
 
 -- LEADER_WILHELMINA / NETHERLANDS
 
@@ -223,6 +266,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15),
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- polder
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20);
+
+-- 2019-04-04 start bias
+UPDATE StartBiasTerrains SET Tier = 2 WHERE CivilizationType = 'CIVILIZATION_NETHERLANDS' AND TerrainType = 'TERRAIN_COAST';
+
 
 
 -- ===========================================================================
