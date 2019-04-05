@@ -1210,7 +1210,7 @@ function AppendXP2ResourceData(kResourceData:table)
 			local importResources:number = pResources:GetResourceImportPerTurn(resourceHash);
 			
 			if resourceUnitCostPerTurn > 0 then
-				AddResourceData(kResourceData, row.Index, "LOC_PRODUCITON_PANEL_UNITS_TOOLTIP", "-", -resourceUnitCostPerTurn);
+				AddResourceData(kResourceData, row.Index, "LOC_PRODUCTION_PANEL_UNITS_TOOLTIP", "-", -resourceUnitCostPerTurn);
 			end
 
 			if resourcePowerCostPerTurn > 0 then
@@ -2375,8 +2375,8 @@ function ViewYieldsPage()
 	for cityName,kCityData in pairs(m_kCityData) do
 		for _,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do
 			local key = kDistrict.Name;
-			-- GS change: don't count pillaged districts
-			if kDistrict.isPillaged == false then
+			-- GS change: don't count pillaged districts and must be built
+			if kDistrict.isPillaged == false and kDistrict.isBuilt == true then
 				if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
 				kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
 				kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kDistrict.Maintenance;
@@ -4006,7 +4006,7 @@ function ViewPolicyPage()
 			-- name with description
 			local sPolicyName:string = policy.Name;
 			if policy.IsSlotted then sPolicyName = "[ICON_Checkmark]"..sPolicyName; end
-			TruncateString(pPolicyInstance.PolicyEntryName, 178, sPolicyName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
+			TruncateString(pPolicyInstance.PolicyEntryName, 278, sPolicyName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pPolicyInstance.PolicyEntryName:SetToolTipString(policy.Description);
 			
 			-- impact with modifiers
@@ -4270,7 +4270,7 @@ function ViewMinorPage()
 			if minor.HasMet and minor.NumTokens == 0 then sMinorName = "[ICON_Capital]"..sMinorName; end
 			if     minor.NumTokens > 0 then sMinorName = sMinorName.." "..tostring(minor.Influence);
 			elseif minor.Influence > 0 then sMinorName = sMinorName.." [COLOR_White]"..tostring(minor.Influence).."[ENDCOLOR] [ICON_Envoy]"; end
-			TruncateString(pMinorInstance.PolicyEntryName, 178, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
+			TruncateString(pMinorInstance.PolicyEntryName, 278, sMinorName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pMinorInstance.PolicyEntryName:SetToolTipString(minor.Description);
 			
 			-- impact with modifiers
@@ -4606,7 +4606,7 @@ end
 function LateInitialize()
 	Resize();
 
-	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
+	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, UI.GetColorValueFromHexLiteral(0xFF331D05) );
 	--AddTabSection( "Test",								ViewTestPage );			--TRONSTER debug
 	--AddTabSection( "Test2",								ViewTestPage );			--TRONSTER debug
 	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );

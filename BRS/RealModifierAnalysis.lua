@@ -1673,12 +1673,20 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		local info:table = GameInfo.Terrains[ tReq.Arguments.TerrainType ];
 		if info == nil then return false; end -- error
 		bIsValidSubject = ( tSubject.Plot:GetTerrainType() == info.Index );
+
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_HAS_ANY_FEATURE" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = ( tSubject.Plot:GetFeatureType() ~= -1 );
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES" then -- 10
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
 		local info:table = GameInfo.Features[ tReq.Arguments.FeatureType ];
 		if info == nil then return false; end -- error
 		bIsValidSubject = ( tSubject.Plot:GetFeatureType() == info.Index );
+
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_HAS_ANY_RESOURCE" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = ( tSubject.Plot:GetResourceType() ~= -1 );
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
