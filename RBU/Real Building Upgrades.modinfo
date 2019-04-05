@@ -2,7 +2,7 @@
 <Mod id="a768ead1-32b9-4da5-9b05-eb966364670b" version="1">
   <Properties>
     <Name>Real Building Upgrades</Name>
-    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.3.[NEWLINE]Please note that new buildings from Gathering Storm are not yet supported (will be added soon).</Description>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 4.0.</Description>
     <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
@@ -41,6 +41,15 @@
 	<Criteria id="XP1Tamar">
 	  <LeaderPlayable>Players:Expansion1_Players::LEADER_TAMAR,Players:Expansion2_Players::LEADER_TAMAR</LeaderPlayable>
 	</Criteria>
+	<Criteria id="XP2Kupe">
+		<LeaderPlayable>Players:Expansion2_Players::LEADER_KUPE</LeaderPlayable>
+	</Criteria>
+	<Criteria id="XP2Matthias">
+		<LeaderPlayable>Players:Expansion2_Players::LEADER_MATTHIAS_CORVINUS,</LeaderPlayable>
+	</Criteria>
+	<Criteria id="XP2Suleiman">
+		<LeaderPlayable>Players:Expansion2_Players::LEADER_SULEIMAN</LeaderPlayable>
+	</Criteria>
   </ActionCriteria>
   <FrontEndActions />
   <InGameActions>
@@ -51,6 +60,7 @@
     <UpdateIcons id="RBU_Icons">
       <File>Base/Icons/RBU_Base_Icons.xml</File>
       <File>XP1/Icons/RBU_XP1_Icons.xml</File>
+      <File>XP2/Icons/RBU_XP2_Icons.xml</File>
     </UpdateIcons>
     <ImportFiles id="RBU_Imports">
       <File>Base/Icons/RBU_Buildings32.dds</File>
@@ -65,6 +75,12 @@
       <File>XP1/Icons/RBU_RF_Buildings80.dds</File>
       <File>XP1/Icons/RBU_RF_Buildings128.dds</File>
       <File>XP1/Icons/RBU_RF_Buildings256.dds</File>
+      <File>XP2/Icons/RBU_GS_Buildings32.dds</File>
+      <File>XP2/Icons/RBU_GS_Buildings38.dds</File>
+      <File>XP2/Icons/RBU_GS_Buildings50.dds</File>
+      <File>XP2/Icons/RBU_GS_Buildings80.dds</File>
+      <File>XP2/Icons/RBU_GS_Buildings128.dds</File>
+      <File>XP2/Icons/RBU_GS_Buildings256.dds</File>
     </ImportFiles>
 	<!-- base game -->
     <UpdateDatabase id="RBU_Database">
@@ -114,9 +130,22 @@
       <File Priority="2">XP1/RBU_XP1.sql</File>
       <File Priority="1">XP2/RBU_XP2.sql</File>
     </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_XP1_Tamar" criteria="XP2Kupe">
+      <Properties><LoadOrder>71</LoadOrder></Properties>
+      <File>XP2/RBU_XP2_Kupe.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_XP1_Tamar" criteria="XP2Matthias">
+      <Properties><LoadOrder>71</LoadOrder></Properties>
+      <File>XP2/RBU_XP2_Matthias.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RBU_DB_XP1_Tamar" criteria="XP2Suleiman">
+      <Properties><LoadOrder>71</LoadOrder></Properties>
+      <File>XP2/RBU_XP2_Suleiman.sql</File>
+    </UpdateDatabase>
     <UpdateText id="RBU_Text_XP2" criteria="Expansion2">
       <Properties><LoadOrder>70</LoadOrder></Properties>
       <File>XP1/Text/RBU_XP1_Text.xml</File>
+      <File>XP2/Text/RBU_XP2_Text.xml</File>
     </UpdateText>
   </InGameActions>
   <Files>
@@ -150,5 +179,16 @@
     <File>XP1/Text/RBU_XP1_Text.xml</File>
 	<!-- Gathering Storm -->
     <File>XP2/RBU_XP2.sql</File>
+    <File>XP2/RBU_XP2_Kupe.sql</File>
+    <File>XP2/RBU_XP2_Matthias.sql</File>
+    <File>XP2/RBU_XP2_Suleiman.sql</File>
+    <File>XP2/Icons/RBU_XP2_Icons.xml</File>
+    <File>XP2/Icons/RBU_GS_Buildings32.dds</File>
+    <File>XP2/Icons/RBU_GS_Buildings38.dds</File>
+    <File>XP2/Icons/RBU_GS_Buildings50.dds</File>
+    <File>XP2/Icons/RBU_GS_Buildings80.dds</File>
+    <File>XP2/Icons/RBU_GS_Buildings128.dds</File>
+    <File>XP2/Icons/RBU_GS_Buildings256.dds</File>
+    <File>XP2/Text/RBU_XP2_Text.xml</File>
   </Files>
 </Mod>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Real Building Upgrades
+ Author: Infixo
+ 2019-04-05: Created
+-->
+<GameData>
+	<BaseGameText>
+		<!-- BUILDINGS -->
+		<Row Tag="LOC_BUILDING_COAL_POWER_PLANT_UPGRADE_NAME">
+			<Text>Coal Power Plant Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_COAL_POWER_PLANT_UPGRADE_DESCRIPTION">
+			<Text>+1 [LOC_Tourism] Tourism and all tiles in this City gain +1 Appeal.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE_NAME">
+			<Text>Oil Power Plant Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE_DESCRIPTION">
+			<Text>Scientific research conducted here generates +1 [LOC_GreatScientist] Great Scientist point. Bonus Amenity extends to each city center within 9 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_NUCLEAR_POWER_PLANT_UPGRADE_NAME"> <!-- building is actually BUILDING_POWER_PLANT -->
+			<Text>Nuclear Power Plant Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_NUCLEAR_POWER_PLANT_UPGRADE_DESCRIPTION">
+			<Text>All [LOC_Tourism] Tourism yields are increased +10%. Bonus Amenity extends to each city center within 9 tiles.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_HYDROELECTRIC_DAM_UPGRADE_NAME">
+			<Text>Hydroelectric Dam Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_HYDROELECTRIC_DAM_UPGRADE_DESCRIPTION">
+			<Text>Bigger market can service more food providers. Plantations and Pastures in this city gain +2 [LOC_Food] Food each. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+		</Row>
+		<!-- UNIQUES -->
+		<Row Tag="LOC_BUILDING_GRAND_BAZAAR_UPGRADE_NAME">
+			<Text>Grand Bazaar Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_GRAND_BAZAAR_UPGRADE_DESCRIPTION">
+			<Text>A building upgrade unique to the Ottomans. Luxury goods bring more tourists and improve revenues. Increases +2 [LOC_Tourism] Tourism in this city. Luxury Resources in this city gain +2 [LOC_Gold] Gold each. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_THERMAL_BATH_UPGRADE_NAME">
+			<Text>Thermal Bath Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_THERMAL_BATH_UPGRADE_DESCRIPTION">
+			<Text>A building upgrade unique to Hungary. Grants +1 [LOC_GreatGeneral] Great General point and +2 [LOC_Production] Production from Pastures. May not be built in an Encampment district that already has a Barracks.</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MARAE_UPGRADE_NAME">
+			<Text>Marae Upgrade</Text>
+		</Row>
+		<Row Tag="LOC_BUILDING_MARAE_UPGRADE_DESCRIPTION">
+			<Text>A building upgrade unique to the Māori. It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [LOC_Housing] Housing, +1 [LOC_Amenities] Amenity and +1 [LOC_Faith] Faith.</Text>
+		</Row>
+	</BaseGameText>
+	
+	<!-- updates of vanilla building upgrades -->
+	<!--
+<LocalizedText>
+	<Replace Tag="LOC_BUILDING_PALACE_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>The improved Palace is finally worthy of its main resident - you! Increases [LOC_PressureUp]+1 Loyalty pressure in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_AMPHITHEATER_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Amphitheater is able to accommodate more spectators. Increases by +0.2 [LOC_Culture] Culture per [LOC_Citizen] Citizen in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_LIBRARY_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Library allows to store more clay plates, parchment scrolls, and books. Citizens are visiting it more often. Increases by +0.2 [LOC_Science] Science per [LOC_Citizen] Citizen in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women. Increases by +0.3 [LOC_Science] Science per [LOC_Citizen] Citizen in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_UNIVERSITY_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded University allows for researching non-technical sciences. Increases by +0.2 [LOC_Science] Science per [LOC_Citizen] Citizen in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Market hosts more traders and shopkeepers. [LOC_Resource_Citrus] Citrus, [LOC_Resource_Cocoa] Cocoa, [LOC_Resource_Olives] Olives, [LOC_Resource_Spices] Spices, [LOC_Resource_Sugar] Sugar and [LOC_Resource_Tea] Tea resources gain +3 [LOC_Gold] Gold each.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_LIGHTHOUSE_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>An upgraded Lighthouse allows Fishing Boats to sail further. Adds +1 [LOC_Food] Food to all Fishing Boats and Fisheries in this city.</Text>
+	</Replace>
+	<Replace Tag="LOC_BUILDING_SEAPORT_UPGRADE_DESCRIPTION" Language="en_US">
+		<Text>Recent upgrades in Seaport infrastructure increased its capacity allowing the City to grow. +1 [LOC_TradeRoute] Trade Route capacity. Bonus [LOC_Production] Production equal to the adjacency bonus of the Harbor district. +1 [LOC_Gold] Gold from all Fishing Boats and Fisheries in this city. Adds +3 [LOC_Production] Production to each Offshore Oil Rig in this city.</Text>
+	</Replace>
+</LocalizedText>
+	-->
+</GameData>

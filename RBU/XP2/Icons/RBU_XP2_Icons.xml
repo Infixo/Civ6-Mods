@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Real Building Upgrades
+ Author: Infixo
+ 2019-04-05: Created
+-->
+<GameInfo>
+	<IconTextureAtlases>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_GS" IconSize="32"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings32.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_GS" IconSize="38"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings38.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_GS" IconSize="50"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings50.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_GS" IconSize="80"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings80.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_GS" IconSize="128" IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings128.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_GS" IconSize="256" IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings256.dds"/>
+		<!-- no separate FOW icons -->
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" IconSize="32"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings32.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" IconSize="38"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings38.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" IconSize="50"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings50.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" IconSize="80"  IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings80.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" IconSize="128" IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings128.dds"/>
+		<Row Name="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" IconSize="256" IconsPerRow="4" IconsPerColumn="2" Filename="RBU_GS_Buildings256.dds"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+		<!-- BUILDINGS -->
+		<Row Name="ICON_BUILDING_COAL_POWER_PLANT_UPGRADE"        Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="0"/>
+		<Row Name="ICON_BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE" Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="1"/>
+		<Row Name="ICON_BUILDING_NUCLEAR_POWER_PLANT_UPGRADE"     Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="2"/>
+		<Row Name="ICON_BUILDING_HYDROELECTRIC_DAM_UPGRADE"       Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="3"/>
+		<!-- UNIQUES -->
+		<Row Name="ICON_BUILDING_GRAND_BAZAAR_UPGRADE" Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="4"/>
+		<Row Name="ICON_BUILDING_THERMAL_BATH_UPGRADE" Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="5"/>
+		<Row Name="ICON_BUILDING_MARAE_UPGRADE"        Atlas="ICON_ATLAS_BUILDING_UPGRADES_GS" Index="6"/>
+		<!-- BUILDINGS FOW -->
+		<Row Name="ICON_BUILDING_COAL_POWER_PLANT_UPGRADE_FOW"        Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="0"/>
+		<Row Name="ICON_BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE_FOW" Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="1"/>
+		<Row Name="ICON_BUILDING_NUCLEAR_POWER_PLANT_UPGRADE_FOW"     Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="2"/>
+		<Row Name="ICON_BUILDING_HYDROELECTRIC_DAM_UPGRADE_FOW"       Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="3"/>
+		<!-- UNIQUES FOW -->
+		<Row Name="ICON_BUILDING_GRAND_BAZAAR_UPGRADE_FOW" Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="4"/>
+		<Row Name="ICON_BUILDING_THERMAL_BATH_UPGRADE_FOW" Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="5"/>
+		<Row Name="ICON_BUILDING_MARAE_UPGRADE_FOW"        Atlas="ICON_ATLAS_BUILDING_UPGRADES_FOW_GS" Index="6"/>
+	</IconDefinitions>
+</GameInfo>
