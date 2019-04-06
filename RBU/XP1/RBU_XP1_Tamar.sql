@@ -13,7 +13,7 @@
 INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
 ('BUILDING_TSIKHE_UPGRADE', 'BUILDING_STAR_FORT_UPGRADE');
 
-UPDATE Buildings SET TraitType = (SELECT TraitType FROM Buildings WHERE BuildingType = 'BUILDING_TSIKHE') -- TRAIT_CIVILIZATION_BUILDING_TSIKHE
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TSIKHE'
 WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
 
 -- +1 Amenity & Housing, +25 Defense

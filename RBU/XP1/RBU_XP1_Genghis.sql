@@ -13,7 +13,7 @@
 INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
 ('BUILDING_ORDU_UPGRADE', 'BUILDING_STABLE_UPGRADE');
 	
-UPDATE Buildings SET TraitType = (SELECT TraitType FROM Buildings WHERE BuildingType = 'BUILDING_ORDU') -- TRAIT_CIVILIZATION_BUILDING_ORDU
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_ORDU'
 WHERE BuildingType = 'BUILDING_ORDU_UPGRADE';
 
 -- 2018-03-05 Mutually exclusive buildings (so they won't appear in production list)

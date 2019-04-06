@@ -25,7 +25,7 @@ function OnCityConquered(capturerID:number,  ownerID:number, cityID:number, city
 	pCity:GetBuildQueue():RemoveBuilding(BUILDING_PALACE_UPGRADE);
 	--print("City has PU", pCity:GetBuildings():HasBuilding(GameInfo.Buildings.BUILDING_PALACE_UPGRADE.Index));
 end
-Events.CityConquered.Add(OnCityConquered);
+GameEvents.CityConquered.Add(OnCityConquered);
 
 
 -- 2019-04-06: Conversion projects for Power Plants
@@ -45,15 +45,11 @@ local BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE:number = GetTableIndex("Buildings
 local BUILDING_POWER_PLANT_UPGRADE:number             = GetTableIndex("Buildings", "BUILDING_POWER_PLANT_UPGRADE");
 
 function OnCityProjectCompleted(playerID:number, cityID:number, projectID:number)
-	print("FUN OnCityProjectCompleted", playerID, cityID, projectID);
-	print("... power plants upgrades BEFORE",
-		pCityBuildings:HasBuilding(BUILDING_COAL_POWER_PLANT_UPGRADE),
-		pCityBuildings:HasBuilding(BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE),
-		pCityBuildings:HasBuilding(BUILDING_POWER_PLANT_UPGRADE));
+	--print("FUN OnCityProjectCompleted", playerID, cityID, projectID);
 	local pCity:table = Players[playerID]:GetCities():FindID(cityID);
 	if pCity == nil then print("ERROR: OnCityProjectCompleted city not found", playerID, cityID); return; end
 	local pCityBuildings:table = pCity:GetBuildings();
-	-- what to do
+	--print("... power plants upgrades BEFORE", pCityBuildings:HasBuilding(BUILDING_COAL_POWER_PLANT_UPGRADE), pCityBuildings:HasBuilding(BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE), pCityBuildings:HasBuilding(BUILDING_POWER_PLANT_UPGRADE));
 	if projectID == PROJECT_CONVERT_REACTOR_TO_COAL then
 		if pCityBuildings:HasBuilding(BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE) or pCityBuildings:HasBuilding(BUILDING_POWER_PLANT_UPGRADE) then
 			pCity:GetBuildQueue():CreateBuilding(BUILDING_COAL_POWER_PLANT_UPGRADE);
@@ -72,14 +68,8 @@ function OnCityProjectCompleted(playerID:number, cityID:number, projectID:number
 			pCityBuildings:RemoveBuilding(BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE);
 			pCity:GetBuildQueue():CreateBuilding(BUILDING_POWER_PLANT_UPGRADE);
 		end
-	--elseif projectID == PROJECT_DECOMMISSION_COAL_POWER_PLANT then
-	--elseif projectID == PROJECT_DECOMMISSION_OIL_POWER_PLANT then
-	--elseif projectID == PROJECT_DECOMMISSION_NUCLEAR_POWER_PLANT then
 	end
-	print("... power plants upgrades AFTER",
-		pCityBuildings:HasBuilding(BUILDING_COAL_POWER_PLANT_UPGRADE),
-		pCityBuildings:HasBuilding(BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE),
-		pCityBuildings:HasBuilding(BUILDING_POWER_PLANT_UPGRADE));
+	--print("... power plants upgrades AFTER", pCityBuildings:HasBuilding(BUILDING_COAL_POWER_PLANT_UPGRADE), pCityBuildings:HasBuilding(BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE), pCityBuildings:HasBuilding(BUILDING_POWER_PLANT_UPGRADE));
 end
 Events.CityProjectCompleted.Add(OnCityProjectCompleted);
 
