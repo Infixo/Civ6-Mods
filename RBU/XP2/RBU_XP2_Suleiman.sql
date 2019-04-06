@@ -34,14 +34,14 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('GRAND_BAZAAR_UPGRADE_IMPROVED_LUXURY_GOLD', 'YieldType', 'YIELD_GOLD'),
 ('GRAND_BAZAAR_UPGRADE_IMPROVED_LUXURY_GOLD', 'Amount',    '2');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_IMPROVED_LUXURY_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_IMPROVED_LUXURY_REQUIREMENTS', 'REQUIRES_PLOT_HAS_ANY_IMPROVEMENT'),
 ('PLOT_HAS_IMPROVED_LUXURY_REQUIREMENTS', 'REQUIRES_PLOT_HAS_LUXURY'); -- exists
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_PLOT_HAS_ANY_IMPROVEMENT', 'REQUIREMENT_PLOT_HAS_ANY_IMPROVEMENT');
 
 -- +2 Tourism

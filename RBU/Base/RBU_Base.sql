@@ -46,10 +46,10 @@ WHERE BuildingType = 'BUILDING_MONUMENT_UPGRADE';
 --('BUILDING_MONUMENT_UPGRADE', 'YIELD_CULTURE', 1);
 
 -- +2 Strength when fighting Barbs
-INSERT INTO Types (Type, Kind) VALUES  -- hash value generated automatically
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES  -- hash value generated automatically
 ('MODIFIER_CITY_TRAINED_UNITS_ADJUST_BARBARIAN_COMBAT', 'KIND_MODIFIER');
 
-INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
 ('MODIFIER_CITY_TRAINED_UNITS_ADJUST_BARBARIAN_COMBAT', 'COLLECTION_CITY_TRAINED_UNITS', 'EFFECT_ADJUST_UNIT_BARBARIAN_COMBAT');
 
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
@@ -90,11 +90,11 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('RESOURCES_FOR_GRANARY_UPGRADE', 'REQUIRES_BANANAS_IN_PLOT'),
 ('RESOURCES_FOR_GRANARY_UPGRADE', 'REQUIRES_WINE_IN_PLOT');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_BANANAS_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_WINE_IN_PLOT',    'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_BANANAS_IN_PLOT', 'ResourceType', 'RESOURCE_BANANAS'),
 ('REQUIRES_WINE_IN_PLOT',    'ResourceType', 'RESOURCE_WINE');
 
@@ -129,12 +129,12 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('RESOURCES_FOR_WATER_MILL_UPGRADE', 'REQUIRES_FURS_IN_PLOT'),
 ('RESOURCES_FOR_WATER_MILL_UPGRADE', 'REQUIRES_SHEEP_IN_PLOT');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_COTTON_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_FURS_IN_PLOT',   'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_SHEEP_IN_PLOT',  'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_COTTON_IN_PLOT', 'ResourceType', 'RESOURCE_COTTON'),
 ('REQUIRES_FURS_IN_PLOT',   'ResourceType', 'RESOURCE_FURS'),
 ('REQUIRES_SHEEP_IN_PLOT',  'ResourceType', 'RESOURCE_SHEEP');
@@ -404,16 +404,16 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('SEAPORT_UPGRADE_ADD_OILRIG_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('SEAPORT_UPGRADE_ADD_OILRIG_PRODUCTION', 'Amount',    '3');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_OILRIG_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_OILRIG_REQUIREMENTS', 'REQUIRES_PLOT_HAS_OILRIG');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_PLOT_HAS_OILRIG', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_PLOT_HAS_OILRIG', 'ImprovementType', 'IMPROVEMENT_OFFSHORE_OIL_RIG');
 
 
@@ -504,28 +504,28 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('RESEARCH_LAB_UPGRADE_ADD_URANIUM_SCIENCE', 'YieldType', 'YIELD_SCIENCE'),
 ('RESEARCH_LAB_UPGRADE_ADD_URANIUM_SCIENCE', 'Amount',    '4');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('RESOURCE_IS_ALUMINUM', 'REQUIREMENTSET_TEST_ALL'),
 ('RESOURCE_IS_AMBER',    'REQUIREMENTSET_TEST_ALL'),
 ('RESOURCE_IS_COPPER',   'REQUIREMENTSET_TEST_ALL'),
 ('RESOURCE_IS_OIL',      'REQUIREMENTSET_TEST_ALL'),
 ('RESOURCE_IS_URANIUM',  'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('RESOURCE_IS_ALUMINUM', 'REQUIRES_ALUMINUM_IN_PLOT'),
 ('RESOURCE_IS_AMBER',    'REQUIRES_AMBER_IN_PLOT'),
 ('RESOURCE_IS_COPPER',   'REQUIRES_COPPER_IN_PLOT'),
 ('RESOURCE_IS_OIL',      'REQUIRES_OIL_IN_PLOT'),
 ('RESOURCE_IS_URANIUM',  'REQUIRES_URANIUM_IN_PLOT');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_ALUMINUM_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_AMBER_IN_PLOT',    'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_COPPER_IN_PLOT',   'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_OIL_IN_PLOT',      'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_URANIUM_IN_PLOT',  'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_ALUMINUM_IN_PLOT', 'ResourceType', 'RESOURCE_ALUMINUM'),
 ('REQUIRES_AMBER_IN_PLOT',    'ResourceType', 'RESOURCE_AMBER'),
 ('REQUIRES_COPPER_IN_PLOT',   'ResourceType', 'RESOURCE_COPPER'),
@@ -571,7 +571,7 @@ SELECT 'RESOURCES_FOR_MARKET_UPGRADE', 'REQUIRES_OLIVES_IN_PLOT'
 FROM Resources
 WHERE ResourceType = 'RESOURCE_OLIVES';
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_CITRUS_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_COCOA_IN_PLOT',  'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_OLIVES_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'), -- R&F only
@@ -579,7 +579,7 @@ INSERT INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_SUGAR_IN_PLOT',  'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_TEA_IN_PLOT',    'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_CITRUS_IN_PLOT', 'ResourceType', 'RESOURCE_CITRUS'),
 ('REQUIRES_COCOA_IN_PLOT',  'ResourceType', 'RESOURCE_COCOA'),
 ('REQUIRES_OLIVES_IN_PLOT', 'ResourceType', 'RESOURCE_OLIVES'), -- R&F only
@@ -637,12 +637,12 @@ SELECT 'RESOURCES_FOR_BANK_UPGRADE', 'REQUIRES_GOLD_IN_PLOT'
 FROM Resources
 WHERE ResourceType = 'RESOURCE_GOLD';
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_DIAMONDS_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_GOLD_IN_PLOT',     'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'), -- Australia DLC
 ('REQUIRES_SILVER_IN_PLOT',   'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_DIAMONDS_IN_PLOT', 'ResourceType', 'RESOURCE_DIAMONDS'),
 ('REQUIRES_GOLD_IN_PLOT',     'ResourceType', 'RESOURCE_GOLD'), -- Australia DLC
 ('REQUIRES_SILVER_IN_PLOT',   'ResourceType', 'RESOURCE_SILVER');
@@ -659,11 +659,11 @@ INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
 ('BUILDING_STOCK_EXCHANGE_UPGRADE', 'YIELD_GOLD', 2);
 
 -- +2 Gold for each specialty district constructed
-INSERT INTO Types (Type, Kind)  -- hash value generated automatically
-VALUES ('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_DISTRICT', 'KIND_MODIFIER');
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES -- hash value generated automatically
+('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_DISTRICT', 'KIND_MODIFIER');
 
-INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
-VALUES ('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_DISTRICT', 'COLLECTION_OWNER', 'EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT');
+INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+('MODIFIER_SINGLE_CITY_ADJUST_CITY_YIELD_PER_DISTRICT', 'COLLECTION_OWNER', 'EFFECT_ADJUST_CITY_YIELD_PER_DISTRICT');
 
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 ('BUILDING_STOCK_EXCHANGE_UPGRADE', 'STOCK_EXCHANGE_UPGRADE_GOLD_PER_DISTRICT');
@@ -762,12 +762,12 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('RESOURCES_FOR_TEMPLE_UPGRADE', 'REQUIRES_INCENSE_IN_PLOT'),
 ('RESOURCES_FOR_TEMPLE_UPGRADE', 'REQUIRES_TOBACCO_IN_PLOT');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_DYES_IN_PLOT',    'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_INCENSE_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_TOBACCO_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_DYES_IN_PLOT',    'ResourceType', 'RESOURCE_DYES'),
 ('REQUIRES_INCENSE_IN_PLOT', 'ResourceType', 'RESOURCE_INCENSE'),
 ('REQUIRES_TOBACCO_IN_PLOT', 'ResourceType', 'RESOURCE_TOBACCO');
@@ -812,16 +812,16 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'YieldType', 'YIELD_FAITH'),
 ('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'Amount',    '3');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 	
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIRES_PLOT_HAS_LUMBER_MILL');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_PLOT_HAS_LUMBER_MILL', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
 	
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_PLOT_HAS_LUMBER_MILL', 'ImprovementType', 'IMPROVEMENT_LUMBER_MILL');
 
 --------------------------------------------------------------
@@ -886,13 +886,13 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('RESOURCES_FOR_ARENA_UPGRADE', 'REQUIRES_MARBLE_IN_PLOT'),
 ('RESOURCES_FOR_ARENA_UPGRADE', 'REQUIRES_SILK_IN_PLOT');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_COFFEE_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_JADE_IN_PLOT',   'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_MARBLE_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'),
 ('REQUIRES_SILK_IN_PLOT',   'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_COFFEE_IN_PLOT', 'ResourceType', 'RESOURCE_COFFEE'),
 ('REQUIRES_JADE_IN_PLOT',   'ResourceType', 'RESOURCE_JADE'),
 ('REQUIRES_MARBLE_IN_PLOT', 'ResourceType', 'RESOURCE_MARBLE'),
@@ -1132,10 +1132,10 @@ INSERT INTO Building_YieldChanges (BuildingType, YieldType, YieldChange) VALUES
 ('BUILDING_MILITARY_ACADEMY_UPGRADE', 'YIELD_PRODUCTION', 3);
 
 -- Flanking Bonus increased by 100%
-INSERT INTO Types (Type, Kind) VALUES  -- hash value generated automatically
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES  -- hash value generated automatically
 ('MODIFIER_CITY_TRAINED_UNITS_ADJUST_FLANKING_BONUS', 'KIND_MODIFIER');
 
-INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
 ('MODIFIER_CITY_TRAINED_UNITS_ADJUST_FLANKING_BONUS', 'COLLECTION_CITY_TRAINED_UNITS', 'EFFECT_ADJUST_UNIT_FLANKING_BONUS_MODIFIER');
 
 INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
@@ -1182,10 +1182,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('WORKSHOPUPGRADE_ADDQUARRYPRODUCTION', 'Amount',    '1');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_RESOURCE_MINE_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_RESOURCE_MINE_REQUIREMENTS', 'REQUIRES_PLOT_HAS_VISIBLE_RESOURCE'),
 ('PLOT_HAS_RESOURCE_MINE_REQUIREMENTS', 'REQUIRES_PLOT_HAS_MINE');
 
@@ -1276,20 +1276,14 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('POWER_PLANT_UPGRADE_ADD_OILWELL_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('POWER_PLANT_UPGRADE_ADD_OILWELL_PRODUCTION', 'Amount',    '3');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_OILWELL_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_OILWELL_REQUIREMENTS', 'REQUIRES_PLOT_HAS_OILWELL');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_PLOT_HAS_OILWELL', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_PLOT_HAS_OILWELL', 'ImprovementType', 'IMPROVEMENT_OIL_WELL');
-
---------------------------------------------------------------
--- AI
--- System Buildings contains only Wonders
--- Will use AiBuildSpecializations that contains only one list: DefaultCitySpecialization
---------------------------------------------------------------

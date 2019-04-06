@@ -212,7 +212,7 @@
 			<Text>An upgraded Lighthouse allows Fishing Boats to sail further. Adds +1 [ICON_Food] Food to all Fishing Boats in this city.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MADRASA_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of (horrors) women.</Text>
+			<Text>A building upgrade unique to Arabia. Recent renovation allows for the education of women.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MARKET_UPGRADE_DESCRIPTION">
 			<Text>An upgraded Market hosts more traders and shopkeepers. [ICON_Resource_Citrus] Citrus, [ICON_Resource_Cocoa] Cocoa, [ICON_Resource_Spices] Spices, [ICON_Resource_Sugar] Sugar and [ICON_Resource_Tea] Tea resources gain +3 [ICON_Gold] Gold each.</Text>

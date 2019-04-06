@@ -3,7 +3,7 @@
 -- Author: Infixo
 -- 2018-03-04: Created
 -- 2018-12-15: New file format (each building is changed separately)
--- 2019-04-07: Added GS buildings and historic moment illustrations
+-- 2019-04-07: Added historic moment illustrations
 --------------------------------------------------------------
 
 
@@ -52,10 +52,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('FOOD_MARKET_UPGRADE_ADD_PLANTATION_FOOD', 'Amount', '2'),
 ('FOOD_MARKET_UPGRADE_ADD_PLANTATION_FOOD', 'YieldType', 'YIELD_FOOD');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 	
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_PLANTATION_REQUIREMENTS', 'REQUIRES_PLOT_HAS_PLANTATION'); -- already exists
 
 --------------------------------------------------------------
@@ -75,10 +75,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('SHOPPING_MALL_UPGRADE_ADD_LUXURY_GOLD', 'Amount', '2'),
 ('SHOPPING_MALL_UPGRADE_ADD_LUXURY_GOLD', 'YieldType', 'YIELD_GOLD');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_LUXURY_RESOURCE', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_LUXURY_RESOURCE', 'REQUIRES_PLOT_HAS_LUXURY'); -- already exists
 
 
@@ -238,22 +238,22 @@ INSERT INTO BuildingModifiers (BuildingType, ModifierId) VALUES
 ('BUILDING_LIGHTHOUSE_UPGRADE', 'LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD');
 
 INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
-('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD',       'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHERY_REQUIREMENTS');
+('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 0, 0, NULL, 'PLOT_HAS_FISHERY_REQUIREMENTS');
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD', 'YieldType', 'YIELD_FOOD'),
 ('LIGHTHOUSE_UPGRADE_ADD_FISHERY_FOOD', 'Amount',    '1');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_FISHERY_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 	
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_FISHERY_REQUIREMENTS', 'REQUIRES_PLOT_HAS_FISHERY');
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_PLOT_HAS_FISHERY', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
 	
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_PLOT_HAS_FISHERY', 'ImprovementType', 'IMPROVEMENT_FISHERY');
 
 

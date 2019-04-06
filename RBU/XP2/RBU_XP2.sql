@@ -125,17 +125,17 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('COAL_POWER_PLANT_UPGRADE_ADD_COAL_MINE_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('COAL_POWER_PLANT_UPGRADE_ADD_COAL_MINE_PRODUCTION', 'Amount',    '3');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_COAL_MINE_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_COAL_MINE_REQUIREMENTS', 'REQUIRES_COAL_IN_PLOT'),
 ('PLOT_HAS_COAL_MINE_REQUIREMENTS', 'REQUIRES_PLOT_HAS_MINE'); -- exists
 
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_COAL_IN_PLOT', 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES');
 
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_COAL_IN_PLOT', 'ResourceType', 'RESOURCE_COAL');
 
 
@@ -189,10 +189,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('POWER_PLANT_UPGRADE_ADD_URANIUM_MINE_SCIENCE', 'YieldType', 'YIELD_SCIENCE'),
 ('POWER_PLANT_UPGRADE_ADD_URANIUM_MINE_SCIENCE', 'Amount',    '2');
 
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('PLOT_HAS_URANIUM_MINE_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
 
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('PLOT_HAS_URANIUM_MINE_REQUIREMENTS', 'REQUIRES_URANIUM_IN_PLOT'), -- defined for BUILDING_RESEARCH_LAB_UPGRADE
 ('PLOT_HAS_URANIUM_MINE_REQUIREMENTS', 'REQUIRES_PLOT_HAS_MINE'); -- exists
 
