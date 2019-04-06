@@ -48,7 +48,7 @@
 			<Text>Marae Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_MARAE_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to the Māori. It seems that your engineers outperformed themsels. This upgrade increases the strength of your outer defenses to the (really) highest possible level. Provides +1 [LOC_Housing] Housing, +1 [LOC_Amenities] Amenity and +1 [LOC_Faith] Faith.</Text>
+			<Text>A building upgrade unique to the Māori. Increases [ICON_PressureUp]+1 Loyalty pressure in this city and grants +1 [ICON_Amenities] Amenity. Increases by +0.2 [ICON_Culture] Culture per [ICON_Citizen] Citizen in this city. +1 [ICON_Production] Production to all of this city's tiles with a Marsh or unimproved Woods and Rainforest. Reef tiles in this city gain +2 [ICON_Gold] Gold each. Costs no maintenance.</Text>
 		</Row>
 	</BaseGameText>
 	
