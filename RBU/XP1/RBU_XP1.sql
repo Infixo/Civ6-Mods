@@ -3,7 +3,20 @@
 -- Author: Infixo
 -- 2018-03-04: Created
 -- 2018-12-15: New file format (each building is changed separately)
+-- 2019-04-07: Added GS buildings and historic moment illustrations
 --------------------------------------------------------------
+
+
+--------------------------------------------------------------
+-- 2019-04-06 Historic moment illustrations are the same as for base buildings
+-- This must be executed at the end, so all upgrades will register their traits in Buildings.
+--------------------------------------------------------------
+
+INSERT INTO MomentIllustrations (MomentIllustrationType, MomentDataType, GameDataType, Texture)
+SELECT 'MOMENT_ILLUSTRATION_UNIQUE_BUILDING', 'MOMENT_DATA_BUILDING', GameDataType||'_UPGRADE', Texture
+FROM RBUConfig, MomentIllustrations
+WHERE IsUnq = 1 AND 'BUILDING_'||BType = GameDataType
+ORDER BY GameDataType;
 
 
 --------------------------------------------------------------

@@ -264,11 +264,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 --------------------------------------------------------------
 -- FILM_STUDIO
 
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_FILM_STUDIO' WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE';
+
 INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
 ('BUILDING_FILM_STUDIO_UPGRADE', 'BUILDING_BROADCAST_CENTER_UPGRADE');
-
-UPDATE Buildings SET TraitType = (SELECT TraitType FROM Buildings WHERE BuildingType = 'BUILDING_FILM_STUDIO') -- TRAIT_CIVILIZATION_BUILDING_FILM_STUDIO
-WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE';
 
 -- +2 Amenity with RR=9 effect (wider and stronger)
 UPDATE Buildings SET Entertainment = 2, RegionalRange = 9
@@ -449,11 +448,10 @@ INSERT INTO Building_GreatPersonPoints (BuildingType, GreatPersonClassType, Poin
 --------------------------------------------------------------
 -- MADRASA
 
+UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_MADRASA' WHERE BuildingType = 'BUILDING_MADRASA_UPGRADE';
+
 INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUES
 ('BUILDING_MADRASA_UPGRADE', 'BUILDING_UNIVERSITY_UPGRADE');
-
-UPDATE Buildings SET TraitType = (SELECT TraitType FROM Buildings WHERE BuildingType = 'BUILDING_MADRASA') --'TRAIT_CIVILIZATION_BUILDING_MADRASA'
-WHERE BuildingType = 'BUILDING_MADRASA_UPGRADE';
 
 UPDATE Buildings SET Housing = 1
 WHERE BuildingType = 'BUILDING_MADRASA_UPGRADE';

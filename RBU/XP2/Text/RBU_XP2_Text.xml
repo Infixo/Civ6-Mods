@@ -36,7 +36,7 @@
 			<Text>Grand Bazaar Upgrade</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_GRAND_BAZAAR_UPGRADE_DESCRIPTION">
-			<Text>A building upgrade unique to the Ottomans. Luxury goods bring more tourists and improve revenues. Increases +2 [LOC_Tourism] Tourism in this city. Luxury Resources in this city gain +2 [LOC_Gold] Gold each. Can only be built once in a city, even if the city has multiple Neighborhoods.</Text>
+			<Text>A building upgrade unique to the Ottomans. Luxury goods bring more tourists and improve trade. Increases +2 [ICON_Tourism] Tourism in this city. International [ICON_TradeRoute] Trade Routes from this city gain +4 [ICON_Gold] Gold; domestic [ICON_TradeRoute] Trade Routes gain +2 [ICON_Gold] Gold. Receive +2 [ICON_Gold] Gold for every Luxury resource this city has improved.</Text>
 		</Row>
 		<Row Tag="LOC_BUILDING_THERMAL_BATH_UPGRADE_NAME">
 			<Text>Thermal Bath Upgrade</Text>

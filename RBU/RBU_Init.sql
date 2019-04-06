@@ -49,6 +49,7 @@ CREATE TABLE RBUConfig (
 	PDist	TEXT	NOT NULL,  	-- PrereqDistrict
 	UMain	INTEGER NOT NULL DEFAULT 0, -- Maintenance
 	Advis	TEXT,  				-- AdvisorType
+	IsUnq   INTEGER NOT NULL DEFAULT 0, -- 1 for uniques
 	PRIMARY KEY (BType)
 );
 
@@ -127,6 +128,22 @@ VALUES  -- generated from Excel
 -- 2019-03-18 Remove all upgrades that don't have a respective base buildings
 DELETE FROM RBUConfig
 WHERE 'BUILDING_'||BType NOT IN (SELECT BuildingType FROM Buildings);
+
+-- 2019-04-06 Mark buildings as Uniques so Moment Illustrations will added for them
+UPDATE RBUConfig SET IsUnq = 1 WHERE BType IN (
+'BASILIKOI_PAIDES',
+'ELECTRONICS_FACTORY',
+'FILM_STUDIO',
+'GRAND_BAZAAR',
+'MADRASA',
+'MARAE',
+'ORDU',
+'PRASAT',
+'STAVE_CHURCH',
+'SUKIENNICE',
+'THERMAL_BATH',
+'TLACHTLI',
+'TSIKHE');
 
 
 --------------------------------------------------------------

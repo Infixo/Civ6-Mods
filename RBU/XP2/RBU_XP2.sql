@@ -2,6 +2,7 @@
 -- Real Building Upgrades
 -- Author: Infixo
 -- 2019-02-18: Created
+-- 2019-04-06: Added GS buildings
 --------------------------------------------------------------
 
 
@@ -200,6 +201,9 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 --------------------------------------------------------------
 -- 2019-04-06 Dam
 --------------------------------------------------------------
+
+--------------------------------------------------------------
+-- HYDROELECTRIC_DAM
 
 -- +2 power
 -- Merchant's promo does not apply to the upgrade (because there is no new source in the city)
