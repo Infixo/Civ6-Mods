@@ -1668,6 +1668,19 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_DISTRICT" then -- 1
 		if CheckForMismatchError("Player") then return false; end
 		
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_TERRAIN_CLASS_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = false;
+		local eTerrainType:number = tSubject.Plot:GetTerrainType();
+		if eTerrainType ~= -1 then
+			local sTerrainType:string = GameInfo.Terrains[eTerrainType].TerrainType;
+			for row in GameInfo.TerrainClass_Terrains() do
+				if row.TerrainType == sTerrainType and row.TerrainClassType == tReq.Arguments.TerrainClass then
+					bIsValidSubject = true; break;
+				end
+			end
+		end -- if
+		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES" then -- 14
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
 		local info:table = GameInfo.Terrains[ tReq.Arguments.TerrainType ];
@@ -1718,9 +1731,11 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_RESOURCE_VISIBLE" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = false;
 		local resource:number = tSubject.Plot:GetResourceType();
-		if resource < 0 then return false; end -- no resource in the plot
-		bIsValidSubject = ( tPlayer.Player:GetResources():IsResourceVisible( resource ) );
+		if resource ~= -1 then -- 2019-04-08 fixed lack of Inverse
+			bIsValidSubject = ( tPlayer.Player:GetResources():IsResourceVisible( resource ) );
+		end
 
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
@@ -1883,7 +1898,7 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 		tMod.CollectionType == "COLLECTION_CITY_PLOT_YIELDS" then
 		sSubjectType = SubjectTypes.Plot;
 		for _,plot in ipairs(tPlots) do
-			if tReqSet then 
+			if tReqSet then
 				if CheckAllRequirements(tReqSet, plot, sSubjectType) then table.insert(tSubjects, plot); end
 			else
 				table.insert(tSubjects, plot);
