@@ -40,6 +40,7 @@ UPDATE AiFavoredItems SET Item = 'YIELD_FAITH'      WHERE Item = 'YEILD_FAITH';
 
 
 -- 2018-03-26: AiLists Alexander's trait
+-- Fixed with Gathering Storm Patch (left for iOS)
 UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_TO_WORLDS_END' WHERE LeaderType = 'TRAIT_LEADER_CITADEL_CIVILIZATION' AND ListType IN ('AlexanderCivics', 'AlexanderTechs', 'AlexanderWonders');
 
 
@@ -64,7 +65,7 @@ AGENDA_QUEEN_OF_NILE	StatementKey	ARGTYPE_IDENTITY	AGENDA_QUEEN_OF_NILE_WARNING
 
 
 -- 2018-12-09: Mispelled name <Row ListType="KoreaScienceBiase"/>
--- it is used 3x, but in all cases the name is spelled the same, so it is's not a problem
+-- it is used 3x, but in all cases the name is spelled the same, so it's not a problem
 
 
 -- 2018-12-09: Missing entries in Types for Victory Strategies
@@ -72,10 +73,11 @@ AGENDA_QUEEN_OF_NILE	StatementKey	ARGTYPE_IDENTITY	AGENDA_QUEEN_OF_NILE_WARNING
 INSERT OR REPLACE INTO Types (Type, Kind) VALUES
 ('VICTORY_STRATEGY_CULTURAL_VICTORY', 'KIND_VICTORY_STRATEGY'),
 ('VICTORY_STRATEGY_MILITARY_VICTORY', 'KIND_VICTORY_STRATEGY'),
-('VICTORY_STRATEGY_SCIENCE_VICTORY', 'KIND_VICTORY_STRATEGY');
+('VICTORY_STRATEGY_SCIENCE_VICTORY',  'KIND_VICTORY_STRATEGY');
 
 
 -- 2018-12-15: Double Wonder production bonus for Apadana and Halicarnassus from Corvee and Monument of the Gods, Huey from Gothic Architecture
+-- Fixed with Gathering Storm Patch (left for iOS)
 DELETE FROM PolicyModifiers WHERE PolicyType = 'POLICY_CORVEE' AND ModifierId = 'CORVEE_APADANAPRODUCTION';
 DELETE FROM PolicyModifiers WHERE PolicyType = 'POLICY_CORVEE' AND ModifierId = 'CORVEE_MAUSOLEUMPRODUCTION';
 DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_MONUMENT_TO_THE_GODS' AND ModifierId = 'MONUMENT_TO_THE_GODS_APADANA';
@@ -84,6 +86,7 @@ DELETE FROM PolicyModifiers WHERE PolicyType = 'POLICY_GOTHIC_ARCHITECTURE' AND 
 
 
 -- 2018-12-25: Norwegian Longship has no PseudoYield assigned and Harald has a boost for that in his strategy!
+-- Fixed with Gathering Storm Patch (left for iOS)
 UPDATE Units SET PseudoYieldType = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT' WHERE UnitType = 'UNIT_NORWEGIAN_LONGSHIP';
 
 
@@ -118,6 +121,7 @@ UPDATE Leaders SET OperationList = 'Default_List' WHERE InheritFrom = 'LEADER_DE
 
 
 -- 2019-01-02: Wrong assignment of PseudoYield to Wonders for Pericles
+-- Fixed with Gathering Storm Patch (left for iOS)
 --		<Row ListType="PericlesWonders" Item="PSEUDOYIELD_INFLUENCE" Favored="true"/>
 --		<Row ListType="PericlesEnvoys" Item="BUILDING_POTALA_PALACE" Value="30"/>
 UPDATE AiFavoredItems SET Item = 'BUILDING_POTALA_PALACE' WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
@@ -126,17 +130,24 @@ UPDATE AiFavoredItems SET Item = 'PSEUDOYIELD_INFLUENCE'  WHERE ListType = 'Peri
 
 -- 2019-01-03: Some AiLists are assigned to Agenda Traits but registered in AiLists in a wrong column (for leaders, not agendas)
 UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_BACKSTABBER'      WHERE LeaderType = 'TRAIT_AGENDA_BACKSTABBER';
-UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_LAST_VIKING_KING' WHERE LeaderType = 'TRAIT_AGENDA_LAST_VIKING_KING';
-UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_WITH_SHIELD'      WHERE LeaderType = 'TRAIT_AGENDA_WITH_SHIELD';
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_LAST_VIKING_KING' WHERE LeaderType = 'TRAIT_AGENDA_LAST_VIKING_KING'; -- Fixed with Gathering Storm Patch (left for iOS)
+UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_WITH_SHIELD'      WHERE LeaderType = 'TRAIT_AGENDA_WITH_SHIELD'; -- Fixed with Gathering Storm Patch (left for iOS)
 
 
 --------------------------------------------------------------
 -- BALANCE SECTION
 
+-- 2019-04-07 Yields per pop
+UPDATE GlobalParameters SET Value = '30' WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- base game 70, rise & fall 50
+UPDATE GlobalParameters SET Value = '20' WHERE Name = 'CULTURE_PERCENTAGE_YIELD_PER_POP'; -- default is 30
+
+-- 2019-04-07 Boosts, base game 50, rise & fall 40, real tech tree 35
+UPDATE Boosts SET Boost = 30;
+
 
 -- Rise & Fall changes
 UPDATE GlobalParameters SET Value = '10'  WHERE Name = 'COMBAT_HEAL_CITY_OUTER_DEFENSES'; -- def. 1
-UPDATE GlobalParameters SET Value = '50'  WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- def. 70
+--UPDATE GlobalParameters SET Value = '50'  WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- def. 70
 UPDATE GlobalParameters SET Value = '200' WHERE Name = 'TOURISM_TOURISM_TO_MOVE_CITIZEN'; -- def. 150
 --UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_AFTER_GAME_ERA'; -- R&F only
 --UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_BEFORE_GAME_ERA'; -- R&F only
@@ -148,6 +159,11 @@ UPDATE GlobalParameters SET Value = '200' WHERE Name = 'TOURISM_TOURISM_TO_MOVE_
 UPDATE Modifiers SET ModifierType = 'MODIFIER_PLAYER_CITIES_ADJUST_CITY_YIELD_CHANGE' WHERE ModifierId = 'GOD_KING_GOLD' OR ModifierId = 'GOD_KING_FAITH';
 -- wow, it certainly works - comparable to Urban Planning now, but depends on situation highly (90-370)
 -- comparison: Urban Planning (280-315), Seeds of Growth ~210
+
+-- 2019-02-19: More XP from Barbarians
+UPDATE GlobalParameters SET Value = '2' WHERE Name = 'EXPERIENCE_BARB_SOFT_CAP';  -- Default: 1, CANNOT be higher than 8
+UPDATE GlobalParameters SET Value = '3' WHERE Name = 'EXPERIENCE_MAX_BARB_LEVEL'; -- Default: 2, CANNOT be higher than 6
+
 
 --------------------------------------------------------------
 -- MISC SECTION

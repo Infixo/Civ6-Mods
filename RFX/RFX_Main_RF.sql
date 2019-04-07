@@ -7,8 +7,8 @@
 -- 2018-03-25 Rise & Fall only (moved from the main file)
 INSERT OR REPLACE INTO Types (Type, Kind) VALUES ('PSEUDOYIELD_GOLDENAGE_POINT', 'KIND_PSEUDOYIELD');
 UPDATE AiFavoredItems SET Item = 'TECH_SAILING' WHERE Item = 'TECH_SALING'; -- GenghisTechs
-UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE_MILITARY' WHERE Item = 'DIPLOACTION_ALLIANCE_MILITARY_EMERGENCY(NOT_IN_YET)'; -- WilhelminaEmergencyAllianceList, REMOVE IF IMPLEMENTED PROPERLY!
-UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE' WHERE Item = 'DIPLOACTION_ALLIANCE_TEAMUP'; -- IronConfederacyDiplomacy, does not exists in Diplo Actions, REMOVE IF IMPLEMENTED PROPERLY!
+DELETE FROM AiFavoredItems WHERE ListType = 'WilhelminaEmergencyAllianceList' AND Item = 'DIPLOACTION_ALLIANCE_MILITARY_EMERGENCY(NOT_IN_YET)'; -- WilhelminaEmergencyAllianceList, REMOVE IF IMPLEMENTED PROPERLY!
+DELETE FROM AiFavoredItems WHERE ListType = 'IronConfederacyDiplomacy' AND Item = 'DIPLOACTION_ALLIANCE_TEAMUP'; -- IronConfederacyDiplomacy, does not exists in Diplo Actions, REMOVE IF IMPLEMENTED PROPERLY!
 
 
 -- below are used by Poundmaker Iron Confederacy; why robert bruce (taken from AGENDA_FLOWER_OF_SCOTLAND_WAR_NEIGHBORS)
@@ -17,11 +17,11 @@ UPDATE AiFavoredItems SET Item = 'DIPLOACTION_ALLIANCE' WHERE Item = 'DIPLOACTIO
 
 
 -- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
-DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
-INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES
-('CIVILIZATION_GEORGIA', 'TERRAIN_DESERT_HILLS', 3),
-('CIVILIZATION_GEORGIA', 'TERRAIN_GRASS_HILLS',  3),
-('CIVILIZATION_GEORGIA', 'TERRAIN_PLAINS_HILLS', 3);
+--DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
+--INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES
+--('CIVILIZATION_GEORGIA', 'TERRAIN_DESERT_HILLS', 3),
+--('CIVILIZATION_GEORGIA', 'TERRAIN_GRASS_HILLS',  3),
+--('CIVILIZATION_GEORGIA', 'TERRAIN_PLAINS_HILLS', 3);
 
 
 --------------------------------------------------------------
@@ -43,4 +43,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 */
 
 -- test
-DELETE FROM GovernmentModifiers WHERE GovernmentType = 'GOVERNMENT_FASCISM' AND ModifierId = 'FASCISM_UNIT_PRODUCTION'; -- FASCISM_WAR_WEARINESS
+-- Fixed with Gathering Storm Patch
+--DELETE FROM GovernmentModifiers WHERE GovernmentType = 'GOVERNMENT_FASCISM' AND ModifierId = 'FASCISM_UNIT_PRODUCTION'; -- FASCISM_WAR_WEARINESS
+
+
+-- test
+--UPDATE Resolutions SET AILuaTargetChooser = 'WC_Choose_BorderControl' WHERE ResolutionType = 'WC_RES_BORDER_CONTROL';
+--UPDATE Resolutions SET AILuaTargetChooser = 'WC_Choose_YieldBan'      WHERE ResolutionType = 'WC_RES_MERCENARY_COMPANIES';

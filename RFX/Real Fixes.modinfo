@@ -6,10 +6,14 @@
     <Teaser>Various game fixes and tweaks</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
+	<CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
   <ActionCriteria>
 	<Criteria id="Expansion1">
 	  <GameCoreInUse>Expansion1</GameCoreInUse>
+	</Criteria>
+	<Criteria id="Expansion2">
+	  <GameCoreInUse>Expansion2</GameCoreInUse>
 	</Criteria>
   </ActionCriteria>
   <InGameActions>
@@ -18,10 +22,17 @@
         <LoadOrder>10000</LoadOrder>
       </Properties>
       <File>RFX_Main.sql</File>
+      <File>RFX_StartBiases.sql</File>
     </UpdateDatabase>
-    <UpdateDatabase id="RFX_Database_RiseFall" criteria="Expansion1">
+    <UpdateDatabase id="RFX_Database_XP1" criteria="Expansion1">
       <Properties>
         <LoadOrder>10001</LoadOrder>
+      </Properties>
+      <File>RFX_Main_RF.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RFX_Database_XP2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>10002</LoadOrder>
       </Properties>
       <File>RFX_Main_RF.sql</File>
     </UpdateDatabase>
@@ -29,5 +40,6 @@
   <Files>
     <File>RFX_Main.sql</File>
     <File>RFX_Main_RF.sql</File>
+    <File>RFX_StartBiases.sql</File>
   </Files>
 </Mod>
