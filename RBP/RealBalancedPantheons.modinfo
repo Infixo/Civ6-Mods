@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="58A5FCCE-86BB-6B61-4314-64D093E5121F" version="1">
+  <Properties>
+    <Name>Real Balanced Pantheons</Name>
+    <Description>Real Balanced Pantheons</Description>
+    <Teaser>Real Balanced Pantheons</Teaser>
+    <Authors>Infixo</Authors>
+    <AffectsSavedGames>1</AffectsSavedGames>
+    <CompatibleVersions>2.0</CompatibleVersions>
+  </Properties>
+  <InGameActions>
+    <UpdateDatabase id="RBP_Database">
+      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <File>RealBalancedPantheons.sql</File>
+    </UpdateDatabase>
+    <UpdateIcons id="RBP_Icons">
+      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <File>RealBalancedPantheons_Icons.xml</File>
+    </UpdateText>
+    <UpdateText id="RBP_Text">
+      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <File>RealBalancedPantheons_Text.xml</File>
+    </UpdateText>
+  </InGameActions>
+  <Files>
+    <File>RealBalancedPantheons.sql</File>
+    <File>RealBalancedPantheons_Icons.xml</File>
+    <File>RealBalancedPantheons_Text.xml</File>
+  </Files>
+</Mod>

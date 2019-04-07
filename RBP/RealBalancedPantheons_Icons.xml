@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<GameInfo>
+
+<!--
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon32"/>
+    <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon50"/>
+    <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon64"/>
+    <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon256"/>
+  </IconTextureAtlases>
+-->
+<IconDefinitions>
+	<Row Name="ICON_BELIEF_RIVER_GODDESS_PLOTS"           Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="3"/>
+	<Row Name="ICON_BELIEF_GOD_OF_THE_SEA_RESOURCES"      Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="7"/>
+	<Row Name="ICON_BELIEF_GOD_OF_THE_OPEN_SKY_RESOURCES" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="8"/>
+	<Row Name="ICON_BELIEF_GODDESS_OF_THE_HUNT_RESOURCES" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="9"/>
+	<Row Name="ICON_BELIEF_STONE_CIRCLES_RESOURCES"       Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="10"/>
+	<Row Name="ICON_BELIEF_GOD_OF_CRAFTSMEN_POPULATION"   Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="12"/>
+	<!-- new ones -->
+	<Row Name="ICON_BELIEF_SACRED_LAKES"        Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="3"/>
+	<Row Name="ICON_BELIEF_GOD_KING"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="4"/>
+	<Row Name="ICON_BELIEF_SUN_GOD_RESOURCES"   Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="8"/>
+	<Row Name="ICON_BELIEF_ONE_WITH_NATURE"     Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="16"/>
+	<Row Name="ICON_BELIEF_GODDESS_OF_COMMERCE" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="21"/>
+	
+
+  
+<!--
+    <Row Name="ICON_BELIEF_DANCE_OF_THE_AURORA"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="0"/>
+
+    <Row Name="ICON_BELIEF_DESERT_FOLKLORE"             Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="1"/>
+
+    <Row Name="ICON_BELIEF_SACRED_PATH"			Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="2"/>
+
+    <Row Name="ICON_BELIEF_RIVER_GODDESS"               Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="3"/>
+
+    <Row Name="ICON_BELIEF_MONUMENT_TO_THE_GODS"        Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="4"/>
+
+    <Row Name="ICON_BELIEF_DIVINE_SPARK"                Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="5"/>
+
+    <Row Name="ICON_BELIEF_LADY_OF_THE_REEDS_AND_MARSHES" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="6"/>
+
+    <Row Name="ICON_BELIEF_GOD_OF_THE_SEA"	        Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="7"/>
+
+    <Row Name="ICON_BELIEF_GOD_OF_THE_OPEN_SKY"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="8"/>
+
+    <Row Name="ICON_BELIEF_GODDESS_OF_THE_HUNT"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="9"/>
+
+    <Row Name="ICON_BELIEF_STONE_CIRCLES"               Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="10"/>
+
+    <Row Name="ICON_BELIEF_RELIGIOUS_IDOLS"             Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="11"/>
+
+    <Row Name="ICON_BELIEF_GOD_OF_CRAFTSMEN"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="12"/>
+
+    <Row Name="ICON_BELIEF_GODDESS_OF_FESTIVALS"        Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="13"/>
+
+    <Row Name="ICON_BELIEF_ORAL_TRADITION"              Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="14"/>
+
+    <Row Name="ICON_BELIEF_GOD_OF_THE_FORGE"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="15"/>
+
+    <Row Name="ICON_BELIEF_INITIATION_RITES"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="16"/>
+    
+    <Row Name="ICON_BELIEF_GOD_OF_HEALING"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="17"/>
+
+    <Row Name="ICON_BELIEF_GOD_OF_WAR"                Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="18"/>
+
+    <Row Name="ICON_BELIEF_FERTILITY_RITES"             Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="19"/>
+
+    <Row Name="ICON_BELIEF_RELIGIOUS_SETTLEMENTS"       Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="20"/>
+
+    <Row Name="ICON_BELIEF_GODDESS_OF_THE_HARVEST"      Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="21"/>
+
+    <Row Name="ICON_BELIEF_CITY_PATRON_GODDESS"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="27"/>
+
+    <Row Name="ICON_BELIEF_EARTH_GODDESS"               Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="26"/>
+
+    <Row Name="ICON_BELIEF_DIVINE_INSPIRATION"          Atlas="ICON_ATLAS_BELIEFS_PATHEON"	Index="23"/>
+
+    <Row Name="ICON_BELIEF_FEED_THE_WORLD"              Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_JESUIT_EDUCATION"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_RELIQUARIES"                 Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_RELIGIOUS_COMMUNITY"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_WORK_ETHIC"                  Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_ZEN_MEDITATION"              Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_CHORAL_MUSIC"                Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    <Row Name="ICON_BELIEF_WARRIOR_MONKS"               Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="23"/>
+
+    
+    
+    <Row Name="ICON_BELIEF_CATHEDRAL"                   Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_GURDWARA"                    Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_MEETING_HOUSE"               Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_MOSQUE"                      Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_PAGODA"                      Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_SYNAGOGUE"                   Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_WAT"                         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_STUPA"                       Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+    <Row Name="ICON_BELIEF_DAR_E_MEHR"                  Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="22"/>
+
+
+
+    <Row Name="ICON_BELIEF_CHURCH_PROPERTY"             Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_LAY_MINISTRY"                Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_PAPAL_PRIMACY"               Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_PILGRIMAGE"                  Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_STEWARDSHIP"                 Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_TITHE"                       Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_WORLD_CHURCH"                Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_CROSS_CULTURAL_DIALOGUE"     Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+    <Row Name="ICON_BELIEF_RELIGIOUS_UNITY"             Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="24"/>
+
+
+    <Row Name="ICON_BELIEF_DEFENDER_OF_FAITH"           Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_HOLY_ORDER"                  Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_ITINERANT_PREACHERS"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_JUST_WAR"                    Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_MISSIONARY_ZEAL"             Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_MONASTIC_ISOLATION"          Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_SCRIPTURE"                   Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_BURIAL_GROUNDS"              Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+
+    <Row Name="ICON_BELIEF_RELIGIOUS_COLONIZATION"      Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
+-->
+
+  </IconDefinitions>
+
+</GameInfo>
