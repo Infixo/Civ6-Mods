@@ -1362,7 +1362,8 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 		return kYields, 0, kSpecYields, 0;
 	end
 	
-	--print("--- CITIZENS OF", pCity:GetName(), table.count(tPlots)); -- debug
+	--print("--- PLOTS OF", pCity:GetName(), table.count(tPlots)); -- debug
+	--print("--- CITIZENS OF", pCity:GetName(), table.count(tUnits)); -- debug
 	for i,plotId in pairs(tPlots) do
 
 		local kPlot	:table = Map.GetPlotByIndex(plotId);
@@ -1394,9 +1395,16 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 		-- Not a common yield, and only exposure from game core is based off
 		-- of the plot so the sum is easily shown, but it's not possible to 
 		-- show how individual buildings contribute... yet.
-		kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( index );
+		--kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( index );
 	end
-	--print("--- SUMMARY OF", pCity:GetName(), iNumWorkedPlots, iNumSpecialists); -- debug
+	
+	-- TOURISM
+	-- Tourism from tiles like Wonders and Districts is not counted because they cannot be worked!
+	for _, plotID in ipairs(Map.GetCityPlots():GetPurchasedPlots(pCity)) do
+		--print("...tourism at", plotID, pCulture:GetTourismAt( plotID )); -- debug
+		kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( plotID );
+	end
+	--print("--- SUMMARY OF", pCity:GetName(), iNumWorkedPlots, iNumSpecialists, "tourism:", kYields.TOURISM); -- debug
 	return kYields, iNumWorkedPlots, kSpecYields, iNumSpecialists;
 end
 
@@ -1565,6 +1573,12 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 		data.PowerProduced = data.PowerProduced + power;
 		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", power, Locale.Lookup(GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Name)));
 	end
+	-- support for Hydroelectric Dam Upgrade from RBU
+	if GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM_UPGRADE ~= nil and pCity:GetBuildings():HasBuilding( GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM_UPGRADE.Index ) then
+		local power = 2;
+		data.PowerProduced = data.PowerProduced + power;
+		table.insert(data.PowerProducedTT, string.format("[ICON_Bullet]%d[ICON_Power] %s", power, Locale.Lookup(GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM_UPGRADE.Name)));
+	end
 	
 	-- Cities: CO2 footprint calculation? Is it possible?
 	--"Resource_Consumption" table has a field "CO2perkWh" INTEGER NOT NULL DEFAULT 0,
@@ -1672,7 +1686,14 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 		-- tiles that can be flooded by a river LOC_FLOOD_WARNING_ICON_TOOLTIP
 		local function CheckPlotContent(plot:table, tooltip:table, extra:string)
 			if plot:GetDistrictType()    ~= -1 then table.insert(tooltip, string.format("%s %s", Locale.Lookup(GameInfo.Districts[plot:GetDistrictType()].Name), extra)); end
-			if plot:GetImprovementType() ~= -1 then table.insert(tooltip, string.format("%s %s", Locale.Lookup(GameInfo.Improvements[plot:GetImprovementType()].Name), extra)); end
+			if plot:GetImprovementType() ~= -1 then
+				local str = string.format("%s %s", Locale.Lookup(GameInfo.Improvements[plot:GetImprovementType()].Name), extra);
+				if plot:GetResourceType() ~= -1 then
+					local resource = GameInfo.Resources[plot:GetResourceType()];
+					str = "[ICON_"..resource.ResourceType.."]"..Locale.Lookup(resource.Name).." "..str;
+				end
+				table.insert(tooltip, str);
+			end
 		end
 		if RiverManager.CanBeFlooded(plot) then
 			data.NumRiverFloodTiles = data.NumRiverFloodTiles + 1;

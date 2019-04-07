@@ -1738,7 +1738,9 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if not( tSubject.SubjectType == SubjectTypes.Plot or tSubject.SubjectType == SubjectTypes.District or tSubject.SubjectType == SubjectTypes.City ) then
 			print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return nil;
 		end
-		bIsValidSubject = ( tSubject.Plot:IsRiver() or tSubject.Plot:IsRiverAdjacent() );
+		-- 2019-04-06 only IsRiver counts, tested on Hydro Dam upgrade
+		--bIsValidSubject = ( tSubject.Plot:IsRiver() or tSubject.Plot:IsRiverAdjacent() );
+		bIsValidSubject = tSubject.Plot:IsRiver();
 	
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_DISTRICT_TYPE_MATCHES" then
 		if CheckForMismatchError(SubjectTypes.District) then return false; end
