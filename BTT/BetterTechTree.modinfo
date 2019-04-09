@@ -28,6 +28,7 @@
             <Items>
 				<File>Icons/BTTUnlockFrames.dds</File>
 				<File>Base/RealEurekasCanShow.lua</File>
+				<File>Base/BoostUnlockedPopup_BTT.lua</File>
 				<!-- core files, will be included in wrappers -->
 				<File>Base/TechAndCivicSupport_BTT.lua</File>
 				<!-- wrappers -->
@@ -39,18 +40,25 @@
 			<File>Icons/BTT_Icons.xml</File>
 		</UpdateIcons>
 		<!-- Vanilla actions -->
-		<ReplaceUIScript id="BTT_ReplaceUI_TechTree">
+		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_Base">
 			<Properties>
 				<LoadOrder>1000</LoadOrder>
 				<LuaContext>TechTree</LuaContext>
 				<LuaReplace>Base/TechTree_BTT_Base.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
-		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree">
+		<ReplaceUIScript id="BTT_ReplaceUI_CivicsTree_Base">
 			<Properties>
 				<LoadOrder>1000</LoadOrder>
 				<LuaContext>CivicsTree</LuaContext>
 				<LuaReplace>Base/CivicsTree_BTT_Base.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<ReplaceUIScript id="BTT_ReplaceUI_BoostUnlockedPopup_Base">
+			<Properties>
+				<LoadOrder>1000</LoadOrder>
+				<LuaContext>BoostUnlockedPopup</LuaContext>
+				<LuaReplace>Base/BoostUnlockedPopup_BTT.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Rise&Fall actions - replace lua only for TechTree, Civics tree was not updated in R&F! -->
@@ -104,6 +112,7 @@
 		<File>Base/TechAndCivicSupport_BTT.lua</File>
 		<File>Base/TechTree_BTT_Base.lua</File>
 		<File>Base/CivicsTree_BTT_Base.lua</File>
+		<File>Base/BoostUnlockedPopup_BTT.lua</File>
 		<!-- Rise & Fall files -->
 		<File>XP1/TechTree_BTT_XP1.lua</File>
 		<!-- Gahtering Storm files -->
