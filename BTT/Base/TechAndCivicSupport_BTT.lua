@@ -361,12 +361,12 @@ function PopulateFromModifiers(sTreeKind:string)
 						sDesc = Locale.Lookup("LOC_TOP_PANEL_TOURISM");
 						AddExtraUnlockable(sType, "TOURISM", "BTT_TOURISM", sDesc, "TOURISM_1");
 					end
-				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then AddExtraUnlockable(sType, "OTHER", "MAP_PIN_DEFENSE", "Urban Defenses", "COMBAT_9");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "MAP_PIN_SUN", "Diplomatic Visibility", "DIPLO_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then AddExtraUnlockable(sType, "OTHER", "MAP_PIN_MOVEMENT", "Extra [ICON_Movement] Movement for embarked units", "MOVEMENT_5");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then AddExtraUnlockable(sType, "OTHER", "MAP_PIN_MOVEMENT", Locale.Lookup("LOC_TECH_MATHEMATICS_DESCRIPTION"), "MOVEMENT_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then AddExtraUnlockable(sType, "OTHER", "MAP_PIN_MOVEMENT", Locale.Lookup("LOC_TERRAIN_OCEAN_NAME"), "MOVEMENT_4");
-				--elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_COMBAT_ADJACENCY"      then AddExtraUnlockable(sType, "OTHER", "MAP_PIN_DEFENSE", "LOC_CIVIC_MILITARY_TRADITION_DESCRIPTION", "COMBAT_9");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then AddExtraUnlockable(sType, "OTHER", "BTT_DEFENSE",  Locale.Lookup("LOC_BTT_URBAN_DEFENSES"), "COMBAT_9");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "BTT_SUN",      Locale.Lookup("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_BTT_EMBARKED_MOVEMENT"), "MOVEMENT_5");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_TECH_MATHEMATICS_DESCRIPTION"), "MOVEMENT_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_BTT_VALID_OCEAN"), "MOVEMENT_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_COMBAT_ADJACENCY"      then AddExtraUnlockable(sType, "OTHER", "BTT_STRENGTH", Locale.Lookup("LOC_CIVIC_MILITARY_TRADITION_DESCRIPTION"), "COMBAT_9");
 				else
 					-- check for other modifiers here
 				end

@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BTT_Text -->
+<!-- Better Tech Tree -->
 <!-- Author: Infixo -->
-<!-- 2018-03-19: Created -->
+<!-- 2019-04-11: Created -->
 <GameData>
 
 <BaseGameText>
 
-	<Row Tag="LOC_BTT_BOOST_TECH_DESC">
-		<Text>{2_Percent}% [ICON_TechBoosted] Eureka for {1_TechName}.</Text>
+	<Row Tag="LOC_BTT_URBAN_DEFENSES"> <!-- LOC_TECH_STEEL_DESCRIPTION -->
+		<Text>Urban Defenses</Text>
 	</Row>
-	<Row Tag="LOC_BTT_BOOST_CIVIC_DESC">
-		<Text>{2_Percent}% [ICON_CivicBoosted] Inspiration for {1_CivicName}.</Text>
+	<Row Tag="LOC_BTT_DIPLO_VISIBILITY"> <!-- LOC_TECH_PRINTING_DESCRIPTION -->
+		<Text>+1 level of diplomatic visibility</Text>
+	</Row>
+	<Row Tag="LOC_BTT_EMBARKED_MOVEMENT"> <!-- LOC_TECH_COMBUSTION_DESCRIPTION LOC_TECH_STEAM_POWER_DESCRIPTION LOC_TECH_SQUARE_RIGGING_DESCRIPTION -->
+		<Text>Extra [ICON_Movement] Movement for embarked units.</Text>
+	</Row>
+	<Row Tag="LOC_BTT_VALID_OCEAN"> <!-- LOC_TECH_CARTOGRAPHY_DESCRIPTION -->
+		<Text>All naval and embarked units can navigate Ocean tiles.</Text>
 	</Row>
 
 </BaseGameText>
