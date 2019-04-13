@@ -46,6 +46,7 @@ INSERT INTO TypeTags (Type, Tag) SELECT ResourceType, 'CLASS_RELIGIOUS_IDOLS'   
 /*
 Working (tested)
 REQUIREMENT_PLOT_ADJACENT_TO_RIVER -- this is actually IsRiver()
+REQUIREMENT_PLOT_IS_HILLS
 REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES
 REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES
 REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES
@@ -67,6 +68,14 @@ REQUIREMENT_PLOT_HAS_ANY_FEATURE - not working
 REQUIREMENT_PLOT_FEATURE_TAG_MATCHES - not working
 REQUIREMENT_PLOT_RESOURCE_VISIBLE - not working
 */
+
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
+('REQUIRES_ERA_IS_ANCIENT',  'REQUIREMENT_GAME_ERA_IS', 0),
+('REQUIRES_ERA_NOT_ANCIENT', 'REQUIREMENT_GAME_ERA_IS', 1);
+
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
+('REQUIRES_ERA_IS_ANCIENT',  'EraType', 'ERA_ANCIENT'),
+('REQUIRES_ERA_NOT_ANCIENT', 'EraType', 'ERA_ANCIENT');
 
 INSERT INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
 ('REQUIRES_PLOT_HAS_NO_VISIBLE_RESOURCE', 'REQUIREMENT_PLOT_RESOURCE_VISIBLE', 1);
@@ -103,32 +112,61 @@ INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value)
 SELECT 'REQUIRES_PLOT_HAS_'||ResourceType, 'ResourceType', ResourceType
 FROM Resources;
 
+-- Requirements for a plot to be a specific terrain
+-- REQUIRES_PLOT_HAS_TUNDRA
+-- REQUIRES_PLOT_HAS_TUNDRA_HILLS
+-- PLOT_IS_TUNDRA_HILLS_TERRAIN_REQUIREMENT
+-- PLOT_IS_GRASS_HILLS_TERRAIN_REQUIREMENT
+-- PLOT_IS_PLAINS_HILLS_TERRAIN_REQUIREMENT
+-- PLOT_IS_HILLS_REQUIREMENT (REQUIREMENT_PLOT_IS_HILLS)
+-- REQUIRES_PLOT_IS_FLAT (REQUIREMENT_PLOT_IS_HILLS)
 
+INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType)
+SELECT 'REQUIRES_PLOT_IS_'||TerrainType, 'REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES'
+FROM Terrains;
+
+INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value)
+SELECT 'REQUIRES_PLOT_IS_'||TerrainType, 'TerrainType', TerrainType
+FROM Terrains;
+
+
+-- Requirements for a plot to NOT have a specific feature
 
 
 --------------------------------------------------------------
 -- BELIEF_FERTILITY_RITES
 -- Low scores; make it 15%? Make 20% in ancient, 10% later
 -- Add +1 Food from Palace (in Ancient)
-UPDATE ModifierArguments SET Value = '20' WHERE ModifierId = 'FERTILITY_RITES_GROWTH';
+UPDATE ModifierArguments SET Value = 20 WHERE ModifierId = 'FERTILITY_RITES_GROWTH';
 
 
 --------------------------------------------------------------
 -- BELIEF_RELIGIOUS_SETTLEMENTS
 -- Still low scores. Make 25% in ancient, 15% later
-UPDATE ModifierArguments SET Value = '20' WHERE ModifierId = 'RELIGIOUS_SETTLEMENTS_CULTUREBORDER';
+UPDATE ModifierArguments SET Value = 20 WHERE ModifierId = 'RELIGIOUS_SETTLEMENTS_CULTUREBORDER';
+
 
 
 --------------------------------------------------------------
 -- BELIEF_GODDESS_OF_THE_HARVEST
 -- Prime choice. Make it maybe 50% of it.
-UPDATE ModifierArguments SET Value = '50' WHERE ModifierId = 'GODDESS_OF_THE_HARVEST_HARVEST_MODIFIER';
-UPDATE ModifierArguments SET Value = '50' WHERE ModifierId = 'GODDESS_OF_THE_HARVEST_REMOVE_FEATURE_MODIFIER';
+UPDATE ModifierArguments SET Value = 50 WHERE ModifierId = 'GODDESS_OF_THE_HARVEST_HARVEST_MODIFIER';
+UPDATE ModifierArguments SET Value = 50 WHERE ModifierId = 'GODDESS_OF_THE_HARVEST_REMOVE_FEATURE_MODIFIER';
 
+
+--------------------------------------------------------------
+-- BELIEF_GODDESS_OF_THE_HUNT
+-- Changed to +2 Food (from +1)
+UPDATE ModifierArguments SET Value = 2 WHERE ModifierId = 'GODDESS_OF_THE_HUNT_CAMP_FOOD_MODIFIER' AND Name = 'Amount';
+
+			
 
 --------------------------------------------------------------
 -- BELIEF_EARTH_GODDESS
 -- Make it maybe Level=3 OR no resources are there? Check distribution on the map. Make for Breathtaking and +2 Faith.
+-- River: No
+-- Terrain: TERRAIN_GRASS_HILLS, TERRAIN_PLAINS_HILLS, TERRAIN_TUNDRA_HILLS
+-- No: FEATURE_FOREST, FEATURE_JUNGLE, FEATURE_GEOTHERMAL_FISSURE
 
 --UPDATE Modifiers SET SubjectRequirementSetId = 'PLOT_BREATHTAKING_APPEAL' WHERE ModifierId = 'EARTH_GODDESS_APPEAL_FAITH_MODIFIER' AND SubjectRequirementSetId = 'PLOT_CHARMING_APPEAL';
 --UPDATE ModifierArguments SET Value = 2 WHERE ModifierId = 'EARTH_GODDESS_APPEAL_FAITH_MODIFIER' AND Name = 'Amount';
@@ -149,6 +187,7 @@ INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 
 -- Ancient: +1 Faith from non-mountain land plots that are not adjacent to a river and have no visible resource nor feature
 
+/*
 -- new requirements
 INSERT INTO TerrainClasses (TerrainClassType, Name) VALUES
 ('TERRAIN_CLASS_EARTH_GODDESS', 'LOC_TERRAIN_CLASS_EARTH_GODDESS_NAME');
@@ -163,6 +202,7 @@ INSERT INTO Requirements (RequirementId, RequirementType) VALUES
 
 INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_TERRAIN_CLASS_EARTH_GODDESS', 'TerrainClass', 'TERRAIN_CLASS_EARTH_GODDESS');
+*/
 
 -- belief modifier
 UPDATE BeliefModifiers SET ModifierId = 'EARTH_GODDESS_TERRAIN_FAITH' WHERE BeliefType = 'BELIEF_EARTH_GODDESS' AND ModifierId = 'EARTH_GODDESS_APPEAL_FAITH';
@@ -180,16 +220,22 @@ INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIREMENTSET_TEST_ALL');
 
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIRES_TERRAIN_CLASS_EARTH_GODDESS'),
+--('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIRES_TERRAIN_CLASS_EARTH_GODDESS'),
 ('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIRES_PLOT_NOT_ADJACENT_TO_RIVER'),
-('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIRES_PLOT_HAS_NO_FEATURE');
+--('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIRES_PLOT_HAS_NO_FEATURE');
 --('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'REQUIRES_PLOT_HAS_NO_VISIBLE_RESOURCE');
+('REQUIREMENTS_EARTH_GODDESS_TERRAIN_FAITH', 'PLOT_IS_HILLS_REQUIREMENT');
+
 
 
 --------------------------------------------------------------
 -- BELIEF_RIVER_GODDESS_PLOTS
 -- +1 faith from flat tiles adjacent to a river
+-- River: Yes
+-- Terrain: TERRAIN_TUNDRA, TERRAIN_PLAINS, TERRAIN_GRASS
+-- No: FEATURE_FOREST, FEATURE_JUNGLE, FEATURE_GEOTHERMAL_FISSURE
 
+/*
 INSERT INTO TerrainClasses (TerrainClassType, Name) VALUES
 ('TERRAIN_CLASS_RIVER_GODDESS', 'LOC_TERRAIN_CLASS_RIVER_GODDESS_NAME');
 
@@ -203,7 +249,7 @@ INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 
 INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_TERRAIN_CLASS_RIVER_GODDESS', 'TerrainClass', 'TERRAIN_CLASS_RIVER_GODDESS');
-
+*/
 
 INSERT INTO Types (Type, Kind) VALUES
 ('BELIEF_RIVER_GODDESS_PLOTS', 'KIND_BELIEF');
@@ -227,12 +273,14 @@ INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
 ('REQUIREMENTS_RIVER_GODDESS_PLOTS', 'REQUIREMENTSET_TEST_ALL');
 
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('REQUIREMENTS_RIVER_GODDESS_PLOTS', 'REQUIRES_TERRAIN_CLASS_RIVER_GODDESS'),
+--('REQUIREMENTS_RIVER_GODDESS_PLOTS', 'REQUIRES_TERRAIN_CLASS_RIVER_GODDESS'),
+('REQUIREMENTS_RIVER_GODDESS_PLOTS', 'REQUIRES_PLOT_IS_FLAT'),
 ('REQUIREMENTS_RIVER_GODDESS_PLOTS', 'REQUIRES_PLOT_ADJACENT_TO_RIVER');
 --('REQUIREMENTS_RIVER_GODDESS_PLOTS', 'REQUIRES_PLOT_HAS_NO_RESOURCE');
 
 --INSERT INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
 --('REQUIRES_PLOT_HAS_NO_RESOURCE', 'REQUIREMENT_PLOT_HAS_ANY_RESOURCE', 1);
+
 
 
 --------------------------------------------------------------
@@ -384,6 +432,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIR
 -- BELIEF_GOD_OF_CRAFTSMEN_POPULATION
 -- 0.2-0.4 prod/gold from Population
 -- Valuation is always 0 for Amount < 1.0
+-- Try Hills adjacent to City Center.
 
 INSERT INTO Types (Type, Kind) VALUES
 ('BELIEF_GOD_OF_CRAFTSMEN_POPULATION', 'KIND_BELIEF');
@@ -504,7 +553,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 --------------------------------------------------------------
 -- BELIEF_ONE_WITH_NATURE
 -- One with Nature
--- +4 faith from each Nat Wonder tile within borders. Only Passable - they can be worked!
+-- +1 Faith from each passable Natural Wonder tile within borders. Only Passable - they can be worked!
 
 INSERT INTO Tags (Tag, Vocabulary) VALUES
 ('CLASS_ONE_WITH_NATURE', 'FEATURE_CLASS');
@@ -649,4 +698,4 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- Requirement: plot is a lake
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_SACRED_LAKES', 'REQUIREMENTSET_TEST_ALL');
 --INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SACRED_LAKES', 'REQUIRES_PLOT_IS_LAKE'); -- already exists
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SACRED_LAKES', 'PLOT_IS_PLAINS_HILLS_TERRAIN_REQUIREMENT'); -- already exists
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SACRED_LAKES', 'PLOT_IS_GRASS_HILLS_TERRAIN_REQUIREMENT'); -- already exists
