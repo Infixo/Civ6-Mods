@@ -4,34 +4,44 @@
 
 <LocalizedText>
 
+	<!-- new pantheons -->
+	<Row Tag="LOC_BELIEF_SUN_GOD_NAME" Language="en_US">
+		<Text>Sun God</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_SUN_GOD_DESCRIPTION" Language="en_US">
+		<Text>+2 [ICON_Faith] Faith from [ICON_Wheat] Wheat and [ICON_Rice] Rice Farms.</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_NAME" Language="en_US">
+		<Text>One with Nature</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_DESCRIPTION" Language="en_US">
+		<Text>+1 [ICON_Faith] Faith from each passable Natural Wonder tile within borders.</Text>
+	</Row>
+	<!-- changed pantheons -->
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_DESCRIPTION" Language="en_US">
 		<Text>+2 [ICON_Food] Food from Camps.</Text>
 	</Replace>
-
 	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="en_US">
-		<Text>City growth rate is 15% higher. Palace receives +1 [ICON_Food] Food and +1 [ICON_Housing] Housing.</Text>
+		<Text>City growth rate is 15% higher. +1 [ICON_Food] Food from Palace.</Text>
 	</Replace>
-		
-		
-    <!-- Disaster resources -->
-    <Row Tag="LOC_RESOURCE_DISASTER_SITE_NAME" Language="en_US">
-      <Text>Disaster Site</Text>
-    </Row>
-    <Row Tag="LOC_RESOURCE_VOLCANIC_ASH_NAME" Language="en_US">
-      <Text>Volcanic Ash</Text>
-    </Row>
-    <Row Tag="LOC_RESOURCE_METEOR_CRATER_NAME" Language="en_US">
-      <Text>Meteor Crater</Text>
-    </Row>  
-    <Row Tag="LOC_RESOURCE_FLOODED_LAND_NAME" Language="en_US">
-      <Text>Flooded Land</Text>
-    </Row>
-  
-    <Row Tag="LOC_BUILDING_INSURANCE_COMPANY_NAME" Language="en_US">
-      <Text>Insurance Company</Text>
-    </Row>
-
-	
+	<Replace Tag="LOC_BELIEF_RELIGIOUS_SETTLEMENTS_DESCRIPTION" Language="en_US">
+		<Text>Border expansion rate is 20% higher.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HARVEST_DESCRIPTION" Language="en_US">
+		<Text>Harvesting a resource or removing a feature receives [ICON_Faith] Faith equal to 50% of the other yield's quantity.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_CITY_PATRON_GODDESS_DESCRIPTION" Language="en_US">
+		<Text>+25% [ICON_Production] Production toward districts and +2 [ICON_Production] Production toward buildings in cities without a specialty district.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_DESCRIPTION" Language="en_US">
+		<Text>(testing) +1 Faith [ICON_Faith] from tiles with Charming or better Appeal.</Text>
+	</Replace>
+		<Replace Tag="LOC_BELIEF_RIVER_GODDESS_DESCRIPTION" Language="en_US">
+			<Text>(testing)+1 [ICON_Amenities] Amenity to cities if they have a Holy Site district adjacent to a River.</Text>
+		</Replace>
+		<Replace Tag="LOC_BELIEF_MONUMENT_TO_THE_GODS_DESCRIPTION" Language="en_US">
+			<Text>(testing)+15% [ICON_Production] Production towards Ancient and Classical era wonders.</Text>
+		</Replace>
 
 </LocalizedText>
 
