@@ -11,8 +11,10 @@ local RMA = ExposedMembers.RMA;
 -- insert functions/objects into RMA in Initialize()
 
 -- Expansions check
-local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+local bIsRiseAndFallMod:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
+local bIsRiseAndFall:boolean = (bIsRiseAndFallMod or bIsGatheringStorm); -- GS includes gameplay features from RF
+
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -281,25 +283,18 @@ function GetYieldTextColor( yieldType:string )
 end
 
 -- ===========================================================================
---	Return a string with +/- or 0 based on any value.
+-- Updated functions from Civ6Common, to include rounding to 1 decimal digit
 -- ===========================================================================
 function toPlusMinusString( value:number )
-	if(value == 0) then
-		return "0";
-	else
-		return Locale.ToNumber(value, "+#,###.#;-#,###.#");
-	end
+	if value == 0 then return "0"; end
+	--return Locale.ToNumber(value, "+#,###.#;-#,###.#");
+	return Locale.ToNumber(math.floor((value*10)+0.5)/10, "+#,###.#;-#,###.#");
 end
 
--- ===========================================================================
---	Return a string with +/- or 0 based on any value.
--- ===========================================================================
 function toPlusMinusNoneString( value:number )
-	if(value == 0) then
-		return " ";
-	else
-		return Locale.ToNumber(value, "+#,###.#;-#,###.#");
-	end
+	if value == 0 then return " "; end
+	--return Locale.ToNumber(value, "+#,###.#;-#,###.#");
+	return Locale.ToNumber(math.floor((value*10)+0.5)/10, "+#,###.#;-#,###.#");
 end
 
 -- ===========================================================================
@@ -469,7 +464,7 @@ end
 -- Retrieve Governor data, if applicable
 -- Is established?, Count how many promotions a governor has
 function GetGovernorData(pCity:table)
-	if not bIsRiseFall then return false, 0 end
+	if not bIsRiseAndFall then return false, 0 end
 	local pGovernor:table = pCity:GetAssignedGovernor()
 	if not pGovernor then return false, 0 end
 	-- count promotions
@@ -1563,6 +1558,14 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_PANTHEON" then return true;
 	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_RELIGION" then return true;
 	
+	-- 2019-04-14 Support for Real Balanced Pantheons
+	elseif tReq.ReqType == "REQUIREMENT_GAME_ERA_IS" then
+		-- valid for any subject, no check needed
+		if bIsRiseAndFall then
+			local eraType:string = GameInfo.Eras[ Game.GetEras():GetCurrentEra() ].EraType;
+			bIsValidSubject = ( tReq.Arguments.EraType == eraType );
+		end
+	
 	elseif tReq.ReqType == "REQUIREMENT_CITY_HAS_BUILDING" then -- 35, Wonders too!
 		--if CheckForMismatchError(SubjectTypes.City) then return false; end
 		if not( tSubject.SubjectType == SubjectTypes.City or tSubject.SubjectType == SubjectTypes.District ) then
@@ -1870,7 +1873,7 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 	elseif tMod.CollectionType == "COLLECTION_PLAYER_GOVERNORS" then -- we'll use cities that have an assigned Governor (doesn't need to be established?)
 		sSubjectType = SubjectTypes.City;
 		for cityname,citydata in pairs(tCities) do
-			if bIsRiseFall and citydata.City:GetAssignedGovernor() then
+			if bIsRiseAndFall and citydata.City:GetAssignedGovernor() then
 				if tReqSet then 
 					if CheckAllRequirements(tReqSet, citydata, sSubjectType) then table.insert(tSubjects, citydata); end
 				else
@@ -2383,7 +2386,7 @@ local tModifiersTables:table = {
 	["UnitPromotion"] = "UnitPromotionModifiers", -- UnitPromotionType
 };
 
-if bIsRiseFall then
+if bIsRiseAndFall then
 	tModifiersTables["Alliance"] = "AllianceEffects"; -- no Pedia page for that!
 	tModifiersTables["Commemoration"] = "CommemorationModifiers"; -- no Pedia page for that!
 	tModifiersTables["Governor"] = "GovernorModifiers"; -- currently empty
@@ -2414,7 +2417,7 @@ local tObjectsTables:table = {
 	["UnitPromotion"] = "UnitPromotions", -- UnitPromotionType
 }
 
-if bIsRiseFall then
+if bIsRiseAndFall then
 	tObjectsTables["Alliance"] = "Alliances"; -- no Pedia page for that!
 	tObjectsTables["Commemoration"] = "CommemorationTypes"; -- no Pedia page for that!
 	tObjectsTables["Governor"] = "Governors"; -- currently empty
@@ -2457,12 +2460,17 @@ function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:n
 					table.insert(tToolTip, "Attached modifier");
 					-- in some cases the subjects will be passed down to be processed again
 					-- when (a) collection was processed correctly (b) there's more than 1 subject
-					if tSubjects then
+					if tSubjects ~= nil then
 						sText, pYields, sAttachedId, bUnknown, tMod = DecodeModifier(sAttachedId, ePlayerID, iCityID, tSubjects, sSubjectType);
 					else
 						sText, pYields, sAttachedId, bUnknown, tMod = DecodeModifier(sAttachedId, ePlayerID, iCityID);
 					end
 					table.insert(tToolTip, sText);
+					-- 2019-04-14 Reset yields to 0 if there are no valid subjects that qualify for attaching
+					if tSubjects ~= nil and #tSubjects == 0 then
+						pYields = nil;
+						table.insert(tToolTip, "Attached modifier has NO valid subjects");
+					end
 				end
 				if pYields then YieldTableAdd(tTotalImpact, pYields); end
 				bUnknownEffect = bUnknownEffect or bUnknown;
@@ -2616,7 +2624,7 @@ function Initialize()
 	Events.InfluenceGiven.Add(           function() bBaseDataDirty = true end );
 	Events.ImprovementAddedToMap.Add( 	 function() bBaseDataDirty = true end );
 	-- Rise & Fall
-	if bIsRiseFall then
+	if bIsRiseAndFall then
 		Events.GovernorAssigned.Add(	 function() bBaseDataDirty = true end );
 		Events.GovernorPromoted.Add(	 function() bBaseDataDirty = true end );
 		Events.EmergencyStarted.Add( 	 function() bBaseDataDirty = true end );

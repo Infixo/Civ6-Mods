@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <GameData>
-  <LocalizedText>
-  
+
+<LocalizedText>
+
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_DESCRIPTION" Language="en_US">
+		<Text>+2 [ICON_Food] Food from Camps.</Text>
+	</Replace>
+
+	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="en_US">
+		<Text>City growth rate is 15% higher. Palace receives +1 [ICON_Food] Food and +1 [ICON_Housing] Housing.</Text>
+	</Replace>
+		
+		
     <!-- Disaster resources -->
     <Row Tag="LOC_RESOURCE_DISASTER_SITE_NAME" Language="en_US">
       <Text>Disaster Site</Text>
@@ -21,31 +32,7 @@
     </Row>
 
 	
-    <!-- The name of the building. -->
-    <Row Tag="LOC_BUILDING_TEST1_NAME" Language="en_US">
-      <Text>Test Building 1</Text>
-    </Row>
-    <Row Tag="LOC_BUILDING_TEST2_NAME" Language="en_US">
-      <Text>Test Building 2</Text>
-    </Row>
-    <Row Tag="LOC_BUILDING_TEST3_NAME" Language="en_US">
-      <Text>Test Building 3</Text>
-    </Row>
 
-    <!-- The description of the building, used in various places. -->
-    <Row Tag="LOC_BUILDING_TEST1_DESCRIPTION" Language="en_US">
-      <Text>Test Building 1 Description</Text>
-    </Row>
-    <Row Tag="LOC_BUILDING_TEST2_DESCRIPTION" Language="en_US">
-      <Text>Test Building 2 Description</Text>
-    </Row>
-    <Row Tag="LOC_BUILDING_TEST3_DESCRIPTION" Language="en_US">
-      <Text>Test Building 3 Description</Text>
-    </Row>
+</LocalizedText>
 
-    <!-- Pedia text (historical context) about the new building. -->
-    <Row Tag="LOC_PEDIA_BUILDINGS_PAGE_BUILDING_TEST_CHAPTER_HISTORY_PARA_1" Language="en_US">
-      <Text>One story for all 3 buildings.</Text>
-    </Row>
-  </LocalizedText>
 </GameData>
