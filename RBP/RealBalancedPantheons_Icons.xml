@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<GameInfo>
-
 <!--
-  <IconTextureAtlases>
+-- Real Balanced Pantheons
+-- Author: Infixo
+-- 2019-04-07: Created
+-->
+<GameInfo>
+<!--
+<IconTextureAtlases>
     <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon32"/>
     <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon50"/>
     <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon64"/>
     <Row Name="ICON_ATLAS_BELIEFS_PATHEON" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="BeliefsPantheon256"/>
-  </IconTextureAtlases>
+</IconTextureAtlases>
 -->
 <IconDefinitions>
+	<Row Name="ICON_BELIEF_SUN_GOD"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="8"/>
+	<Row Name="ICON_BELIEF_ONE_WITH_NATURE" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="16"/>
+	<!-- temporary -->
 	<Row Name="ICON_BELIEF_RIVER_GODDESS_PLOTS"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="3"/>
 	<Row Name="ICON_BELIEF_GOD_OF_THE_SEA_RESOURCES"       Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="7"/>
 	<Row Name="ICON_BELIEF_GOD_OF_THE_OPEN_SKY_RESOURCES"  Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="8"/>
@@ -20,16 +26,15 @@
 	<Row Name="ICON_BELIEF_GOD_OF_CRAFTSMEN_POPULATION"    Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="12"/>
 	<Row Name="ICON_BELIEF_GODDESS_OF_FESTIVALS_RESOURCES" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="13"/>
 	<Row Name="ICON_BELIEF_ORAL_TRADITION_RESOURCES"       Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="14"/>
-
 	<!-- new ones -->
 	<Row Name="ICON_BELIEF_SACRED_LAKES"        Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="3"/>
 	<Row Name="ICON_BELIEF_GOD_KING"            Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="4"/>
-	<Row Name="ICON_BELIEF_SUN_GOD_RESOURCES"   Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="8"/>
-	<Row Name="ICON_BELIEF_ONE_WITH_NATURE"     Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="16"/>
 	<Row Name="ICON_BELIEF_GODDESS_OF_COMMERCE" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="21"/>
 	<Row Name="ICON_BELIEF_GODDESS_OF_COMMERCE_GOLD" Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="21"/>
-	
 
+</IconDefinitions>
+
+</GameInfo>
   
 <!--
     <Row Name="ICON_BELIEF_DANCE_OF_THE_AURORA"         Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="0"/>
@@ -157,7 +162,3 @@
 
     <Row Name="ICON_BELIEF_RELIGIOUS_COLONIZATION"      Atlas="ICON_ATLAS_BELIEFS_PATHEON" Index="25"/>
 -->
-
-  </IconDefinitions>
-
-</GameInfo>

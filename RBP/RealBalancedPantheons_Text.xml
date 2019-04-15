@@ -5,18 +5,18 @@
 <LocalizedText>
 
 	<!-- new pantheons -->
-	<Replace Tag="LOC_BELIEF_SUN_GOD_NAME" Language="en_US">
+	<Row Tag="LOC_BELIEF_SUN_GOD_NAME" Language="en_US">
 		<Text>Sun God</Text>
-	</Replace>
-	<Replace Tag="LOC_BELIEF_SUN_GOD_DESCRIPTION" Language="en_US">
-		<Text>+2 [ICON_Faith] Faith from [ICON_Wheat] Wheat and [ICON_Rice] Rice Farms.</Text>
-	</Replace>
-	<Replace Tag="LOC_BELIEF_ONE_WITH_NATURE_NAME" Language="en_US">
+	</Row>
+	<Row Tag="LOC_BELIEF_SUN_GOD_DESCRIPTION" Language="en_US">
+		<Text>+2 [ICON_Faith] Faith from [ICON_RESOURCE_RICE] Rice and [ICON_RESOURCE_WHEAT] Wheat Farms.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from [ICON_RESOURCE_RICE] Rice and [ICON_RESOURCE_WHEAT] Wheat resources.</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_NAME" Language="en_US">
 		<Text>One with Nature</Text>
-	</Replace>
-	<Replace Tag="LOC_BELIEF_ONE_WITH_NATURE_DESCRIPTION" Language="en_US">
+	</Row>
+	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_DESCRIPTION" Language="en_US">
 		<Text>+1 [ICON_Faith] Faith from each passable Natural Wonder tile within borders.</Text>
-	</Replace>
+	</Row>
 	<!--Pantheon - Amenity Bonuses-->
 	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_DESCRIPTION" Language="en_US">
 		<Text>(testing)+1 [ICON_Amenities] Amenity to cities if they have a Holy Site district adjacent to a River.</Text>
@@ -33,28 +33,28 @@
 	</Replace>
 	<!--Pantheon - Local Resource Bonuses-->
 	<Replace Tag="LOC_BELIEF_GOD_OF_THE_SEA_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Production] Production from Fishing Boats.[NEWLINE]In Ancient Era: +1 [ICON_Production] Production from resources valid for Fishing Boats.</Text>
+		<Text>+1 [ICON_Production] Production from Fishing Boats.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from resources valid for Fishing Boats.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GOD_OF_THE_OPEN_SKY_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Culture] Culture from Pastures.[NEWLINE]In Ancient Era: +1 [ICON_Culture] Culture from resources valid for Pastures.</Text>
+		<Text>+1 [ICON_Culture] Culture from Pastures.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Culture] Culture from resources valid for Pastures.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_DESCRIPTION" Language="en_US">
-		<Text>+2 [ICON_Food] Food from Camps.[NEWLINE]In Ancient Era: +2 [ICON_Food] Food from resources valid for Camps.</Text>
+		<Text>+2 [ICON_Food] Food from Camps.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Food] Food from resources valid for Camps.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_STONE_CIRCLES_DESCRIPTION" Language="en_US">
-		<Text>+2 [ICON_Faith] Faith from Quarries.[NEWLINE]In Ancient Era: +2 [ICON_Faith] Faith from resources valid for Quarries.</Text>
+		<Text>+2 [ICON_Faith] Faith from Quarries.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from resources valid for Quarries.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_RELIGIOUS_IDOLS_DESCRIPTION" Language="en_US">
-		<Text>+2 [ICON_Faith] Faith from Mines over Luxury and Bonus resources.[NEWLINE]In Ancient Era: +2 [ICON_Faith] Faith from Luxury and Bonus resources valid for Mines.</Text>
+		<Text>+2 [ICON_Faith] Faith from Mines over Luxury and Bonus resources.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from Luxury and Bonus resources valid for Mines.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Production] Production from Mines over Strategic resources.[NEWLINE]In Ancient Era: +1 [ICON_Production] Production from Hills adjacent to City Center.</Text>
+		<Text>+1 [ICON_Production] Production from Mines over Strategic resources.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from Hills adjacent to City Center.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_FESTIVALS_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Food] Food from [ICON_RESOURCE_WINE] Wine, [ICON_RESOURCE_INCENSE] Incense, [ICON_RESOURCE_COCOA] Cocoa, [ICON_RESOURCE_TOBACCO] Tobacco, [ICON_RESOURCE_COFFEE] Coffee, and [ICON_RESOURCE_TEA] Tea Plantations.[NEWLINE]In Ancient Era: +1 [ICON_Food] Food from these resources.</Text>
+		<Text>+1 [ICON_Food] Food from [ICON_RESOURCE_WINE] Wine, [ICON_RESOURCE_INCENSE] Incense, [ICON_RESOURCE_COCOA] Cocoa, [ICON_RESOURCE_TOBACCO] Tobacco, [ICON_RESOURCE_OLIVES] Olives, [ICON_RESOURCE_COFFEE] Coffee, and [ICON_RESOURCE_TEA] Tea Plantations.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Food] Food from these resources.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_ORAL_TRADITION_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Culture] Culture from [ICON_RESOURCE_BANANAS] Banana, [ICON_RESOURCE_CITRUS] Citrus, [ICON_RESOURCE_COTTON] Cotton, [ICON_RESOURCE_DYES] Dyes, [ICON_RESOURCE_SILK] Silk, [ICON_RESOURCE_SPICES] Spices, and [ICON_RESOURCE_SUGAR] Sugar Plantations.[NEWLINE]In Ancient Era: +1 [ICON_Culture] Culture from these resources.</Text>
+		<Text>+1 [ICON_Culture] Culture from [ICON_RESOURCE_BANANAS] Banana, [ICON_RESOURCE_CITRUS] Citrus, [ICON_RESOURCE_COTTON] Cotton, [ICON_RESOURCE_DYES] Dyes, [ICON_RESOURCE_SILK] Silk, [ICON_RESOURCE_SPICES] Spices, and [ICON_RESOURCE_SUGAR] Sugar Plantations.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Culture] Culture from these resources.</Text>
 	</Replace>
 	<!--Pantheon - General Purpose-->
 	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="en_US">

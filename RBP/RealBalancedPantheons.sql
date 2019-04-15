@@ -19,10 +19,9 @@ river, flatland, nothing  	1:22	1:18	1:16
 */
 
 
-
--- already exists
--- CLASS_GODDESS_OF_FESTIVALS
--- CLASS_ORAL_TRADITION
+--------------------------------------------------------------
+-- Resource classes for pantheons improving local resources
+-- CLASS_GODDESS_OF_FESTIVALS and CLASS_ORAL_TRADITION already exist
 
 INSERT INTO Tags (Tag, Vocabulary) VALUES
 ('CLASS_GOD_OF_THE_OPEN_SKY', 'RESOURCE_CLASS'),
@@ -42,7 +41,9 @@ INSERT INTO TypeTags (Type, Tag) SELECT ResourceType, 'CLASS_RELIGIOUS_IDOLS'   
 
 
 
--- some re-usable requirements
+--------------------------------------------------------------
+-- Some re-usable requirements
+-- Unfortunately many of them are not scored properly
 /*
 Working (tested)
 REQUIREMENT_PLOT_ADJACENT_TO_RIVER -- this is actually IsRiver()
@@ -74,26 +75,28 @@ REQUIREMENT_PLOT_FEATURE_TAG_MATCHES - not working
 REQUIREMENT_PLOT_RESOURCE_VISIBLE - not working
 */
 
-INSERT INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
-('REQUIRES_PLOT_NOT_ADJACENT_TO_RIVER', 'REQUIREMENT_PLOT_ADJACENT_TO_RIVER', 1);
+-- this one is working, however not used
+--INSERT INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
+--('REQUIRES_PLOT_NOT_ADJACENT_TO_RIVER', 'REQUIREMENT_PLOT_ADJACENT_TO_RIVER', 1);
 
 INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
-('REQUIRES_ERA_IS_ANCIENT',  'REQUIREMENT_GAME_ERA_IS', 0),
-('REQUIRES_ERA_NOT_ANCIENT', 'REQUIREMENT_GAME_ERA_IS', 1);
+('REQUIRES_ERA_IS_ANCIENT',  'REQUIREMENT_GAME_ERA_IS', 0);
+--('REQUIRES_ERA_NOT_ANCIENT', 'REQUIREMENT_GAME_ERA_IS', 1);
 
 INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
-('REQUIRES_ERA_IS_ANCIENT',  'EraType', 'ERA_ANCIENT'),
-('REQUIRES_ERA_NOT_ANCIENT', 'EraType', 'ERA_ANCIENT');
+('REQUIRES_ERA_IS_ANCIENT',  'EraType', 'ERA_ANCIENT');
+--('REQUIRES_ERA_NOT_ANCIENT', 'EraType', 'ERA_ANCIENT');
 
 -- Requirement: city follows a pantheon and era is Ancient
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_ANCIENT', 'REQUIREMENTSET_TEST_ALL');
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_ANCIENT', 'REQUIRES_CITY_FOLLOWS_PANTHEON');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_ANCIENT', 'REQUIRES_CITY_FOLLOWS_PANTHEON'); -- exists
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_ANCIENT', 'REQUIRES_ERA_IS_ANCIENT');
 
 -- Requirement: city follows a pantheon and era is NOT Ancient
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT', 'REQUIREMENTSET_TEST_ALL');
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT', 'REQUIRES_CITY_FOLLOWS_PANTHEON');
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT', 'REQUIRES_ERA_NOT_ANCIENT');
+-- this is working, however not needed as "no improvement" is working and used
+--INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)	   VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT', 'REQUIREMENTSET_TEST_ALL');
+--INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT', 'REQUIRES_CITY_FOLLOWS_PANTHEON');
+--INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT', 'REQUIRES_ERA_NOT_ANCIENT');
 
 /* not working - scoring ignores them
 
@@ -117,36 +120,6 @@ INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_PLOT_HAS_NO_FISSURE', 'FeatureType', 'FEATURE_GEOTHERMAL_FISSURE');
 
 
--- new dynamic modifiers
-
---INSERT OR REPLACE INTO Types (Type, Kind) VALUES
---('MODIFIER_ALL_CITIES_ADJUST_CITY_YIELD_PER_POPULATION', 'KIND_MODIFIER');
-
---INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
---('MODIFIER_ALL_CITIES_ADJUST_CITY_YIELD_PER_POPULATION', 'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_CITY_YIELD_PER_POPULATION');
-
-INSERT OR REPLACE INTO Types (Type, Kind) VALUES
-('MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'KIND_MODIFIER'),
-('MODIFIER_ALL_CITIES_ADJUST_BUILDING_HOUSING',      'KIND_MODIFIER'),
-('MODIFIER_ALL_CITIES_ADJUST_WONDER_PRODUCTION',     'KIND_MODIFIER');
-
-INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
-('MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_BUILDING_YIELD_CHANGE'),
-('MODIFIER_ALL_CITIES_ADJUST_BUILDING_HOUSING',      'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_BUILDING_HOUSING'),
-('MODIFIER_ALL_CITIES_ADJUST_WONDER_PRODUCTION',     'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_WONDER_PRODUCTION');
-
-/*
--- Requirements for a plot to have a specific resource
-
-INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType)
-SELECT 'REQUIRES_PLOT_HAS_'||ResourceType, 'REQUIREMENT_PLOT_RESOURCE_TYPE_MATCHES'
-FROM Resources;
-
-INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value)
-SELECT 'REQUIRES_PLOT_HAS_'||ResourceType, 'ResourceType', ResourceType
-FROM Resources;
-*/
-
 -- Requirements for a plot to be a specific terrain
 -- REQUIRES_PLOT_HAS_TUNDRA
 -- REQUIRES_PLOT_HAS_TUNDRA_HILLS
@@ -157,7 +130,6 @@ FROM Resources;
 -- REQUIRES_PLOT_IS_FLAT (REQUIREMENT_PLOT_IS_HILLS)
 -- PLOT_IS_MOUNTAIN	REQUIREMENT_PLOT_IS_MOUNTAIN
 
-
 INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
 ('REQUIRES_PLOT_IS_HILLS',  'REQUIREMENT_PLOT_IS_HILLS', 0),
 ('REQUIRES_PLOT_NOT_HILLS', 'REQUIREMENT_PLOT_IS_HILLS', 1),
@@ -165,16 +137,6 @@ INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType, Inverse) VA
 ('REQUIRES_PLOT_NOT_MOUNTAIN', 'REQUIREMENT_PLOT_IS_MOUNTAIN', 1),
 ('REQUIRES_PLOT_HAS_DISTRICT',    'REQUIREMENT_PLOT_HAS_ANY_DISTRICT', 0),
 ('REQUIRES_PLOT_HAS_NO_DISTRICT', 'REQUIREMENT_PLOT_HAS_ANY_DISTRICT', 1);
-
-/*
-INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType)
-SELECT 'REQUIRES_PLOT_IS_'||TerrainType, 'REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES'
-FROM Terrains;
-
-INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value)
-SELECT 'REQUIRES_PLOT_IS_'||TerrainType, 'TerrainType', TerrainType
-FROM Terrains;
-*/
 
 
 
@@ -188,6 +150,14 @@ UPDATE ModifierArguments SET Value = 15 WHERE ModifierId = 'FERTILITY_RITES_GROW
 INSERT INTO BeliefModifiers (BeliefType, ModifierId) VALUES
 --('BELIEF_FERTILITY_RITES', 'FERTILITY_RITES_PALACE_HOUSING'),
 ('BELIEF_FERTILITY_RITES', 'FERTILITY_RITES_PALACE_FOOD');
+
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES
+--('MODIFIER_ALL_CITIES_ADJUST_BUILDING_HOUSING',      'KIND_MODIFIER'),
+('MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'KIND_MODIFIER');
+
+INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+--('MODIFIER_ALL_CITIES_ADJUST_BUILDING_HOUSING',      'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_BUILDING_HOUSING'), -- working ok, not used
+('MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_BUILDING_YIELD_CHANGE');
 
 INSERT INTO Modifiers(ModifierId, ModifierType, SubjectRequirementSetId) VALUES
 --('FERTILITY_RITES_PALACE_HOUSING', 'MODIFIER_ALL_CITIES_ADJUST_BUILDING_HOUSING',      'CITY_FOLLOWS_PANTHEON_REQUIREMENTS'),
@@ -387,7 +357,7 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 -- +1 Production from Fishing Boats resources
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GOD_OF_THE_SEA_FISHINGBOATS_PRODUCTION';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GOD_OF_THE_SEA_FISHINGBOATS_PRODUCTION';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_GOD_OF_THE_SEA_RESOURCES', 'KIND_BELIEF');
@@ -409,6 +379,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_GOD_OF_THE_SEA_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GOD_OF_THE_SEA_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GOD_OF_THE_SEA_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_GOD_OF_THE_SEA');
 INSERT INTO Requirements (RequirementId, RequirementType)				 VALUES ('REQUIRES_PLOT_HAS_TAG_GOD_OF_THE_SEA',  'REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES');
 INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIRES_PLOT_HAS_TAG_GOD_OF_THE_SEA',  'Tag', 'CLASS_GOD_OF_THE_SEA');
@@ -419,7 +390,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIR
 -- +1 Culture from Pasture resources
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GOD_OF_THE_OPEN_SKY_PASTURE_CULTURE';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GOD_OF_THE_OPEN_SKY_PASTURE_CULTURE';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_GOD_OF_THE_OPEN_SKY_RESOURCES', 'KIND_BELIEF');
@@ -441,6 +412,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_GOD_OF_THE_OPEN_SKY_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GOD_OF_THE_OPEN_SKY_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GOD_OF_THE_OPEN_SKY_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_GOD_OF_THE_OPEN_SKY');
 INSERT INTO Requirements (RequirementId, RequirementType)				 VALUES ('REQUIRES_PLOT_HAS_TAG_GOD_OF_THE_OPEN_SKY',  'REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES');
 INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIRES_PLOT_HAS_TAG_GOD_OF_THE_OPEN_SKY',  'Tag', 'CLASS_GOD_OF_THE_OPEN_SKY');
@@ -455,7 +427,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIR
 UPDATE ModifierArguments SET Value = 2 WHERE ModifierId = 'GODDESS_OF_THE_HUNT_CAMP_FOOD_MODIFIER' AND Name = 'Amount';
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GODDESS_OF_THE_HUNT_CAMP_FOOD';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GODDESS_OF_THE_HUNT_CAMP_FOOD';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_GODDESS_OF_THE_HUNT_RESOURCES', 'KIND_BELIEF');
@@ -477,6 +449,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_GODDESS_OF_THE_HUNT_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GODDESS_OF_THE_HUNT_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GODDESS_OF_THE_HUNT_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_GODDESS_OF_THE_HUNT');
 INSERT INTO Requirements (RequirementId, RequirementType)				 VALUES ('REQUIRES_PLOT_HAS_TAG_GODDESS_OF_THE_HUNT',  'REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES');
 INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIRES_PLOT_HAS_TAG_GODDESS_OF_THE_HUNT',  'Tag', 'CLASS_GODDESS_OF_THE_HUNT');
@@ -488,7 +461,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIR
 -- +2 Faith from Quarry resources
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'STONE_CIRCLES_QUARRY_FAITH';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'STONE_CIRCLES_QUARRY_FAITH';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_STONE_CIRCLES_RESOURCES', 'KIND_BELIEF');
@@ -510,6 +483,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_STONE_CIRCLES_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_STONE_CIRCLES_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_STONE_CIRCLES_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_STONE_CIRCLES');
 INSERT INTO Requirements (RequirementId, RequirementType)				 VALUES ('REQUIRES_PLOT_HAS_TAG_STONE_CIRCLES',  'REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES');
 INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIRES_PLOT_HAS_TAG_STONE_CIRCLES',  'Tag', 'CLASS_STONE_CIRCLES');
@@ -521,8 +495,8 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIR
 -- +2 Faith from Mines over Luxury and Bonus resources.
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'RELIGIOUS_IDOLS_BONUS_MINE_FAITH';
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'RELIGIOUS_IDOLS_LUXURY_MINE_FAITH';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'RELIGIOUS_IDOLS_BONUS_MINE_FAITH';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'RELIGIOUS_IDOLS_LUXURY_MINE_FAITH';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_RELIGIOUS_IDOLS_RESOURCES', 'KIND_BELIEF');
@@ -544,6 +518,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_RELIGIOUS_IDOLS_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_RELIGIOUS_IDOLS_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_RELIGIOUS_IDOLS_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_RELIGIOUS_IDOLS');
 INSERT INTO Requirements (RequirementId, RequirementType)				 VALUES ('REQUIRES_PLOT_HAS_TAG_RELIGIOUS_IDOLS',  'REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES');
 INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIRES_PLOT_HAS_TAG_RELIGIOUS_IDOLS',  'Tag', 'CLASS_RELIGIOUS_IDOLS');
@@ -564,7 +539,15 @@ INSERT INTO Beliefs (BeliefType, Name, Description, BeliefClassType) VALUES
 
 INSERT INTO BeliefModifiers (BeliefType, ModifierId) VALUES
 ('BELIEF_GOD_OF_CRAFTSMEN_POPULATION', 'GOD_OF_CRAFTSMEN_PLOTS_PRODUCTION');
-/*
+
+/* not scored properly
+
+INSERT OR REPLACE INTO Types (Type, Kind) VALUES
+('MODIFIER_ALL_CITIES_ADJUST_CITY_YIELD_PER_POPULATION', 'KIND_MODIFIER');
+
+INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+('MODIFIER_ALL_CITIES_ADJUST_CITY_YIELD_PER_POPULATION', 'COLLECTION_ALL_CITIES', 'EFFECT_ADJUST_CITY_YIELD_PER_POPULATION');
+
 INSERT INTO Modifiers(ModifierId, ModifierType, SubjectRequirementSetId) VALUES
 ('GOD_OF_CRAFTSMEN_POPULATION_PRODUCTION', 'MODIFIER_ALL_CITIES_ADJUST_CITY_YIELD_PER_POPULATION', 'CITY_FOLLOWS_PANTHEON_REQUIREMENTS');
 
@@ -596,7 +579,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIR
 -- +1 Food from Wine, Incense, Cocoa, Tobacco, Coffee, and Tea Plantations.
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GODDESS_OF_FESTIVALS_PLANTATION_TAG_FOOD';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'GODDESS_OF_FESTIVALS_PLANTATION_TAG_FOOD';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_GODDESS_OF_FESTIVALS_RESOURCES', 'KIND_BELIEF');
@@ -618,6 +601,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_GODDESS_OF_FESTIVALS_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GODDESS_OF_FESTIVALS_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_GODDESS_OF_FESTIVALS_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_GODDESS_OF_FESTIVAL'); -- exists
 
 
@@ -627,7 +611,7 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES 
 -- +1 [ICON_Culture] Culture from [ICON_RESOURCE_BANANAS] Banana, [ICON_RESOURCE_CITRUS] Citrus, [ICON_RESOURCE_COTTON] Cotton, [ICON_RESOURCE_DYES] Dyes, [ICON_RESOURCE_SILK] Silk, [ICON_RESOURCE_SPICES] Spices, and [ICON_RESOURCE_SUGAR] Sugar Plantations.
 
 -- Base belief valid after Ancient era
-UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'ORAL_TRADITION_PLANTATION_TAG_CULTURE';
+--UPDATE Modifiers SET SubjectRequirementSetId = 'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_NOT_ANCIENT' WHERE ModifierId = 'ORAL_TRADITION_PLANTATION_TAG_CULTURE';
 
 --INSERT INTO Types (Type, Kind) VALUES
 --('BELIEF_ORAL_TRADITION_RESOURCES', 'KIND_BELIEF');
@@ -649,6 +633,7 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Requirement: plot has a resource with a specific tag
 INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_ORAL_TRADITION_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_ORAL_TRADITION_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_ORAL_TRADITION_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_ORAL_TRADITION'); -- exists
 
 
@@ -772,25 +757,39 @@ WHERE NaturalWonder = 1  AND Impassable = 0;
 -- +2 Faith from Farms over Wheat or Rice
 
 INSERT INTO Types (Type, Kind) VALUES
-('BELIEF_SUN_GOD_RESOURCES', 'KIND_BELIEF');
+('BELIEF_SUN_GOD', 'KIND_BELIEF');
 
 INSERT INTO Beliefs (BeliefType, Name, Description, BeliefClassType) VALUES
-('BELIEF_SUN_GOD_RESOURCES', 'LOC_BELIEF_SUN_GOD_NAME', 'LOC_BELIEF_SUN_GOD_DESCRIPTION', 'BELIEF_CLASS_PANTHEON');
+('BELIEF_SUN_GOD', 'LOC_BELIEF_SUN_GOD_NAME', 'LOC_BELIEF_SUN_GOD_DESCRIPTION', 'BELIEF_CLASS_PANTHEON');
 
 INSERT INTO BeliefModifiers (BeliefType, ModifierId) VALUES
-('BELIEF_SUN_GOD_RESOURCES', 'SUN_GOD_RESOURCES_FAITH');
+('BELIEF_SUN_GOD', 'SUN_GOD_FARM_FAITH'),
+('BELIEF_SUN_GOD', 'SUN_GOD_RESOURCES_FAITH');
 
 INSERT INTO Modifiers(ModifierId, ModifierType, SubjectRequirementSetId) VALUES
-('SUN_GOD_RESOURCES_FAITH',          'MODIFIER_ALL_CITIES_ATTACH_MODIFIER',         'CITY_FOLLOWS_PANTHEON_REQUIREMENTS'),
+('SUN_GOD_FARM_FAITH',               'MODIFIER_ALL_CITIES_ATTACH_MODIFIER',         'CITY_FOLLOWS_PANTHEON_REQUIREMENTS'),
+('SUN_GOD_RESOURCES_FAITH',          'MODIFIER_ALL_CITIES_ATTACH_MODIFIER',         'REQUIREMENTS_CITY_FOLLOWS_PANTHEON_ANCIENT'),
+('SUN_GOD_FARM_FAITH_MODIFIER',      'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 'REQUIREMENTS_SUN_GOD_FARM_RESOURCES'),
 ('SUN_GOD_RESOURCES_FAITH_MODIFIER', 'MODIFIER_CITY_PLOT_YIELDS_ADJUST_PLOT_YIELD', 'REQUIREMENTS_SUN_GOD_RESOURCES');
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('SUN_GOD_FARM_FAITH',      'ModifierId', 'SUN_GOD_FARM_FAITH_MODIFIER'),
 ('SUN_GOD_RESOURCES_FAITH', 'ModifierId', 'SUN_GOD_RESOURCES_FAITH_MODIFIER'),
+('SUN_GOD_FARM_FAITH_MODIFIER', 'YieldType', 'YIELD_FAITH'),
+('SUN_GOD_FARM_FAITH_MODIFIER', 'Amount',    '2'),
 ('SUN_GOD_RESOURCES_FAITH_MODIFIER', 'YieldType', 'YIELD_FAITH'),
 ('SUN_GOD_RESOURCES_FAITH_MODIFIER', 'Amount',    '2');
 
--- Requirement: plot has a resource with a specific tag
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_SUN_GOD_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SUN_GOD_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_SUN_GOD');
+-- Requirement: plot has a specific resource class
 INSERT INTO Requirements (RequirementId, RequirementType)				 VALUES ('REQUIRES_PLOT_HAS_TAG_SUN_GOD',  'REQUIREMENT_PLOT_RESOURCE_TAG_MATCHES');
 INSERT INTO RequirementArguments (RequirementId, Name, Value)			 VALUES ('REQUIRES_PLOT_HAS_TAG_SUN_GOD',  'Tag', 'CLASS_SUN_GOD');
+
+-- Requirement: plot has a farm over a resource with a specific tag
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_SUN_GOD_FARM_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SUN_GOD_FARM_RESOURCES', 'REQUIRES_PLOT_HAS_FARM'); -- exists
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SUN_GOD_FARM_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_SUN_GOD');
+
+-- Requirement: plot has a resource with a specific tag
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('REQUIREMENTS_SUN_GOD_RESOURCES', 'REQUIREMENTSET_TEST_ALL');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SUN_GOD_RESOURCES', 'REQUIRES_PLOT_HAS_NO_IMPROVEMENT');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('REQUIREMENTS_SUN_GOD_RESOURCES', 'REQUIRES_PLOT_HAS_TAG_SUN_GOD');
