@@ -52,10 +52,10 @@
 	</Replace>
 	<!--Pantheon - General Purpose-->
 	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="en_US">
-		<Text>City growth rate is 15% higher. +1 [ICON_Food] Food from Palace.</Text>
+		<Text>City growth rate is 20% higher. +1 [ICON_Food] Food from Palace.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_RELIGIOUS_SETTLEMENTS_DESCRIPTION" Language="en_US">
-		<Text>Border expansion rate is 20% higher.</Text>
+		<Text>Border expansion rate is 20% higher. +1 [ICON_Culture] Culture from Palace.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HARVEST_DESCRIPTION" Language="en_US">
 		<Text>Harvesting a resource or removing a feature receives [ICON_Faith] Faith equal to 50% of the other yield's quantity.</Text>

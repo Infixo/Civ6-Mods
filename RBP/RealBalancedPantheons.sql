@@ -142,10 +142,10 @@ INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType, Inverse) VA
 
 --------------------------------------------------------------
 -- BELIEF_FERTILITY_RITES
--- +1 Food from Palace, 15% growth
+-- +1 Food from Palace, 20% growth
 
--- Base belief changed to +15% growth (from +10%)
-UPDATE ModifierArguments SET Value = 15 WHERE ModifierId = 'FERTILITY_RITES_GROWTH';
+-- Base belief changed to +20% growth (from +10%)
+UPDATE ModifierArguments SET Value = 20 WHERE ModifierId = 'FERTILITY_RITES_GROWTH';
 
 INSERT INTO BeliefModifiers (BeliefType, ModifierId) VALUES
 --('BELIEF_FERTILITY_RITES', 'FERTILITY_RITES_PALACE_HOUSING'),
@@ -161,7 +161,7 @@ INSERT OR REPLACE INTO DynamicModifiers (ModifierType, CollectionType, EffectTyp
 
 INSERT INTO Modifiers(ModifierId, ModifierType, SubjectRequirementSetId) VALUES
 --('FERTILITY_RITES_PALACE_HOUSING', 'MODIFIER_ALL_CITIES_ADJUST_BUILDING_HOUSING',      'CITY_FOLLOWS_PANTHEON_REQUIREMENTS'),
-('FERTILITY_RITES_PALACE_FOOD',    'MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'CITY_FOLLOWS_PANTHEON_REQUIREMENTS');
+('FERTILITY_RITES_PALACE_FOOD', 'MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'CITY_FOLLOWS_PANTHEON_REQUIREMENTS');
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 --('FERTILITY_RITES_PALACE_HOUSING', 'Amount', '1'),
@@ -177,6 +177,17 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 
 -- Base belief changed to 20% rate (from 15%)
 UPDATE ModifierArguments SET Value = 20 WHERE ModifierId = 'RELIGIOUS_SETTLEMENTS_CULTUREBORDER';
+
+INSERT INTO BeliefModifiers (BeliefType, ModifierId) VALUES
+('BELIEF_RELIGIOUS_SETTLEMENTS', 'RELIGIOUS_SETTLEMENTS_PALACE_CULTURE');
+
+INSERT INTO Modifiers(ModifierId, ModifierType, SubjectRequirementSetId) VALUES
+('RELIGIOUS_SETTLEMENTS_PALACE_CULTURE', 'MODIFIER_ALL_CITIES_ADJUST_BUILDING_YIELD_CHANGE', 'CITY_FOLLOWS_PANTHEON_REQUIREMENTS');
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+('RELIGIOUS_SETTLEMENTS_PALACE_CULTURE', 'BuildingType', 'BUILDING_PALACE'),
+('RELIGIOUS_SETTLEMENTS_PALACE_CULTURE', 'YieldType',    'YIELD_CULTURE'),
+('RELIGIOUS_SETTLEMENTS_PALACE_CULTURE', 'Amount',       '1');
 
 
 
