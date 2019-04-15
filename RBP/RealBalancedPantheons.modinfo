@@ -2,12 +2,15 @@
 <Mod id="58A5FCCE-86BB-6B61-4314-64D093E5121F" version="1">
   <Properties>
     <Name>Real Balanced Pantheons</Name>
-    <Description>Real Balanced Pantheons</Description>
-    <Teaser>Real Balanced Pantheons</Teaser>
+    <Description>Changes and tweaks to Pantheon beliefs to help AI choose better.[NEWLINE][NEWLINE]Version 1.0</Description>
+    <Teaser>Changes and tweaks to Pantheon beliefs to help AI choose better</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>1</AffectsSavedGames>
     <CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
+  <Dependencies>
+    <Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" />
+  </Dependencies>
   <InGameActions>
     <UpdateDatabase id="RBP_Database">
       <Properties><LoadOrder>1</LoadOrder></Properties>
