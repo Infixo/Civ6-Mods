@@ -7,7 +7,7 @@
 		<Authors>Infixo</Authors>
 		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul, RohBang, Gorlod, Zergus, Rac, Aristos</SpecialThanks>
 		<AffectsSavedGames>0</AffectsSavedGames>
-		<CompatibleVersions>2.0</CompatibleVersions>
+		<CompatibleVersions>1.2,2.0</CompatibleVersions>
 		<SubscriptionID>1312585482</SubscriptionID>
 	</Properties>
 	<ActionCriteria>

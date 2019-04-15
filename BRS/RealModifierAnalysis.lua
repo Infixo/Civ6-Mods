@@ -1557,6 +1557,7 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	elseif tReq.ReqType == "REQUIREMENT_PLAYER_IS_AT_PEACE_WITH_ALL_MAJORS" then return true;
 	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_PANTHEON" then return true;
 	elseif tReq.ReqType == "REQUIREMENT_CITY_FOLLOWS_RELIGION" then return true;
+	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_PANTHEON" then return true; -- 2019-04-14 Support for Real Balanced Pantheons
 	
 	-- 2019-04-14 Support for Real Balanced Pantheons
 	elseif tReq.ReqType == "REQUIREMENT_GAME_ERA_IS" then
@@ -1739,11 +1740,31 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if resource ~= -1 then -- 2019-04-08 fixed lack of Inverse
 			bIsValidSubject = ( tPlayer.Player:GetResources():IsResourceVisible( resource ) );
 		end
+	
+	-- 2019-04-15 Support for Real Balance Pantheons
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_IS_MOUNTAIN" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = tSubject.Plot:IsMountain();
+		
+	-- 2019-04-15 Support for Real Balance Pantheons
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_IS_HILLS" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = tSubject.Plot:IsHills();
+		
+	-- 2019-04-15 Support for Real Balance Pantheons
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_HAS_ANY_DISTRICT" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = ( tSubject.Plot:GetDistrictType() ~= -1 );
+		
+	-- 2019-04-15 Support for Real Balance Pantheons
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_HAS_ANY_IMPROVEMENT" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		bIsValidSubject = ( tSubject.Plot:GetImprovementType() ~= -1 );
 
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
 		local info:table = GameInfo.Improvements[ tReq.Arguments.ImprovementType ];
-		if info == nil then return false; end -- error
+		if info == nil then print("ERROR: CheckOneRequirement unknown improvement", tReq.Arguments.ImprovementType); return false; end -- error
 		bIsValidSubject = ( tSubject.Plot:GetImprovementType() == info.Index );
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_IS_APPEAL_BETWEEN" then
@@ -1766,6 +1787,20 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
 		bIsValidSubject = ( districtType == tReq.Arguments.DistrictType ); -- DISTRICT_THEATER, etc.
 
+	-- 2019-04-15 Support for Real Balance Pantheons
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_ADJACENT_DISTRICT_TYPE_MATCHES" then
+		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		--local districtType:string = tSubject.DistrictType;
+		--if GameInfo.DistrictReplaces[ districtType ] then districtType = GameInfo.DistrictReplaces[ districtType ].ReplacesDistrictType; end
+		local info:table = GameInfo.Districts[ tReq.Arguments.DistrictType ];
+		if info == nil then print("ERROR: CheckOneRequirement unknown district", tReq.Arguments.DistrictType); return false; end -- error
+		local eDistrictType:number = info.Index;
+		local iX:number, iY:number = tSubject.Plot:GetX(), tSubject.Plot:GetY();
+		for direction = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1, 1 do
+			local adjacentPlot = Map.GetAdjacentPlot(iX, iY, direction);
+			if adjacentPlot ~= nil and adjacentPlot:GetDistrictType() == eDistrictType then bIsValidSubject = true; break; end
+		end
+		
 	else
 		-- do nothing here... probably will never implement all possible types
 		return false;
