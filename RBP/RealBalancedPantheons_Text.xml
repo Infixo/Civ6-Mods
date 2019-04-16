@@ -13,7 +13,7 @@
 		<Text>Sun God</Text>
 	</Row>
 	<Row Tag="LOC_BELIEF_SUN_GOD_DESCRIPTION" Language="en_US">
-		<Text>+2 [ICON_Faith] Faith from [ICON_RESOURCE_RICE] Rice and [ICON_RESOURCE_WHEAT] Wheat Farms.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from [ICON_RESOURCE_RICE] Rice and [ICON_RESOURCE_WHEAT] Wheat resources when unimproved.</Text>
+		<Text>+2 [ICON_Faith] Faith from  Farms over resources.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from resources valid for Farms when unimproved.</Text>
 	</Row>
 	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_NAME" Language="en_US">
 		<Text>One with Nature</Text>
@@ -33,7 +33,7 @@
 	</Replace>
 	<!--Pantheon - Amenity Bonuses-->
 	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Amenities] Amenity to cities if they have a Holy Site district adjacent to a River. Flatlands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
+		<Text>+1 [ICON_Amenities] Amenity to cities with a Holy Site adjacent to a River. Flatlands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
 	<!--Pantheon - Gameplay Race Bonuses-->
 	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_DESCRIPTION" Language="en_US">
@@ -57,12 +57,6 @@
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_DESCRIPTION" Language="en_US">
 		<Text>+1 [ICON_Production] Production from Mines over Strategic resources and Lumber Mills.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from unimproved Woods adjacent to City Center.</Text>
-	</Replace>
-	<Replace Tag="LOC_BELIEF_GODDESS_OF_FESTIVALS_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Food] Food from [ICON_RESOURCE_WINE] Wine, [ICON_RESOURCE_INCENSE] Incense, [ICON_RESOURCE_COCOA] Cocoa, [ICON_RESOURCE_TOBACCO] Tobacco, [ICON_RESOURCE_OLIVES] Olives, [ICON_RESOURCE_COFFEE] Coffee, and [ICON_RESOURCE_TEA] Tea Plantations.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Food] Food from these resources when unimproved.</Text>
-	</Replace>
-	<Replace Tag="LOC_BELIEF_ORAL_TRADITION_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Culture] Culture from [ICON_RESOURCE_BANANAS] Banana, [ICON_RESOURCE_CITRUS] Citrus, [ICON_RESOURCE_COTTON] Cotton, [ICON_RESOURCE_DYES] Dyes, [ICON_RESOURCE_SILK] Silk, [ICON_RESOURCE_SPICES] Spices, and [ICON_RESOURCE_SUGAR] Sugar Plantations.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Culture] Culture from these resources when unimproved.</Text>
 	</Replace>
 	<!--Pantheon - General Purpose-->
 	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="en_US">

@@ -13,21 +13,23 @@
   </Dependencies>
   <InGameActions>
     <UpdateDatabase id="RBP_Database">
-      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <Properties><LoadOrder>210</LoadOrder></Properties> <!-- so it loads after most popular resource mods and Religion Expanded -->
       <File>RealBalancedPantheons.sql</File>
     </UpdateDatabase>
     <UpdateIcons id="RBP_Icons">
-      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <Properties><LoadOrder>210</LoadOrder></Properties>
       <File>RealBalancedPantheons_Icons.xml</File>
     </UpdateText>
     <UpdateText id="RBP_Text">
-      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <Properties><LoadOrder>210</LoadOrder></Properties>
       <File>RealBalancedPantheons_Text.xml</File>
+      <File>RealBalancedPantheons_Text.sql</File>
     </UpdateText>
   </InGameActions>
   <Files>
     <File>RealBalancedPantheons.sql</File>
     <File>RealBalancedPantheons_Icons.xml</File>
     <File>RealBalancedPantheons_Text.xml</File>
+    <File>RealBalancedPantheons_Text.sql</File>
   </Files>
 </Mod>
