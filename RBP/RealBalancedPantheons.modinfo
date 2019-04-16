@@ -19,7 +19,7 @@
     <UpdateIcons id="RBP_Icons">
       <Properties><LoadOrder>210</LoadOrder></Properties>
       <File>RealBalancedPantheons_Icons.xml</File>
-    </UpdateText>
+    </UpdateIcons>
     <UpdateText id="RBP_Text">
       <Properties><LoadOrder>210</LoadOrder></Properties>
       <File>RealBalancedPantheons_Text.xml</File>
