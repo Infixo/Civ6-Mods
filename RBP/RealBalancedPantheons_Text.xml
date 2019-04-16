@@ -33,7 +33,7 @@
 	</Replace>
 	<!--Pantheon - Amenity Bonuses-->
 	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Amenities] Amenity to cities with a Holy Site adjacent to a River. Flatlands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
+		<Text>+1 [ICON_Amenities] Amenity to cities with a Holy Site adjacent to a River. Plains and Grasslands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
 	<!--Pantheon - Gameplay Race Bonuses-->
 	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_DESCRIPTION" Language="en_US">
