@@ -1,7 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- BetterReportScreen_Text -->
 <!-- Author: Infixo -->
 <!-- 2018-03-03: Created -->
+<!-- 2019-04-17: Corrections and GS translations by swinghead -->
 <GameData>
 
 <LocalizedText>
@@ -17,6 +18,12 @@
 	</Replace>
 	<Replace Tag="LOC_HUD_REPORTS_TAB_MINORS" Language="de_DE"> <!-- LOC_CITY_STATES_CITY_STATES -->
 		<Text>Stadtstaaten</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_CITIES" Language="de_DE"> <!-- Gathering Storm -->
+		<Text>Städte</Text>
+	</Replace>
+	<Replace Tag="LOC_HUD_REPORTS_TAB_CITIES2" Language="de_DE"> <!-- Gathering Storm -->
+		<Text>[ICON_Power]Städte</Text>-
 	</Replace>
 	<!-- Column headers -->
 	<Replace Tag="LOC_BRS_HEADER_BUILDINGNAME" Language="de_DE">
@@ -36,13 +43,13 @@
 	</Replace>
 	<!-- Resource checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_DETAILS" Language="de_DE">
-		<Text>Versteck Stadtdetails</Text>
+		<Text>Verstecke Stadtdetails</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_BUILDINGS" Language="de_DE">
-		<Text>Versteck kostenlosen Gebäude</Text>
+		<Text>Verstecke kostenlose Gebäude</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_FREE_UNITS" Language="de_DE">
-		<Text>Versteck kostenlosen Einheiten</Text>
+		<Text>Verstecke kostenlose Einheiten</Text>
 	</Replace>
 	<!-- UNITS -->
 	<!-- Unit groups -->
@@ -100,10 +107,10 @@
 	</Replace>
 	<!-- Tooltips -->
 	<Replace Tag="LOC_BRS_TOOLTIP_GOTOCITY" Language="de_DE">
-		<Text>Geh in diese Stadt</Text>
+		<Text>Gehe in diese Stadt</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_TOOLTIP_LOOKATUNIT" Language="de_DE">
-		<Text>Find diese Einheit auf der Karte</Text>
+		<Text>Gehe zu dieser Einheit auf der Karte</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_TOOLTIP_GARRISON" Language="de_DE">
 		<Text>Garnison</Text>
@@ -129,16 +136,16 @@
 	</Replace>
 	<!-- Checkboxes -->
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_INACTIVE_POLICIES" Language="de_DE">
-		<Text>Versteck inaktiven Politiken</Text>
+		<Text>Verstecke inaktiven Politiken</Text>
 	</Replace>
 	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_POLICIES" Language="de_DE">
-		<Text>Versteck Politiken mit keinen Effekten</Text>
+		<Text>Verstecke Politiken mit keinen Effekten</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="de_DE"> <!-- todo -->
-		<Text>Hide Not Met City States</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NOT_MET_MINORS" Language="de_DE">
+		<Text>Verstecke nicht getroffene Stadtstaaten</Text>
 	</Replace>
-	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="de_DE"> <!-- todo -->
-		<Text>Hide City States with No Impact</Text>
+	<Replace Tag="LOC_BRS_CHECKBOX_HIDE_NO_IMPACT_MINORS" Language="de_DE">
+		<Text>Verstecke Stadtstaaten mit keinen Effekten</Text>
 	</Replace>
 	<!-- Deals -->
     <Replace Tag="LOC_BRS_CURRENT_DEALS_OUTGOING" Language="de_DE">
@@ -169,6 +176,16 @@
     <Replace Tag="LOC_BRS_HAVING_DISTRICTS" Language="de_DE"> <!-- LOC_CITY_YIELD_FROM_NUM_DISTRICTS_TOOLTIP -->
 		<!-- {Value: number + #.#;-#.# } from having {1_Num : plural 1?{1} district; other?{1} districts;}. -->
 		<Text>Durch {1_Num : plural 1?{1} Bezirk; other?{1} Bezirke;}</Text>
+    </Replace>
+	<!-- Gathering Storm -->
+    <Replace Tag="LOC_BRS_CO2" Language="de_DE">
+		<Text>CO2</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_BARRIER" Language="de_DE">
+		<Text>Sperre</Text>
+    </Replace>
+    <Replace Tag="LOC_BRS_BARRIER_MAINTENANCE" Language="de_DE">
+		<Text>Hochwassersperre Wartungskosten</Text>
     </Replace>
 
 </LocalizedText>

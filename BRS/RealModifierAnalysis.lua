@@ -1855,6 +1855,11 @@ function BuildCollectionOfSubjects(tMod:table, tOwner:table, sOwnerType:string)
 			sSubjectType = SubjectTypes.Player;
 			table.insert(tSubjects, tPlayer); -- there's only one
 		end
+		
+	-- 2019-04-17 Fix for City-States attached modifiers that cannot recognize a subject properly
+	elseif tMod.CollectionType == "COLLECTION_ALL_PLAYERS" then
+		sSubjectType = SubjectTypes.Player;
+		table.insert(tSubjects, tPlayer); -- there's only one
 
 	elseif tMod.CollectionType == "COLLECTION_CITY_DISTRICTS" then
 		local function AddDistrictsFromCity(tSubject:table)

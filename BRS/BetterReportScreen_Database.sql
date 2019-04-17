@@ -7,10 +7,10 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MAJOR', '5');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MINOR', '4');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MINOR', '5');
 
 -- options
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_OPTION_MODIFIERS', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_OPTION_MODIFIERS', '0');
 
 
 -- ReportsList Loader
