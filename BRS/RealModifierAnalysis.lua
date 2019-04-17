@@ -1121,11 +1121,11 @@ function GetPlayerData(ePlayerID:number)
 	
 	-- YIELDS
 	tPlayer.Yields = YieldTableNew()
-	tPlayer.Yields.GOLD    = pPlayer:GetTreasury():GetGoldYield()
-	tPlayer.Yields.SCIENCE = pPlayer:GetTechs():GetScienceYield()
-	tPlayer.Yields.CULTURE = pPlayer:GetCulture():GetCultureYield()
-	tPlayer.Yields.FAITH   = pPlayer:GetReligion():GetFaithYield()
-	--tPlayer.Yields.TOURISM = pPlayer:GetStats():GetTourism()
+	tPlayer.Yields.GOLD    = pPlayer:GetTreasury():GetGoldYield();
+	tPlayer.Yields.SCIENCE = pPlayer:GetTechs():GetScienceYield();
+	tPlayer.Yields.CULTURE = pPlayer:GetCulture():GetCultureYield();
+	tPlayer.Yields.FAITH   = pPlayer:GetReligion():GetFaithYield();
+	tPlayer.Yields.TOURISM = pPlayer:GetStats():GetTourism();
 	local iTotFood:number, iTotProd:number, iTotAmenity:number, iTotHousing:number = 0, 0, 0, 0
 	for _,city in pPlayer:GetCities():Members() do
 		iTotFood    = iTotFood    + city:GetGrowth():GetFoodSurplus()
@@ -1572,25 +1572,25 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if not( tSubject.SubjectType == SubjectTypes.City or tSubject.SubjectType == SubjectTypes.District ) then
 			print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return nil;
 		end
-		if tSubject.SubjectType == tSubject.SubjectType == SubjectTypes.City then
-		for _,district in ipairs(tSubject.Districts) do
-			if district.isBuilt then
-				for _,building in ipairs(district.Buildings) do
-					local buildingType:string = building.BuildingType;	
-					if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
-					bIsValidSubject = ( buildingType == tReq.Arguments.BuildingType ); -- BUILDING_LIGHTHOUSE, etc.
+		if tSubject.SubjectType == SubjectTypes.City then
+			for _,district in ipairs(tSubject.Districts) do
+				if district.isBuilt then
+					for _,building in ipairs(district.Buildings) do
+						local buildingType:string = building.BuildingType;	
+						if GameInfo.BuildingReplaces[ buildingType ] then buildingType = GameInfo.BuildingReplaces[ buildingType ].ReplacesBuildingType; end
+						bIsValidSubject = ( buildingType == tReq.Arguments.BuildingType ); -- BUILDING_LIGHTHOUSE, etc.
+						if bIsValidSubject then break; end
+					end
+					if bIsValidSubject then break; end
+				end -- isBuilt
+			end
+			if not bIsValidSubject then -- still not found
+				for _,wonder in ipairs(tSubject.Wonders) do
+					-- wonders don't have replacements
+					bIsValidSubject = ( wonder.BuildingType == tReq.Arguments.BuildingType ); -- BUILDING_ST_BASILS_CATHEDRAL, etc.
 					if bIsValidSubject then break; end
 				end
-				if bIsValidSubject then break; end
-			end -- isBuilt
-		end
-		if not bIsValidSubject then -- still not found
-			for _,wonder in ipairs(tSubject.Wonders) do
-				-- wonders don't have replacements
-				bIsValidSubject = ( wonder.BuildingType == tReq.Arguments.BuildingType ); -- BUILDING_ST_BASILS_CATHEDRAL, etc.
-				if bIsValidSubject then break; end
 			end
-		end
 		else --  subject is District
 			if tSubject.isBuilt then
 				for _,building in ipairs(tSubject.Buildings) do
@@ -2035,6 +2035,11 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		if CheckForMismatchError("District") then return nil; end
 		return nil;
 
+	-- 2019-04-17 Added
+	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_BASED_ON_ADJACENCY_BONUS" then
+		if CheckForMismatchError(SubjectTypes.District) then return nil; end
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldTypeToGrant, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldTypeToMirror));
+
 	elseif tMod.EffectType == "EFFECT_FEATURE_ADJACENCY" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		-- complex effect, with 4 parameters
@@ -2316,6 +2321,11 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, iNum * tonumber(tMod.Arguments.Amount));
 
 	------------------------------ GREAT WORK and TOURISM ------------------------------------------------
+	
+	-- 2019-04-17 Added
+	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_TOURISM" then
+		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		tImpact.TOURISM = tSubject.Yields.TOURISM * tonumber(tMod.Arguments.Amount) / 100;
 
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_TOURISM_CHANGE" then
 		if not( tSubject.SubjectType == SubjectTypes.City or tSubject.SubjectType == SubjectTypes.District ) then
