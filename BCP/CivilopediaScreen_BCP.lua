@@ -9,6 +9,7 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 -- 2018-03-23: Name changed into Better Civilopedia, table of units pages
 -- 2018-03-26: Sources of GPPs
 -- 2018-04-01: PlotYields modifiers
+-- 2019-03-19: Discussions, Emergencies, Resolutions
 --------------------------------------------------------------
 
 -- exposed functions and variables
@@ -183,6 +184,7 @@ local tPagesToSkip:table = {
 	TableUnits = true,
 	OverviewMoments = true,
 	RandAgenda = true,
+	Discussion = true,
 };
 
 -- we assume Player as the default modifier owner, the below with pass a Capital City to avoid warnings in the log file
@@ -790,6 +792,55 @@ PageLayouts["Improvement"] = function(page)
 	ShowModifiers(page);
 	ShowInternalPageInfo(page);
 
+end
+
+
+-- 2019-04-17 More info for Govs
+PageLayouts["Government"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	local government = GameInfo.Governments[page.PageId];
+	if government == nil then return; end
+	local governmentType = government.GovernmentType;
+	
+	-- insert descriptions before Historical Context
+	-- Left Column!
+	local chapter_body:table = {};
+	
+	-- bonuses
+	local inherentBonusDescription = government.InherentBonusDesc;
+	local accumulatedBonusDescription = government.AccumulatedBonusDesc;
+	table.insert(chapter_body, Locale.Lookup("{LOC_GOVERNMENT_INHERENT_BONUS}: {1}", inherentBonusDescription)); -- Inherent bonus
+	table.insert(chapter_body, Locale.Lookup("{LOC_GOVERNMENT_ACCUMULATED_BONUS}: {1}", accumulatedBonusDescription)); -- Legacy bonus
+	
+	-- influence
+	local influencePointBonusDescription = Locale.Lookup("LOC_GOVT_INFLUENCE_POINTS_TOWARDS_ENVOYS", government.InfluencePointsPerTurn, government.InfluencePointsThreshold, government.InfluenceTokensPerThreshold);
+	table.insert(chapter_body, Locale.Lookup("{LOC_GOVERNMENT_INFLUENCE_BONUS}: {1}", influencePointBonusDescription)); -- Influence generation
+	
+	-- favor generation
+	local favor:number = 0;
+	for row in GameInfo.Governments_XP2() do
+		if row.GovernmentType == governmentType then favor = row.Favor; break; end
+	end
+	local favorBonusDescription = Locale.Lookup("LOC_GOVT_FAVOR_PER_TURN", favor); -- "Gain {1_FavorPerTurn} [ICON_FAVOR] Diplomatic Favor per [ICON_Turn] Turn."
+	--if(not Locale.IsNilOrWhitespace(favorBonusDescription)) then
+	table.insert(chapter_body, Locale.Lookup("{LOC_GOVERNMENT_FAVOR_BONUS}: {1}", favorBonusDescription)); -- "Favor generation"
+	--end
+	
+	AddChapter("LOC_HUD_REPORTS_BONUSES", chapter_body);
+	
+	-- Right Column
+	if government.Tier ~= nil then
+		AddRightColumnStatBox("[ICON_Bullet][ICON_Bullet][ICON_Bullet]", function(s)
+			s:AddSeparator();
+			s:AddLabel(government.Tier);
+			s:AddLabel(Locale.Lookup("LOC_TOOLTIP_SAMPLE_DIPLOMACY_GOVERNMENT_DIFFERENT")..": "..tostring(government.OtherGovernmentIntolerance));
+			s:AddSeparator();
+		end);
+	end
+	ShowModifiers(page);
+	ShowInternalPageInfo(page);
 end
 
 

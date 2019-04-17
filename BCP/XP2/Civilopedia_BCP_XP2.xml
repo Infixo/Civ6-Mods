@@ -9,7 +9,7 @@
 <GameInfo>
 	<!-- New section for World Congress -->
 	<CivilopediaSections>
-		<Row SectionId="CONGRESS" Name="LOC_TOOLTIP_CONGRESS_CONGRESS_BUTTON" Icon="ICON_STAT_DIPLOMATIC_VICTORY" SortIndex="190" />
+		<Row SectionId="CONGRESS" Name="LOC_TOOLTIP_CONGRESS_CONGRESS_BUTTON" Icon="ICON_CIVILOPEDIA_LEADERS" SortIndex="190" /> <!-- ICON_STAT_DIPLOMATIC_VICTORY -->
 	</CivilopediaSections>
 	<!-- Discussions and Resolutions will be addedd as another PageGroup in CONGRESS section -->
 	<CivilopediaPageGroups>
