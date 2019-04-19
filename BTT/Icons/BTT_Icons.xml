@@ -19,7 +19,7 @@
 		<Row Name="ICON_BTT_STRENGTH"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="6"/>
 		<Row Name="ICON_BTT_MOVEMENT"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="7"/>
 		<Row Name="ICON_BTT_DEFENSE"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="8"/>
-		<Row Name="ICON_BTT_SUN"         Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="9"/>
+		<Row Name="ICON_BTT_ACCESS"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="9"/>
 		<!-- FOW -->
 		<Row Name="ICON_BTT_BOOST_TECH_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="0"/>
 		<Row Name="ICON_BTT_BOOST_CIVIC_FOW" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="1"/>
@@ -30,7 +30,7 @@
 		<Row Name="ICON_BTT_STRENGTH_FOW"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="6"/>
 		<Row Name="ICON_BTT_MOVEMENT_FOW"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="7"/>
 		<Row Name="ICON_BTT_DEFENSE_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="8"/>
-		<Row Name="ICON_BTT_SUN_FOW"         Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="9"/>
+		<Row Name="ICON_BTT_ACCESS_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="9"/>
 	</IconDefinitions>
 	
 </GameInfo>

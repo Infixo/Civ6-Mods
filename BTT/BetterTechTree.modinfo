@@ -6,7 +6,8 @@
 		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.5.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
-		<CompatibleVersions>2.0</CompatibleVersions>
+		<CompatibleVersions>1.2,2.0</CompatibleVersions>
+		<SubscriptionID>1337632610</SubscriptionID>
 	</Properties>
 	<ActionCriteria>
 		<Criteria id="Expansion1">

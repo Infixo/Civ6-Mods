@@ -362,7 +362,7 @@ function PopulateFromModifiers(sTreeKind:string)
 						AddExtraUnlockable(sType, "TOURISM", "BTT_TOURISM", sDesc, "TOURISM_1");
 					end
 				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then AddExtraUnlockable(sType, "OTHER", "BTT_DEFENSE",  Locale.Lookup("LOC_BTT_URBAN_DEFENSES"), "COMBAT_9");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "BTT_SUN",      Locale.Lookup("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "BTT_ACCESS",   Locale.Lookup("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
 				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_BTT_EMBARKED_MOVEMENT"), "MOVEMENT_5");
 				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_TECH_MATHEMATICS_DESCRIPTION"), "MOVEMENT_4");
 				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_BTT_VALID_OCEAN"), "MOVEMENT_4");
