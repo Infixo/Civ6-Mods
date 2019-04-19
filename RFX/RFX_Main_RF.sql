@@ -31,11 +31,17 @@ UPDATE AiFavoredItems SET Item = 'TECH_GUNPOWDER' WHERE Item = 'TECH_GUNPOWER'; 
 -- BALANCE SECTION
 
 -- Game pace (Eras)
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 60, GameEraMaximumTurns = 90 WHERE EraType = 'ERA_ANCIENT';
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 50, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_CLASSICAL';
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 50, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_MEDIEVAL';
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 50, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_RENAISSANCE';
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 50, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_INDUSTRIAL';
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 70, GameEraMaximumTurns = 85 WHERE EraType = 'ERA_ANCIENT';     -- 75
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_CLASSICAL';   -- 60
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_MEDIEVAL';    -- 60
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_RENAISSANCE'; -- 60
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_INDUSTRIAL';  -- 60
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 45, GameEraMaximumTurns = 60 WHERE EraType = 'ERA_MODERN';      -- 50
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 45, GameEraMaximumTurns = 60 WHERE EraType = 'ERA_ATOMIC';      -- 50
+UPDATE Eras_XP1 SET GameEraMinimumTurns = 40, GameEraMaximumTurns = 55 WHERE EraType = 'ERA_INFORMATION'; -- 45
+
+
+
 
 
 --------------------------------------------------------------

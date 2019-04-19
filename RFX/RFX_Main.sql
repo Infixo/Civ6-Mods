@@ -134,15 +134,23 @@ UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_LAST_VIKING_KIN
 UPDATE AiLists SET LeaderType = NULL, AgendaType = 'TRAIT_AGENDA_WITH_SHIELD'      WHERE LeaderType = 'TRAIT_AGENDA_WITH_SHIELD'; -- Fixed with Gathering Storm Patch (left for iOS)
 
 
+-- 2019-04-09 Warrior Monks don't have bonuses from Great Generals
+-- They are not counted as Medieval units - must be added to a ReqSet that selects subjects (GGs from Classical and Medieval eras)
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('AOE_CLASSICAL_REQUIREMENTS', 'AOE_REQUIRES_CLASS_WARRIOR_MONK');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('AOE_MEDIEVAL_REQUIREMENTS',  'AOE_REQUIRES_CLASS_WARRIOR_MONK');
+INSERT INTO Requirements (RequirementId, RequirementType)                VALUES ('AOE_REQUIRES_CLASS_WARRIOR_MONK', 'REQUIREMENT_UNIT_TAG_MATCHES');
+INSERT INTO RequirementArguments (RequirementId, Name, Value)            VALUES ('AOE_REQUIRES_CLASS_WARRIOR_MONK', 'Tag', 'CLASS_WARRIOR_MONK');
+
+
 --------------------------------------------------------------
 -- BALANCE SECTION
 
 -- 2019-04-07 Yields per pop
-UPDATE GlobalParameters SET Value = '30' WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- base game 70, rise & fall 50
-UPDATE GlobalParameters SET Value = '20' WHERE Name = 'CULTURE_PERCENTAGE_YIELD_PER_POP'; -- default is 30
+--UPDATE GlobalParameters SET Value = '40' WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- base game 70, rise & fall 50
+--UPDATE GlobalParameters SET Value = '25' WHERE Name = 'CULTURE_PERCENTAGE_YIELD_PER_POP'; -- default is 30
 
 -- 2019-04-07 Boosts, base game 50, rise & fall 40, real tech tree 35
-UPDATE Boosts SET Boost = 30;
+--UPDATE Boosts SET Boost = 30;
 
 
 -- Rise & Fall changes
