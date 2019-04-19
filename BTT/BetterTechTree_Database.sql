@@ -6,12 +6,12 @@
 -- ===========================================================================
 
 -- just to make versioning easier
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MAJOR', 1);
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MINOR', 5);
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MAJOR', 2);
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MINOR', 0);
 
 -- options
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_OPTION_HARVESTS',   1); -- set this to '0' if you want to switch OFF the harvest icons
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_OPTION_STAR_ICONS', 0); -- set this to 1 if you want to switch ON the star icons
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_OPTION_HARVESTS',   1); -- set this to '0' if you want to switch OFF the harvest and removal icons
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_OPTION_STAR_ICONS', 0); -- set this to 1 if you want to switch back ON the star icons
 
 
 
@@ -38,13 +38,17 @@ UPDATE Technologies SET Description = NULL WHERE Description IN (
 'LOC_TECH_BRONZE_WORKING_DESCRIPTION',
 'LOC_TECH_CELESTIAL_NAVIGATION_DESCRIPTION',
 'LOC_TECH_SHIPBUILDING_DESCRIPTION',
+'LOC_TECH_MATHEMATICS_DESCRIPTION',
 'LOC_TECH_APPRENTICESHIP_DESCRIPTION',
 'LOC_TECH_CARTOGRAPHY_DESCRIPTION',
 'LOC_TECH_BANKING_DESCRIPTION',
+'LOC_TECH_SQUARE_RIGGING_DESCRIPTION',
 'LOC_TECH_INDUSTRIALIZATION_DESCRIPTION',
 'LOC_TECH_SCIENTIFIC_THEORY_DESCRIPTION',
+'LOC_TECH_STEAM_POWER_DESCRIPTION',
 'LOC_TECH_REPLACEABLE_PARTS_DESCRIPTION',
 'LOC_TECH_STEEL_DESCRIPTION',
+'LOC_TECH_COMBUSTION_DESCRIPTION',
 'LOC_TECH_ROCKETRY_DESCRIPTION',
 'LOC_TECH_PLASTICS_DESCRIPTION',
 'LOC_TECH_SYNTHETIC_MATERIALS_DESCRIPTION',

@@ -7,13 +7,16 @@
 <BaseGameText>
 
 	<Row Tag="LOC_BTT_URBAN_DEFENSES"> <!-- LOC_TECH_STEEL_DESCRIPTION -->
-		<Text>Unlocks Urban Defenses, giving all of your cities an automatic 400 Fortification Strength and the ability to perform a ranged attack. All previous wall improvements become obsolete and siege support units are no longer effective.</Text>
+		<Text>Unlocks Urban Defenses, giving all of your cities an automatic {1_Num} Fortification Strength and the ability to perform a ranged attack. All previous wall improvements become obsolete and siege support units are no longer effective.</Text>
 	</Row>
 	<Row Tag="LOC_BTT_DIPLO_VISIBILITY"> <!-- LOC_TECH_PRINTING_DESCRIPTION -->
 		<Text>+1 level of diplomatic visibility</Text>
 	</Row>
 	<Row Tag="LOC_BTT_EMBARKED_MOVEMENT"> <!-- LOC_TECH_COMBUSTION_DESCRIPTION LOC_TECH_STEAM_POWER_DESCRIPTION LOC_TECH_SQUARE_RIGGING_DESCRIPTION -->
-		<Text>Extra [ICON_Movement] Movement for embarked units.</Text>
+		<Text>+{1_Num} [ICON_Movement] Movement for embarked units.</Text>
+	</Row>
+	<Row Tag="LOC_BTT_ALL_NAVAL_UNITS_MOVEMENT"> <!-- LOC_TECH_MATHEMATICS_DESCRIPTION -->
+		<Text>+{1_Num} [ICON_Movement] Movement for all naval units.</Text>
 	</Row>
 	<Row Tag="LOC_BTT_VALID_OCEAN"> <!-- LOC_TECH_CARTOGRAPHY_DESCRIPTION -->
 		<Text>All naval and embarked units can navigate Ocean tiles.</Text>

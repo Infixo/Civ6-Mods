@@ -101,6 +101,7 @@ local tBackgroundTextures:table = {
 	TOURISM = "ICON_BTT_SQUARE",
 	COMMAND = "ICON_BTT_SQUARE",
 	OTHER = "ICON_BTT_SQUARE",
+	OCEAN = "ICON_BTT_OCEAN",
 };
 
 -- NOT USED!!!
@@ -476,6 +477,13 @@ function PopulateImprovementAdjacency()
 end
 
 
+function GetModifierArgument(sModifierId:string, sName:string)
+	for row in GameInfo.ModifierArguments() do
+		if row.ModifierId == sModifierId and row.Name == sName then return row.Value; end
+	end
+	return nil;
+end
+
 function PopulateFromModifiers(sTreeKind:string)
 	local sType:string, sDesc:string;
 	for row in GameInfo[sTreeKind.."Modifiers"]() do
@@ -492,12 +500,24 @@ function PopulateFromModifiers(sTreeKind:string)
 						sDesc = LL("LOC_TOP_PANEL_TOURISM");
 						AddExtraUnlockable(sType, "TOURISM", "BTT_TOURISM", sDesc, "TOURISM_1");
 					end
-				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then AddExtraUnlockable(sType, "OTHER", "BTT_DEFENSE",  LL("LOC_BTT_URBAN_DEFENSES"), "COMBAT_9");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "BTT_ACCESS",   LL("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", LL("LOC_BTT_EMBARKED_MOVEMENT"), "MOVEMENT_5");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", LL("LOC_TECH_MATHEMATICS_DESCRIPTION"), "MOVEMENT_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", LL("LOC_BTT_VALID_OCEAN"), "MOVEMENT_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_COMBAT_ADJACENCY"      then AddExtraUnlockable(sType, "OTHER", "BTT_STRENGTH", LL("LOC_CIVIC_MILITARY_TRADITION_DESCRIPTION"), "COMBAT_9");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then
+					-- DefenseValue = 400
+					AddExtraUnlockable(sType, "OTHER", "BTT_DEFENSE",  LL("LOC_BTT_URBAN_DEFENSES", GetModifierArgument(mod.ModifierId, "DefenseValue")), "COMBAT_9");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then
+					-- Amount = 1, Source = SOURCE_TECH
+					AddExtraUnlockable(sType, "OTHER", "BTT_ACCESS",   LL("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then
+					-- Amount = 1/2
+					AddExtraUnlockable(sType, "OCEAN", "BTT_MOVEMENT", LL("LOC_BTT_EMBARKED_MOVEMENT", GetModifierArgument(mod.ModifierId, "Amount")), "MOVEMENT_5");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then
+					-- Amount = 1
+					AddExtraUnlockable(sType, "OCEAN", "BTT_MOVEMENT", LL("LOC_BTT_ALL_NAVAL_UNITS_MOVEMENT", GetModifierArgument(mod.ModifierId, "Amount")), "MOVEMENT_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then
+					-- TerrainType = TERRAIN_OCEAN, Valid = 1
+					AddExtraUnlockable(sType, "OCEAN", "BTT_WORLD", LL("LOC_BTT_VALID_OCEAN"), "MOVEMENT_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_COMBAT_ADJACENCY"      then
+					-- Enable = 1
+					AddExtraUnlockable(sType, "OTHER", "BTT_STRENGTH", LL("LOC_CIVIC_MILITARY_TRADITION_DESCRIPTION"), "COMBAT_9");
 				else
 					-- check for other modifiers here
 				end
@@ -527,12 +547,12 @@ function PopulateEmbarkment(sTable:string, sType:string)
 		-- unit
 		if row.EmbarkUnitType ~= nil then
 			--print("...unit", row.EmbarkUnitType); dshowtable(row);
-			AddExtraUnlockable(row[sType], "OTHER", row.EmbarkUnitType, LL("LOC_UNITOPERATION_EMBARK_DESCRIPTION")..": "..LL(GameInfo.Units[row.EmbarkUnitType].Name), "MOVEMENT_5");
+			AddExtraUnlockable(row[sType], "OCEAN", row.EmbarkUnitType, LL("LOC_UNITOPERATION_EMBARK_DESCRIPTION")..": "..LL(GameInfo.Units[row.EmbarkUnitType].Name), "MOVEMENT_5");
 		end
 		-- all units
 		if row.EmbarkAll then
 			--print("...all units"); dshowtable(row);
-			AddExtraUnlockable(row[sType], "OTHER", "BTT_UNITS", LL("LOC_TECH_SHIPBUILDING_DESCRIPTION"), "MOVEMENT_5");
+			AddExtraUnlockable(row[sType], "OCEAN", "BTT_UNITS", LL("LOC_TECH_SHIPBUILDING_DESCRIPTION"), "MOVEMENT_5");
 		end
 	end
 end
@@ -541,8 +561,10 @@ end
 function Initialize_BTT_TechTree()
 	--print("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
-	PopulateHarvests();
-	PopulateFeatureRemovals();
+	if bOptionHarvests then
+		PopulateHarvests();
+		PopulateFeatureRemovals();
+	end
 	PopulateImprovementBonus();
 	PopulateImprovementAdjacency();
 	PopulateFromModifiers("Technology");

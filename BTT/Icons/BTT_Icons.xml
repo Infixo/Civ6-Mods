@@ -15,7 +15,7 @@
 		<Row Name="ICON_BTT_HARVEST"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="2"/>
 		<Row Name="ICON_BTT_IMPR_BONUS"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="3"/>
 		<Row Name="ICON_BTT_SQUARE"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="4"/>
-		<Row Name="ICON_BTT_TOURISM"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="5"/> <!-- exception, will be used as front icon -->
+		<Row Name="ICON_BTT_OCEAN"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="5"/>
 		<Row Name="ICON_BTT_STRENGTH"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="6"/>
 		<Row Name="ICON_BTT_MOVEMENT"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="7"/>
 		<Row Name="ICON_BTT_DEFENSE"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="8"/>
@@ -23,13 +23,15 @@
 		<Row Name="ICON_BTT_HAMMER"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="10"/>
 		<Row Name="ICON_BTT_REMOVE"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="11"/>
 		<Row Name="ICON_BTT_UNITS"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="12"/>
+		<Row Name="ICON_BTT_WORLD"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="13"/>
+		<Row Name="ICON_BTT_TOURISM"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="17"/>
 		<!-- FOW -->
 		<Row Name="ICON_BTT_BOOST_TECH_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="0"/>
 		<Row Name="ICON_BTT_BOOST_CIVIC_FOW" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="1"/>
 		<Row Name="ICON_BTT_HARVEST_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="2"/>
 		<Row Name="ICON_BTT_IMPR_BONUS_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="3"/>
 		<Row Name="ICON_BTT_SQUARE_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="4"/>
-		<Row Name="ICON_BTT_TOURISM_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="5"/> <!-- exception, will be used as front icon -->
+		<Row Name="ICON_BTT_OCEAN_FOW"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="5"/>
 		<Row Name="ICON_BTT_STRENGTH_FOW"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="6"/>
 		<Row Name="ICON_BTT_MOVEMENT_FOW"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="7"/>
 		<Row Name="ICON_BTT_DEFENSE_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="8"/>
@@ -37,6 +39,8 @@
 		<Row Name="ICON_BTT_HAMMER_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="10"/>
 		<Row Name="ICON_BTT_REMOVE_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="11"/>
 		<Row Name="ICON_BTT_UNITS_FOW"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="12"/>
+		<Row Name="ICON_BTT_WORLD_FOW"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="13"/>
+		<Row Name="ICON_BTT_TOURISM_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="17"/>
 	</IconDefinitions>
 	
 </GameInfo>
