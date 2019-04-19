@@ -70,7 +70,7 @@ function GetExtraUnlockables(sType:string)
 end
 
 function AddExtraUnlockable(sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string)
-	print("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+	--print("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 	local tItem:table = {
 		Type = sType,
 		UnlockKind = sUnlockKind, -- "BOOST", "IMPROVEMENT", "SPY", "HARVEST"
@@ -346,13 +346,12 @@ function CanShowImprovement(sImprovementType:string)
 	if Game.GetLocalPlayer() == -1 then return true; end
 	local sLocalPlayerCivType:string = PlayerConfigurations[ Game.GetLocalPlayer() ]:GetCivilizationTypeName();
 	--print("checking trait for",sLocalPlayerCivType);
+	local bCanShow:boolean = false;
 	for row in GameInfo.CivilizationTraits() do
-		if row.TraitType == imprInfo.TraitType then
-			return row.CivilizationType == sLocalPlayerCivType; -- true if that's our improvement, false if somebody's else
-		end
+		-- true only if that's our improvement
+		if row.TraitType == imprInfo.TraitType and row.CivilizationType == sLocalPlayerCivType then bCanShow = true; end
 	end
-	-- didn't find any? error
-	return false;
+	return bCanShow;
 end
 
 function PopulateImprovementBonus()
@@ -368,6 +367,114 @@ function PopulateImprovementBonus()
 		end
 	end
 end
+
+function PopulateImprovementAdjacency()
+
+	local adjacency_yields = {};
+	local has_bonus = {};
+	for impradj in GameInfo.Improvement_Adjacencies() do
+		if CanShowImprovement(impradj.ImprovementType) then
+			for row in GameInfo.Adjacency_YieldChanges() do
+				if row.ID == impradj.YieldChangeId and (row.PrereqTech ~= nil or row.PrereqCivic ~= nil) then
+					
+					-- this part analyzes a single adjacency bonus
+					-- it uses code from Civilopedia Improvement page to build a dynamic tooltip
+					local object;
+					if(row.OtherDistrictAdjacent) then
+						object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_DISTRICT";
+					elseif(row.AdjacentResource) then
+						object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
+					elseif(row.AdjacentSeaResource) then
+						object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_SEA_RESOURCE";
+					elseif(row.AdjacentResourceClass ~= "NO_RESOURCECLASS") then
+						if(row.AdjacentResourceClass == "RESOURCECLASS_BONUS") then
+							object = "LOC_TOOLTIP_BONUS_RESOURCE";
+						elseif(row.AdjacentResourceClass == "RESOURCECLASS_LUXURY") then
+							object = "LOC_TOOLTIP_LUXURY_RESOURCE";
+						elseif(row.AdjacentResourceClass == "RESOURCECLASS_STRATEGIC") then
+							object = "LOC_TOOLTIP_BONUS_STRATEGIC";
+						else
+							object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE_CLASS";
+						end
+					elseif(row.AdjacentRiver) then
+						object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
+					elseif(row.AdjacentWonder) then
+						object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_WONDER";
+					elseif(row.AdjacentNaturalWonder) then
+						object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_NATURAL_WONDER";
+					elseif(row.AdjacentTerrain) then
+						local terrain = GameInfo.Terrains[row.AdjacentTerrain];
+						if(terrain) then
+							object = terrain.Name;
+						end
+					elseif(row.AdjacentFeature) then
+						local feature = GameInfo.Features[row.AdjacentFeature];
+						if(feature) then
+							object = feature.Name;
+						end
+					elseif(row.AdjacentImprovement) then
+						local improvement = GameInfo.Improvements[row.AdjacentImprovement];
+						if(improvement) then
+							object = improvement.Name;
+						end
+					elseif(row.AdjacentDistrict) then		
+						local district = GameInfo.Districts[row.AdjacentDistrict];
+						if(district) then
+							object = district.Name;
+						end
+					end
+
+					local yield = GameInfo.Yields[row.YieldType];
+
+					if(object and yield) then
+
+						local key = (row.TilesRequired > 1) and "LOC_TYPE_TRAIT_ADJACENT_BONUS_PER" or "LOC_TYPE_TRAIT_ADJACENT_BONUS";
+
+						local value = Locale.Lookup(key, row.YieldChange, yield.IconString, yield.Name, row.TilesRequired, object);
+
+						--[[ Infixo: this part is not needed
+						if(row.PrereqCivic or row.PrereqTech) then
+							local item;
+							if(row.PrereqCivic) then
+								item = GameInfo.Civics[row.PrereqCivic];
+							else
+								item = GameInfo.Technologies[row.PrereqTech];
+							end
+
+							if(item) then
+								local text = Locale.Lookup("LOC_TYPE_TRAIT_ADJACENT_BONUS_REQUIRES_TECH_OR_CIVIC", item.Name);
+								value = value .. "  " .. text;
+							end
+						end
+						--]]
+
+						if(row.ObsoleteCivic or row.ObsoleteTech) then
+							local item;
+							if(row.ObsoleteCivic) then
+								item = GameInfo.Civics[row.ObsoleteCivic];
+							else
+								item = GameInfo.Technologies[row.ObsoleteTech];
+							end
+						
+							if(item) then
+								local text = Locale.Lookup("LOC_TYPE_TRAIT_ADJACENT_BONUS_OBSOLETE_WITH_TECH_OR_CIVIC", item.Name);
+								value = value .. "  " .. text;
+							end
+						end
+					
+						-- register a new icon
+						local sTechCivic:string = row.PrereqTech;
+						if row.PrereqCivic ~= nil then sTechCivic = row.PrereqCivic; end
+						AddExtraUnlockable(sTechCivic, "IMPR_BONUS", impradj.ImprovementType, LL(GameInfo.Improvements[impradj.ImprovementType].Name)..": "..value, impradj.ImprovementType);
+					
+					end -- object and yield
+					
+				end -- tech or civic not nil
+			end -- adj
+		end -- if can show
+	end -- improvs
+end
+
 
 function PopulateFromModifiers(sTreeKind:string)
 	local sType:string, sDesc:string;
@@ -434,13 +541,14 @@ end
 function Initialize_BTT_TechTree()
 	--print("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
-	PopulateBoosts();
 	PopulateHarvests();
 	PopulateFeatureRemovals();
 	PopulateImprovementBonus();
+	PopulateImprovementAdjacency();
 	PopulateFromModifiers("Technology");
 	PopulateUnitCommands("PrereqTech");
 	PopulateEmbarkment("Technologies", "TechnologyType");
+	PopulateBoosts();
 	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 
@@ -448,11 +556,12 @@ end
 function Initialize_BTT_CivicsTree()
 	--print("FUN Initialize_BTT_CivicsTree()");
 	-- add all the new init stuff here
-	PopulateBoosts();
 	PopulateImprovementBonus();
+	PopulateImprovementAdjacency();
 	PopulateFromModifiers("Civic");
 	PopulateUnitCommands("PrereqCivic");
 	PopulateEmbarkment("Civics", "CivicType");
+	PopulateBoosts();
 	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 

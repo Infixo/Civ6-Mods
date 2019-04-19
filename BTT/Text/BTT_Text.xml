@@ -7,7 +7,7 @@
 <BaseGameText>
 
 	<Row Tag="LOC_BTT_URBAN_DEFENSES"> <!-- LOC_TECH_STEEL_DESCRIPTION -->
-		<Text>Urban Defenses</Text>
+		<Text>Unlocks Urban Defenses, giving all of your cities an automatic 400 Fortification Strength and the ability to perform a ranged attack. All previous wall improvements become obsolete and siege support units are no longer effective.</Text>
 	</Row>
 	<Row Tag="LOC_BTT_DIPLO_VISIBILITY"> <!-- LOC_TECH_PRINTING_DESCRIPTION -->
 		<Text>+1 level of diplomatic visibility</Text>
