@@ -5,8 +5,8 @@
 <GameInfo>
 
 	<IconTextureAtlases>
-		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS"     IconSize="38" IconsPerRow="6" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
-		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="6" IconsPerColumn="1" Filename="BTTUnlockFrames.dds"/>
+		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS"     IconSize="38" IconsPerRow="6" IconsPerColumn="3" Filename="BTTUnlockFrames.dds"/>
+		<Row Name="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="6" IconsPerColumn="3" Filename="BTTUnlockFrames.dds"/>
 	</IconTextureAtlases>
 	
 	<IconDefinitions>
@@ -20,6 +20,9 @@
 		<Row Name="ICON_BTT_MOVEMENT"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="7"/>
 		<Row Name="ICON_BTT_DEFENSE"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="8"/>
 		<Row Name="ICON_BTT_ACCESS"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="9"/>
+		<Row Name="ICON_BTT_HAMMER"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="10"/>
+		<Row Name="ICON_BTT_REMOVE"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="11"/>
+		<Row Name="ICON_BTT_UNITS"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS" Index="12"/>
 		<!-- FOW -->
 		<Row Name="ICON_BTT_BOOST_TECH_FOW"  Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="0"/>
 		<Row Name="ICON_BTT_BOOST_CIVIC_FOW" Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="1"/>
@@ -31,6 +34,9 @@
 		<Row Name="ICON_BTT_MOVEMENT_FOW"    Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="7"/>
 		<Row Name="ICON_BTT_DEFENSE_FOW"     Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="8"/>
 		<Row Name="ICON_BTT_ACCESS_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="9"/>
+		<Row Name="ICON_BTT_HAMMER_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="10"/>
+		<Row Name="ICON_BTT_REMOVE_FOW"      Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="11"/>
+		<Row Name="ICON_BTT_UNITS_FOW"       Atlas="ICON_ATLAS_BTT_TECHUNLOCKS_FOW" Index="12"/>
 	</IconDefinitions>
 	
 </GameInfo>

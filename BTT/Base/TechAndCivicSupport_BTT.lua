@@ -4,6 +4,8 @@ print("Loading TechAndCivicSupport_BTT.lua from Better Tech Tree version "..Glob
 -- Author: Infixo
 -- 2018-03-19: Created
 -- 2018-12-01: Version 1.1, added option to switch off the harvest icons
+-- 2019-04-09: Version 1.2, added Unit Commands
+-- 2019-04-19: Version 2.0, new icons, modifiers, feature removals, embarkment
 -- ===========================================================================
 
 -- Rise & Fall check
@@ -17,6 +19,8 @@ print("Real Eurekas:", bIsREU and "YES" or "no");
 
 -- configuration options
 local bOptionHarvests:boolean = ( GlobalParameters.BTT_OPTION_HARVESTS == 1 );
+
+local LL = Locale.Lookup;
 
 
 -- ===========================================================================
@@ -66,7 +70,7 @@ function GetExtraUnlockables(sType:string)
 end
 
 function AddExtraUnlockable(sType:string, sUnlockKind:string, sUnlockType:string, sDescription:string, sPediaKey:string)
-	--print("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
+	print("FUN AddExtraUnlockable",sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 	local tItem:table = {
 		Type = sType,
 		UnlockKind = sUnlockKind, -- "BOOST", "IMPROVEMENT", "SPY", "HARVEST"
@@ -217,22 +221,22 @@ function PopulateBoosts()
 		-- what is boosted?
 		if     row.TechnologyType then
 			sUnlockKind = "BOOST_TECH"; sUnlockType = row.TechnologyType; sPediaKey = row.TechnologyType;
-			sDescBoost = string.format(": %d%% [ICON_TechBoosted] %s [ICON_GoingTo] %s", row.Boost, Locale.Lookup("LOC_HUD_POPUP_TECH_BOOST_UNLOCKED"), Locale.Lookup(GameInfo.Technologies[row.TechnologyType].Name));
+			sDescBoost = string.format(": %d%% [ICON_TechBoosted] %s [ICON_GoingTo] %s", row.Boost, LL("LOC_HUD_POPUP_TECH_BOOST_UNLOCKED"), LL(GameInfo.Technologies[row.TechnologyType].Name));
 		elseif row.CivicType then
 			sUnlockKind = "BOOST_CIVIC"; sUnlockType = row.CivicType; sPediaKey = row.CivicType;
-			sDescBoost = string.format(": %d%% [ICON_CivicBoosted] %s [ICON_GoingTo] %s", row.Boost, Locale.Lookup("LOC_HUD_POPUP_CIVIC_BOOST_UNLOCKED"), Locale.Lookup(GameInfo.Civics[row.CivicType].Name));
+			sDescBoost = string.format(": %d%% [ICON_CivicBoosted] %s [ICON_GoingTo] %s", row.Boost, LL("LOC_HUD_POPUP_CIVIC_BOOST_UNLOCKED"), LL(GameInfo.Civics[row.CivicType].Name));
 		else
 			-- error in boost definition
 		end
 		-- what is the boost? it gives Type; in rare cases can generate more than 1 unlock!
 		if row.BoostingCivicType then
 			sType = row.BoostingCivicType;
-			sDescription = Locale.Lookup( GameInfo.Civics[sType].Name )..sDescBoost;
+			sDescription = LL( GameInfo.Civics[sType].Name )..sDescBoost;
 			AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 		end
 		if row.BoostingTechType then
 			sType = row.BoostingTechType;
-			sDescription = Locale.Lookup( GameInfo.Technologies[sType].Name )..sDescBoost;
+			sDescription = LL( GameInfo.Technologies[sType].Name )..sDescBoost;
 			AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 		end
 		if row.DistrictType then
@@ -241,7 +245,7 @@ function PopulateBoosts()
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
 				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_DISTRICTS" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
-				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
+				sDescription = LL(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
@@ -251,7 +255,7 @@ function PopulateBoosts()
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
 				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_BUILDINGS" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
-				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
+				sDescription = LL(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
@@ -261,7 +265,7 @@ function PopulateBoosts()
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
 				if row.BoostClass == "BOOST_TRIGGER_OWN_X_UNITS_OF_TYPE" or row.BoostClass == "BOOST_TRIGGER_MAINTAIN_X_TRADE_ROUTES" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
-				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
+				sDescription = LL(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
@@ -270,7 +274,7 @@ function PopulateBoosts()
 			objectInfo = GameInfo.Resources[row.ResourceType];
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
-				sDescription = Locale.Lookup(objectInfo.Name).."[ICON_"..row.ResourceType.."] "..Locale.Lookup(GameInfo.Improvements[row.ImprovementType].Name)..sDescription;
+				sDescription = LL(objectInfo.Name).."[ICON_"..row.ResourceType.."] "..LL(GameInfo.Improvements[row.ImprovementType].Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
@@ -280,7 +284,7 @@ function PopulateBoosts()
 			if objectInfo then sType = ( objectInfo.PrereqTech and objectInfo.PrereqTech or objectInfo.PrereqCivic ); end
 			if sType then
 				if row.BoostClass == "BOOST_TRIGGER_HAVE_X_IMPROVEMENTS" then sDescription = string.format(" (%d)", row.NumItems)..sDescription; end
-				sDescription = Locale.Lookup(objectInfo.Name)..sDescription;
+				sDescription = LL(objectInfo.Name)..sDescription;
 				AddExtraUnlockable(sType, sUnlockKind, sUnlockType, sDescription, sPediaKey);
 			end
 		end
@@ -288,26 +292,46 @@ function PopulateBoosts()
 end
 
 function PopulateHarvests()
-	local sDesc:string;
-	local tHarvests:table = {}; 
+	local sTT:string;
+	local tHarvests:table = {};
 	-- first, collate harvests of the same resource into 1 string
 	for row in GameInfo.Resource_Harvests() do
-		local tTechHarvests:table = tHarvests[ row.PrereqTech ]
-		if tTechHarvests == nil then tTechHarvests = {}; tHarvests[ row.PrereqTech ] = tTechHarvests; end
-		sDesc = tTechHarvests[ row.ResourceType ];
-		if sDesc == nil then -- insert name as initial insert
-			sDesc = Locale.Lookup("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION")..": "..Locale.Lookup(GameInfo.Resources[row.ResourceType].Name); --  don't put resource font icon, modded ones usually don't have it
+		if tHarvests[ row.PrereqTech ] == nil then tHarvests[ row.PrereqTech ] = {}; end -- init a new tech
+		local tTechHarvests:table = tHarvests[ row.PrereqTech ];
+		if tTechHarvests[ row.ResourceType ] == nil then
+			-- init a new resource
+			tTechHarvests[ row.ResourceType ] = "[ICON_"..row.ResourceType.."] "..LL(GameInfo.Resources[row.ResourceType].Name)..":"; --  don't put resource font icon, modded ones usually don't have it
 		end
-		sDesc = sDesc..string.format(" %+d", row.Amount)..GameInfo.Yields[row.YieldType].IconString;
-		tTechHarvests[ row.ResourceType ] = sDesc;
+		tTechHarvests[ row.ResourceType ] = tTechHarvests[ row.ResourceType ]..string.format(" %+d", row.Amount)..GameInfo.Yields[row.YieldType].IconString;
 	end
+		--if sDesc == nil then -- insert name as initial insert
+			--sDesc = LL("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION")..": "..LL(GameInfo.Resources[row.ResourceType].Name); --  don't put resource font icon, modded ones usually don't have it
+		--end
 	-- second, add to the proper techs
 	for tech,harvests in pairs(tHarvests) do
-		for restype,desc in pairs(harvests) do
-			AddExtraUnlockable(tech, "HARVEST", restype, desc, restype);
+		-- create a collated tooltip
+		local sTT:string = LL("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION");
+		for _,tooltip in pairs(harvests) do sTT = sTT.."[NEWLINE]"..tooltip; end
+		AddExtraUnlockable(tech, "HARVEST", "BTT_HAMMER", sTT, "WORLD_2");
+	end
+end
+
+
+function PopulateFeatureRemovals()
+	for row in GameInfo.Features() do
+		if row.RemoveTech ~= nil then
+			-- removable feature, build yields
+			local sTT:string = LL("LOC_UNITOPERATION_REMOVE_FEATURE_DESCRIPTION")..": "..LL(row.Name);
+			for yield in GameInfo.Feature_Removes() do
+				if yield.FeatureType == row.FeatureType then
+					sTT = sTT..string.format(" %+d", yield.Yield)..GameInfo.Yields[yield.YieldType].IconString;
+				end
+			end
+			AddExtraUnlockable(row.RemoveTech, "HARVEST", "BTT_REMOVE", sTT, row.FeatureType);
 		end
 	end
 end
+
 
 -- many improvements are unique to a Civ
 -- must not show them unless the player is that Civ
@@ -339,7 +363,7 @@ function PopulateImprovementBonus()
 		else -- error in configuration
 		end
 		if CanShowImprovement(row.ImprovementType) then
-			sDesc = Locale.Lookup(GameInfo.Improvements[row.ImprovementType].Name)..": +"..tostring(row.BonusYieldChange)..GameInfo.Yields[row.YieldType].IconString;
+			sDesc = LL(GameInfo.Improvements[row.ImprovementType].Name)..": +"..tostring(row.BonusYieldChange)..GameInfo.Yields[row.YieldType].IconString;
 			AddExtraUnlockable(sType, "IMPR_BONUS", row.ImprovementType, sDesc, row.ImprovementType);
 		end
 	end
@@ -352,21 +376,21 @@ function PopulateFromModifiers(sTreeKind:string)
 		for mod in GameInfo.Modifiers() do
 			if mod.ModifierId == row.ModifierId then
 				if mod.ModifierType == "MODIFIER_PLAYER_GRANT_SPY" then
-					sDesc = "+1 "..Locale.Lookup(GameInfo.Units["UNIT_SPY"].Name);
+					sDesc = "+1 "..LL(GameInfo.Units["UNIT_SPY"].Name);
 					AddExtraUnlockable(sType, "UNIT", "UNIT_SPY", sDesc, "UNIT_SPY");
 				elseif string.find(mod.ModifierType, "ADJUST_TOURISM") or mod.ModifierType == "MODIFIER_PLAYER_ADJUST_RELIGIOUS_TOURISM_REDUCTION" then
 					-- MODIFIER_PLAYER_CITIES_ADJUST_TOURISM MODIFIER_PLAYER_ADJUST_TOURISM  MODIFIER_PLAYER_DISTRICTS_ADJUST_TOURISM_CHANGE
 					-- tourism modifiers - no specific description, register only once (Conservation!)
 					if not IsExtraUnlockableAdded(sType, "TOURISM", "BTT_TOURISM") then
-						sDesc = Locale.Lookup("LOC_TOP_PANEL_TOURISM");
+						sDesc = LL("LOC_TOP_PANEL_TOURISM");
 						AddExtraUnlockable(sType, "TOURISM", "BTT_TOURISM", sDesc, "TOURISM_1");
 					end
-				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then AddExtraUnlockable(sType, "OTHER", "BTT_DEFENSE",  Locale.Lookup("LOC_BTT_URBAN_DEFENSES"), "COMBAT_9");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "BTT_ACCESS",   Locale.Lookup("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_BTT_EMBARKED_MOVEMENT"), "MOVEMENT_5");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_TECH_MATHEMATICS_DESCRIPTION"), "MOVEMENT_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", Locale.Lookup("LOC_BTT_VALID_OCEAN"), "MOVEMENT_4");
-				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_COMBAT_ADJACENCY"      then AddExtraUnlockable(sType, "OTHER", "BTT_STRENGTH", Locale.Lookup("LOC_CIVIC_MILITARY_TRADITION_DESCRIPTION"), "COMBAT_9");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_CITIES_URBAN_DEFENSES" then AddExtraUnlockable(sType, "OTHER", "BTT_DEFENSE",  LL("LOC_BTT_URBAN_DEFENSES"), "COMBAT_9");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADD_DIPLO_VISIBILITY"        then AddExtraUnlockable(sType, "OTHER", "BTT_ACCESS",   LL("LOC_BTT_DIPLO_VISIBILITY"), "DIPLO_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_ADJUST_EMBARKED_MOVEMENT"    then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", LL("LOC_BTT_EMBARKED_MOVEMENT"), "MOVEMENT_5");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_SEA_MOVEMENT"   then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", LL("LOC_TECH_MATHEMATICS_DESCRIPTION"), "MOVEMENT_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_UNITS_ADJUST_VALID_TERRAIN"  then AddExtraUnlockable(sType, "OTHER", "BTT_MOVEMENT", LL("LOC_BTT_VALID_OCEAN"), "MOVEMENT_4");
+				elseif mod.ModifierType == "MODIFIER_PLAYER_GRANT_COMBAT_ADJACENCY"      then AddExtraUnlockable(sType, "OTHER", "BTT_STRENGTH", LL("LOC_CIVIC_MILITARY_TRADITION_DESCRIPTION"), "COMBAT_9");
 				else
 					-- check for other modifiers here
 				end
@@ -382,20 +406,41 @@ function PopulateUnitCommands(sPrereq:string)
 	for row in GameInfo.UnitCommands() do
 		sType = row[sPrereq];
 		if sType ~= nil then
-			sDesc = Locale.Lookup(row.Description);
+			sDesc = LL(row.Description);
 			AddExtraUnlockable(sType, "COMMAND", row.CommandType, sDesc, row.CommandType);
 		end
 	end
 end
 
+
+-- 2019-04-19 Embarkment
+function PopulateEmbarkment(sTable:string, sType:string)
+	--print("FUN PopulateEmbarkment", sTable, sType);
+	for row in GameInfo[sTable]() do
+		-- unit
+		if row.EmbarkUnitType ~= nil then
+			--print("...unit", row.EmbarkUnitType); dshowtable(row);
+			AddExtraUnlockable(row[sType], "OTHER", row.EmbarkUnitType, LL("LOC_UNITOPERATION_EMBARK_DESCRIPTION")..": "..LL(GameInfo.Units[row.EmbarkUnitType].Name), "MOVEMENT_5");
+		end
+		-- all units
+		if row.EmbarkAll then
+			--print("...all units"); dshowtable(row);
+			AddExtraUnlockable(row[sType], "OTHER", "BTT_UNITS", LL("LOC_TECH_SHIPBUILDING_DESCRIPTION"), "MOVEMENT_5");
+		end
+	end
+end
+
+
 function Initialize_BTT_TechTree()
 	--print("FUN Initialize_BTT_TechTree()");
 	-- add all the new init stuff here
 	PopulateBoosts();
-	if bOptionHarvests then PopulateHarvests(); end
+	PopulateHarvests();
+	PopulateFeatureRemovals();
 	PopulateImprovementBonus();
 	PopulateFromModifiers("Technology");
 	PopulateUnitCommands("PrereqTech");
+	PopulateEmbarkment("Technologies", "TechnologyType");
 	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 
@@ -407,6 +452,7 @@ function Initialize_BTT_CivicsTree()
 	PopulateImprovementBonus();
 	PopulateFromModifiers("Civic");
 	PopulateUnitCommands("PrereqCivic");
+	PopulateEmbarkment("Civics", "CivicType");
 	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 
