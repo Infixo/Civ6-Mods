@@ -437,16 +437,20 @@ PageLayouts["Unit"] = function(page)
 	print("...showing page", page.PageLayoutId, page.PageId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
 	
+	local unit = GameInfo.Units[page.PageId];
+	if unit == nil then return; end
+	local unitType = unit.UnitType;
+	
 	-- show sources of GPP for GPs
 	for row in GameInfo.GreatPersonClasses() do
-		if row.UnitType == page.PageId then ShowSourcesOfGPPs(page); end
+		if row.UnitType == unitType then ShowSourcesOfGPPs(page); end
 	end
 	
 	-- start with page.PageId, it contains UnitType
 	-- built ability list
 	local tAbilities:table = {};
 	for row in GameInfo.TypeTags() do
-		if row.Type == page.PageId then
+		if row.Type == unitType then
 			-- add class
 			for row2 in GameInfo.TypeTags() do
 				if row2.Tag == row.Tag and string.sub(row2.Type, 1, 7) == "ABILITY" then tAbilities[ row2.Type ] = true; end
@@ -464,6 +468,22 @@ PageLayouts["Unit"] = function(page)
 			if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.UnitAbilities[ability].Name), chapter_body); end
 		end
 	end
+	
+	-- Right Column
+	local tAiInfos:table = {};
+	for row in GameInfo.UnitAiInfos() do
+		if row.UnitType == unitType then table.insert(tAiInfos, row.AiType); end
+	end
+	if #tAiInfos > 0 then
+		table.sort(tAiInfos);
+		AddRightColumnStatBox("[ICON_Bullet][ICON_Bullet][ICON_Bullet]", function(s)
+			s:AddSeparator();
+			s:AddHeader("UnitAiInfos");
+			for _,aiinfo in ipairs(tAiInfos) do s:AddLabel(aiinfo); end
+			s:AddSeparator();
+		end);
+	end
+	
 	ShowInternalPageInfo(page);
 end
 
@@ -839,6 +859,7 @@ PageLayouts["Government"] = function(page)
 			s:AddSeparator();
 		end);
 	end
+	
 	ShowModifiers(page);
 	ShowInternalPageInfo(page);
 end
