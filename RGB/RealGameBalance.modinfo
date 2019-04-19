@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="58D8DCFF-52BD-7B10-3833-16D838F8924D" version="1">
+	<Properties>
+		<Name>Real Game Balance</Name>
+		<Description>Real Game Balance[NEWLINE][NEWLINE][ICON_Bullet]Game pace balanced for Emperor difficulty.</Description>
+		<Teaser>Makes the game run at a more historically accurate pace</Teaser>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>1</AffectsSavedGames>
+		<CompatibleVersions>2.0</CompatibleVersions>
+	</Properties>
+	<Dependencies>
+		<Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="LOC_EXPANSION1_MOD_TITLE" />
+		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="LOC_EXPANSION2_MOD_TITLE" />
+		<Mod id="01159f41-7ca0-4181-84cf-2f2c912edfdd" title="Steel and Thunder: Unit Expansion" />
+	</Dependencies>
+	<FrontEndActions>
+		<UpdateText id="RGB_Config_Text">
+			<Properties><LoadOrder>1050</LoadOrder></Properties>
+			<File>Text/RGB_Config_Text.sql</File>
+		</UpdateText>
+	</FrontEndActions>
+	<InGameActions>
+		<UpdateDatabase id="RGB_DB_Main">
+			<Properties><LoadOrder>1050</LoadOrder></Properties>
+			<File>RGB_Districts.sql</File>
+			<File>RGB_Units.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RGB_DB_Scaling">
+			<Properties><LoadOrder>1090</LoadOrder></Properties>
+			<File>RGB_Scaling.sql</File>
+		</UpdateDatabase>
+		<UpdateText id="RGB_Text">
+			<Properties><LoadOrder>1050</LoadOrder></Properties>
+			<File Priority="1">Text/RGB_Config_Text.sql</File>
+			<File>Text/RGB_Text.sql</File>
+		</UpdateText>
+	</InGameActions>
+	<Files>
+		<File>RGB_Districts.sql</File>
+		<File>RGB_Scaling.sql</File>
+		<File>RGB_Units.sql</File>
+		<File>Text/RGB_Config_Text.sql</File>
+		<File>Text/RGB_Text.sql</File>
+	</Files>
+</Mod>
