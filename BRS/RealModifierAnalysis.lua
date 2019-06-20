@@ -196,6 +196,21 @@ function YieldTableGetInfo(pYields:table)
 	return sYieldInfo;
 end
 
+-- 2019-06-20 GS introduced multiple yields in one modifier, separated with comma
+function YieldTableSetMultipleYields(pYields:table, sYields:string, sValues:string)
+	sYields = sYields..",";	sValues = sValues..",";
+	while string.len(sYields) > 0 and string.len(sValues) > 0 do
+		local iCommaYields:number = string.find(sYields, ",");
+		local iCommaValues:number = string.find(sValues, ",");
+		--print("YieldTableSetMultipleYields", sYields, iCommaYields, sValues, iCommaValues);
+		YieldTableSetYield(pYields, string.sub(sYields, 1, iCommaYields-1), tonumber(string.sub(sValues, 1, iCommaValues-1)));
+		-- remove processed yield
+		sYields = string.sub(sYields, iCommaYields+1);
+		sValues = string.sub(sValues, iCommaValues+1);
+	end
+end
+
+
 -- ===========================================================================
 -- GENERIC FUNCTIONS AND HELPERS
 -- ===========================================================================
@@ -1986,7 +2001,7 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	-- single effect for changing plot yields
 	elseif tMod.EffectType == "EFFECT_ADJUST_PLOT_YIELD" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return nil; end
-		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
+		YieldTableSetMultipleYields(tImpact, tMod.Arguments.YieldType, tMod.Arguments.Amount);
 
 	------------------------------ CITY ------------------------------------------------
 	

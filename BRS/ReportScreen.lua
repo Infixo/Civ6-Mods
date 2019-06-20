@@ -9,6 +9,7 @@ include("Civ6Common");
 include("InstanceManager");
 include("SupportFunctions");
 include("TabSupport");
+include("LeaderIcon");
 
 -- exposing functions and variables
 if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
@@ -41,10 +42,25 @@ local ENDCOLOR									:string = "[ENDCOLOR]";
 local DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y		:number = 6;
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
-local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
+local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 87;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
 local INDENT_STRING								:string = "      ";
 local TOOLTIP_SEP								:string = "-------------------";
 local TOOLTIP_SEP_NEWLINE						:string = "[NEWLINE]"..TOOLTIP_SEP.."[NEWLINE]";
+local GOSSIP_GROUP_TYPES						:table	= {
+	"ALL",
+	"BARBARIAN",
+	"DIPLOMACY",
+	"CITY",
+	"CULTURE",
+	"DISCOVER",
+	"ESPIONAGE",
+	"GREATPERSON",
+	"MILITARY",
+	"RELIGION",
+	"SCIENCE",
+	"SETTLEMENT",
+	"VICTORY"
+};
 
 -- Mapping of unit type to cost.
 local UnitCostMap:table = {};
@@ -102,6 +118,12 @@ local m_kDealData			:table = nil;
 local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all action.
 
 local m_isCollapsing		:boolean = true;
+
+--Gossip filtering
+local m_kGossipInstances:table = {};
+local m_groupFilter:number = 1;	-- (1) Indicates Unfiltered by this criteria (Group Type Index)
+local m_leaderFilter:number = -1;	-- (-1) Indicates Unfilitered by this criteria (PlayerID)
+
 --BRS !! new variables
 local m_kCurrentDeals	:table = nil;
 local m_kUnitDataReport	:table = nil;
@@ -210,6 +232,7 @@ function Open( tabToOpen:number )
 	
 	-- To remember the last opened tab when the report is re-opened: ARISTOS
 	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
+	Resize();
 	m_tabs.SelectTab( m_kCurrentTab );
 	
 	-- show number of cities in the title bar
@@ -1795,6 +1818,7 @@ function ResetTabForNewPageContent()
 	m_isCollapsing = true;
 	Controls.CollapseAll:LocalizeAndSetText("LOC_HUD_REPORTS_COLLAPSE_ALL");
 	Controls.Scroll:SetScrollValue( 0 );	
+	m_kGossipInstances = {};
 end
 
 
@@ -2711,6 +2735,180 @@ end
 
 
 -- ===========================================================================
+-- GOSSIP PAGE
+-- ===========================================================================
+
+--	Tab Callback
+function ViewGossipPage()	
+	ResetTabForNewPageContent();
+	local playerID:number = Game.GetLocalPlayer();
+	if playerID == -1 then
+		--Observer. No report.
+		return;
+	end
+
+	--Get our Diplomacy
+	local pLocalPlayerDiplomacy:table = Players[playerID]:GetDiplomacy();
+	if pLocalPlayerDiplomacy == nil then
+		--This is a significant error
+		UI.DataError("Diplomacy is nil! Cannot display Gossip Report");
+		return;
+	end
+
+	--We use simple instances to mask generic content. So we need to ensure there are no
+	--leftover children from the last instance.
+	local instance:table = m_simpleIM:GetInstance();	
+	instance.Top:DestroyAllChildren();
+
+	local uiFilterInstance:table = {};
+	ContextPtr:BuildInstanceForControl("GossipFilterInstance", uiFilterInstance, instance.Top);
+
+	--Generate our filters for each group
+	for i, type in pairs(GOSSIP_GROUP_TYPES) do
+		local uiFilter:table = {};
+		uiFilterInstance.GroupFilter:BuildEntry("InstanceOne", uiFilter);
+		uiFilter.Button:SetText(Locale.Lookup("LOC_HUD_REPORTS_FILTER_" .. type));
+		uiFilter.Button:SetVoid1(i);
+		uiFilter.Button:SetSizeX(252);
+	end
+	uiFilterInstance.GroupFilter:RegisterSelectionCallback(function(i:number)
+		uiFilterInstance.GroupFilter:GetButton():SetText(Locale.Lookup("LOC_HUD_REPORTS_FILTER_" .. GOSSIP_GROUP_TYPES[i]));
+		m_groupFilter = i;
+		FilterGossip();
+	end);
+	uiFilterInstance.GroupFilter:GetButton():SetText(Locale.Lookup("LOC_HUD_REPORTS_FILTER_ALL"));
+
+
+	local pHeaderInstance:table = {}
+	ContextPtr:BuildInstanceForControl( "GossipHeaderInstance", pHeaderInstance, instance.Top );
+	
+	local kGossipLog:table = {};	
+
+	--Make our 'All' Filter for players
+	local uiAllFilter:table = {};
+	uiFilterInstance.PlayerFilter:BuildEntry("InstanceOne", uiAllFilter);
+	uiAllFilter.LeaderIcon.Portrait:SetIcon("ICON_LEADER_ALL");
+	uiAllFilter.LeaderIcon.Portrait:SetHide(false);
+	uiAllFilter.LeaderIcon.TeamRibbon:SetHide(true);
+	uiAllFilter.Button:SetText(Locale.Lookup("LOC_HUD_REPORTS_PLAYER_FILTER_ALL"));
+	uiAllFilter.Button:SetVoid1(-1);
+	uiAllFilter.Button:SetSizeX(252);
+
+
+	--Populate with all of our Gossip and build Player Filter
+	for targetID, kPlayer in pairs(Players) do
+		--If we are not ourselves, are a major civ, and we have met these people
+		if targetID ~= playerID and kPlayer:IsMajor() and pLocalPlayerDiplomacy:HasMet(targetID) then
+			--Append their gossip
+			local bHasGossip:boolean = false;
+			local kAppendTable:table =  Game.GetGossipManager():GetRecentVisibleGossipStrings(0, playerID, targetID);
+			for _, entry in pairs(kAppendTable) do
+				table.insert(kGossipLog, entry);
+				bHasGossip = true;
+			end
+
+			--If we had gossip, add them as a filter
+			if bHasGossip then
+				local uiFilter:table = {};
+				uiFilterInstance.PlayerFilter:BuildEntry("InstanceOne", uiFilter);
+
+				local leaderName:string = PlayerConfigurations[targetID]:GetLeaderTypeName();
+				local iconName:string = "ICON_" .. leaderName;
+				--Build and update
+				local filterLeaderIcon:table = LeaderIcon:AttachInstance(uiFilter.LeaderIcon);
+				filterLeaderIcon:UpdateIcon(iconName, targetID, true);
+				uiFilter.Button:SetText(Locale.Lookup(PlayerConfigurations[targetID]:GetLeaderName()));
+				uiFilter.Button:SetVoid1(targetID);
+				uiFilter.Button:SetSizeX(252);
+			end
+		end
+	end
+
+	uiFilterInstance.PlayerFilter:RegisterSelectionCallback(function(i:number)
+		if i == -1 then
+			uiFilterInstance.LeaderIcon.Portrait:SetIcon("ICON_LEADER_ALL");
+			uiFilterInstance.LeaderIcon.Portrait:SetHide(false);
+			uiFilterInstance.LeaderIcon.TeamRibbon:SetHide(true);
+			uiFilterInstance.LeaderIcon.Relationship:SetHide(true);
+			uiFilterInstance.PlayerFilter:GetButton():SetText(Locale.Lookup("LOC_HUD_REPORTS_PLAYER_FILTER_ALL"));
+		else
+			local leaderName:string = PlayerConfigurations[i]:GetLeaderTypeName();
+			local iconName:string = "ICON_" .. leaderName;
+			--Build and update
+			local filterLeaderIcon:table = LeaderIcon:AttachInstance(uiFilterInstance.LeaderIcon);
+			filterLeaderIcon:UpdateIcon(iconName, i, true);
+			uiFilterInstance.PlayerFilter:GetButton():SetText(Locale.Lookup(PlayerConfigurations[i]:GetLeaderName()));
+		end
+		m_leaderFilter = i;
+		FilterGossip();
+	end);
+
+	uiFilterInstance.LeaderIcon.Portrait:SetIcon("ICON_LEADER_ALL");
+	uiFilterInstance.LeaderIcon.Portrait:SetHide(false);
+	uiFilterInstance.LeaderIcon.TeamRibbon:SetHide(true);
+	uiFilterInstance.LeaderIcon.Relationship:SetHide(true);
+	uiFilterInstance.PlayerFilter:GetButton():SetText(Locale.Lookup("LOC_HUD_REPORTS_PLAYER_FILTER_ALL"));
+
+	table.sort(kGossipLog, function(a, b) return a[2] > b[2]; end);
+	
+	for _, kGossipEntry in pairs(kGossipLog) do
+		local leaderName:string = PlayerConfigurations[kGossipEntry[4]]:GetLeaderTypeName();
+		local iconName:string = "ICON_" .. leaderName;
+		local pGossipInstance:table = {}
+		ContextPtr:BuildInstanceForControl( "GossipEntryInstance", pGossipInstance, instance.Top ) ;
+
+		local kGossipData:table = GameInfo.Gossips[kGossipEntry[3]];
+		
+		--Build and update
+		local gossipLeaderIcon:table = LeaderIcon:AttachInstance(pGossipInstance.Leader);
+		gossipLeaderIcon:UpdateIcon(iconName, kGossipEntry[4], true);
+		
+		pGossipInstance.Date:SetText(kGossipEntry[2]);
+		pGossipInstance.Icon:SetIcon("ICON_GOSSIP_" .. kGossipData.GroupType);
+		pGossipInstance.Description:SetText(kGossipEntry[1]);
+
+		--Build our references
+		table.insert(m_kGossipInstances, {instance = pGossipInstance, leaderID = kGossipEntry[4], gossipType = kGossipData.GroupType});
+	end
+		--Refresh our sizes
+	uiFilterInstance.GroupFilter:CalculateInternals();
+	uiFilterInstance.PlayerFilter:CalculateInternals();
+
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	Controls.CollapseAll:SetHide(true);
+	Controls.BottomYieldTotals:SetHide( true );
+	Controls.BottomResourceTotals:SetHide( true );
+	Controls.BottomPoliciesFilters:SetHide( true );
+	Controls.BottomMinorsFilters:SetHide( true );
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST );
+	-- Remember this tab when report is next opened: ARISTOS
+	m_kCurrentTab = 4;
+end
+
+--	Filter Callbacks
+function FilterGossip()
+	local gossipGroupType:string = GOSSIP_GROUP_TYPES[m_groupFilter];
+	for _, entry in pairs(m_kGossipInstances) do
+		local bShouldHide:boolean = false;
+
+		--Leader matches, or all?
+		if m_leaderFilter ~= -1 and entry.leaderID ~= m_leaderFilter then
+			bShouldHide = true;
+		end
+
+		--Group type, or all?
+		if m_groupFilter ~= 1 and entry.gossipType ~= gossipGroupType then
+			bShouldHide = true;
+		end
+
+		entry.instance.Top:SetHide(bShouldHide);
+	end
+end
+
+
+-- ===========================================================================
 -- CITY STATUS PAGE
 -- ===========================================================================
 
@@ -3199,7 +3397,7 @@ function ViewCityStatusPage()
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.BottomMinorsFilters:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST);
 	-- Remember this tab when report is next opened: ARISTOS
 	m_kCurrentTab = 3;
 end
@@ -3789,9 +3987,9 @@ function ViewUnitsPage()
 	Controls.BottomResourceTotals:SetHide( true )
 	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.BottomMinorsFilters:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88 )
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST );
 	-- Remember this tab when report is next opened: ARISTOS
-	m_kCurrentTab = 5;
+	m_kCurrentTab = 6;
 end
 
 
@@ -3862,9 +4060,9 @@ function ViewDealsPage()
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.BottomMinorsFilters:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST);
 	-- Remember this tab when report is next opened: ARISTOS
-	m_kCurrentTab = 4;
+	m_kCurrentTab = 5;
 end
 
 
@@ -4063,7 +4261,7 @@ function ViewPolicyPage()
 	Controls.BottomMinorsFilters:SetHide( true );
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomPoliciesFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	-- Remember this tab when report is next opened: ARISTOS
-	m_kCurrentTab = 6;
+	m_kCurrentTab = 7;
 end
 
 
@@ -4335,7 +4533,7 @@ function ViewMinorPage()
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomMinorsFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );	
 	
 	-- Remember this tab when report is next opened: ARISTOS
-	m_kCurrentTab = 7;
+	m_kCurrentTab = 8;
 end
 
 
@@ -4545,9 +4743,9 @@ function ViewCities2Page()
 	Controls.BottomResourceTotals:SetHide( true );
 	Controls.BottomPoliciesFilters:SetHide( true );
 	Controls.BottomMinorsFilters:SetHide( true );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - 88);
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST);
 	-- Remember this tab when report is next opened: ARISTOS
-	m_kCurrentTab = 8;
+	m_kCurrentTab = 9;
 end
 
 
@@ -4625,7 +4823,7 @@ end
 
 -- ===========================================================================
 function LateInitialize()
-	Resize();
+	--Resize(); -- June Patch
 
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, UI.GetColorValueFromHexLiteral(0xFF331D05) );
 	--AddTabSection( "Test",								ViewTestPage );			--TRONSTER debug
@@ -4633,6 +4831,9 @@ function LateInitialize()
 	AddTabSection( "LOC_HUD_REPORTS_TAB_YIELDS",		ViewYieldsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_RESOURCES",		ViewResourcesPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_CITIES",	ViewCityStatusPage );
+	if GameCapabilities.HasCapability("CAPABILITY_GOSSIP_REPORT") then
+		AddTabSection( "LOC_HUD_REPORTS_TAB_GOSSIP", ViewGossipPage );
+	end
 	AddTabSection( "LOC_HUD_REPORTS_TAB_DEALS",			ViewDealsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_UNITS",			ViewUnitsPage );
 	AddTabSection( "LOC_HUD_REPORTS_TAB_POLICIES",		ViewPolicyPage );
@@ -4798,11 +4999,14 @@ function Initialize()
 	LuaEvents.ReportsList_OpenYields.Add(     function() Open(1); end );
 	LuaEvents.ReportsList_OpenResources.Add(  function() Open(2); end );
 	LuaEvents.ReportsList_OpenCityStatus.Add( function() Open(3); end );
-	LuaEvents.ReportsList_OpenDeals.Add(      function() Open(4); end );
-	LuaEvents.ReportsList_OpenUnits.Add(      function() Open(5); end );
-	LuaEvents.ReportsList_OpenPolicies.Add(   function() Open(6); end );
-	LuaEvents.ReportsList_OpenMinors.Add(     function() Open(7); end );
-	if bIsGatheringStorm then LuaEvents.ReportsList_OpenCities2.Add( function() Open(8); end ); end
+	if GameCapabilities.HasCapability("CAPABILITY_GOSSIP_REPORT") then
+		LuaEvents.ReportsList_OpenGossip.Add( function() Open(4); end );
+	end
+	LuaEvents.ReportsList_OpenDeals.Add(      function() Open(5); end );
+	LuaEvents.ReportsList_OpenUnits.Add(      function() Open(6); end );
+	LuaEvents.ReportsList_OpenPolicies.Add(   function() Open(7); end );
+	LuaEvents.ReportsList_OpenMinors.Add(     function() Open(8); end );
+	if bIsGatheringStorm then LuaEvents.ReportsList_OpenCities2.Add( function() Open(9); end ); end
 	
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
 	Events.InputActionTriggered.Add( OnInputActionTriggered );

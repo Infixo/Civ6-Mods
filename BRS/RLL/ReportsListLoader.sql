@@ -3,6 +3,7 @@
 -- Author: Infixo
 -- 2019-03-30: Created
 -- I hereby grant the permission to use RLL in other Civ6 mods provided no changes are made to the code.
+-- 2019-06-20: Updated for June 2019 Patch (Gossip tab)
 -- ===========================================================================
 
 /*
@@ -37,7 +38,7 @@ INSTRUCTIONS
 
 -- just to make versioning easier
 INSERT OR REPLACE INTO GlobalParameters (Name, Value) VALUES ('RLL_VERSION_MAJOR', '1');
-INSERT OR REPLACE INTO GlobalParameters (Name, Value) VALUES ('RLL_VERSION_MINOR', '0');
+INSERT OR REPLACE INTO GlobalParameters (Name, Value) VALUES ('RLL_VERSION_MINOR', '1');
 
 
 -- ===========================================================================
@@ -66,4 +67,5 @@ INSERT OR REPLACE INTO RLLReports (ReportType, ButtonLabel, LuaEvent, StackID, S
 ('REPORT_EMPIRE_YIELDS',      'LOC_PARTIALSCREEN_REPORTS_YIELDS',      'ReportsList_OpenYields',          'EmpireReportsStack', 110, NULL),
 ('REPORT_EMPIRE_RESOURCES',   'LOC_PARTIALSCREEN_REPORTS_RESOURCES',   'ReportsList_OpenResources',       'EmpireReportsStack', 120, NULL),
 ('REPORT_EMPIRE_CITY_STATUS', 'LOC_PARTIALSCREEN_REPORTS_CITY_STATUS', 'ReportsList_OpenCityStatus',      'EmpireReportsStack', 130, NULL),
+('REPORT_EMPIRE_GOSSIP',      'LOC_PARTIALSCREEN_REPORTS_GOSSIP',      'ReportsList_OpenGossip',          'EmpireReportsStack', 135, 'CAPABILITY_GOSSIP_REPORT'),
 ('REPORT_GLOBAL_RESOURCES',   'LOC_PARTIALSCREEN_REPORTS_RESOURCES',   'GlobalReportsList_OpenResources', 'GlobalReportsStack', 510, 'CAPABILITY_DIPLOMACY_DEALS');

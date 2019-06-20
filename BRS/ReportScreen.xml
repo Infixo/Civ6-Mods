@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
-
-	<Container Style="FullScreenVignetteConsumer" />
+	<Include File="LeaderIcon"/>
+	<Container Style="FullScreenVignetteConsumer" Size="parent,parent-29"/>
 
 	<Box						ID="Main"						Anchor="C,C"									Size="1144,759"						Color="11,27,40,255">
 		<Grid															Anchor="C,C"									Size="parent+9,parent+9"	Style="WindowFrameTopOnly" />
@@ -145,18 +145,18 @@
 			<Image																Anchor="C,B"	Offset="0,2"		Size="parent,parent"				Texture="Controls_Gradient" Color="255,255,255,32">
 				<Grid			ID="StrategicGrid"											Offset="5,10"		Size="parent-10,32"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_STRATEGICS" />-->
-					<GridButton ID="StrategicCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_RESOURCECLASS_STRATEGIC_NAME" Size="130,25" Offset="5,0" Hidden="0"/>
-					<Stack	ID="StrategicResources"		Anchor="L,C"	Offset="150,0"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
+					<GridButton ID="StrategicCheckbox"	Anchor="L,C"	Style="CheckBoxControl" String="LOC_RESOURCECLASS_STRATEGIC_NAME" Size="130,25" Offset="5,0" Hidden="0"/>
+					<Stack		ID="StrategicResources"	Anchor="L,C"	Offset="150,0"	WrapWidth="1000"	WrapGrowth="Down"	StackGrowth="Right"	StackPadding="3"/>
 				</Grid>				
 				<Grid			ID="LuxuryGrid"													Offset="5,40"		Size="parent-10,32"					Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_LUXURIES" />-->
-					<GridButton ID="LuxuryCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_RESOURCECLASS_LUXURY_NAME" Size="130,25" Offset="5,0" Hidden="0"/>
-					<Stack	ID="LuxuryResources"			Anchor="L,C"	Offset="150,0"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
+					<GridButton ID="LuxuryCheckbox"		Anchor="L,C"	Style="CheckBoxControl" String="LOC_RESOURCECLASS_LUXURY_NAME" Size="130,25" Offset="5,0" Hidden="0"/>
+					<Stack		ID="LuxuryResources"	Anchor="L,C"	Offset="150,0"	WrapWidth="1000"	WrapGrowth="Down"	StackGrowth="Right"	StackPadding="3"/>
 				</Grid>
 				<Grid			ID="BonusGrid"													Offset="5,70"	Size="parent-10,32"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
 					<!--<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_BONUSES" />-->
-					<GridButton ID="BonusCheckbox" Anchor="L,C" Style="CheckBoxControl" String="LOC_RESOURCECLASS_BONUS_NAME" Size="130,25" Offset="5,0" Hidden="0"/>
-					<Stack	ID="BonusResources"				Anchor="L,C"	Offset="150,0"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
+					<GridButton ID="BonusCheckbox"		Anchor="L,C"	Style="CheckBoxControl" String="LOC_RESOURCECLASS_BONUS_NAME" Size="130,25" Offset="5,0" Hidden="0"/>
+					<Stack		ID="BonusResources"		Anchor="L,C"	Offset="150,0"	WrapWidth="1000"	WrapGrowth="Down"	StackGrowth="Right"	StackPadding="3"/>
 				</Grid>
 			</Image>
 		</Container>
@@ -706,6 +706,107 @@
 	</Instance>
 
 
+  <!-- GOSSIP -->
+  <Instance					Name="GossipHeaderInstance">
+    <Container			ID="Top"													Offset="8,0" Size="1010,22">
+      <Image																					Offset="4,0"	Size="parent-4,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+      <Stack	StackGrowth="Right" >
+        <Box																		Size="2,parent"	Color="46,70,95,255" />
+        <Container																	Size="60,parent">
+          <Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_TURN" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,128" />
+        <Container																	Size="60,parent">
+          <Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_GOSSIP_TYPE" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,128" />
+        <Container																	Size="60,parent">
+          <Label													Style="ReportHeaderSmallText"		String="LOC_HUD_REPORTS_LEADER" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,128" />
+        <Container																	Size="parent-190,parent">
+          <Label													Style="ReportHeaderSmallText"		String="LOC_REPORTS_NOTIFICATION_DESCRIPTION" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,255" />
+      </Stack>
+    </Container>
+  </Instance>
+
+  <Instance					Name="GossipEntryInstance">
+    <Container			ID="Top"														Offset="8,0" Size="1010,40">
+      <Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+      <Stack	StackGrowth="Right" >
+        <Box																		Size="2,parent"	Color="46,70,95,255" />
+        <Container																	Size="60,parent">
+          <Label				ID="Date"																	Style="ReportValueText"	String="$Name$" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,128" />
+        <Container																	Size="60,40">
+          <Image				ID="Icon"																	    Size="32,32" Offset="0,0" Anchor="C,C" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,128" />
+        <Container																	Size="60,40">
+          <MakeInstance Name="LeaderIcon32"                           ID="Leader" Offset="0,0" Anchor="C,C" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,128" />
+        <Container																	Size="parent-190,parent">
+          <Label				ID="Description"	Style="ReportValueText"	String="$Description$" WrapWidth="parent-10" Align="Left" Anchor="L,C" Offset="4,0" />
+        </Container>
+        <Box																		Size="2,parent"	Color="46,70,95,255" />
+      </Stack>
+    </Container>
+  </Instance>
+
+  <Instance					Name="GossipFilterInstance">
+    <Container			ID="Top"														Offset="8,0" Size="1010,69">
+      <Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+      <Stack	StackGrowth="Right" >
+        <Box																													Size="2,parent"	Color="46,70,95,255" />
+        <Container																			Offset="1,5"	Size="268,parent">
+          <PullDown ID="PlayerFilter" Offset="0,0" Size="268,62" AutoFlip="1" AutoSizePopup="1" ScrollThreshold="375" SpaceForScroll="0">
+            <ButtonData>
+              <GridButton  Size="325,62" Style="TabFont" TextAnchor="L,C" TextOffset="110,0" WrapWidth="200">
+                <Container Size="auto,auto" Anchor="L,C" Offset="10,-1">
+                  <MakeInstance Anchor="L,C" ID="LeaderIcon" Name="LeaderIcon45"/>
+                </Container>
+                <GridData Texture="Reports_DropDownControlLarge" StateOffsetIncrement="0,45"	SliceCorner="10,15" SliceTextureSize="45,45" />
+              </GridButton>
+            </ButtonData>
+            <GridData Offset="0,56" Texture="Controls_DropdownPanel" InnerPadding="3,6" SliceCorner="10,10" SliceTextureSize="22,22"/>
+            <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
+              <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="I,I"   />
+            </ScrollPanelData>
+            <StackData StackGrowth="Bottom" Anchor="L,T"/>
+            <InstanceData Name="InstanceOne">
+              <GridButton ID="Button" Size="536,62" Texture="Reports_ButtonControl" SliceCorner="12,6" SliceTextureSize="45,24"  StateOffsetIncrement="0,24" Style="TabFont" Anchor="L,T" FontStyle="glow">
+                <Container Size="auto,auto" Anchor="L,C" Offset="10,-1">
+                  <MakeInstance Anchor="L,C" ID="LeaderIcon" Name="LeaderIcon45"/>
+                </Container>
+              </GridButton>
+            </InstanceData>
+          </PullDown>
+        </Container>
+        <Container																			Offset="1,5"	Size="268,parent">
+          <PullDown ID="GroupFilter" Offset="0,0" AutoFlip="1" ScrollThreshold="375" Size="268,62" SpaceForScroll="0" AutoSizePopup="1">
+            <ButtonData>
+              <GridButton Size="325,62" Style="FontNormal14" FontStyle="glow" Color0="208,212,217,255" Color1="16,43,67,100">
+                <GridData Texture="Reports_DropDownControlLarge" StateOffsetIncrement="0,45"	SliceCorner="10,15" SliceTextureSize="45,45" />
+              </GridButton>
+            </ButtonData>
+            <GridData Offset="0,56" Texture="Controls_DropdownPanel" InnerPadding="3,6" SliceCorner="10,10" SliceTextureSize="22,22"/>
+            <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,550" AutoScrollBar="1" >
+              <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="I,I"   />
+            </ScrollPanelData>
+            <StackData StackGrowth="Bottom" Anchor="L,T"/>
+            <InstanceData Name="InstanceOne">
+              <GridButton ID="Button" Size="536,62" Texture="Reports_ButtonControl" SliceCorner="12,6" SliceTextureSize="45,24"  StateOffsetIncrement="0,24" Style="FontNormal14" FontStyle="glow" Color0="208,212,217,255"	String="LOC_HUD_REPORTS_FILTER_ALL" Color1="16,43,67,100"/>
+            </InstanceData>
+          </PullDown>
+        </Container>
+      </Stack>
+      <Box																													Anchor="R,C" Size="2,parent"	Color="46,70,95,255"/>
+    </Container>
+  </Instance>
 
 
 	<!-- CITY STATUS -->
