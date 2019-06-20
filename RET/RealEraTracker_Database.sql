@@ -7,7 +7,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MAJOR', '1');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '1');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '2');
 
 -- options
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', '0'); -- set to 1 to detect historic moments that other players earned 

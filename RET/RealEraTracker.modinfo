@@ -3,10 +3,10 @@
 	<Properties>
 		<Name>Real Era Tracker</Name>
 		<Teaser>Shows a list of historic moments not yet earned.</Teaser>
-		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Rise &amp; Fall[ENDCOLOR] or [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.1.1.</Description>
+		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Rise &amp; Fall[ENDCOLOR] or [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.2.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
-		<CompatibleVersions>2.0</CompatibleVersions>
+		<CompatibleVersions>1.2,2.0</CompatibleVersions>
 		<SubscriptionID>1699006932</SubscriptionID>
 	</Properties>
 	<ActionCriteria>
