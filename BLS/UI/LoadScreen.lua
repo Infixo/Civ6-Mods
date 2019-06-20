@@ -1,4 +1,4 @@
-print("Loading LoadScreen.lua from Better Loading Screen v1.5");
+print("Loading LoadScreen.lua from Better Loading Screen v1.6");
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.
@@ -62,6 +62,15 @@ function OnActivateButtonClicked()
 	end
 
     UI.SetExitOnClose(false);
+
+	-- In PlayByCloud, we should trigger another cloud notification check now.  
+	-- This will ensure the player gets a notification for the next cloud match so they can daisy chain all their turns quickly.
+	if(GameConfiguration.IsPlayByCloud()) then
+		local kandoConnected = FiraxisLive.IsFiraxisLiveLoggedIn();
+		if(kandoConnected) then
+			FiraxisLive.CheckForCloudNotifications();
+		end
+	end
 end
 
 -- ===========================================================================
@@ -178,15 +187,15 @@ function OnLoadScreenContentReady()
 	local primaryColor, secondaryColor  = UI.GetPlayerColors( localPlayer );
 
 	if primaryColor == nil then
-		primaryColor = 0xff99aaaa;
+		primaryColor = UI.GetColorValueFromHexLiteral(0xff99aaaa);
 		UI.DataError("NIL primary color; likely player object not ready... using default color.");
 	end
 	if secondaryColor == nil then
-		secondaryColor = 0xffaa9999;
+		secondaryColor = UI.GetColorValueFromHexLiteral(0xffaa9999);
 		UI.DataError("NIL secondary color; likely player object not ready... using default color.");
 	end
 
-	local backColor						= DarkenLightenColor(primaryColor, DARKEN_AMOUNT, 255);
+	local backColor						= UI.DarkenLightenColor(primaryColor, DARKEN_AMOUNT, 255);
 	Controls.Banner:SetColor(backColor);
 	
 	local playerConfig		:table = PlayerConfigurations[localPlayer];
@@ -423,7 +432,7 @@ end
 function OnLoadGameViewStateDone()
 	
 	m_isLoadComplete = true;	
-	--print("OnLoadGameViewStateDone");
+	print("OnLoadGameViewStateDone");
 	
 	UIManager:SetUICursor( 0 );	
 	
