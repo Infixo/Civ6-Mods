@@ -465,7 +465,11 @@ PageLayouts["Unit"] = function(page)
 			local chapter_body = {};
 			table.insert(chapter_body, sImpact);
 			table.insert(chapter_body, sToolTip);
-			if bOptionModifiers then AddChapter(Locale.Lookup(GameInfo.UnitAbilities[ability].Name), chapter_body); end
+			if bOptionModifiers then
+				local sAbilityName:string = GameInfo.UnitAbilities[ability].Name;
+				if sAbilityName == nil then sAbilityName = "LOC_"..ability.."_NAME"; end
+				AddChapter(Locale.Lookup(sAbilityName), chapter_body);
+			end
 		end
 	end
 	
@@ -751,11 +755,28 @@ function ShowPlotYields(page, sTable:string)
 	local sObjectType:string      = page.PageLayoutId.."Type";
 	local sObjectTag:string       = page.PageLayoutId.."Tag";
 	local chapter_body:table = {};
-
+	
 	for _,mod in ipairs(tPlotModifiers) do
+		--print("modifier is", mod.Mod.ModifierID);
+		
 		local function AddYieldChange(sPrefix:string)
-			table.insert(chapter_body, string.format(COLOR_GREY.."%s[ENDCOLOR]%+d %s "..COLOR_GREY.."(%s)", sPrefix, mod.Mod.Arguments.Amount, GameInfo.Yields[mod.Mod.Arguments.YieldType].IconString, mod.Mod.ModifierId));
+			-- 2019-06-20 GS introduced multiple yields in one modifier, separated with comma
+			local sYieldType:string, sAmount:string = mod.Mod.Arguments.YieldType..",", mod.Mod.Arguments.Amount..",";
+			while string.len(sYieldType) > 0 and string.len(sAmount) > 0 do
+				local iCommaYieldType:number = string.find(sYieldType, ",");
+				local iCommaAmount:number = string.find(sAmount, ",");
+				--print("repeat", sYieldType, iCommaYieldType, sAmount, iCommaAmount);
+				table.insert(chapter_body, string.format(COLOR_GREY.."%s[ENDCOLOR]%+d %s "..COLOR_GREY.."(%s)",
+					sPrefix,
+					tonumber(string.sub(sAmount, 1, iCommaAmount-1)),
+					GameInfo.Yields[ string.sub(sYieldType, 1, iCommaYieldType-1) ].IconString,
+					mod.Mod.ModifierId));
+				-- remove processed yield
+				sYieldType = string.sub(sYieldType, iCommaYieldType+1);
+				sAmount = string.sub(sAmount, iCommaAmount+1);
+			end
 		end
+		
 		if mod.Type == sObjectType and mod.Object == page.PageId then
 			AddYieldChange("");
 		elseif mod.Type == sObjectClassType and mod.Object == objectInfo[sObjectClassType] then
