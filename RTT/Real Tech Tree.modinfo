@@ -2,12 +2,13 @@
 <Mod id="08F3DDAD-42FF-3D72-2570-91D662B3326B" version="1">
   <Properties>
     <Name>Real Tech Tree</Name>
-    <Description>Improved Tech &amp; Civic Trees. More logical and based on reality connections.[NEWLINE][ICON_BULLET]Balanced beelining - techs and civics in the same Era have similar number of prereqs.[NEWLINE][ICON_BULLET]Eliminated dead-end techs which will cause AI to update its units.[NEWLINE][ICON_BULLET]Slightly decreased Eureka boosts for better game pace.[NEWLINE][NEWLINE]Works with vanilla, Rise &amp; Fall and Gathering Storm. Version 3.0.</Description>
+    <Description>Improved Tech &amp; Civic Trees. More logical and based on reality connections.[NEWLINE][ICON_BULLET]Balanced beelining - techs and civics in the same Era have similar number of prereqs.[NEWLINE][ICON_BULLET]Eliminated dead-end techs which will cause AI to update its units.[NEWLINE][ICON_BULLET]Slightly decreased Eureka boosts for better game pace.[NEWLINE][NEWLINE]Works with vanilla, Rise &amp; Fall and Gathering Storm. Version 3.1.</Description>
     <Teaser>Logical and based on reality connections. Balanced beelining.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-tech-tree.25911/</Homepage>
-    <AffectsSavedGames>0</AffectsSavedGames>
-    <CompatibleVersions>2.0</CompatibleVersions>
+    <AffectsSavedGames>1</AffectsSavedGames>
+    <CompatibleVersions>1.2,2.0</CompatibleVersions>
+	<SubscriptionID>871465857</SubscriptionID>
   </Properties>
   <ActionCriteria>
     <Criteria id="Expansion2">

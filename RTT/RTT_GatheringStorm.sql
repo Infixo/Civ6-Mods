@@ -3,6 +3,7 @@
 -- Future Era is not changed in both trees
 -- Author: Infixo
 -- 2019-02-15: Created
+-- 2019-06-24: June 2019 Patch changes
 --------------------------------------------------------------
 
 
@@ -34,3 +35,13 @@ UPDATE Civics SET UITreeRow = -2 WHERE CivicType = 'CIVIC_NEAR_FUTURE_GOVERNANCE
 
 INSERT INTO CivicPrereqs (Civic, PrereqCivic) VALUES
 ('CIVIC_ENVIRONMENTALISM', 'CIVIC_SPACE_RACE');
+
+
+-- 2019-06-24 June 2019 Patch changes
+
+DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_STIRRUPS' AND PrereqTech = 'TECH_ENGINEERING'; -- not needed
+DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_STIRRUPS' AND PrereqTech = 'TECH_MILITARY_TACTICS'; -- not needed
+INSERT INTO TechnologyPrereqs (Technology, PrereqTech) VALUES -- revert to the original prereq
+('TECH_STIRRUPS', 'TECH_HORSEBACK_RIDING');
+
+DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_CHEMISTRY' AND PrereqTech = 'TECH_STEAM_POWER'; -- not needed
