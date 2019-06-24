@@ -12,12 +12,13 @@
 -- 2018-03-26: Version 3.0, major updates to many upgrades, new file format (each building is changed separately)
 -- 2019-03-18: Version 3.3, mod restructured for better DLCs support
 -- 2019-04-05: Version 4.0, Gathering Storm buildings added
+-- 2019-06-24: Version 4.1, June 2019 Patch update
 --------------------------------------------------------------
 
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MAJOR', '4');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '0');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RBU_VERSION_MINOR', '1');
 
 
 -- Version 1.5 Fix for Apadana crash; 2018-03-05 no longer necessary (tested)
@@ -114,14 +115,14 @@ VALUES  -- generated from Excel
 ('FOOD_MARKET','PLASTICS',NULL,280,'NEIGHBORHOOD',2,'GENERIC'),
 ('ORDU','CONSTRUCTION',NULL,55,'ENCAMPMENT',1,'CONQUEST'),
 ('SHOPPING_MALL',NULL,'CULTURAL_HERITAGE',350,'NEIGHBORHOOD',2,'CULTURE'),
-('TSIKHE','BALLISTICS',NULL,200,'CITY_CENTER',1,'GENERIC'),
+('TSIKHE','BALLISTICS',NULL,130,'CITY_CENTER',1,'GENERIC'),
 -- Gathering Storm buildings
 ('COAL_POWER_PLANT','REPLACEABLE_PARTS',NULL,180,'INDUSTRIAL_ZONE',2,'GENERIC'), -- T2, 300
 ('FOSSIL_FUEL_POWER_PLANT','ADVANCED_BALLISTICS',NULL,340,'INDUSTRIAL_ZONE',3,'GENERIC'), -- T3, 450
 -- 'NUCLEAR_POWER_PLANT', 450 -- this is still POWER_PLANT -- T3, 600
 ('HYDROELECTRIC_DAM','COMPUTERS',NULL,435,'DAM',3,'GENERIC'), -- 580
 ('GRAND_BAZAAR','SCIENTIFIC_THEORY',NULL,130,'COMMERCIAL_HUB',0,'GENERIC'), -- T2, 220
-('THERMAL_BATH',NULL,'CONSERVATION',265,'ENTERTAINMENT_COMPLEX',2,'GENERIC'), -- T2, 445
+('THERMAL_BATH',NULL,'CONSERVATION',215,'ENTERTAINMENT_COMPLEX',2,'GENERIC'), -- T2, 445 -> 360
 ('MARAE',NULL,'RECORDED_HISTORY',70,'THEATER',0,'CULTURE'); -- T1, 150
 
 

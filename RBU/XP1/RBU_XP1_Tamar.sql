@@ -16,9 +16,9 @@ INSERT INTO BuildingReplaces (CivUniqueBuildingType, ReplacesBuildingType) VALUE
 UPDATE Buildings SET TraitType = 'TRAIT_CIVILIZATION_BUILDING_TSIKHE'
 WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
 
--- +1 Amenity & Housing, +25 Defense
+-- +1 Amenity & Housing, +50 Defense
 UPDATE Buildings
-SET PurchaseYield = NULL, OuterDefenseHitPoints = 25, OuterDefenseStrength = 1, Entertainment = 1, Housing = 1
+SET PurchaseYield = NULL, OuterDefenseHitPoints = 50, OuterDefenseStrength = 1, Entertainment = 1, Housing = 1
 WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
 
 -- +1 Faith

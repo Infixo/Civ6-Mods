@@ -2,13 +2,14 @@
 <Mod id="a768ead1-32b9-4da5-9b05-eb966364670b" version="1">
   <Properties>
     <Name>Real Building Upgrades</Name>
-    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 4.0.</Description>
+    <Description>Standard buildings can be upgraded to produce 50% more yields. Tier 2 buildings receive also new yields and Tier 3 buildings additional unique features.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 4.1.</Description>
     <Teaser>Standard buildings can be upgraded. Tier 2 buildings receive new yields and Tier 3 buildings unique features.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-building-upgrades.26031/</Homepage>
     <AffectsSavedGames>1</AffectsSavedGames>
     <SupportsMultiplayer>1</SupportsMultiplayer>
-	<CompatibleVersions>2.0</CompatibleVersions>
+	<CompatibleVersions>1.2,2.0</CompatibleVersions>
+	<SubscriptionID>888640113</SubscriptionID>
   </Properties>
   <ActionCriteria>
     <Criteria id="Expansion1">

@@ -34,9 +34,9 @@ INSERT INTO Building_TourismBombs_XP2 (BuildingType, TourismBombValue) VALUES
 ('BUILDING_FILM_STUDIO_UPGRADE',      450),
 ('BUILDING_AQUATICS_CENTER_UPGRADE',  450);
 
-UPDATE Buildings SET OuterDefenseHitPoints =  50 WHERE BuildingType = 'BUILDING_WALLS_UPGRADE';
-UPDATE Buildings SET OuterDefenseHitPoints =  50 WHERE BuildingType = 'BUILDING_CASTLE_UPGRADE';
-UPDATE Buildings SET OuterDefenseHitPoints =  50 WHERE BuildingType = 'BUILDING_STAR_FORT_UPGRADE';
+--UPDATE Buildings SET OuterDefenseHitPoints =  50 WHERE BuildingType = 'BUILDING_WALLS_UPGRADE';
+--UPDATE Buildings SET OuterDefenseHitPoints =  50 WHERE BuildingType = 'BUILDING_CASTLE_UPGRADE';
+--UPDATE Buildings SET OuterDefenseHitPoints =  50 WHERE BuildingType = 'BUILDING_STAR_FORT_UPGRADE';
 UPDATE Buildings SET OuterDefenseHitPoints = 100 WHERE BuildingType = 'BUILDING_TSIKHE_UPGRADE';
 
 
@@ -229,3 +229,39 @@ INSERT INTO Modifiers (ModifierId, ModifierType, RunOnce, Permanent, OwnerRequir
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('HYDROELECTRIC_DAM_UPGRADE_ADD_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
 ('HYDROELECTRIC_DAM_UPGRADE_ADD_PRODUCTION', 'Amount',    '1');
+
+
+--------------------------------------------------------------
+-- 2019-06-24 June 2019 Patch cost changes
+--------------------------------------------------------------
+
+-- defense 50%
+UPDATE Buildings SET Cost = 110 WHERE BuildingType = 'BUILDING_CASTLE_UPGRADE'; -- ->220
+UPDATE Buildings SET Cost = 150 WHERE BuildingType = 'BUILDING_STAR_FORT_UPGRADE'; -- ->300
+
+-- L1 45%
+UPDATE Buildings SET Cost = 170 WHERE BuildingType = 'BUILDING_HANGAR_UPGRADE'; -- ->380
+
+-- L2 60%
+UPDATE Buildings SET Cost = 200 WHERE BuildingType = 'BUILDING_FACTORY_UPGRADE'; -- ->330
+UPDATE Buildings SET Cost = 200 WHERE BuildingType = 'BUILDING_ELECTRONICS_FACTORY_UPGRADE'; -- ->330
+UPDATE Buildings SET Cost = 220 WHERE BuildingType = 'BUILDING_ZOO_UPGRADE'; -- ->360
+UPDATE Buildings SET Cost = 220 WHERE BuildingType = 'BUILDING_AQUARIUM_UPGRADE'; -- ->360
+UPDATE Buildings SET Cost = 230 WHERE BuildingType = 'BUILDING_FOOD_MARKET_UPGRADE'; -- ->380
+UPDATE Buildings SET Cost = 260 WHERE BuildingType = 'BUILDING_SHOPPING_MALL_UPGRADE'; -- ->440
+UPDATE Buildings SET Cost = 290 WHERE BuildingType = 'BUILDING_AIRPORT_UPGRADE'; -- ->480
+
+-- L3 75%
+UPDATE Buildings SET Cost = 250 WHERE BuildingType = 'BUILDING_MILITARY_ACADEMY_UPGRADE'; -- ->330
+UPDATE Buildings SET Cost = 250 WHERE BuildingType = 'BUILDING_STOCK_EXCHANGE_UPGRADE'; -- ->330
+UPDATE Buildings SET Cost = 330 WHERE BuildingType = 'BUILDING_BROADCAST_CENTER_UPGRADE'; -- ->440
+UPDATE Buildings SET Cost = 330 WHERE BuildingType = 'BUILDING_FILM_STUDIO_UPGRADE'; -- ->440
+UPDATE Buildings SET Cost = 330 WHERE BuildingType = 'BUILDING_RESEARCH_LAB_UPGRADE'; -- ->440
+UPDATE Buildings SET Cost = 330 WHERE BuildingType = 'BUILDING_SEAPORT_UPGRADE'; -- ->440
+UPDATE Buildings SET Cost = 360 WHERE BuildingType = 'BUILDING_STADIUM_UPGRADE'; -- ->480
+UPDATE Buildings SET Cost = 360 WHERE BuildingType = 'BUILDING_AQUATICS_CENTER_UPGRADE'; -- ->480
+UPDATE Buildings SET Cost = 270 WHERE BuildingType = 'BUILDING_FOSSIL_FUEL_POWER_PLANT_UPGRADE'; -- 450->360, 75%
+UPDATE Buildings SET Cost = 330 WHERE BuildingType = 'BUILDING_HYDROELECTRIC_DAM_UPGRADE'; -- 580->440, 75%
+UPDATE Buildings SET Cost = 360 WHERE BuildingType = 'BUILDING_POWER_PLANT_UPGRADE'; -- ->480
+
+
