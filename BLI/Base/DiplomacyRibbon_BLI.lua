@@ -9,6 +9,8 @@ include("DiplomacyRibbon");
 
 local BASE_ResetLeaders = ResetLeaders;
 local BASE_AddLeader = AddLeader;
+local BASE_ShowStats = ShowStats;
+local BASE_UpdateStatValues = UpdateStatValues;
 
 local tInstances:table = {};
 
@@ -24,28 +26,63 @@ end
 -- ===========================================================================
 --	Add a leader (from right to left)
 -- ===========================================================================
-function AddLeader(iconName : string, playerID : number, isUniqueLeader: boolean)
-	local leaderIcon, instance = BASE_AddLeader(iconName, playerID, isUniqueLeader);
-	tInstances[playerID] = instance;
-	RefreshScoreAndStrength(playerID);
-	return leaderIcon, instance;
+function AddLeader(iconName:string, playerID:number, kProps:table)
+	local leaderIcon, uiLeader = BASE_AddLeader(iconName, playerID, kProps);
+	tInstances[playerID] = uiLeader;
+	--RefreshScoreAndStrength(playerID);
+	return leaderIcon, uiLeader;
 end
 
-function RefreshScoreAndStrength(playerID:number)
-	local instance = tInstances[playerID];
-	if instance == nil then return; end
+
+-- ===========================================================================
+-- Need to override the mouse-over behavior
+function ShowStats( uiLeader:table )
+	local m_ribbonStats = Options.GetUserOption("Interface", "RibbonStats");
+	if 	m_ribbonStats == RibbonHUDStats.FOCUS then return; end -- DO NOT show on mouse-over
+	BASE_ShowStats(uiLeader);
+end
+
+
+-- ===========================================================================
+function UpdateStatValues( playerID:number, uiLeader:table )
+	local m_ribbonStats = Options.GetUserOption("Interface", "RibbonStats");
+	--print("UpdateStatValues", playerID, uiLeader, m_ribbonStats);
+	BASE_UpdateStatValues(playerID, uiLeader);
+	
 	local pPlayer:table = Players[playerID];
-    instance.TotScore:SetText( pPlayer:GetScore() );
-    instance.Strength:SetText( pPlayer:GetStats():GetMilitaryStrengthWithoutTreasury() );
-	instance[LeaderIcon.DATA_FIELD_CLASS]:UpdateAllToolTips(playerID);
+    uiLeader.TotScore:SetText( pPlayer:GetScore() );
+    uiLeader.Strength:SetText( pPlayer:GetStats():GetMilitaryStrengthWithoutTreasury() );
+	uiLeader[LeaderIcon.DATA_FIELD_CLASS]:UpdateAllToolTips(playerID);
+	
+	-- Show or hide all stats based on options.
+	if m_ribbonStats == RibbonHUDStats.SHOW then
+		if uiLeader.StatStack:IsHidden() or m_isIniting then
+			ShowStats( uiLeader );
+		end
+		uiLeader.StatStackBLI:SetHide(true); -- hide BLI stats
+	elseif m_ribbonStats == RibbonHUDStats.FOCUS then
+		HideStats( uiLeader ); -- hide main stack always
+		uiLeader.StatStackBLI:SetHide(false); -- show BLI stats
+	elseif m_ribbonStats == RibbonHUDStats.HIDE then
+		if uiLeader.StatStack:IsVisible() or m_isIniting then			
+			HideStats( uiLeader );
+		end
+		uiLeader.StatStackBLI:SetHide(true); -- hide BLI stats
+	end
+	
+end
+
+
+-- ===========================================================================
+function RefreshScoreAndStrength(playerID:number)
+	local uiLeader = tInstances[playerID];
+	if uiLeader == nil then return; end
+	UpdateStatValues(playerID, uiLeader);
 end
 
 function RefreshScoreAndStrengthForAll()
-	for playerID,instance in pairs(tInstances) do
-		local pPlayer:table = Players[playerID];
-		instance.TotScore:SetText( pPlayer:GetScore() );
-		instance.Strength:SetText( pPlayer:GetStats():GetMilitaryStrengthWithoutTreasury() );
-		instance[LeaderIcon.DATA_FIELD_CLASS]:UpdateAllToolTips(playerID);
+	for playerID,uiLeader in pairs(tInstances) do
+		UpdateStatValues(playerID, uiLeader);
 	end
 end
 

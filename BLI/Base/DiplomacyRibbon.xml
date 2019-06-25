@@ -1,63 +1,77 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Context>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
 
 	<Include File="LeaderIcon"/>
 
-  <AlphaAnim ID="ChatIndicatorWaitTimer" Cycle="Once" Speed="0.5" AlphaBegin="0.0" AlphaEnd="1.0" Stopped="1"/>	
-  <Container				ID="RibbonContainer" Size="auto,60" Anchor="R,T" Offset="0,27">
-		<Grid						ID="LeaderBG" Anchor="R,T" Size="10,100" Style="DropShadow2" Offset="-24,-16" Color="255,255,255,150" />
-    <Container			ID="ScrollContainer" Anchor="R,T" Size="10,86">
-      <ScrollPanel	ID="LeaderScroll" Size="parent,parent">
-        <Stack			ID="LeaderStack" Anchor="R,T" StackGrowth="Left" StackPadding="2" Offset="3,4"/>
-      </ScrollPanel>
-      <Image    ID="NextButtonContainer" Texture="ActionPanel_Badge" Offset="-32,-45" Size="40,37" Anchor="R,B" AnchorSide="O,O">
-        <Button ID="NextButton" Anchor="R,B" Offset="4,2" Style="ArrowButtonRight"/>
-      </Image>
-      <Container ID="PreviousButtonContainer" Offset="-32,-52" Size="40,37" Anchor="L,B" AnchorSide="O,O">
-        <Image Texture="DiploRibbon_Separator" Size="62,34" Offset="-22,-29"/>
-        <Image     Texture="ActionPanel_Badge" Size="40,37" FlipX="1">
-          <Button ID="PreviousButton" Anchor="L,B" Offset="4,2" Style="ArrowButtonLeft"/>
-        </Image>
-      </Container>
-    </Container>
-	  
-	  <Tutorial   			ID="TutDiploRibbon"	Style="TutorialContainer"	Offset="80,90" Anchor="R,T" TriggerBy="TutorialDiploRibbon">
-		  <SlideAnim				Anchor="R,T" Start="0,0"	EndOffset="0,-20" Cycle="Bounce" Function="OutQuad" >
-			  <Image				Offset="0,0"	Size="44,58"		Texture="Tutorial_ArrowV" FlipY="1" />
-		  </SlideAnim>
-	  </Tutorial>
-
-	  <Tutorial   			ID="TutSelectLeaderIcon"	Style="TutorialContainer"	Anchor="R,T" Offset="200,12"  TriggerBy="TutorialSelectLeaderIcon">
-		  <Grid						Style="TutorialEndTurnCalloutGrid">
-			  <Label				Style="TutorialEndTurnHeaderText"		String="LOC_META_158b_HEAD" />
-			  <Label				Style="TutorialEndTurnBodyText"			String="LOC_META_158b_BODY" />
-		  </Grid>
-		  <SlideAnim				Anchor="R,T" Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
-			  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" />
-		  </SlideAnim>
-	  </Tutorial>
-	  
-  </Container>
-
-  <!-- ==================================================================	-->
-  <!--	Instances															-->
-  <!-- ==================================================================	-->
-  <Instance Name="LeaderInstance">
-	<SlideAnim ID="LeaderContainer" Size="51,102" Offset="0,0" Begin="0,0" EndOffset="0,20" Cycle="Once" Stopped="1" ConsumeMouseOver="1">
-        <Grid Anchor="C,T" Offset="2,27" Size="45,65" Texture="Controls_TitleBarDark" SliceStart="0,20" SliceCorner="12,0" SliceSize="18,1" SliceTextureSize="42,14">
-			<Stack Anchor="C,T" Offset="0,30" StackGrowth="Bottom" StackPadding="3">
-				<Label  ID="TotScore"  Anchor="C,T" Color="White" Style="FontNormal12" String="score" />
-				<!--<Label  ID="NumTechs"  Anchor="L,B" Color="Science" Style="FontNormal12" String="techs" />-->
-				<Label  ID="Strength"  Anchor="C,T" Color="Military" Style="FontNormal12" String="milstr" />
-			</Stack>
-		</Grid>
-		<Container Anchor="C,T" Size="47,47">
-			<MakeInstance Name="LeaderIcon45"/>
+	<AlphaAnim ID="ChatIndicatorWaitTimer" Cycle="Once" Speed="0.5" AlphaBegin="0.0" AlphaEnd="1.0" Stopped="1"/>
+	<Container				ID="RibbonContainer" Size="auto,60" Anchor="R,T" Offset="0,27" >
+		<Container			ID="ScrollContainer" Anchor="R,T" Size="10,90" >
+			<ScrollPanel	ID="LeaderScroll" Size="parent,parent" >
+				<Stack			ID="LeaderStack" Anchor="R,T" StackGrowth="Left" StackPadding="0" Offset="3,4"/>
+			</ScrollPanel>
+			
+			<Image				ID="NextButtonContainer" Anchor="R,B" Offset="-12,-13" Size="40,37"  Texture="ActionPanel_Badge" >
+				<Button			ID="NextButton" Anchor="R,B" Offset="4,2" Style="ArrowButtonRight"/>
+			</Image>
+			<Container		ID="PreviousButtonContainer" Size="40,parent" Anchor="L,T" AnchorSide="O,I">
+				<Image																	 Size="62,34" Offset="8,2" Texture="DiploRibbon_Separator" />
+				<Image			ID="PreviousButtonBacking"	 Size="40,37" Anchor="L,B" Offset="29,-13" Texture="ActionPanel_Badge" FlipX="1">
+					<Button		ID="PreviousButton" Anchor="L,B" Offset="4,2" Style="ArrowButtonLeft" />
+				</Image>
+			</Container>
 		</Container>
-		<AlphaAnim ID="ChatIndicatorFade" Cycle="Once" AlphaBegin="0.0" AlphaEnd="1.0" Speed="3" Stopped="1">
-			<Image ID="ChatIndicator" Hidden="0" Offset="35,0" Size="22,22" Texture="DiploRibbon_TypingIndicator"/>
-		</AlphaAnim>
-	</SlideAnim>
-  </Instance>
+
+		<Tutorial   		ID="TutDiploRibbon"	Style="TutorialContainer"	Offset="80,90" Anchor="R,T" TriggerBy="TutorialDiploRibbon">
+			<SlideAnim		Anchor="R,T" Start="0,0"	EndOffset="0,-20" Cycle="Bounce" Function="OutQuad" >
+				<Image									 Size="44,58"		Texture="Tutorial_ArrowV" FlipY="1" />
+			</SlideAnim>
+		</Tutorial>
+
+		<Tutorial   		ID="TutSelectLeaderIcon"	Style="TutorialContainer"	Anchor="R,T" Offset="200,12"  TriggerBy="TutorialSelectLeaderIcon">
+			<Grid					Style="TutorialEndTurnCalloutGrid">
+				<Label			Style="TutorialEndTurnHeaderText"		String="LOC_META_158b_HEAD" />
+				<Label			Style="TutorialEndTurnBodyText"			String="LOC_META_158b_BODY" />
+			</Grid>
+			<SlideAnim		Anchor="R,T" Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
+				<Image									 Size="58,44"		Texture="Tutorial_ArrowH" />
+			</SlideAnim>
+		</Tutorial>
+	</Container>
+
+
+	<!-- ==== [ Instances	]================================================	-->
+
+	<Instance Name="LeaderInstance">
+		<Container				ID="LeaderContainer"									Size="63,auto" ConsumeMouseOver="1">
+			<Grid						ID="StatBacking"		Style="Subheader" Size="63,auto" Offset="0,-3" Color="HUDRIBBON_STATS_SHOW">
+				<SlideAnim		ID="ActiveSlide"											Size="63,auto" EndOffset="0,16" Speed="3" Cycle="Once" Stopped="1">
+					<AlphaAnim	ID="ActiveLeaderAndStats"							Size="10,10" AlphaBegin="0" AlphaEnd="1" Speed="2" Cycle="Once" Stopped="1">
+						<Box								Offset="2,4"								Size="parent,parent"	Color="128,128,0,128"  />
+						<Box								Offset="3,4"								Size="2,parent-2"			Color="128,128,0,200"  />
+						<Box								Offset="-1,4" Anchor="R,T"	Size="2,parent-2"			Color="128,128,0,200"  />
+					</AlphaAnim>
+					<Grid ID="StatStackBLI" Anchor="C,T" Offset="0,27" Size="45,65" Texture="Controls_TitleBarDark" SliceStart="0,20" SliceCorner="12,0" SliceSize="18,1" SliceTextureSize="42,14">
+						<Stack Anchor="C,T" Offset="0,30" StackGrowth="Bottom" StackPadding="3">
+							<Label  ID="TotScore"  Anchor="C,T" Color="White" Style="FontNormal12" String="score" />
+							<!--<Label  ID="NumTechs"  Anchor="L,B" Color="Science" Style="FontNormal12" String="techs" />-->
+							<Label  ID="Strength"  Anchor="C,T" Color="Military" Style="FontNormal12" String="milstr" />
+						</Stack>
+					</Grid>
+					<MakeInstance Name="LeaderIcon45" Anchor="C,T" Offset="0,1" />
+					<AlphaAnim ID="ChatIndicatorFade" Cycle="Once" AlphaBegin="0.0" AlphaEnd="1.0" Speed="3" Stopped="1">
+						<Image ID="ChatIndicator" Offset="35,0" Size="22,22" Texture="DiploRibbon_TypingIndicator"/>
+					</AlphaAnim>
+					<Stack			ID="StatStack" StackGrowth="Bottom" Offset="1,55" StackPadding="3" EndPadding="6" >
+						<Label		ID="Score"			Style="FontNormal14" FontStyle="shadow" Color0="255,200,0,255" Color2="180,130,200,255"		EffectColor="0,0,0,255" String="[ICON_Capital]-"	ToolTip="LOC_HUD_RIBBON_SCORE"		  />
+						<Label		ID="Military"		Style="FontNormal14" FontStyle="shadow" ColorSet="ResMilitaryLabelCS"	EffectColor="0,0,0,255" String="[ICON_Strength]-"	ToolTip="LOC_HUD_RIBBON_STRENGTH" />
+						<Label		ID="Science"		Style="FontNormal14" FontStyle="shadow" ColorSet="ResScienceLabelCS"	EffectColor="0,0,0,255" String="[ICON_Science]-"	ToolTip="LOC_HUD_RIBBON_SCIENCE"  />
+						<Label		ID="Culture"		Style="FontNormal14" FontStyle="shadow" ColorSet="ResCultureLabelCS"	EffectColor="0,0,0,255" String="[ICON_Culture]-"	ToolTip="LOC_HUD_RIBBON_CULTURE"  />
+						<Label		ID="Gold"				Style="FontNormal14" FontStyle="shadow" ColorSet="ResGoldLabelCS"			EffectColor="0,0,0,255" String="[ICON_Gold]-"			ToolTip="LOC_HUD_RIBBON_GOLD"     />
+						<Label		ID="Faith"			Style="FontNormal14" FontStyle="shadow" ColorSet="ResFaithLabelCS" 		EffectColor="0,0,0,255" String="[ICON_Faith]-"		ToolTip="LOC_HUD_RIBBON_FAITH"    />
+					</Stack>
+				</SlideAnim>
+			</Grid>
+		</Container>
+	</Instance>
   
 </Context>

@@ -10,8 +10,8 @@ include("DiplomacyRibbon_BLI");
 XP1_AddLeader = AddLeader;
 
 -- ===========================================================================
-function AddLeader(iconName : string, playerID : number, isUniqueLeader: boolean)
-	local leaderIcon, instance = XP1_AddLeader(iconName, playerID, isUniqueLeader);
+function AddLeader(iconName : string, playerID : number, kProps : table)	
+	local leaderIcon, instance = XP1_AddLeader(iconName, playerID, kProps);
 
 	-- Update relationship pip tool with details about our alliance if we're in one
 	--[[ Infixo: Don't do anything - the enhaced tooltip handles that
