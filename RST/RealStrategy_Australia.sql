@@ -16,18 +16,18 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('CurtinSettlement'),
-('CurtinDiplomacy'),
+--('CurtinDiplomacy'), -- 2019-06-25 Added in June 2019 Patch
 ('CurtinPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('CurtinSettlement',   'TRAIT_LEADER_CITADEL_CIVILIZATION', 'PlotEvaluations'),
-('CurtinDiplomacy',    'TRAIT_LEADER_CITADEL_CIVILIZATION', 'DiplomaticActions'),
+--('CurtinDiplomacy',    'TRAIT_LEADER_CITADEL_CIVILIZATION', 'DiplomaticActions'),
 ('CurtinPseudoYields', 'TRAIT_LEADER_CITADEL_CIVILIZATION', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CurtinSettlement', 'Coastal', 0, 10),
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_LIBERATION_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_PROTECTORATE_WAR', 1, 0),
 ('CurtinDiplomacy', 'DIPLOACTION_DECLARE_RECONQUEST_WAR', 1, 0),
-('CurtinDiplomacy', 'DIPLOACTION_LIBERATE_CITY', 1, 0),
+--('CurtinDiplomacy', 'DIPLOACTION_LIBERATE_CITY', 1, 0), -- 2019-06-25 Added in June 2019 Patch
 ('CurtinPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- outback station
 --('CurtinPseudoYields', 'PSEUDOYIELD_TOURISM', 1, 10),     -- 2019-04-04 Firaxis wants him more sciency
 ('CurtinPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15), -- 2019-04-04 Firaxis wants him more sciency
