@@ -32,12 +32,12 @@
 		<Text>+1 [ICON_Faith] Faith from unimproved Rainforest tiles.</Text>
 	</Replace>
 	<!--Pantheon - Amenity Bonuses-->
-	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Amenities] Amenity to cities with a Holy Site adjacent to a River. Plains and Grasslands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
+	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_EXPANSION2_DESCRIPTION" Language="en_US">
+		<Text>+2 [ICON_Amenities] Amenities and +2 [ICON_Housing] Housing to cities if they have a Holy Site district adjacent to a River. Plains and Grasslands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
 	<!--Pantheon - Gameplay Race Bonuses-->
-	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_DESCRIPTION" Language="en_US">
-		<Text>Additional +1 (+2 in Ancient Era) [ICON_GreatPerson] Great Person point(s) from Holy Site ([ICON_GreatProphet] Prophet), Campus ([ICON_GreatScientist] Scientist), and Theater Square ([ICON_GreatWriter] Writer) districts.</Text>
+	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_EXPANSION2_DESCRIPTION" Language="en_US">
+		<Text>+1 [ICON_GreatPerson] Great Person Points from Holy Sites (Prophet), Campuses with a Library (Scientist), and Theater Squares with an Amphitheater (Writer).[NEWLINE]Additional +1 [ICON_GreatPerson] Great Person Points from Holy Sites (Prophet), Campuses (Scientist), and Theater Squares (Writer) in Ancient Era.</Text>
 	</Replace>
 	<!--Pantheon - Local Resource Bonuses-->
 	<Replace Tag="LOC_BELIEF_GOD_OF_THE_SEA_DESCRIPTION" Language="en_US">
@@ -46,8 +46,8 @@
 	<Replace Tag="LOC_BELIEF_GOD_OF_THE_OPEN_SKY_DESCRIPTION" Language="en_US">
 		<Text>+1 [ICON_Culture] Culture from Pastures.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Culture] Culture from resources valid for Pastures when unimproved.</Text>
 	</Replace>
-	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_DESCRIPTION" Language="en_US">
-		<Text>+2 [ICON_Food] Food from Camps.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Food] Food from resources valid for Camps when unimproved.</Text>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_EXPANSION2_DESCRIPTION" Language="en_US">
+		<Text>+1 [ICON_Food] Food and +1 [ICON_Production] Production from Camps.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Food] Food and +1 [ICON_Production] Production from resources valid for Camps when unimproved.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_STONE_CIRCLES_DESCRIPTION" Language="en_US">
 		<Text>+2 [ICON_Faith] Faith from Quarries.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from resources valid for Quarries when unimproved.</Text>
@@ -55,26 +55,37 @@
 	<Replace Tag="LOC_BELIEF_RELIGIOUS_IDOLS_DESCRIPTION" Language="en_US">
 		<Text>+2 [ICON_Faith] Faith from Mines over Luxury and Bonus resources.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from Luxury and Bonus resources valid for Mines when unimproved.</Text>
 	</Replace>
-	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Production] Production from Mines over Strategic resources and Lumber Mills.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from unimproved Woods adjacent to City Center.</Text>
+	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_EXPANSION2_DESCRIPTION" Language="en_US">
+		<Text>+1 [ICON_Production] Production and +1 [ICON_Faith] Faith from improved Strategic resources.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from unimproved Woods adjacent to City Center.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_FESTIVALS_EXPANSION2_DESCRIPTION" Language="en_US">
+		<Text>+1 [ICON_Culture] Culture from Plantations.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Culture] Culture from resources valid for Plantations when unimproved.</Text>
 	</Replace>
 	<!--Pantheon - General Purpose-->
-	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="en_US">
-		<Text>City growth rate is 20% higher. +1 [ICON_Food] Food from Palace.</Text>
+	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_EXPANSION2_DESCRIPTION" Language="en_US">
+		<Text>When chosen receive a Builder in your capital. City growth rate is 20% higher. +1 [ICON_Food] Food from Palace.</Text>
 	</Replace>
+	<!-- 2019-06-29 Not needed after June Patch
 	<Replace Tag="LOC_BELIEF_RELIGIOUS_SETTLEMENTS_DESCRIPTION" Language="en_US">
 		<Text>Border expansion rate is 20% higher. +1 [ICON_Culture] Culture from Palace.</Text>
 	</Replace>
+	-->
+	<!-- 2019-06-29 Removed in June Patch
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HARVEST_DESCRIPTION" Language="en_US">
 		<Text>Harvesting a resource or removing a feature receives [ICON_Faith] Faith equal to 50% of the other yield's quantity.</Text>
 	</Replace>
+	-->
 	<Replace Tag="LOC_BELIEF_CITY_PATRON_GODDESS_DESCRIPTION" Language="en_US">
 		<Text>+25% [ICON_Production] Production toward districts and +2 [ICON_Production] Production toward buildings in cities without a specialty district.</Text>
 	</Replace>
-	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_DESCRIPTION" Language="en_US">
+	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_EXPANSION2_DESCRIPTION" Language="en_US">
 		<Text>Hills that have no District, Improvement, Woods, Rainforest nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
-
+	<!-- TODO
+		<Row Tag="LOC_BELIEF_INITIATION_RITES_EXPANSION2_DESCRIPTION">
+			<Text>+50 [ICON_Faith] Faith for each Barbarian Outpost cleared. The unit that cleared the Barbarian Outpost heals +100 HP.</Text>
+		</Row>
+	-->
 </LocalizedText>
 
 </GameData>
