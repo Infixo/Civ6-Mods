@@ -4174,13 +4174,14 @@ end
 
 
 function ViewPolicyPage()
-
+	--print("FUN ViewPolicyPage");
 	ResetTabForNewPageContent();
 
 	-- fill
 	--for iUnitGroup, kUnitGroup in spairs( m_kUnitDataReport, function( t, a, b ) return t[b].ID > t[a].ID end ) do
 	--for policyGroup,policies in pairs(m_kPolicyData) do
 	for policyGroup,policies in spairs( m_kPolicyData, function(t,a,b) return tPolicyOrder[a] < tPolicyOrder[b]; end ) do -- simple sort by group code name
+		--print("PolicyGroup:", policyGroup);
 		local instance : table = NewCollapsibleGroupInstance()
 		
 		instance.RowHeaderButton:SetText( tPolicyGroupNames[policyGroup] );
@@ -4201,7 +4202,8 @@ function ViewPolicyPage()
 		-- fill a single group
 		--for _,policy in ipairs(policies) do
 		for _,policy in spairs( policies, function(t,a,b) return t[a].Name < t[b].Name; end ) do -- sort by name
-		
+			--print("Policy:", policy.Name);
+			--dshowtable(policy);
 			--FILTERS
 			if (not Controls.HideInactivePoliciesCheckbox:IsSelected() or policy.IsActive) and
 				(not Controls.HideNoImpactPoliciesCheckbox:IsSelected() or policy.IsImpact) then
@@ -4219,23 +4221,29 @@ function ViewPolicyPage()
 			local sStatusToolTip:string = "Id "..tostring(policy.Index);
 			if policy.IsActive then sStatusText = "[ICON_CheckSuccess]"; sStatusToolTip = sStatusToolTip.." Active policy";
 			else                    sStatusText = "[ICON_CheckFail]";    sStatusToolTip = sStatusToolTip.." Inactive policy (obsolete or not yet unlocked)"; end
+			--print("...status", sStatusText);
 			pPolicyInstance.PolicyEntryStatus:SetText(sStatusText);
 			--pPolicyInstance.PolicyEntryStatus:SetToolTipString(sStatusToolTip);
 			
 			-- name with description
 			local sPolicyName:string = policy.Name;
 			if policy.IsSlotted then sPolicyName = "[ICON_Checkmark]"..sPolicyName; end
+			--print("...description", policy.Description);
 			TruncateString(pPolicyInstance.PolicyEntryName, 278, sPolicyName); -- [ICON_Checkmark] [ICON_CheckSuccess] [ICON_CheckFail] [ICON_CheckmarkBlue]
 			pPolicyInstance.PolicyEntryName:SetToolTipString(policy.Description);
 			
 			-- impact with modifiers
 			local sPolicyImpact:string = ( policy.Impact == "" and "[ICON_CheckmarkBlue]" ) or policy.Impact;
 			if policy.UnknownEffect then sPolicyImpact = sPolicyImpact.." [COLOR_Red]!"; end
+			--print("...impact", sPolicyImpact);
 			TruncateString(pPolicyInstance.PolicyEntryImpact, 218, sPolicyImpact);
+			--print("...tooltip", sStatusToolTip, policy.ImpactToolTip);
+			--print("...tooltip", sStatusToolTip..TOOLTIP_SEP_NEWLINE..policy.ImpactToolTip);
 			if bOptionModifiers then pPolicyInstance.PolicyEntryImpact:SetToolTipString(sStatusToolTip..TOOLTIP_SEP_NEWLINE..policy.ImpactToolTip); end
-			
+			--print("Yields:");
 			-- fill out yields
 			for yield,value in pairs(policy.Yields) do
+				--print("...yield,value", yield, value);
 				if value ~= 0 then pPolicyInstance["PolicyEntryYield"..yield]:SetText(toPlusMinusNoneString(value)); end
 			end
 			
