@@ -1023,7 +1023,7 @@ INSERT INTO Modifiers(ModifierId, ModifierType, SubjectRequirementSetId) VALUES
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('DIVINE_SPARK_CAMPUS_MODIFIER', 'GreatPersonClassType', 'GREAT_PERSON_CLASS_SCIENTIST'),
-('DIVINE_SPARK_CAMPUS_MODIFIER', 'Amount', '1');
+('DIVINE_SPARK_CAMPUS_MODIFIER', 'Amount', '1'),
 ('DIVINE_SPARK_THEATER_MODIFIER', 'GreatPersonClassType', 'GREAT_PERSON_CLASS_WRITER'),
 ('DIVINE_SPARK_THEATER_MODIFIER', 'Amount', '1');
 
@@ -1034,24 +1034,8 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- +50 Faith for each Barbarian Outpost cleared. The unit that cleared the Barbarian Outpost heals +100 HP.
 -- In Base game only INITIATION_RITES_FAITH_DISPERSAL (INITIATION_RITES_FAITH_DISPERSAL_MODIFIER) is used
 -- XP2 adds INITIATION_RITES_HEALING_DISPERSAL which seems to break the scoring
+-- Both are BROKEN - entire Pantheon to be removed
 
-
--- Remove the broken modifier (?)
-DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_INITIATION_RITES' AND ModifierId = 'INITIATION_RITES_HEALING_DISPERSAL';
-
-
-/*		
-		<Row>
-			<PolicyType>POLICY_DISCIPLINE</PolicyType>
-			<ModifierId>DISCIPLINE_BARBARIANCOMBAT</ModifierId>
-		</Row>
-		<Row>
-			<ModifierId>DISCIPLINE_BARBARIANCOMBAT</ModifierId>
-			<ModifierType>MODIFIER_PLAYER_UNITS_ADJUST_BARBARIAN_COMBAT</ModifierType>
-		</Row>
-		<Row>
-			<ModifierId>DISCIPLINE_BARBARIANCOMBAT</ModifierId>
-			<Name>Amount</Name>
-			<Value>5</Value>
-		</Row>
-*/
+DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_INITIATION_RITES';
+DELETE FROM Beliefs WHERE BeliefType = 'BELIEF_INITIATION_RITES';
+DELETE FROM Types WHERE Type = 'BELIEF_INITIATION_RITES';
