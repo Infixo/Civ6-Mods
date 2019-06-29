@@ -331,6 +331,7 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('REQUIREMENTS_EARTH_GODDESS_FAITH', 'REQUIRES_PLOT_HAS_NO_FISSURE');
 
 
+/* 2019-06-29 After the June Patch I am having CTDs from UI text boxes (modifier strings too long?)
 
 --------------------------------------------------------------
 -- BELIEF_RIVER_GODDESS
@@ -398,6 +399,8 @@ INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES 
 -- doesn't work
 --INSERT INTO Requirements (RequirementId, RequirementType, Inverse) VALUES
 --('REQUIRES_PLOT_HAS_NO_RESOURCE', 'REQUIREMENT_PLOT_HAS_ANY_RESOURCE', 1);
+
+*/
 
 
 

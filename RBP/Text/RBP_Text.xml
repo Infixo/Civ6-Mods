@@ -32,9 +32,11 @@
 		<Text>+1 [ICON_Faith] Faith from unimproved Rainforest tiles.</Text>
 	</Replace>
 	<!--Pantheon - Amenity Bonuses-->
+	<!-- 2019-06-29 not used
 	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_EXPANSION2_DESCRIPTION" Language="en_US">
 		<Text>+2 [ICON_Amenities] Amenities and +2 [ICON_Housing] Housing to cities if they have a Holy Site district adjacent to a River. Plains and Grasslands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
+	-->
 	<!--Pantheon - Gameplay Race Bonuses-->
 	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_EXPANSION2_DESCRIPTION" Language="en_US">
 		<Text>+1 [ICON_GreatPerson] Great Person Points from Holy Sites (Prophet), Campuses with a Library (Scientist), and Theater Squares with an Amphitheater (Writer).[NEWLINE]Additional +1 [ICON_GreatPerson] Great Person Points from Holy Sites (Prophet), Campuses (Scientist), and Theater Squares (Writer) in Ancient Era.</Text>
@@ -81,11 +83,6 @@
 	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_EXPANSION2_DESCRIPTION" Language="en_US">
 		<Text>Hills that have no District, Improvement, Woods, Rainforest nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
-	<!-- TODO
-		<Row Tag="LOC_BELIEF_INITIATION_RITES_EXPANSION2_DESCRIPTION">
-			<Text>+50 [ICON_Faith] Faith for each Barbarian Outpost cleared. The unit that cleared the Barbarian Outpost heals +100 HP.</Text>
-		</Row>
-	-->
 </LocalizedText>
 
 </GameData>
