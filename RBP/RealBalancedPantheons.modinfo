@@ -23,13 +23,13 @@
     <UpdateText id="RBP_Text">
       <Properties><LoadOrder>210</LoadOrder></Properties>
       <File>Text/RBP_Text.xml</File>
-      <!--<File>Text/RBP_Text_ru_RU.xml</File>-->
+      <File>Text/RBP_Text_ru_RU.xml</File>
     </UpdateText>
   </InGameActions>
   <Files>
     <File>RealBalancedPantheons.sql</File>
     <File>RealBalancedPantheons_Icons.xml</File>
     <File>Text/RBP_Text.xml</File>
-    <!--<File>Text/RBP_Text_ru_RU.xml</File>-->
+    <File>Text/RBP_Text_ru_RU.xml</File>
   </Files>
 </Mod>

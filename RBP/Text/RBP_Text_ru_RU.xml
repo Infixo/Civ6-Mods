@@ -2,8 +2,8 @@
 <!--
 -- Real Balanced Pantheons
 -- Author: Infixo
--- 2019-04-07: Created
 -- 2019-04-18: Russian localization by MiAMi
+-- 2019-06-29: Updated for June Patch
 -->
 <GameData>
 
@@ -14,7 +14,7 @@
 		<Text>Бог солнца</Text>
 	</Row>
 	<Row Tag="LOC_BELIEF_SUN_GOD_DESCRIPTION" Language="ru_RU">
-		<Text>+2 [ICON_Faith] веры от ферм на ресурсах.[NEWLINE]Дополнительно, в эпоху древнего мира: +2 [ICON_Faith] веры от ресурсов, улучшаемых фермой.</Text>
+		<Text>+2 [ICON_Faith] веры от ферм на ресурсах.[NEWLINE]Дополнительно, в эпоху древнего мира: +2 [ICON_Faith] веры от соответствующих ресурсов до постройки на них фермы.</Text>
 	</Row>
 	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_NAME" Language="ru_RU">
 		<Text>Единение с природой</Text>
@@ -33,49 +33,57 @@
 		<Text>+1 [ICON_Faith] веры от клеток тропического леса без улучшений.</Text>
 	</Replace>
 	<!--Pantheon - Amenity Bonuses-->
-	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_DESCRIPTION" Language="ru_RU">
-		<Text>+1 [ICON_Amenities] довольства в городах со священным местом у реки. Клетки лугов и равнин у реки, не имеющие особенностей, дают +1 [ICON_Faith] веры.</Text>
+	<!-- 2019-06-29 not used
+	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>+2 [ICON_Amenities] Amenities and +2 [ICON_Housing] Housing to cities if they have a Holy Site district adjacent to a River. Plains and Grasslands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
+	-->
 	<!--Pantheon - Gameplay Race Bonuses-->
-	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_DESCRIPTION" Language="ru_RU">
-		<Text>Дополнительно +1 (+2 в эпоху Древнего мира) [ICON_GreatPerson] очко великого человека для священного места ([ICON_GreatProphet] пророк), кампуса ([ICON_GreatScientist] ученый), и театральной площади ([ICON_GreatWriter] писатель).</Text>
+	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>+1 [ICON_GreatPerson] очко великого человека для священного места ([ICON_GreatProphet] пророк), кампуса ([ICON_GreatScientist] ученый), и театральной площади ([ICON_GreatWriter] писатель) в эпоху Древнего мира.</Text>
 	</Replace>
 	<!--Pantheon - Local Resource Bonuses-->
 	<Replace Tag="LOC_BELIEF_GOD_OF_THE_SEA_DESCRIPTION" Language="ru_RU">
-		<Text>+1 [ICON_Production] производства от рыбацких лодок. В прибрежных городах рост населения и скорость расширения границ увеличены на 10%.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Production] производства от ресурсов, улучшаемых рыбацкой лодкой.</Text>
+		<Text>+1 [ICON_Production] производства от рыбацких лодок. В прибрежных городах рост населения и скорость расширения границ увеличены на 10%.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Production] производства от соответствующих ресурсов до постройки на них рыбацкой лодки.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GOD_OF_THE_OPEN_SKY_DESCRIPTION" Language="ru_RU">
-		<Text>+1 [ICON_Culture] культуры от пастбищ.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Culture] культуры от ресурсов, улучшаемых пастбищем.</Text>
+		<Text>+1 [ICON_Culture] культуры от пастбищ.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Culture] культуры от соответствующих ресурсов до постройки на них пастбища.</Text>
 	</Replace>
-	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_DESCRIPTION" Language="ru_RU">
-		<Text>+2 [ICON_Food] пищи от лагерей.[NEWLINE]Дополнительно в эпоху древнего мира: +2 [ICON_Food] пищи от ресурсов, улучшаемых лагерем.</Text>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>+1 [ICON_Food] пищи and +1 [ICON_Production] производства от лагерей.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Food] пищи и +1 [ICON_Production] производства от соответствующих ресурсов до постройки на них лагеря.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_STONE_CIRCLES_DESCRIPTION" Language="ru_RU">
-		<Text>+2 [ICON_Faith] веры от каменоломен.[NEWLINE]Дополнительно в эпоху древнего мира: +2 [ICON_Faith] веры от ресурсов, улучшаемых каменоломней.</Text>
+		<Text>+2 [ICON_Faith] веры от каменоломен.[NEWLINE]Дополнительно в эпоху древнего мира: +2 [ICON_Faith] веры от соответствующих ресурсов до постройки на них каменоломни.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_RELIGIOUS_IDOLS_DESCRIPTION" Language="ru_RU">
-		<Text>+2 [ICON_Faith] веры от рудников на бонусных и редких ресурсах.[NEWLINE]Дополнительно в эпоху древнего мира: +2 [ICON_Faith] веры от бонусных и редких ресурсов, улучшаемых рудником.</Text>
+		<Text>+2 [ICON_Faith] веры от рудников на бонусных и редких ресурсах.[NEWLINE]Дополнительно в эпоху древнего мира: +2 [ICON_Faith] веры от соответствующих бонусных и редких ресурсов до постройки на них рудника.</Text>
 	</Replace>
-	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_DESCRIPTION" Language="ru_RU">
-		<Text>+1 [ICON_Production] производства от рудников на стратегических ресурсах и лесопилок.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Production] производства клеток леса, примыкающих к городскому центру.</Text>
+	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>+1 [ICON_Production] производства and +1 [ICON_Faith] веры от улучшений на стратегических ресурсах.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Production] производства от девственных лесов, примыкающих к городскому центру.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_FESTIVALS_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>+1 [ICON_Culture] культуры от плантаций.[NEWLINE]Дополнительно в эпоху древнего мира: +1 [ICON_Culture] культуры от соответствующих ресурсов до постройки на них плантаций.</Text>
 	</Replace>
 	<!--Pantheon - General Purpose-->
-	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_DESCRIPTION" Language="ru_RU">
-		<Text>Город растет на 20% быстрее. +1 [ICON_Food] пищи от дворца.</Text>
+	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>Дает юнит строителей в вашей столице. Города растут на 20% быстрее. +1 [ICON_Food] пищи от дворца.</Text>
 	</Replace>
+	<!-- 2019-06-29 Not needed after June Patch
 	<Replace Tag="LOC_BELIEF_RELIGIOUS_SETTLEMENTS_DESCRIPTION" Language="ru_RU">
-		<Text>Границы расширяются на 20% быстрее. +1 [ICON_Culture] культуры от дворца.</Text>
+		<Text>Border expansion rate is 20% higher. +1 [ICON_Culture] Culture from Palace.</Text>
 	</Replace>
+	-->
+	<!-- 2019-06-29 Removed in June Patch
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HARVEST_DESCRIPTION" Language="ru_RU">
-		<Text>Сбор ресурса или удаление особенности дает [ICON_Faith] веру, равную 50% от полученного дохода.</Text>
+		<Text>Harvesting a resource or removing a feature receives [ICON_Faith] Faith equal to 50% of the other yield's quantity.</Text>
 	</Replace>
+	-->
 	<Replace Tag="LOC_BELIEF_CITY_PATRON_GODDESS_DESCRIPTION" Language="ru_RU">
-		<Text>+25% [ICON_Production] производства при строительстве районов и +2 [ICON_Production] производства при строительстве зданий в городах без специализированных районов.</Text>
+		<Text>+25% [ICON_Production] производства при строительстве районов и +2 [ICON_Production] производства при строительстве зданий в городах без специализированных раонов.</Text>
 	</Replace>
-	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_DESCRIPTION" Language="ru_RU">
-		<Text>Холмы, не имеющие районов, улучшений или особенностей, дают +1 [ICON_Faith] веры.</Text>
+	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_EXPANSION2_DESCRIPTION" Language="ru_RU">
+		<Text>Холмы без районов, улучшений, лесов, тропических лесов или геотермальных источников дают +1 [ICON_Faith] веры.</Text>
 	</Replace>
-
 </LocalizedText>
 
 </GameData>
