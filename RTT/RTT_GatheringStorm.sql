@@ -13,12 +13,14 @@
 UPDATE Technologies SET UITreeRow = 4 WHERE TechnologyType = 'TECH_REFINING';
 
 DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_SQUARE_RIGGING' AND PrereqTech = 'TECH_MASS_PRODUCTION'; -- removed for balance purposes (Buttress)
+DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_INDUSTRIALIZATION' AND PrereqTech = 'TECH_SQUARE_RIGGING'; -- 2019-07-15 Revert the vanilla connection
 DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_NUCLEAR_FUSION' AND PrereqTech = 'TECH_NUCLEAR_FISSION'; -- added via TECH_COMPOSITES
 DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_FUTURE_TECH' AND PrereqTech = 'TECH_STEALTH_TECHNOLOGY'; -- not needed
 DELETE FROM TechnologyPrereqs WHERE Technology = 'TECH_FUTURE_TECH' AND PrereqTech = 'TECH_TELECOMMUNICATIONS'; -- not needed
 
 INSERT INTO TechnologyPrereqs (Technology, PrereqTech) VALUES
 ('TECH_BUTTRESS', 'TECH_THE_WHEEL'),
+('TECH_INDUSTRIALIZATION', 'TECH_MASS_PRODUCTION'), -- 2019-07-15 Revert the vanilla connection
 ('TECH_REFINING', 'TECH_INDUSTRIALIZATION'),
 ('TECH_ROBOTICS', 'TECH_TELECOMMUNICATIONS'),
 ('TECH_NUCLEAR_FUSION', 'TECH_COMPOSITES'),
