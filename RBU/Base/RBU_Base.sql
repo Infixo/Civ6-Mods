@@ -150,7 +150,7 @@ WHERE BuildingType = 'BUILDING_SEWER_UPGRADE';
 -- WALLS / CASTLE / STAR_FORT (exceptions!)
 
 -- +1 Housing, +50 HP
-UPDATE Buildings SET PurchaseYield = NULL, OuterDefenseHitPoints = 50, OuterDefenseStrength = 2, Housing = 1
+UPDATE Buildings SET PurchaseYield = NULL, OuterDefenseHitPoints = 50, OuterDefenseStrength = 1, Housing = 1
 WHERE BuildingType IN ('BUILDING_CASTLE_UPGRADE', 'BUILDING_STAR_FORT_UPGRADE', 'BUILDING_WALLS_UPGRADE');
 
 
