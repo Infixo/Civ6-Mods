@@ -235,6 +235,11 @@ PageLayouts["Building"] = function(page)
 	-- additional info not shown in original pedia
 	local tMoreInfo:table = {};
 
+	-- 2019-07-15 OuterDefenseStrength
+	if building.OuterDefenseStrength > 0 then
+		table.insert(tMoreInfo, string.format("%s [ICON_Strength] %+d", Locale.Lookup("LOC_COMBAT_PREVIEW_BASE_STRENGTH"), building.OuterDefenseStrength));
+	end
+	
 	-- Regional Range
 	if building.RegionalRange > 0 then
 		table.insert(tMoreInfo, string.format("%s [ICON_Ranged] %d", Locale.Lookup("LOC_UI_PEDIA_RANGE"), building.RegionalRange));
