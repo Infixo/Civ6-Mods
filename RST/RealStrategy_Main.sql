@@ -13,37 +13,51 @@
 -- 2018-12-22 PlotEvaluations
 
 DELETE FROM AiFavoredItems WHERE ListType = 'StandardSettlePlot';
-INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
-('StandardSettlePlot', 'Foreign Continent', 0, -4, NULL), -- def
-('StandardSettlePlot', 'Nearest Friendly City', 0, -8, NULL), -- def, be careful - expansion gives +3, naval +2/4
-('StandardSettlePlot', 'Fresh Water', 0, 20, NULL), -- +7
-('StandardSettlePlot', 'Coastal', 0, 6, NULL), -- -2
-('StandardSettlePlot', 'Total Yield', 0, 1, 'YIELD_PRODUCTION'), -- def
-('StandardSettlePlot', 'Inner Ring Yield', 0, 1, 'YIELD_FOOD'), -- def
-('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_PRODUCTION'), -- def
-('StandardSettlePlot', 'Inner Ring Yield', 0, 1, 'YIELD_GOLD'), -- new
-('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_SCIENCE'), -- new
-('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_CULTURE'), -- new
-('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_FAITH'), -- new
-('StandardSettlePlot', 'New Resources', 0, 6, NULL), -- +2
-('StandardSettlePlot', 'Resource Class', 0, 2, 'RESOURCECLASS_BONUS'), -- new
-('StandardSettlePlot', 'Resource Class', 0, 3, 'RESOURCECLASS_LUXURY'), -- +1
-('StandardSettlePlot', 'Resource Class', 0, 4, 'RESOURCECLASS_STRATEGIC'), -- +2
-('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_HORSES'), -- -1
-('StandardSettlePlot', 'Specific Resource', 0, 4, 'RESOURCE_IRON'), -- -1
-('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_NITER'), -- def
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal, TooltipString) VALUES
+('StandardSettlePlot', 'Foreign Continent', 0, -4, NULL, 'LOC_SETTLEMENT_RECOMMENDATION_FOREIGN_CONTINENT'), -- -2
+('StandardSettlePlot', 'Nearest Friendly City', 0, -8, NULL, 'LOC_SETTLEMENT_RECOMMENDATION_NEAREST_CITY'), -- -10, be careful - expansion gives +3, naval +2/4
+('StandardSettlePlot', 'Fresh Water', 0, 20, NULL, 'LOC_SETTLEMENT_RECOMMENDATION_FRESH_WATER'), -- def
+('StandardSettlePlot', 'Coastal', 0, 8, NULL, 'LOC_SETTLEMENT_RECOMMENDATION_COAST'), -- 12
+('StandardSettlePlot', 'Total Yield', 0, 1, 'YIELD_PRODUCTION', 'LOC_SETTLEMENT_RECOMMENDATION_TOTAL_YIELD'), -- 2
+('StandardSettlePlot', 'Inner Ring Yield', 0, 1, 'YIELD_FOOD',    'LOC_SETTLEMENT_RECOMMENDATION_INNER_YIELD'), -- 1
+('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_PRODUCTION', 'LOC_SETTLEMENT_RECOMMENDATION_INNER_YIELD'), -- def
+('StandardSettlePlot', 'Inner Ring Yield', 0, 1, 'YIELD_GOLD',    'LOC_SETTLEMENT_RECOMMENDATION_INNER_YIELD'), -- new
+('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_SCIENCE', 'LOC_SETTLEMENT_RECOMMENDATION_INNER_YIELD'), -- 1
+('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_CULTURE', 'LOC_SETTLEMENT_RECOMMENDATION_INNER_YIELD'), -- 1
+('StandardSettlePlot', 'Inner Ring Yield', 0, 2, 'YIELD_FAITH',   'LOC_SETTLEMENT_RECOMMENDATION_INNER_YIELD'), -- 1
+('StandardSettlePlot', 'New Resources', 0, 6, NULL, 'LOC_SETTLEMENT_RECOMMENDATION_NEW_RESOURCES'), -- 4
+('StandardSettlePlot', 'Resource Class', 0, 2, 'RESOURCECLASS_BONUS',     'LOC_SETTLEMENT_RECOMMENDATION_STRATEGIC_RESOURCES'), -- new
+('StandardSettlePlot', 'Resource Class', 0, 3, 'RESOURCECLASS_LUXURY',    'LOC_SETTLEMENT_RECOMMENDATION_STRATEGIC_RESOURCES'), -- 2
+('StandardSettlePlot', 'Resource Class', 0, 4, 'RESOURCECLASS_STRATEGIC', 'LOC_SETTLEMENT_RECOMMENDATION_STRATEGIC_RESOURCES'), -- 2
+('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_HORSES', 'LOC_SETTLEMENT_RECOMMENDATION_RESOURCES'), -- 3
+('StandardSettlePlot', 'Specific Resource', 0, 4, 'RESOURCE_IRON',   'LOC_SETTLEMENT_RECOMMENDATION_RESOURCES'), -- 5
+('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_NITER',  'LOC_SETTLEMENT_RECOMMENDATION_STRATEGIC_RESOURCES'), -- def
 --('StandardSettlePlot', 'Specific Resource', 0, 0, 'RESOURCE_COAL'), -- plenty
 --('StandardSettlePlot', 'Specific Resource', 0, 0, 'RESOURCE_OIL'), -- plenty
-('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_ALUMINUM'), -- new
-('StandardSettlePlot', 'Specific Resource', 0, 10, 'RESOURCE_URANIUM'), -- new
-('StandardSettlePlot', 'Specific Feature', 0, -5, 'FEATURE_ICE');
+('StandardSettlePlot', 'Specific Resource', 0, 2, 'RESOURCE_ALUMINUM', 'LOC_SETTLEMENT_RECOMMENDATION_STRATEGIC_RESOURCES'), -- new
+('StandardSettlePlot', 'Specific Resource', 0, 10, 'RESOURCE_URANIUM', 'LOC_SETTLEMENT_RECOMMENDATION_STRATEGIC_RESOURCES'), -- new
+('StandardSettlePlot', 'Specific Feature', 0, -5, 'FEATURE_ICE', 'LOC_SETTLEMENT_RECOMMENDATION_FEATURES');
 -- put Natural Wonders as generally good to be around
-INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal)
-SELECT 'StandardSettlePlot', 'Specific Feature', 0, 3, FeatureType -- +1
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal, TooltipString)
+SELECT 'StandardSettlePlot', 'Specific Feature', 0, 3, FeatureType, 'LOC_SETTLEMENT_RECOMMENDATION_FEATURES' -- +1
 FROM Features
 WHERE NaturalWonder = 1;
 
 UPDATE AiFavoredItems SET Value = 50 WHERE ListType = 'DefaultCitySettlement' AND Item = 'SETTLEMENT_MIN_VALUE_NEEDED';
+
+--------------------------------------------------------------
+-- 2019-07-15 Updates to Settlement recommendations
+
+UPDATE PlotEvalConditions SET PoorValue =-40, GoodValue =-16 WHERE ConditionType = 'Nearest Friendly City'; -- PoorValue="-50" GoodValue="-20"
+UPDATE PlotEvalConditions SET PoorValue =  0, GoodValue =  6 WHERE ConditionType = 'New Resources'; -- PoorValue="0" GoodValue="4"
+UPDATE PlotEvalConditions SET PoorValue = 12, GoodValue = 18 WHERE ConditionType = 'Inner Ring Yield'; -- PoorValue="18" GoodValue="26"
+UPDATE PlotEvalConditions SET PoorValue = 10, GoodValue = 20 WHERE ConditionType = 'Total Yield'; -- PoorValue="30" GoodValue="50"
+UPDATE PlotEvalConditions SET PoorValue = -1, GoodValue =  8 WHERE ConditionType = 'Coastal'; -- PoorValue="-1" GoodValue="12"
+--UPDATE PlotEvalConditions SET PoorValue = 00, GoodValue = 00 WHERE ConditionType = 'Fresh Water'; -- PoorValue="0" GoodValue="20"
+UPDATE PlotEvalConditions SET PoorValue = -1, GoodValue =  4 WHERE ConditionType = 'Specific Resource'; -- PoorValue="-1" GoodValue="6"
+UPDATE PlotEvalConditions SET PoorValue = -6, GoodValue =  6 WHERE ConditionType = 'Specific Feature'; -- PoorValue="-5" GoodValue="5"
+UPDATE PlotEvalConditions SET PoorValue =  3, GoodValue =  6 WHERE ConditionType = 'Resource Class'; -- PoorValue="2" GoodValue="6"
+UPDATE PlotEvalConditions SET PoorValue = -4, GoodValue = 15 WHERE ConditionType = 'Foreign Continent'; -- PoorValue="-2" GoodValue="50"
 
 
 --------------------------------------------------------------
