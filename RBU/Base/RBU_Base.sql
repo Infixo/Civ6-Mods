@@ -812,17 +812,17 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 ('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'YieldType', 'YIELD_FAITH'),
 ('STAVECHURCHUPGRADE_ADDLUMBERMILLFAITH', 'Amount',    '3');
 
-INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
-('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
-	
-INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIRES_PLOT_HAS_LUMBER_MILL');
-
 INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType) VALUES
 ('REQUIRES_PLOT_HAS_LUMBER_MILL', 'REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES');
 	
 INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value) VALUES
 ('REQUIRES_PLOT_HAS_LUMBER_MILL', 'ImprovementType', 'IMPROVEMENT_LUMBER_MILL');
+
+INSERT OR REPLACE INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
+('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
+	
+INSERT OR REPLACE INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+('PLOT_HAS_LUMBER_MILL_REQUIREMENTS', 'REQUIRES_PLOT_HAS_LUMBER_MILL');
 
 --------------------------------------------------------------
 -- Buildings enabled by Religion - removed
