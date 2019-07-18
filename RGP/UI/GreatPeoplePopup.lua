@@ -1,4 +1,4 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.2");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.3");
 -- ===========================================================================
 --	Great People Popup
 -- ===========================================================================
@@ -154,6 +154,17 @@ end
 -- ===========================================================================
 --  View the great people currently available (to be purchased)
 -- ===========================================================================
+
+-- Infixo: find out if a GP has already been recruited
+--Game	GetGreatPeople GetPastTimeline
+---> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
+function GreatPersonHasBeenRecruited(eIndividual:number)
+	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
+		if pastGP.Individual == eIndividual then return true; end
+	end
+	return false;
+end
+
 function ViewCurrent( data:table )
   if (data == nil) then
     UI.DataError("GreatPeople attempting to view current timeline data but received NIL instead.");
@@ -232,6 +243,20 @@ function ViewCurrent( data:table )
     if kPerson.EraID ~= nil then
       local eraName:string = Locale.ToUpper(Locale.Lookup(GameInfo.Eras[kPerson.EraID].Name));
       instance.EraName:SetText( eraName );
+	  -- Infixo: show all GPs from this era in the tooltip
+	  local sEraType:string = GameInfo.Eras[kPerson.EraID].EraType;
+	  local sGPClass:string = GameInfo.GreatPersonClasses[eClassID].GreatPersonClassType;
+	  local tTT:table = {};
+	  for gp in GameInfo.GreatPersonIndividuals() do
+		if gp.GreatPersonClassType == sGPClass and gp.EraType == sEraType then
+		  if GreatPersonHasBeenRecruited(gp.Index) then
+			table.insert(tTT, "[COLOR_Grey]"..Locale.Lookup(gp.Name).." - "..Locale.Lookup("LOC_TECH_KEY_UNAVAILABLE").."[ENDCOLOR]");
+		  else
+			table.insert(tTT, Locale.Lookup(gp.Name));
+		  end
+		end
+	  end
+	  instance.EraName:SetToolTipString(table.concat(tTT, "[NEWLINE]"));
     end
 
     -- Grab icon representing type of class
@@ -1354,7 +1379,7 @@ function Initialize()
   end
 
   -- Tab setup and setting of default tab.
-  m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
+  m_tabs = CreateTabs( Controls.TabContainer, 42, 34, UI.GetColorValueFromHexLiteral(0xFF331D05) );
   m_tabs.AddTab( Controls.ButtonGreatPeople,      OnGreatPeopleClick );
   m_tabs.AddTab( Controls.ButtonPreviouslyRecruited,  OnPreviousRecruitedClick );
   m_tabs.CenterAlignTabs(-10);

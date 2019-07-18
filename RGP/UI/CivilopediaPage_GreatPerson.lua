@@ -1,4 +1,4 @@
-print("Loading CivilopediaPage_GreatPerson.lua from RGP Mod, version 3.2");
+print("Loading CivilopediaPage_GreatPerson.lua from RGP Mod, version 3.3");
 -- ===========================================================================
 --	Civilopedia - Great Person Page Layout
 -- ===========================================================================
