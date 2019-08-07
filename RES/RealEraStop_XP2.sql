@@ -3,10 +3,21 @@
 -- Author: Infixo
 -- 2019-02-21: Created
 -- 2019-03-08: Version 2.7 Flood Barrier fix
+-- 2019-08-07: Version 2.8 Patronage Resolution fix
 -- ===========================================================================
 
 -- Table Resolutions
 -- EarliestEra / LatestEra - not referenced - but Eras are not removed, so it should work ok
+
+--------------------------------------------------------------
+-- 2019-08-07 Version 2.8
+-- Workaround for an issue with Patronage Resolution selected when all GPs have been recruited
+
+UPDATE Resolutions SET LatestEra = 'ERA_CLASSICAL'   WHERE ResolutionType = 'WC_RES_PATRONAGE' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '3');
+UPDATE Resolutions SET LatestEra = 'ERA_MEDIEVAL'    WHERE ResolutionType = 'WC_RES_PATRONAGE' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '4');
+UPDATE Resolutions SET LatestEra = 'ERA_RENAISSANCE' WHERE ResolutionType = 'WC_RES_PATRONAGE' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '5');
+UPDATE Resolutions SET LatestEra = 'ERA_INDUSTRIAL'  WHERE ResolutionType = 'WC_RES_PATRONAGE' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '6');
+
 
 --------------------------------------------------------------
 -- 2019-02-21 Railroad (GS)
