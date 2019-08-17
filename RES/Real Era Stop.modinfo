@@ -2,7 +2,7 @@
 <Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="2">
   <Properties>
     <Name>Real Era Stop</Name>
-    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.8.</Description>
+    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.9.</Description>
     <Teaser>Allows to stop research at specific Era (from Classical to Atomic)</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
@@ -62,6 +62,14 @@
     <UpdateText id="RES_Text">
       <File>RealEraStop_Text.sql</File>
     </UpdateText>
+	<ImportFiles id="RES_ImportFiles">
+	  <Properties>
+	    <LoadOrder>999990</LoadOrder>
+	  </Properties>
+	  <Items>
+	    <File>UI/EspionageEscape.lua</File>
+	  </Items>
+	</ImportFiles>
   </InGameActions>
   <Files>
     <File>Config/RealEraStop_Config.xml</File>
@@ -73,5 +81,6 @@
     <File>RealEraStop_Delete_XP2.sql</File>
     <File>RealEraStop_Dates.sql</File>
     <File>RealEraStop_Text.sql</File>
+    <File>UI/EspionageEscape.lua</File>
   </Files>
 </Mod>
