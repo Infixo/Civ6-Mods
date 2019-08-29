@@ -61,6 +61,11 @@ INSERT INTO BuildingPrereqs(Building, PrereqBuilding)
 SELECT 'BUILDING_BROADCAST_CENTER', 'BUILDING_CONCERT_HALL'
 FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
 
+-- 2019-08-29 Added prereq for the Film Studio
+INSERT INTO BuildingPrereqs(Building, PrereqBuilding) 
+SELECT 'BUILDING_FILM_STUDIO', 'BUILDING_CONCERT_HALL'
+FROM GlobalParameters WHERE Name = 'RGM_OPTION_CONCERT_HALL' AND Value = '1';
+
 -- Policy Grand Opera +100% yields to Theater buildings
 
 INSERT INTO PolicyModifiers (PolicyType, ModifierId)
