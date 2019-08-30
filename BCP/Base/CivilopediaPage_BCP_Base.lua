@@ -285,7 +285,7 @@ PageLayouts["UnitAbility"] = function(page)
 	local chapter_body:table = {};
 	table.insert(chapter_body, COLOR_GREY..unitAbilityType.."[ENDCOLOR]");
 	table.insert(chapter_body, Locale.Lookup("LOC_UI_PEDIA_ABILITY_INACTIVE")..": "..Locale.Lookup(unitAbility.Inactive and "LOC_YES" or "LOC_NO"));
-	table.insert(chapter_body, Locale.Lookup(unitAbility.Description));
+	table.insert(chapter_body, unitAbility.Description ~= nil and Locale.Lookup(unitAbility.Description) or unitAbilityType);
 	AddChapter(Locale.Lookup("LOC_UI_PEDIA_DESCRIPTION"), chapter_body);
 
 	-- Granted by?
