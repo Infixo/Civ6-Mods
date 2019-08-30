@@ -2436,7 +2436,7 @@ local tModifiersTables:table = {
 	["Building"] = "BuildingModifiers", -- BuildingType
 	["Civic"] = "CivicModifiers", -- CivicType
 	["District"] = "DistrictModifiers", -- DistrictType
-	-- GameModifiers -- not shown in Pedia?
+	["Game"] = "GameModifiers", -- not shown in Pedia?
 	--["GoodyHut"] = "GoodyHutSubTypes",
 	["Government"] = "GovernmentModifiers", -- GovernmentType
 	-- ["GreatPerson"] = GreatPersonIndividualBirthModifiers -- GreatPersonIndividualType
@@ -2568,6 +2568,7 @@ function CalculateModifierEffect(sObject:string, sObjectType:string, ePlayerID:n
 	
 	--TimerTick("All modifiers for object "..sObject..":"..sObjectType); -- debug
 	-- done!
+	--for _,st in ipairs(tToolTip) do print(sObjectType, string.len(st), st); end -- debug
 	return sTotalImpact, tTotalImpact, table.concat(tToolTip, "[NEWLINE]"), bUnknownEffect;
 end
 
@@ -2618,9 +2619,11 @@ function GetObjectNameForModifier(sModifierId:string)
 		for row in GameInfo[ modtable ]() do
 			if row.ModifierId == sModifierId or row.ModifierID == sModifierId then
 				--print("found", sModifierId, " for ", row[object.."Type"])
+				if object == "Game" then return "[COLOR_Grey]Game[ENDCOLOR]"; end
 				local objectInfo:table = GameInfo[ tObjectsTables[object] ][ row[object.."Type"] ];
 				--print("   ...", object, objectInfo[object.."Type"], objectInfo.Name)
 				if object == "Commemoration" then return Locale.Lookup(objectInfo.CategoryDescription); end
+				if objectInfo.Name == nil then return "[COLOR_Grey]"..object.."[ENDCOLOR]"; end -- 2019-08-30 Some traits have no Name
 				local sLocName:string = Locale.Lookup(objectInfo.Name);
 				if sLocName == objectInfo.Name then return "[COLOR_Grey]"..object.."[ENDCOLOR]"; end-- LOC_ not defined
 				return sLocName;

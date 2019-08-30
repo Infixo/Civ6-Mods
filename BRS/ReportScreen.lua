@@ -625,8 +625,8 @@ function GetData()
 				if sSubjectType == "LOC_MODIFIER_OBJECT_DISTRICT" then
 					-- find a city
 					local sSubjectString:string = GameEffects.GetObjectString( subjectID );
-					local iCityID:number = tonumber( string.sub(sSubjectString, string.find(sSubjectString, "City:")+6) );
-					--print("city:", sSubjectString, "decode:", iCityID)
+					local iCityID:number = tonumber( string.match(sSubjectString, "City: (%d+)") );
+					--print("city:", sSubjectString, "decode:", iCityID);
 					if iCityID ~= nil then
 						local pCity:table = player:GetCities():FindID(iCityID);
 						if pCity and tTrackedOwners[pCity:GetName()] then RegisterModifierForCity(sSubjectType, pCity:GetName()); end
@@ -639,9 +639,9 @@ function GetData()
 		if sOwnerType == "LOC_MODIFIER_OBJECT_UNIT" then
 			-- find a unit
 			local sOwnerString:string = GameEffects.GetObjectString( iOwnerID );
-			local iUnitID:number      = tonumber( string.sub(sOwnerString, string.find(sOwnerString,"Unit:")+6,  string.find(sOwnerString,", Owner:")-1) );
-			local iUnitOwnerID:number = tonumber( string.sub(sOwnerString, string.find(sOwnerString,"Owner:")+7, string.find(sOwnerString,", Type")-1) );
-			--print("unit:", sOwnerString, "decode:", iUnitOwnerID, iUnitID)
+			local iUnitID:number      = tonumber( string.match(sOwnerString, "Unit: (%d+)") );
+			local iUnitOwnerID:number = tonumber( string.match(sOwnerString, "Owner: (%d+)") );
+			--print("unit:", sOwnerString, "decode:", iUnitOwnerID, iUnitID);
 			if iUnitID and iUnitOwnerID and iUnitOwnerID == playerID and tTrackedUnits[iUnitID] then
 				RegisterModifierForUnit(iUnitID);
 			end
@@ -655,8 +655,9 @@ function GetData()
 				if sSubjectType == "LOC_MODIFIER_OBJECT_UNIT" then
 					-- find a unit
 					local sSubjectString:string = GameEffects.GetObjectString( subjectID );
-					local iUnitID:number      = tonumber( string.sub(sSubjectString, string.find(sSubjectString,"Unit:")+6,  string.find(sSubjectString,", Owner:")-1) );
-					local iUnitOwnerID:number = tonumber( string.sub(sSubjectString, string.find(sSubjectString,"Owner:")+7, string.find(sSubjectString,", Type")-1) );
+					local iUnitID:number      = tonumber( string.match(sSubjectString, "Unit: (%d+)") );
+					local iUnitOwnerID:number = tonumber( string.match(sSubjectString, "Owner: (%d+)") );
+					--print("unit:", sSubjectString, "decode:", iUnitOwnerID, iUnitID);
 					if iUnitID and iUnitOwnerID and iUnitOwnerID == playerID and tTrackedUnits[iUnitID] then
 						RegisterModifierForUnit(iUnitID, sSubjectType, sSubjectName);
 					end
@@ -3671,10 +3672,15 @@ function group_military( unit, unitInstance, group, parent, type )
 	local sText:string = "";
 	if table.count(tUnitModifiers) > 0 then table.insert(tPromoTT, TOOLTIP_SEP); end
 	local iPromoNum:number = 0;
+	local tExtraTT:table = {};
 	for _,mod in ipairs(tUnitModifiers) do
 		local function AddExtraPromoText(sText:string)
+			--print("AddExtraPromoText", mod.OwnerName, mod.Modifier.ModifierId, sText);
+			local sExtra:string = Locale.Lookup(mod.OwnerName).." ("..RMA.GetObjectNameForModifier(mod.Modifier.ModifierId)..") "..sText;
+			for _,txt in ipairs(tExtraTT) do if txt == sExtra then return; end end -- check if already added, do not add duplicates
 			iPromoNum = iPromoNum + 1;
-			table.insert(tPromoTT, tostring(iPromoNum)..". "..Locale.Lookup(mod.OwnerName).." ("..RMA.GetObjectNameForModifier(mod.Modifier.ModifierId)..") "..sText);
+			table.insert(tPromoTT, tonumber(iPromoNum)..". "..sExtra);
+			table.insert(tExtraTT, sExtra);
 		end
 		tMod = mod.Modifier;
 		sText = ""; if tMod.Text then sText = Locale.Lookup(tMod.Text); end
