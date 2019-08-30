@@ -3690,7 +3690,7 @@ function group_military( unit, unitInstance, group, parent, type )
 			AddExtraPromoText( string.format("%+d [ICON_Strength]", tonumber(tMod.Arguments.Amount))); -- Strength
 		elseif tMod.EffectType == "EFFECT_GRANT_ABILITY" then
 			local unitAbility:table = GameInfo.UnitAbilities[ tMod.Arguments.AbilityType ];
-			if unitAbility then
+			if unitAbility and unitAbility.Name and unitAbility.Description then -- 2019-08-30 some Abilities have neither Name nor Description
 				AddExtraPromoText( Locale.Lookup(unitAbility.Name)..": "..Locale.Lookup(unitAbility.Description)); -- LOC_CIVICS_KEY_ABILITY
 			else
 				AddExtraPromoText( tMod.EffectType.." [COLOR_Red]"..tMod.Arguments.AbilityType.."[ENDCOLOR]")
@@ -3721,6 +3721,8 @@ function group_military( unit, unitInstance, group, parent, type )
 		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_BARBARIAN_COMBAT" then
 			local iAdvStr:number = tonumber(tMod.Arguments.Amount);
 			AddExtraPromoText( string.gsub(Locale.Lookup("LOC_COMBAT_PREVIEW_BONUS_VS_BARBARIANS", iAdvStr), "+"..tostring(iAdvStr), "+"..tostring(iAdvStr).." [ICON_Strength]") );  -- +{1_Value} Advantage vs. Barbarians
+		elseif tMod.EffectType == "EFFECT_ADJUST_UNIT_SUPPORT_BONUS_MODIFIER" then
+			AddExtraPromoText( Locale.Lookup("LOC_COMBAT_PREVIEW_SUPPORT_BONUS_DESC", tonumber(tMod.Arguments.Percent)) ); -- +x% support bonus
 		else
 			AddExtraPromoText( "[COLOR_Grey]"..tMod.EffectType.."[ENDCOLOR]" );
 		end
