@@ -40,6 +40,9 @@ INSERT INTO TypeTags (Type, Tag) SELECT ResourceType, 'CLASS_STONE_CIRCLES'     
 INSERT INTO TypeTags (Type, Tag) SELECT ResourceType, 'CLASS_RELIGIOUS_IDOLS'     FROM Improvement_ValidResources WHERE ImprovementType = 'IMPROVEMENT_MINE'
 									AND ResourceType IN (SELECT ResourceType FROM Resources WHERE ResourceClassType = 'RESOURCECLASS_LUXURY' OR ResourceClassType = 'RESOURCECLASS_BONUS');
 
+-- 2019-08-30 Goddess of Festivals - must add a tag for all valid resources, the base game doesn't update it
+DELETE FROM TypeTags WHERE Tag = 'CLASS_GODDESS_OF_FESTIVALS';
+INSERT INTO TypeTags (Type, Tag) SELECT ResourceType, 'CLASS_GODDESS_OF_FESTIVALS' FROM Improvement_ValidResources WHERE ImprovementType = 'IMPROVEMENT_PLANTATION';
 
 
 --------------------------------------------------------------
