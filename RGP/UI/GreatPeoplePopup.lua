@@ -1,4 +1,4 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.3");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.4");
 -- ===========================================================================
 --	Great People Popup
 -- ===========================================================================
@@ -511,7 +511,7 @@ function ViewCurrent( data:table )
       m_uiGreatPeople[kPerson.IndividualID] = instance;   -- Store instance for later look up
     end
 
-    local noneAvailable   :boolean = (kPerson.ClassID == nil);
+	local noneAvailable		:boolean = (kPerson.IndividualID == nil);
     instance.ClassName:SetHide( noneAvailable );
     --instance.TitleLine:SetHide( noneAvailable ); -- Infixo: not used
     instance.IndividualName:SetHide( noneAvailable );
@@ -525,6 +525,13 @@ function ViewCurrent( data:table )
 	instance.BiographyOpenButton:SetHide( noneAvailable );
     instance.EffectStack:CalculateSize();
     instance.EffectStackScroller:CalculateSize();
+
+
+
+
+
+
+
 
 	-- CQUI
 	--[[
@@ -1349,6 +1356,19 @@ end
 function OnShutdown()
   LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isHidden",   ContextPtr:IsHidden() );
   LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isPreviousTab",  (m_tabs.selectedControl == Controls.ButtonPreviouslyRecruited) );
+
+	-- Game engine Events	
+	Events.LocalPlayerChanged.Remove( OnLocalPlayerChanged );	
+	Events.LocalPlayerTurnBegin.Remove( OnLocalPlayerTurnBegin );	
+	Events.LocalPlayerTurnEnd.Remove( OnLocalPlayerTurnEnd );
+	Events.UnitGreatPersonActivated.Remove( OnUnitGreatPersonActivated );
+	Events.GreatPeoplePointsChanged.Remove( OnGreatPeoplePointsChanged );
+	
+	-- LUA Events
+	LuaEvents.GameDebug_Return.Remove(							OnGameDebugReturn );
+	LuaEvents.LaunchBar_OpenGreatPeoplePopup.Remove(			OnOpenViaLaunchBar );
+	LuaEvents.NotificationPanel_OpenGreatPeoplePopup.Remove(	OnOpenViaNotification );
+	LuaEvents.LaunchBar_CloseGreatPeoplePopup.Remove(			OnClose );
 end
 
 -- ===========================================================================
