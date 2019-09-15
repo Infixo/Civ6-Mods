@@ -311,7 +311,7 @@ function PlayerGetNumProjectsAdvanced(ePlayerID:number, eProjectID:number)
 end
 
 -- check if player has a spaceport
-local eDistrictSpaceportIndex:number = GameInfo.Districts["DISTRICT_SPACEPORT"].Index;
+local eDistrictSpaceportIndex:number = ( GameInfo.Districts["DISTRICT_SPACEPORT"] == nil and -1 or GameInfo.Districts["DISTRICT_SPACEPORT"].Index ); -- 2019-08-18 RES compatibility fix
 function PlayerHasSpaceport(ePlayerID:number)
 	--print("FUN PlayerHasSpaceport", ePlayerID);
 	for _,district in Players[ePlayerID]:GetDistricts():Members() do

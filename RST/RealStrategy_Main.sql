@@ -346,7 +346,7 @@ DELETE FROM AiLists        WHERE System = 'Strategies';
 
 UPDATE AiFavoredItems SET Value = 35 WHERE ListType = 'CultureVictoryYields'       AND Item = 'YIELD_CULTURE'; -- def. 25
 
-UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'CultureVictoryPseudoYields' AND Item LIKE 'PSEUDOYIELD_GREATWORK_%'; -- def. 10
+UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'CultureVictoryPseudoYields' AND Item LIKE 'PSEUDOYIELD_GREATWORK_%'; -- def. 10
 UPDATE AiFavoredItems SET Value = 35 WHERE ListType = 'CultureVictoryPseudoYields' AND Item = 'PSEUDOYIELD_TOURISM'; -- def. 25
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES

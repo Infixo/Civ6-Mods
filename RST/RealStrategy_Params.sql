@@ -6,7 +6,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '1');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '4');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '5');
 
 -- logging
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
@@ -101,7 +101,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- 7..9 -   major influence on a strategy
 -- ===========================================================================
 
-CREATE TABLE RSTFlavors (
+CREATE TABLE IF NOT EXISTS RSTFlavors (
 	ObjectType TEXT NOT NULL,
 	Type TEXT NOT NULL CHECK (Type IN ('Parameter', 'STRATEGY', 'LEADER', 'POLICY', 'GOVERNMENT', 'Wonder', 'BELIEF', 'CityState', 'GreatPerson')),
 	Subtype TEXT,

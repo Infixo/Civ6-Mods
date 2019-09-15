@@ -902,8 +902,8 @@ function GetPriorityDiplo(data:table)
 	-- NO. Alliance is only 1 of the type. What matters is level. However this and suzerain boils down do FPT value (favor per turn).
 	
 	--Yield here is Favor per turn (FPT). It is rather rare, 20-30 is a lot.
-	local totalFavor:number   = pPlayer:GetDiplomaticFavor(); 
-	local favorPerTurn:number = pPlayer:GetDiplomaticFavorPerTurn();
+	local totalFavor:number   = pPlayer:GetDiplomacy():GetFavor(); 
+	local favorPerTurn:number = pPlayer:GetDiplomacy():GetFavorPerTurn();
 	iPriority = iPriority + favorPerTurn * GlobalParameters.RST_DIPLO_FAVOR_PER_TURN_WEIGHT;
 	if bLogDebug then print("...favor per turn", favorPerTurn, iPriority); end
 	
@@ -1356,8 +1356,8 @@ function GetOtherPlayerPriorityDiplo(data:table, eOtherID:number)
 	if bLogDebug then print("...diplo progress", progress, iPriority); end
 	
 	--Yield here is Favor per turn (FPT). It is rather rare, 20-30 is a lot.
-	local totalFavor:number   = pOther:GetDiplomaticFavor(); 
-	local favorPerTurn:number = pOther:GetDiplomaticFavorPerTurn();
+	local totalFavor:number   = pOther:GetDiplomacy():GetFavor(); 
+	local favorPerTurn:number = pOther:GetDiplomacy():GetFavorPerTurn();
 	iPriority = iPriority + favorPerTurn * GlobalParameters.RST_DIPLO_FAVOR_PER_TURN_WEIGHT;
 	if bLogDebug then print("...favor per turn", favorPerTurn, iPriority); end
 	
@@ -1527,8 +1527,8 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iProgressThem:number = RST.PlayerGetDiploVictoryProgress(eOtherID);
 		-- calculate how much favor players gonna have during the next voting
 		local iNumTurnsWC:number = RST.WorldCongressGetTurnsLeft(); -- num turns to the next world congress
-		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomaticFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomaticFavorPerTurn();
-		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomaticFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomaticFavorPerTurn();
+		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomatcy():GetFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomatcy():GetFavorPerTurn();
+		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomatcy():GetFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomatcy():GetFavorPerTurn();
 		if bLogDebug then print("progress us/them", iProgressUs, iProgressThem, "favor us/them", iFavorUs, iFavorThem); end
 		-- compare actual victory progress, however we are considered equal if difference is less than 15pp
 		if (iProgressThem - iProgressUs) > 15 then return true; end
