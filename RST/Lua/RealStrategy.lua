@@ -1527,8 +1527,8 @@ function OtherPlayerDoingBetterThanUs(data:table, eOtherID:number, sStrategy:str
 		local iProgressThem:number = RST.PlayerGetDiploVictoryProgress(eOtherID);
 		-- calculate how much favor players gonna have during the next voting
 		local iNumTurnsWC:number = RST.WorldCongressGetTurnsLeft(); -- num turns to the next world congress
-		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomatcy():GetFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomatcy():GetFavorPerTurn();
-		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomatcy():GetFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomatcy():GetFavorPerTurn();
+		local iFavorUs:number   = math.max(1, Players[ePlayerID]:GetDiplomacy():GetFavor()) + iNumTurnsWC * Players[ePlayerID]:GetDiplomacy():GetFavorPerTurn();
+		local iFavorThem:number = math.max(1, Players[eOtherID]:GetDiplomacy():GetFavor())  + iNumTurnsWC * Players[eOtherID]:GetDiplomacy():GetFavorPerTurn();
 		if bLogDebug then print("progress us/them", iProgressUs, iProgressThem, "favor us/them", iFavorUs, iFavorThem); end
 		-- compare actual victory progress, however we are considered equal if difference is less than 15pp
 		if (iProgressThem - iProgressUs) > 15 then return true; end
