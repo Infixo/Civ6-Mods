@@ -1,4 +1,4 @@
-print("Loading LoadScreen.lua from Better Loading Screen v1.6");
+print("Loading LoadScreen.lua from Better Loading Screen v1.7");
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.
@@ -353,11 +353,24 @@ function OnLoadScreenContentReady()
 			iconAtlas = "ICON_"..civType;
 			instance.Icon:SetIcon(iconAtlas);
 			instance.TextStack:SetOffsetX( SIZE_BUILDING_ICON + 4 );
-			local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name )); 
-			instance.Header:SetText( headerText );
+			if (item.Name ~= nil and item.Name ~= "NONE") then
+				local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name ));
+				instance.Header:SetText( headerText );
+			else
+				instance.Header:SetShow(false);
+			end
 			--item.Description = string.gsub(item.Description, "[NEWLINE][NEWLINE]", "[NEWLINE]");
-			instance.Description:SetText( Locale.Lookup(item.Description) );
-			instance.Icon:SetToolTipString( Locale.Lookup(item.Description) ); -- add description also as tool tip to icon
+			if (item.Description ~= nil and item.Description ~= "NONE") then
+				instance.Description:SetText( Locale.Lookup( item.Description ) );
+				instance.Icon:SetToolTipString( Locale.Lookup( item.Description  ) ); -- add description also as tool tip to icon
+			else
+				instance.Description:SetShow(false);
+				instance.Icon:SetToolTipString( "" );
+			end
+			-- hide everything if neither is defined
+			if (item.Name == nil or item.Name == "NONE") and (item.Description == nil or item.Description == "NONE") then
+				instance.Icon:SetShow(false);
+			end
 		end
 
 		-- Unique Units
