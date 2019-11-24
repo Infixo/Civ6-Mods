@@ -297,13 +297,15 @@ function PopulateHarvests()
 	local tHarvests:table = {};
 	-- first, collate harvests of the same resource into 1 string
 	for row in GameInfo.Resource_Harvests() do
-		if tHarvests[ row.PrereqTech ] == nil then tHarvests[ row.PrereqTech ] = {}; end -- init a new tech
-		local tTechHarvests:table = tHarvests[ row.PrereqTech ];
-		if tTechHarvests[ row.ResourceType ] == nil then
-			-- init a new resource
-			tTechHarvests[ row.ResourceType ] = "[ICON_"..row.ResourceType.."] "..LL(GameInfo.Resources[row.ResourceType].Name)..":"; --  don't put resource font icon, modded ones usually don't have it
+		if row.PrereqTech ~= nil then -- support for mods that add harvests with no tech req
+			if tHarvests[ row.PrereqTech ] == nil then tHarvests[ row.PrereqTech ] = {}; end -- init a new tech
+			local tTechHarvests:table = tHarvests[ row.PrereqTech ];
+			if tTechHarvests[ row.ResourceType ] == nil then
+				-- init a new resource
+				tTechHarvests[ row.ResourceType ] = "[ICON_"..row.ResourceType.."] "..LL(GameInfo.Resources[row.ResourceType].Name)..":"; --  don't put resource font icon, modded ones usually don't have it
+			end
+			tTechHarvests[ row.ResourceType ] = tTechHarvests[ row.ResourceType ]..string.format(" %+d", row.Amount)..GameInfo.Yields[row.YieldType].IconString;
 		end
-		tTechHarvests[ row.ResourceType ] = tTechHarvests[ row.ResourceType ]..string.format(" %+d", row.Amount)..GameInfo.Yields[row.YieldType].IconString;
 	end
 		--if sDesc == nil then -- insert name as initial insert
 			--sDesc = LL("LOC_UNITOPERATION_HARVEST_RESOURCE_DESCRIPTION")..": "..LL(GameInfo.Resources[row.ResourceType].Name); --  don't put resource font icon, modded ones usually don't have it
