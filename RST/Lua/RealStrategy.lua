@@ -146,12 +146,12 @@ function PriorityTableRandom(iRand:number)
 	return tNew;
 end
 
--- set all values to 0
-function PriorityTableClear(pTable:table)
-	for strat,_ in pairs(Strategies) do pTable[ strat ] = 0; end
+-- set all values to iNum
+function PriorityTableSet(pTable:table, iNum:number)
+	for strat,_ in pairs(Strategies) do pTable[ strat ] = iNum; end
 end
 
--- set all values to a range iMin..iMax, both nclusive
+-- set all values to a range iMin..iMax, both inclusive
 function PriorityTableMinMax(pTable:table, iMin:number, iMax:number)
 	for strat,_ in pairs(Strategies) do pTable[ strat ] = math.min( math.max( pTable[strat], iMin ), iMax ); end
 end
@@ -2208,7 +2208,21 @@ function InitializeData()
 		end
 		data.Priorities[flavor.Strategy] = flavor.Value;
 	end
-	
+
+	-- 2020-05-15 Support for modded Civs - if they don't supply a parameter, the default 3 will be assigned
+	for _,row in ipairs(DB.Query("select LeaderType from Leaders where InheritFrom = 'LEADER_DEFAULT'")) do
+		local data:table = tPriorities[row.LeaderType];
+		if data == nil then
+			data = {
+				ObjectType = row.LeaderType,
+				Type = "LEADER",
+				Subtype = "",
+				Priorities = PriorityTableNew(),
+			};
+			PriorityTableSet(data.Priorities, 3);
+			tPriorities[row.LeaderType] = data;
+		end
+	end
 	
 	print("Table of priorities:"); -- debug
 	for objType,data in pairs(tPriorities) do

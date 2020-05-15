@@ -60,7 +60,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GitarjaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 5);
 
 -- 2019-04-04 start bias
-UPDATE StartBiasTerrains SET Tier = 1 WHERE CivilizationType = 'CIVILIZATION_INDONESIA' AND TerrainType = 'TERRAIN_COAST';
+UPDATE StartBiasTerrains SET Tier = 1 WHERE CivilizationType = 'CIVILIZATION_INDONESIA' AND TerrainType = 'TERRAIN_COAST'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_JAYAVARMAN / KHMER

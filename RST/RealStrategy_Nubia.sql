@@ -58,10 +58,13 @@ FROM Types WHERE Type = 'BUILDING_KOTOKU_IN';
 INSERT OR REPLACE INTO StartBiasFeatures (CivilizationType, FeatureType, Tier)
 SELECT CivilizationType, 'FEATURE_FLOODPLAINS', 5
 FROM Civilizations
-WHERE CivilizationType = 'CIVILIZATION_NUBIA';
+WHERE CivilizationType = 'CIVILIZATION_NUBIA'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 --
-DELETE FROM StartBiasResources WHERE CivilizationType = 'CIVILIZATION_NUBIA';
+DELETE FROM StartBiasResources WHERE CivilizationType = 'CIVILIZATION_NUBIA'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 INSERT INTO StartBiasResources (CivilizationType, ResourceType, Tier)
 SELECT 'CIVILIZATION_NUBIA', ResourceType, 5
 FROM Improvement_ValidResources
-WHERE ImprovementType = 'IMPROVEMENT_MINE';
+WHERE ImprovementType = 'IMPROVEMENT_MINE'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);

@@ -149,7 +149,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GenghisPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
 
 -- 2019-04-04 start bias
-UPDATE StartBiasResources SET Tier = 3 WHERE CivilizationType = 'CIVILIZATION_MONGOLIA' AND ResourceType = 'RESOURCE_HORSES';
+UPDATE StartBiasResources SET Tier = 3 WHERE CivilizationType = 'CIVILIZATION_MONGOLIA' AND ResourceType = 'RESOURCE_HORSES'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_LAUTARO / MAPUCHE
@@ -195,12 +196,14 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
 SELECT 'CIVILIZATION_SCOTLAND', TerrainType, 4
 FROM Terrains
-WHERE Hills = 1 AND TerrainType <> 'TERRAIN_SNOW_HILLS';
+WHERE Hills = 1 AND TerrainType <> 'TERRAIN_SNOW_HILLS'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 --
 INSERT OR REPLACE INTO StartBiasFeatures (CivilizationType, FeatureType, Tier)
 SELECT CivilizationType, 'FEATURE_FOREST', 5
 FROM Civilizations
-WHERE CivilizationType = 'CIVILIZATION_SCOTLAND';
+WHERE CivilizationType = 'CIVILIZATION_SCOTLAND'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_SEONDEOK / KOREA
@@ -253,7 +256,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
 SELECT 'CIVILIZATION_GEORGIA', TerrainType, 4
 FROM Terrains
-WHERE Hills = 1 AND TerrainType <> 'TERRAIN_SNOW_HILLS';
+WHERE Hills = 1 AND TerrainType <> 'TERRAIN_SNOW_HILLS'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_WILHELMINA / NETHERLANDS
@@ -268,7 +272,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('WilhelminaPseudoYields', 'PSEUDOYIELD_HAPPINESS', 1, 20);
 
 -- 2019-04-04 start bias
-UPDATE StartBiasTerrains SET Tier = 2 WHERE CivilizationType = 'CIVILIZATION_NETHERLANDS' AND TerrainType = 'TERRAIN_COAST';
+UPDATE StartBiasTerrains SET Tier = 2 WHERE CivilizationType = 'CIVILIZATION_NETHERLANDS' AND TerrainType = 'TERRAIN_COAST'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 

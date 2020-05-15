@@ -217,7 +217,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 INSERT OR REPLACE INTO StartBiasResources (CivilizationType, ResourceType, Tier)
 SELECT 'CIVILIZATION_CANADA', ResourceType, 5
 FROM Resources
-WHERE ResourceType IN ('RESOURCE_URANIUM', 'RESOURCE_OIL', 'RESOURCE_NITER');
+WHERE ResourceType IN ('RESOURCE_URANIUM', 'RESOURCE_OIL', 'RESOURCE_NITER')
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_MANSA_MUSA
@@ -239,11 +240,13 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MansaMusaPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT', 1, 25);
 
 -- 2019-04-04 start bias
-DELETE FROM StartBiasResources WHERE CivilizationType = 'CIVILIZATION_MALI';
+DELETE FROM StartBiasResources WHERE CivilizationType = 'CIVILIZATION_MALI'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 INSERT INTO StartBiasResources (CivilizationType, ResourceType, Tier)
 SELECT 'CIVILIZATION_MALI', ResourceType, 5
 FROM Improvement_ValidResources
-WHERE ImprovementType = 'IMPROVEMENT_MINE';
+WHERE ImprovementType = 'IMPROVEMENT_MINE'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_MATTHIAS_CORVINUS
@@ -270,7 +273,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 ('MatthiasSettlement', 'Fresh Water',      0, 8, NULL);
 
 -- 2019-04-04 start bias
-UPDATE StartBiasFeatures SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_HUNGARY' AND FeatureType = 'FEATURE_GEOTHERMAL_FISSURE';
+UPDATE StartBiasFeatures SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_HUNGARY' AND FeatureType = 'FEATURE_GEOTHERMAL_FISSURE'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_PACHACUTI
@@ -280,7 +284,8 @@ UPDATE StartBiasFeatures SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_HUN
 INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
 SELECT 'CIVILIZATION_INCA', TerrainType, 5
 FROM Improvement_ValidTerrains
-WHERE ImprovementType = 'IMPROVEMENT_TERRACE_FARM';
+WHERE ImprovementType = 'IMPROVEMENT_TERRACE_FARM'
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);
 
 
 -- LEADER_SULEIMAN
@@ -314,4 +319,5 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_VICTORIA / ENGLAND
 
 -- 2019-04-04 start bias
-UPDATE StartBiasResources SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_ENGLAND'; -- RESOURCE_COAL, RESOURCE_IRON
+UPDATE StartBiasResources SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_ENGLAND' -- RESOURCE_COAL, RESOURCE_IRON
+	AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RST_OPTION_BIASES' AND Value = 1);

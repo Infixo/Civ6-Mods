@@ -2,11 +2,12 @@
 -- Real Strategy - Parameters
 -- Author: Infixo
 -- 2018-12-14: Created
+-- 2020-05-15: Added RST_OPTION_BIASES
 -- ===========================================================================
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '1');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '5');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '6');
 
 -- logging
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
@@ -16,6 +17,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0');
 
 -- random numbers - support for Multi Player
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); -- 0 - turned OFF / 1 - turned ON, using math.rand / 2 - turned ON, using Game.GetRandNum
+
+-- start biases on/off
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_BIASES', '1'); -- 0 - turned OFF / 1 - turned ON
+
 
 
 -- ===========================================================================
