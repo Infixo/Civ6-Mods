@@ -29,106 +29,10 @@ local bOptionAiLists:boolean = ( GlobalParameters.BCP_OPTION_AILISTS == 1 );
 include("CivilopediaScreen");
 
 -- Cache base functions
-BCP_BASE_OnOpenCivilopedia = OnOpenCivilopedia;
-BCP_BASE_NavigateTo = NavigateTo;
 BCP_BASE_PageLayouts = {};
 --print("Storing contents of PageLayouts:");
 for k,v in pairs(PageLayouts) do
 	BCP_BASE_PageLayouts[k] = v;
-end
-
-
---------------------------------------------------------------
--- 2018-02-22: Remember last visited page (based on CQUI code)
-
-local _LastSectionId = nil;
-local _LastPageId = nil;
-
-function OnOpenCivilopedia(sectionId_or_search, pageId)
-	-- Opened without any query, restore the previously opened page and section instead
-	if sectionId_or_search == nil and _LastPageId then
-		print("Received a request to open the Civilopedia - last section and page", _LastSectionId, _LastPageId);
-		NavigateTo(_LastSectionId, _LastPageId, true); -- should already be in history, so don't store again
-		UIManager:QueuePopup(ContextPtr, PopupPriority.Current);
-		UI.PlaySound("Civilopedia_Open");
-	else
-		print("Received a request to open the Civilopedia");
-		pageVisitHistory = {};
-		pageHistoryIndex = 0;
-		BCP_BASE_OnOpenCivilopedia(sectionId_or_search, pageId);
-	end
-	Controls.SearchEditBox:TakeFocus();
-end
-
-
---------------------------------------------------------------
--- 2018-03-14: Page history and back/next buttons (based on Civilopedia Improvement mod)
-
--- stores the history of pages visited, with sectionID and pageID
-local pageVisitHistory = {};
-local pageHistoryIndex = 0;
-
-function IsBackPageButtonDisabled()
-	return #pageVisitHistory == 0 or pageHistoryIndex == 1;
-end
-
-function IsNextPageButtonDisabled()
-	return #pageVisitHistory == 0 or pageHistoryIndex == #pageVisitHistory;
-end
-
-function RefreshHistoryButtons()
-	Controls.BackPageButton:SetDisabled( IsBackPageButtonDisabled() );
-	Controls.NextPageButton:SetDisabled( IsNextPageButtonDisabled() );
-	Controls.BackPageButton:SetAlpha( IsBackPageButtonDisabled() and 0.4 or 1.0);
-	Controls.NextPageButton:SetAlpha( IsNextPageButtonDisabled() and 0.4 or 1.0);
-end
-
--------------------------------------------------------------------------------
--- This function will remember the history by default
--- Need 3rd param set to true to NOT rememeber
--- This way we don't need to modify all functions that call NavigateTo
-function NavigateTo(SectionId, PageId, bNotInHistory)
-	--print("Navigating to " .. SectionId .. ":" .. PageId);
-
-	local prevSectionId = _CurrentSectionId;
-	local prevPageId = _CurrentPageId;
-
-	-- Store the currently opened section and page
-	_LastSectionId = SectionId;
-	_LastPageId = PageId;
-	
-	BCP_BASE_NavigateTo(SectionId, PageId);
-
-	if SectionId == prevSectionId and PageId == prevPageId then return; end
-
-	-- support for page history
-	if bNotInHistory then return; end
-	while pageHistoryIndex < #pageVisitHistory do
-		table.remove(pageVisitHistory);
-	end
-	table.insert(pageVisitHistory, { sectionId = SectionId, pageId = PageId });
-	pageHistoryIndex = #pageVisitHistory;
-	RefreshHistoryButtons();
-	--print("pageHistoryIndex:", pageHistoryIndex);
-	--for i,v in pairs(pageVisitHistory) do
-		--print(i .. ":" .. v.sectionId .. ":" .. v.pageId);
-	--end
-end
-
-function OnBackPageButton()
-	if IsBackPageButtonDisabled() then return; end -- assert
-	--print("Back button clicked");
-	pageHistoryIndex = pageHistoryIndex - 1;
-	NavigateTo( pageVisitHistory[ pageHistoryIndex ].sectionId, pageVisitHistory[ pageHistoryIndex ].pageId, true ); -- don't store
-	RefreshHistoryButtons();
-end
-
-function OnNextPageButton()
-	if IsNextPageButtonDisabled() then return; end -- assert
-	--print("Next button clicked");
-	pageHistoryIndex = pageHistoryIndex + 1;
-	NavigateTo( pageVisitHistory[ pageHistoryIndex ].sectionId, pageVisitHistory[ pageHistoryIndex ].pageId, true ); -- don't store
-	RefreshHistoryButtons();
 end
 
 
@@ -146,11 +50,6 @@ end
 
 function Initialize_BCP()
 	Resize();
-	Controls.BackPageButton:RegisterCallback( Mouse.eLClick, OnBackPageButton );
-	Controls.BackPageButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	Controls.NextPageButton:RegisterCallback( Mouse.eLClick, OnNextPageButton );
-	Controls.NextPageButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
-	RefreshHistoryButtons();
 end
 Initialize_BCP();
 
