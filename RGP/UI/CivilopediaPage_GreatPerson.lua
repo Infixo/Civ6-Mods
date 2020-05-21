@@ -1,4 +1,4 @@
-print("Loading CivilopediaPage_GreatPerson.lua from RGP Mod, version 3.4");
+print("Loading CivilopediaPage_GreatPerson.lua from RGP Mod, version 3.5");
 -- ===========================================================================
 --	Civilopedia - Great Person Page Layout
 -- ===========================================================================
@@ -105,7 +105,9 @@ PageLayouts["GreatPerson" ] = function(page)
 		if(greatPerson.EraType) then
 			local era = GameInfo.Eras[greatPerson.EraType];
 			if(era) then
-				s:AddLabel(era.Name);
+				if(gpClass and gpClass.AvailableInTimeline) then
+					s:AddLabel(era.Name);
+				end
 			end
 		end
 

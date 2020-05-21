@@ -14,13 +14,13 @@
 
       <Tutorial ID="GPAbilityPointer" Style="TutorialContainer" Anchor="L,C" Offset="410,70" TriggerBy="TutorialGPAbilityPointer">
         <SlideAnim Start="110,-40" EndOffset="30,0" Cycle="Bounce" Function="OutQuad" >
-          <Image Texture="Tutorial_ArrowH" Size="58,44" />
+          <Image Texture="Tutorial_ArrowH" Size="58,44" Offset="25,-90"/>
         </SlideAnim>
       </Tutorial>
 
       <Tutorial ID="GPCostPointer" Style="TutorialContainer" Anchor="L,C" Offset="410,270" TriggerBy="TutorialGPCostPointer">
         <SlideAnim Start="110,-40" EndOffset="30,0" Cycle="Bounce" Function="OutQuad" >
-          <Image Texture="Tutorial_ArrowH" Size="58,44" />
+          <Image Texture="Tutorial_ArrowH" Size="58,44" Offset="45,111"/>
         </SlideAnim>
       </Tutorial>
     </ScrollPanel>

@@ -1,4 +1,4 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.4");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.5");
 -- ===========================================================================
 --	Great People Popup
 -- ===========================================================================
@@ -25,7 +25,7 @@ local SIZE_ACTION_ICON			: number = 38;
 local m_TopPanelConsideredHeight:number = 0;
 local m_greatPersonPanelIM  :table  = InstanceManager:new("PanelInstance",        "Content",  Controls.PeopleStack);
 local m_greatPersonRowIM  :table  = InstanceManager:new("PastRecruitmentInstance",  "Content",  Controls.RecruitedStack);
-local m_uiGreatPeople   :table;
+local m_kGreatPeople   :table;
 local m_kData       :table;
 local m_activeBiographyID :number = -1; -- Only allow one open at a time (or very quick exceed font allocation)
 local m_activeRecruitInfoID	:number	= -1;	-- Only allow one open at a time (or very quick exceed font allocation)
@@ -39,6 +39,9 @@ local m_screenWidth			:number = -1;
 --local m_ModalFrameBaseSize = Controls.ModalFrame:GetSizeY();
 --local m_WoodPanelingBaseSize = Controls.WoodPaneling:GetSizeY();
 --local m_PopupContainerBaseSize = Controls.PopupContainer:GetSizeY();
+
+-- Infixo: moving the Great Prophet to the end
+local eClassProphet = GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].Index;
 
 -- Infixo Filters (pulldowns)
 local m_filterClassID:number = -1; -- -1 for All, >-1 for Great Person Class ID
@@ -150,47 +153,8 @@ function GetBiographyTextTable( individualID:number )
   return kBiography;
 end
 
-
 -- ===========================================================================
---  View the great people currently available (to be purchased)
--- ===========================================================================
-
--- Infixo: find out if a GP has already been recruited
---Game	GetGreatPeople GetPastTimeline
----> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
-function GreatPersonHasBeenRecruited(eIndividual:number)
-	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
-		if pastGP.Individual == eIndividual then return true; end
-	end
-	return false;
-end
-
-function ViewCurrent( data:table )
-  if (data == nil) then
-    UI.DataError("GreatPeople attempting to view current timeline data but received NIL instead.");
-    return;
-  end
-
-  m_uiGreatPeople = {};
-  m_greatPersonPanelIM:ResetInstances();
-  Controls.PeopleScroller:SetHide(false);
-  Controls.RecruitedArea:SetHide(true);
-
-	local kInstanceToShow:table = nil;
-	
-  -- Infixo: moving the Great Prophet to the end
-  local eClassProphet = GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].Index;
-  local iNumGPs = #GameInfo.GreatPersonClasses;  -- num of GPs classes
-  if table.count(data.Timeline) == iNumGPs then  -- just a precaution, should always be equal
-    --print("Moving Great Prophet to the end");
-	local temp = data.Timeline[eClassProphet+1];
-	for i=eClassProphet+1, iNumGPs-1, 1 do data.Timeline[i] = data.Timeline[i+1]; end
-	data.Timeline[iNumGPs] = temp;
-  end
-
-  local preferedRecruitScrollSize = 0;
-  local isPreferedRecruitScrollSizeComputed:boolean = false;
-  for i, kPerson:table in ipairs(data.Timeline) do
+function AddRecruit( kData:table, kPerson:table )
 
     local instance    :table = m_greatPersonPanelIM:GetInstance();
     local classData   :table = GameInfo.GreatPersonClasses[kPerson.ClassID];
@@ -198,9 +162,10 @@ function ViewCurrent( data:table )
     local classText   :string = "";
 
     -- Infixo: moving the Great Prophet to the end
+	local iNumGPs = table.count(kData.Timeline); -- General Commandante is 10th class but doesn't go into the Timeline
 	local eClassID = kPerson.ClassID;
-	--print("BEFORE: i,eClassID,eCP,tabcnt", i, eClassID, eClassProphet, table.count(data.Timeline));
-	if kPerson.ClassID == nil then
+	--print("BEFORE: i,eClassID,eCP,iNumGPs", i, eClassID, eClassProphet, iNumGPs);
+	if eClassID == nil then
 		if i == iNumGPs then eClassID = eClassProphet;
 		elseif i < eClassProphet+1 then eClassID = i-1;
 		else eClassID = i; end
@@ -360,7 +325,7 @@ function ViewCurrent( data:table )
         instance.GoldButton:SetToolTipString(GetPatronizeWithGoldTT(kPerson));
         instance.GoldButton:SetVoid1(kPerson.IndividualID);
         instance.GoldButton:RegisterCallback(Mouse.eLClick, OnGoldButtonClick);
-        instance.GoldButton:SetDisabled(not kPerson.CanPatronizeWithGold);
+        instance.GoldButton:SetDisabled((not kPerson.CanPatronizeWithGold) or IsReadOnly());
         instance.GoldButton:SetHide(false);
       else
         instance.GoldButton:SetHide(true);
@@ -372,7 +337,7 @@ function ViewCurrent( data:table )
         instance.FaithButton:SetToolTipString(GetPatronizeWithFaithTT(kPerson));
         instance.FaithButton:SetVoid1(kPerson.IndividualID);
         instance.FaithButton:RegisterCallback(Mouse.eLClick, OnFaithButtonClick);
-        instance.FaithButton:SetDisabled(not kPerson.CanPatronizeWithFaith);
+        instance.FaithButton:SetDisabled((not kPerson.CanPatronizeWithFaith) or IsReadOnly());
         instance.FaithButton:SetHide(false);
       else
         instance.FaithButton:SetHide(true);
@@ -415,7 +380,7 @@ function ViewCurrent( data:table )
       -- Recruiting standings
       -- Let's sort the table first by points total, then by the lower player id (to push yours toward the top of the list for readability)
       local recruitTable: table = {};
-      for i, kPlayerPoints in ipairs(data.PointsByClass[kPerson.ClassID]) do
+      for i, kPlayerPoints in ipairs(kData.PointsByClass[kPerson.ClassID]) do
 	    kPlayerPoints.TurnsLeft = Round((kPerson.RecruitCost-kPlayerPoints.PointsTotal)/kPlayerPoints.PointsPerTurn + 0.5,0);
         table.insert(recruitTable,kPlayerPoints);
       end
@@ -439,9 +404,6 @@ function ViewCurrent( data:table )
         end
         if (canEarnAnotherOfThisClass) then
           local recruitInst:table = instance["m_RecruitIM"]:GetInstance();
-          if not isPreferedRecruitScrollSizeComputed then
-            preferedRecruitScrollSize = preferedRecruitScrollSize + recruitInst.Top:GetSizeY() + 5; -- AZURENCY : 5 is the padding
-          end
           recruitInst.Country:SetText( kPlayerPoints.PlayerName );
           --recruitInst.Amount:SetText( tostring(Round(kPlayerPoints.PointsTotal,1)) .. "/" .. tostring(kPerson.RecruitCost) );
 
@@ -473,7 +435,6 @@ function ViewCurrent( data:table )
           recruitInst.Top:SetToolTipString(recruitDetails);
         end
       end
-      if not isPreferedRecruitScrollSizeComputed then isPreferedRecruitScrollSizeComputed = true; end
 	  
 	  if (kPerson.EarnConditions ~= nil and kPerson.EarnConditions ~= "") then
 	    instance.RecruitInfo:SetText("[COLOR_Civ6Red]" .. Locale.Lookup("LOC_GREAT_PEOPLE_CANNOT_EARN_PERSON") .. "[ENDCOLOR]");
@@ -508,7 +469,7 @@ function ViewCurrent( data:table )
 	  instance.RecruitInfoBackButton:SetVoid1( kPerson.IndividualID );
 	  instance.RecruitInfoBackButton:RegisterCallback( Mouse.eLClick, OnRecruitInfoClick );
       --]]
-      m_uiGreatPeople[kPerson.IndividualID] = instance;   -- Store instance for later look up
+      m_kGreatPeople[kPerson.IndividualID] = instance;   -- Store instance for later look up
     end
 
 	local noneAvailable		:boolean = (kPerson.IndividualID == nil);
@@ -526,35 +487,50 @@ function ViewCurrent( data:table )
     instance.EffectStack:CalculateSize();
     instance.EffectStackScroller:CalculateSize();
 
-
-
-
-
-
-
-
-	-- CQUI
-	--[[
-    if (m_PopupContainerBaseSize + preferedRecruitScrollSize - 86) > m_ActscreenHeight then -- AZURENCY : 86 is the default height of the recruit scroll
-      preferedRecruitScrollSize = m_ActscreenHeight - 86 - 582 -- AZURENCY :  (582 = 768 (default popup height) - 186 (default recruit progress box height))
-    end
-
-    instance.RecruitScroll:SetSizeY(preferedRecruitScrollSize);
-    instance.RecruitProgressBox:SetSizeY(preferedRecruitScrollSize + 114); -- (114 = 200 - 86)
-    instance.Content:SetSizeY(preferedRecruitScrollSize + 574);
-	--]]
-	-- end CQUI
   end
 
-  Controls.PeopleStack:CalculateSize();
-  Controls.PeopleScroller:CalculateSize();
 
-  -- CQUI
-  --local newprefsize = preferedRecruitScrollSize - 96;
-  --Controls.PopupContainer:SetSizeY(m_PopupContainerBaseSize + newprefsize);
-  --Controls.WoodPaneling:SetSizeY(m_WoodPanelingBaseSize + newprefsize);
-  --Controls.ModalFrame:SetSizeY(m_ModalFrameBaseSize + newprefsize);
-  -- CQUI
+-- ===========================================================================
+--  View the great people currently available (to be purchased)
+-- ===========================================================================
+
+-- Infixo: find out if a GP has already been recruited
+--Game	GetGreatPeople GetPastTimeline
+---> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
+function GreatPersonHasBeenRecruited(eIndividual:number)
+	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
+		if pastGP.Individual == eIndividual then return true; end
+	end
+	return false;
+end
+
+function ViewCurrent( data:table )
+  if (data == nil) then
+    UI.DataError("GreatPeople attempting to view current timeline data but received NIL instead.");
+    return;
+  end
+
+  m_kGreatPeople = {};
+  m_greatPersonPanelIM:ResetInstances();
+  Controls.PeopleScroller:SetHide(false);
+  Controls.RecruitedArea:SetHide(true);
+
+	local kInstanceToShow:table = nil;
+	
+	-- Infixo: moving the Great Prophet to the end
+	--print("Moving Great Prophet to the end");
+	local iNumGPs = table.count(data.Timeline); -- General Commandante is 10th class but doesn't go into the Timeline, so I can't use #GameInfo
+	--print("iNumGPs", iNumGPs, "from Timeline", table.count(data.Timeline)); -- Infixo
+	local temp = data.Timeline[eClassProphet+1];
+	for i=eClassProphet+1, iNumGPs-1, 1 do data.Timeline[i] = data.Timeline[i+1]; end
+	data.Timeline[iNumGPs] = temp;
+
+	for i, kPerson:table in ipairs(data.Timeline) do
+		AddRecruit(data, kPerson);
+	end
+	
+	Controls.PeopleStack:CalculateSize();
+	Controls.PeopleScroller:CalculateSize();
 
   m_screenWidth = math.max(Controls.PeopleStack:GetSizeX(), 1024);
   Controls.WoodPaneling:SetSizeX( m_screenWidth );
@@ -579,6 +555,9 @@ function ViewCurrent( data:table )
     scrollAmt = math.clamp( scrollAmt, 0, 1);
     Controls.PeopleScroller:SetScrollValue( scrollAmt );
   end
+	if IsTutorialRunning() then
+		Controls.PeopleScroller:SetScrollValue( .3 );
+	end
 end
 
 function FillRecruitInstance(instance:table, playerPoints:table, personData:table, classData:table)
@@ -882,7 +861,7 @@ function OnRecruitInfoClick( individualID )
 		OnRecruitInfoClick( m_activeRecruitInfoID );		
 	end
 	
-	local instance:table= m_uiGreatPeople[individualID];
+	local instance:table= m_kGreatPeople[individualID];
 	if instance == nil then
 		print("WARNING: Was unable to find instance for individual \""..tostring(individualID).."\"");
 		return;
@@ -914,7 +893,7 @@ function OnBiographyClick( individualID )
     OnBiographyClick( m_activeBiographyID );
   end
 
-  local instance:table= m_uiGreatPeople[individualID];
+  local instance:table= m_kGreatPeople[individualID];
   if instance == nil then
     print("WARNING: Was unable to find instance for individual \""..tostring(individualID).."\"");
     return;
@@ -1321,6 +1300,13 @@ function OnPreviousRecruitedClick()
   Controls.Total:SetHide( false );
   -- Infixo end
   Refresh();
+end
+
+-- ===========================================================================
+-- FOR OVERRIDE
+-- ===========================================================================
+function IsReadOnly()
+	return false;
 end
 
 -- =======================================================================================
