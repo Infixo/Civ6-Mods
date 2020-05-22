@@ -3,14 +3,10 @@ print("Loading LeaderIcon.lua from Better Leader Icon version "..GlobalParameter
 -- Better Leader Icon
 -- Author: Infixo
 -- 2019-03-21: Created
+-- 2020-05-22: Updated for May 2020 Patch (New Frontier)
 -- ===========================================================================
 
---[[
--- Created by Luigi Mangione on Monday Jun 5 2017
--- Copyright (c) Firaxis Games
---]]
-
-include("LuaClass");
+-- Copyright 2017-2019, Firaxis Games
 include("TeamSupport");
 include("DiplomacyRibbonSupport");
 
@@ -47,47 +43,42 @@ end
 ------------------------------------------------------------------
 -- Class Table
 ------------------------------------------------------------------
-LeaderIcon = LuaClass:Extend();
+LeaderIcon = {
+	playerID = -1,
+	TEAM_RIBBON_PREFIX	= "ICON_TEAM_RIBBON_"
+}
 
-------------------------------------------------------------------
--- Class Constants
-------------------------------------------------------------------
-LeaderIcon.DATA_FIELD_CLASS = "LEADER_ICON_CLASS";
-LeaderIcon.TEAM_RIBBON_PREFIX = "ICON_TEAM_RIBBON_";
-LeaderIcon.TEAM_RIBBON_SIZE = 53;
 
 ------------------------------------------------------------------
 -- Static-Style allocation functions
 ------------------------------------------------------------------
-function LeaderIcon:GetInstance(instanceManager:table, newParent:table)
+function LeaderIcon:GetInstance(instanceManager:table, uiNewParent:table)
 	-- Create leader icon class if it has not yet been created for this instance
-	local instance:table = instanceManager:GetInstance(newParent);
+	local instance:table = instanceManager:GetInstance(uiNewParent);
 	return LeaderIcon:AttachInstance(instance);
 end
 
-function LeaderIcon:AttachInstance(instance:table)
-	self = instance[LeaderIcon.DATA_FIELD_CLASS];
-	if not self then
-		self = LeaderIcon:new(instance);
-		instance[LeaderIcon.DATA_FIELD_CLASS] = self;
-	end
-	self:Reset();
-	return self, instance;
-end
+-- ===========================================================================
+--	Essentially the "new"
+-- ===========================================================================
+function LeaderIcon:AttachInstance( instance:table )
+	if instance == nil then
+		UI.DataError("NIL instance passed into LeaderIcon:AttachInstance.  Setting the value to the ContextPtr's 'Controls'.");
+		instance = Controls;
 
-------------------------------------------------------------------
--- Constructor
-------------------------------------------------------------------
-function LeaderIcon:new(instanceOrControls: table)
-	self = LuaClass.new(LeaderIcon)
-	self.Controls = instanceOrControls or Controls;
-	return self;
+	end
+	setmetatable(instance, {__index = self });
+	self.Controls = instance;
+	--instance.LeaderIcon = self; -- Infixo - this allows for calls to LeaderIcon from within DiploRibbon - a bit messy, but otherwise stats are not updated quickly enough
+	self:Reset();
+	return instance;
 end
-------------------------------------------------------------------
 
 
 function LeaderIcon:UpdateIcon(iconName: string, playerID: number, isUniqueLeader: boolean, ttDetails: string)
 	--print("LeaderIcon:UpdateIcon", iconName, playerID, ttDetails);
+	
+	LeaderIcon.playerID = playerID;
 	
 	local pPlayer:table = Players[playerID];
 	local pPlayerConfig:table = PlayerConfigurations[playerID];
@@ -115,6 +106,9 @@ end
 
 function LeaderIcon:UpdateIconSimple(iconName: string, playerID: number, isUniqueLeader: boolean, ttDetails: string)
 	--print("LeaderIcon:UpdateIconSimple", iconName, playerID, ttDetails);
+	
+	LeaderIcon.playerID = playerID;
+	
 	local localPlayerID:number = Game.GetLocalPlayer();
 
 	self.Controls.Portrait:SetIcon(iconName);
@@ -145,6 +139,7 @@ end
 
 
 function LeaderIcon:UpdateAllToolTips(playerID:number, ttDetails: string)
+	--print("LeaderIcon:UpdateAllToolTips", playerID, ttDetails, self.playerID);
 	-- Set the tooltip and deal flags
 	local tooltip:string, bYourItems:boolean, bTheirItems:boolean = self:GetToolTipString(playerID);
 	if (ttDetails ~= nil and ttDetails ~= "") then
@@ -164,7 +159,7 @@ function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 	--print("LeaderIcon:UpdateTeamAndRelationship", playerID);
 	
 	local localPlayerID	:number = Game.GetLocalPlayer();
-	if localPlayerID == -1 or playerID == 1000 then return; end		--  Local player is auto-play.
+	if localPlayerID == PlayerTypes.NONE or playerID == PlayerTypes.OBSERVER then return; end		--  Local player is auto-play.
 
 	-- Don't even attempt it, just hide the icon if this game mode doesn't have the capabilitiy.
 	if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_HUD_RIBBON_RELATIONSHIPS") == false then
@@ -172,6 +167,7 @@ function LeaderIcon:UpdateTeamAndRelationship(playerID: number)
 		return;
 	end
 	
+	-- Nope, autoplay or observer
 	if playerID < 0 then 
 		UI.DataError("Invalid playerID="..tostring(playerID).." to check against for UpdateTeamAndRelationship().");
 		return; 
@@ -256,7 +252,7 @@ end
 --print("iAccessAgendas", iAccessAgendas);
 
 function LeaderIcon:GetRelationToolTipString(playerID:number)
-	--print("FUN LeaderIcon:GetRelationToolTipString", playerID);
+	--print("LeaderIcon:GetRelationToolTipString", playerID);
 	
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == -1 then return ""; end
@@ -412,6 +408,10 @@ end
 --Resets instances we retrieve
 -- ===========================================================================
 function LeaderIcon:Reset()
+	if self.Controls == nil then
+		UI.DataError("Attempting to call Reset() on a nil LeaderIcon.");
+		return;
+	end
 	self.Controls.TeamRibbon:SetHide(true);
  	self.Controls.Relationship:SetHide(true);
  	self.Controls.YouIndicator:SetHide(true);
@@ -433,7 +433,7 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	--print("LeaderIcon:GetToolTipString", playerID);
 
 	local localPlayerID:number = Game.GetLocalPlayer();
-	if localPlayerID == -1 or localPlayerID == 1000 then return ""; end
+	if localPlayerID == PlayerTypes.NONE or localPlayerID == PlayerTypes.OBSERVER then return ""; end
 
 	local tTT:table = {};
 	local result:string = "";
@@ -573,6 +573,14 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	end
 	
 	return table.concat(tTT, "[NEWLINE]"), bYourItems, bTheirItems;
+end
+
+
+-- ===========================================================================
+function LeaderIcon:AppendTooltip( extraText:string )
+	if extraText == nil or extraText == "" then return; end		--Ignore blank
+	local tooltip:string = self:GetToolTipString(self.playerID) .. "[NEWLINE]" .. extraText;
+	self.Controls.Portrait:SetToolTipString(tooltip);
 end
 
 print("OK loaded LeaderIcon.lua from Better Leader Icon");
