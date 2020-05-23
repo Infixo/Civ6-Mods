@@ -10,6 +10,7 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 -- 2018-03-26: Sources of GPPs
 -- 2018-04-01: PlotYields modifiers
 -- 2019-03-19: Discussions, Emergencies, Resolutions
+-- 2020-05-21: Updated for May 2020 Patch (New Frontier)
 --------------------------------------------------------------
 
 -- exposed functions and variables
@@ -30,11 +31,17 @@ include("CivilopediaScreen");
 
 -- Cache base functions
 BCP_BASE_PageLayouts = {};
+BCP_BASE_OnOpenCivilopedia = OnOpenCivilopedia;
+
 --print("Storing contents of PageLayouts:");
 for k,v in pairs(PageLayouts) do
 	BCP_BASE_PageLayouts[k] = v;
 end
 
+function OnOpenCivilopedia(sectionId_or_search, pageId)
+	BCP_BASE_OnOpenCivilopedia(sectionId_or_search, pageId);
+	Controls.SearchEditBox:TakeFocus();
+end
 
 -- Code from ReportScreen.lua
 function Resize()
@@ -46,6 +53,7 @@ function Resize()
 		Controls.Main:SetOffsetY( topPanelSizeY * 0.5 );
 	--end
 end
+
 
 
 function Initialize_BCP()
