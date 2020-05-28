@@ -2240,6 +2240,9 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_YIELD_MODIFIER_PER_TRIBUTARY" then
 		if CheckForMismatchError(SubjectTypes.Player) then return nil; end
+		--print("FUN ApplyEffectAndCalculateImpact(mod,eff,sub)(subject)",tMod.ModifierId,tMod.EffectType,sSubjectType,tSubject.SubjectType,tSubject.Name);
+		--print("EFFECT_ADJUST_PLAYER_YIELD_MODIFIER_PER_TRIBUTARY", tMod.Arguments.YieldType, tMod.Arguments.Amount, "city-states:", tSubject.NumSuzerainCityStates);
+		--dshowyields(tSubject.Yields);
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, YieldTableGetYield(tSubject.Yields, tMod.Arguments.YieldType) * tSubject.NumSuzerainCityStates * tonumber(tMod.Arguments.Amount) / 100.0);
 
 	------------------------------ TRADE ROUTE ------------------------------------------------

@@ -304,6 +304,7 @@ end
 
 -- this table will hold Tech or Civic requirement for increased Housing
 local tImprMoreHousingReqs:table = nil;
+local iFarmHousingForMaya:number = 0; -- 2020-05-28 Special case for Maya civ
 
 function PopulateImprMoreHousingReqs()
 	--print("PopulateImprMoreHousingReqs");
@@ -315,7 +316,10 @@ function PopulateImprMoreHousingReqs()
 			--dshowrectable(tMod);
 			-- now extract requirement!
 			for _,req in ipairs(tMod.SubjectReqSet.Reqs) do
-				if req.ReqType == "REQUIREMENT_PLAYER_HAS_TECHNOLOGY" then
+				-- 2020-05-28 Special case for Maya civ
+				if req.ReqType == "REQUIREMENT_PLAYER_TYPE_MATCHES" and req.Arguments.CivilizationType == "CIVILIZATION_MAYA" then 
+					iFarmHousingForMaya = tonumber(tMod.Arguments.Amount);
+				elseif req.ReqType == "REQUIREMENT_PLAYER_HAS_TECHNOLOGY" then
 					tImprMoreHousingReqs[ mod.ImprovementType ] = { IsTech = true, Prereq = req.Arguments.TechnologyType, Amount = tonumber(tMod.Arguments.Amount) };
 				elseif req.ReqType == "REQUIREMENT_PLAYER_HAS_CIVIC" then
 					tImprMoreHousingReqs[ mod.ImprovementType ] = { IsTech = false, Prereq = req.Arguments.CivicType, Amount = tonumber(tMod.Arguments.Amount) };
@@ -325,30 +329,39 @@ function PopulateImprMoreHousingReqs()
 	end
 	print("Found", table.count(tImprMoreHousingReqs), "improvements with additional Housing.");
 	for k,v in pairs(tImprMoreHousingReqs) do print(k, v.IsTech, v.Prereq, v.Amount); end
+	print("Maya housing for Farms is", iFarmHousingForMaya);
 end
 
 function GetRealHousingFromImprovements(pCity:table)
 	if tImprMoreHousingReqs == nil then PopulateImprMoreHousingReqs(); end -- do it once
-	local iNumHousing:number = 0; -- we'll add data from Housing field in Improvements here BUT this is 0.5 actually per each, so the final number must by divided by 2
+	local iNumHousing:number = 0; -- we'll add data from Housing field in Improvements divided by TilesRequired which is usually 2
+	-- 2020-05-28 Special case for Maya civ
+	local ePlayerID:number = pCity:GetOwner();
+	local bIsMaya:boolean = ( PlayerConfigurations[ePlayerID]:GetCivilizationTypeName() == "CIVILIZATION_MAYA" );
+	-- check all plots in the city
 	for _,plotIndex in ipairs(Map.GetCityPlots():GetPurchasedPlots(pCity)) do
 		local pPlot:table = Map.GetPlotByIndex(plotIndex);
 		if pPlot and pPlot:GetImprovementType() > -1 and not pPlot:IsImprovementPillaged() then
 			local imprInfo:table = GameInfo.Improvements[ pPlot:GetImprovementType() ];
-			iNumHousing = iNumHousing + imprInfo.Housing; -- well, we can always add 0, right?
+			iNumHousing = iNumHousing + imprInfo.Housing / imprInfo.TilesRequired; -- well, we can always add 0, right?
 			-- now check if there's more with techs/civics
 			-- this check is independent from base Housing: there could be an improvement that doesn't give housing as fresh but could later
 			if tImprMoreHousingReqs[ imprInfo.ImprovementType ] then
 				--print("ANALYZE WEIRD CASE", imprInfo.ImprovementType);
 				local reqs:table = tImprMoreHousingReqs[ imprInfo.ImprovementType ];
 				if reqs.IsTech then
-					if Players[Game.GetLocalPlayer()]:GetTechs():HasTech( GameInfo.Technologies[reqs.Prereq].Index ) then iNumHousing = iNumHousing + 2 * reqs.Amount; end
+					if Players[ePlayerID]:GetTechs():HasTech( GameInfo.Technologies[reqs.Prereq].Index ) then iNumHousing = iNumHousing + reqs.Amount; end
 				else
-					if Players[Game.GetLocalPlayer()]:GetCulture():HasCivic( GameInfo.Civics[reqs.Prereq].Index ) then iNumHousing = iNumHousing + 2 * reqs.Amount; end
+					if Players[ePlayerID]:GetCulture():HasCivic( GameInfo.Civics[reqs.Prereq].Index ) then iNumHousing = iNumHousing + reqs.Amount; end
 				end
+			end
+			-- 2020-05-28 Special case for Maya civ
+			if imprInfo.ImprovementType == "IMPROVEMENT_FARM" and bIsMaya then
+				iNumHousing = iNumHousing + iFarmHousingForMaya;
 			end
 		end
 	end
-	return iNumHousing * 0.5;
+	return iNumHousing;
 end
 
 
