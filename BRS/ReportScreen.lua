@@ -2368,7 +2368,20 @@ function ViewYieldsPage()
 		local bPercYields:boolean = false;
 		for _,mod in ipairs(kCityData.Modifiers) do
 			if mod.Modifier.EffectType == "EFFECT_ADJUST_CITY_YIELD_MODIFIER" then
-				tPercYields[ mod.Arguments.YieldType ] = tPercYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount);
+				if tonumber(mod.Arguments.Amount) == nil then
+					-- 2020-05-29 Special case for Maya civ - yields and percentages are encoded in a single argument as a group of values delimited with comma
+					local yields:table, percentages:table = {}, {};
+					for str in string.gmatch( mod.Arguments.YieldType, "[_%a]+" ) do table.insert(yields,      str) end
+					for str in string.gmatch( mod.Arguments.Amount,    "-?%d+" )  do table.insert(percentages, str) end
+					if #yields == #percentages then -- extra precaution for mods
+						for i,yield in ipairs(yields) do
+							tPercYields[ yield ] = tPercYields[ yield ] + tonumber(percentages[i]);
+						end
+					end
+					--dshowtable(yields); dshowtable(percentages); dshowtable(tPercYields); -- debug
+				else
+					tPercYields[ mod.Arguments.YieldType ] = tPercYields[ mod.Arguments.YieldType ] + tonumber(mod.Arguments.Amount);
+				end
 				bPercYields = true;
 			end
 		end
