@@ -1,0 +1,467 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+				 xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Style="FontNormal16" FontStyle="Shadow">
+
+  <Include File="CivilizationIcon" />
+
+  <!-- MakeInstances -->
+	
+	<Instance					Name="CityInstance">
+		<Stack					ID="Top"	StackGrowth="Right" StackPadding="4">
+      <Image        ID="IconBacking" Anchor="L,C" Size="30,30" Texture="CircleBacking30" Color="100,100,100,255">
+        <Image      ID="Icon" Anchor="C,C" Size="30,30" Icon="ICON_CIVILIZATION_UNKNOWN" IconSize="30"/>
+      </Image>
+			<Label				ID="Name" Anchor="L,C" Style="FontNormal14" String="$CityName$" />
+		</Stack>
+	</Instance>
+
+	<Instance					Name="PhaseSectionInstance">
+		<Image				ID="Progress" Anchor="C,C"	Size="144,12" Texture="Climate_PhaseMeter_1">
+			<Image			ID="Pip"		  Anchor="C,C"	Size="32,32" Texture="Climate_PhaseMeterPip_Off">
+				<Label		ID="Name"			Anchor="C,C"	Style="FontNormal14" Color0="255,255,255,255" String="$"/>
+			</Image>			
+		</Image>
+	</Instance>
+
+	<Instance					Name="AffectedInstance">
+		<Stack					ID="Top"	StackGrowth="Right" >
+			<Label				ID="Num" Anchor="L,C" Style="FontNormal14" String="$Buff/Debuff$" />
+		</Stack>
+	</Instance>
+
+  <Instance					Name="CivCO2Instance">
+    <Grid					  ID="Top" Size="95,50" Style="SubContainer2" Color="0,0,0,150">
+      <MakeInstance Name="CivilizationIcon36" ID="CivIcon" Anchor="L,C" Offset="0,0"/>
+      <Label				ID="Amount"	Anchor="C,C" Offset="18,0" Style="FontNormal20" String="000" />
+    </Grid>
+  </Instance>
+
+  <Instance					Name="ResourceCO2Instance">
+    <Grid					  ID="Top" Size="160,50" Style="SubContainer2" Color="0,0,0,150">
+      <Image        ID="Icon" Anchor="L,C" Offset="-6,0" Size="50,50" IconSize="50" Icon="ICON_RESOURCE_OIL"/>
+      <Image        ID="Palette" Anchor="L,C" Offset="44,0" Size="36,36" Texture="Controls_KeySwatch" Color="255,255,255,255"/>
+      <Label				ID="Amount"	Anchor="C,C" Offset="44,0" Style="FontNormal20" String="000" />
+    </Grid>
+  </Instance>
+
+	<Instance							Name="EventEraRowInstance">
+		<Container					ID="Top"																			Size="parent,28" >
+			<Label						ID="EraName"			Anchor="C,T"	Offset="0,4"	Style="WorldClimateSection"	String="$EraName$" />	
+			<Line							Start="11,26"	End="parent-11,26" Color="0,0,0,255" Width="2" />
+		</Container>
+	</Instance>
+
+	<Instance							Name="EventRowHeaderInstance">
+		<Container					ID="Top"												Anchor="C,T" Offset="0,2" Size="1000,40">
+			<Grid																						Size="parent,parent" Style="Climate_StatHeading" />
+			<Stack	StackGrowth="Right" StackPadding="6">
+        <Container Size="320,parent">
+          <Label Anchor="C,C" Style="ClimateHistoryHeader" String="LOC_CLIMATE_COLUMN_EVENT"/>
+        </Container>
+        <Container Size="240,parent">
+          <Label Anchor="C,C" Style="ClimateHistoryHeader" String="LOC_CLIMATE_COLUMN_LOCATION"/>
+        </Container>
+        <Container Size="330,parent">
+          <Label Anchor="C,C" Style="ClimateHistoryHeader" String="LOC_CLIMATE_COLUMN_EFFECT"/>
+        </Container>
+        <Container Size="80,parent">
+          <Label Anchor="C,C" Style="ClimateHistoryHeader" String="LOC_CLIMATE_COLUMN_DATE"/>
+        </Container>
+			</Stack>
+
+		</Container>
+	</Instance>
+
+	<Instance							Name="EventRowInstance">
+		<Container					ID="Top"												Anchor="C,T" Offset="-4,0"	Size="1000,64">
+      <Box Size="parent,parent" Color="0,0,0,75"/>
+			<Image																						Offset="0,0"	Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="98,163,240,75"/>
+			<Stack StackGrowth="Right" StackPadding="4">
+        <!--Icon and Name-->
+        <Container ID="NameContainer" Size="320,parent">
+          <Image ID="Icon" Size="64,64" Texture="ClimateEventStat_Volcanoes"/>
+          <Stack StackGrowth="Down" Anchor="C,C" Offset="30,0" StackPadding="4">
+            <Label ID="EventTypeName" Anchor="C,C" Align="Center" WrapWidth="240" Style="ClimateHistoryTitle"/>
+            <Label ID="EventName" Anchor="C,C" Align="Center" WrapWidth="240" Style="ClimateHistoryTitle"/>
+          </Stack>
+        </Container>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <!--Location-->
+        <Container Size="240,parent">
+          <Label ID="LocationString" Anchor="C,C" Align="Center" WrapWidth="parent" Style="ClimateHistoryText"/>
+        </Container>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <!--Effects-->
+        <Container ID="FertilizedContainer" Size="70,parent" ToolTip="LOC_CLIMATE_FERTILIZED_TILES">
+          <Image ID="FertilizedTilesIcon" Size="22,22" Offset="8,0" Anchor="L,C" Texture="ClimateHex_Buffed"/>
+          <Image ID="LosingFertilizedTilesIcon" Size="22,22" Offset="8,0" Anchor="L,C" Texture="ClimateHex_NotFertile"/>
+          <Label ID="FertilizedTiles" Offset="14,0" Anchor="C,C" Align="Center" WrapWidth="parent" Style="FontFlair20"/>
+        </Container>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <Container Size="70,parent" ToolTip="LOC_CLIMATE_DAMAGED_TILES">
+          <Image ID="DamagedTilesIcon" Size="22,22" Offset="8,0" Anchor="L,C" Texture="ClimateHex_Debuffed"/>
+          <Label ID="DamagedTiles" Offset="14,0" Anchor="C,C" Align="Center" WrapWidth="parent" Style="FontFlair20"/>
+        </Container>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <Container Size="70,parent" ToolTip="LOC_CLIMATE_UNITS_LOST">
+          <Image ID="UnitsLostIcon" Size="23,26" Offset="8,0" Anchor="L,C" Texture="ClimateImpact_UnitLost"/>
+          <Label ID="UnitsLost" Offset="14,0" Anchor="C,C" Align="Center" WrapWidth="parent" Style="FontFlair20"/>
+        </Container>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <Container Size="70,parent" ToolTip="LOC_CLIMATE_POP_LOST">
+          <Image ID="PopLostIcon" Size="23,26" Offset="8,0" Anchor="L,C" Texture="ClimateImpact_PopLost"/>
+          <Label ID="PopLost" Offset="14,0" Anchor="C,C" Align="Center" WrapWidth="parent" Style="FontFlair20"/>
+        </Container>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <!--Date-->
+        <Container Size="100,parent">
+          <Label ID="DateString" Anchor="C,C" Align="Center" WrapWidth="parent" Style="ClimateHistoryText"/>
+        </Container>
+			</Stack>
+		</Container>
+	</Instance>
+
+  <Instance							Name="ClimateChangeInstance">
+    <Container					ID="Top"												Anchor="C,T" Offset="-4,0"	Size="1000,64">
+      <Box Size="parent,parent" Color="0,0,0,75"/>
+      <Image																						Offset="0,0"	Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="98,163,240,75" />
+      
+      <Stack StackGrowth="Right" StackPadding="4">
+        <!--Icon and Name-->
+        <Container Size="280,parent">
+          <Image ID="Icon" Size="64,64" Texture="ClimateEventStat_ClimateChange"/>
+          <Label ID="EventTypeName" Anchor="C,C" Offset="50,0" Style="FontFlair14" SmallCaps="18" SmallCapsType="EveryWord" GradientColor="220,166,167,255" FontStyle="Glow" EffectColor="250,105,108,255"/>
+        </Container>
+        <Container Size="606,parent"/>
+        <Box Size="2,parent" Color="0,0,0,40"/>
+        <!--Date-->
+        <Container Size="100,parent">
+          <Label ID="DateString" Anchor="C,C" Align="Center" WrapWidth="parent" Style="ClimateHistoryText"/>
+        </Container>
+      </Stack>
+    </Container>
+  </Instance>
+
+	<Instance					Name="PieChartSliceInstance">
+		<Meter					ID="Slice" Anchor="C,C" Size="360,360" Texture="Climate_CO2Meter_Fill" Speed="0" />
+	</Instance>
+	
+	
+	<!-- Screen -->
+
+	<Container				ID="Vignette" Style="FullScreenVignetteConsumer" />
+
+	<Container				ID="PopupContainer"							Anchor="C,C"									Size="1024,768"  >
+    <Box Anchor="C,C" Size="parent,768" Color="22,51,92,255">
+      <Image					ID="OverviewBG"								Anchor="C,C"							Size="parent,parent"				                      Texture="Climate_BG"/>
+      
+        <Image																																			Size="parent,40"						Texture="Controls_SubHeader2"  />
+			<Container																																	Size="parent,40">				
+				<Label			ID="ModalScreenTitle"						Anchor="C,C"									Style="FontFlair24" FontStyle="glow" ColorSet="ShellHeader" SmallCaps="28" SmallCapsLeading="0" SmallCapsType="EveryWord"/>
+			</Container>
+      <Grid	Anchor="C,C" Size="parent+16,parent+16"	Style="ScreenFrame"/>
+    </Box>
+
+
+    <Button ID="ModalScreenClose"	Anchor="R,T" Style="CloseButtonLarge" Offset="-8,-5"/>
+
+		<!-- Pane Sections -->
+		<Container																			Anchor="C,T"	Offset="0,80"	Size="1024,parent-80">
+
+			<!-- ========== PANE Overview ========== -->
+			
+			<Container		ID="OverviewPane"																						Size="parent,parent">
+        <Container			ID="BGRings"									            							  Offset="0,25"                  Size="1024,546"     >
+          <Image				ID="BGRingLT"									Anchor="L,T"	FlipY="True"			              Size="512,273"			Texture="Climate_BGRings" />
+          <Image				ID="BGRingLB"									Anchor="L,B"	            			              Size="512,273"			Texture="Climate_BGRings" />
+          <Image				ID="BGRingRT"									Anchor="R,T"	FlipX="True"	FlipY="True"			Size="512,273"			Texture="Climate_BGRings" />
+          <Image				ID="BGRingRB"									Anchor="R,B"	FlipX="True"			              Size="512,273"		  Texture="Climate_BGRings" />
+        </Container>
+				<Label			ID="ClimateChangePhaseText"			Anchor="C,T"	Offset="0,7"		Style="WorldClimateBigText" />
+
+        <!-- Left Panel -->
+        <Grid Size="500,40" Offset="5,70" Style="Climate_StatHeading">
+          <Label Anchor="C,C" Offset="-50,2" Style="WorldClimateSection" Align="Center" String="{LOC_CLIMATE_CONTRIBUTING_TO_CLIMATE_CHANGE:upper}"/>
+        </Grid>
+        
+				<Stack Offset="5,110" StackGrowth="Down" StackPadding="2">
+          <!-- CO2 Levels -->
+          <Grid	ID="OverviewCO2Grid" Size="400,141" Style="Climate_StatFrame_Grid_Left">
+            <Stack Offset="170,0" Anchor="R,C" StackGrowth="Down" StackPadding="4">
+              <Label													Anchor="R,C" Align="Right" WrapWidth="230" String="{LOC_CLIMATE_CO2_LEVELS:upper}" Style="WorldClimateStatArea"/>
+              <Label		ID="ContributeTotal"	Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateText"/>
+              <Label		ID="ContributeTop"		Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateText"/>
+              <Label		ID="ContributeMe"			Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateText"/>
+            </Stack>
+            <Image Anchor="L,C" Size="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_CO2"/>
+            </Image>
+          </Grid>
+
+          <!-- Temperature -->
+          <Grid	ID="GlobalTempGrid" Size="400,141" Style="Climate_StatFrame_Grid_Left">
+            <Stack Offset="170,0" Anchor="R,C" StackGrowth="Down" StackPadding="4">
+              <Label																Anchor="R,C" Align="Right" WrapWidth="230" String="{LOC_CLIMATE_GLOBAL_TEMPERATURE:upper}" Style="WorldClimateStatArea"/>
+              <Label	  ID="TemperatureValue"	      Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateStatAreaLarge"/>
+              <Label		ID="ClimateTemperature"			Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateText"/>
+            </Stack>
+            <Image Anchor="L,C" Sizef="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_Temperature"/>
+            </Image>
+          </Grid>
+
+          <!-- World Age -->
+          <Grid	Size="507,141" Style="Climate_StatFrame_Grid_Left">
+            <Stack Offset="277,0" Anchor="R,C" StackGrowth="Down" StackPadding="5">
+              <Label														Anchor="R,C" Align="Right" WrapWidth="230" String="{LOC_CLIMATE_WORLD_SETTINGS:upper}" Style="WorldClimateStatArea"/>
+              <Label		ID="WorldAgeText"				Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateText"/>
+              <Label		ID="RealismText"				Anchor="R,C" Align="Right" WrapWidth="230" Style="WorldClimateText"/>
+            </Stack>
+            <Image Anchor="L,C" Size="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_Status"/>
+            </Image>
+          </Grid>
+				</Stack>
+
+        <!-- Right Panel -->
+        <Grid Anchor="R,T" Size="500,40" Offset="5,70" Style="Climate_StatHeading">
+          <Label Anchor="C,C" Offset="50,2" Style="WorldClimateSection" Align="Center" String="{LOC_CLIMATE_FORECAST:upper}"/>
+        </Grid>
+        
+        <Stack Anchor="R,T" Offset="5,110" StackGrowth="Down" StackPadding="2">
+          <!-- Storms -->
+          <Grid	Size="400,105" Anchor="R,T" Style="Climate_StatFrame_Grid_Right" ToolTip="LOC_CLIMATE_STORM_EVENT_DESCRIPTION_TOOLTIP">
+            <Container Anchor="R,T" Size="230,parent" Offset="5,0">
+              <Stack Offset="5,0" Anchor="L,C" StackGrowth="Down" StackPadding="2">
+                <Label																				Anchor="L,C" Align="Left" WrapWidth="parent-10" String="{LOC_CLIMATE_CHANCE_OF_STORMS:upper}" Style="WorldClimateStatArea"/>
+                <Label	ID="StormChanceNum"										Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+                <Label	ID="StormChanceFromClimateChange"			Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+              </Stack>
+            </Container>
+            <Image Anchor="R,C" Size="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_Storms"/>
+            </Image>
+          </Grid>
+
+          <!-- Flooding -->
+          <Grid	Size="400,105" Anchor="R,T" Style="Climate_StatFrame_Grid_Right" ToolTip="LOC_CLIMATE_RIVER_FLOOD_EVENT_DESCRIPTION_TOOLTIP">
+            <Container Anchor="R,T" Size="230,parent" Offset="5,0">
+              <Stack Offset="5,0" Anchor="L,C" StackGrowth="Down" StackPadding="2">
+                <Label																							Anchor="L,C" Align="Left" WrapWidth="parent-10" String="{LOC_CLIMATE_CHANCE_OF_RIVER_FLOOD:upper}" Style="WorldClimateStatArea"/>
+                <Label	ID="RiverFloodChanceNum"										Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+                <Label	ID="RiverFloodChanceFromClimateChange"			Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+              </Stack>
+            </Container>
+            <Image Anchor="R,C" Size="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_Flooding"/>
+            </Image>
+          </Grid>
+
+          <!-- Droughts -->
+          <Grid	Size="400,105" Anchor="R,T" Style="Climate_StatFrame_Grid_Right" ToolTip="LOC_CLIMATE_DROUGHT_EVENT_DESCRIPTION_TOOLTIP">
+            <Container Anchor="R,T" Size="230,parent" Offset="5,0">
+              <Stack Offset="5,0" Anchor="L,C" StackGrowth="Down" StackPadding="2">
+                <Label																	Anchor="L,C" Align="Left" WrapWidth="parent-10" String="{LOC_CLIMATE_DROUGHTS:upper}" Style="WorldClimateStatArea"/>
+                <Label	ID="DroughtActivityChanceNum"	Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+                <Label	ID="DroughtChanceFromClimateChange"			Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+              </Stack>
+            </Container>
+            <Image Anchor="R,C" Size="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_Drought"/>
+            </Image>
+          </Grid>
+
+          <!-- Volcanic -->
+          <Grid	Size="507,106" Anchor="R,T" Style="Climate_StatFrame_Grid_Right" ToolTip="LOC_CLIMATE_VOLCANO_EVENT_DESCRIPTION_TOOLTIP">
+            <Container Anchor="R,T" Size="230,parent" Offset="5,0">
+              <Stack Offset="5,0" Anchor="L,C" StackGrowth="Down" StackPadding="2">
+                <Label																	Anchor="L,C" Align="Left" WrapWidth="parent-10" String="{LOC_CLIMATE_VOLCANIC_ACTIVITY:upper}" Style="WorldClimateStatArea"/>
+                <Label	ID="VolcanicActivityChanceNum"	Anchor="L,C" Align="Left" WrapWidth="parent-10" Style="WorldClimateText"/>
+                <Container Size="parent,auto">
+                  <Label	ID="VolatileNum"      Anchor="L,T" Align="Left" WrapWidth="108" Style="WorldClimateText"/>
+                  <Label	ID="InactiveNum"      Offset="110,0" Anchor="L,T" Align="Left" WrapWidth="108" Style="WorldClimateText"/>               
+                </Container>
+                <Container Size="parent,auto">
+                  <Label	ID="ActiveNum"        Anchor="L,T" Align="Left" WrapWidth="108" Style="WorldClimateText"/>
+                  <Label	ID="EruptedNum"       Offset="110,0" Anchor="L,T" Align="Left" WrapWidth="108" Style="WorldClimateText"/>
+                </Container>
+              </Stack>
+            </Container>
+            <Image Anchor="R,C" Size="62,62" Offset="235,0" Texture="Climate_IconSlot">
+              <Image Anchor="C,C" Size="64,64" Texture="ClimateEventStat_Volcanoes"/>
+            </Image>
+          </Grid>
+          
+        </Stack>
+
+        <!-- Middle - Current Event Status -->
+        <Image Anchor="C,T" Offset="0,-27" Size="523,535" Texture="Climate_Globe" ConsumeMouse="1">
+          <Stack ID="CurrentEventStack" Anchor="C,T" Offset="0,130" StackGrowth="Down" StackPadding="5">
+            <Image					ID="WeatherStatusImage"					Anchor="C,T"	Offset="0,0"		Texture="ClimateEvent_Flood" />
+            <Grid Anchor="C,T" Size="350,auto" AutoSizePadding="0,10" Style="Climate_EventFrame_Grid">
+              <Stack Anchor="C,C" StackGrowth="Down" StackPadding="8">
+                <Label	ID="WeatherStatusText"					Anchor="C,T"	Align="Center" Style="WorldClimateBigText" WrapWidth="410"/>
+                <Label	ID="WeatherLocation"						Anchor="C,T"	Style="WorldClimateText"/>
+                <Label	ID="WeatherName"						    Anchor="C,T"	Style="WorldClimateText"/>
+                <Box    ID="CitiesStackDivider" Anchor="C,T" Size="300,2" Color="150,150,150,180"/>
+                <Stack	ID="CitiesStack"								Anchor="C,T" Offset="0,0"		StackGrowth="Left" StackPadding="5"/>
+              </Stack>
+            </Grid>
+            <Label ID="WeatherEffect" Anchor="C,T" Style="WorldClimateText" Align="Center" WrapWidth="300"/>
+            <Grid Anchor="C,T" Size="auto,auto" Texture="Climate_ImpactSlot" SliceCorner="11,11" SliceSize="2,2">
+              <Stack ID="BuffStack" Anchor="C,C" StackGrowth="Right" StackPadding="4">
+                <Container ID="PlotLostFertileContainer" Size="40,26" ToolTip="LOC_CLIMATE_LOST_FERTILIZED_TILES">
+                  <Image Size="22,22" Anchor="L,C" Texture="ClimateHex_NotFertile"/>
+                  <Label ID="PlotLostFertileLabel" Anchor="C,C" Offset="8,0" Style="FontNormal16" String="0"/>
+                </Container>
+                <Container ID="PlotFertileContainer" Size="40,26" ToolTip="LOC_CLIMATE_FERTILIZED_TILES">
+                  <Image Size="22,22" Anchor="L,C" Texture="ClimateHex_Buffed"/>
+                  <Label ID="PlotFertileLabel" Anchor="C,C" Offset="8,0" Style="FontNormal16" String="0"/>
+                </Container>
+                <Container ID="PlotDamagedContainer" Size="40,26" ToolTip="LOC_CLIMATE_DAMAGED_TILES">
+                  <Image Size="22,22" Anchor="L,C" Texture="ClimateHex_Debuffed"/>
+                  <Label ID="PlotDamagedLabel" Anchor="C,C" Offset="8,0" Style="FontNormal16" String="0"/>
+                </Container>
+                <Container ID="UnitsLostContainer" Size="40,26" ToolTip="LOC_CLIMATE_UNITS_LOST">
+                  <Image Size="23,26" Anchor="L,C" Texture="ClimateImpact_UnitLost"/>
+                  <Label ID="UnitsLostLabel" Anchor="C,C" Offset="8,0" Style="FontNormal16" String="0"/>
+                </Container>
+                <Container ID="PopLostContainer" Size="40,26" ToolTip="LOC_CLIMATE_POP_LOST">
+                  <Image Size="23,26" Anchor="L,C" Texture="ClimateImpact_PopLost"/>
+                  <Label ID="PopLostLabel" Anchor="C,C" Offset="8,0" Style="FontNormal16" String="0"/>
+                </Container>
+              </Stack>
+            </Grid>
+          </Stack>
+        </Image>
+
+        <!-- Climate Phase Meter -->
+        <Grid Anchor="C,T" Offset="0,40" Size="1022,20" Texture="Climate_PhaseMeterBG" SliceCorner="11,8" SliceSize="2,2">
+          <Stack Anchor="C,C" StackGrowth="Right" StackPadding="-1">
+            <MakeInstance ID="Phase1" Name="PhaseSectionInstance" />
+            <Image Anchor="L,C" Size="3,18" Texture="Climate_PhaseMeterDiv"/>
+            <MakeInstance ID="Phase2" Name="PhaseSectionInstance" />
+            <Image Anchor="L,C" Size="3,18" Texture="Climate_PhaseMeterDiv"/>
+            <MakeInstance ID="Phase3" Name="PhaseSectionInstance" />
+            <Image Anchor="L,C" Size="3,18" Texture="Climate_PhaseMeterDiv"/>
+            <MakeInstance ID="Phase4" Name="PhaseSectionInstance" />
+            <Image Anchor="L,C" Size="3,18" Texture="Climate_PhaseMeterDiv"/>
+            <MakeInstance ID="Phase5" Name="PhaseSectionInstance" />
+            <Image Anchor="L,C" Size="3,18" Texture="Climate_PhaseMeterDiv"/>
+            <MakeInstance ID="Phase6" Name="PhaseSectionInstance" />
+            <Image Anchor="L,C" Size="3,18" Texture="Climate_PhaseMeterDiv"/>
+            <MakeInstance ID="Phase7" Name="PhaseSectionInstance" />
+          </Stack>
+        </Grid>
+
+        <!-- Polar Ice -->
+				<Grid	Anchor="L,B" Offset="5,5" Size="494,140" Style="Climate_FooterPanel" ToolTip="LOC_CLIMATE_POLAR_ICE_MELT_DESCRIPTION_TOOLTIP">
+          <Grid Size="parent,40" Style="Climate_StatHeading">
+            <Label ID="PolarIceAlertIndicator" Anchor="L,C" Offset="5,0" String="[ICON_New]" ToolTip="LOC_CLIMATE_POLAR_ICE_MELT_ALERT_TOOLTIP"/>
+            <Label Anchor="C,C" Offset="0,1" String="{LOC_CLIMATE_POLAR_ICE:upper}" Style="WorldClimateSection"/>
+          </Grid>
+          <Image Anchor="C,B" Size="490,104" Texture="Climate_PanelIllust_Ice"/>
+          <Label ID="PolarIceLostNum" Anchor="C,C" Offset="0,20" Style="FontFlair24" />
+          <Label ID="NextPolarIceLost" Anchor="C,C" Offset="0,50" Style="WorldClimateText"/>
+				</Grid>
+
+        <!-- Sea Level -->
+				<Grid				ID="SeaLevelArea"		Anchor="R,B"	Offset="5,5" Size="494,140" Style="Climate_FooterPanel" >
+          <Grid Size="parent,40" Style="Climate_StatHeading">
+            <Label ID="SeaLevelAlertIndicator" Anchor="L,C" Offset="5,0" String="[ICON_New]" ToolTip="LOC_CLIMATE_SEA_LEVEL_RISE_ALERT_TOOLTIP"/>
+            <Label Anchor="C,C" Offset="0,1" String="{LOC_CLIMATE_SEA_LEVEL:upper}" Style="WorldClimateSection"/>
+          </Grid>
+          <Image Anchor="R,B" Size="490,104" Offset="2,2" Texture="Climate_PanelIllust_SeaLevel" Color="255,255,255,210"/>
+					<Label		ID="SeaLevel"				Anchor="L,C"	Offset="20,10" Style="FontFlair24" />
+					<Stack												Anchor="L,C"	Offset="20,35" StackGrowth="Right" StackPadding="20">
+						<Label ID="TilesFlooded"		Style="WorldClimateText"/>
+						<Label ID="TilesSubmerged"	Style="WorldClimateText"/>
+					</Stack>
+          <Label ID="NextSeaLevelRise"  Anchor="L,C" Offset="20,54" Style="WorldClimateText"/>
+          <Image ID="SeaLevelWave" Anchor="C,B" Size="490,24" Texture="Climate_SeaLevelMeter"/>
+				</Grid>
+
+			</Container>
+
+			
+			<!-- ========== PANE CO2Levels ========== -->
+			
+			<Container								ID="CO2LevelsPane"																					Size="parent,parent" >
+
+				<!-- Left pane -->
+        <Stack Offset="11,2" StackPadding="6">
+
+          <Grid Size="500,674" Style="SubContainer4" Color="0,0,0,85">
+            <Grid		Size="parent,52" Style="Climate_StatHeading">
+              <Label Anchor="C,T"  String="LOC_CLIMATE_GLOBAL_CONTRIBUTIONS" Offset="0,8"/>
+              <Label								ID="GlobalContributionsTotalNum"	Anchor="C,C" Offset="0,10"/>
+            </Grid>
+
+
+            <Stack Anchor="C,T" Offset="0,52" StackGrowth="Right" StackPadding="4">
+              <Container				ID="CO2TabContainer"												                Size="parent-100,34">
+                <GridButton			ID="CO2ButtonByCivilization"																Size="150,34"					Style="TabButton"			FontSize="14"	TextOffset="0,2" String="LOC_CLIMATE_TAB_CO2_BY_CIVILIZATION" >
+                  <GridButton		ID="CO2SelectedByCivilization"															Size="parent,parent"	Style="TabButtonSelected" />
+                </GridButton>
+                <GridButton			ID="CO2ButtonByResource"																		Size="150,34"					Style="TabButton"			FontSize="14"	TextOffset="0,2" String="LOC_CLIMATE_TAB_CO2_BY_RESOURCE" >
+                  <GridButton		ID="CO2SelectedByResource"																												Size="parent,parent"	Style="TabButtonSelected" />
+                </GridButton>
+              </Container>
+            </Stack>
+
+            <Image		ID="GlobalContributionsPie"				Anchor="C,T" Offset="0,92" Size="360,360" Texture="Climate_CO2Meter_Slot" />
+            <Stack		ID="GlobalCityStack"							Anchor="C,T" Offset="0,460" StackGrowth="Right" StackPadding="3" WrapGrowth="Bottom" WrapWidth="500" />
+          </Grid>
+        </Stack>
+				
+				<!-- Right pane -->
+        <Stack Anchor="R,T" Offset="11,2" StackPadding="6">
+
+          <Grid Size="500,674" Style="SubContainer4" Color="0,0,0,85">
+            <Grid		Size="500,52" Style="Climate_StatHeading">
+              <Label Anchor="C,T" String="LOC_CLIMATE_YOUR_CO2_CONTRIBUTION" Offset="0,8" />
+              <Label		ID="YourContributionsNum"					Anchor="C,C" Offset="0,10" />
+            </Grid>
+            <Image		ID="TotalContributionsPie"				Anchor="C,T" Offset="0,92" 	Size="360,360" Texture="Climate_CO2Meter_Slot" />
+            <Stack		ID="YourCO2Stack"									Anchor="C,T" Offset="0,460" StackGrowth="Right" StackPadding="3" WrapGrowth="Bottom" WrapWidth="500" />
+          </Grid>
+        </Stack>
+			</Container>
+			
+			
+			<!-- ========== PANE Event History ========== -->
+			<Container						ID="EventHistoryPane"																			Size="parent,parent">
+        
+        <MakeInstance Name="EventRowHeaderInstance"/>
+        <ScrollPanel				ID="EventScroll"													Offset="4,42"		Size="parent,parent-46"				Vertical="1" AutoScrollBar="1"  >
+          <Stack						ID="EventStack"							Anchor="C,T"	Offset="0,0"/>
+					<ScrollBar Anchor="R,C" Size="11,parent" AnchorSide="O,I" Offset="-15,0" Style="ScrollVerticalBar" />
+				</ScrollPanel>							
+			</Container>
+		</Container>
+
+    <!-- Tabs -->
+    <Container																			Anchor="C,T"	Offset="0,30"		Size="400,61" >
+      <Image																				Anchor="C,C"									Size="439,27"					Texture="Controls_TabLedge2_Fill" StretchMode="Tile" />
+      <Grid																					Anchor="C,T"									Size="600,61"					Texture="Controls_TabLedge2"  SliceCorner="194,18" SliceSize="52,26" SliceTextureSize="438,61">
+        <Container				ID="TabContainer"												Anchor="C,C"	Size="parent-80,34">
+          <GridButton			ID="ButtonOverview"																			Size="170,34"					Style="TabButton"			FontSize="14"	TextOffset="0,2" String="LOC_CLIMATE_TAB_OVERVIEW" >
+            <GridButton		ID="SelectedOverview"																													Size="parent,parent"	Style="TabButtonSelected" />
+          </GridButton>
+          <GridButton			ID="ButtonCO2Levels"																		Size="170,34"					Style="TabButton"			FontSize="14"	TextOffset="0,2" String="LOC_CLIMATE_TAB_CO2_LEVELS" >
+            <GridButton		ID="SelectedCO2Levels"																												Size="parent,parent"	Style="TabButtonSelected" />
+          </GridButton>
+          <GridButton			ID="ButtonEventHistory"																	Size="170,34"					Style="TabButton"			FontSize="14"	TextOffset="0,2" String="LOC_CLIMATE_TAB_EVENT_HISTORY" >
+            <GridButton		ID="SelectedEventHistory"																											Size="parent,parent"	Style="TabButtonSelected" />
+          </GridButton>
+        </Container>
+      </Grid>
+    </Container>
+
+    <!-- Modal screen controls are in a separate container because of the custom BG inside the scroll panel -->
+    <Grid ID="YieldsContainer" Style="YieldContainerStyle"/>
+    
+	</Container>
+
+</Context>

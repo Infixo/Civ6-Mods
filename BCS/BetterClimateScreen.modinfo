@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="26B4DBEE-93EE-4B27-5682-70C454D0253C" version="1">
+	<Properties>
+		<Name>Better Climate Screen</Name>
+		<Teaser>Better Climate Screen.</Teaser>
+		<Description>Better Climate Screen.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.0.</Description>
+		<Authors>Infixo</Authors>
+		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul, RohBang, Gorlod, Zergus, Rac, Aristos</SpecialThanks>
+		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>2.0</CompatibleVersions>
+		<SubscriptionID>1312585482</SubscriptionID>
+	</Properties>
+	<Dependencies>
+		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" />
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="DLCGranColombiaMaya"> <!-- 2020-05-21 -->
+			<LeaderPlayable>Players:Expansion2_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY</LeaderPlayable>
+		</Criteria>
+	</ActionCriteria>
+	<InGameActions>
+		<!-- Gathering Storm actions - import lua and xml, replace lua -->
+        <ImportFiles id="BCS_ImportFiles_XP2">
+			<Properties><LoadOrder>100</LoadOrder></Properties>
+            <Items>
+                <File>ClimateScreen.lua</File>
+				<File>XP2/ClimateScreen.xml</File>
+            </Items>
+        </ImportFiles>
+		<ReplaceUIScript id="BCS_ReplaceUI_ClimateScreen_XP2">
+			<Properties>
+                <LoadOrder>101</LoadOrder>
+				<LuaContext>ClimateScreen</LuaContext>
+				<LuaReplace>ClimateScreen.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<!-- Gran Colombia & Maya actions - replace lua and import xml (there's no 'replace' for xml) -->
+		<ImportFiles id="BCS_ImportFiles_XP2" criteria="DLCGranColombiaMaya">
+			<Properties><LoadOrder>110</LoadOrder></Properties>
+			<File>GCM/ClimateScreen.xml</File>
+		</ImportFiles>
+		<ReplaceUIScript id="BCS_ReplaceUI_ClimateScreen_GCM" criteria="DLCGranColombiaMaya">
+			<Properties>
+                <LoadOrder>111</LoadOrder>
+				<LuaContext>ClimateScreen</LuaContext>
+				<LuaReplace>ClimateScreen.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+    </InGameActions>
+    <Files>
+		<!-- Shared files -->
+        <File>ClimateScreen.lua</File>
+		<!-- Gathering Storm files -->
+		<File>XP2/ClimateScreen.xml</File>
+		<!-- Gran Colombia & Maya files -->
+		<File>GCM/ClimateScreen.xml</File>
+    </Files>
+</Mod>
