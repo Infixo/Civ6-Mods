@@ -2,13 +2,11 @@
 <Mod id="26B4DBEE-93EE-4B27-5682-70C454D0253C" version="1">
 	<Properties>
 		<Name>Better Climate Screen</Name>
-		<Teaser>Better Climate Screen.</Teaser>
-		<Description>Better Climate Screen.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.0.</Description>
+		<Teaser>More information about CO2 footprint.</Teaser>
+		<Description>More information about CO2 footprint.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.0.</Description>
 		<Authors>Infixo</Authors>
-		<SpecialThanks>Greg Miller, nightfearer, Tyolan, copysoul, RohBang, Gorlod, Zergus, Rac, Aristos</SpecialThanks>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
-		<SubscriptionID>1312585482</SubscriptionID>
 	</Properties>
 	<Dependencies>
 		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" />

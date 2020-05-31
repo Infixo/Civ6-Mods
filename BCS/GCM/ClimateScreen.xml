@@ -30,20 +30,44 @@
 		</Stack>
 	</Instance>
 
-  <Instance					Name="CivCO2Instance">
-    <Grid					  ID="Top" Size="95,50" Style="SubContainer2" Color="0,0,0,150">
-      <MakeInstance Name="CivilizationIcon36" ID="CivIcon" Anchor="L,C" Offset="0,0"/>
-      <Label				ID="Amount"	Anchor="C,C" Offset="18,0" Style="FontNormal20" String="000" />
-    </Grid>
-  </Instance>
+	<Instance Name="CivCO2Instance">
+		<Grid ID="Top" Size="480,38" Style="SubContainer2" Color="0,0,0,150">
+			<MakeInstance Name="CivilizationIcon30" ID="CivIcon" Anchor="L,C" Offset="0,0"/>
+			<Label	ID="Name"     Anchor="L,C" Offset="40,0" Style="FontNormal18" String="Civ" />
+			<Container Anchor="L,C" Size="60,38" Offset="200,0" >
+				<Label ID="Percent"  Anchor="C,C" Style="FontNormal18" String="00%" Align="Center" />
+			</Container>
+			<Container Anchor="L,C" Size="80,38" Offset="280,0" >
+				<Label ID="Amount" Anchor="C,C" Style="FontNormal18" String="0000" Align="Center" />
+			</Container>
+			<Container Anchor="L,C" Size="60,38" Offset="380,0" >
+				<Label ID="LastTurn" Anchor="C,C" Style="FontNormal18" String="+00" Align="Center" />
+			</Container>
+		</Grid>
+	</Instance>
 
-  <Instance					Name="ResourceCO2Instance">
-    <Grid					  ID="Top" Size="160,50" Style="SubContainer2" Color="0,0,0,150">
-      <Image        ID="Icon" Anchor="L,C" Offset="-6,0" Size="50,50" IconSize="50" Icon="ICON_RESOURCE_OIL"/>
-      <Image        ID="Palette" Anchor="L,C" Offset="44,0" Size="36,36" Texture="Controls_KeySwatch" Color="255,255,255,255"/>
-      <Label				ID="Amount"	Anchor="C,C" Offset="44,0" Style="FontNormal20" String="000" />
-    </Grid>
-  </Instance>
+	<Instance Name="ResourceCO2Instance">
+		<Grid ID="Top" Size="480,38" Style="SubContainer2" Color="0,0,0,150">
+			<Image ID="Icon" Anchor="L,C" Offset="0,0" Size="38,38" IconSize="32" Icon="ICON_RESOURCE_OIL"/>
+			<!--<Image        ID="Palette" Anchor="L,C" Offset="44,0" Size="36,36" Texture="Controls_KeySwatch" Color="255,255,255,255"/>-->
+			<Label	ID="Name"     Anchor="L,C" Offset="40,0" Style="FontNormal18" String="Civ" />
+			<Container Anchor="L,C" Size="60,38" Offset="140,0" >
+				<Label ID="Percent"  Anchor="C,C" Style="FontNormal18" String="00%" Align="Center" />
+			</Container>
+			<Container Anchor="L,C" Size="60,38" Offset="200,0" >
+				<Label ID="Amount" Anchor="C,C" Style="FontNormal18" String="0000" Align="Center" />
+			</Container>
+			<Container Anchor="L,C" Size="60,38" Offset="260,0" >
+				<Label ID="LastTurn" Anchor="C,C" Style="FontNormal18" String="+00" Align="Center" />
+			</Container>
+			<Container Anchor="L,C" Size="80,38" Offset="320,0" >
+				<Label ID="ResAmount" Anchor="C,C" Style="FontNormal18" String="0000" Align="Center" />
+			</Container>
+			<Container Anchor="L,C" Size="60,38" Offset="400,0" >
+				<Label ID="ResLastTurn" Anchor="C,C" Style="FontNormal18" String="+00" Align="Center" />
+			</Container>
+		</Grid>
+	</Instance>
 
 	<Instance							Name="EventEraRowInstance">
 		<Container					ID="Top"																			Size="parent,28" >
@@ -412,7 +436,7 @@
               <Label								ID="GlobalContributionsTotalNum"	Anchor="C,C" Offset="0,10"/>
             </Grid>
 
-
+		<!--
             <Stack Anchor="C,T" Offset="0,52" StackGrowth="Right" StackPadding="4">
               <Container				ID="CO2TabContainer"												                Size="parent-100,34">
                 <GridButton			ID="CO2ButtonByCivilization"																Size="150,34"					Style="TabButton"			FontSize="14"	TextOffset="0,2" String="LOC_CLIMATE_TAB_CO2_BY_CIVILIZATION" >
@@ -423,9 +447,12 @@
                 </GridButton>
               </Container>
             </Stack>
-
-            <Image		ID="GlobalContributionsPie"				Anchor="C,T" Offset="0,92" Size="360,360" Texture="Climate_CO2Meter_Slot" />
-            <Stack		ID="GlobalCityStack"							Anchor="C,T" Offset="0,460" StackGrowth="Right" StackPadding="3" WrapGrowth="Bottom" WrapWidth="500" />
+		-->
+            <!--<Image		ID="GlobalContributionsPie"				Anchor="C,T" Offset="0,92" Size="360,360" Texture="Climate_CO2Meter_Slot" />-->
+			<Container Anchor="L,T" Offset="10,50" Size="480,40" >
+				<Label Anchor="C,C" Align="Center" Style="FontNormal16" String="LOC_CLIMATE_TAB_CO2_BY_CIVILIZATION" />
+			</Container>
+            <Stack ID="GlobalCivStack" Anchor="L,T" Offset="10,90" StackGrowth="Bottom" StackPadding="2" />
           </Grid>
         </Stack>
 				
@@ -437,8 +464,16 @@
               <Label Anchor="C,T" String="LOC_CLIMATE_YOUR_CO2_CONTRIBUTION" Offset="0,8" />
               <Label		ID="YourContributionsNum"					Anchor="C,C" Offset="0,10" />
             </Grid>
-            <Image		ID="TotalContributionsPie"				Anchor="C,T" Offset="0,92" 	Size="360,360" Texture="Climate_CO2Meter_Slot" />
-            <Stack		ID="YourCO2Stack"									Anchor="C,T" Offset="0,460" StackGrowth="Right" StackPadding="3" WrapGrowth="Bottom" WrapWidth="500" />
+            <!--<Image		ID="TotalContributionsPie"				Anchor="C,T" Offset="0,92" 	Size="360,360" Texture="Climate_CO2Meter_Slot" />-->
+			<Container Anchor="L,T" Offset="10,50" Size="480,40" >
+				<Label Anchor="C,C" Align="Center" Style="FontNormal16" String="LOC_CLIMATE_TAB_CO2_BY_RESOURCE" />
+			</Container>
+            <Stack ID="GlobalResStack" Anchor="L,T" Offset="10,90" StackGrowth="Bottom" StackPadding="2" />
+			
+			<Container Anchor="L,T" Offset="10,251" Size="480,40" >
+				<Label Anchor="C,C" Align="Center" Style="FontNormal16" String="LOC_CLIMATE_YOUR_CO2_CONTRIBUTION" />
+			</Container>
+            <Stack ID="YourCO2Stack" Anchor="L,T" Offset="10,291" StackGrowth="Bottom" StackPadding="2" />
           </Grid>
         </Stack>
 			</Container>
@@ -475,5 +510,7 @@
 
     <!-- Modal screen controls are in a separate container because of the custom BG inside the scroll panel -->
     <Grid ID="YieldsContainer" Style="YieldContainerStyle"/>
+	
 	</Container>
+
 </Context>

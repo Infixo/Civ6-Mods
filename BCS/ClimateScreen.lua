@@ -34,9 +34,9 @@ local SEA_LEVEL_WAVE_OFFSET	:number = 15;
 -- ===========================================================================
 --	MEMBERS
 -- ===========================================================================
-local m_kCO2CivsIM				:table = InstanceManager:new( "ResourceCO2Instance", "Top", Controls.GlobalCityStack );
-local m_kCivCO2IM				:table = InstanceManager:new( "CivCO2Instance", "Top", Controls.GlobalCityStack );
-local m_kYourCO2IM				:table = InstanceManager:new( "ResourceCO2Instance", "Top", Controls.YourCO2Stack );
+local m_kResCO2IM				:table = InstanceManager:new( "ResourceCO2Instance", "Top", Controls.GlobalResStack ); -- CO2 emmission from resources (WORLD)
+local m_kCivCO2IM				:table = InstanceManager:new( "CivCO2Instance", "Top", Controls.GlobalCivStack ); -- CO2 emmission from Civs (WORLD)
+local m_kYourCO2IM				:table = InstanceManager:new( "ResourceCO2Instance", "Top", Controls.YourCO2Stack ); -- CO2 emmission from resources (YOU)
 local m_kSliceIM				:table = InstanceManager:new( "PieChartSliceInstance", "Slice" );
 local m_kAffectedCitiesIM		:table = InstanceManager:new( "CityInstance", "Top", Controls.CitiesStack );
 local m_kEventRowInstance		:table = InstanceManager:new( "EventRowInstance", "Top", Controls.EventStack );
@@ -69,7 +69,7 @@ function Open( selectedTabName:string )
 	
 	m_kSliceIM:ResetInstances();	-- Instance manager that generates pie chart slices.
 
-	m_CO2tabs.SelectTab( Controls.CO2ButtonByCivilization );
+	--m_CO2tabs.SelectTab( Controls.CO2ButtonByCivilization );
 	
 	UpdateClimateChangeEventsData();
 
@@ -152,6 +152,7 @@ end
 --		Each tab has: "ButtonFoo" and in it a "SelectFoo"
 -- ===========================================================================
 function RealizeTabs( selectedTabName:string )
+	--print("RealizeTabs", selectedTabName);
 	
 	m_currentTabName = selectedTabName;
 
@@ -383,6 +384,8 @@ end
 
 -- ===========================================================================
 function TabSelectOverview()
+	--print("TabSelectOverview");
+	
 	RealizeTabs("Overview");
 	
 	-- Alert indicators are shown by RefreshCurrentEvent if required
@@ -607,8 +610,11 @@ end
 
 -- ===========================================================================
 function TabSelectCO2Levels()
-	
+
 	RealizeTabs("CO2Levels");
+	
+	TabCO2ByCivilization();
+	TabCO2ByResource();
 	RealizePlayerCO2();
 
 	local CO2Total		:number = GameClimate.GetTotalCO2Footprint();
@@ -759,19 +765,36 @@ end
 --	Create the pie-chart on the right side of the screen that is composed of
 --	overlayed meters.
 -- ===========================================================================
+
+-- helpers
+function FormatLastTurn(lastTurn:number)
+	return lastTurn == 0 and "0" or string.format("%+d", lastTurn);
+end
+function ResourceIcon(icon:string)
+	return "[ICON_"..icon.."]";
+end
+function FormatPercent(amount:number, total:number)
+	return total == 0 and "-" or string.format("%.0f%%", amount*100/total);
+end
+
 function RealizePlayerCO2()
 
 	local pLocalPlayer			:table = Players[m_playerID];
 	local pResources			:table	= pLocalPlayer:GetResources();	
 	local kResourceUseAmounts	:table = {};		-- hold raw CO2 usage amounts by each resource
-	local kSliceAmounts			:table = {};		-- hold the % each resource is contributing to CO2
+	--local kSliceAmounts			:table = {};		-- hold the % each resource is contributing to CO2
 	local total					:number = 0;
-	local kColors				:table = GetPieChartColorTable();
-	local maxColors				:number = #kColors;
-	local colorIndex			:number = 1;	-- Used to tint correponding colors
+	--local kColors				:table = GetPieChartColorTable();
+	--local maxColors				:number = #kColors;
+	--local colorIndex			:number = 1;	-- Used to tint correponding colors
 
 	m_kYourCO2IM:ResetInstances();
 
+	-- calculate the total first
+	for kResourceInfo in GameInfo.Resources() do
+		total = total + GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index, false );
+	end
+	
 	for kResourceInfo in GameInfo.Resources() do
 
 		-- Does the resource contribute to CO2?
@@ -784,39 +807,46 @@ function RealizePlayerCO2()
 
 				local uiResource		:table = m_kYourCO2IM:GetInstance();
 				local co2Amount			:number = amount;
-				local color				:number = kColors[colorIndex];
+				--local color				:number = kColors[colorIndex];
 				local amountLastTurn	:number = GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index, true );
+				local resourceTotal		:number = GameClimate.GetPlayerRawResourceConsumption( m_playerID, kResourceInfo.Index, false );
 				local resourceLastTurn	:number = GameClimate.GetPlayerRawResourceConsumption( m_playerID, kResourceInfo.Index, true );
 
+				uiResource.Icon:SetIcon( "ICON_" .. kResourceInfo.ResourceType);
+				uiResource.Name:SetText( Locale.Lookup(kResourceInfo.Name) );
+				uiResource.Percent:SetText( FormatPercent(co2Amount, total) );
 				uiResource.Amount:SetText( co2Amount );
-				uiResource.Icon:SetIcon("ICON_" .. kResourceInfo.ResourceType);
-				uiResource.Palette:SetColor( color );
+				uiResource.LastTurn:SetText( FormatLastTurn(amountLastTurn) );
+				--uiResource.Palette:SetColor( color );
+
+				uiResource.ResAmount:SetText( tostring(resourceTotal)..ResourceIcon(kResourceInfo.ResourceType) );
+				uiResource.ResLastTurn:SetText( FormatLastTurn(resourceLastTurn)..ResourceIcon(kResourceInfo.ResourceType) );
 				uiResource.Top:SetToolTipString( Locale.Lookup("LOC_CLIMATE_RESOURCE_CONSUMED_LAST_TURN", resourceLastTurn, kResourceInfo.Name, amountLastTurn) );
+				
+				--table.insert( kResourceUseAmounts, amount);
+				--total = total + co2Amount;
 
-				table.insert( kResourceUseAmounts, amount);
-				total = total + co2Amount;
-
-				colorIndex = (colorIndex + 1) % maxColors;
+				--colorIndex = (colorIndex + 1) % maxColors;
 			end
 		end
 	end
 
 	-- Now total is known, create an array based on percentages (0.0 - 1.0) each resources makes and chart it.
-	for i,amount in ipairs( kResourceUseAmounts ) do
-		table.insert(kSliceAmounts, amount/total );
-	end
+	--for i,amount in ipairs( kResourceUseAmounts ) do
+		--table.insert(kSliceAmounts, amount/total );
+	--end
 	
-	BuildPieChart( Controls.TotalContributionsPie, m_kSliceIM, kSliceAmounts, kColors );
+	--BuildPieChart( Controls.TotalContributionsPie, m_kSliceIM, kSliceAmounts, kColors );
 end
 
 
 -- ===========================================================================
-function TabCO2ByCiviliation()	
-	
-	RealizeCO2Tabs("ByCivilization");
+function TabCO2ByCivilization()
 
-	m_kCO2CivsIM:ResetInstances();
-	m_kCivCO2IM:ResetInstances();
+	--RealizeCO2Tabs("ByCivilization");
+
+	--m_kCO2CivsIM:ResetInstances(); -- clear old data
+	m_kCivCO2IM:ResetInstances(); -- clear old data
 
 	-- Realease instances of pie slices previously used in the global section.
 	for _,uiSliceInstance in ipairs(m_kGlobalPieSlices) do
@@ -830,67 +860,101 @@ function TabCO2ByCiviliation()
 	local kFootprints			:table = {};		-- hold raw CO2 usage amounts by each resource	
 	local kColors				:table = {};
 	
+	-- calculate the total first, so we can get percentages later
+	local iNumPlayersWithCO2:number = 0;
 	for _, pPlayer in ipairs(pPlayers) do
-		
 		local playerID			:number = pPlayer:GetID();
 		local CO2FootprintNum	:number = GameClimate.GetPlayerCO2Footprint( playerID, false  );
-
 		if CO2FootprintNum > 0 then
 			total = total + CO2FootprintNum;
+			iNumPlayersWithCO2 = iNumPlayersWithCO2 + 1;
+		end
+	end
+	
+	-- calculate tresholds - 50% and 150% of the average
+	local fCO2Avg:number, fCO2Min:number, fCO2Max:number = 0.0, 0.0, 0.0;
+	if iNumPlayersWithCO2 > 1 then -- apply coloring only if at least 2 players contribute
+		fCO2Avg = total / iNumPlayersWithCO2;
+		fCO2Min = fCO2Avg * 0.5;
+		fCO2Max = fCO2Avg * 1.5;
+	end
+	
+	local function FormatColor(text:string, amount:number)
+		if amount == 0 then return "[COLOR:128,128,128,128]"..text.."[ENDCOLOR]"; end
+		if iNumPlayersWithCO2 < 2 then return text; end
+		if amount < fCO2Min then return "[COLOR_GREEN]"..text.."[ENDCOLOR]"; end
+		if amount > fCO2Max then return "[COLOR_RED]"..text.."[ENDCOLOR]"; end
+		return text;
+	end
+
+	local function AddCivCO2Row(bIcon:boolean, playerID:number, civName:string, amount:number, lastTurn:number)
+		uiCiv = m_kCivCO2IM:GetInstance();
+		-- icon
+		if bIcon then
+			local civIconController = CivilizationIcon:AttachInstance( uiCiv.CivIcon );
+			civIconController:UpdateIconFromPlayerID( playerID );
+			civIconController:SetLeaderTooltip( playerID );
+		end
+		-- values
+		uiCiv.Name:SetText( civName );
+		uiCiv.Percent:SetText( FormatColor( FormatPercent(amount, total), amount ) );
+		uiCiv.Amount:SetText( FormatColor( tostring(amount), amount) );
+		uiCiv.LastTurn:SetText( FormatColor( FormatLastTurn(lastTurn), amount ) );
+	end
+	
+	-- unmet players are put into one bag (dark blue back color in the original screen)
+	local bShowUnmet:boolean = false;
+	local iUnmetCO2FootprintNum:number, iUnmetCO2FootprintLastTurn:number = 0, 0;
+	
+	for _, pPlayer in ipairs(pPlayers) do
+		local playerID			:number = pPlayer:GetID();
+		local iCO2FootprintNum	:number = GameClimate.GetPlayerCO2Footprint( playerID, false  );
+
+		-- last turn emmission is only available via GetPlayerResourceCO2Footprint(ePlayer,eResource,bLastTurn)
+		-- resources not related to CO2 just return 0, so we can just loop through
+		local iCO2FootprintLastTurn:number = 0;
+		for kResourceInfo in GameInfo.Resources() do
+			iCO2FootprintLastTurn = iCO2FootprintLastTurn + GameClimate.GetPlayerResourceCO2Footprint( playerID, kResourceInfo.Index, true );
 		end
 		
 		local pPlayerConfig		:table = PlayerConfigurations[playerID];
 		local civType			:string = pPlayerConfig:GetCivilizationTypeName();
-		local civName			:string = Locale.Lookup( pPlayerConfig:GetCivilizationDescription() );
-		local backColor, frontColor = UI.GetPlayerColors(playerID);
+		local civName			:string = Locale.Lookup( pPlayerConfig:GetCivilizationShortDescription() );
+		--local backColor, frontColor = UI.GetPlayerColors(playerID);
+
 
 		-- unmet players get a dark blue pie wedge and no clues about who the civ is
-		if not pPlayerDiplomacy:HasMet(playerID) then
-			civType = "";
-			civName = Locale.Lookup("LOC_WORLD_RANKING_UNMET_PLAYER");
-			backColor = UI.GetColorValue("COLOR_STANDARD_BLUE_DK");
-		end
-
-		if (m_playerID == playerID) then
-			civName = Locale.Lookup( "LOC_CLIMATE_YOU", civName );	-- Add "(You)" for your civ.
-		end
-
-		uiCiv = m_kCivCO2IM:GetInstance();
-
-		local civIconController = CivilizationIcon:AttachInstance( uiCiv.CivIcon );
-		civIconController:UpdateIconFromPlayerID( playerID );
-		civIconController:SetLeaderTooltip( playerID );
-
-		uiCiv.Amount:SetText( CO2FootprintNum );
-
-		if CO2FootprintNum > 0 then
-			table.insert( kFootprints, CO2FootprintNum);				-- Add value
-			table.insert( kColors, backColor );		-- Add color based on player's color
+		if pPlayerDiplomacy:HasMet(playerID) or m_playerID == playerID then
+			if m_playerID == playerID then
+				civName = Locale.Lookup( "LOC_CLIMATE_YOU", civName );	-- Add "(You)" for your civ.
+			end
+			AddCivCO2Row(true, playerID, civName, iCO2FootprintNum, iCO2FootprintLastTurn);
+		else
+			iUnmetCO2FootprintNum = iUnmetCO2FootprintNum + iCO2FootprintNum;
+			iUnmetCO2FootprintLastTurn = iUnmetCO2FootprintLastTurn + iCO2FootprintLastTurn;
+			bShowUnmet = true;
 		end
 	end
 
-	-- Now total is known, create an array based on percentages (0.0 - 1.0) for each player and chart it.
-	local kSliceAmounts :table = {};		-- hold the % each resource is contributing to CO2
-	for i,amount in ipairs( kFootprints ) do
-		table.insert(kSliceAmounts, amount/total );
-	end	
-	
-	m_kGlobalPieSlices = BuildPieChart( Controls.GlobalContributionsPie, m_kSliceIM, kSliceAmounts, kColors );	
+	-- unmer players at the end
+	if bShowUnmet then
+		AddCivCO2Row(false, 0, Locale.Lookup("LOC_WORLD_RANKING_UNMET_PLAYER"), iUnmetCO2FootprintNum, iUnmetCO2FootprintLastTurn);
+	end
 end
 
 
 -- ===========================================================================
 function TabCO2ByResource()
 
-	RealizeCO2Tabs("ByResource");
+	--RealizeCO2Tabs("ByResource");
 
-	m_kCO2CivsIM:ResetInstances();
-	m_kCivCO2IM:ResetInstances();	
+	--m_kCO2CivsIM:ResetInstances();
+	m_kResCO2IM:ResetInstances();	
 
 	-- Realease instances of pie slices previously used in the global section.
-	for _,uiSliceInstance in ipairs(m_kGlobalPieSlices) do
-		m_kSliceIM:ReleaseInstance( uiSliceInstance );
-	end
+	--for _,uiSliceInstance in ipairs(m_kGlobalPieSlices) do
+		--m_kSliceIM:ReleaseInstance( uiSliceInstance );
+	--end
 
 	local kResourceUseAmounts	:table = {};		-- hold raw CO2 usage amounts by each resource
 	local kSliceAmounts			:table = {};		-- hold the % each resource is contributing to CO2
@@ -899,6 +963,20 @@ function TabCO2ByResource()
 	local colorIndex			:number = 1;	-- Used to tint correponding colors
 	local total					:number = 0;	-- Total CO2 from all resources
 
+	-- calculate the total first
+	for kResourceInfo in GameInfo.Resources() do
+		-- Does the resource contribute to CO2?
+		local kConsumption:table = GameInfo.Resource_Consumption[kResourceInfo.ResourceType];
+		if kConsumption ~= nil and kConsumption.CO2perkWh ~= nil and kConsumption.CO2perkWh > 0 then
+			-- Loop through all players and sum up the CO2
+			local amount	:number = 0;			
+			for _,pPlayer in ipairs(PlayerManager.GetAliveMajors()) do			
+				amount = amount + GameClimate.GetPlayerResourceCO2Footprint( pPlayer:GetID(), kResourceInfo.Index, false );
+			end
+		total = total + amount;
+		end
+	end
+	
 	-- For all the resources in the game
 	for kResourceInfo in GameInfo.Resources() do
 
@@ -906,38 +984,49 @@ function TabCO2ByResource()
 		local kConsumption:table = GameInfo.Resource_Consumption[kResourceInfo.ResourceType];
 		if kConsumption ~= nil and kConsumption.CO2perkWh ~= nil and kConsumption.CO2perkWh > 0 then
 
-			-- Loop through all players and sum up the CO2
-			local amount	:number = 0;			
-			for _,pPlayer in ipairs(PlayerManager.GetAliveMajors()) do			
-				amount = amount + GameClimate.GetPlayerResourceCO2Footprint( pPlayer:GetID(), kResourceInfo.Index, false );
+			-- Loop through all players and sum up the CO2 and resources
+			local amount:number, lastTurn:number = 0, 0;
+			local resourceTotal:number, resourceLastTurn:number = 0, 0;
+			for _,pPlayer in ipairs(PlayerManager.GetAliveMajors()) do
+				local playerID:number = pPlayer:GetID();
+				amount   = amount   + GameClimate.GetPlayerResourceCO2Footprint( playerID, kResourceInfo.Index, false );
+				lastTurn = lastTurn + GameClimate.GetPlayerResourceCO2Footprint( playerID, kResourceInfo.Index, true );
+				resourceTotal    = resourceTotal    + GameClimate.GetPlayerRawResourceConsumption( playerID, kResourceInfo.Index, false );
+				resourceLastTurn = resourceLastTurn + GameClimate.GetPlayerRawResourceConsumption( playerID, kResourceInfo.Index, true );
 			end
 
 			-- If more than 0, add a UI element.
 			if amount > 0 then
-				local uiResource	:table = m_kCO2CivsIM:GetInstance();
+				local uiResource	:table = m_kResCO2IM:GetInstance();
 				local resourceName	:string = Locale.Lookup( kResourceInfo.Name );
 				local co2Amount		:number = amount;
 				local color			:number = kColors[colorIndex];
 
-				uiResource.Amount:SetText( co2Amount );
 				uiResource.Icon:SetIcon("ICON_" .. kResourceInfo.ResourceType);
-				uiResource.Palette:SetColor( color );
-				uiResource.Icon:SetToolTipString( resourceName );
+				--uiResource.Palette:SetColor( color );
+				uiResource.Name:SetText( Locale.Lookup(kResourceInfo.Name) );
+				uiResource.Percent:SetText( FormatPercent(co2Amount, total) );
+				uiResource.Amount:SetText( co2Amount );
+				uiResource.LastTurn:SetText( FormatLastTurn(lastTurn) );
+				uiResource.ResAmount:SetText( tostring(resourceTotal)..ResourceIcon(kResourceInfo.ResourceType) );
+				uiResource.ResLastTurn:SetText( FormatLastTurn(resourceLastTurn)..ResourceIcon(kResourceInfo.ResourceType) );
+				--uiResource.Top:SetToolTipString( Locale.Lookup("LOC_CLIMATE_RESOURCE_CONSUMED_LAST_TURN", resourceLastTurn, kResourceInfo.Name, amountLastTurn) );
+				
+				
+				--table.insert( kResourceUseAmounts, amount );
+				--total = total + co2Amount;
 
-				table.insert( kResourceUseAmounts, amount );
-				total = total + co2Amount;
-
-				colorIndex = (colorIndex + 1) % maxColors;
+				--colorIndex = (colorIndex + 1) % maxColors;
 			end
 		end
 	end
 
 	-- Now total is known, create an array based on percentages (0.0 - 1.0) each resources makes and chart it.
-	for i,amount in ipairs( kResourceUseAmounts ) do
-		table.insert(kSliceAmounts, amount/total );
-	end
+	--for i,amount in ipairs( kResourceUseAmounts ) do
+		--table.insert(kSliceAmounts, amount/total );
+	--end
 
-	m_kGlobalPieSlices = BuildPieChart( Controls.GlobalContributionsPie, m_kSliceIM, kSliceAmounts, kColors );
+	--m_kGlobalPieSlices = BuildPieChart( Controls.GlobalContributionsPie, m_kSliceIM, kSliceAmounts, kColors );
 end
 
 
@@ -1094,7 +1183,8 @@ end
 
 -- ===========================================================================
 function LateInitialize()
-
+	--print("LateInitialize");
+	
 	-- Tab setup and setting of default tab.
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, UI.GetColorValueFromHexLiteral(0xFF331D05) );
 	m_tabs.AddTab( Controls.ButtonOverview,		TabSelectOverview );
@@ -1102,11 +1192,11 @@ function LateInitialize()
 	m_tabs.AddTab( Controls.ButtonEventHistory,	TabSelectEventHistory );
 	m_tabs.CenterAlignTabs(-10);	
 
-	m_CO2tabs = CreateTabs( Controls.CO2TabContainer );
-	m_CO2tabs.AddTab( Controls.CO2ButtonByCivilization,		TabCO2ByCiviliation );
-	m_CO2tabs.AddTab( Controls.CO2ButtonByResource,			TabCO2ByResource );
+	--m_CO2tabs = CreateTabs( Controls.CO2TabContainer );
+	--m_CO2tabs.AddTab( Controls.CO2ButtonByCivilization,		TabCO2ByCiviliation );
+	--m_CO2tabs.AddTab( Controls.CO2ButtonByResource,			TabCO2ByResource );
 	--m_CO2tabs.AddTab( Controls.CO2ButtonDeforestation,		TabCO2Deforestation );	-- TODO: Gamecore
-	m_CO2tabs.CenterAlignTabs(-2);	
+	--m_CO2tabs.CenterAlignTabs(-2);	
 
 	-- Lua Events
 	LuaEvents.GameDebug_Return.Add(OnGameDebugReturn);
