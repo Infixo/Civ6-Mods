@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration.[NEWLINE]Version 1.6.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration.[NEWLINE]Version 1.7.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -49,6 +49,10 @@
 		<Criteria id="Expansion2Leaders">	<!-- 2019-02-14 -->
 			<LeaderPlayable>Players:Expansion2_Players::LEADER_DIDO,Players:Expansion2_Players::LEADER_ELEANOR_ENGLAND,Players:Expansion2_Players::LEADER_ELEANOR_FRANCE,Players:Expansion2_Players::LEADER_KRISTINA,Players:Expansion2_Players::LEADER_KUPE,Players:Expansion2_Players::LEADER_LAURIER,Players:Expansion2_Players::LEADER_MANSA_MUSA,Players:Expansion2_Players::LEADER_MATTHIAS_CORVINUS,Players:Expansion2_Players::LEADER_PACHACUTI,Players:Expansion2_Players::LEADER_SULEIMAN</LeaderPlayable>
 		</Criteria>
+		<Criteria id="DLCGranColombiaMaya"> <!-- 2020-05-21 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_SIMON_BOLIVAR,Players:StandardPlayers::LEADER_LADY_SIX_SKY,StandardPlayers::LEADER_SIMON_BOLIVAR,StandardPlayers::LEADER_LADY_SIX_SKY,Players:Expansion1_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY,Players:Expansion2_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY</LeaderPlayable>
+		</Criteria>
+		
 	</ActionCriteria>
 	<InGameActions>
 		<ImportFiles id="RST_Imports">
@@ -107,6 +111,10 @@
 			<Properties><LoadOrder>281</LoadOrder></Properties>
 			<File>RealStrategy_Leaders_XP2.sql</File>
 		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_GranColombiaMaya" criteria="DLCGranColombiaMaya">
+			<Properties><LoadOrder>290</LoadOrder></Properties>
+			<File>RealStrategy_GranColombiaMaya.sql</File>
+		</UpdateDatabase>
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Lua/RealStrategy_InGameExp.xml</File>
@@ -136,6 +144,7 @@
 		<File>RealStrategy_Leaders_XP1.sql</File>
 		<File>RealStrategy_GatheringStorm.sql</File>
 		<File>RealStrategy_Leaders_XP2.sql</File>
+		<File>RealStrategy_GranColombiaMaya.sql</File>
 		<File>Lua/RealStrategy.lua</File>
 		<File>Lua/RealStrategy_GreatPeople.lua</File>
 		<!--<File>Lua/RealStrategy_GreatPeople.xml</File>-->

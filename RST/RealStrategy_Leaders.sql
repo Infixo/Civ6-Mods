@@ -203,12 +203,18 @@ INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
 
 INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AgressiveDiplomacy', 'DIPLOACTION_DENOUNCE', 1, 0),
-('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15), -- 25
+('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_FRIENDSHIP', 0, 0),
+('AgressiveDiplomacy', 'DIPLOACTION_ALLIANCE', 0, 0),
+('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_SURPRISE_WAR', 1, 0),
+('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_FORMAL_WAR', 1, 0),
+('AggressivePseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 15),
+('AggressivePseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE',  1, 15),
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 25), -- 25
 ('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15), -- 25
-('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15), -- 25
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 20), -- 25
 ('AggressivePseudoYields', 'PSEUDOYIELD_CITY_BASE',            1,  50), -- 40
 ('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10), -- -10
-('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -15), -- -25
+('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -25), -- -25
 ('AggressivePseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10), -- 50 naval warfare is still not good, no point to have more of them
 ('AggressivePseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15); -- 50
 
