@@ -89,12 +89,12 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', 0), -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
 ('RST_DIPLO_PROGRESS_WEIGHT', 4), -- points for 1%; now DVP = 10%, so 1 DVP = 40 points
-('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 9),
+('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 8),
 -- guess others scalers
 ('RST_GUESS_SCALER_CONQUEST', 100),
-('RST_GUESS_SCALER_SCIENCE',  100),
+('RST_GUESS_SCALER_SCIENCE',  110),
 ('RST_GUESS_SCALER_CULTURE',  115),
-('RST_GUESS_SCALER_DIPLO',    125),
+('RST_GUESS_SCALER_DIPLO',    100),
 ('RST_GUESS_SCALER_RELIGION', 75); -- religion has 4 items scored, always getting a bit much
 
 
