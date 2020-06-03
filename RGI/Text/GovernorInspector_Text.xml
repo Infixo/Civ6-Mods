@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Real Governor Inspector
+	Author: Infixo       
+	2020-06-03: Created
+-->
+
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_RGI_WINDOW_TITLE">
+		<Text>Real Governor Inspector</Text>
+	</Row>
+	<Row Tag="LOC_RGI_BUTTON_LABEL">
+		<Text>Governor Inspector</Text>
+	</Row>
+	<Row Tag="LOC_RGI_WORLD">
+		<Text>World</Text>
+	</Row>
+	<Row Tag="LOC_RGI_REPEATABLE">
+		<Text>Repeatable</Text>
+	</Row>
+	<Row Tag="LOC_RGI_FAVORED">
+		<Text>Favored</Text>
+	</Row>
+	<Row Tag="LOC_RGI_COUNT">
+		<Text>Count</Text>
+	</Row>
+	<Row Tag="LOC_RGI_CHECKBOX_HIDE_NOT_ACTIVE">
+		<Text>Hide not active</Text>
+	</Row>
+	<Row Tag="LOC_RGI_CHECKBOX_SHOW_ONLY_EARNED">
+		<Text>Show only earned</Text>
+	</Row>
+	<Row Tag="LOC_RGI_CHECKBOX_HIDE_NOT_AVAILABLE">
+		<Text>Hide from different eras and currently not available</Text>
+	</Row>
+
+</BaseGameText>
+
+</GameData>

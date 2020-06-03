@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="48F8BEFC-11AA-6F44-0030-09E989A2459F" version="1">
+	<Properties>
+		<Name>Real Governor Inspector</Name>
+		<Teaser>Helps managing Governors.</Teaser>
+		<Description>Helps managing Governors. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.0.</Description>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>2.0</CompatibleVersions>
+	</Properties>
+	<Dependencies>
+		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" /> <!-- It requires GS because the promotions and effects are a bit different from R&F -->
+	</Dependencies>
+	<InGameActions>
+		<ImportFiles id="RGI_Imports">
+			<File>Serialize.lua</File>
+		</ImportFiles>
+		<UpdateDatabase id="RGI_UpdateDatabase">
+			<Properties><LoadOrder>1</LoadOrder></Properties>
+			<File>GovernorInspector_Database.sql</File>
+		</UpdateDatabase>
+		<AddUserInterfaces id="RGI_Main">
+			<Properties>
+				<Context>InGame</Context>
+			</Properties>
+			<File>GovernorInspector.xml</File>
+		</AddUserInterfaces>
+		<UpdateText id="RGI_UpdateText">
+			<File>Text/GovernorInspector_Text.xml</File>
+		</UpdateText>
+		<!-- reports list loader -->
+		<UpdateDatabase id="RLL_Database">
+			<File>RLL/ReportsListLoader.sql</File>
+		</UpdateDatabase>
+		<ImportFiles id="RLL_Imports">
+			<File>RLL/ReportsListLoader.lua</File>
+		</ImportFiles>
+		<ReplaceUIScript id="RLL_ReplaceUI_ReportsList">
+			<Properties>
+                <LoadOrder>99999</LoadOrder>
+				<LuaContext>ReportsList</LuaContext>
+				<LuaReplace>RLL/ReportsListLoader.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+    </InGameActions>
+    <Files>
+		<File>GovernorInspector_Database.sql</File>
+        <File>GovernorInspector.lua</File>
+        <File>GovernorInspector.xml</File>
+		<File>Serialize.lua</File>
+		<File>Text/GovernorInspector_Text.xml</File>
+		<!-- reports list loader -->
+		<File>RLL/ReportsListLoader.sql</File>
+		<File>RLL/ReportsListLoader.lua</File>
+    </Files>
+</Mod>
