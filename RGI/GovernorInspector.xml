@@ -90,11 +90,11 @@
 			<!--<Image	Offset="0,0" Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />-->
 			<Stack	StackGrowth="Down" >
 				<Container	Size="parent-2,22">
-					<Label ID="Yields" Style="ReportValueText" Anchor="C,C" String="$yields$" Align="Center" />
+					<Label ID="Yields" Style="ReportValueText" Anchor="C,C" String="$yields$" Align="Center" Offset="0,1" />
 				</Container>
 				<Box Size="parent-2,1" Color="46,70,95,128" />
 				<Container Size="parent-2,22">
-					<Label ID="Effect" Style="ReportValueText" Anchor="C,C" String="$effect$" Align="Center" />
+					<Label ID="Effect" Style="ReportValueText" Anchor="C,C" String="$effect$" Align="Center" Offset="0,1" />
 				</Container>
 				<Box Size="parent-2,1" Color="46,70,95,128" />
 			</Stack>
@@ -106,7 +106,7 @@
 
 	<Instance					Name="CityHeaderInstance">
 		<Container			ID="Top"														Offset="8,0" Size="990,22">
-			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box			Size="2,parent"	Color="46,70,95,255" />
 				<Container		Size="40,parent">
@@ -135,7 +135,7 @@
 	<!-- Columns: governor icon, city name, population, many effects -->
 	<Instance Name="CityEntryInstance">
 		<Container ID="Top" Offset="8,0" Size="990,46">
-			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box									Size="2,parent"	Color="46,70,95,255" />
 				<Container	Size="40,parent">

@@ -7,6 +7,7 @@ print("Loading GovernorInspector.lua from Real Governor Inspector version "..(Gl
 include("InstanceManager");
 include("SupportFunctions"); -- TruncateString
 include("TabSupport");
+include("Civ6Common");
 
 include("Serialize");
 
@@ -89,6 +90,14 @@ function spairs( t, order_function )
 	end
 end
 
+-- check if 'value' exists in table 'pTable'; should work for any type of 'value' and table indices
+function IsInTable(pTable:table, value)
+	for _,data in pairs(pTable) do
+		if data == value then return true; end
+	end
+	return false;
+end
+
 
 -- ===========================================================================
 -- INIT SECTION - called only once
@@ -138,9 +147,31 @@ end
 -- UPDATE SECTION - called every time a window is open, main processing happens here
 -- ===========================================================================
 
+-- GameInfo and other static data
+
+-- Rayna adjacencies
+local eRaynaDistricts:table = {};
+table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_COMMERCIAL_HUB.Index);
+table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_HARBOR.Index);
+table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_ROYAL_NAVY_DOCKYARD.Index);
+table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_COTHON.Index);
+table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_SUGUBA.Index);
+
+-- Rayna power & gold
+local eRaynaImpr:table = {};
+table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_OFFSHORE_WIND_FARM.Index);
+table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_SOLAR_FARM.Index);
+table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_WIND_FARM.Index);
+table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_GEOTHERMAL_PLANT.Index);
+local eRaynaDam:number = GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index;
+
+
 -- main function for calculating effects of governors in a specific city
 function ProcessCity( pCity:table )
 	print("FUN ProcessCity", pCity:GetName());
+	
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == nil then return end;
 	
 	-- generic city data - I try to use the same names as in CitySupport.lua
 	local data:table = {
@@ -150,6 +181,12 @@ function ProcessCity( pCity:table )
 		CityName     = LL(pCity:GetName()),
 		Population   = pCity:GetPopulation(),
 		PromoEffects = {}, -- table of effects, key is PromotionType
+		-- working data
+		PlotIndex    = Map.GetPlotIndex(pCity:GetX(),pCity:GetY()),
+		RoutesPassing = 0,
+		RaynaAdjacency = 0, -- Comms and Harbors
+		RaynaPower = 0, -- num of eligible power sources
+		RaynaTiles = 0, -- num of unimproved tiles
 	};
 	
 	-- governor
@@ -162,13 +199,15 @@ function ProcessCity( pCity:table )
 		data.GovernorTT = Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title);
 	end
 	
+	
 	-- iterate through city plots
+	print("..city plots");
 	local cityPlots:table = Map.GetCityPlots():GetPurchasedPlots(pCity);
 	local pCitizens	: table = pCity:GetCitizens();	
-	for _, plotID in ipairs(cityPlots) do		
-		local plot	: table = Map.GetPlotByIndex(plotID);
-		local x		: number = plot:GetX();
-		local y		: number = plot:GetY();
+	for _,plotID in ipairs(cityPlots) do		
+		local plot:table = Map.GetPlotByIndex(plotID);
+		local x:number = plot:GetX();
+		local y:number = plot:GetY();
 		isPlotWorked = pCitizens:IsPlotWorked(x,y);
 		if isPlotWorked then
 			for row in GameInfo.Yields() do			
@@ -180,9 +219,48 @@ function ProcessCity( pCity:table )
 		-- of the plot so the sum is easily shown, but it's not possible to 
 		-- show how individual buildings contribute... yet.
 		--kYields["TOURISM"] = kYields["TOURISM"] + pCulture:GetTourismAt( plotID );
+		local eImprovement:number = plot:GetImprovementType();
+		local eFeature:number = plot:GetFeatureType();
+		local eDistrict:number = plot:GetDistrictType();
+
+		-- Rayna power
+		if IsInTable(eRaynaImpr, eImprovement) then data.RaynaPower = data.RaynaPower + 1; end
+		-- Rayna unimproved feature tiles
+		if eFeature ~= -1 and eImprovement == -1 and eDistrict == -1 then data.RaynaTiles = data.RaynaTiles + 1; end
 	end
 
 	-- more city data
+	
+	-- Rayna and FOREIGN routes passing through (which also includes the destination!)
+	print("..foreign routes");
+	for _,origPlayer in ipairs(PlayerManager.GetAliveMajors()) do
+		local origPlayerID:number = origPlayer:GetID();
+		if origPlayerID ~= localPlayerID then
+			for _,origCity in origPlayer:GetCities():Members() do
+				local origCityID:number = origCity:GetID();
+				--print("checking", origPlayer:GetID(), origCity:GetName());
+				for _,route in ipairs(origCity:GetTrade():GetOutgoingRoutes()) do
+					--print("..route to", route.DestinationCityPlayer, route.DestinationCityID);
+					local path:table = Game.GetTradeManager():GetTradeRoutePath( origPlayerID, origCityID, route.DestinationCityPlayer, route.DestinationCityID );
+					if IsInTable(path, data.PlotIndex) then data.RoutesPassing = data.RoutesPassing + 1; end
+				end -- routes
+			end -- cities
+		end -- foreign
+	end -- players
+	
+	-- Rayna double adjacency bonuses
+	print("..double adjacency");
+	for _,district in pCity:GetDistricts():Members() do
+		if IsInTable(eRaynaDistricts, district:GetType()) then
+			data.RaynaAdjacency = data.RaynaAdjacency + district:GetYield(GameInfo.Yields.YIELD_GOLD.Index);
+		end
+	end
+	
+	-- Rayna power
+	if pCity:GetBuildings():HasBuilding( eRaynaDam ) and not pCity:GetBuildings():IsPillaged( eRaynaDam ) then
+		 data.RaynaPower = data.RaynaPower + 1;
+	end
+	
 	
 	-- get generic data
 	-- loop through all promotions, filtering out which are valid will happen later
@@ -190,12 +268,32 @@ function ProcessCity( pCity:table )
 	for _,governor in ipairs(m_kGovernors) do
 		for _,promotion in ipairs(governor.Promotions) do
 			local effects:table = {
-				Effect = "effect",
-				Yields = "yields",
+				Yields = ".",
+				Effect = "",
 			};
 			--=========
 			-- MAIN ENGINE
 			--=========
+			
+			
+			-- RAYNA
+			if     promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" then -- +3 gold for each foreig route passing through
+				effects.Yields = GetYieldString("YIELD_GOLD", data.RoutesPassing*2);
+				effects.Effect = tostring(data.RoutesPassing);
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_HARBORMASTER" then -- double adjacency
+				effects.Yields = GetYieldString("YIELD_GOLD", data.RaynaAdjacency); -- the gain is one extra adjacency
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" then -- gold from unimproved feature tiles
+				effects.Yields = GetYieldString("YIELD_GOLD", data.RaynaTiles*2);
+				effects.Effect = tostring(data.RaynaTiles);
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_RENEWABLE_ENERGY" then
+				effects.Yields = GetYieldString("YIELD_GOLD", data.RaynaPower*2).." [ICON_Power]"..toPlusMinusString(data.RaynaPower*2);
+				effects.Effect = tostring(data.RaynaPower);
+			--GOVERNOR_PROMOTION_MERCHANT_CONTRACTOR
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_TAX_COLLECTOR" then --  - +2 gold per Pop
+				effects.Yields = GetYieldString("YIELD_GOLD", data.Population*2);
+			end
+			
+			
 			data.PromoEffects[ promotion.PromotionType ] = effects;
 		end -- promotions
 	end -- governors
@@ -218,7 +316,9 @@ function UpdateData()
 	--local pReligion	:table	= player:GetReligion();
 	--local pScience	:table	= player:GetTechs();
 	--local pResources:table	= player:GetResources();		
-
+	
+	m_kCities = {}; -- reset data
+	
 	for _,pCity in player:GetCities():Members() do	
 		--data.Resources			= GetCityResourceData( pCity );					-- Add more data (not in CitySupport)			
 		--data.WorkedTileYields	= GetWorkedTileYieldData( pCity, pCulture );	-- Add more data (not in CitySupport)
