@@ -28,6 +28,7 @@ local bOptionIncludeOthers:boolean = ( GlobalParameters.RET_OPTION_INCLUDE_OTHER
 local LL = Locale.Lookup;
 local ENDCOLOR:string = "[ENDCOLOR]";
 local NEWLINE:string  = "[NEWLINE]";
+local TOOLTIP_SEP								:string = "-------------------";
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
 
@@ -204,6 +205,13 @@ function ProcessCity( pCity:table )
 		MagnusPlant = "", -- will contain an icon of the power plant resource consumed
 		MagnusProduction = 0, -- vertical integration, yield
 		MagnusRegional = 0, -- vertical integration, num buildings
+		-- Liang
+		LiangFisheries = 0, -- num of fisheries
+		LiangParks = 0, -- num of recreation parks
+		LiangHousing = 0, -- neighborhood and aqueduct
+		LiangAmenities = 0, -- canals and dams
+		LiangProduction = 0, -- production bonus
+		LiangDistrict = "", -- name of the district
 		-- Reyna
 		RoutesPassing  = 0,
 		ReynaAdjacency = 0, -- Comms and Harbors
@@ -247,6 +255,7 @@ function ProcessCity( pCity:table )
 		local eFeature:number = plot:GetFeatureType();
 		local sFeature:string = ( eFeature ~= -1 and GameInfo.Features[eFeature].FeatureType or "");
 		local eImprovement:number = plot:GetImprovementType();
+		local bIsImprovementPillaged:boolean = plot:IsImprovementPillaged();
 		local eDistrict:number = plot:GetDistrictType();
 
 		-- Magnus removals
@@ -263,8 +272,16 @@ function ProcessCity( pCity:table )
 				if harv.FeatureType == sFeature then IncMagnusTiles(harv.YieldType); end
 			end
 		end
+		-- Liang
+		if eImprovement == GameInfo.Improvements.IMPROVEMENT_FISHERY.Index and not bIsImprovementPillaged then
+			data.LiangFisheries = data.LiangFisheries + 1;
+		end
+		if eImprovement == GameInfo.Improvements.IMPROVEMENT_CITY_PARK.Index and not bIsImprovementPillaged then
+			data.LiangParks = data.LiangParks + 1;
+		end
+		
 		-- Reyna power
-		if IsInTable(eReynaImpr, eImprovement) then data.ReynaPower = data.ReynaPower + 1; end
+		if IsInTable(eReynaImpr, eImprovement) and not bIsImprovementPillaged then data.ReynaPower = data.ReynaPower + 1; end
 		-- Reyna unimproved feature tiles
 		if eFeature ~= -1 and eImprovement == -1 and eDistrict == -1 then data.ReynaTiles = data.ReynaTiles + 1; end
 	end
@@ -319,6 +336,28 @@ function ProcessCity( pCity:table )
 		data.MagnusProduction = data.MagnusProduction + num * eMagnusRegional[buildingType].Yield;
 	end
 	
+	-- Liang water works
+	print("..water works");
+	for _,district in pCity:GetDistricts():Members() do
+		local eDistrict:number = district:GetType();
+		-- housing
+		if eDistrict == GameInfo.Districts.DISTRICT_NEIGHBORHOOD.Index then data.LiangHousing = data.LiangHousing + 1; end
+		if eDistrict == GameInfo.Districts.DISTRICT_MBANZA.Index then data.LiangHousing = data.LiangHousing + 1; end
+		if eDistrict == GameInfo.Districts.DISTRICT_AQUEDUCT.Index then data.LiangHousing = data.LiangHousing + 1; end
+		if eDistrict == GameInfo.Districts.DISTRICT_BATH.Index then data.LiangHousing = data.LiangHousing + 1; end
+		-- amenities
+		if eDistrict == GameInfo.Districts.DISTRICT_CANAL.Index then data.LiangAmenities = data.LiangAmenities + 1; end
+		if eDistrict == GameInfo.Districts.DISTRICT_DAM.Index then data.LiangAmenities = data.LiangAmenities + 1; end
+	end
+	
+	-- Liang district production
+	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
+	local tDistrictProduced:table = GameInfo.Districts[ hashItemProduced ];
+	if hashItemProduced ~= 0 and tDistrictProduced ~= nil then
+		data.LiangDistrict = LL(tDistrictProduced.Name);
+		data.LiangProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.2, 1 );
+	end
+	
 	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
 	print("..foreign routes");
 	for _,origPlayer in ipairs(PlayerManager.GetAliveMajors()) do
@@ -359,9 +398,10 @@ function ProcessCity( pCity:table )
 		for _,promotion in ipairs(governor.Promotions) do
 			local tEffect:table = YieldTableNew();
 			local effects:table = {
-				Yields = "[ICON_CheckFail]", -- "not processed" mark
+				Yields = "",
 				Effect = "",
 			};
+			local bCheckSuccess:boolean = false; -- just to mark that it was processed
 			local function FormatSetEffect(num:number, icon:string)
 				if num > 0 then effects.Effect = tostring(num).."["..icon.."]"; end
 			end
@@ -388,71 +428,114 @@ function ProcessCity( pCity:table )
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_SURPLUS_LOGISTICS" then -- food
 				tEffect.FOOD = Round(data.FoodSurplus * 0.2, 1)
-				effects.Yields = GetYieldString("YIELD_FOOD", tEffect.FOOD);
+				--effects.Yields = GetYieldString("YIELD_FOOD", tEffect.FOOD);
 				FormatSetEffect(data.RoutesEnding, "ICON_TradeRoute");
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_EXPEDITION" then -- settlers do not consume population
-				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				bCheckSuccess = true;
+				--effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
 
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_INDUSTRIALIST" then -- power and prod from plants
 				effects.Yields = "";
 				if data.MagnusPlant ~= "" then
 					tEffect.PRODUCTION = 2;
-					effects.Yields = GetYieldString("YIELD_PRODUCTION", 2);
+					--effects.Yields = GetYieldString("YIELD_PRODUCTION", 2);
 					effects.Effect = data.MagnusPlant;
 				end
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_BLACK_MARKETEER" then -- cheaper units
-				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				bCheckSuccess = true;
+				--effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_VERTICAL_INTEGRATION" then
 				if data.MagnusRegional > 0 then
 					tEffect.PRODUCTION = data.MagnusProduction;
-					effects.Yields = GetYieldString("YIELD_PRODUCTION", data.MagnusProduction);
+					--effects.Yields = GetYieldString("YIELD_PRODUCTION", data.MagnusProduction);
 					effects.Effect = tostring(data.MagnusRegional);
 				else
-					effects.Yields = GetYieldString("YIELD_PRODUCTION", 0);
+					--effects.Yields = "";
 				end
 			
 			
 			-- LIANG
 			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_BUILDER_GUILDMASTER" then -- builders +1 charge
+				bCheckSuccess = true;
+				--effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_ZONING_COMMISSIONER" then -- +20% towards constructing districts
+				tEffect.PRODUCTION = data.LiangProduction;
+				effects.Effect = data.LiangDistrict;
+			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_AQUACULTURE" then -- fisheries +1 prod
+				tEffect.PRODUCTION = data.LiangFisheries;
+				--effects.Yields = YieldTableGetInfo(tEffect);
+				FormatSetEffect(data.LiangFisheries, "ICON_District");
+			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_REINFORCED_INFRASTRUCTURE" then -- no damage
+				bCheckSuccess = true;
+				--effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_WATER_WORKS" then -- housing and amenities
+				tEffect.HOUSING = data.LiangHousing*2;
+				tEffect.AMENITY = data.LiangAmenities;
+				--effects.Yields = YieldTableGetInfo(tEffect);
+				--effects.Effect = string.format("%d[ICON_DISTRICT_NEIGHBORHOOD][ICON_DISTRICT_AQUEDUCT] %d[ICON_DISTRICT_CANAL][ICON_DISTRICT_DAM]", data.LiangHousing, data.LiangAmenities);
+				if data.LiangAmenities > 0 or data.LiangHousing > 0 then
+					effects.Effect = string.format("%d  /  %d", data.LiangAmenities, data.LiangHousing);
+				end
+			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_PARKS_RECREATION" then -- city parks +3 culture
+				tEffect.CULTURE = data.LiangParks*3;
+				--effects.Yields = YieldTableGetInfo(tEffect);
+				FormatSetEffect(data.LiangParks, "ICON_District");
+
+
+			
+
+
+
+
+
 			-- PINGALA
 			
 			-- REYNA
 			
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" then -- +3 gold for each foreign route passing through
 				tEffect.GOLD = data.RoutesPassing*3;
-				effects.Yields = GetYieldString("YIELD_GOLD", data.RoutesPassing*3);
+				--effects.Yields = YieldTableGetInfo(tEffect);
 				FormatSetEffect(data.RoutesPassing, "ICON_TradeRoute");
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_HARBORMASTER" then -- double adjacency
-				tEffect.GOLD = data.ReynaAdjacency;
-				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaAdjacency); -- the gain is one extra adjacency
+				tEffect.GOLD = data.ReynaAdjacency; -- the gain is one extra adjacency
+				--effects.Yields = YieldTableGetInfo(tEffect);
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" then -- +2 gold from unimproved feature tiles
 				tEffect.GOLD = data.ReynaTiles*2;
-				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaTiles*2);
+				--effects.Yields = YieldTableGetInfo(tEffect);
 				FormatSetEffect(data.ReynaTiles, "ICON_District");
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_RENEWABLE_ENERGY" then
 				tEffect.GOLD  = data.ReynaPower*2;
 				tEffect.POWER = data.ReynaPower*2;
-				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaPower*2).." "..GetYieldString("YIELD_POWER", data.ReynaPower*2);
+				--effects.Yields = YieldTableGetInfo(tEffect);
 				FormatSetEffect(data.ReynaPower, "ICON_Bolt");
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_CONTRACTOR" then
-				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				bCheckSuccess = true;
+				--effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_TAX_COLLECTOR" then --  - +2 gold per Pop
 				tEffect.GOLD  = data.Population*2;
-				effects.Yields = GetYieldString("YIELD_GOLD", data.Population*2);
+				--effects.Yields = YieldTableGetInfo(tEffect);
 				FormatSetEffect(data.Population, "ICON_Citizen");
 				
 			end -- main switch
 			
-			YieldTableAdd(tGovEffect, tEffect);
+			effects.Yields = ( bCheckSuccess and "[ICON_CheckSuccess]" or YieldTableGetInfo(tEffect) );
 			data.PromoEffects[ promotion.PromotionType ] = effects;
+			YieldTableAdd(tGovEffect, tEffect);
+			
 		end -- promotions
 		
 		-- store the total effect
@@ -563,17 +646,21 @@ function ViewGovernorPage(eTabNum:number)
 		ContextPtr:BuildInstanceForControl( "PromoNameInstance", pPromoNameInstance, pHeaderInstance.PromoNames );
 		pPromoNameInstance.PromoName:SetText( promo.Name );
 		local isTruncated:boolean = TruncateString(pPromoNameInstance.PromoName, 96, promo.Name);
-		if isTruncated then pPromoNameInstance.PromoName:SetToolTipString( promo.Name..NEWLINE..promo.Description );
-		else                pPromoNameInstance.PromoName:SetToolTipString( promo.Description ); end
+		local tTT:table = {};
+		if isTruncated then table.insert(tTT, promo.Name); end
+		table.insert(tTT, promo.Description);
+		local sLocExtra = "LOC_RGI_"..promo.PromotionType;
+		local sExtra:string = LL(sLocExtra);
+		if sExtra ~= sLocExtra then table.insert(tTT, TOOLTIP_SEP); table.insert(tTT, sExtra); end
+		pPromoNameInstance.PromoName:SetToolTipString( table.concat(tTT, NEWLINE) );
 	end
 	
-
 	-- civ and leader for uniques
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == -1 then return; end
 	local sCivilization:string = PlayerConfigurations[localPlayerID]:GetCivilizationTypeName();
 	local sLeader:string       = PlayerConfigurations[localPlayerID]:GetLeaderTypeName();
-	
+	--[[
 	-- checkboxes
 	local bEraScore1:boolean = Controls.EraScore1Checkbox:IsSelected();
 	local bEraScore2:boolean = Controls.EraScore2Checkbox:IsSelected();
@@ -589,7 +676,7 @@ function ViewGovernorPage(eTabNum:number)
 	for _,city in Players[localPlayerID]:GetCities():Members() do
 		table.insert(tShow, city);
 	end
-	
+	--]]
 	-- show loop
 	--print("...filtering done, before show");
 	for _,city in spairs(m_kCities, CitiesSortFunction) do
