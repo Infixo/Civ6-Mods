@@ -5,7 +5,7 @@ print("Loading GovernorInspector.lua from Real Governor Inspector version "..(Gl
 --  2020-06-03: Created
 -- ===========================================================================
 include("InstanceManager");
-include("SupportFunctions"); -- TruncateString
+include("SupportFunctions"); -- TruncateString, Round
 include("TabSupport");
 --include("Civ6Common");
 include("RealYields");
@@ -145,7 +145,34 @@ table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_OFFSHORE_WIND_FARM.In
 table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_SOLAR_FARM.Index);
 table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_WIND_FARM.Index);
 table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_GEOTHERMAL_PLANT.Index);
-local eReynaDam:number = GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index;
+
+-- Magnus extra production from regional buildings
+local eMagnusDistricts:table = {};
+table.insert(eMagnusDistricts, GameInfo.Districts.DISTRICT_INDUSTRIAL_ZONE.Index);
+table.insert(eMagnusDistricts, GameInfo.Districts.DISTRICT_HANSA.Index);
+local eMagnusRegional:table = {};
+for building in GameInfo.Buildings() do
+	if building.PrereqDistrict == "DISTRICT_INDUSTRIAL_ZONE" and building.RegionalRange > 0 then
+		-- find yield
+		local iYield:number = 0;
+		for row in GameInfo.Building_YieldChanges() do
+			if row.BuildingType == building.BuildingType and row.YieldType == "YIELD_PRODUCTION" then iYield = iYield + row.YieldChange; end
+		end
+		-- we assume all are powered, analysis of power is crazy difficult
+		for row in GameInfo.Building_YieldChangesBonusWithPower() do
+			if row.BuildingType == building.BuildingType and row.YieldType == "YIELD_PRODUCTION" then iYield = iYield + row.YieldChange; end
+		end
+		if iYield > 0 then -- no point analyzing 0 yields
+			eMagnusRegional[ building.BuildingType ] = {
+				Index = building.Index,
+				BuildingType = building.BuildingType,
+				Range = building.RegionalRange,
+				Yield = iYield,
+			};
+		end
+	end
+end
+--dshowrectable(eMagnusRegional);
 
 
 -- main function for calculating effects of governors in a specific city
@@ -158,6 +185,7 @@ function ProcessCity( pCity:table )
 	-- generic city data - I try to use the same names as in CitySupport.lua
 	local data:table = {
 		City         = pCity,
+		Owner        = pCity:GetOwner(),
 		GovernorIcon = "",
 		GovernorTT   = "",
 		CityName     = LL(pCity:GetName()),
@@ -165,12 +193,24 @@ function ProcessCity( pCity:table )
 		PromoEffects = {}, -- table of effects, key is PromotionType
 		GovernorEffects = {}, -- table of effects, key is GovernorType
 		-- working data
+		PlotX        = pCity:GetX(),
+		PlotY        = pCity:GetY(),
 		PlotIndex    = Map.GetPlotIndex(pCity:GetX(),pCity:GetY()),
-		RoutesPassing = 0,
+		-- Magnus
+		MagnusTiles = YieldTableNew(), -- num of tiles that can be harvested or feature-removed for specific yield
+		--FoodPerTurn  = pCity:GetYield( YieldTypes.FOOD ),
+		FoodSurplus = pCity:GetGrowth():GetFoodSurplus(),
+		RoutesEnding = 0, -- only your own
+		MagnusPlant = "", -- will contain an icon of the power plant resource consumed
+		MagnusProduction = 0, -- vertical integration, yield
+		MagnusRegional = 0, -- vertical integration, num buildings
+		-- Reyna
+		RoutesPassing  = 0,
 		ReynaAdjacency = 0, -- Comms and Harbors
-		ReynaPower = 0, -- num of eligible power sources
-		ReynaTiles = 0, -- num of unimproved tiles
+		ReynaPower     = 0, -- num of eligible power sources
+		ReynaTiles     = 0, -- num of unimproved tiles
 	};
+
 	
 	-- governor
 	local pAssignedGovernor = pCity:GetAssignedGovernor();
@@ -187,7 +227,7 @@ function ProcessCity( pCity:table )
 	print("..city plots");
 	local cityPlots:table = Map.GetCityPlots():GetPurchasedPlots(pCity);
 	local pCitizens	: table = pCity:GetCitizens();	
-	for _,plotID in ipairs(cityPlots) do		
+	for _,plotID in ipairs(cityPlots) do
 		local plot:table = Map.GetPlotByIndex(plotID);
 		local x:number = plot:GetX();
 		local y:number = plot:GetY();
@@ -202,10 +242,27 @@ function ProcessCity( pCity:table )
 		-- of the plot so the sum is easily shown, but it's not possible to 
 		-- show how individual buildings contribute... yet.
 		--kYields["TOURISM"] = kYields["TOURISM"] + pCulture:GetTourismAt( plotID );
-		local eImprovement:number = plot:GetImprovementType();
+		local eResource:number = plot:GetResourceType();
+		local sResource:string = ( eResource ~= -1 and GameInfo.Resources[eResource].ResourceType or "");
 		local eFeature:number = plot:GetFeatureType();
+		local sFeature:string = ( eFeature ~= -1 and GameInfo.Features[eFeature].FeatureType or "");
+		local eImprovement:number = plot:GetImprovementType();
 		local eDistrict:number = plot:GetDistrictType();
 
+		-- Magnus removals
+		local function IncMagnusTiles(yield:string)
+			YieldTableSetYield( data.MagnusTiles, yield, YieldTableGetYield(data.MagnusTiles, yield) + 1 );
+		end
+		if eResource ~= -1 then
+			for harv in GameInfo.Resource_Harvests() do
+				if harv.ResourceType == sResource then IncMagnusTiles(harv.YieldType); end
+			end
+		end
+		if eFeature ~= -1 then
+			for harv in GameInfo.Feature_Removes() do
+				if harv.FeatureType == sFeature then IncMagnusTiles(harv.YieldType); end
+			end
+		end
 		-- Reyna power
 		if IsInTable(eReynaImpr, eImprovement) then data.ReynaPower = data.ReynaPower + 1; end
 		-- Reyna unimproved feature tiles
@@ -213,6 +270,54 @@ function ProcessCity( pCity:table )
 	end
 
 	-- more city data
+	local function CheckBuilding(pCity:table, building:number)
+		local cityBuildings:table = pCity:GetBuildings();
+		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
+		return 0;
+	end
+	
+	-- Magnus and national routes
+	print("..national routes");
+	for _,route in ipairs(pCity:GetTrade():GetIncomingRoutes()) do
+		if route.OriginCityPlayer == data.Owner then data.RoutesEnding = data.RoutesEnding + 1; end
+	end
+	
+	-- Magnus PP
+	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_COAL_POWER_PLANT.Index )        == 1 then data.MagnusPlant = "[ICON_RESOURCE_COAL]";    end
+	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_FOSSIL_FUEL_POWER_PLANT.Index ) == 1 then data.MagnusPlant = "[ICON_RESOURCE_OIL]";     end
+	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_POWER_PLANT.Index )             == 1 then data.MagnusPlant = "[ICON_RESOURCE_URANIUM]"; end
+	--print(data.MagnusPlant);
+	
+	-- Magnus extra production
+	print("..vertical integration");
+	local tMagnusBuildings:table = {};
+	for _,district in Players[data.Owner]:GetDistricts():Members() do
+		if IsInTable(eMagnusDistricts, district:GetType()) then
+			local iRange:number = Map.GetPlotDistance(district:GetX(), district:GetY(), data.PlotX, data.PlotY);
+			--print("IZ", district:GetID(), "dist", iRange);
+			-- check regional buildings
+			local city:table = district:GetCity();
+			--print("city is", city);
+			for _,building in pairs(eMagnusRegional) do
+				if tMagnusBuildings[ building.BuildingType ] == nil then tMagnusBuildings[ building.BuildingType ] = 0; end
+				if CheckBuilding(city, building.Index) == 1 and iRange <= building.Range then
+					tMagnusBuildings[ building.BuildingType ] = tMagnusBuildings[ building.BuildingType ] + 1;
+				end
+			end
+		end
+	end
+	--dshowtable(tMagnusBuildings);
+	-- process vertical integration
+	if tMagnusBuildings.BUILDING_FACTORY > 0 then tMagnusBuildings.BUILDING_FACTORY = tMagnusBuildings.BUILDING_FACTORY - 1; end
+	if tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY > 0 then tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY = tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY - 1; end
+	--dshowtable(tMagnusBuildings);
+	if tMagnusBuildings.BUILDING_POWER_PLANT > 0 then tMagnusBuildings.BUILDING_POWER_PLANT = tMagnusBuildings.BUILDING_POWER_PLANT - 1;
+	elseif tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT > 0 then tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT = tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT - 1; end
+	--dshowtable(tMagnusBuildings);
+	for buildingType,num in pairs(tMagnusBuildings) do
+		data.MagnusRegional = data.MagnusRegional + num;
+		data.MagnusProduction = data.MagnusProduction + num * eMagnusRegional[buildingType].Yield;
+	end
 	
 	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
 	print("..foreign routes");
@@ -240,14 +345,12 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Reyna power
-	if pCity:GetBuildings():HasBuilding( eReynaDam ) and not pCity:GetBuildings():IsPillaged( eReynaDam ) then
-		 data.ReynaPower = data.ReynaPower + 1;
-	end
-	
+	data.ReynaPower = data.ReynaPower + CheckBuilding( pCity, GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index );
+
 	
 	-- get generic data
 	-- loop through all promotions, filtering out which are valid will happen later
-	
+	print("MAIN LOOP");
 	for _,governor in ipairs(m_kGovernors) do
 	
 		-- gather all yield-type effects for a governor
@@ -266,32 +369,87 @@ function ProcessCity( pCity:table )
 			--=========
 			-- MAIN ENGINE
 			--=========
+			-- VICTOR
+			
+			-- AMANI
+			
+			-- MOKSHA
+			
+			-- MAGNUS
+			if promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER" then -- extra yields from harvests and removals
+				effects.Yields = "";
+				for yield,amount in pairs(data.MagnusTiles) do
+					if amount > 0 then 
+						if #effects.Effect > 0 then effects.Effect = effects.Effect.." "; end
+						effects.Effect = effects.Effect..tostring(amount)..GetYieldTextIcon("YIELD_"..yield);
+					end
+				end
+				effects.Effect = "[COLOR_White]"..effects.Effect..ENDCOLOR;
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_SURPLUS_LOGISTICS" then -- food
+				tEffect.FOOD = Round(data.FoodSurplus * 0.2, 1)
+				effects.Yields = GetYieldString("YIELD_FOOD", tEffect.FOOD);
+				FormatSetEffect(data.RoutesEnding, "ICON_TradeRoute");
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_EXPEDITION" then -- settlers do not consume population
+				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_INDUSTRIALIST" then -- power and prod from plants
+				effects.Yields = "";
+				if data.MagnusPlant ~= "" then
+					tEffect.PRODUCTION = 2;
+					effects.Yields = GetYieldString("YIELD_PRODUCTION", 2);
+					effects.Effect = data.MagnusPlant;
+				end
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_BLACK_MARKETEER" then -- cheaper units
+				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_VERTICAL_INTEGRATION" then
+				if data.MagnusRegional > 0 then
+					tEffect.PRODUCTION = data.MagnusProduction;
+					effects.Yields = GetYieldString("YIELD_PRODUCTION", data.MagnusProduction);
+					effects.Effect = tostring(data.MagnusRegional);
+				else
+					effects.Yields = GetYieldString("YIELD_PRODUCTION", 0);
+				end
 			
 			
-			-- RAYNA
-			if     promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" then -- +3 gold for each foreign route passing through
+			-- LIANG
+			
+			-- PINGALA
+			
+			-- REYNA
+			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" then -- +3 gold for each foreign route passing through
 				tEffect.GOLD = data.RoutesPassing*3;
 				effects.Yields = GetYieldString("YIELD_GOLD", data.RoutesPassing*3);
 				FormatSetEffect(data.RoutesPassing, "ICON_TradeRoute");
+				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_HARBORMASTER" then -- double adjacency
 				tEffect.GOLD = data.ReynaAdjacency;
 				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaAdjacency); -- the gain is one extra adjacency
+				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" then -- +2 gold from unimproved feature tiles
 				tEffect.GOLD = data.ReynaTiles*2;
 				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaTiles*2);
 				FormatSetEffect(data.ReynaTiles, "ICON_District");
+				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_RENEWABLE_ENERGY" then
 				tEffect.GOLD  = data.ReynaPower*2;
 				tEffect.POWER = data.ReynaPower*2;
 				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaPower*2).." "..GetYieldString("YIELD_POWER", data.ReynaPower*2);
 				FormatSetEffect(data.ReynaPower, "ICON_Bolt");
+				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_CONTRACTOR" then
 				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
+				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_TAX_COLLECTOR" then --  - +2 gold per Pop
 				tEffect.GOLD  = data.Population*2;
 				effects.Yields = GetYieldString("YIELD_GOLD", data.Population*2);
 				FormatSetEffect(data.Population, "ICON_Citizen");
-			end
+				
+			end -- main switch
 			
 			YieldTableAdd(tGovEffect, tEffect);
 			data.PromoEffects[ promotion.PromotionType ] = effects;
