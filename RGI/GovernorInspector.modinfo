@@ -13,6 +13,7 @@
 	</Dependencies>
 	<InGameActions>
 		<ImportFiles id="RGI_Imports">
+			<File>RealYields.lua</File>
 			<File>Serialize.lua</File>
 		</ImportFiles>
 		<UpdateDatabase id="RGI_UpdateDatabase">
@@ -47,6 +48,7 @@
 		<File>GovernorInspector_Database.sql</File>
         <File>GovernorInspector.lua</File>
         <File>GovernorInspector.xml</File>
+		<File>RealYields.lua</File>
 		<File>Serialize.lua</File>
 		<File>Text/GovernorInspector_Text.xml</File>
 		<!-- reports list loader -->

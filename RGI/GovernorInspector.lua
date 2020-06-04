@@ -7,7 +7,8 @@ print("Loading GovernorInspector.lua from Real Governor Inspector version "..(Gl
 include("InstanceManager");
 include("SupportFunctions"); -- TruncateString
 include("TabSupport");
-include("Civ6Common");
+--include("Civ6Common");
+include("RealYields");
 
 include("Serialize");
 
@@ -57,17 +58,6 @@ m_kCities = {}; -- processed data for all cities, key is CityID
 -- Helpers
 -- ===========================================================================
 
--- debug routine - prints a table, and tables inside recursively (up to 5 levels)
-function dshowrectable(tTable:table, iLevel:number)
-	local level:number = 0;
-	if iLevel ~= nil then level = iLevel; end
-	for k,v in pairs(tTable) do
-		print(string.rep("---:",level), k, type(v), tostring(v));
-		if type(v) == "table" and level < 5 then dshowrectable(v, level+1); end
-	end
-end
-
-
 -- Infixo: this is an iterator to replace pairs
 -- it sorts t and returns its elements one by one
 -- source: https://stackoverflow.com/questions/15706270/sort-a-table-in-lua
@@ -88,14 +78,6 @@ function spairs( t, order_function )
 			return keys[i], t[keys[i]]
 		end
 	end
-end
-
--- check if 'value' exists in table 'pTable'; should work for any type of 'value' and table indices
-function IsInTable(pTable:table, value)
-	for _,data in pairs(pTable) do
-		if data == value then return true; end
-	end
-	return false;
 end
 
 
@@ -149,21 +131,21 @@ end
 
 -- GameInfo and other static data
 
--- Rayna adjacencies
-local eRaynaDistricts:table = {};
-table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_COMMERCIAL_HUB.Index);
-table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_HARBOR.Index);
-table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_ROYAL_NAVY_DOCKYARD.Index);
-table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_COTHON.Index);
-table.insert(eRaynaDistricts, GameInfo.Districts.DISTRICT_SUGUBA.Index);
+-- Reyna adjacencies
+local eReynaDistricts:table = {};
+table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_COMMERCIAL_HUB.Index);
+table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_HARBOR.Index);
+table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_ROYAL_NAVY_DOCKYARD.Index);
+table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_COTHON.Index);
+table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_SUGUBA.Index);
 
--- Rayna power & gold
-local eRaynaImpr:table = {};
-table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_OFFSHORE_WIND_FARM.Index);
-table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_SOLAR_FARM.Index);
-table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_WIND_FARM.Index);
-table.insert(eRaynaImpr, GameInfo.Improvements.IMPROVEMENT_GEOTHERMAL_PLANT.Index);
-local eRaynaDam:number = GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index;
+-- Reyna power & gold
+local eReynaImpr:table = {};
+table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_OFFSHORE_WIND_FARM.Index);
+table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_SOLAR_FARM.Index);
+table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_WIND_FARM.Index);
+table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_GEOTHERMAL_PLANT.Index);
+local eReynaDam:number = GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index;
 
 
 -- main function for calculating effects of governors in a specific city
@@ -181,12 +163,13 @@ function ProcessCity( pCity:table )
 		CityName     = LL(pCity:GetName()),
 		Population   = pCity:GetPopulation(),
 		PromoEffects = {}, -- table of effects, key is PromotionType
+		GovernorEffects = {}, -- table of effects, key is GovernorType
 		-- working data
 		PlotIndex    = Map.GetPlotIndex(pCity:GetX(),pCity:GetY()),
 		RoutesPassing = 0,
-		RaynaAdjacency = 0, -- Comms and Harbors
-		RaynaPower = 0, -- num of eligible power sources
-		RaynaTiles = 0, -- num of unimproved tiles
+		ReynaAdjacency = 0, -- Comms and Harbors
+		ReynaPower = 0, -- num of eligible power sources
+		ReynaTiles = 0, -- num of unimproved tiles
 	};
 	
 	-- governor
@@ -223,15 +206,15 @@ function ProcessCity( pCity:table )
 		local eFeature:number = plot:GetFeatureType();
 		local eDistrict:number = plot:GetDistrictType();
 
-		-- Rayna power
-		if IsInTable(eRaynaImpr, eImprovement) then data.RaynaPower = data.RaynaPower + 1; end
-		-- Rayna unimproved feature tiles
-		if eFeature ~= -1 and eImprovement == -1 and eDistrict == -1 then data.RaynaTiles = data.RaynaTiles + 1; end
+		-- Reyna power
+		if IsInTable(eReynaImpr, eImprovement) then data.ReynaPower = data.ReynaPower + 1; end
+		-- Reyna unimproved feature tiles
+		if eFeature ~= -1 and eImprovement == -1 and eDistrict == -1 then data.ReynaTiles = data.ReynaTiles + 1; end
 	end
 
 	-- more city data
 	
-	-- Rayna and FOREIGN routes passing through (which also includes the destination!)
+	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
 	print("..foreign routes");
 	for _,origPlayer in ipairs(PlayerManager.GetAliveMajors()) do
 		local origPlayerID:number = origPlayer:GetID();
@@ -248,17 +231,17 @@ function ProcessCity( pCity:table )
 		end -- foreign
 	end -- players
 	
-	-- Rayna double adjacency bonuses
+	-- Reyna double adjacency bonuses
 	print("..double adjacency");
 	for _,district in pCity:GetDistricts():Members() do
-		if IsInTable(eRaynaDistricts, district:GetType()) then
-			data.RaynaAdjacency = data.RaynaAdjacency + district:GetYield(GameInfo.Yields.YIELD_GOLD.Index);
+		if IsInTable(eReynaDistricts, district:GetType()) then
+			data.ReynaAdjacency = data.ReynaAdjacency + district:GetYield(GameInfo.Yields.YIELD_GOLD.Index);
 		end
 	end
 	
-	-- Rayna power
-	if pCity:GetBuildings():HasBuilding( eRaynaDam ) and not pCity:GetBuildings():IsPillaged( eRaynaDam ) then
-		 data.RaynaPower = data.RaynaPower + 1;
+	-- Reyna power
+	if pCity:GetBuildings():HasBuilding( eReynaDam ) and not pCity:GetBuildings():IsPillaged( eReynaDam ) then
+		 data.ReynaPower = data.ReynaPower + 1;
 	end
 	
 	
@@ -266,36 +249,57 @@ function ProcessCity( pCity:table )
 	-- loop through all promotions, filtering out which are valid will happen later
 	
 	for _,governor in ipairs(m_kGovernors) do
+	
+		-- gather all yield-type effects for a governor
+		local tGovEffect:table = YieldTableNew();
+		
 		for _,promotion in ipairs(governor.Promotions) do
+			local tEffect:table = YieldTableNew();
 			local effects:table = {
-				Yields = ".",
+				Yields = "[ICON_CheckFail]", -- "not processed" mark
 				Effect = "",
 			};
+			local function FormatSetEffect(num:number, icon:string)
+				if num > 0 then effects.Effect = tostring(num).."["..icon.."]"; end
+			end
+			
 			--=========
 			-- MAIN ENGINE
 			--=========
 			
 			
 			-- RAYNA
-			if     promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" then -- +3 gold for each foreig route passing through
-				effects.Yields = GetYieldString("YIELD_GOLD", data.RoutesPassing*2);
-				effects.Effect = tostring(data.RoutesPassing);
+			if     promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" then -- +3 gold for each foreign route passing through
+				tEffect.GOLD = data.RoutesPassing*3;
+				effects.Yields = GetYieldString("YIELD_GOLD", data.RoutesPassing*3);
+				FormatSetEffect(data.RoutesPassing, "ICON_TradeRoute");
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_HARBORMASTER" then -- double adjacency
-				effects.Yields = GetYieldString("YIELD_GOLD", data.RaynaAdjacency); -- the gain is one extra adjacency
-			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" then -- gold from unimproved feature tiles
-				effects.Yields = GetYieldString("YIELD_GOLD", data.RaynaTiles*2);
-				effects.Effect = tostring(data.RaynaTiles);
+				tEffect.GOLD = data.ReynaAdjacency;
+				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaAdjacency); -- the gain is one extra adjacency
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" then -- +2 gold from unimproved feature tiles
+				tEffect.GOLD = data.ReynaTiles*2;
+				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaTiles*2);
+				FormatSetEffect(data.ReynaTiles, "ICON_District");
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_RENEWABLE_ENERGY" then
-				effects.Yields = GetYieldString("YIELD_GOLD", data.RaynaPower*2).." [ICON_Power]"..toPlusMinusString(data.RaynaPower*2);
-				effects.Effect = tostring(data.RaynaPower);
-			--GOVERNOR_PROMOTION_MERCHANT_CONTRACTOR
+				tEffect.GOLD  = data.ReynaPower*2;
+				tEffect.POWER = data.ReynaPower*2;
+				effects.Yields = GetYieldString("YIELD_GOLD", data.ReynaPower*2).." "..GetYieldString("YIELD_POWER", data.ReynaPower*2);
+				FormatSetEffect(data.ReynaPower, "ICON_Bolt");
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_CONTRACTOR" then
+				effects.Yields = "[ICON_CheckSuccess]"; -- just to mark that it was processed
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_TAX_COLLECTOR" then --  - +2 gold per Pop
+				tEffect.GOLD  = data.Population*2;
 				effects.Yields = GetYieldString("YIELD_GOLD", data.Population*2);
+				FormatSetEffect(data.Population, "ICON_Citizen");
 			end
 			
-			
+			YieldTableAdd(tGovEffect, tEffect);
 			data.PromoEffects[ promotion.PromotionType ] = effects;
 		end -- promotions
+		
+		-- store the total effect
+		data.GovernorEffects[ governor.GovernorType ] = YieldTableGetInfo(tGovEffect);
+		
 	end -- governors
 	
 	--dshowrectable(data); -- debug
@@ -331,18 +335,6 @@ end
 -- ===========================================================================
 -- INFO PAGE - refresh the data based on sorts, flags, etc.
 -- ===========================================================================
---.ID	310
---.Type	-77408354  => Hash for GameInfo.Moments[]
---.InstanceDescription	The discovery of Apprenticeship by Korea sets the world stage for future discoveries in the Medieval Era!
---.ActingPlayer	0
---.EraScore	2
---.GameEra	1
---.Turn	101
---.HasEverBeenCommemorated	false => seems to be false always
---.ActionPlotX	-9999
---.ActionPlotY	-9999
---.ExtraData	table: 000000006221F3C0 => (ipairs) table of { .DataType and .DataValue }
--- ===========================================================================
 
 -- clear all data
 function ResetTabForNewPageContent()
@@ -358,6 +350,7 @@ function ShowSingleCity(pCity:table, pInstance:table)
 	pInstance.Governor:SetToolTipString( pCity.GovernorTT );
 	pInstance.CityName:SetText( pCity.CityName );
 	pInstance.Population:SetText( pCity.Population );
+	pInstance.Total:SetText( pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ] );
 	
 	-- fill out effects with dynamic data
 	for _,promo in ipairs(m_kGovernors[m_kCurrentTab].Promotions) do
@@ -367,74 +360,7 @@ function ShowSingleCity(pCity:table, pInstance:table)
 		local promoEffects:table = pCity.PromoEffects[ promo.PromotionType ];
 		pPromoEffectInstance.Yields:SetText( promoEffects.Yields );
 		pPromoEffectInstance.Effect:SetText( promoEffects.Effect );
-		--local isTruncated:boolean = TruncateString(pPromoEffectInstance.PromoName, 110, promo.Name);
-		--if isTruncated then pPromoEffectInstance.PromoName:SetToolTipString( promo.Name..NEWLINE..promo.Description );
-		--else                pPromoEffectInstance.PromoName:SetToolTipString( promo.Description ); end
 	end
-
-	--[[
-	-- favored
-	pInstance.Favored:SetSelected( pMoment.Favored );
-	pInstance.Favored:RegisterCallback( Mouse.eLClick, function() pMoment.Favored = not pMoment.Favored; ViewGovernorPage(); end );
-	-- category, era score
-	if     pMoment.Category == 1 then pInstance.Group:SetText("[ICON_CapitalLarge]"); pInstance.Group:SetOffsetY(10);
-	elseif pMoment.Category == 2 then pInstance.Group:SetText("[ICON_Capital]");      pInstance.Group:SetOffsetY(7);
-	else                              pInstance.Group:SetText("[ICON_Army]");         pInstance.Group:SetOffsetY(8); end
-	-- score
-	local iScore:number = pMoment.EraScore;
-	if m_bIsTajMahal and iScore >= 2 then iScore = iScore + 1; end
-	pInstance.EraScore:SetText("[COLOR_White]"..tostring(iScore)..ENDCOLOR);
-	-- description
-	local isTruncated:boolean = TruncateString(pInstance.Description, 305, pMoment.Description);
-	if isTruncated then pInstance.Description:SetToolTipString( pMoment.Description..NEWLINE..pMoment.LongDesc );
-	else                pInstance.Description:SetToolTipString( pMoment.LongDesc ); end
-	-- object & valid for
-	isTruncated = TruncateString(pInstance.Object, 155, pMoment.Object);
-	local sStatusTT:string = "";
-	if isTruncated then sStatusTT = pMoment.Object; end
-	if pMoment.ValidFor ~= "" then
-		if sStatusTT ~= "" then sStatusTT = sStatusTT..NEWLINE; end
-		if     GameInfo.Civilizations[pMoment.ValidFor] ~= nil then sStatusTT = sStatusTT..LL(GameInfo.Civilizations[pMoment.ValidFor].Name);
-		elseif GameInfo.Leaders[pMoment.ValidFor]       ~= nil then sStatusTT = sStatusTT..LL(GameInfo.Leaders[pMoment.ValidFor].Name);
-		else                                                        sStatusTT = sStatusTT..pMoment.ValidFor; end
-	end
-	pInstance.Object:SetToolTipString(sStatusTT);
-	-- status and tooltips
-	if     pMoment.Status == 0 then pInstance.Status:SetText("[ICON_Bullet]");        pInstance.Status:SetOffsetY(0);
-	elseif pMoment.Status == 1 then pInstance.Status:SetText("[ICON_CheckmarkBlue]"); pInstance.Status:SetOffsetY(0);
-	else                            pInstance.Status:SetText("[ICON_Not]");           pInstance.Status:SetOffsetY(4); end
-	pInstance.Status:SetToolTipString("");
-	if #pMoment.TT > 0 then pInstance.Status:SetToolTipString(table.concat(pMoment.TT, NEWLINE)); end
-	-- turn, count, player
-	pInstance.Turn:SetText(tostring(pMoment.Turn));
-	pInstance.Count:SetText(tostring(pMoment.Count));
-	pInstance.Player:SetText(pMoment.Player);
-	-- era info
-	pInstance.Eras:SetText("");
-	if pMoment.MinEra ~= nil or pMoment.MaxEra ~= nil then
-		pInstance.Eras:SetText("[ICON_Turn]");
-		local sEras:string = " [ICON_GoingTo] ";
-		if pMoment.MinEra ~= nil then sEras = LL(GameInfo.Eras[pMoment.MinEra].Name)..sEras; end
-		if pMoment.MaxEra ~= nil then sEras = sEras..LL(GameInfo.Eras[pMoment.MaxEra].Name); end
-		pInstance.Eras:SetToolTipString(sEras);
-	end
-	-- debug extra tooltip
-	pInstance.Extra:SetText("---");
-	local tTT:table = {};
-	for k,v in pairs(pMoment) do
-		table.insert(tTT, tostring(k)..": "..tostring(v));
-	end
-	-- ExtraData (ipairs) table of { .DataType and .DataValue }
-	for i,extra in ipairs(pMoment.ExtraData) do
-		if GameInfo.Types[extra.DataType] == nil then
-			table.insert(tTT, string.format("[%d] %s", i, tostring(extra.DataType)));
-		else
-			table.insert(tTT, string.format("[%d] %s", i, GameInfo.Types[extra.DataType].Type));
-		end
-		table.insert(tTT, string.format("[%d] %s", i, tostring(extra.DataValue)));
-	end
-	pInstance.Extra:SetToolTipString(table.concat(tTT, NEWLINE));
-	--]]
 end
 
 -- sort function
@@ -478,7 +404,7 @@ function ViewGovernorPage(eTabNum:number)
 		local pPromoNameInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "PromoNameInstance", pPromoNameInstance, pHeaderInstance.PromoNames );
 		pPromoNameInstance.PromoName:SetText( promo.Name );
-		local isTruncated:boolean = TruncateString(pPromoNameInstance.PromoName, 110, promo.Name);
+		local isTruncated:boolean = TruncateString(pPromoNameInstance.PromoName, 96, promo.Name);
 		if isTruncated then pPromoNameInstance.PromoName:SetToolTipString( promo.Name..NEWLINE..promo.Description );
 		else                pPromoNameInstance.PromoName:SetToolTipString( promo.Description ); end
 	end
@@ -505,46 +431,6 @@ function ViewGovernorPage(eTabNum:number)
 	for _,city in Players[localPlayerID]:GetCities():Members() do
 		table.insert(tShow, city);
 	end
-	
-	--[[
-	local iCurrentEra:number = Game.GetEras():GetCurrentEra();
-	local tSaveData:table = {}; -- save current favored moments
-	for key,moment in pairs(m_kMoments) do
-		--print("...filtering key", key);
-		-- filters
-		local bShow:boolean = true;
-		-- harcoded
-		if moment.EraScore == nil or moment.EraScore == 0 then bShow = false; end
-		if moment.ValidFor ~= nil and moment.ValidFor ~= "" then
-			if not( moment.ValidFor == sCivilization or moment.ValidFor == sLeader ) then bShow = false; end
-		end
-		--if eGroup == 0 then
-			--if not moment.Favored then bShow = false; end
-		--else
-			--if moment.Category ~= eGroup then bShow = false; end
-		--end
-		
-		if not moment.Favored then -- favored are ALWAYS shown
-		
-			-- checkboxes
-			if moment.EraScore == 1 and not bEraScore1 then bShow = false; end
-			if moment.EraScore == 2 and not bEraScore2 then bShow = false; end
-			if moment.EraScore == 3 and not bEraScore3 then bShow = false; end
-			if moment.EraScore >= 4 and not bEraScore4 then bShow = false; end
-			if bHideNotActive  and moment.Status ~= 0 then bShow = false; end
-			if bShowOnlyEarned and moment.Status ~= 1 then bShow = false; end
-			-- available & eras
-			local iMinEra:number, iMaxEra:number = 0, m_iMaxEraIndex;
-			if moment.MinEra ~= nil then iMinEra = GameInfo.Eras[moment.MinEra].Index; end
-			if moment.MaxEra ~= nil then iMaxEra = GameInfo.Eras[moment.MaxEra].Index; end
-			if bHideNotAvailable and (iCurrentEra < iMinEra or iCurrentEra > iMaxEra) then bShow = false; end
-		
-		end -- not favored
-		
-		if bShow then table.insert(tShow, city); end
-		if moment.Favored then table.insert(tSaveData, key); end
-	end
-	--]]
 	
 	-- show loop
 	--print("...filtering done, before show");
@@ -700,7 +586,7 @@ function Open( tabToOpen:number )
 	-- player data
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == -1 then return; end
-	
+	--[[
 	-- thresholds
 	local iDarkAgeThreshold:number   = pGameEras:GetPlayerDarkAgeThreshold(localPlayerID);
 	local iGoldenAgeThreshold:number = pGameEras:GetPlayerGoldenAgeThreshold(localPlayerID);
@@ -717,6 +603,7 @@ function Open( tabToOpen:number )
 	-- Taj Mahal
 	m_bIsTajMahal = (Players[localPlayerID]:GetStats():GetNumBuildingsOfType(m_iTajMahalIndex) > 0);
 	Controls.TajMahalImage:SetHide(not m_bIsTajMahal);
+	--]]
 end
 
 
@@ -822,7 +709,7 @@ end
 -- ===========================================================================
 -- CHECKBOXES
 -- ===========================================================================
-
+--[[
 function OnToggleEraScore1Checkbox()
 	local isChecked = Controls.EraScore1Checkbox:IsSelected();
 	Controls.EraScore1Checkbox:SetSelected( not isChecked );
@@ -866,7 +753,7 @@ function OnToggleHideNotAvailableCheckbox()
 	Controls.HideNotAvailableCheckbox:SetSelected( not isChecked );
 	ViewGovernorPage();
 end
-
+--]]
 
 -- ===========================================================================
 function Initialize()
@@ -876,6 +763,7 @@ function Initialize()
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnCloseButton );
 	Controls.CloseButton:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	-- Filters
+	--[[
 	Controls.EraScore1Checkbox:RegisterCallback( Mouse.eLClick, OnToggleEraScore1Checkbox );
 	Controls.EraScore1Checkbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.EraScore1Checkbox:SetSelected( true );
@@ -897,6 +785,7 @@ function Initialize()
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotAvailableCheckbox );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.HideNotAvailableCheckbox:SetSelected( true );
+	--]]
 	-- Events
 	LuaEvents.ReportsList_OpenGovernorInspector.Add( function() Open(); end );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );

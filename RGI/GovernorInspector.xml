@@ -74,7 +74,7 @@
 	<!-- PROMOTIONS AND EFFECTS -->
 	
 	<Instance Name="PromoNameInstance">
-		<Container ID="Top" Size="120,22">
+		<Container ID="Top" Size="100,22">
 			<!--<Image Offset="0,0"	Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />-->
 			<Container		Size="parent-2,parent">
 				<GridButton		ID="PromoButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
@@ -86,7 +86,7 @@
 	</Instance>
 	
 	<Instance Name="PromoEffectInstance">
-		<Container	ID="Top" Size="120,46">
+		<Container	ID="Top" Size="100,46">
 			<!--<Image	Offset="0,0" Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />-->
 			<Stack	StackGrowth="Down" >
 				<Container	Size="parent-2,22">
@@ -109,7 +109,7 @@
 			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box			Size="2,parent"	Color="46,70,95,255" />
-				<Container		Size="40,parent">
+				<Container		Size="35,parent">
 					<GridButton		ID="Governor"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_REPORTS_GOVERNOR" >
 						<Label													Style="ReportValueText"		String="[ICON_Governor]" />
 					</GridButton>
@@ -121,9 +121,15 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="40,parent">
+				<Container		Size="35,parent">
 					<GridButton		ID="Population"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_HUD_REPORTS_HEADER_POPULATION" >
 						<Label													Style="ReportValueText"		String="[ICON_Citizen]" />
+					</GridButton>
+				</Container>
+				<Box			Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="120,parent">
+					<GridButton		ID="Total"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" >
+						<Label													Style="ReportValueText"		String="LOC_HUD_CITY_TOTAL" />
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
@@ -138,16 +144,20 @@
 			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
 				<Box									Size="2,parent"	Color="46,70,95,255" />
-				<Container	Size="40,parent">
-					<Label		ID="Governor"		Style="ReportValueText"	String="$G$"/>
+				<Container Size="35,parent">
+					<Label ID="Governor"		Style="ReportValueText"	String="$G$"/>
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container	Size="150,parent">
-					<Label		ID="CityName"	Style="ReportValueText" String="$City$" />
+				<Container Size="150,parent">
+					<Label ID="CityName" Color="Science" Style="ReportValueText" String="$City$" Align="Left" />
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
-				<Container	Size="40,parent">
+				<Container Size="35,parent">
 					<Label ID="Population" Style="ReportValueText" String="$0$" Align="Center" />
+				</Container>
+				<Box									Size="2,parent"	Color="46,70,95,128" />
+				<Container Size="120,parent">
+					<Label ID="Total" Style="ReportValueText" String="$Total$" Align="Center" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Stack			ID="PromoEffects" StackGrowth="Right" />
