@@ -208,6 +208,10 @@ function ProcessCity( pCity:table )
 		PlotX        = pCity:GetX(),
 		PlotY        = pCity:GetY(),
 		PlotIndex    = Map.GetPlotIndex(pCity:GetX(),pCity:GetY()),
+		-- Victor
+		VictorResources = {}, -- strat resources
+		VictorProject = "", -- WMD
+		VictorProduction = 0, -- extra production
 		-- Magnus
 		MagnusTiles = YieldTableNew(), -- num of tiles that can be harvested or feature-removed for specific yield
 		--FoodPerTurn  = pCity:GetYield( YieldTypes.FOOD ),
@@ -277,7 +281,15 @@ function ProcessCity( pCity:table )
 		local eImprovement:number = plot:GetImprovementType();
 		local bIsImprovementPillaged:boolean = plot:IsImprovementPillaged();
 		local eDistrict:number = plot:GetDistrictType();
-
+		
+		-- Victor strat resources
+		if eResource ~= -1 and GameInfo.Resources[eResource].ResourceClassType == "RESOURCECLASS_STRATEGIC" then
+			if (eImprovement ~= -1 and not bIsImprovementPillaged) or eDistrict ~= -1 then
+				if data.VictorResources[sResource] == nil then data.VictorResources[sResource] = 0; end
+				data.VictorResources[sResource] = data.VictorResources[sResource] + 1;
+			end
+		end
+		
 		-- Magnus removals
 		local function IncMagnusTiles(yield:string)
 			YieldTableSetYield( data.MagnusTiles, yield, YieldTableGetYield(data.MagnusTiles, yield) + 1 );
@@ -314,6 +326,17 @@ function ProcessCity( pCity:table )
 		local cityBuildings:table = pCity:GetBuildings();
 		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
 		return 0;
+	end
+	
+	-- Victor nuclear production
+	local tProjectProduced:table = GameInfo.Projects[ hashItemProduced ];
+	if hashItemProduced ~= 0 and tProjectProduced ~= nil and tProjectProduced.WMD then
+		data.VictorProject = LL(tProjectProduced.ShortName);
+		if data.Governor == GameInfo.Governors.GOVERNOR_THE_DEFENDER.Index and data.IsEstablished then
+			data.VictorProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.3, 1 );
+		else
+			data.VictorProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.3, 1 );
+		end
 	end
 	
 	-- Magnus and national routes
@@ -422,7 +445,7 @@ function ProcessCity( pCity:table )
 	end -- all buildings
 	
 	-- Pingala space project production
-	local tProjectProduced:table = GameInfo.Projects[ hashItemProduced ];
+	--local tProjectProduced:table = GameInfo.Projects[ hashItemProduced ];
 	if hashItemProduced ~= 0 and tProjectProduced ~= nil and tProjectProduced.SpaceRace then
 		data.PingalaProject = LL(tProjectProduced.ShortName);
 		if data.Governor == GameInfo.Governors.GOVERNOR_THE_EDUCATOR.Index and data.IsEstablished then
@@ -500,14 +523,34 @@ function ProcessCity( pCity:table )
 			--=========
 			-- MAIN ENGINE
 			--=========
+			
 			-- VICTOR
+			--GOVERNOR_PROMOTION_REDOUBT
+			--GOVERNOR_PROMOTION_GARRISON_COMMANDER
+			--GOVERNOR_PROMOTION_EMBRASURE
+			--GOVERNOR_PROMOTION_AIR_DEFENSE_INITIATIVE
+			if promotion.PromotionType == "GOVERNOR_PROMOTION_DEFENSE_LOGISTICS" then
+				effects.Yields = "";
+				for class,amount in pairs(data.VictorResources) do
+					--if amount > 0 then 
+						if #effects.Effect > 0 then effects.Effect = effects.Effect.." "; end
+						effects.Effect = effects.Effect..tostring(amount).."[ICON_"..class.."]";
+					--end
+				end
+				effects.Effect = "[COLOR_White]"..effects.Effect..ENDCOLOR;
+			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_ARMS_RACE_PROPONENT" then
+				tEffect.PRODUCTION = data.VictorProduction;
+				--effects.Effect = data.VictorProject;
+				if data.VictorProduction > 0 then effects.Effect = "[ICON_RESOURCE_URANIUM]"; end
+		
 			
 			-- AMANI
 			
 			-- MOKSHA
 			
 			-- MAGNUS
-			if promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER" then -- extra yields from harvests and removals
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER" then -- extra yields from harvests and removals
 				effects.Yields = "";
 				for yield,amount in pairs(data.MagnusTiles) do
 					if amount > 0 then 
@@ -612,7 +655,8 @@ function ProcessCity( pCity:table )
 				
 			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_SPACE_INITIATIVE" then
 				tEffect.PRODUCTION = data.PingalaProduction;
-				effects.Effect = data.PingalaProject;
+				--effects.Effect = data.PingalaProject;
+				if data.PingalaProduction > 0 then effects.Effect = "[ICON_DISTRICT_SPACEPORT]"; end
 
 			
 			-- REYNA
@@ -693,6 +737,26 @@ end
 -- INFO PAGE - refresh the data based on sorts, flags, etc.
 -- ===========================================================================
 
+local tColumnSize:table = {
+	-- Victor
+	GOVERNOR_PROMOTION_GARRISON_COMMANDER = 100,
+	GOVERNOR_PROMOTION_DEFENSE_LOGISTICS = 120,
+	-- Magnus
+	GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER = 130,
+	GOVERNOR_PROMOTION_RESOURCE_MANAGER_EXPEDITION = 100,
+	GOVERNOR_PROMOTION_RESOURCE_MANAGER_BLACK_MARKETEER = 100,
+	-- Pingala
+	GOVERNOR_PROMOTION_EDUCATOR_LIBRARIAN = 150,
+	GOVERNOR_PROMOTION_EDUCATOR_CONNOISSEUR = 100,
+	GOVERNOR_PROMOTION_EDUCATOR_RESEARCHER = 100,
+	GOVERNOR_PROMOTION_EDUCATOR_GRANTS = 100,
+	GOVERNOR_PROMOTION_MERCHANT_CURATOR = 100,
+	-- Liang
+	GOVERNOR_PROMOTION_BUILDER_GUILDMASTER = 100,
+	GOVERNOR_PROMOTION_ZONING_COMMISSIONER = 130,
+	GOVERNOR_PROMOTION_REINFORCED_INFRASTRUCTURE = 100,
+};
+
 -- clear all data
 function ResetTabForNewPageContent()
 	m_simpleIM:ResetInstances();
@@ -711,7 +775,7 @@ function ShowSingleCity(pCity:table, pInstance:table)
 	pInstance.Governor:SetToolTipString( pCity.GovernorTT );
 	pInstance.CityName:SetText( pCity.CityName );
 	pInstance.Population:SetText( pCity.Population );
-	TruncateWithToolTip(pInstance.Total, 170, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
+	TruncateWithToolTip(pInstance.Total, 198, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
 	
 	-- fill out effects with dynamic data
 	for _,promo in ipairs(m_kGovernors[m_kCurrentTab].Promotions) do
@@ -723,12 +787,17 @@ function ShowSingleCity(pCity:table, pInstance:table)
 		--TruncateWithToolTip(pPromoEffectInstance.Effect, 120, promoEffects.Effect);
 		pPromoEffectInstance.Yields:SetText(promoEffects.Yields);
 		pPromoEffectInstance.Effect:SetText(promoEffects.Effect);
-		-- dynamic column width (test)
+		-- dynamic column width
+		if tColumnSize[promo.PromotionType] ~= nil then
+			pPromoEffectInstance.Top:SetSizeX( tColumnSize[promo.PromotionType] );
+		end
+		--[[
 		if promo.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_CONNOISSEUR" or promo.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_RESEARCHER" then
 			pPromoEffectInstance.Top:SetSizeX(100);
 		elseif promo.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_LIBRARIAN" then
 			pPromoEffectInstance.Top:SetSizeX(160);
 		end
+		-]]
 	end
 end
 
@@ -781,6 +850,10 @@ function ViewGovernorPage(eTabNum:number)
 		local sExtra:string = LL(sLocExtra);
 		if sExtra ~= sLocExtra then table.insert(tTT, TOOLTIP_SEP); table.insert(tTT, sExtra); end
 		pPromoNameInstance.PromoName:SetToolTipString( table.concat(tTT, NEWLINE) );
+		-- dynamic column width
+		if tColumnSize[promo.PromotionType] ~= nil then
+			pPromoNameInstance.Top:SetSizeX( tColumnSize[promo.PromotionType] );
+		end
 	end
 	
 	-- civ and leader for uniques
@@ -820,7 +893,7 @@ function ViewGovernorPage(eTabNum:number)
 	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );
 	
 	-- save current favored moments
-	SaveDataToPlayerSlot(localPlayerID, "RETFavoredMoments", tSaveData);
+	--SaveDataToPlayerSlot(localPlayerID, "RETFavoredMoments", tSaveData);
 end
 
 
@@ -884,12 +957,14 @@ function OnLoadComplete()
 	-- get favored moments from a save file
 	--print("--- LOADING FAVORED MOMENTS ---");
 	--for _,playerID in ipairs(PlayerManager.GetAliveIDs()) do
+	--[[
 		local data:table = LoadDataFromPlayerSlot(Game.GetLocalPlayer(), "RETFavoredMoments");
 		if data ~= nil then -- but make sure we really loaded the data
 			for _,key in ipairs(data) do
 				if m_kMoments[key] then m_kMoments[key].Favored = true; end
 			end
 		end
+	--]]
 	--end
 	--print("--- END LOADING FAVORED ---");
 end
@@ -937,8 +1012,9 @@ function Open( tabToOpen:number )
 	local pGameEras:table = Game.GetEras();
 
 	-- current era
-	Controls.EraNameLabel:SetText( LL("LOC_ERA_PROGRESS_THE_ERA", GameInfo.Eras[ pGameEras:GetCurrentEra() ].Name) );
+	--Controls.EraNameLabel:SetText( LL("LOC_ERA_PROGRESS_THE_ERA", GameInfo.Eras[ pGameEras:GetCurrentEra() ].Name) );
 	-- turns till next
+	--[[
 	if pGameEras:GetCurrentEra() == pGameEras:GetFinalEra() then
 		Controls.TurnsLabel:SetHide( true );
 	else
@@ -955,7 +1031,7 @@ function Open( tabToOpen:number )
 			Controls.TurnsLabel:SetText( string.format("[ICON_Turn] %d - %d", iNextEraMinTurn, iNextEraMaxTurn) );
 		end
 	end
-	
+	--]]
 	-- player data
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == -1 then return; end

@@ -19,6 +19,9 @@
 	<Row Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_ARMS_RACE_PROPONENT">
 		<Text>Nuclear armament project in the city.[NEWLINE][COLOR_Gray]Production gain is based on the total city production and since other modifiers are already included, it can be bigger than the actual gain.[ENDCOLOR]</Text>
 	</Row>
+	<Row Tag="LOC_RGI_GOVERNOR_PROMOTION_DEFENSE_LOGISTICS">
+		<Text>Strategic resources in the city.</Text>
+	</Row>
 	<!-- MAGNUS -->
 	<Row Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER">
 		<Text>Number of features and resources that can be removed or harvested, split by yield they can provide in the city.</Text>
