@@ -3,7 +3,7 @@
 
 	<Container Style="FullScreenVignetteConsumer" />
 
-	<Box 		ID="Main"	Anchor="C,C"	Size="1015,711"		Color="11,27,40,255">
+	<Box 		ID="Main"	Anchor="C,C"	Size="1130,711"		Color="11,27,40,255">
 		<Grid							Anchor="C,C"					Size="parent+9,parent+9"		Style="WindowFrameTopOnly" />
 		
 		<!-- Window Header -->
@@ -17,8 +17,11 @@
 		<Label ID="TotalsLabel"     Anchor="L,T" Offset="910,7"  Style="FontFlair18" String="$score$"      FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
 		<Label ID="ThresholdsLabel" Anchor="L,T" Offset="810,26" Style="FontFlair16" String="$thresholds$" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
 		<!-- Taj Mahal -->
+		<!--
 		<Image ID="TajMahalImage" Anchor="L,T" Offset="770,8" Size="32,32" Icon="ICON_BUILDING_TAJ_MAHAL" IconSize="32" ToolTip="{LOC_BUILDING_TAJ_MAHAL_NAME}[NEWLINE]{LOC_BUILDING_TAJ_MAHAL_DESCRIPTION}"/>
+		-->
 		<Grid							Anchor="C,T"	Offset="0,44"	Size="parent-6,8"				Style="Divider3Grid" />
+		
 		
 		<!-- Tab Header -->
 		<Container		ID="TabArea"	Anchor="C,T"	Offset="0,44"	Size="parent,42" >
@@ -40,10 +43,11 @@
 		<Image														Anchor="C,T"	Offset="0,83"		Size="parent-8,22"				Color="0,0,0,255" Texture="Controls_GradientSmall" />
 
 		<!-- Filters -->
+		<!--
 		<Container ID="BottomFilters" Anchor="C,B" Offset="0,0" Size="parent-6,80">
 			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
 			<Image Anchor="C,B" Offset="0,2" Size="parent,parent" Texture="Controls_Gradient" Color="255,255,255,32">
-				<!--<Label Anchor="L,T" Offset="10,10" Style="FontFlair20" String="LOC_ERA_PROGRESS_ERA_SCORE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />-->
+				<Label Anchor="L,T" Offset="10,10" Style="FontFlair20" String="LOC_ERA_PROGRESS_ERA_SCORE" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
 				<GridButton ID="EraScore1Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="40,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 1"/>
 				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="200,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 2"/>
 				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="360,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 3"/>
@@ -53,6 +57,7 @@
 				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="L,B" Offset="520,10" Size="400,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE"/>
 			</Image>
 		</Container>
+		-->
 		
 	</Box>
 
@@ -74,19 +79,19 @@
 	<!-- PROMOTIONS AND EFFECTS -->
 	
 	<Instance Name="PromoNameInstance">
-		<Container ID="Top" Size="100,22">
+		<Container ID="Top" Size="120,22">
 			<!--<Image Offset="0,0"	Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />-->
 			<Container		Size="parent-2,parent">
-				<GridButton		ID="PromoButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+				<GridButton		ID="PromoButton"  Size="parent-2,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 					<Label		ID="PromoName"	 Style="ReportValueText"		String="promo" />
 				</GridButton>
 			</Container>
-			<Box			Size="2,parent"	Color="46,70,95,128" />
+			<Box Size="2,parent"	Color="46,70,95,128" Anchor="R,T" />
 		</Container>
 	</Instance>
 	
 	<Instance Name="PromoEffectInstance">
-		<Container	ID="Top" Size="100,46">
+		<Container	ID="Top" Size="120,46"> <!-- 120x6 = 720 -->
 			<!--<Image	Offset="0,0" Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />-->
 			<Stack	StackGrowth="Down" >
 				<Container	Size="parent-2,22">
@@ -98,17 +103,17 @@
 				</Container>
 				<Box Size="parent-2,1" Color="46,70,95,128" />
 			</Stack>
-			<Box Size="2,parent" Color="46,70,95,128" />
+			<Box Size="2,parent" Color="46,70,95,128" Anchor="R,T" />
 		</Container>
 	</Instance>
 				
 	<!-- CITIES -->
 
 	<Instance					Name="CityHeaderInstance">
-		<Container			ID="Top"														Offset="8,0" Size="990,22">
-			<Image																						Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
+		<Container			ID="Top" Offset="4,0" Size="parent-8,22">
+			<Image Size="parent,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
 			<Stack	StackGrowth="Right" >
-				<Box			Size="2,parent"	Color="46,70,95,255" />
+				<Box			Size="2,parent"	Color="46,70,95,128" />
 				<Container		Size="35,parent">
 					<GridButton		ID="Governor"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" ToolTip="LOC_REPORTS_GOVERNOR" >
 						<Label													Style="ReportValueText"		String="[ICON_Governor]" />
@@ -127,7 +132,7 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="120,parent">
+				<Container		Size="170,parent">
 					<GridButton		ID="Total"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C" >
 						<Label													Style="ReportValueText"		String="LOC_HUD_CITY_TOTAL" />
 					</GridButton>
@@ -140,10 +145,10 @@
 
 	<!-- Columns: governor icon, city name, population, many effects -->
 	<Instance Name="CityEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="990,46">
-			<Image	Offset="4,0"	Size="parent-8,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
-			<Stack	StackGrowth="Right" >
-				<Box									Size="2,parent"	Color="46,70,95,255" />
+		<Container ID="Top" Offset="4,0" Size="parent-8,46">
+			<Image Size="parent,parent" Texture="Controls_GradientSmall" Color="39,89,137,125" />
+			<Stack StackGrowth="Right" > <!-- 400 -->
+				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container Size="35,parent">
 					<Label ID="Governor"		Style="ReportValueText"	String="$G$"/>
 				</Container>
@@ -156,11 +161,11 @@
 					<Label ID="Population" Style="ReportValueText" String="$0$" Align="Center" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container Size="120,parent">
+				<Container Size="170,parent">
 					<Label ID="Total" Style="ReportValueText" String="$Total$" Align="Center" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Stack			ID="PromoEffects" StackGrowth="Right" />
+				<Stack ID="PromoEffects" StackGrowth="Right" /> <!-- 720 -->
 			</Stack>
 		</Container>
 	</Instance>

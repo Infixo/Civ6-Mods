@@ -175,6 +175,15 @@ for building in GameInfo.Buildings() do
 end
 --dshowrectable(eMagnusRegional);
 
+-- Pingala GW types
+local ePingalaGWTypes:table = {
+"GREATWORKOBJECT_SCULPTURE",
+"GREATWORKOBJECT_PORTRAIT",
+"GREATWORKOBJECT_LANDSCAPE",
+"GREATWORKOBJECT_WRITING",
+"GREATWORKOBJECT_MUSIC",
+};
+
 
 -- main function for calculating effects of governors in a specific city
 function ProcessCity( pCity:table )
@@ -187,6 +196,8 @@ function ProcessCity( pCity:table )
 	local data:table = {
 		City         = pCity,
 		Owner        = pCity:GetOwner(),
+		Governor     = -1, -- assigned gov
+		IsEstablished = false,
 		GovernorIcon = "",
 		GovernorTT   = "",
 		CityName     = LL(pCity:GetName()),
@@ -212,6 +223,14 @@ function ProcessCity( pCity:table )
 		LiangAmenities = 0, -- canals and dams
 		LiangProduction = 0, -- production bonus
 		LiangDistrict = "", -- name of the district
+		-- Pingala
+		PingalaCulture = 0, -- extra yield
+		PingalaScience = 0, -- extra yield
+		PingalaTourism = 0, -- tourism from GWs
+		PingalaNumGW = 0, -- num of eligible GWs
+		PingalaProject = "", -- space race
+		PingalaProduction = 0, -- extra production
+		PingalaGPP = {}, -- extra GPPs
 		-- Reyna
 		RoutesPassing  = 0,
 		ReynaAdjacency = 0, -- Comms and Harbors
@@ -223,9 +242,10 @@ function ProcessCity( pCity:table )
 	-- governor
 	local pAssignedGovernor = pCity:GetAssignedGovernor();
 	if pAssignedGovernor then
-		local eGovernorType = pAssignedGovernor:GetType();
-		local governorDefinition = GameInfo.Governors[eGovernorType];
-		local governorMode = pAssignedGovernor:IsEstablished() and "_FILL]" or "_SLOT]";
+		data.Governor = pAssignedGovernor:GetType();
+		data.IsEstablished = pAssignedGovernor:IsEstablished();
+		local governorDefinition = GameInfo.Governors[data.Governor];
+		local governorMode = data.IsEstablished and "_FILL]" or "_SLOT]";
 		data.GovernorIcon = "[ICON_" .. governorDefinition.GovernorType .. governorMode;
 		data.GovernorTT = Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title);
 	end
@@ -287,6 +307,9 @@ function ProcessCity( pCity:table )
 	end
 
 	-- more city data
+	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
+	local cityBuildings:table = pCity:GetBuildings();
+	
 	local function CheckBuilding(pCity:table, building:number)
 		local cityBuildings:table = pCity:GetBuildings();
 		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
@@ -351,12 +374,80 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Liang district production
-	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
 	local tDistrictProduced:table = GameInfo.Districts[ hashItemProduced ];
 	if hashItemProduced ~= 0 and tDistrictProduced ~= nil then
 		data.LiangDistrict = LL(tDistrictProduced.Name);
-		data.LiangProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.2, 1 );
+		if data.Governor == GameInfo.Governors.GOVERNOR_THE_BUILDER.Index and data.IsEstablished then
+			data.LiangProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.2, 1 );
+		else
+			data.LiangProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.2, 1 );
+		end
 	end
+	
+	-- Pingala extra yields
+	if data.Governor == GameInfo.Governors.GOVERNOR_THE_EDUCATOR.Index and data.IsEstablished then
+		data.PingalaCulture = Round( pCity:GetYield("YIELD_CULTURE") -  pCity:GetYield("YIELD_CULTURE") / 1.15, 1 );
+		data.PingalaScience = Round( pCity:GetYield("YIELD_SCIENCE") -  pCity:GetYield("YIELD_SCIENCE") / 1.15, 1 );
+	else
+		data.PingalaCulture = Round( pCity:GetYield("YIELD_CULTURE") * 0.15, 1 );
+		data.PingalaScience = Round( pCity:GetYield("YIELD_SCIENCE") * 0.15, 1 );
+	end
+	
+	-- Pingala GW
+	print("..great works");
+	for building in GameInfo.Buildings() do
+		local buildingIndex:number = building.Index;
+		if cityBuildings:HasBuilding(buildingIndex) then
+			local iNumSlots:number = cityBuildings:GetNumGreatWorkSlots(buildingIndex);
+			--print("..", building.BuildingType, iNumSlots);
+			if iNumSlots > 0 then
+				-- count GWs
+				for idx = 0, iNumSlots-1 do
+					local eGWIdx:number = cityBuildings:GetGreatWorkInSlot(buildingIndex, idx);
+					if eGWIdx ~= -1 then
+						local eGW:number = cityBuildings:GetGreatWorkTypeFromIndex(eGWIdx);
+						--print("....gw,type", eGW,GameInfo.GreatWorks[eGW].GreatWorkObjectType);
+						if IsInTable(ePingalaGWTypes, GameInfo.GreatWorks[eGW].GreatWorkObjectType) then
+							data.PingalaNumGW = data.PingalaNumGW + 1;
+						end
+					end
+				end
+				-- get regular tourism except Artifacts
+				--print("....tourism", cityBuildings:GetBuildingTourismFromGreatWorks(false, buildingIndex));
+				if cityBuildings:GetGreatWorkSlotType(buildingIndex, 0) ~= GameInfo.GreatWorkSlotTypes.GREATWORKSLOT_ARTIFACT.Index then
+					data.PingalaTourism = data.PingalaTourism + cityBuildings:GetBuildingTourismFromGreatWorks(false, buildingIndex);
+				end
+			end
+		end -- in city
+	end -- all buildings
+	
+	-- Pingala space project production
+	local tProjectProduced:table = GameInfo.Projects[ hashItemProduced ];
+	if hashItemProduced ~= 0 and tProjectProduced ~= nil and tProjectProduced.SpaceRace then
+		data.PingalaProject = LL(tProjectProduced.ShortName);
+		if data.Governor == GameInfo.Governors.GOVERNOR_THE_EDUCATOR.Index and data.IsEstablished then
+			data.PingalaProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.3, 1 );
+		else
+			data.PingalaProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.3, 1 );
+		end
+	end
+
+	-- Pingala GPPs
+	print("..great people points");
+	for building in GameInfo.Buildings() do
+		local buildingType:string  = building.BuildingType;
+		local buildingIndex:number = building.Index;
+		if cityBuildings:HasBuilding(buildingIndex) and not cityBuildings:IsPillaged(buildingIndex) then
+			for row in GameInfo.Building_GreatPersonPoints() do
+				if row.BuildingType == buildingType then
+					if data.PingalaGPP[row.GreatPersonClassType] == nil then data.PingalaGPP[row.GreatPersonClassType] = 0; end
+					data.PingalaGPP[row.GreatPersonClassType] = data.PingalaGPP[row.GreatPersonClassType] + row.PointsPerTurn;
+				end
+			end
+			print("..building", buildingType);
+		end -- in city
+	end -- buildings
+	dshowtable(data.PingalaGPP);
 	
 	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
 	print("..foreign routes");
@@ -490,14 +581,39 @@ function ProcessCity( pCity:table )
 				--effects.Yields = YieldTableGetInfo(tEffect);
 				FormatSetEffect(data.LiangParks, "ICON_District");
 
-
 			
-
-
-
-
-
 			-- PINGALA
+			
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_LIBRARIAN" then
+				tEffect.CULTURE = data.PingalaCulture;
+				tEffect.SCIENCE = data.PingalaScience;
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_CONNOISSEUR" then
+				tEffect.CULTURE = data.Population;
+				FormatSetEffect(data.Population, "ICON_Citizen");
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_RESEARCHER" then
+				tEffect.SCIENCE = data.Population;
+				FormatSetEffect(data.Population, "ICON_Citizen");
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_GRANTS" then
+				--local tGPPs:table = {};
+				local iTotGPP:number = 0;
+				for class,num in pairs(data.PingalaGPP) do
+					--table.insert(tGPPs, string.format("%d%s", num, GameInfo.GreatPersonClasses[class].IconString));
+					iTotGPP = iTotGPP + num;
+				end
+				--effects.Effect = table.concat(tGPPs, " ");
+				effects.Effect = "[COLOR_White]+"..tostring(iTotGPP)..ENDCOLOR;
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_MERCHANT_CURATOR" then
+				tEffect.TOURISM = data.PingalaTourism;
+				effects.Effect = tostring(data.PingalaNumGW);
+				
+			elseif promotion.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_SPACE_INITIATIVE" then
+				tEffect.PRODUCTION = data.PingalaProduction;
+				effects.Effect = data.PingalaProject;
+
 			
 			-- REYNA
 			
@@ -586,12 +702,16 @@ end
 -- fills a single instance with the data of the moment
 function ShowSingleCity(pCity:table, pInstance:table)
 	print("FUN ShowSingleCity", pCity.CityName);
+	local function TruncateWithToolTip(control:table, length:number, text:string)
+		local isTruncated:boolean = TruncateString(control, length, text);
+		if isTruncated then control:SetToolTipString(text); end
+	end
 	
 	pInstance.Governor:SetText( pCity.GovernorIcon );
 	pInstance.Governor:SetToolTipString( pCity.GovernorTT );
 	pInstance.CityName:SetText( pCity.CityName );
 	pInstance.Population:SetText( pCity.Population );
-	pInstance.Total:SetText( pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ] );
+	TruncateWithToolTip(pInstance.Total, 170, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
 	
 	-- fill out effects with dynamic data
 	for _,promo in ipairs(m_kGovernors[m_kCurrentTab].Promotions) do
@@ -599,8 +719,16 @@ function ShowSingleCity(pCity:table, pInstance:table)
 		ContextPtr:BuildInstanceForControl( "PromoEffectInstance", pPromoEffectInstance, pInstance.PromoEffects );
 		--dshowrectable(pCity);
 		local promoEffects:table = pCity.PromoEffects[ promo.PromotionType ];
-		pPromoEffectInstance.Yields:SetText( promoEffects.Yields );
-		pPromoEffectInstance.Effect:SetText( promoEffects.Effect );
+		--TruncateWithToolTip(pPromoEffectInstance.Yields, 120, promoEffects.Yields);
+		--TruncateWithToolTip(pPromoEffectInstance.Effect, 120, promoEffects.Effect);
+		pPromoEffectInstance.Yields:SetText(promoEffects.Yields);
+		pPromoEffectInstance.Effect:SetText(promoEffects.Effect);
+		-- dynamic column width (test)
+		if promo.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_CONNOISSEUR" or promo.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_RESEARCHER" then
+			pPromoEffectInstance.Top:SetSizeX(100);
+		elseif promo.PromotionType == "GOVERNOR_PROMOTION_EDUCATOR_LIBRARIAN" then
+			pPromoEffectInstance.Top:SetSizeX(160);
+		end
 	end
 end
 
