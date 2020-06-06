@@ -355,6 +355,7 @@ function ProcessCity( pCity:table )
 	print("..vertical integration");
 	local tMagnusBuildings:table = {};
 	for _,district in Players[data.Owner]:GetDistricts():Members() do
+		--print("....ID", district:GetID());
 		if IsInTable(eMagnusDistricts, district:GetType()) then
 			local iRange:number = Map.GetPlotDistance(district:GetX(), district:GetY(), data.PlotX, data.PlotY);
 			--print("IZ", district:GetID(), "dist", iRange);
@@ -371,11 +372,11 @@ function ProcessCity( pCity:table )
 	end
 	--dshowtable(tMagnusBuildings);
 	-- process vertical integration
-	if tMagnusBuildings.BUILDING_FACTORY > 0 then tMagnusBuildings.BUILDING_FACTORY = tMagnusBuildings.BUILDING_FACTORY - 1; end
-	if tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY > 0 then tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY = tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY - 1; end
+	if tMagnusBuildings.BUILDING_FACTORY             and tMagnusBuildings.BUILDING_FACTORY             > 0 then tMagnusBuildings.BUILDING_FACTORY             = tMagnusBuildings.BUILDING_FACTORY             - 1; end
+	if tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY and tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY > 0 then tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY = tMagnusBuildings.BUILDING_ELECTRONICS_FACTORY - 1; end
 	--dshowtable(tMagnusBuildings);
-	if tMagnusBuildings.BUILDING_POWER_PLANT > 0 then tMagnusBuildings.BUILDING_POWER_PLANT = tMagnusBuildings.BUILDING_POWER_PLANT - 1;
-	elseif tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT > 0 then tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT = tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT - 1; end
+	if     tMagnusBuildings.BUILDING_POWER_PLANT             and tMagnusBuildings.BUILDING_POWER_PLANT             > 0 then tMagnusBuildings.BUILDING_POWER_PLANT             = tMagnusBuildings.BUILDING_POWER_PLANT             - 1;
+	elseif tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT and tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT > 0 then tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT = tMagnusBuildings.BUILDING_FOSSIL_FUEL_POWER_PLANT - 1; end
 	--dshowtable(tMagnusBuildings);
 	for buildingType,num in pairs(tMagnusBuildings) do
 		data.MagnusRegional = data.MagnusRegional + num;
@@ -890,7 +891,8 @@ function ViewGovernorPage(eTabNum:number)
 
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );
+	--Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST );
 	
 	-- save current favored moments
 	--SaveDataToPlayerSlot(localPlayerID, "RETFavoredMoments", tSaveData);
