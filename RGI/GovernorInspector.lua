@@ -208,6 +208,8 @@ function ProcessCity( pCity:table )
 		PlotX        = pCity:GetX(),
 		PlotY        = pCity:GetY(),
 		PlotIndex    = Map.GetPlotIndex(pCity:GetX(),pCity:GetY()),
+		HappinessNonFoodYieldModifier = pCity:GetGrowth():GetHappinessNonFoodYieldModifier(), -- modifier from amenities
+		HappinessGrowthModifier		= pCity:GetGrowth():GetHappinessGrowthModifier(), -- YIELD_FOOD
 		-- Victor
 		VictorResources = {}, -- strat resources
 		VictorProject = "", -- WMD
@@ -329,14 +331,12 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Victor nuclear production
+	-- This extra production does not appear as increase in the total prod output but only as less turns to finish the project
 	local tProjectProduced:table = GameInfo.Projects[ hashItemProduced ];
 	if hashItemProduced ~= 0 and tProjectProduced ~= nil and tProjectProduced.WMD then
 		data.VictorProject = LL(tProjectProduced.ShortName);
-		if data.Governor == GameInfo.Governors.GOVERNOR_THE_DEFENDER.Index and data.IsEstablished then
-			data.VictorProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.3, 1 );
-		else
-			data.VictorProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.3, 1 );
-		end
+		local baseCityProd:number = pCity:GetYield("YIELD_PRODUCTION") / (1 + data.HappinessNonFoodYieldModifier/100.0);
+		data.VictorProduction = Round( baseCityProd * 0.3, 1 );
 	end
 	
 	-- Magnus and national routes
@@ -398,24 +398,31 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Liang district production
+	-- Liang seems to be broken as she doesn't provide 20% modifier but flat +4 prod - weird
 	local tDistrictProduced:table = GameInfo.Districts[ hashItemProduced ];
 	if hashItemProduced ~= 0 and tDistrictProduced ~= nil then
 		data.LiangDistrict = LL(tDistrictProduced.Name);
+		local baseCityProd:number = pCity:GetYield("YIELD_PRODUCTION");
+		local cityProdMod:number = data.HappinessNonFoodYieldModifier; -- modifier
 		if data.Governor == GameInfo.Governors.GOVERNOR_THE_BUILDER.Index and data.IsEstablished then
-			data.LiangProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.2, 1 );
-		else
-			data.LiangProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.2, 1 );
+			cityProdMod = cityProdMod + 20;
 		end
+		baseCityProd = baseCityProd / (1 + cityProdMod/100.0);
+		data.LiangProduction = Round( baseCityProd * 0.2, 1 );
 	end
 	
 	-- Pingala extra yields
+	local baseCityCulture:number = pCity:GetYield("YIELD_CULTURE");
+	local baseCityScience:number = pCity:GetYield("YIELD_SCIENCE");
 	if data.Governor == GameInfo.Governors.GOVERNOR_THE_EDUCATOR.Index and data.IsEstablished then
-		data.PingalaCulture = Round( pCity:GetYield("YIELD_CULTURE") -  pCity:GetYield("YIELD_CULTURE") / 1.15, 1 );
-		data.PingalaScience = Round( pCity:GetYield("YIELD_SCIENCE") -  pCity:GetYield("YIELD_SCIENCE") / 1.15, 1 );
+		baseCityCulture = baseCityCulture / (1 + (data.HappinessNonFoodYieldModifier + 15)/100);
+		baseCityScience = baseCityScience / (1 + (data.HappinessNonFoodYieldModifier + 15)/100);
 	else
-		data.PingalaCulture = Round( pCity:GetYield("YIELD_CULTURE") * 0.15, 1 );
-		data.PingalaScience = Round( pCity:GetYield("YIELD_SCIENCE") * 0.15, 1 );
+		baseCityCulture = baseCityCulture / (1 + (data.HappinessNonFoodYieldModifier +  0)/100);
+		baseCityScience = baseCityScience / (1 + (data.HappinessNonFoodYieldModifier +  0)/100);
 	end
+	data.PingalaCulture = Round( baseCityCulture * 0.15, 1 );
+	data.PingalaScience = Round( baseCityScience * 0.15, 1 );
 	
 	-- Pingala GW
 	print("..great works");
@@ -446,14 +453,16 @@ function ProcessCity( pCity:table )
 	end -- all buildings
 	
 	-- Pingala space project production
+	-- This extra production does not appear as increase in the total prod output but only as less turns to finish the project
 	--local tProjectProduced:table = GameInfo.Projects[ hashItemProduced ];
 	if hashItemProduced ~= 0 and tProjectProduced ~= nil and tProjectProduced.SpaceRace then
 		data.PingalaProject = LL(tProjectProduced.ShortName);
-		if data.Governor == GameInfo.Governors.GOVERNOR_THE_EDUCATOR.Index and data.IsEstablished then
-			data.PingalaProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.3, 1 );
-		else
-			data.PingalaProduction = Round( pCity:GetYield("YIELD_PRODUCTION") * 0.3, 1 );
-		end
+		--if data.Governor == GameInfo.Governors.GOVERNOR_THE_EDUCATOR.Index and data.IsEstablished then
+			--data.PingalaProduction = Round( pCity:GetYield("YIELD_PRODUCTION") -  pCity:GetYield("YIELD_PRODUCTION") / 1.3, 1 );
+		--else
+		local baseCityProd:number = pCity:GetYield("YIELD_PRODUCTION") / (1 + data.HappinessNonFoodYieldModifier/100.0);
+		data.PingalaProduction = Round( baseCityProd * 0.3, 1 );
+		--end
 	end
 
 	-- Pingala GPPs
