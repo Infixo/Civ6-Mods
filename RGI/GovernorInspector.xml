@@ -158,7 +158,9 @@
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container Size="150,parent">
-					<Label ID="CityName" Color="Science" Style="ReportValueText" String="$City$" Align="Left" />
+					<GridButton		ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" >
+						<Label		ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
+					</GridButton>
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
 				<Container Size="35,parent">

@@ -15,6 +15,14 @@
 	<Row Tag="LOC_RGI_BUTTON_LABEL">
 		<Text>Governor Inspector</Text>
 	</Row>
+	<!--
+	<Row Tag="LOC_GOVERNOR_ASSIGNMENT_CONFIRM_REPLACEMENT">
+			<Text>REPLACE GOVERNOR? Slotting this governor will replace the governor in this city.</Text>
+	</Row>
+		<Row Tag="LOC_GOVERNORS_SCREEN_GOVERNOR_ASSIGN_TO">
+			<Text>Assign {1_GovernorName} to:</Text>
+		</Row>
+	-->
 	<!-- VICTOR -->
 	<Row Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_ARMS_RACE_PROPONENT">
 		<Text>Nuclear armament project in the city.[NEWLINE][COLOR_Gray]Production gain is based on the total city production and since other modifiers are already included, it can be bigger than the actual gain.[ENDCOLOR]</Text>

@@ -8,6 +8,7 @@ include("InstanceManager");
 include("SupportFunctions"); -- TruncateString, Round
 include("TabSupport");
 --include("Civ6Common");
+include("PopupDialog");
 include("RealYields");
 
 include("Serialize");
@@ -244,6 +245,16 @@ function ProcessCity( pCity:table )
 		ReynaTiles     = 0, -- num of unimproved tiles
 	};
 
+	-- more city data
+	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
+	local cityBuildings:table = pCity:GetBuildings();
+	local playerResources:table = Players[localPlayerID]:GetResources();
+	
+	local function CheckBuilding(pCity:table, building:number)
+		local cityBuildings:table = pCity:GetBuildings();
+		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
+		return 0;
+	end
 	
 	-- governor
 	local pAssignedGovernor = pCity:GetAssignedGovernor();
@@ -255,7 +266,6 @@ function ProcessCity( pCity:table )
 		data.GovernorIcon = "[ICON_" .. governorDefinition.GovernorType .. governorMode;
 		data.GovernorTT = Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title);
 	end
-	
 	
 	-- iterate through city plots
 	print("..city plots");
@@ -281,12 +291,20 @@ function ProcessCity( pCity:table )
 		local eFeature:number = plot:GetFeatureType();
 		local sFeature:string = ( eFeature ~= -1 and GameInfo.Features[eFeature].FeatureType or "");
 		local eImprovement:number = plot:GetImprovementType();
+		local sImprovement:string = ( eImprovement ~= -1 and GameInfo.Improvements[eImprovement].ImprovementType or "");
 		local bIsImprovementPillaged:boolean = plot:IsImprovementPillaged();
 		local eDistrict:number = plot:GetDistrictType();
 		
 		-- Victor strat resources
-		if eResource ~= -1 and GameInfo.Resources[eResource].ResourceClassType == "RESOURCECLASS_STRATEGIC" then
-			if (eImprovement ~= -1 and not bIsImprovementPillaged) or eDistrict ~= -1 then
+		local function IsImprovementValid(sImprovement:string, sResource:string)
+			--print("IsImprovementValid", sImprovement, sResource);
+			for row in GameInfo.Improvement_ValidResources() do
+				if row.ImprovementType == sImprovement and row.ResourceType == sResource then return true; end
+			end
+			return false;
+		end
+		if eResource ~= -1 and GameInfo.Resources[eResource].ResourceClassType == "RESOURCECLASS_STRATEGIC" and playerResources:IsResourceVisible(eResource) then
+			if (eImprovement ~= -1 and IsImprovementValid(sImprovement, sResource) and not bIsImprovementPillaged) or eDistrict ~= -1 then
 				if data.VictorResources[sResource] == nil then data.VictorResources[sResource] = 0; end
 				data.VictorResources[sResource] = data.VictorResources[sResource] + 1;
 			end
@@ -296,7 +314,7 @@ function ProcessCity( pCity:table )
 		local function IncMagnusTiles(yield:string)
 			YieldTableSetYield( data.MagnusTiles, yield, YieldTableGetYield(data.MagnusTiles, yield) + 1 );
 		end
-		if eResource ~= -1 then
+		if eResource ~= -1 then -- TODO: technically should check if visible, but only strategic ones have this issue and they cannot be harvestes in the vanilla game
 			for harv in GameInfo.Resource_Harvests() do
 				if harv.ResourceType == sResource then IncMagnusTiles(harv.YieldType); end
 			end
@@ -318,16 +336,6 @@ function ProcessCity( pCity:table )
 		if IsInTable(eReynaImpr, eImprovement) and not bIsImprovementPillaged then data.ReynaPower = data.ReynaPower + 1; end
 		-- Reyna unimproved feature tiles
 		if eFeature ~= -1 and eImprovement == -1 and eDistrict == -1 then data.ReynaTiles = data.ReynaTiles + 1; end
-	end
-
-	-- more city data
-	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
-	local cityBuildings:table = pCity:GetBuildings();
-	
-	local function CheckBuilding(pCity:table, building:number)
-		local cityBuildings:table = pCity:GetBuildings();
-		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
-		return 0;
 	end
 	
 	-- Victor nuclear production
@@ -744,6 +752,48 @@ end
 
 
 -- ===========================================================================
+-- Assign governor - code from GovernorAssignmentChooser.lua
+-- ===========================================================================
+
+function ConfirmedAssignment(data:table)
+	-- Request assignment
+	local pLocalPlayer = Players[Game.GetLocalPlayer()];
+	if (pLocalPlayer ~= nil) then
+		local kParameters:table = {};
+		kParameters[PlayerOperations.PARAM_GOVERNOR_TYPE] = m_kGovernors[m_kCurrentTab].Index; --m_SelectedGovernorID;
+		kParameters[PlayerOperations.PARAM_PLAYER_ONE] = data.City:GetOwner(); --m_SelectedCityOwner;
+		kParameters[PlayerOperations.PARAM_CITY_DEST] = data.City:GetID(); --m_SelectedCityID;
+		UI.RequestPlayerOperation(Game.GetLocalPlayer(), PlayerOperations.ASSIGN_GOVERNOR, kParameters);
+		Close();
+		Open(); -- refresh
+	end
+end
+
+function AssignGovernor(data:table)
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID ~= nil) then
+		local pCity = data.City; --CityManager.GetCity(m_SelectedCityOwner, m_SelectedCityID);
+		if pCity ~= nil and pCity:GetAssignedGovernor() ~= nil then
+			local pAssignedGovernor = pCity:GetAssignedGovernor();
+			local governorOwner = pAssignedGovernor:GetOwner();
+			if (pAssignedGovernor:GetOwner() == localPlayerID) then
+				-- If this city already has an assigned governor popup a popup dialog to confirm the replacement
+				local popup:table = PopupDialogInGame:new( "GovernorAssignmentReplaceConfirm" );
+				--popup:ShowYesNoDialog( Locale.Lookup("LOC_GOVERNOR_ASSIGNMENT_CONFIRM_REPLACEMENT"), function() ConfirmedAssignment(); LuaEvents.GovernorPanel_Open(); end );
+				popup:ShowYesNoDialog( Locale.Lookup("LOC_GOVERNOR_ASSIGNMENT_CONFIRM_REPLACEMENT"), function() ConfirmedAssignment(data); end );
+			else
+				ConfirmedAssignment(data);
+				--LuaEvents.GovernorPanel_Close();
+			end
+		else
+			ConfirmedAssignment(data);
+			--LuaEvents.GovernorPanel_Close();
+		end
+	end
+end
+
+
+-- ===========================================================================
 -- INFO PAGE - refresh the data based on sorts, flags, etc.
 -- ===========================================================================
 
@@ -786,6 +836,12 @@ function ShowSingleCity(pCity:table, pInstance:table)
 	pInstance.CityName:SetText( pCity.CityName );
 	pInstance.Population:SetText( pCity.Population );
 	TruncateWithToolTip(pInstance.Total, 198, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
+	
+	-- go to the city after clicking
+	pInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( pCity.City:GetX(), pCity.City:GetY() ); UI.SelectCity( pCity.City ); end );
+	pInstance.GoToCityButton:RegisterCallback( Mouse.eRClick, function() AssignGovernor(pCity); end );
+	pInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
+	
 	
 	-- fill out effects with dynamic data
 	for _,promo in ipairs(m_kGovernors[m_kCurrentTab].Promotions) do
