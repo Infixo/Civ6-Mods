@@ -98,6 +98,7 @@ local tPagesToSkip:table = {
 local tPagesWithCityOwner:table = {
 	District = true,
 	Building = true,
+	GovernorPromotion = true,
 }
 
 function ShowModifiers(page)
