@@ -20,7 +20,7 @@ local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-d
 --print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 
 -- configuration options
-local bOptionIncludeOthers:boolean = ( GlobalParameters.RET_OPTION_INCLUDE_OTHERS == 1 );
+local bOptionTotalAll:boolean = ( GlobalParameters.RGI_OPTION_TOTAL_ALL == 1 );
 
 
 -- ===========================================================================
@@ -40,11 +40,8 @@ function ColorRED(s)   return "[COLOR_Red]"  ..tostring(s)..ENDCOLOR; end
 -- ===========================================================================
 --	VARIABLES
 -- ===========================================================================
+
 local m_kCurrentTab:number = 1; -- last active tab which will be also used as a moment category
-local m_iMaxEraIndex:number = #GameInfo.Eras-1;
-local m_iTajMahalIndex:number = (GameInfo.Buildings.BUILDING_TAJ_MAHAL and GameInfo.Buildings.BUILDING_TAJ_MAHAL.Index or -1);
-local m_bIsTajMahal:boolean = false;
-m_kMoments = {};
 m_simpleIM = InstanceManager:new("SimpleInstance", "Top",    Controls.Stack); -- Non-Collapsable, simple
 m_tabIM    = InstanceManager:new("TabInstance",    "Button", Controls.TabContainer);
 m_tabs     = nil;
@@ -54,6 +51,7 @@ m_kCities = {}; -- processed data for all cities, key is CityID
 
 --m_kPromosHeader = InstanceManager:new("SimpleInstance", "Top",    Controls.Stack); -- Non-Collapsable, simple
 --m_kPromosValues
+m_kPoliciesIM = InstanceManager:new("PolicyInstance", "Top", Controls.PoliciesStack);
 
 
 -- ===========================================================================
@@ -135,8 +133,6 @@ end
 -- ===========================================================================
 
 -- refresh governor promotions and the tooltip
-
-
 function UpdateGovernorPromotions()
 	print("FUN UpdateGovernorPromotions()");
 	
@@ -232,16 +228,22 @@ function ProcessCity( pCity:table )
 	
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == nil then return end;
+	local playerResources:table = Players[localPlayerID]:GetResources();
+	
+	local cityGrowth:table = pCity:GetGrowth();
+	local cityBuildings:table = pCity:GetBuildings();
 	
 	-- generic city data - I try to use the same names as in CitySupport.lua
 	local data:table = {
 		City         = pCity,
 		Owner        = pCity:GetOwner(),
+		Status       = "", -- icons with the city status, only NEGATIVE effects are shown
 		Governor     = -1, -- assigned gov
 		IsEstablished = false,
 		GovernorIcon = "",
 		GovernorTT   = "",
 		CityName     = LL(pCity:GetName()),
+		CapitalIcon  = (pCity:IsCapital() and "[ICON_Capital]" or ""),
 		Population   = pCity:GetPopulation(),
 		PromoEffects = {}, -- table of effects, key is PromotionType
 		GovernorEffects = {}, -- table of effects, key is GovernorType
@@ -249,8 +251,8 @@ function ProcessCity( pCity:table )
 		PlotX        = pCity:GetX(),
 		PlotY        = pCity:GetY(),
 		PlotIndex    = Map.GetPlotIndex(pCity:GetX(),pCity:GetY()),
-		HappinessNonFoodYieldModifier = pCity:GetGrowth():GetHappinessNonFoodYieldModifier(), -- modifier from amenities
-		HappinessGrowthModifier		= pCity:GetGrowth():GetHappinessGrowthModifier(), -- YIELD_FOOD
+		HappinessNonFoodYieldModifier = cityGrowth:GetHappinessNonFoodYieldModifier(), -- modifier from amenities
+		HappinessGrowthModifier		  = cityGrowth:GetHappinessGrowthModifier(), -- YIELD_FOOD
 		-- Victor
 		VictorResources = {}, -- strat resources
 		VictorProject = "", -- WMD
@@ -258,7 +260,7 @@ function ProcessCity( pCity:table )
 		-- Magnus
 		MagnusTiles = YieldTableNew(), -- num of tiles that can be harvested or feature-removed for specific yield
 		--FoodPerTurn  = pCity:GetYield( YieldTypes.FOOD ),
-		FoodSurplus = pCity:GetGrowth():GetFoodSurplus(),
+		FoodSurplus = cityGrowth:GetFoodSurplus(),
 		RoutesEnding = 0, -- only your own
 		MagnusPlant = "", -- will contain an icon of the power plant resource consumed
 		MagnusProduction = 0, -- vertical integration, yield
@@ -287,13 +289,37 @@ function ProcessCity( pCity:table )
 
 	-- more city data
 	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
-	local cityBuildings:table = pCity:GetBuildings();
-	local playerResources:table = Players[localPlayerID]:GetResources();
 	
 	local function CheckBuilding(pCity:table, building:number)
 		local cityBuildings:table = pCity:GetBuildings();
 		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
 		return 0;
+	end
+	
+	-- city status - power
+	if not pCity:GetPower():IsFullyPowered() then -- insufficient power
+		data.Status = data.Status .. "[ICON_PowerInsufficient]";
+	end
+	-- city status - loyalty
+	if pCity:GetCulturalIdentity():GetLoyaltyPerTurn() < 0 then
+		data.Status = data.Status .. "[ICON_PressureDown]";
+	end
+	-- city status - under siege
+	local pDistrict:table = Players[localPlayerID]:GetDistricts():FindID( pCity:GetDistrictID() );
+	if pDistrict ~= nil and pDistrict:IsUnderSiege() then
+		data.Status = data.Status .. "[ICON_UnderSiege]";
+	end
+	-- city status - occupied
+	if pCity:IsOccupied() then
+		data.Status = data.Status .. "[ICON_Occupied]";
+	end
+	-- city status - housing
+	if cityGrowth:GetHousing() < data.Population then -- insufficient housing
+		data.Status = data.Status .. "[ICON_HousingInsufficient]";
+	end
+	-- city status - amenities
+	if cityGrowth:GetAmenities() < cityGrowth:GetAmenitiesNeeded() then
+		data.Status = data.Status .. "[ICON_AmenitiesInsufficient]";
 	end
 	
 	-- governor
@@ -758,7 +784,10 @@ function ProcessCity( pCity:table )
 			
 			effects.Yields = ( bCheckSuccess and "[ICON_CheckSuccess]" or YieldTableGetInfo(tEffect) );
 			data.PromoEffects[ promotion.PromotionType ] = effects;
-			YieldTableAdd(tGovEffect, tEffect);
+			-- sum up only effects from active promotions
+			if bOptionTotalAll or promotion.IsActive then
+				YieldTableAdd(tGovEffect, tEffect);
+			end
 			
 		end -- promotions
 		
@@ -812,8 +841,9 @@ function ConfirmedAssignment(data:table)
 		kParameters[PlayerOperations.PARAM_PLAYER_ONE] = data.City:GetOwner(); --m_SelectedCityOwner;
 		kParameters[PlayerOperations.PARAM_CITY_DEST] = data.City:GetID(); --m_SelectedCityID;
 		UI.RequestPlayerOperation(Game.GetLocalPlayer(), PlayerOperations.ASSIGN_GOVERNOR, kParameters);
-		Close();
-		Open(); -- refresh
+		-- refresh
+		UpdateData();
+		ViewGovernorPage();
 	end
 end
 
@@ -882,14 +912,14 @@ function ShowSingleCity(pCity:table, pInstance:table)
 	
 	pInstance.Governor:SetText( pCity.GovernorIcon );
 	pInstance.Governor:SetToolTipString( pCity.GovernorTT );
-	pInstance.CityName:SetText( pCity.CityName );
+	pInstance.CityName:SetText( pCity.CapitalIcon..pCity.CityName.."  "..pCity.Status );
 	pInstance.Population:SetText( pCity.Population );
 	TruncateWithToolTip(pInstance.Total, 198, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
 	
 	-- go to the city after clicking
 	pInstance.GoToCityButton:SetToolTipString( "[ICON_GoingTo] "..pCity.CityName );
 	pInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( pCity.City:GetX(), pCity.City:GetY() ); UI.SelectCity( pCity.City ); end );
-	pInstance.GoToCityButton:RegisterCallback( Mouse.eRClick, function() AssignGovernor(pCity); end );
+	--pInstance.GoToCityButton:RegisterCallback( Mouse.eRClick, function() AssignGovernor(pCity); end );
 	pInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
 	
 	
@@ -980,10 +1010,10 @@ function ViewGovernorPage(eTabNum:number)
 	end
 	
 	-- civ and leader for uniques
-	local localPlayerID:number = Game.GetLocalPlayer();
-	if localPlayerID == -1 then return; end
-	local sCivilization:string = PlayerConfigurations[localPlayerID]:GetCivilizationTypeName();
-	local sLeader:string       = PlayerConfigurations[localPlayerID]:GetLeaderTypeName();
+	--local localPlayerID:number = Game.GetLocalPlayer();
+	--if localPlayerID == -1 then return; end
+	--local sCivilization:string = PlayerConfigurations[localPlayerID]:GetCivilizationTypeName();
+	--local sLeader:string       = PlayerConfigurations[localPlayerID]:GetLeaderTypeName();
 	--[[
 	-- checkboxes
 	local bEraScore1:boolean = Controls.EraScore1Checkbox:IsSelected();
@@ -1013,8 +1043,7 @@ function ViewGovernorPage(eTabNum:number)
 
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
-	--Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - (Controls.BottomFilters:GetSizeY() + SIZE_HEIGHT_PADDING_BOTTOM_ADJUST ) );
-	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST );
+	Controls.Scroll:SetSizeY( Controls.Main:GetSizeY() - Controls.PoliciesSection:GetSizeY() - SIZE_HEIGHT_PADDING_BOTTOM_ADJUST );
 	
 	-- save current favored moments
 	--SaveDataToPlayerSlot(localPlayerID, "RETFavoredMoments", tSaveData);
@@ -1118,6 +1147,67 @@ end
 -- ===========================================================================
 -- UI Single entry point for display
 -- ===========================================================================
+
+local tPolicies:table = {
+	"POLICY_PRAETORIUM", -- classical
+	"POLICY_CIVIL_PRESTIGE", -- medieval
+	"POLICY_COMMUNICATIONS_OFFICE", -- information
+	"POLICY_GOV_MERCHANT_REPUBLIC",
+	"POLICY_GOV_THEOCRACY",
+	"POLICY_GOV_COMMUNISM",
+};
+
+-- refresh additional information displayed in the window
+function RefreshAdditionalInfo()
+
+	-- player data
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then return; end
+	
+	local playerGovernors:table = Players[localPlayerID]:GetGovernors();
+	local governorPointsObtained = playerGovernors:GetGovernorPoints();
+	local governorPointsSpent = playerGovernors:GetGovernorPointsSpent();
+	Controls.GovernorTitlesAvailable:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_AVAILABLE", governorPointsObtained - governorPointsSpent));
+	Controls.GovernorTitlesSpent:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_SPENT", governorPointsSpent));
+	
+	-- Audience Chamber
+	if GameInfo.Buildings.BUILDING_GOV_TALL ~= nil then
+		Controls.AudienceChamberImage:SetHide( Players[localPlayerID]:GetStats():GetNumBuildingsOfType(GameInfo.Buildings.BUILDING_GOV_TALL.Index) == 0 );
+	else
+		Controls.AudienceChamberImage:SetHide( true );
+	end
+	
+	-- Policies
+	m_kPoliciesIM:ResetInstances();
+	local playerCulture:table = Players[localPlayerID]:GetCulture();
+	-- government enabled policy
+	local sGovPolicy:string = "";
+	if playerCulture:GetCurrentGovernment() ~= -1 then
+		sGovPolicy = GameInfo.Governments[ playerCulture:GetCurrentGovernment() ].PolicyToUnlock;
+		if sGovPolicy == nil then sGovPolicy = ""; end
+	end
+	-- find out which polices are slotted now
+	local tSlottedPolicies:table = {};
+	for i = 0, playerCulture:GetNumPolicySlots()-1 do
+		if playerCulture:GetSlotPolicy(i) ~= -1 then tSlottedPolicies[ playerCulture:GetSlotPolicy(i) ] = true; end
+	end
+	-- iterate through policies that need checking
+	for _,sPolicy in ipairs(tPolicies) do
+		local policy:table = GameInfo.Policies[sPolicy];
+		local bIsActive:boolean = ( playerCulture:IsPolicyUnlocked(policy.Index) and not playerCulture:IsPolicyObsolete(policy.Index) );
+		local bIsSlotted:boolean = ( (tSlottedPolicies[ policy.Index ] and true) or false);
+		if sPolicy == sGovPolicy then bIsSlotted = true; end
+		local sName:string = Locale.Lookup(policy.Name);
+		if not bIsActive then sName = "[COLOR:64,64,64,255]"..sName..ENDCOLOR;
+		elseif bIsSlotted then sName = "[ICON_Checkmark]"..sName;
+		--else sName = "[ICON_CheckFail]"..sName;
+		end
+		local pPolicyInstance:table = m_kPoliciesIM:GetInstance();
+		pPolicyInstance.PolicyName:SetText(sName);
+		pPolicyInstance.PolicyName:SetToolTipString( Locale.Lookup(policy.Description) );
+	end
+end
+
 function Open( tabToOpen:number )
 	print("FUN Open()", tabToOpen, m_kCurrentTab);
 	
@@ -1132,56 +1222,7 @@ function Open( tabToOpen:number )
 	if tabToOpen ~= nil then m_kCurrentTab = tabToOpen; end
 	m_tabs.SelectTab( m_kCurrentTab );
 	
-	-- show era score info
-	local pGameEras:table = Game.GetEras();
-
-	-- current era
-	--Controls.EraNameLabel:SetText( LL("LOC_ERA_PROGRESS_THE_ERA", GameInfo.Eras[ pGameEras:GetCurrentEra() ].Name) );
-	-- turns till next
-	--[[
-	if pGameEras:GetCurrentEra() == pGameEras:GetFinalEra() then
-		Controls.TurnsLabel:SetHide( true );
-	else
-		Controls.TurnsLabel:SetHide( false );
-		local nextEraCountdown:number = pGameEras:GetNextEraCountdown() + 1; -- 0 turns remaining is the last turn, shift by 1 to make sense to non-programmers
-		if nextEraCountdown > 0 then
-			-- If the era countdown has started only show that number
-			Controls.TurnsLabel:SetText( string.format("[ICON_Turn] %d", nextEraCountdown) );
-		else
-			local inactiveCountdownLength:number = GlobalParameters.NEXT_ERA_TURN_COUNTDOWN; -- Even though the countdown has not started yet, account for it in our time estimates
-			local currentTurn:number = Game.GetCurrentGameTurn();
-			local iNextEraMinTurn:number = math.max(pGameEras:GetCurrentEraMinimumEndTurn() - currentTurn, inactiveCountdownLength);
-			local iNextEraMaxTurn:number = math.max(pGameEras:GetCurrentEraMaximumEndTurn() - currentTurn, inactiveCountdownLength);
-			Controls.TurnsLabel:SetText( string.format("[ICON_Turn] %d - %d", iNextEraMinTurn, iNextEraMaxTurn) );
-		end
-	end
-	--]]
-	-- player data
-	local localPlayerID:number = Game.GetLocalPlayer();
-	if localPlayerID == -1 then return; end
-	--[[
-	-- thresholds
-	local iDarkAgeThreshold:number   = pGameEras:GetPlayerDarkAgeThreshold(localPlayerID);
-	local iGoldenAgeThreshold:number = pGameEras:GetPlayerGoldenAgeThreshold(localPlayerID);
-	--Controls.ThresholdsLabel:SetText( string.format("[ICON_GLORY_DARK_AGE] %s [ICON_GLORY_NORMAL_AGE] %s [ICON_GLORY_GOLDEN_AGE]", ColorRED(iDarkAgeThreshold), ColorGREEN(iGoldenAgeThreshold)) );
-	Controls.ThresholdsLabel:SetText( string.format("[ICON_GLORY_DARK_AGE]  %d  [ICON_GLORY_NORMAL_AGE]  %d  [ICON_GLORY_GOLDEN_AGE]", iDarkAgeThreshold, iGoldenAgeThreshold) );
-	
-	-- total era score
-	local iCurrentScore:number = pGameEras:GetPlayerCurrentScore(localPlayerID);
-	local sAge:string = "[ICON_GLORY_DARK_AGE]";
-	if iCurrentScore >= iDarkAgeThreshold   then sAge = "[ICON_GLORY_NORMAL_AGE]"; end
-	if iCurrentScore >= iGoldenAgeThreshold then sAge = "[ICON_GLORY_GOLDEN_AGE]"; end
-	Controls.TotalsLabel:SetText( tostring(iCurrentScore).." "..sAge );
-	
-	-- Taj Mahal
-	m_bIsTajMahal = (Players[localPlayerID]:GetStats():GetNumBuildingsOfType(m_iTajMahalIndex) > 0);
-	Controls.TajMahalImage:SetHide(not m_bIsTajMahal);
-	--]]
-	local playerGovernors:table = Players[localPlayerID]:GetGovernors();
-	local governorPointsObtained = playerGovernors:GetGovernorPoints();
-	local governorPointsSpent = playerGovernors:GetGovernorPointsSpent();
-	Controls.GovernorTitlesAvailable:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_AVAILABLE", governorPointsObtained - governorPointsSpent));
-	Controls.GovernorTitlesSpent:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_SPENT", governorPointsSpent));
+	RefreshAdditionalInfo();
 end
 
 
@@ -1248,25 +1289,16 @@ end
 -- ===========================================================================
 function LateInitialize()
 	print("FUN LateInitialize");
-	
 	InitializeData();
-	
 	--Resize();
-	
+	-- tabs are created dynamically because of Ibrahim
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
-	
-	-- are tabs created dynamically because of Ibrahim
-
 	for index,governor in ipairs(m_kGovernors) do
 		-- create a tab
 		AddTabSection( governor.IconFill.."  ".. governor.Name, function() ViewGovernorPage( index ); end );
 	end
-
 	m_tabs.SameSizedTabs(10);
 	m_tabs.CenterAlignTabs(-10);
-
-	--Controls.GovernorTitlesAvailable:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_AVAILABLE", governorPointsObtained - governorPointsSpent));
-	--Controls.GovernorTitlesSpent:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_SPENT", governorPointsSpent));
 end
 
 

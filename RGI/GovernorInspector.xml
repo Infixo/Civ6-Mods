@@ -3,13 +3,11 @@
 
 	<Container Style="FullScreenVignetteConsumer" />
 
-	<Box 		ID="Main"	Anchor="C,C"	Size="1100,720"		Color="11,27,40,255">
+	<Box 		ID="Main"	Anchor="C,C"	Size="1150,720"		Color="11,27,40,255">
 		<Grid							Anchor="C,C"					Size="parent+9,parent+9"		Style="WindowFrameTopOnly" />
-		
 		<!-- Window Header -->
 		<Button		ID="CloseButton"	Anchor="R,T"	Offset="-3,-1"	Size="44,44"					Texture="Controls_CloseLarge" />
 		<Image							Anchor="C,T"					Size="parent,44"		Color="61,112,154,255"	Texture="Controls_Gradient_HalfRadial" />
-
 		<!-- Open the Governors panel -->
 		<Button ID="OpenGovernorsButton" Anchor="L,T" Offset="1,0" Size="49,49" Texture="LaunchBar_Hook_GovernorsButton" Style="ButtonNormalText" StateOffsetIncrement="0,49" ToolTip="LOC_HUD_LAUNCHBAR_GOVERNOR_BUTTON" >
 			<Image Size="35,35" Anchor="C,C" Texture="LaunchBar_Hook_Governors" />
@@ -18,26 +16,16 @@
 		<!-- Governor Titles -->
 		<Label ID="GovernorTitlesAvailable" Anchor="L,T" Offset="70,11" Style="FontFlair14" Color="230,230,230,255"/>
 		<Label ID="GovernorTitlesSpent"     Anchor="L,T" Offset="70,25" Style="FontFlair14" Color="230,230,230,255"/>
-
-		
-		
-		<!--<GridButton		ID="CollapseAll"									Offset="48,13"	SizeToText="80,12"				Style="RoundedButton"		String="LOC_HUD_REPORTS_COLLAPSE_ALL"  Hidden="0" />-->
-		<!--
-		<Label ID="EraNameLabel" Anchor="L,T" Offset="60,8"  Style="FontFlair16" String="$CurrentEra$" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />
-		<Label ID="TurnsLabel"   Anchor="L,T" Offset="58,26" Style="FontFlair16" String="$turns$"      FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
-		-->
-		<Label                   Anchor="C,T" Offset="0,16"  Style="FontFlair20" String="{LOC_RGI_WINDOW_TITLE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCapsType="EveryWord" SmallCaps="26" />
+		<Label Anchor="C,T" Offset="0,16" Style="FontFlair20" String="{LOC_RGI_WINDOW_TITLE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCapsType="EveryWord" SmallCaps="26" />
 		<!--
 		<Label                      Anchor="L,T" Offset="810,8"  Style="FontFlair16" String="{LOC_ERA_PROGRESS_ERA_SCORE:upper}" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />
 		<Label ID="TotalsLabel"     Anchor="L,T" Offset="910,7"  Style="FontFlair18" String="$score$"      FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
 		<Label ID="ThresholdsLabel" Anchor="L,T" Offset="810,26" Style="FontFlair16" String="$thresholds$" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" />
 		-->
-		<!-- Taj Mahal -->
-		<!--
-		<Image ID="TajMahalImage" Anchor="L,T" Offset="770,8" Size="32,32" Icon="ICON_BUILDING_TAJ_MAHAL" IconSize="32" ToolTip="{LOC_BUILDING_TAJ_MAHAL_NAME}[NEWLINE]{LOC_BUILDING_TAJ_MAHAL_DESCRIPTION}"/>
-		-->
-		<Grid							Anchor="C,T"	Offset="0,44"	Size="parent-6,8"				Style="Divider3Grid" />
+		<!-- Audience Chamber -->
+		<Image ID="AudienceChamberImage" Anchor="R,T" Offset="50,-1" Size="50,50" Icon="ICON_BUILDING_GOV_TALL" IconSize="50" ToolTip="{LOC_BUILDING_GOV_TALL_NAME}[NEWLINE]{LOC_BUILDING_GOV_TALL_DESCRIPTION}"/>
 		
+		<Grid							Anchor="C,T"	Offset="0,44"	Size="parent-6,8"				Style="Divider3Grid" />
 		
 		<!-- Tab Header -->
 		<Container		ID="TabArea"	Anchor="C,T"	Offset="0,44"	Size="parent,42" >
@@ -58,7 +46,13 @@
 		</ScrollPanel>
 		<Image														Anchor="C,T"	Offset="0,83"		Size="parent-8,22"				Color="0,0,0,255" Texture="Controls_GradientSmall" />
 
-		<!-- Filters -->
+		<!-- Policies -->
+		<Container ID="PoliciesSection" Size="parent-6,50" Anchor="C,B" >
+			<Grid Anchor="L,T" Size="parent,8" Style="Divider3Grid"/>
+			<!--<Stack ID="PoliciesStack" StackGrowth="Down" StackPadding="10" WrapGrowth="Right" WrapWidth="parent" />-->
+			<Stack ID="PoliciesStack" StackGrowth="Right" StackPadding="4" Anchor="L,T" Offset="6,8" />
+		</Container>
+
 		<!--
 		<Container ID="BottomFilters" Anchor="C,B" Offset="0,0" Size="parent-6,80">
 			<Grid Anchor="C,T" Offset="0,0" Size="parent,8" Style="Divider3Grid"/>
@@ -136,7 +130,7 @@
 					</GridButton>
 				</Container>
 				<Box			Size="2,parent"	Color="46,70,95,128" />
-				<Container		Size="150,parent">
+				<Container		Size="200,parent">
 					<GridButton		ID="CityName"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
 						<Label													Style="ReportValueText"		String="LOC_HUD_REPORTS_HEADER_CITY" />
 					</GridButton>
@@ -169,14 +163,14 @@
 					<Label ID="Governor"		Style="ReportValueText"	String="$G$"/>
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
-				<Container Size="150,parent">
+				<Container Size="200,parent">
 					<GridButton		ID="GoToCityButton" Size="parent-4,parent-2" Style="ButtonLightWeightSquareGrid" Anchor="C,C" >
-						<Label		ID="CityName" Color="Science" Style="ReportValueText" String="$CityName$" />
+						<Label		ID="CityName" Color="Science" Style="ReportValueText" FontSize="15" String="$CityName$" />
 					</GridButton>
 				</Container>
 				<Box 									Size="2,parent" Color="46,70,95,128" />
 				<Container Size="35,parent">
-					<Label ID="Population" Style="ReportValueText" String="$0$" Align="Center" />
+					<Label ID="Population" Style="ReportValueText" FontSize="16" String="$0$" Align="Center" />
 				</Container>
 				<Box									Size="2,parent"	Color="46,70,95,128" />
 				<Container Size="200,parent">
@@ -186,6 +180,13 @@
 				<Stack ID="PromoEffects" StackGrowth="Right" /> <!-- 720 -->
 			</Stack>
 		</Container>
+	</Instance>
+
+	<!-- Policies -->
+	<Instance Name="PolicyInstance">
+		<Grid ID="Top" Size="185,35" Style="SubContainer2" Color="0,0,0,150">
+			<Label ID="PolicyName" Anchor="C,C" Offset="0,0" Style="FontNormal14" String="PolicyName" />
+		</Grid>
 	</Instance>
 
 </Context>
