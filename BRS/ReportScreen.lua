@@ -293,6 +293,7 @@ end
 -- The idea taken from CQUI, however CQUI's code is wrong(tested for vanilla and R&F) - the farm doesn't need to be worked, only created within borders
 -- GetHousingFromImprovements() returns math.floor(), i.e. +0.5 is rounded to 0, must have 2 farms to get +1 housing
 
+--[[ OBSOLETE as of 2020-06-09
 -- Some improvements provide more housing when a tech or civic is unlocked
 -- this is done via modifiers, so we need to find them first (EFFECT_ADJUST_IMPROVEMENT_HOUSING)
 -- STEPWELL_HOUSING_WITHTECH (REQUIREMENT_PLAYER_HAS_TECHNOLOGY) TechnologyType
@@ -362,6 +363,26 @@ function GetRealHousingFromImprovements(pCity:table)
 		end
 	end
 	return iNumHousing;
+end
+--]]
+
+-- 2020-06-09 new idea for calculations - calculate only a correction and apply to the game function
+-- please note that another condition was added - a tile must be within workable distance - this is how the game's engine works
+local iCityMaxBuyPlotRange:number = tonumber(GlobalParameters.CITY_MAX_BUY_PLOT_RANGE);
+function GetRealHousingFromImprovements(pCity:table)
+	local cityX:number, cityY:number = pCity:GetX(), pCity:GetY();
+	--local centerIndex:number = Map.GetPlotIndex(pCity:GetLocation());
+	local iNumHousing:number = 0; -- we'll add data from Housing field in Improvements divided by TilesRequired which is usually 2
+	-- check all plots in the city
+	for _,plotIndex in ipairs(Map.GetCityPlots():GetPurchasedPlots(pCity)) do
+		local pPlot:table = Map.GetPlotByIndex(plotIndex);
+		--print(centerIndex, plotIndex, Map.GetPlotDistance(cityX,cityY, pPlot:GetX(), pPlot:GetY()));
+		if pPlot and pPlot:GetImprovementType() > -1 and not pPlot:IsImprovementPillaged() and Map.GetPlotDistance(cityX, cityY, pPlot:GetX(), pPlot:GetY()) <= iCityMaxBuyPlotRange then
+			local imprInfo:table = GameInfo.Improvements[ pPlot:GetImprovementType() ];
+			iNumHousing = iNumHousing + imprInfo.Housing / imprInfo.TilesRequired; -- well, we can always add 0, right?
+		end
+	end
+	return pCity:GetGrowth():GetHousingFromImprovements() + Round(iNumHousing-math.floor(iNumHousing),1);
 end
 
 
@@ -750,8 +771,10 @@ function GetData()
 		-- Modifiers
 		data.Modifiers = m_kModifiers[ cityName ]; -- just a reference to the main table
 		
-		-- real housing from improvements
+		-- real housing from improvements - this is a permanent fix for data.Housing field, so it is safe to use it later
 		data.RealHousingFromImprovements = GetRealHousingFromImprovements(pCity);
+		data.Housing = data.Housing - data.HousingFromImprovements + data.RealHousingFromImprovements;
+		data.HousingFromImprovements = data.RealHousingFromImprovements;
 		
 		-- number of followers of the main religion
 		data.MajorityReligionFollowers = 0;
@@ -3098,11 +3121,11 @@ function city_fields( kCityData, pCityInstance )
 	TruncateStringWithTooltip(pCityInstance.CityName, 178, (kCityData.IsCapital and "[ICON_Capital]" or "")..Locale.Lookup(kCityData.CityName)..((kCityData.DistrictsNum < kCityData.DistrictsPossibleNum) and "[COLOR_Green]![ENDCOLOR]" or ""));
 	
 	-- Population and Housing
-	-- a bit more complicated due to real housing from improvements
-	local fRealHousing:number = kCityData.Housing - kCityData.HousingFromImprovements + kCityData.RealHousingFromImprovements;
+	-- a bit more complicated due to real housing from improvements - fix applied earlier
+	--local fRealHousing:number = kCityData.Housing - kCityData.HousingFromImprovements + kCityData.RealHousingFromImprovements;
 	local sPopulationText:string = "[COLOR_White]"..tostring(kCityData.Population).."[ENDCOLOR] / ";
-	if kCityData.Population >= fRealHousing then sPopulationText = sPopulationText..ColorRed(fRealHousing);
-	else                                         sPopulationText = sPopulationText..tostring(fRealHousing); end
+	if kCityData.Population >= kCityData.Housing then sPopulationText = sPopulationText..ColorRed(kCityData.Housing);
+	else                                              sPopulationText = sPopulationText..tostring(kCityData.Housing); end
 	-- check for Sewer
 	pCityInstance.Population:SetToolTipString("");
 	if GameInfo.Buildings["BUILDING_SEWER"] ~= nil and kCityData.City:GetBuildings():HasBuilding( GameInfo.Buildings["BUILDING_SEWER"].Index ) then
@@ -3115,7 +3138,7 @@ function city_fields( kCityData, pCityInstance )
 	table.insert(tTT, "Housing : "..kCityData.Housing);
 	table.insert(tTT, "FromImpr: "..kCityData.HousingFromImprovements);
 	table.insert(tTT, "RealImpr: "..kCityData.RealHousingFromImprovements);
-	table.insert(tTT, "RealHous: "..fRealHousing);
+	table.insert(tTT, "RealHous: "..kCityData.Housing);
 	pCityInstance.Population:SetToolTipString(table.concat(tTT, "[NEWLINE]"));
 	--]]
 	

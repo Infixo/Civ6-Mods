@@ -752,10 +752,10 @@ function GetCityData( pCity:table )
 	data.HitpointPercent				= ((districtHitpoints-currentDistrictDamage) / districtHitpoints);
 	data.HitpointsCurrent				= districtHitpoints-currentDistrictDamage;
 	data.HitpointsTotal					= districtHitpoints;
-	data.Housing						= pCityGrowth:GetHousing();
+	data.Housing						= pCityGrowth:GetHousing(); -- incorrect, but not used by RMA
 	data.HousingFromWater				= pCityGrowth:GetHousingFromWater();
 	data.HousingFromBuildings			= pCityGrowth:GetHousingFromBuildings();
-	data.HousingFromImprovements		= pCityGrowth:GetHousingFromImprovements();
+	data.HousingFromImprovements		= pCityGrowth:GetHousingFromImprovements(); -- incorrect, but bnot used by RMA
 	data.HousingFromDistricts			= pCityGrowth:GetHousingFromDistricts();
 	data.HousingFromCivics				= pCityGrowth:GetHousingFromCivics();
 	data.HousingFromGreatPeople			= pCityGrowth:GetHousingFromGreatPeople();
@@ -1774,7 +1774,7 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	-- 2019-04-15 Support for Real Balance Pantheons
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_HAS_ANY_IMPROVEMENT" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
-		bIsValidSubject = ( tSubject.Plot:GetImprovementType() ~= -1 );
+		bIsValidSubject = ( tSubject.Plot:GetImprovementType() ~= -1 or tSubject.Plot:GetDistrictType() ~= -1 ); -- 2020-06-04 Seems like the engine also considers districts as improvements
 
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_IMPROVEMENT_TYPE_MATCHES" then
 		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
@@ -2025,6 +2025,11 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_YIELD_PER_POPULATION" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
 		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount) * tSubject.Population);
+
+	-- 2020-06-04 Reyna taxation, seems like they forgot about city yield per pop modifiers :)
+	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_GOLD_FROM_CITIZENS" then
+		if CheckForMismatchError(SubjectTypes.City) then return nil; end
+		tImpact.GOLD = tonumber(tMod.Arguments.Amount) * tSubject.Population;
 		
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_GROWTH" then
 		if CheckForMismatchError(SubjectTypes.City) then return nil; end
