@@ -9,6 +9,18 @@
 		<!-- Window Header -->
 		<Button		ID="CloseButton"	Anchor="R,T"	Offset="-3,-1"	Size="44,44"					Texture="Controls_CloseLarge" />
 		<Image							Anchor="C,T"					Size="parent,44"		Color="61,112,154,255"	Texture="Controls_Gradient_HalfRadial" />
+
+		<!-- Open the Governors panel -->
+		<Button ID="OpenGovernorsButton" Anchor="L,T" Offset="1,0" Size="49,49" Texture="LaunchBar_Hook_GovernorsButton" Style="ButtonNormalText" StateOffsetIncrement="0,49" ToolTip="LOC_HUD_LAUNCHBAR_GOVERNOR_BUTTON" >
+			<Image Size="35,35" Anchor="C,C" Texture="LaunchBar_Hook_Governors" />
+			<!--<Label ID="AlertIndicator" String="[ICON_New]" Anchor="R,T" AnchorSide="O,O" Offset="-18,-18" Hidden="1"/>-->
+		</Button>
+		<!-- Governor Titles -->
+		<Label ID="GovernorTitlesAvailable" Anchor="L,T" Offset="70,11" Style="FontFlair14" Color="230,230,230,255"/>
+		<Label ID="GovernorTitlesSpent"     Anchor="L,T" Offset="70,25" Style="FontFlair14" Color="230,230,230,255"/>
+
+		
+		
 		<!--<GridButton		ID="CollapseAll"									Offset="48,13"	SizeToText="80,12"				Style="RoundedButton"		String="LOC_HUD_REPORTS_COLLAPSE_ALL"  Hidden="0" />-->
 		<!--
 		<Label ID="EraNameLabel" Anchor="L,T" Offset="60,8"  Style="FontFlair16" String="$CurrentEra$" FontStyle="Glow" Color0="133,205,235,255" Color1="203,215,225,100" Color2="254,254,254,255" SmallCaps="18" SmallCapsType="EveryWord" />

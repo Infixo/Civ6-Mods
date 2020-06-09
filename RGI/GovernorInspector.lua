@@ -105,9 +105,11 @@ function InitializeData()
 				if promo.GovernorType == governorDef.GovernorType then
 					local promoInfo:table = GameInfo.GovernorPromotions[ promo.GovernorPromotion ];
 					local tPromo:table = {
-						PromotionType = promo.GovernorPromotion,
+						Index = promoInfo.Index,
+						PromotionType = promoInfo.GovernorPromotionType,
 						Name = LL(promoInfo.Name),
-						Description = LL(promoInfo.Description),   
+						Description = LL(promoInfo.Description),
+						IsActive = false, -- this will be updated during Open
 					};
 					table.insert(tPromos, tPromo);
 				end
@@ -119,6 +121,7 @@ function InitializeData()
 				IconFill = "[ICON_"..governorDef.GovernorType.."_FILL]",
 				IconSlot = "[ICON_"..governorDef.GovernorType.."_SLOT]",
 				Promotions = tPromos,
+				PromotionsTT = {}, -- tooltip with promotions
 			};
 			table.insert(m_kGovernors, tGovernor);
 		end
@@ -130,6 +133,43 @@ end
 -- ===========================================================================
 -- UPDATE SECTION - called every time a window is open, main processing happens here
 -- ===========================================================================
+
+-- refresh governor promotions and the tooltip
+
+
+function UpdateGovernorPromotions()
+	print("FUN UpdateGovernorPromotions()");
+	
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == nil then return end;
+	
+	local playerGovernors:table = Players[localPlayerID]:GetGovernors();
+	
+	-- check if a governor has a specific promotion
+	function CheckGovernorPromotion(eGovernor:number, ePromotion:number)
+		--print("FUN CheckGovernorPromotion", eGovernor, ePromotion);
+		local hasAny:boolean, governorList:table = playerGovernors:GetGovernorList();
+		if not hasAny then print("NONE APPOINTED"); return false; end -- none appointed, no promotions
+		for _,governor in ipairs(governorList) do
+			if governor:GetType() == eGovernor and governor:HasPromotion(ePromotion) then return true; end --print("....YES"); return true; end
+		end
+		--print("....no matching promo");
+		return false; -- no matching promo found
+	end
+	
+	for _,governor in ipairs(m_kGovernors) do
+		governor.PromotionsTT = ""; -- reset
+		for _,promo in ipairs(governor.Promotions) do
+			--print("..checking promo", governor.GovernorType, promo.PromotionType);
+			promo.IsActive = CheckGovernorPromotion(governor.Index, promo.Index);
+			if promo.IsActive then
+				if governor.PromotionsTT ~= "" then governor.PromotionsTT = governor.PromotionsTT .. NEWLINE; end
+				governor.PromotionsTT = governor.PromotionsTT .. "[ICON_Bullet]" .. promo.Description;
+			end
+		end
+	end
+end
+
 
 -- GameInfo and other static data
 
@@ -257,6 +297,12 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- governor
+	local function GetPromotionTT(eGov:number)
+		for _,gov in ipairs(m_kGovernors) do
+			if gov.Index == eGov then return gov.PromotionsTT; end
+		end
+		return "";
+	end
 	local pAssignedGovernor = pCity:GetAssignedGovernor();
 	if pAssignedGovernor then
 		data.Governor = pAssignedGovernor:GetType();
@@ -264,7 +310,7 @@ function ProcessCity( pCity:table )
 		local governorDefinition = GameInfo.Governors[data.Governor];
 		local governorMode = data.IsEstablished and "_FILL]" or "_SLOT]";
 		data.GovernorIcon = "[ICON_" .. governorDefinition.GovernorType .. governorMode;
-		data.GovernorTT = Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title);
+		data.GovernorTT = Locale.Lookup(governorDefinition.Name)..", "..Locale.Lookup(governorDefinition.Title)..NEWLINE..GetPromotionTT(data.Governor);
 	end
 	
 	-- iterate through city plots
@@ -485,10 +531,10 @@ function ProcessCity( pCity:table )
 					data.PingalaGPP[row.GreatPersonClassType] = data.PingalaGPP[row.GreatPersonClassType] + row.PointsPerTurn;
 				end
 			end
-			print("..building", buildingType);
+			--print("..building", buildingType);
 		end -- in city
 	end -- buildings
-	dshowtable(data.PingalaGPP);
+	--dshowtable(data.PingalaGPP);
 	
 	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
 	print("..foreign routes");
@@ -738,7 +784,9 @@ function UpdateData()
 	--local pTreasury	:table	= player:GetTreasury();
 	--local pReligion	:table	= player:GetReligion();
 	--local pScience	:table	= player:GetTechs();
-	--local pResources:table	= player:GetResources();		
+	--local pResources:table	= player:GetResources();
+	
+	UpdateGovernorPromotions();
 	
 	m_kCities = {}; -- reset data
 	
@@ -799,8 +847,9 @@ end
 
 local tColumnSize:table = {
 	-- Victor
-	GOVERNOR_PROMOTION_GARRISON_COMMANDER = 100,
-	GOVERNOR_PROMOTION_DEFENSE_LOGISTICS = 120,
+	GOVERNOR_PROMOTION_GARRISON_COMMANDER = 95,
+	GOVERNOR_PROMOTION_DEFENSE_LOGISTICS = 140,
+	GOVERNOR_PROMOTION_EMBRASURE = 95,
 	-- Magnus
 	GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER = 130,
 	GOVERNOR_PROMOTION_RESOURCE_MANAGER_EXPEDITION = 100,
@@ -838,6 +887,7 @@ function ShowSingleCity(pCity:table, pInstance:table)
 	TruncateWithToolTip(pInstance.Total, 198, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
 	
 	-- go to the city after clicking
+	pInstance.GoToCityButton:SetToolTipString( "[ICON_GoingTo] "..pCity.CityName );
 	pInstance.GoToCityButton:RegisterCallback( Mouse.eLClick, function() Close(); UI.LookAtPlot( pCity.City:GetX(), pCity.City:GetY() ); UI.SelectCity( pCity.City ); end );
 	pInstance.GoToCityButton:RegisterCallback( Mouse.eRClick, function() AssignGovernor(pCity); end );
 	pInstance.GoToCityButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound( "Main_Menu_Mouse_Over" ); end );
@@ -907,8 +957,15 @@ function ViewGovernorPage(eTabNum:number)
 	for _,promo in ipairs(m_kGovernors[m_kCurrentTab].Promotions) do
 		local pPromoNameInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "PromoNameInstance", pPromoNameInstance, pHeaderInstance.PromoNames );
-		pPromoNameInstance.PromoName:SetText( promo.Name );
-		local isTruncated:boolean = TruncateString(pPromoNameInstance.PromoName, 96, promo.Name);
+		-- dynamic column width
+		local iColumnSize:number = 110; -- default
+		if tColumnSize[promo.PromotionType] ~= nil then
+			iColumnSize = tColumnSize[promo.PromotionType];
+			pPromoNameInstance.Top:SetSizeX( iColumnSize );
+		end
+		--pPromoNameInstance.PromoName:SetText( promo.Name );
+		--local sName:string = 
+		local isTruncated:boolean = TruncateString(pPromoNameInstance.PromoName, iColumnSize-4, promo.Name);
 		local tTT:table = {};
 		if isTruncated then table.insert(tTT, promo.Name); end
 		table.insert(tTT, promo.Description);
@@ -916,9 +973,9 @@ function ViewGovernorPage(eTabNum:number)
 		local sExtra:string = LL(sLocExtra);
 		if sExtra ~= sLocExtra then table.insert(tTT, TOOLTIP_SEP); table.insert(tTT, sExtra); end
 		pPromoNameInstance.PromoName:SetToolTipString( table.concat(tTT, NEWLINE) );
-		-- dynamic column width
-		if tColumnSize[promo.PromotionType] ~= nil then
-			pPromoNameInstance.Top:SetSizeX( tColumnSize[promo.PromotionType] );
+		-- is earned?
+		if promo.IsActive then
+			pPromoNameInstance.PromoName:SetColor(UI.GetColorValue("COLOR_WHITE"));
 		end
 	end
 	
@@ -1120,6 +1177,11 @@ function Open( tabToOpen:number )
 	m_bIsTajMahal = (Players[localPlayerID]:GetStats():GetNumBuildingsOfType(m_iTajMahalIndex) > 0);
 	Controls.TajMahalImage:SetHide(not m_bIsTajMahal);
 	--]]
+	local playerGovernors:table = Players[localPlayerID]:GetGovernors();
+	local governorPointsObtained = playerGovernors:GetGovernorPoints();
+	local governorPointsSpent = playerGovernors:GetGovernorPointsSpent();
+	Controls.GovernorTitlesAvailable:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_AVAILABLE", governorPointsObtained - governorPointsSpent));
+	Controls.GovernorTitlesSpent:SetText(Locale.Lookup("LOC_GOVERNOR_GOVERNOR_TITLES_SPENT", governorPointsSpent));
 end
 
 
@@ -1271,6 +1333,7 @@ function OnToggleHideNotAvailableCheckbox()
 end
 --]]
 
+
 -- ===========================================================================
 function Initialize()
 	-- UI Callbacks
@@ -1278,6 +1341,9 @@ function Initialize()
 	ContextPtr:SetInputHandler( OnInputHandler, true );
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnCloseButton );
 	Controls.CloseButton:RegisterCallback(	Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	-- Open Governors window
+	Controls.OpenGovernorsButton:RegisterCallback(Mouse.eLClick, function() Close(); LuaEvents.GovernorPanel_Toggle(); end);
+	
 	-- Filters
 	--[[
 	Controls.EraScore1Checkbox:RegisterCallback( Mouse.eLClick, OnToggleEraScore1Checkbox );
