@@ -3,6 +3,7 @@
 -- Author: Infixo
 -- 2019-04-05: Created
 -- 2019-06-29: June 2019 Patch changes
+-- 2020-06-10: May 2020 Patch changes
 --------------------------------------------------------------
 
 /* distribution
@@ -309,6 +310,9 @@ INSERT OR REPLACE INTO Requirements (RequirementId, RequirementType)            
 INSERT OR REPLACE INTO RequirementArguments (RequirementId, Name, Value)            VALUES ('REQUIRES_PLOT_BREATHTAKING_APPEAL', 'MinimumAppeal', 4);
 */
 
+/* 2020-06-10 The scoring has been FIXED in the May 2020 Patch!
+   It is counting only proper tiles within borders AND ignores Mountains!
+
 DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_EARTH_GODDESS'; -- detach Appeal modifier because it is broken
 INSERT INTO BeliefModifiers (BeliefType, ModifierId) VALUES
 ('BELIEF_EARTH_GODDESS', 'EARTH_GODDESS_HILLS_FAITH');
@@ -333,6 +337,7 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 ('REQUIREMENTS_EARTH_GODDESS_FAITH', 'REQUIRES_PLOT_HAS_NO_JUNGLE'),
 ('REQUIREMENTS_EARTH_GODDESS_FAITH', 'REQUIRES_PLOT_HAS_NO_FISSURE');
 
+*/
 
 /* 2019-06-29 After the June Patch I am having CTDs from UI text boxes (modifier strings too long?)
 
@@ -1042,6 +1047,11 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 -- XP2 adds INITIATION_RITES_HEALING_DISPERSAL which seems to break the scoring
 -- Both are BROKEN - entire Pantheon to be removed
 
+/* 2020-06-10 The scoring has been fixed in the May 2020 Patch
+   The belief scores now a reasonable 50..150, so there is no reason to remove it.
+   
 DELETE FROM BeliefModifiers WHERE BeliefType = 'BELIEF_INITIATION_RITES';
 DELETE FROM Beliefs WHERE BeliefType = 'BELIEF_INITIATION_RITES';
 DELETE FROM Types WHERE Type = 'BELIEF_INITIATION_RITES';
+
+*/

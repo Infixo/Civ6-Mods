@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+-- Real Balanced Pantheons
+-- Author: Infixo
+-- 2019-04-07: Created
+-- 2019-06-29: Updated for June Patch
+-->
+<GameData>
+
+<LocalizedText>
+
+	<!-- new pantheons -->
+	<Row Tag="LOC_BELIEF_SUN_GOD_NAME" Language="pl_PL">
+		<Text>Bóg Słońce</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_SUN_GOD_DESCRIPTION" Language="pl_PL">
+		<Text>+2 [ICON_Faith] Wiara od farm na surowcach.[NEWLINE]Dodatkowo, w starożytności: +2 [ICON_Faith] Wiary od nieulepszonych surowców na których można zbudować farmy.</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_NAME" Language="pl_PL">
+		<Text>Jedność z naturą</Text>
+	</Row>
+	<Row Tag="LOC_BELIEF_ONE_WITH_NATURE_DESCRIPTION" Language="pl_PL">
+		<Text>+3 [ICON_Faith] Wiara od każdego przekraczalnego Cudu Naturalnego wewnątrz granic.</Text>
+	</Row>
+	<!--Pantheon - Adjacency Bonuses-->
+	<Replace Tag="LOC_BELIEF_DANCE_OF_THE_AURORA_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Faith] Wiary od pól tundry.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_DESERT_FOLKLORE_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Faith] Wiary od pól pustyni</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_SACRED_PATH_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Faith] Wiary od nieulepszonych Dżungli</Text>
+	</Replace>
+	<!--Pantheon - Amenity Bonuses-->
+	<!-- 2019-06-29 not used
+	<Replace Tag="LOC_BELIEF_RIVER_GODDESS_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>+2 [ICON_Amenities] Amenities and +2 [ICON_Housing] Housing to cities if they have a Holy Site district adjacent to a River. Plains and Grasslands adjacent to a River that have no District, Improvement, Woods, Rainforest, Marsh, Oasis, Desert Floodplains nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
+	</Replace>
+	-->
+	<!--Pantheon - Gameplay Race Bonuses-->
+	<Replace Tag="LOC_BELIEF_DIVINE_SPARK_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_GreatPerson] Punktów Wielkich Ludzi (Prorok), Kampusów z Biblioteką (Naukowiec), Dzielnic Kulturalnych z Amfiteatrem (Pisarz).[NEWLINE]Dodatkowo +1 [ICON_GreatPerson] Punktów wielkich osów od Dzielnicy Świątynnek (Prorok), Kampusu (Scientist), i Dzielnicy Teatralnej (Pisarz) w Epoce Starożytnej.</Text>
+	</Replace>
+	<!--Pantheon - Local Resource Bonuses-->
+	<Replace Tag="LOC_BELIEF_GOD_OF_THE_SEA_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Production] Produkcji z Łodzi Rybackich. Wzrost populacji i ekspansa granic jest 10% szybsza w Miastach Przybrzeżnych.[NEWLINE]Dodatkowo, w Starożytności: +1 [ICON_Production] Produkcji od nieulepszonych surowców na których można zbudować łodzie rybackie.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GOD_OF_THE_OPEN_SKY_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Culture] Kultury od Pastwisk [NEWLINE]Dodatkowo, w Starożytności: +1 [ICON_Culture] Kultury od nieulepszonych surowców na których można zbudować pastwiska.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HUNT_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Food] Żywności i +1 [ICON_Production] Produkcji od obozów.[NEWLINE]Dodatkowo, w Starożytności +1 [ICON_Food] Żywności i +1 [ICON_Production] Produkcji na nieulepszonych surowcach na których można zbudować obozy.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_STONE_CIRCLES_DESCRIPTION" Language="pl_PL">
+		<Text>+2 [ICON_Faith] Wiary od kamienołomów [NEWLINE]Dodatkowo, w Starożytności: +2 [ICON_Faith] Wiary od nieulepszonych surowców na których można zbudować kamienołomy.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_RELIGIOUS_IDOLS_DESCRIPTION" Language="pl_PL">
+		<Text>+2 [ICON_Faith] Wiary od kopalni na luksusowych i bonusowych surowcach.[NEWLINE]Dodatkowo, w Starożytności: +2 [ICON_Faith] Wiary od nieulepszonych luksusowych i bonusowych surowców na których można zbudować kopalnie.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Production] Produkcji i +1 [ICON_Faith] Wiary od ulepszonych surowców strategicznych.[NEWLINE]Dodatkowo, w Starożytności: +1 [ICON_Production] Produkcji od nieulepszonych lasów sąsiadujących z Centrum Miasta.</Text>
+	</Replace>
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_FESTIVALS_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>+1 [ICON_Culture] Kultury z Plantacji.[NEWLINE]Dodatkowo, w Starożytności: +1 [ICON_Culture] Kultury od nieulepszonych surowców na których można zbudować plantacje.</Text>
+	</Replace>
+	<!--Pantheon - General Purpose-->
+	<Replace Tag="LOC_BELIEF_FERTILITY_RITES_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>Przy wyborze darmowy Budowniczy w stolicy. Przyrost populacji jest 20% szybszy +1 [ICON_Food] Żywności z Pałacu.</Text>
+	</Replace>
+	<!-- 2019-06-29 Not needed after June Patch
+	<Replace Tag="LOC_BELIEF_RELIGIOUS_SETTLEMENTS_DESCRIPTION" Language="pl_PL">
+		<Text>Border expansion rate is 20% higher. +1 [ICON_Culture] Culture from Palace.</Text>
+	</Replace>
+	-->
+	<!-- 2019-06-29 Removed in June Patch
+	<Replace Tag="LOC_BELIEF_GODDESS_OF_THE_HARVEST_DESCRIPTION" Language="pl_PL">
+		<Text>Harvesting a resource or removing a feature receives [ICON_Faith] Faith equal to 50% of the other yield's quantity.</Text>
+	</Replace>
+	-->
+	<Replace Tag="LOC_BELIEF_CITY_PATRON_GODDESS_DESCRIPTION" Language="pl_PL">
+		<Text>+25% [ICON_Production] Produkcji dzielnic +2 [ICON_Production] Produkcji budynków w miastach bez Wyspecjalizowanej Dzielnicy.</Text>
+	</Replace>
+	<!-- 2020-06-10 Fixed in the May 2020 Patch
+	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_EXPANSION2_DESCRIPTION" Language="pl_PL">
+		<Text>Wzgórza bez Dzielnicy, Ulepszenia, Lasów, Dżungli ani Szczeliny Geotermalnej, dostają +1 [ICON_Faith]Wiary.</Text>
+	</Replace>
+	-->
+</LocalizedText>
+
+</GameData>

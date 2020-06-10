@@ -2,7 +2,7 @@
 <Mod id="58A5FCCE-86BB-6B61-4314-64D093E5121F" version="1">
   <Properties>
     <Name>Real Balanced Pantheons</Name>
-    <Description>Changes and tweaks to Pantheon beliefs to help AI choose better.[NEWLINE][NEWLINE]Version 2.1.1.</Description>
+    <Description>Changes and tweaks to Pantheon beliefs to help AI choose better.[NEWLINE][NEWLINE]Version 2.2.</Description>
     <Teaser>Changes and tweaks to Pantheon beliefs to help AI choose better</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>1</AffectsSavedGames>
@@ -23,6 +23,7 @@
     <UpdateText id="RBP_Text">
       <Properties><LoadOrder>210</LoadOrder></Properties>
       <File>Text/RBP_Text.xml</File>
+      <File>Text/RBP_Text_pl_PL.xml</File>
       <File>Text/RBP_Text_ru_RU.xml</File>
     </UpdateText>
   </InGameActions>
@@ -30,6 +31,7 @@
     <File>RealBalancedPantheons.sql</File>
     <File>RealBalancedPantheons_Icons.xml</File>
     <File>Text/RBP_Text.xml</File>
+    <File>Text/RBP_Text_pl_PL.xml</File>
     <File>Text/RBP_Text_ru_RU.xml</File>
   </Files>
 </Mod>

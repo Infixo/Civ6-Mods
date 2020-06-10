@@ -81,9 +81,11 @@
 	<Replace Tag="LOC_BELIEF_CITY_PATRON_GODDESS_DESCRIPTION" Language="ru_RU">
 		<Text>+25% [ICON_Production] производства при строительстве районов и +2 [ICON_Production] производства при строительстве зданий в городах без специализированных раонов.</Text>
 	</Replace>
+	<!-- 2020-06-10 Fixed in the May 2020 Patch
 	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_EXPANSION2_DESCRIPTION" Language="ru_RU">
 		<Text>Холмы без районов, улучшений, лесов, тропических лесов или геотермальных источников дают +1 [ICON_Faith] веры.</Text>
 	</Replace>
+	-->
 </LocalizedText>
 
 </GameData>

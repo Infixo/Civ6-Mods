@@ -59,7 +59,7 @@
 		<Text>+2 [ICON_Faith] Faith from Mines over Luxury and Bonus resources.[NEWLINE]Additionally, in Ancient Era: +2 [ICON_Faith] Faith from Luxury and Bonus resources valid for Mines when unimproved.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GOD_OF_CRAFTSMEN_EXPANSION2_DESCRIPTION" Language="en_US">
-		<Text>+1 [ICON_Production] Production and +1 [ICON_Faith] Faith from improved Strategic resources.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from unimproved Woods adjacent to City Center.</Text>
+		<Text>+1 [ICON_Production] Production and +1 [ICON_Faith] Faith from improved Strategic resources.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Production] Production from unimproved Woods adjacent to the City Center.</Text>
 	</Replace>
 	<Replace Tag="LOC_BELIEF_GODDESS_OF_FESTIVALS_EXPANSION2_DESCRIPTION" Language="en_US">
 		<Text>+1 [ICON_Culture] Culture from Plantations.[NEWLINE]Additionally, in Ancient Era: +1 [ICON_Culture] Culture from resources valid for Plantations when unimproved.</Text>
@@ -81,9 +81,11 @@
 	<Replace Tag="LOC_BELIEF_CITY_PATRON_GODDESS_DESCRIPTION" Language="en_US">
 		<Text>+25% [ICON_Production] Production toward districts and +2 [ICON_Production] Production toward buildings in cities without a specialty district.</Text>
 	</Replace>
+	<!-- 2020-06-10 Fixed in the May 2020 Patch
 	<Replace Tag="LOC_BELIEF_EARTH_GODDESS_EXPANSION2_DESCRIPTION" Language="en_US">
 		<Text>Hills that have no District, Improvement, Woods, Rainforest nor Geothermal Fissure, receive +1 [ICON_Faith] Faith.</Text>
 	</Replace>
+	-->
 </LocalizedText>
 
 </GameData>
