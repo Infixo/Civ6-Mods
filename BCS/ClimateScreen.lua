@@ -1,4 +1,4 @@
-print("Loading ClimateScreen.lua from Better Climate Screen version 1.0");
+print("Loading ClimateScreen.lua from Better Climate Screen version 1.1");
 --	Copyright 2018, Firaxis Games
  
 -- ===========================================================================
@@ -842,7 +842,7 @@ end
 
 -- ===========================================================================
 function TabCO2ByCivilization()
-
+	--print("FUN TabCO2ByCiviliation()");
 	--RealizeCO2Tabs("ByCivilization");
 
 	--m_kCO2CivsIM:ResetInstances(); -- clear old data
@@ -859,14 +859,31 @@ function TabCO2ByCivilization()
 	local total					:number = 0;
 	local kFootprints			:table = {};		-- hold raw CO2 usage amounts by each resource	
 	local kColors				:table = {};
+	local kLastTurn:table = {}; -- cache for last turn emmission
+	
+	-- last turn emmission is only available via GetPlayerResourceCO2Footprint(ePlayer,eResource,bLastTurn)
+	-- resources not related to CO2 just return 0, so we can just loop through
+	local function GetLastTurnEmission(playerID:number)
+		if kLastTurn[playerID] == nil then
+			local iCO2FootprintLastTurn:number = 0;
+			for kResourceInfo in GameInfo.Resources() do
+				iCO2FootprintLastTurn = iCO2FootprintLastTurn + GameClimate.GetPlayerResourceCO2Footprint( playerID, kResourceInfo.Index, true );
+			end
+			kLastTurn[playerID] = iCO2FootprintLastTurn;
+		end
+		--print("..last turn", playerID, kLastTurn[playerID]);
+		return kLastTurn[playerID];
+	end
 	
 	-- calculate the total first, so we can get percentages later
 	local iNumPlayersWithCO2:number = 0;
-	for _, pPlayer in ipairs(pPlayers) do
-		local playerID			:number = pPlayer:GetID();
-		local CO2FootprintNum	:number = GameClimate.GetPlayerCO2Footprint( playerID, false  );
-		if CO2FootprintNum > 0 then
-			total = total + CO2FootprintNum;
+	for _,pPlayer in ipairs(pPlayers) do
+		local playerID:number = pPlayer:GetID();
+		local iCO2FootprintNum:number = GameClimate.GetPlayerCO2Footprint(playerID, false);
+		local iCO2FootprintLastTurn:number = GetLastTurnEmission(playerID);
+		
+		if not ( iCO2FootprintLastTurn == 0 and iCO2FootprintNum == 0 ) then
+			total = total + iCO2FootprintNum;
 			iNumPlayersWithCO2 = iNumPlayersWithCO2 + 1;
 		end
 	end
@@ -886,8 +903,55 @@ function TabCO2ByCivilization()
 		if amount > fCO2Max then return "[COLOR_RED]"..text.."[ENDCOLOR]"; end
 		return text;
 	end
-
+	
+	-- gather data
+	local tRows:table = {};
 	local function AddCivCO2Row(bIcon:boolean, playerID:number, civName:string, amount:number, lastTurn:number)
+		--print("..adding", playerID, civName);
+		local row:table = { Icon = bIcon, PlayerID = playerID, CivName = civName, Amount = amount, LastTurn = lastTurn };
+		table.insert(tRows, row);
+	end
+	
+	-- unmet players are put into one bag (dark blue back color in the original screen)
+	local bShowUnmet:boolean = false;
+	local iUnmetCO2FootprintNum:number, iUnmetCO2FootprintLastTurn:number = 0, 0;
+	
+	for _, pPlayer in ipairs(pPlayers) do
+		local playerID			:number = pPlayer:GetID();
+		local iCO2FootprintNum	:number = GameClimate.GetPlayerCO2Footprint( playerID, false  );
+
+		-- last turn emmission is only available via GetPlayerResourceCO2Footprint(ePlayer,eResource,bLastTurn)
+		-- resources not related to CO2 just return 0, so we can just loop through
+		local iCO2FootprintLastTurn:number = GetLastTurnEmission(playerID);
+		--for kResourceInfo in GameInfo.Resources() do
+			--iCO2FootprintLastTurn = iCO2FootprintLastTurn + GameClimate.GetPlayerResourceCO2Footprint( playerID, kResourceInfo.Index, true );
+		--end
+		
+		local pPlayerConfig		:table = PlayerConfigurations[playerID];
+		local civType			:string = pPlayerConfig:GetCivilizationTypeName();
+		local civName			:string = Locale.Lookup( pPlayerConfig:GetCivilizationShortDescription() );
+		--local backColor, frontColor = UI.GetPlayerColors(playerID);
+
+		-- unmet players get a dark blue pie wedge and no clues about who the civ is
+		if pPlayerDiplomacy:HasMet(playerID) or m_playerID == playerID then
+			if m_playerID == playerID then
+				civName = "[ICON_Capital]"..Locale.Lookup( "LOC_CLIMATE_YOU", civName );	-- Add "(You)" for your civ.
+			end
+			AddCivCO2Row(true, playerID, civName, iCO2FootprintNum, iCO2FootprintLastTurn);
+		else
+			iUnmetCO2FootprintNum = iUnmetCO2FootprintNum + iCO2FootprintNum;
+			iUnmetCO2FootprintLastTurn = iUnmetCO2FootprintLastTurn + iCO2FootprintLastTurn;
+			bShowUnmet = true;
+		end
+	end
+
+	-- unmer players at the end
+	if bShowUnmet then
+		AddCivCO2Row(false, 0, Locale.Lookup("LOC_WORLD_RANKING_UNMET_PLAYER"), iUnmetCO2FootprintNum, iUnmetCO2FootprintLastTurn);
+	end
+	
+	-- show single row
+	local function ShowCivCO2Row(bIcon:boolean, playerID:number, civName:string, amount:number, lastTurn:number)
 		uiCiv = m_kCivCO2IM:GetInstance();
 		-- icon
 		if bIcon then
@@ -902,44 +966,18 @@ function TabCO2ByCivilization()
 		uiCiv.LastTurn:SetText( FormatColor( FormatLastTurn(lastTurn), amount ) );
 	end
 	
-	-- unmet players are put into one bag (dark blue back color in the original screen)
-	local bShowUnmet:boolean = false;
-	local iUnmetCO2FootprintNum:number, iUnmetCO2FootprintLastTurn:number = 0, 0;
-	
-	for _, pPlayer in ipairs(pPlayers) do
-		local playerID			:number = pPlayer:GetID();
-		local iCO2FootprintNum	:number = GameClimate.GetPlayerCO2Footprint( playerID, false  );
-
-		-- last turn emmission is only available via GetPlayerResourceCO2Footprint(ePlayer,eResource,bLastTurn)
-		-- resources not related to CO2 just return 0, so we can just loop through
-		local iCO2FootprintLastTurn:number = 0;
-		for kResourceInfo in GameInfo.Resources() do
-			iCO2FootprintLastTurn = iCO2FootprintLastTurn + GameClimate.GetPlayerResourceCO2Footprint( playerID, kResourceInfo.Index, true );
+	-- sort and display
+	local function sortFunction(a,b)
+		if a.Amount == b.Amount then
+			return a.LastTurn > b.LastTurn;
 		end
-		
-		local pPlayerConfig		:table = PlayerConfigurations[playerID];
-		local civType			:string = pPlayerConfig:GetCivilizationTypeName();
-		local civName			:string = Locale.Lookup( pPlayerConfig:GetCivilizationShortDescription() );
-		--local backColor, frontColor = UI.GetPlayerColors(playerID);
-
-
-		-- unmet players get a dark blue pie wedge and no clues about who the civ is
-		if pPlayerDiplomacy:HasMet(playerID) or m_playerID == playerID then
-			if m_playerID == playerID then
-				civName = Locale.Lookup( "LOC_CLIMATE_YOU", civName );	-- Add "(You)" for your civ.
-			end
-			AddCivCO2Row(true, playerID, civName, iCO2FootprintNum, iCO2FootprintLastTurn);
-		else
-			iUnmetCO2FootprintNum = iUnmetCO2FootprintNum + iCO2FootprintNum;
-			iUnmetCO2FootprintLastTurn = iUnmetCO2FootprintLastTurn + iCO2FootprintLastTurn;
-			bShowUnmet = true;
-		end
+		return a.Amount > b.Amount;
+	end
+	table.sort(tRows, sortFunction);
+	for _,row in ipairs(tRows) do
+		ShowCivCO2Row(row.Icon, row.PlayerID, row.CivName, row.Amount, row.LastTurn);
 	end
 
-	-- unmer players at the end
-	if bShowUnmet then
-		AddCivCO2Row(false, 0, Locale.Lookup("LOC_WORLD_RANKING_UNMET_PLAYER"), iUnmetCO2FootprintNum, iUnmetCO2FootprintLastTurn);
-	end
 end
 
 

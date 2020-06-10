@@ -31,16 +31,16 @@
 	</Instance>
 
 	<Instance Name="CivCO2Instance">
-		<Grid ID="Top" Size="480,38" Style="SubContainer2" Color="0,0,0,150">
+		<Grid ID="Top" Size="475,38" Style="SubContainer2" Color="0,0,0,150">
 			<MakeInstance Name="CivilizationIcon30" ID="CivIcon" Anchor="L,C" Offset="0,0"/>
 			<Label	ID="Name"     Anchor="L,C" Offset="40,0" Style="FontNormal18" String="Civ" />
-			<Container Anchor="L,C" Size="60,38" Offset="200,0" >
+			<Container Anchor="L,C" Size="50,38" Offset="240,0" >
 				<Label ID="Percent"  Anchor="C,C" Style="FontNormal18" String="00%" Align="Center" />
 			</Container>
-			<Container Anchor="L,C" Size="80,38" Offset="280,0" >
+			<Container Anchor="L,C" Size="70,38" Offset="310,0" >
 				<Label ID="Amount" Anchor="C,C" Style="FontNormal18" String="0000" Align="Center" />
 			</Container>
-			<Container Anchor="L,C" Size="60,38" Offset="380,0" >
+			<Container Anchor="L,C" Size="50,38" Offset="400,0" >
 				<Label ID="LastTurn" Anchor="C,C" Style="FontNormal18" String="+00" Align="Center" />
 			</Container>
 		</Grid>
@@ -438,7 +438,11 @@
 			<Container Anchor="L,T" Offset="10,50" Size="480,40" >
 				<Label Anchor="C,C" Align="Center" Style="FontNormal16" String="LOC_CLIMATE_TAB_CO2_BY_CIVILIZATION" />
 			</Container>
-            <Stack ID="GlobalCivStack" Anchor="L,T" Offset="10,90" StackGrowth="Bottom" StackPadding="2" />
+			<ScrollPanel ID="GlobalCivScroll" Offset="10,90" Size="parent-8,parent-92" Vertical="1" AutoScrollBar="1">
+				<Stack ID="GlobalCivStack" Anchor="L,T" Offset="0,0" StackGrowth="Bottom" StackPadding="2" />
+				<ScrollBar Anchor="R,C" Size="11,parent" AnchorSide="O,I" Offset="-15,0" Style="ScrollVerticalBar" />
+			</ScrollPanel>
+			
           </Grid>
         </Stack>
 				
