@@ -1,0 +1,12 @@
+<!--
+	Real All Disasters - Korea
+	Author: Infixo
+	2020-06-11: Created
+-->
+
+<GameInfo>
+	<RandomEvent_PillagedDistricts>
+		<Row RandomEventType="RANDOM_EVENT_SOLAR_FLARE_MINOR" DistrictType="DISTRICT_SEOWON"/>
+		<Row RandomEventType="RANDOM_EVENT_SOLAR_FLARE_MAJOR" DistrictType="DISTRICT_SEOWON"/>
+	</RandomEvent_PillagedDistricts>
+</GameInfo>

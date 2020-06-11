@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="22B5EBAC-45AF-0E61-3727-19C050C0644E" version="1">
+	<Properties>
+		<Name>Real All Disasters</Name>
+		<Description>Adds Comet Strikes and Solar Flares to the base game.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR] and [COLOR_Green]Maya and Gran Colombia Pack[ENDCOLOR].[NEWLINE]Version 1.0.</Description>
+		<Teaser>Adds Comet Strikes and Solar Flares to the base game.</Teaser>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>1</AffectsSavedGames>
+		<SupportsMultiplayer>1</SupportsMultiplayer>
+		<CompatibleVersions>2.0</CompatibleVersions>
+	</Properties>
+	<Dependencies>
+		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm"/>
+		<Mod id="9DE86512-DE1A-400D-8C0A-AB46EBBF76B9" title="DLC: Maya and Gran Colombia Pack"/>
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="Expansion1Korea">	<!-- 2018-02-08 -->
+			<LeaderPlayable>Players:Expansion1_Players::LEADER_SEONDEOK,Players:Expansion2_Players::LEADER_SEONDEOK</LeaderPlayable>
+		</Criteria>
+	</ActionCriteria>
+	<InGameActions>
+		<UpdateDatabase id="RAD_Database">
+			<Properties><LoadOrder>100</LoadOrder></Properties>
+			<File>RealAllDisasters.xml</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RAD_Database" criteria="Expansion1Korea">
+			<Properties><LoadOrder>101</LoadOrder></Properties>
+			<File>RealAllDisasters_Korea.xml</File>
+		</UpdateDatabase>
+	</InGameActions>
+	<Files>
+		<File>RealAllDisasters.xml</File>
+		<File>RealAllDisasters_Korea.xml</File>
+	</Files>
+</Mod>
