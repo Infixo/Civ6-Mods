@@ -145,6 +145,7 @@ INSERT INTO RequirementArguments (RequirementId, Name, Value)            VALUES 
 -- 2019-08-30
 -- Units_Trained_Hotfix_Gameplay
 -- Author: JNR
+-- Infixo: All fixed in September 2019 Patch
 --------------------------------------------------------------
 UPDATE Modifiers SET ModifierType='MODIFIER_PLAYER_UNIT_ADJUST_SEA_MOVEMENT' WHERE ModifierId='ROYAL_DOCKYARD_MOVEMENT_BONUS';
 UPDATE Modifiers SET ModifierType='MODIFIER_PLAYER_UNIT_ADJUST_UNIT_EXPERIENCE_MODIFIER' WHERE ModifierId='BARRACKS_TRAINED_UNIT_XP';
@@ -158,6 +159,24 @@ UPDATE Modifiers SET ModifierType='MODIFIER_PLAYER_UNIT_ADJUST_UNIT_EXPERIENCE_M
 UPDATE Modifiers SET ModifierType='MODIFIER_PLAYER_UNIT_ADJUST_UNIT_EXPERIENCE_MODIFIER' WHERE ModifierId='AIRPORT_TRAINED_AIRCRAFT_XP';
 UPDATE Modifiers SET ModifierType='MODIFIER_PLAYER_UNIT_ADJUST_UNIT_EXPERIENCE_MODIFIER' WHERE ModifierId='BASILIKOI_TRAINED_UNIT_XP';
 UPDATE Modifiers SET ModifierType='MODIFIER_PLAYER_UNIT_ADJUST_UNIT_EXPERIENCE_MODIFIER' WHERE ModifierId='ORDU_TRAINED_XP';
+
+
+--------------------------------------------------------------
+-- 2020-06-14 WC resolution nor working correctly
+-- This is technically GS but I am using UPDATE, so no effect if WC is not there
+
+UPDATE Modifiers
+SET ModifierType = 'MODIFIER_PLAYER_CITIES_ADJUST_TRADE_ROUTE_YIELD_TO_OTHERS'
+WHERE ModifierId = 'INCREASES_TRADE_TO_GOLD' AND ModifierType = 'MODIFIER_PLAYER_CITIES_ADJUST_TRADE_ROUTE_YIELD_FROM_OTHERS';
+
+
+--------------------------------------------------------------
+-- 2020-06-16 Netherland's +50% towards Flood Barrier not working
+
+UPDATE ModifierArguments
+SET Name = 'BuildingType'
+WHERE ModifierId = 'TRAIT_FLOOD_BARRIER_PRODUCTION' AND Value = 'BUILDING_FLOOD_BARRIER';
+
 
 
 --------------------------------------------------------------
