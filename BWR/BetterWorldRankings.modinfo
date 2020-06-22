@@ -31,6 +31,10 @@
 				<LuaReplace>Base/WorldRankings_Base_BWR.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
+		<UpdateText id="BWR_UpdateText">
+			<Properties><LoadOrder>100</LoadOrder></Properties>
+			<File>Text/BetterWorldRankings_Text.xml</File>
+		</UpdateText>
 		<!-- Gathering Storm -->
 		<ImportFiles id="BWR_Imports_XP2" criteria="Expansion2">
 			<Properties><LoadOrder>120</LoadOrder></Properties>
@@ -49,6 +53,7 @@
 		<!-- shared -->
 		<File>BetterWorldRankings_Database.sql</File>
 		<File>WorldRankings_BWR.lua</File>
+		<File>Text/BetterWorldRankings_Text.xml</File>
 		<!-- base game -->
 		<File>Base/WorldRankings.xml</File>
 		<File>Base/WorldRankings_Base_BWR.lua</File>

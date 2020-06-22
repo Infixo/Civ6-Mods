@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterWorldRankings_Text -->
+<!-- Author: Infixo -->
+<!-- 2020-06-22: Created -->
+<GameData>
+
+<BaseGameText>
+
+	<!-- CULTURE -->
+	<Row Tag="LOC_BWR_TOURISM_FOR_ONE">
+		<Text>You need [COLOR:ResCultureLabelCS]{1_Tourism}[ENDCOLOR] [ICON_Tourism]Tourism to attract a single [COLOR:ResCultureLabelCS]VISITING TOURIST[ENDCOLOR].</Text>
+	</Row>
+	
+</BaseGameText>
+
+</GameData>
