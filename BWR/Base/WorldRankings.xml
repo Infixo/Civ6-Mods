@@ -94,20 +94,23 @@
 
 			<Container ID="CultureViewHeader" Offset="12,60"/>
 			<Container ID="CultureViewContents" Offset="0,130">
-				<Stack StackGrowth="Right" Offset="20,10" Padding="2">
-					<Grid Size="205,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS_TOOLTIP">
+				<!-- extra info -->
+				<Label ID="TourismForOne" Offset="25,2" Style="FontNormalMedium14" Color="206,218,225,255" String="LOC_BWR_TOURISM_FOR_ONE" />
+				<!-- headers -->
+				<Stack StackGrowth="Right" Offset="20,21" Padding="2">
+					<Grid Size="190,28" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS_TOOLTIP">
 						<Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS" Anchor="C,C" WrapWidth="parent-5" />
 					</Grid>
 
-					<Grid Size="125,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM_TOOLTIP">
+					<Grid Size="125,28" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM_TOOLTIP">
 						<Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM" Anchor="C,C" WrapWidth="Parent-5"/>
 					</Grid>
 
-					<Grid Size="140,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS_TOOLTIP">
+					<Grid Size="155,28" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS_TOOLTIP">
 						<Label Anchor="C,C" WrapWidth="Parent-8" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS"/>
 					</Grid>
 				</Stack>
-				<ScrollPanel ID="CultureViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
+				<ScrollPanel ID="CultureViewScrollbar" Offset="15,50" Size="parent-37,545" Style="WorldRankingsScrollPanel">
 					<Stack ID="CultureViewStack" Offset="0,5" Padding="5"/>
 				</ScrollPanel>
 			</Container>
@@ -331,10 +334,18 @@
 	
 	<Instance Name="ScoreInstance">
 		
-		<GridButton	ID="ButtonBG" Size="470,180" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+		<GridButton	ID="ButtonBG" Size="470,75" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
 			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
-			<Label ID="Details" Offset="15,40" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
+			<!--<Label ID="Details" Offset="15,40" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>-->
 			<Label ID="Score" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<Label ID="Score1" Offset="10,55"  Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score2" Offset="65,55"  Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score3" Offset="120,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score4" Offset="175,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score5" Offset="230,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score6" Offset="285,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score7" Offset="340,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="ScoreX" Offset="400,55" Anchor="L,T" String="[ICON_Exclamation]" Style="FontNormalMedium14" Color="206,218,225,255"/>
 		</GridButton>
 		
 	</Instance>
@@ -442,11 +453,17 @@
 			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Image ID="DomesticTouristsIcon" Offset="55,27" Size="22,21" Texture="Tourism_DomesticSmall"/>
 			<Label ID="DomesticTourists" Offset="80,28" String="DomesticTourists" Style="FontNormal18" Color="206,218,225,255"/>
-			<Container  ID="VisitingUsContainer" Offset="205,0" Size="125, parent">
+			<Label ID="CulturePerTurn" Offset="130,31" String="999" Style="FontNormal14" Color="206,218,225,255"/>
+			<!-- central column -->
+			<Container  ID="VisitingUsContainer" Offset="190,0" Size="125, parent">
 				<Image    Texture="Controls_Div6" StretchMode="Fill" Rotate="90" Size="2,parent-10" Anchor="L,C" Color="33,43,49"/>
 				<Image    Texture="Controls_Div6" StretchMode="Fill" Rotate="90" Size="2,parent-10" Anchor="R,C" Color="33,43,49"/>
-				<Image    ID="VisitingUsIcon"      Offset="-15,0" Size="24,24" Texture="Tourism_VisitingSmall" Anchor="C,C"/>
-				<Label    ID="VisitingUsTourists"  Offset="10,0" String="23" Style="FontNormal18" Color="206,218,225,255" Anchor="C,C"/>
+				<Image    ID="VisitingUsIcon"      Offset="-45,-10" Size="24,24" Texture="Tourism_VisitingSmall" Anchor="C,C"/>
+				<Label    ID="VisitingUsTourists"  Offset="-20,-10" String="23" Style="FontNormal18" Color="206,218,225,255" Anchor="C,C"/>
+				<Label ID="TurnsTillNext"      Offset="-37,12" String="[ICON_Turn]5" Style="FontNormal12" Color="206,218,225,255" Anchor="C,C"/>
+				<Label ID="OpenBorders" Offset="20,-8" String="[ICON_OPEN_BORDERS]" Anchor="C,C"/>
+				<Label ID="TradeRoute" Offset="43,-8" String="[ICON_PROPOSE_TRADE]" Anchor="C,C"/>
+				<Label ID="TourismBoost"  Offset="30,12" String="+30%" Style="FontNormal14" Color="206,218,225,255" Anchor="C,C"/>
 			</Container>
 			<Label ID="VisitingTourists" Offset="60,5" Align="right" Anchor="R,T" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" String="VisitingTourists"/>
 			<Label Offset="60,35" Align="right" Anchor="R,T" String="LOC_VICTORYSTATUS_CULTURE_TOURISTS_LABEL" Style="FontNormalMedium14" Color="206,218,225,255"/>

@@ -55,8 +55,8 @@
 				<Grid Offset="260,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
 				<Label Offset="270,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_SCORE_TAB"/>
 
-				<GridButton ID="ScoreDetailsButton" Offset="-490,12" Size="140,27" Anchor="R,T" Style="FontNormalMedium14" TextAnchor="R,C" TextOffset="30,0" Texture="Controls_ButtonControl_Gray" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" StateOffsetIncrement="0,24" String="LOC_WORLD_RANKINGS_SHOW_DETAILS"/>
-				<CheckBox ID="ScoreDetailsCheck" Offset="465,18" Style="MainCheckBox" IsChecked="0"/>
+				<GridButton ID="ScoreDetailsButton" Hidden="true" Offset="-490,12" Size="140,27" Anchor="R,T" Style="FontNormalMedium14" TextAnchor="R,C" TextOffset="30,0" Texture="Controls_ButtonControl_Gray" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" StateOffsetIncrement="0,24" String="LOC_WORLD_RANKINGS_SHOW_DETAILS"/>
+				<CheckBox ID="ScoreDetailsCheck" Hidden="true" Offset="465,18" Style="MainCheckBox" IsChecked="1"/>
 					
 				<ScrollPanel ID="ScoreViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
 					<Stack ID="ScoreViewStack" Offset="0,5" Padding="5"/>
@@ -291,7 +291,7 @@
 		
 		<Container>
 			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" TruncateWidth="150" TruncatedTooltip="1"/>
+			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" TruncateWidth="140" TruncatedTooltip="1"/>
 			<Container Offset="10,6">
 				<MakeInstance Name="CivilizationIcon44"/>
 			</Container>
@@ -371,10 +371,18 @@
 	
 	<Instance Name="ScoreInstance">
 		
-		<GridButton	ID="ButtonBG" Size="470,180" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+		<GridButton	ID="ButtonBG" Size="470,75" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
 			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
-			<Label ID="Details" Offset="15,40" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
+			<!--<Label ID="Details" Offset="15,40" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>-->
 			<Label ID="Score" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<Label ID="Score1" Offset="10,55"  Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score2" Offset="65,55"  Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score3" Offset="120,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score4" Offset="175,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score5" Offset="230,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score6" Offset="285,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="Score7" Offset="340,55" Anchor="L,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255" Hidden="true"/>
+			<Label ID="ScoreX" Offset="400,55" Anchor="L,T" String="[ICON_Exclamation]" Style="FontNormalMedium14" Color="206,218,225,255"/>
 		</GridButton>
 		
 	</Instance>

@@ -38,6 +38,7 @@ end
 
 
 -- ===========================================================================
+-- CULTURE
 
 function GatherCultureData()
 	--print("FUN GatherCultureData()");
@@ -146,12 +147,53 @@ function ViewCulture()
 	Controls.TourismForOne:SetText(Locale.Lookup("LOC_BWR_TOURISM_FOR_ONE", m_iTourismForOne));
 end
 
--- ===========================================================================
 
---function InitializeBWR()
-	--print("FUN InitializeBWR()");
-	
---end
---InitializeBWR();
+-- ===========================================================================
+-- SCORE
+
+-- these categories will be shown by default, all that are not here will be shown as a tooltip
+local tScoresMap:table = {
+	CATEGORY_EMPIRE       = {"Score1", "[ICON_Citizen]"},
+	CATEGORY_TECH         = {"Score2", "[ICON_Science]"},
+	CATEGORY_CIVICS       = {"Score3", "[ICON_Culture]"},
+	CATEGORY_GREAT_PEOPLE = {"Score4", "[ICON_GreatPerson]"},
+	CATEGORY_RELIGION     = {"Score5", "[ICON_Religion]"},
+	CATEGORY_WONDER       = {"Score6", "[ICON_Housing]"},
+	CATEGORY_ERA_SCORE    = {"Score7", "[ICON_Turn]"},
+};
+
+-- overwrite fully so it functions as "always details"
+function PopulateScoreInstance(instance:table, playerData:table)
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
+
+	instance.Score:SetText(playerData.PlayerScore);
+
+	ResizeLocalPlayerBorder(instance, 75 + 9); -- +SIZE_LOCAL_PLAYER_BORDER_PADDING but it is local
+
+	local detailsText:string = "";
+	for i, category in ipairs(playerData.Categories) do
+		local categoryInfo:table = GameInfo.ScoringCategories[category.CategoryID];
+		local sTT:string = Locale.Lookup(categoryInfo.Name) .. ": " .. category.CategoryScore;
+		local tScoreRec:table = tScoresMap[ categoryInfo.CategoryType ];
+		if tScoreRec ~= nil then
+			-- display specific category
+			instance[ tScoreRec[1] ]:SetText( tScoreRec[2]..tostring(category.CategoryScore) );
+			instance[ tScoreRec[1] ]:SetToolTipString(sTT);
+			instance[ tScoreRec[1] ]:SetHide(false);
+		else
+			-- all others go here
+			if #detailsText > 0 then detailsText = detailsText.."[NEWLINE]"; end
+			detailsText = detailsText..sTT;
+		end
+	end
+
+	if #detailsText > 0 then
+		instance.ScoreX:SetToolTipString(detailsText);
+		instance.ScoreX:SetHide(false);
+	else
+		instance.ScoreX:SetHide(true);
+	end
+end
+
 
 print("OK loaded WorldRankings_BWR.lua from Better World Rankings");
