@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="74D4FDCC-14FE-5F52-7676-03B229E7845D" version="1">
+	<Properties>
+		<Name>Better World Rankings (UI)</Name>
+		<Description>More information in the World Rankings screen.[NEWLINE][NEWLINE]Version 1.0.</Description>
+		<Teaser>More information in the World Rankings screen.</Teaser>
+		<Authors>Infixo</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>1.2,2.0</CompatibleVersions>
+	</Properties>
+	<ActionCriteria>
+		<Criteria id="Expansion2">
+			<GameCoreInUse>Expansion2</GameCoreInUse>
+		</Criteria>
+	</ActionCriteria>
+	<InGameActions>
+		<UpdateDatabase id="BWR_Database_Base">
+			<Properties><LoadOrder>100</LoadOrder></Properties>
+			<File>BetterWorldRankings_Database.sql</File>
+		</UpdateDatabase>
+		<ImportFiles id="BWR_Imports_Base">
+			<Properties><LoadOrder>100</LoadOrder></Properties>
+			<File>Base/WorldRankings.xml</File>
+			<File>Base/WorldRankings_Base_BWR.lua</File>
+			<File>WorldRankings_BWR.lua</File>
+		</ImportFiles>
+		<ReplaceUIScript id="BWR_Replace_WorldRankings_Base">
+			<Properties>
+				<LoadOrder>100</LoadOrder>
+				<LuaContext>WorldRankings</LuaContext>
+				<LuaReplace>Base/WorldRankings_Base_BWR.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<!-- Gathering Storm -->
+		<ImportFiles id="BWR_Imports_XP2" criteria="Expansion2">
+			<Properties><LoadOrder>120</LoadOrder></Properties>
+			<File>XP2/WorldRankings.xml</File>
+			<File>XP2/WorldRankings_Expansion2_BWR.lua</File>
+		</ImportFiles>
+		<ReplaceUIScript id="BWR_Replace_WorldRankings_XP2" criteria="Expansion2">
+			<Properties>
+				<LoadOrder>120</LoadOrder>
+				<LuaContext>WorldRankings</LuaContext>
+				<LuaReplace>XP2/WorldRankings_Expansion2_BWR.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+	</InGameActions>
+	<Files>
+		<!-- shared -->
+		<File>BetterWorldRankings_Database.sql</File>
+		<File>WorldRankings_BWR.lua</File>
+		<!-- base game -->
+		<File>Base/WorldRankings.xml</File>
+		<File>Base/WorldRankings_Base_BWR.lua</File>
+		<!-- Gathering Storm -->
+		<File>XP2/WorldRankings.xml</File>
+		<File>XP2/WorldRankings_Expansion2_BWR.lua</File>
+	</Files>
+</Mod>

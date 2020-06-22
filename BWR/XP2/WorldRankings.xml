@@ -1,0 +1,654 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+
+	<Include File="CivilizationIcon" />
+	
+	<SlideAnim Style="RundownAnimBG">
+
+		<!-- ==================================================================	-->
+		<!--	Tab Header																												-->
+		<!-- ==================================================================	-->
+		<Container ID="TabHeader" Offset="-5,48" Size="520,63">
+
+			<Image	Anchor="C,C" Size="parent-200,parent-4" StretchMode="Tile" Texture="Controls_TabLedgeOverflowFill"  />
+			<Grid		Anchor="L,T" Size="parent,parent" Texture="Controls_TabLedgeOverflowCaps" SliceCorner="121,5" SliceSize="1,1" SliceTextureSize="243,63">				
+				<Container			ID="TabContainer" Size="parent-80,34"	Offset="40,0" />
+				<Button					ID="ExpandExtraTabs" Offset="-5,15" Texture="Controls_ButtonPlus" Size="36,36" StateOffsetIncrement="0,36">
+					<Container		ID="ExtraTabs" Offset="5,-5" Anchor="R,B" AnchorSide="I,O" Size="auto,auto" Hidden="1" ConsumeMouse="1">
+						<Grid				ID="ExtraTabsShadow" Size="auto,auto" AutoSizePadding="5,5" Style="DropShadow4">
+							<Grid			ID="ExtraTabsBG" Size="auto,auto" AutoSizePadding="5,5" Texture="Controls_DropdownPanel" SliceCorner="11,11" SliceSize="1,1" SliceTextureSize="22,22">
+								<Stack	ID="ExtraTabStack" Anchor="C,C" Padding="-3"/>
+							</Grid>
+						</Grid>
+					</Container>
+				</Button>
+			</Grid>
+			
+		</Container>
+
+		<!-- ==================================================================	-->
+		<!--	Close Button																										-->
+		<!-- ==================================================================	-->
+		<Button ID="CloseButton" Anchor="R,T" Offset="0,46" Style="CloseButtonSmall" />
+
+		<!-- ==================================================================	-->
+		<!--	Overall View  																										-->
+		<!-- ==================================================================	-->
+		<Container ID="OverallView" Offset="0,52">
+
+			<ScrollPanel ID="OverallViewScrollbar" Offset="15,63" Size="parent-35,parent-122" Style="WorldRankingsScrollPanel">
+				<Stack ID="OverallViewStack" Offset="0,-3"/>
+			</ScrollPanel>
+
+		</Container>
+		
+		<!-- ==================================================================	-->
+		<!--	Score View  																										-->
+		<!-- ==================================================================	-->
+		<Container ID="ScoreView" Offset="0,63">
+			
+			<Container ID="ScoreViewHeader" Offset="12,60"/>
+			<Container ID="ScoreViewContents" Offset="0,130">
+				<Grid Offset="20,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="30,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CIVILIZATION_LABEL"/>
+				
+				<Grid Offset="260,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="270,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_SCORE_TAB"/>
+
+				<GridButton ID="ScoreDetailsButton" Offset="-490,12" Size="140,27" Anchor="R,T" Style="FontNormalMedium14" TextAnchor="R,C" TextOffset="30,0" Texture="Controls_ButtonControl_Gray" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" StateOffsetIncrement="0,24" String="LOC_WORLD_RANKINGS_SHOW_DETAILS"/>
+				<CheckBox ID="ScoreDetailsCheck" Offset="465,18" Style="MainCheckBox" IsChecked="0"/>
+					
+				<ScrollPanel ID="ScoreViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
+					<Stack ID="ScoreViewStack" Offset="0,5" Padding="5"/>
+				</ScrollPanel>
+			</Container>
+		</Container>
+		
+		<!-- ==================================================================	-->
+		<!--	Science View  																										-->
+		<!-- ==================================================================	-->
+		<Container ID="ScienceView" Offset="0,63">
+
+			<Container ID="ScienceViewHeader" Offset="12,60"/>
+			<Container ID="ScienceViewContents" Offset="0,130">
+				<Grid Offset="20,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="30,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CIVILIZATION_LABEL"/>
+
+				<Grid Offset="260,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="-485,20" Size="235,30" Style="FontNormalMedium14" Color="255,255,225,100" Anchor="R,T" String="LOC_WORLD_RANKINGS_STEPS_COMPLETED"/>
+				
+				<!--
+				<GridButton ID="ScienceDetailsButton" Offset="-490,12" Size="140,27" Anchor="R,T" Style="FontNormalMedium14"  TextAnchor="R,C" TextOffset="30,0" Texture="Controls_ButtonControl_Gray" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" StateOffsetIncrement="0,24" String="LOC_WORLD_RANKINGS_SHOW_DETAILS"/>
+				<CheckBox ID="ScienceDetailsCheck" Offset="465,18" Style="MainCheckBox" IsChecked="0"/>
+				-->
+					
+				<ScrollPanel ID="ScienceViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
+					<Stack ID="ScienceViewStack" Offset="0,5" Padding="5"/>
+				</ScrollPanel>
+			</Container>
+		</Container>
+
+		<!-- ==================================================================	-->
+		<!--	Culture View  																										-->
+		<!-- ==================================================================	-->
+		<Container ID="CultureView" Offset="0,63">
+
+			<Container ID="CultureViewHeader" Offset="12,60"/>
+			<Container ID="CultureViewContents" Offset="0,130">
+				<Stack StackGrowth="Right" Offset="20,10" Padding="2">
+					<Grid Size="205,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS_TOOLTIP">
+						<Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS" Anchor="C,C" WrapWidth="parent-5" />
+					</Grid>
+
+					<Grid Size="125,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM_TOOLTIP">
+						<Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM" Anchor="C,C" WrapWidth="Parent-5"/>
+					</Grid>
+
+					<Grid Size="140,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS_TOOLTIP">
+						<Label Anchor="C,C" WrapWidth="Parent-8" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS"/>
+					</Grid>
+				</Stack>
+				<ScrollPanel ID="CultureViewScrollbar" Offset="15,45" Size="parent-37,45" Style="WorldRankingsScrollPanel">
+					<Stack ID="CultureViewStack" Offset="0,5" Padding="5"/>
+				</ScrollPanel>
+			</Container>
+		</Container>
+
+		<!-- ==================================================================	-->
+		<!--	Domination View  																										-->
+		<!-- ==================================================================	-->
+		<Container ID="DominationView" Offset="0,63">
+
+			<Container ID="DominationViewHeader" Offset="12,60"/>
+			<Container ID="DominationViewContents" Offset="0,130">
+				<Grid Offset="20,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="30,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CIVILIZATION_LABEL"/>
+
+				<Grid Offset="260,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="-485,20" Size="235,30" Style="FontNormalMedium14" Color="255,255,225,100" Anchor="R,T" String="LOC_WORLD_RANKINGS_DOMINATION_PROGRESS"/>
+
+				<ScrollPanel ID="DominationViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
+					<Stack ID="DominationViewStack" Offset="0,5" Padding="5"/>
+				</ScrollPanel>
+			</Container>
+		</Container>
+
+		<!-- ==================================================================	-->
+		<!--	Religion View  																										-->
+		<!-- ==================================================================	-->
+		<Container ID="ReligionView" Offset="0,63">
+
+			<Container ID="ReligionViewHeader" Offset="12,60"/>
+			<Container ID="ReligionViewContents" Offset="0,130">
+				<Grid Offset="20,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="30,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CIVILIZATION_LABEL"/>
+
+				<Grid Offset="260,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="-485,20" Size="235,30" Style="FontNormalMedium14" Color="255,255,225,100" Anchor="R,T" String="LOC_WORLD_RANKINGS_RELIGION_CIVS_CONVERTED"/>
+
+				<ScrollPanel ID="ReligionViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
+					<Stack ID="ReligionViewStack" Offset="0,5" Padding="5"/>
+				</ScrollPanel>
+			</Container>
+		</Container>
+
+		<!-- ==================================================================	-->
+		<!--	Generic View (used for mods and scenarios)												-->
+		<!-- ==================================================================	-->
+		<Container ID="GenericView" Offset="0,63">
+
+			<Container ID="GenericViewHeader" Offset="12,60"/>
+			<Container ID="GenericViewContents" Offset="0,130">
+				<Grid Offset="20,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="30,20" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CIVILIZATION_LABEL"/>
+
+				<Grid Offset="260,10" Size="235,30" Texture="Controls_ColumnHeader" SliceCorner="10,11" SliceTextureSize="28,28" Color="33,43,49,255"/>
+				<Label Offset="-485,20" Size="235,30" Style="FontNormalMedium14" Color="255,255,225,100" Anchor="R,T" String="LOC_WORLD_RANKINGS_REQUIREMENTS_LABEL"/>
+
+				<ScrollPanel ID="GenericViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
+					<Stack ID="GenericViewStack" Offset="0,5" Padding="5"/>
+				</ScrollPanel>
+			</Container>
+		</Container>
+
+	</SlideAnim>
+
+	<!-- ==================================================================	-->
+	<!--	Instances																													-->
+	<!-- ==================================================================	-->
+	<Instance Name="TabInstance">
+		
+		<GridButton	ID="Button" Size="50,34" Style="TabButton" FontSize="14" TextOffset="0,2">
+				<GridButton ID="Selection" Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" Hidden="1"/>
+		</GridButton>
+
+	</Instance>
+
+  <Instance Name="ExtraTabInstance">
+
+    <GridButton ID="Button" Size="100,26" Style="FontNormalMedium14" Texture="Controls_DropdownChoice" SliceCorner="16,0" SliceSize="4,26" SliceTextureSize="32,26" StateOffsetIncrement="0,26"/>
+
+  </Instance>
+
+  <Instance Name="GenericHeaderInstance">
+
+    <Container ID="HeaderTop" Size="400,60">
+      <Grid	ID="HeaderFrame" Offset="80,10" Size="parent,parent" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="31,44,53,255"/>
+      <Image ID="HeaderIcon" Offset="0,-5" Size="80,80" Texture="Victories80"/>
+      <Image ID="AdvisorIcon" Offset="10,200" Size="80,80" Texture="Advisors80" TextureOffset="560,0" FlipX="1" />
+      <Grid ID="AdvisorTextBG" Offset="80,70" Size="parent-20,auto" AutoSizePadding="0,10" Texture="Controls_WordBubbleLeft" SliceCorner="30,10" SliceSize="1,1" SliceTextureSize="56,47" Color="31,44,53,255">
+        <Label ID="AdvisorText" Offset="30,0" Anchor="L,C" Size="350,100" Align="left" Style="FontNormalMedium14" Color="206,218,225,255" />
+      </Grid>
+      <Label ID="HeaderLabel" Offset="80,18" Anchor="C,T" Style="WorldRankingsHeader"/>
+      <Label ID="HeaderSubLabel" Offset="80,45" Anchor="C,T" Style="ReligionDataCell" String="HeaderSubLabel"/>
+      <Button	ID="ExpandHeaderButton" Offset="462,53" Texture="Controls_ButtonExtendSmall" Size="20,17" TextureOffset="0,64" StateOffsetIncrement="0,17" Hidden="1"/>
+      <Button	ID="ContractHeaderButton" Offset="462,263" Texture="Controls_ButtonExtendSmall" Size="20,17" StateOffsetIncrement="0,17"/>
+    </Container>
+
+  </Instance>
+	
+	<Instance Name="ScienceHeaderInstance">
+		
+		<Container ID="HeaderTop" Size="400,60">
+			<Grid	ID="HeaderFrame" Offset="80,10" Size="parent,parent" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="31,44,53,255"/>
+			<Image ID="HeaderIcon" Offset="0,-5" Size="80,80" Texture="Victories80"/>
+			<Image ID="AdvisorIcon" Offset="10,200" Size="80,80" Texture="Advisors80" TextureOffset="560,0" FlipX="1" />
+      <Grid ID="AdvisorTextBG" Offset="80,70" Size="parent-20,auto" Texture="Controls_WordBubbleLeft" SliceCorner="30,10" SliceSize="1,1" SliceTextureSize="56,47" Color="31,44,53,255">
+        <Stack Offset="24,0" StackGrowth="Down" StackPadding="10">
+          <Label ID="AdvisorText" Offset="6,10" Size="350,100" Style="FontNormalMedium14" Color="206,218,225,255" />
+          <Label ID="AdvisorTextCentered" Offset="14,0" Align="left" Size="350,100" Style="FontNormalMedium14" Color="206,218,225,255" />
+          <Container Size="auto,24" Anchor="C,B">
+            <Label ID="AdvisorTextNextStep" Offset="0,10" Anchor="C,B" Align="center" Size="350,100" Style="FontNormalMedium14" Color="206,218,225,255" />
+            <Image ID="NextStepHighlight" Offset="0,0" Anchor="C,B" Size="225,94" Texture="Controls_Gradient_HalfRadial" Color="24,115,147"/>
+          </Container>
+        </Stack>
+      </Grid>
+			<Label ID="HeaderLabel" Offset="80,18" Anchor="C,T" Style="WorldRankingsHeader"/>
+			<Label ID="HeaderSubLabel" Offset="80,45" Anchor="C,T" Style="ReligionDataCell" String="HeaderSubLabel"/>
+			<Button	ID="ExpandHeaderButton" Offset="462,53" Texture="Controls_ButtonExtendSmall" Size="20,17" TextureOffset="0,64" StateOffsetIncrement="0,17" Hidden="1"/>
+			<Button	ID="ContractHeaderButton" Offset="462,263" Texture="Controls_ButtonExtendSmall" Size="20,17" StateOffsetIncrement="0,17"/>
+		</Container>
+
+	</Instance>
+	
+	<Instance Name="CultureHeaderInstance">
+		
+		<Container ID="HeaderTop" Size="400,60">
+			<Grid	ID="HeaderFrame" Offset="80,10" Size="parent,parent" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="31,44,53,255"/>
+			<Image ID="HeaderIcon" Offset="0,-5" Size="80,80" Texture="Victories80"/>
+			<Image ID="AdvisorIcon" Offset="10,200" Size="80,80" Texture="Advisors80" TextureOffset="560,0" FlipX="1" />
+			<Grid ID="AdvisorTextBG" Offset="80,70" Size="parent-20,200" Texture="Controls_WordBubbleLeft" SliceCorner="30,10" SliceSize="1,1" SliceTextureSize="56,47" Color="31,44,53,255"/>
+			<Label ID="AdvisorText" Offset="110,80" Size="350,100" Style="FontNormalMedium14" Color="206,218,225,255" String="AdvisorText" />
+			<Container ID="HowToAttractTourists" Size="parent,parent" >
+				<Image ID="DomesticTourismIcon" Offset="120,80" Size="55,54" Texture="Tourism_Domestic">
+					<Label ID="DomesticTourism" Offset="70,0" Size="260,100" Anchor="L,C" Align="left" Style="FontNormal14" Color="206,218,225,255" String="DomesticTourism"/>
+				</Image>
+				<Image ID="VisitingTourismIcon" Offset="120,154" Size="55,54" Texture="Tourism_Visiting">
+					<Label ID="VisitingTourism" Offset="70,4" Size="260,100" Anchor="L,C" Align="left" Style="FontNormal14" Color="206,218,225,255" String="VisitingTourism"/>
+				</Image>
+			</Container>
+			<Label ID="HeaderLabel" Offset="80,18" Anchor="C,T" Style="WorldRankingsHeader"/>
+			<Label ID="HeaderSubLabel" Offset="80,45" Anchor="C,T" Style="ReligionDataCell" String="HeaderSubLabel"/>
+			<Button	ID="ExpandHeaderButton" Offset="462,53" Texture="Controls_ButtonExtendSmall" Size="20,17" TextureOffset="0,64" StateOffsetIncrement="0,17" Hidden="1"/>
+			<Button	ID="ContractHeaderButton" Offset="462,263" Texture="Controls_ButtonExtendSmall" Size="20,17" StateOffsetIncrement="0,17"/>
+			<Grid ID="StateBG" Offset="80,300" Anchor="C,T" Size="0,0" Texture="Controls_SubContainer4" SliceCorner="8,8" SliceSize="1,1" SliceTextureSize="18,18" Color="66,43,70,255" Hidden="1">
+				<Label ID="StateLabel" Offset="0,0" Size="260,100" Anchor="C,C" Align="canter" Style="FontNormal14" ColorSet="ResCultureLabelCS" String="StateLabel"/>
+				<Button	ID="PrevState" Offset="-20,8" Texture="Controls_ArrowButtonLeft" Size="19,23"/>
+				<Button	ID="NextState" Offset="200,8" Texture="Controls_ArrowButtonRight" Size="19,23"/>
+			</Grid>
+		</Container>
+
+	</Instance>
+
+	<Instance Name="CivilizationIconInstance">
+		
+		<Container>
+			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
+			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<Container Offset="10,6">
+				<MakeInstance Name="CivilizationIcon44"/>
+			</Container>
+		</Container>
+		
+	</Instance>
+
+	<Instance Name="CivilizationIconInstanceScience">
+		
+		<Container>
+			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
+			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" TruncateWidth="175" TruncatedTooltip="1"/>
+			<Container Offset="10,6">
+				<MakeInstance Name="CivilizationIcon44"/>
+			</Container>
+		</Container>
+		
+	</Instance>
+
+	<Instance Name="CivilizationIconInstanceCulture">
+		
+		<Container>
+			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
+			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" TruncateWidth="150" TruncatedTooltip="1"/>
+			<Container Offset="10,6">
+				<MakeInstance Name="CivilizationIcon44"/>
+			</Container>
+		</Container>
+		
+	</Instance>
+
+	<Instance Name="CivilizationIconInstanceReligion">
+		
+		<Container>
+			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
+			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" TruncateWidth="150" TruncatedTooltip="1"/>
+			<Container Offset="10,6">
+				<MakeInstance Name="CivilizationIcon44"/>
+			</Container>
+		</Container>
+		
+	</Instance>
+
+	<Instance Name="OverallInstance">
+		
+		<GridButton	ID="ButtonBG" Offset="0,10" Size="480,130" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<Image ID="VictoryBanner" Offset="10,0" Size="41,141" Texture="Controls_Pennant"/>
+			<Image ID="VictoryLabelGradient" Offset="30,2" Size="125,34" Texture="Controls_Gradient" Rotate="90"/>
+			<Label ID="VictoryLabel" Offset="70,10" String="VictoryLabel" Style="WorldRankingsHeader" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<Label ID="VictoryLeading" Offset="70,54" String="VictoryLeading" Style="FontNormal16" Color="206,218,225,255"/>
+			<Label ID="VictoryPlayer" Offset="75,72" String="VictoryPlayer" Style="FontNormal16" Color="206,218,225,150"/>
+			<Grid ID="VictoryLabelUnderline" Offset="0,37" Size="143,2" SliceSize="1,2" SliceCorner="69,0" SliceTextureSize="143,2" Texture="Controls_Div6" Color="49,53,55,255"/>
+			<Image ID="VictoryIcon" Offset="0,-13" Size="64,64" Texture="Victories64"/>
+			<Container ID="TopPlayer" Size="56,56" Offset="2,58">
+				<Image ID="CivIconBackingFaded" Anchor="C,C" Offset="0,0" Size="48,48" Texture="CircleBacking48" Color="100,100,100,255"/>
+				<Image ID="CivIconFaded" Anchor="C,C" Offset="0,0" Size="48,48" Texture="CivSymbols48" Color="100,100,100,255"/>
+				<Image ID="CivIconBackingRing" Offset="0,0" Size="56,56" Texture="Controls_CircleRim"/>
+				<Image ID="LocalPlayer" Offset="10,0" Size="35,10" Texture="Controls_YouArrowSmall"/>
+				<Container Offset="28,28">
+					<MakeInstance Name="CivilizationIconBar48"/>
+				</Container>
+				<Image ID="TeamRibbon" Size="53,53" Anchor="C,B" Offset="0,-8" Texture="TeamRibbon53"/>
+			</Container>
+			<Stack ID="PlayerStack" Offset="70,91" Padding="5" StackGrowth="Right" WrapWidth="380" WrapGrowth="bottom"/>
+		</GridButton>
+		
+	</Instance>
+	
+	<Instance Name="OverallPlayerInstance">
+
+		<Image ID="CivIconBackingFaded" Anchor="C,C" Size="36,36" Texture="CircleBacking36" Color="100,100,100,255">
+			<Image ID="CivIconFaded" Anchor="C,C" Size="36,36" Texture="CivSymbols36" Color="100,100,100,255"/>
+			<Container ID="LocalPlayer">
+				<Image Offset="-4,-5" Size="44,45" Texture="Controls_CircleRimSmall"/>
+				<Image Offset="0,-3" Size="35,10" Texture="Controls_YouArrowSmall"/>
+			</Container>
+			<MakeInstance Name="CivilizationIconBar36"/>
+			<Image ID="TeamRibbon" Size="44,44" Anchor="C,B" Offset="0,-9" Texture="TeamRibbon44"/>
+		</Image>
+		
+	</Instance>
+	
+	<Instance Name="ScoreTeamInstance">
+		
+		<Grid ID="ButtonFrame" Size="482,auto" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+				<Label ID="TeamScore" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			</Grid>
+			
+			<!-- Player Stack -->
+			<Stack ID="ScorePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
+		
+	</Instance>
+	
+	<Instance Name="ScoreInstance">
+		
+		<GridButton	ID="ButtonBG" Size="470,180" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
+			<Label ID="Details" Offset="15,40" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
+			<Label ID="Score" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+		</GridButton>
+		
+	</Instance>
+
+	<Instance Name="ScienceTeamInstance">
+		<Grid ID="ButtonFrame" Size="482,auto" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+				<Stack Offset="238,7" StackGrowth="Right" StackPadding="1">
+					<Grid ID="ObjBG_1" Size="44,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+						<Grid ID="ObjFill_1" Offset="0,0" Size="56,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="54,34" SliceTextureSize="56,37" Hidden="1"/>
+						<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_1" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_1" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_1" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_1" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+					</Grid>
+					<Grid ID="ObjBG_2" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+						<Grid ID="ObjFill_2" Offset="0,0" Size="56,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="54,34" SliceTextureSize="56,37" Hidden="1"/>
+						<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_2" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_2" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_2" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_2" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+					</Grid>
+					<Grid ID="ObjBG_3" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+						<Grid ID="ObjFill_3" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="45,37" Hidden="1"/>
+						<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_3" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_3" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_3" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_3" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+					</Grid>
+					<Grid ID="ObjBG_4" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+						<Grid ID="ObjFill_4" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="45,37" Hidden="1"/>
+						<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_4" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_4" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_4" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_4" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+					</Grid>
+					<Grid ID="ObjBG_5" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+						<Grid ID="ObjFill_5" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="45,37" Hidden="1"/>
+						<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_5" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_5" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_5" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_5" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+					</Grid>
+				</Stack>
+			</Grid>
+			<Stack ID="SciencePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
+	</Instance>
+
+	<Instance Name="ScienceInstance">
+
+		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<MakeInstance Name="CivilizationIconInstanceScience" ID="CivilizationIcon"/>
+			<Grid ID="ObjBG_1" Offset="230,10" Size="44,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+				<Grid ID="ObjFill_1" Offset="0,0" Size="45,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37" Hidden="1"/>
+				<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+				<Image ID="ObjHidden_1" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+				<TextureBar	ID="ObjBar_1" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+				<Image ID="ObjToggle_OFF_1" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+				<Image ID="ObjToggle_ON_1" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+			</Grid>
+			<Grid ID="ObjBG_2" Offset="275,10" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+				<Grid ID="ObjFill_2" Offset="0,0" Size="45,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37" Hidden="1"/>
+				<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+				<Image ID="ObjHidden_2" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+				<TextureBar	ID="ObjBar_2" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+				<Image ID="ObjToggle_OFF_2" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+				<Image ID="ObjToggle_ON_2" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+			</Grid>
+				<Grid ID="ObjBG_3" Offset="320,10" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+				<Grid ID="ObjFill_3" Offset="0,0" Size="45,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37" Hidden="1"/>
+				<Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+				<Image ID="ObjHidden_3" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+				<TextureBar	ID="ObjBar_3" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+				<Image ID="ObjToggle_OFF_3" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+				<Image ID="ObjToggle_ON_3" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+			</Grid>
+                <Grid ID="ObjBG_4" Offset="365,10" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+                <Grid ID="ObjFill_4" Offset="0,0" Size="45,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37" Hidden="1"/>
+                <Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+                <Image ID="ObjHidden_4" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+                <TextureBar	ID="ObjBar_4" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+                <Image ID="ObjToggle_OFF_4" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+                <Image ID="ObjToggle_ON_4" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+            </Grid>
+                <Grid ID="ObjBG_5" Offset="410,10" Size="45,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37">
+                <Grid ID="ObjFill_5" Offset="0,0" Size="45,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="43,34" SliceTextureSize="45,37" Hidden="1"/>
+                <Image Offset="3,10" Size="45,16" Texture="Controls_MeterLinear"/>
+                <Image ID="ObjHidden_5" Offset="3,10" Size="42,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+                <TextureBar	ID="ObjBar_5" Offset="5,10" Direction="Right" Speed="0" Size="42,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+                <Image ID="ObjToggle_OFF_5" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+                <Image ID="ObjToggle_ON_5" Offset="19,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,175" Hidden="1"/>
+            </Grid>
+		</GridButton>
+
+	</Instance>
+
+	<Instance Name="CultureTeamInstance">
+
+		<Grid ID="ButtonFrame" Size="482,auto" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+
+				<!-- Team Culture Info -->
+				<Label ID="VisitingTourists" Offset="60,4" Align="right" Anchor="R,T" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" String="VisitingTourists"/>
+				<Image Offset="5,0" Anchor="R,C" Size="52,52" Texture="Tourism_Meter">
+					<TextureBar	ID="TouristsFill" Offset="0,0" Anchor="C,C" Direction="Up" Speed="0" Size="52,52" TextureOffset="0,52" Texture="Tourism_Meter"/>
+				</Image>
+			</Grid>
+
+			<!-- Player Stack -->
+			<Stack ID="CulturePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
+
+	</Instance>
+
+	<Instance Name="CultureInstance">
+
+		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<MakeInstance Name="CivilizationIconInstanceCulture" ID="CivilizationIcon"/>
+			<Image ID="DomesticTouristsIcon" Offset="55,27" Size="22,21" Texture="Tourism_DomesticSmall"/>
+			<Label ID="DomesticTourists" Offset="80,28" String="DomesticTourists" Style="FontNormal18" Color="206,218,225,255"/>
+			<Container  ID="VisitingUsContainer" Offset="205,0" Size="125, parent">
+				<Image    ID="VisitingUsIcon"      Offset="-15,0" Size="24,24" Texture="Tourism_VisitingSmall" Anchor="C,C"/>
+				<Label    ID="VisitingUsTourists"  Offset="10,0" String="23" Style="FontNormal18" Color="206,218,225,255" Anchor="C,C"/>
+			</Container>
+
+      <Stack Anchor="R,C" Offset="60,0" StackGrowth="Down" StackPadding="0">
+		    <Label ID="VisitingTourists" Align="right" Anchor="R,T" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" String="VisitingTourists"/>
+		    <Label ID="TurnsTillVictory" Align="right" Anchor="R,T" String="LOC_VICTORYSTATUS_CULTURE_TOURISTS_LABEL" Style="FontNormal12" Color="206,218,225,255"/>
+      </Stack>
+      
+      <Image Offset="5,2" Anchor="R,T" Size="52,52" Texture="Tourism_Meter"/>
+			<TextureBar	ID="TouristsFill" Offset="5,2" Anchor="R,T" Direction="Up" Speed="0" Size="52,52" TextureOffset="0,52" Texture="Tourism_Meter"/>
+		</GridButton>
+
+	</Instance>
+
+	<Instance Name="DominationTeamInstance">
+
+		<Grid ID="ButtonFrame" Size="482,auto" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<Stack StackGrowth="Down" StackPadding="0,4">
+				<!-- Team Info -->
+				<Grid ID="TeamButton" Size="parent,auto" MinSize="0,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+					<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+						<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+						<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+					</Image>
+					<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+
+					<!-- Domination Info -->
+					<Label ID="CapitalsCaptured" Offset="19,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CapitalsCaptured"/>
+					<Stack ID="CapitalsCapturedStack" Anchor="R,T" Offset="16,20" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
+				</Grid>
+
+				<!-- Player Stack -->
+				<Stack ID="PlayerInstanceStack" Anchor="C,T" StackGrowth="Down" StackPadding="3"/>
+			</Stack>
+		</Grid>
+
+	</Instance>
+
+	<Instance Name="DominationInstance">
+
+		<GridButton	ID="ButtonBG" Size="parent,auto" MinSize="0,54" AutoSizePadding="0,3" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
+			<Label ID="HasCapital" Offset="35,35" Style="FontNormalMedium14" Color="206,218,225,255" String="[ICON_Capital]"/>	
+			<Label ID="CapitalsCaptured" Offset="15,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CapitalsCaptured"/>
+			<Stack ID="CapitalsCapturedStack" Anchor="R,T" Offset="10,20" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
+		</GridButton>
+
+	</Instance>
+	
+	<Instance Name="DominatedCapitalInstance">
+		<Container ID="Root" Size="auto,auto">
+			<MakeInstance Name="CivilizationIcon30" ID="CivilizationIcon"/>
+		</Container>
+	</Instance>
+
+	<Instance Name="ReligionTeamInstance">
+
+		<Grid ID="ButtonFrame" Size="482,auto" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+
+				<!-- Religion Info -->
+				<Label ID="CivsConverted" Offset="10,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CivsConverted"/>
+				<Stack ID="CivsConvertedStack" Anchor="R,T" Offset="-116,18" Padding="5" StackGrowth="Left" WrapWidth="280" WrapGrowth="bottom"/>
+			</Grid>
+
+			<!-- Player Stack -->
+			<Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
+
+	</Instance>
+
+	<Instance Name="ReligionInstance">
+
+		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<Grid ID="ReligionBG" Offset="48,23" Size="30,30" Texture="Religion_FollowersSlot" SliceCorner="14,14" SliceSize="1,1" SliceTextureSize="30,30"/>
+			<Image ID="ReligionIcon" Offset="55,27" Size="22,22" Texture="Religions22"/>
+			<Label ID="ReligionName" Offset="80,32" Style="FontNormalMedium14" Color="206,218,225,255" String="ReligionName"/>
+			<MakeInstance Name="CivilizationIconInstanceReligion" ID="CivilizationIcon"/>
+			<Label ID="CivsConverted" Offset="10,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CivsConverted"/>
+			<Stack ID="CivsConvertedStack" Anchor="R,T" Offset="10,20" Padding="5" StackGrowth="Left" WrapWidth="280" WrapGrowth="bottom"/>
+		</GridButton>
+
+	</Instance>
+
+	<Instance Name="GenericTeamInstance">
+
+		<Grid ID="ButtonFrame" Size="482,auto" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Stack StackGrowth="Down" StackPadding="4">
+				<Grid ID="TeamButton" Size="parent,auto" AutoSizePadding="0,4" MinSize="0,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+					<Image ID="TeamIconBacking" Anchor="L,C" Offset="10,-4" Size="36,36" Texture="CircleBacking36">
+						<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+						<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+					</Image>
+					<Label ID="TeamName" Anchor="L,C" Offset="55,0" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+
+					<!-- Generic Info -->
+					<Label ID="Details" Offset="15,15" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
+				</Grid>
+
+				<!-- Player Stack -->
+				<Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,0" StackGrowth="Down" StackPadding="3"/>
+			</Stack>
+		</Grid>
+
+	</Instance>
+
+	<Instance Name="GenericInstance">
+
+		<GridButton	ID="ButtonBG" Size="470,180" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
+			<Label ID="Details" Offset="15,15" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
+		</GridButton>
+
+	</Instance>
+
+	<Instance Name="ConvertedReligionInstance">
+		<Container ID="Root" Size="auto,auto">
+			<MakeInstance Name="CivilizationIcon30" ID="CivilizationIcon"/>
+		</Container>
+	</Instance>
+
+	<Instance Name="TeamTooltipInstance" >
+		<Grid ID="BG" Size="200,auto" SliceCorner="10,10" SliceTextureSize="33,32" Texture="Controls_Tooltip"  >
+			<Container ID="Content" Size="auto,auto" InnerPadding="25,25" InnerOffset="10,10">
+				<Image ID="LeaderIcon" Anchor="L,C" Size="55,55" Texture="Leaders55"/>
+				<Image ID="YouIndicator" Anchor="L,C" Hidden="1" Size="55,55" Texture="Diplomacy_YouIndicatorSmall"/>
+				<Label ID="LeaderName" Anchor="L,C" Offset="65,0" Style="FontNormal16" Color="0,0,0,255"/>
+				<Label ID="UnmetLabel" Anchor="C,C" Style="FontNormal16" Color="0,0,0,255" Hidden="1"/>
+			</Container>
+		</Grid>
+	</Instance>
+
+</Context>
