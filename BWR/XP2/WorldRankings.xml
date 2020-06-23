@@ -313,7 +313,7 @@
 
 	<Instance Name="OverallInstance">
 		
-		<GridButton	ID="ButtonBG" Offset="0,10" Size="480,130" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+		<GridButton	ID="ButtonBG" Offset="0,10" Size="480,170" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
 			<Image ID="VictoryBanner" Offset="10,0" Size="41,141" Texture="Controls_Pennant"/>
 			<Image ID="VictoryLabelGradient" Offset="30,2" Size="125,34" Texture="Controls_Gradient" Rotate="90"/>
 			<Label ID="VictoryLabel" Offset="70,10" String="VictoryLabel" Style="WorldRankingsHeader" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
@@ -330,15 +330,20 @@
 					<MakeInstance Name="CivilizationIconBar48"/>
 				</Container>
 				<Image ID="TeamRibbon" Size="53,53" Anchor="C,B" Offset="0,-8" Texture="TeamRibbon53"/>
+				<!-- new fields -->
+				<Label ID="HasCapital" Hidden="true" Offset="35,35" Style="FontNormalMedium14" Color="206,218,225,255" String="[ICON_Capital]" ToolTip="LOC_WORLD_RANKINGS_DOMINATION_HAS_ORIGINAL_CAPITAL"/>
+				<Label ID="Line1" Anchor="C,B" Offset="0,-33" String="Line1" Style="FontNormal14" Color="206,218,225,255"/>
+				<Label ID="Line2" Anchor="C,B" Offset="0,-48" String="Line2" Style="FontNormal14" Color="206,218,225,255"/>
 			</Container>
-			<Stack ID="PlayerStack" Offset="70,91" Padding="5" StackGrowth="Right" WrapWidth="380" WrapGrowth="bottom"/>
+			<Stack ID="PlayerStack" Offset="70,92" Padding="5" StackGrowth="Right" WrapWidth="380" WrapGrowth="bottom"/>
 		</GridButton>
 		
 	</Instance>
 	
 	<Instance Name="OverallPlayerInstance">
 
-		<Image ID="CivIconBackingFaded" Anchor="C,C" Size="36,36" Texture="CircleBacking36" Color="100,100,100,255">
+		<Container ID="CivIconBackingFaded" Size="36,70">
+		  <Image Anchor="C,T" Size="36,36" Texture="CircleBacking36" Color="100,100,100,255">
 			<Image ID="CivIconFaded" Anchor="C,C" Size="36,36" Texture="CivSymbols36" Color="100,100,100,255"/>
 			<Container ID="LocalPlayer">
 				<Image Offset="-4,-5" Size="44,45" Texture="Controls_CircleRimSmall"/>
@@ -346,7 +351,12 @@
 			</Container>
 			<MakeInstance Name="CivilizationIconBar36"/>
 			<Image ID="TeamRibbon" Size="44,44" Anchor="C,B" Offset="0,-9" Texture="TeamRibbon44"/>
-		</Image>
+			<!-- new fields -->
+			<Label ID="HasCapital" Hidden="true" Offset="21,21" Style="FontNormalMedium14" Color="206,218,225,255" String="[ICON_Capital]" ToolTip="LOC_WORLD_RANKINGS_DOMINATION_HAS_ORIGINAL_CAPITAL"/>
+			<Label ID="Line1" Anchor="C,B" Offset="0,-20" String="Line1" Style="FontNormal14" Color="206,218,225,255"/>
+			<Label ID="Line2" Anchor="C,B" Offset="0,-35" String="Line2" Style="FontNormal14" Color="206,218,225,255"/>
+		  </Image>
+		</Container>
 		
 	</Instance>
 	

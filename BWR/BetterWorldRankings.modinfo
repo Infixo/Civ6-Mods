@@ -6,6 +6,7 @@
 		<Teaser>More information in the World Rankings screen.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
+		<SupportsMultiplayer>0</SupportsMultiplayer>
 		<CompatibleVersions>1.2,2.0</CompatibleVersions>
 	</Properties>
 	<ActionCriteria>

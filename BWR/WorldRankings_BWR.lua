@@ -7,6 +7,8 @@ print("Loading WorldRankings_BWR.lua from Better World Rankings version "..Globa
 -- ===========================================================================
 
 -- Cache base functions
+BASE_PopulateOverallInstance = PopulateOverallInstance;
+BASE_PopulateOverallPlayerIconInstance = PopulateOverallPlayerIconInstance;
 BASE_GatherCultureData = GatherCultureData;
 BASE_PopulateCultureInstance = PopulateCultureInstance;
 BASE_ViewCulture = ViewCulture;
@@ -35,6 +37,106 @@ function dshowrectable(tTable:table, iLevel:number)
 		if type(v) == "table" and level < 5 then dshowrectable(v, level+1); end
 	end
 end
+
+
+
+-- ===========================================================================
+-- OVERALL
+--[[ teamData record
+ 	TeamProgress	number	0.125
+ 	TeamID	number	6
+ 	PlayerData	table	table: 00000000B02F8660
+ ---:	6	table	table: 00000000B02F8840
+ ---:---:	SecondTiebreakScore	number	329.18359375
+ ---:---:	GenericScore	number	1039
+ ---:---:	Player	table	table: 00000000B02821A0
+ ---:---:---:	__instance	userdata	userdata: 0000000014A54B10
+ ---:---:	SecondTiebreakSummary	string	[ICON_Science] Science per turn: 329.2
+ ---:---:	FirstTiebreakSummary	string	Technologies Researched: 61
+ ---:---:	FirstTiebreakScore	number	61
+ 	SecondTeamTiebreakScore	number	329.18359375
+ 	TeamGenericScore	number	1039
+ 	FirstTeamTiebreakScore	number	61
+ 	PlayerCount	number	1
+ 	TeamScore	number	0.125
+--]]
+
+-- returns hasCapital:boolean, numCaptured:number
+function CheckOriginalCapitals(playerID:number)
+	--print("FUN CheckOriginalCapitals", playerID);
+	
+	local pCities = Players[playerID]:GetCities();
+	if pCities:GetCapitalCity() == nil then return false, 0; end -- we haven't started yet
+	
+	local hasCapital:boolean, numCaptured:number = false, 0;
+
+	for _,city in pCities:Members() do
+		local originalOwnerID:number = city:GetOriginalOwner();
+		local pOriginalOwner:table = Players[originalOwnerID];
+		if playerID ~= originalOwnerID and pOriginalOwner:IsMajor() and city:IsOriginalCapital() then
+			numCaptured = numCaptured + 1;
+		elseif playerID == originalOwnerID and pOriginalOwner:IsMajor() and city:IsOriginalCapital() then
+			hasCapital = true;
+		end
+	end
+
+	return hasCapital, numCaptured;
+end
+
+function PopulateOverallPlayerIconInstance(instance:table, victoryType:string, teamData:table, iconSize:number)
+	--print("FUN PopulateOverallPlayerIconInstance()", victoryType, iconSize);
+	--dshowrectable(teamData);
+	BASE_PopulateOverallPlayerIconInstance(instance, victoryType, teamData, iconSize);
+	
+	-- new fields
+	-- Take the player ID from the first team member who should be the only team member
+	local playerID:number = Teams[teamData.TeamID][1];
+	local playerData:table = teamData.PlayerData[playerID];
+	local score1:number, score2:number = Round(playerData.FirstTiebreakScore, 0), Round(playerData.SecondTiebreakScore, 0);
+	if playerData ~= nil then
+		-- tooltips are the same for all
+		instance.Line1:SetToolTipString(playerData.FirstTiebreakSummary);
+		instance.Line2:SetToolTipString(playerData.SecondTiebreakSummary);
+		-- formatting depends on the victory type
+		if     victoryType == "VICTORY_TECHNOLOGY" then
+			instance.Line1:SetText(tostring(score1));
+			instance.Line2:SetText("[COLOR_Science]"..tostring(score2).."[ENDCOLOR]");
+		elseif victoryType == "VICTORY_CULTURE" then
+			instance.Line1:SetText("[COLOR_Tourism]"..tostring(score1).."[ENDCOLOR]");
+			instance.Line2:SetText("[COLOR_Culture]"..tostring(score2).."[ENDCOLOR]");
+		elseif victoryType == "VICTORY_CONQUEST" then
+			local hasCapital:boolean, numCaptured:number = CheckOriginalCapitals(playerID);
+			instance.HasCapital:SetHide(not hasCapital);
+			instance.Line1:SetText(tostring(numCaptured));
+			instance.Line1:SetToolTipString(Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_SUMMARY", numCaptured));
+			instance.Line2:SetText("[COLOR_Military]"..tostring(score2).."[ENDCOLOR]");
+		elseif victoryType == "VICTORY_RELIGIOUS" then 
+			instance.Line1:SetText(tostring(score1));
+			instance.Line2:SetText("[COLOR_FaithDark]"..tostring(score2).."[ENDCOLOR]");
+		elseif victoryType == "VICTORY_DIPLOMATIC" then
+			instance.Line1:SetText(tostring(score1));
+			instance.Line2:SetHide(true);
+		else
+			instance.Line1:SetText(tostring(score1));
+			instance.Line2:SetText(tostring(score2));
+		end
+	end
+end
+
+local SIZE_OVERALL_BG_HEIGHT:number = 95;
+local SIZE_OVERALL_INSTANCE:number = 75;
+
+function PopulateOverallInstance(instance:table, victoryType:string, typeText:string)
+	--print("FUN PopulateOverallInstance()", victoryType, typeText);
+	BASE_PopulateOverallInstance(instance, victoryType, typeText);
+	
+	-- this is just to resize the instance properly
+	local numIcons:number = PlayerManager.GetAliveMajorsCount() - 1; -- max 9 in one line
+	local numRows:number = math.floor(numIcons/9); -- full rows
+	if numIcons > numRows * 9 then numRows = numRows + 1; end -- partial row
+	instance.ButtonBG:SetSizeY(SIZE_OVERALL_BG_HEIGHT + SIZE_OVERALL_INSTANCE * numRows);
+end
+
 
 
 -- ===========================================================================
@@ -146,6 +248,7 @@ function ViewCulture()
 	-- new fields
 	Controls.TourismForOne:SetText(Locale.Lookup("LOC_BWR_TOURISM_FOR_ONE", m_iTourismForOne));
 end
+
 
 
 -- ===========================================================================
