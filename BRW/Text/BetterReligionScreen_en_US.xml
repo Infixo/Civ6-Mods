@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Better Religion Window
+    Author: Infixo
+    2020-06-25: Created
+-->
+<GameData>
+
+<BaseGameText>
+
+	<Row Tag="LOC_BRW_CITY_SORT_NOT_FOLLOWING"> <!-- LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING -->
+        <Text>Cities [COLOR_Red]Not[ENDCOLOR] Following Religion</Text>
+	</Row>
+
+</BaseGameText>
+
+</GameData>

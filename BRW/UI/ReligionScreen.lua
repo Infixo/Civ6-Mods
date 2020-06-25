@@ -10,6 +10,7 @@ include( "SupportFunctions" ); -- Round
 -- ===========================================================================
 --	CONSTANTS
 -- ===========================================================================
+local LL = Locale.Lookup;
 local PADDING_ICON:number = 5;
 local PADDING_TABS:number = 10;
 local NUM_MAX_BELIEFS:number = 4;
@@ -20,6 +21,7 @@ local PADDING_RELIGION_ICON_SELECTION:number = 8;
 local PADDING_RELIGION_ICON_SELECTION_SMALL:number = 4;
 local PADDING_TAB_BUTTON_TEXT:number = 55;
 local SIZE_BELIEF_ICON_SMALL:number = 32;
+local SIZE_BELIEF_ICON_MEDIUM:number = 50;
 local SIZE_BELIEF_ICON_LARGE:number = 64;
 local SIZE_RELIGION_ICON_SMALL:number = 22;
 local SIZE_RELIGION_ICON_MEDIUM:number = 50;
@@ -73,7 +75,7 @@ local m_CanCreatePantheon:boolean = false;
 local m_isConfirmedBeliefs:boolean = false;
 local m_isConfirmingBeliefs:boolean = false;
 local m_pGameReligion:table = Game.GetReligion();
-local m_CitiesFilter:number = CITIES_FILTER.FOLLOWING_RELIGION;
+local m_CitiesFilter:number = CITIES_FILTER.NOT_FOLLOWING_RELIGION;
 local m_CitiesIM:table = InstanceManager:new("City", "CityBG", Controls.Cities);
 local m_ReligionsIM:table = InstanceManager:new("Religion", "ReligionBG", Controls.Religions);
 local m_ReligionTabsIM:table = InstanceManager:new("ReligionTab", "Button", Controls.TabContainer);
@@ -955,6 +957,10 @@ end
 -- ===========================================================================
 --	Called if player selects any religion tab
 -- ===========================================================================
+function ColorWhite(str:string)
+    return "[COLOR:206,218,225,255]"..str.."[ENDCOLOR]";
+end
+
 function ViewReligion(religionType:number)
 	ResetState();
 
@@ -992,10 +998,10 @@ function ViewReligion(religionType:number)
 
 	if religion.Founder == localPlayerID or localDiplomacy:HasMet(religion.Founder) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
 		local civName:string = Locale.Lookup(GameInfo.Civilizations[civID].Name);
-		Controls.ViewReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", civName)));
+		Controls.ViewReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", ColorWhite(civName))));
 		local holyCity:table = CityManager.GetCity(playerReligion:GetHolyCityID());
 		if holyCity ~= nil then
-			Controls.ViewReligionHolyCity:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_HOLY_CITY", holyCity:GetName())));
+			Controls.ViewReligionHolyCity:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_HOLY_CITY", ColorWhite(LL(holyCity:GetName())))));
 		else
 			Controls.ViewReligionHolyCity:LocalizeAndSetText(Locale.ToUpper("LOC_UI_RELIGION_HOLY_CITY_NONE"));
 		end
@@ -1005,7 +1011,7 @@ function ViewReligion(religionType:number)
 	end
 
 	-- Update text and icons
-	SetBeliefIcon(Controls.ViewReligionPantheonIcon, belief.BeliefType, SIZE_BELIEF_ICON_LARGE);
+	--SetBeliefIcon(Controls.ViewReligionPantheonIcon, belief.BeliefType, SIZE_BELIEF_ICON_LARGE);
 	SetReligionIcon(Controls.ViewReligionImage, religionData.ReligionType, SIZE_RELIGION_ICON_LARGE, religionData.Color);
 
 	Controls.CitiesHeader:LocalizeAndSetText(Locale.ToUpper("LOC_UI_RELIGION_CITIES"));
@@ -1013,12 +1019,13 @@ function ViewReligion(religionType:number)
 	Controls.PantheonBeliefHeader:LocalizeAndSetText(Locale.ToUpper("LOC_UI_RELIGION_CITIES_PANTHEON_BELIEF"));
 	Controls.ViewReligionTitle:SetText(Locale.ToUpper(Locale.Lookup(Game.GetReligion():GetName(religionType))));
 	
-	Controls.ViewReligionPantheonTitle:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_PANTHEON_NAME", belief.Name)));
-	Controls.ViewReligionBeliefsHeader:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_BELIEFS_OF_RELIGION", Game.GetReligion():GetName(religionType))))
-	Controls.ViewReligionPantheonDescription:LocalizeAndSetText(belief.Description);
+	--Controls.ViewReligionPantheonTitle:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_PANTHEON_NAME", belief.Name)));
+	--Controls.ViewReligionBeliefsHeader:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_BELIEFS_OF_RELIGION", Game.GetReligion():GetName(religionType))))
+	--Controls.ViewReligionPantheonDescription:LocalizeAndSetText(belief.Description);
 
 	-- Spawn religion beliefs
 	m_ReligionBeliefsIM:ResetInstances();
+    AddPantheonBelief(pantheonBelief);
 	AddUnlockedBeliefs(religion);
 	AddLockedBeliefs(religion);
 
@@ -1062,7 +1069,7 @@ function ViewReligion(religionType:number)
 		local playerPantheon:number = playerReligion:GetPantheon();
 
 		for _, city in playerCities:Members() do
-			print("checking city", city:GetName());
+			--print("checking city", city:GetName());
 			local bIncludeCity:boolean = false;
 			local religionFollowers:table = {};
 			local religionPressures:table = {};
@@ -1206,9 +1213,9 @@ function ViewReligion(religionType:number)
 
 	-- Update dominant city text
 	if(numDominantCities == 1) then
-		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE", numDominantCities)));
+		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE", ColorWhite("1"))));
 	else
-		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE_PLURAL", numDominantCities)));
+		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE_PLURAL", ColorWhite(tostring(numDominantCities)))));
 	end
 
 	-- Sort cities based on number of followers
@@ -1311,6 +1318,25 @@ function ViewReligion(religionType:number)
 	RealizeSortTypePulldown();
 end
 
+
+-- ==============================================
+function AddPantheonBelief(pantheon)
+	local beliefInst:table = m_ReligionBeliefsIM:GetInstance();
+    if pantheon == -1 then
+        -- belief locked situation
+		beliefInst.BeliefBG:SetColor(UI.GetColorValueFromHexLiteral(0xFF808080));
+		beliefInst.BeliefLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_NO_PANTHEON")));
+		beliefInst.BeliefDescription:SetText("");
+    else
+		belief = GameInfo.Beliefs[pantheon];
+		beliefInst.BeliefBG:SetColor(UI.GetColorValue("COLOR_WHITE"));
+		beliefInst.BeliefLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_PANTHEON_NAME", belief.Name)));
+		beliefInst.BeliefDescription:LocalizeAndSetText(belief.Description);
+		SetBeliefIcon(beliefInst.BeliefIcon, belief.BeliefType, SIZE_BELIEF_ICON_MEDIUM);
+		beliefInst.BeliefIcon:SetHide(false);
+    end
+end
+
 -- ==============================================
 function AddUnlockedBeliefs(religion)
 	for _, beliefIndex in ipairs(religion.Beliefs) do
@@ -1319,7 +1345,7 @@ function AddUnlockedBeliefs(religion)
 		beliefInst.BeliefBG:SetColor(UI.GetColorValue("COLOR_WHITE"));
 		beliefInst.BeliefLabel:SetText(Locale.ToUpper(belief.Name));
 		beliefInst.BeliefDescription:LocalizeAndSetText(belief.Description);
-		SetBeliefIcon(beliefInst.BeliefIcon, belief.BeliefType, SIZE_BELIEF_ICON_LARGE);
+		SetBeliefIcon(beliefInst.BeliefIcon, belief.BeliefType, SIZE_BELIEF_ICON_MEDIUM);
 		beliefInst.BeliefIcon:SetHide(false);
 	end
 end
@@ -1383,7 +1409,7 @@ function PopulateSortType()
 		elseif(sortType == CITIES_FILTER.FOLLOWING_RELIGION) then
 			control.DescriptionText:LocalizeAndSetText("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING");
 		elseif(sortType == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then
-			control.DescriptionText:LocalizeAndSetText("cities NOT folowing");
+			control.DescriptionText:LocalizeAndSetText("LOC_BRW_CITY_SORT_NOT_FOLLOWING");
 		end
 		
 		control.Button:RegisterCallback( Mouse.eLClick,  function() OnSortTypeChanged(sortType); end );
@@ -1400,7 +1426,7 @@ function RealizeSortTypePulldown()
 	elseif(m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION) then
 		pullDownButton:SetText("   " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING"));
 	elseif(m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then
-		pullDownButton:SetText("   " .. Locale.Lookup("cities NOT folowing"));
+		pullDownButton:SetText("   " .. Locale.Lookup("LOC_BRW_CITY_SORT_NOT_FOLLOWING"));
 	end
 end
 

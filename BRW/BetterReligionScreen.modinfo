@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mod id="67B4DBCB-82AD-3F90-1595-43C677C1301E" version="1">
 	<Properties>
-		<Name>Better Religion Screen (UI)</Name>
-		<Description>Enhanced Religion Screen.[NEWLINE][NEWLINE]Version 1.0.</Description>
-		<Teaser>Enhanced Religion Screen.</Teaser>
+		<Name>Better Religion Window (UI)</Name>
+		<Description>Enhanced Religion Window.[NEWLINE][NEWLINE]Version 1.0.</Description>
+		<Teaser>Enhanced Religion Window.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>1.2,2.0</CompatibleVersions>
@@ -14,9 +14,13 @@
 			<File>UI/ReligionScreen.xml</File>
 			<File>UI/ReligionScreen.lua</File>
 		</ImportFiles>
+		<UpdateText id="BRW_UpdateText">
+            <File>Text/BetterReligionScreen_en_US.xml</File>
+        </UpdateText>
 	</InGameActions>
 	<Files>
 		<File>UI/ReligionScreen.xml</File>
 		<File>UI/ReligionScreen.lua</File>
+		<File>Text/BetterReligionScreen_en_US.xml</File>
 	</Files>
 </Mod>

@@ -215,22 +215,23 @@
     <!-- ==================================================================	-->
     <!--	View a single religion                                          	-->
     <!-- ==================================================================	-->
-    <Container ID="ViewReligion" Offset="20,90" Hidden="1" Size="980,677">
+    <Container ID="ViewReligion" Offset="10,80" Hidden="1" Size="1005,690">
 
       <!-- Religion Panel -->
-      <Grid Size="980,350" Texture="Religion_Panel" SliceCorner="24,30" SliceSize="0,0" SliceTextureSize="53,97" Color="255,255,255,178">
+      <!--<Grid Size="980,320" Texture="Religion_Panel" SliceCorner="24,30" SliceSize="0,0" SliceTextureSize="53,97" Color="255,255,255,178">-->
+      <Grid Size="parent,320" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
         <Image Anchor="L,B" Offset="-40,2" Texture="Religion_IconGlow" Color="255,255,255,200"/>
         
-        <Grid Size="14,parent-4" Offset="-10,2" Texture="Religion_BraceFlip" SliceCorner="0,24" SliceSize="14,120" SliceTextureSize="14,166"/>
-        <Image Texture="Religion_BraceDeco" FlipX="1" Anchor="L,C" Offset="-17,0"/>
-        <Grid Size="14,parent-4" Offset="975,2" Texture="Religion_Brace" SliceCorner="0,24" SliceSize="14,120" SliceTextureSize="14,166"/>
-        <Image Texture="Religion_BraceDeco" Anchor="R,C" Offset="-16,0"/>
+        <!--<Grid Size="14,parent-4" Offset="-10,2" Texture="Religion_BraceFlip" SliceCorner="0,24" SliceSize="14,120" SliceTextureSize="14,166"/>-->
+        <!--<Image Texture="Religion_BraceDeco" FlipX="1" Anchor="L,C" Offset="-17,0"/>-->
+        <!--<Grid Size="14,parent-4" Offset="975,2" Texture="Religion_Brace" SliceCorner="0,24" SliceSize="14,120" SliceTextureSize="14,166"/>-->
+        <!--<Image Texture="Religion_BraceDeco" Anchor="R,C" Offset="-16,0"/>-->
 
-        <Container Size="460,335" Anchor="L,T" Offset="20,0">
+        <Container Size="350,300" Anchor="L,T" Offset="10,0">
           <Stack StackGrowth="Right" Anchor="C,T" Offset="0,20">
             <Image ID="ViewReligionImage" Texture="Religion_Generic" Anchor="L,C"/>
             <Stack ID="ViewReligionStack"    Anchor="L,C" StackPadding="5">
-              <Label ID="ViewReligionTitle"     WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionHeadingSmall"    String="ViewReligionTitle" />
+              <Label ID="ViewReligionTitle"     WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionHeadingSmall"    Style="FontFlair24" String="ViewReligionTitle" />
               <Label ID="ViewReligionFounder"   WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionSubHeadingSmall" String="ViewReligionFounder" />
               <Label ID="ViewReligionHolyCity"  WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionSubHeadingSmall" String="ViewReligionHolyCity" />
               <Label ID="ViewReligionDominance" WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionSubHeadingSmall" String="ViewReligionDominance" />
@@ -239,6 +240,7 @@
           
           <Stack ID="IconStack" StackGrowth="Right" Anchor="C,T" Offset="0,145" Padding="2" Size="400,80"/>
 
+          <!--
           <Grid Style="DivHeader" Size="auto,auto" AutoSizePadding="0,5" Anchor="C,B" Offset="0,10">
             <Stack Anchor="C,C" StackGrowth="Down" StackPadding="0">
               <Label ID="ViewReligionPantheonTitle" Anchor="C,C" Style="ReligionSubHeading" String="ViewReligionPantheonTitle"  Align="Center" WrapWidth="350"/>
@@ -248,31 +250,34 @@
               </Stack>
             </Stack>
           </Grid>
+          -->
         </Container>
 
-        <Container Size="490,auto" Anchor="R,C" Offset="20,0">
-          <Grid Style="DivHeader" Size="465,24" Anchor="C,T" Offset="0,0">
+        <Container Size="560,auto" Anchor="R,T" Offset="20,0">
+          <!--
+          <Grid Style="DivHeader" Size="parent,24" Anchor="C,T" Offset="0,10">
             <Label ID="ViewReligionBeliefsHeader" WrapWidth="450" Anchor="C,C" Style="ReligionSubHeadingSmall" String="ViewReligionBeliefsHeader" />
           </Grid>
-          <ScrollPanel  ID="ViewReligionScroll" Size="450,295" Anchor="C,T" AutoScrollBar="1" Vertical="1" Offset="0,26">
-            <Stack ID="ViewReligionBeliefs" Size="350,360" StackPadding="-4" StackGrowth="Down"/>
+          -->
+          <ScrollPanel  ID="ViewReligionScroll" Size="parent,300" Anchor="C,T" AutoScrollBar="1" Vertical="1" Offset="0,10">
+            <Stack ID="ViewReligionBeliefs" Size="parent-4,360" StackPadding="-4" StackGrowth="Down"/>
             <ScrollBar Style="Slider_Religion" Anchor="R,C" AnchorSide="O,I"/>
           </ScrollPanel>
         </Container>
       </Grid>
 
       <!-- Cities Panel -->
-        <Grid Anchor="C,B" Size="980,330" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
+      <Grid Anchor="C,B" Size="parent,370" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
           <Label ID="CitiesHeader" Anchor="C,T" Offset="-300,10" Style="ReligionSubHeadingSmall" String="CitiesHeader" />
           <Label ID="FollowersHeader" Anchor="C,T" Offset="0,10" Style="ReligionSubHeadingSmall" String="FollowersHeader" />
           <Label ID="PantheonBeliefHeader" Anchor="C,T" Offset="300,10" Style="ReligionSubHeadingSmall" String="PantheonBeliefHeader" />
           <PullDown ID="FilterType" Size="327" Offset="32,-5" Style="SmallPullDown" />
           <Container ID="ReligionIcons" Anchor="C,T" Size="280,22"	Offset="10,28" />
           <Grid Size="parent-30,10" Offset="15,44" Texture="Controls_DecoHFlip" SliceCorner="19,0" SliceTextureSize="40,18" Color="255,255,255,70"/>
-          <ScrollPanel ID="CitiesScrollbar" Offset="20,58" Size="940,264" Style="ScrollPanelWithRightBar">
+          <ScrollPanel ID="CitiesScrollbar" Offset="20,58" Size="parent-40,300" Style="ScrollPanelWithRightBar">
             <Stack ID="Cities" StackPadding="3" StackGrowth="Down" />
           </ScrollPanel>
-        </Grid>
+      </Grid>
       
     </Container>
 
@@ -319,13 +324,14 @@
     </GridButton>
   </Instance>
 
-  <Instance Name="ReligionBelief">
-    <Grid	ID="BeliefBG" Texture="Religion_BeliefSlot" Size="450,auto" SliceCorner="96,36" SliceTextureSize="192,72" StateOffsetIncrement="0,72" AutoSizePadding="0,4" MinSize="192,72"> 
-      <Image ID="BeliefIcon" Size="64,64" Offset="6,4" Texture="BeliefsPantheon64" />
-      <Label ID="BeliefLabel" Offset="75,14" Style="ReligionSubHeadingSmallNoKern" String="BeliefLabel" />
-      <Label ID="BeliefDescription" Offset="75,32" Size="365" Style="ReligionDescription" String="BeliefDescription" />
-    </Grid>
-  </Instance>
+    <!-- belief slot displayed e.g. on the religion tab -->
+    <Instance Name="ReligionBelief">
+        <Grid	ID="BeliefBG" Texture="Religion_BeliefSlot" Size="565,auto" SliceCorner="96,36" SliceTextureSize="192,72" StateOffsetIncrement="0,72" AutoSizePadding="0,4" MinSize="192,53"> 
+            <Image ID="BeliefIcon" Size="50,50" Offset="5,3" Texture="BeliefsPantheon50" />
+            <Label ID="BeliefLabel" Offset="58,12" Style="ReligionSubHeadingSmallNoKern" String="BeliefLabel" />
+            <Label ID="BeliefDescription" Offset="58,30" WrapWidth="510" Style="ReligionDescription" String="BeliefDescription" />
+        </Grid>
+    </Instance>
 
   <Instance Name="ReligionOption">
     <Button	ID="ReligionButton" Texture="Religion_IconButton" Size="124,136" StateOffsetIncrement="0,138" States="5">
@@ -338,7 +344,7 @@
   </Instance>
 
   <Instance Name="City">
-    <Grid	ID="CityBG" Texture="Controls_SlotCap" Size="335,auto" SliceCorner="15,17" SliceTextureSize="29,34">
+    <Grid	ID="CityBG" Texture="Controls_SlotCap" Size="960,auto" SliceCorner="15,17" SliceTextureSize="29,34">
       <Label ID="PressureToConvert" Offset="5,0" Anchor="L,C" Style="FontNormal14" Color="220,220,220,255" String="$222" />
       <Label ID="CityName" Offset="45,0" Size="275" Anchor="L,C" Style="ReligionDataCell" String="CityName" />
       <Label ID="PressureFromIcon" Offset="285,2" Anchor="L,C" Style="ReligionDataCell" String="[ICON_PressureRight]" />
@@ -355,7 +361,7 @@
   </Instance>
 
 	<Instance Name="CityFollowers">
-		<Grid ID="BG" Texture="Controls_Slot" Size="1,47" SliceCorner="17,17" SliceTextureSize="34,34">
+		<Grid ID="BG" Texture="Controls_Slot" Size="1,45" SliceCorner="17,17" SliceTextureSize="34,34">
 			<!--<ReligionDataCell			    Style="FontNormal16"	Color="118,133,144,255" />-->
 			<Label ID="Followers" Anchor="C,C" Offset="0,-8" Style="FontNormal16" Color="192,192,192,255" String="$11$"/>
 			<Label ID="Pressure"  Anchor="C,C" Offset="0,10" Style="FontNormal14" Color="118,133,144,255" String="$999$"/>
