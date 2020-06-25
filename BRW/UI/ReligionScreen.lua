@@ -1,8 +1,11 @@
+print("Loading ReligionScreen.lua from Better Religion Screen v1.0");
+
 -- Copyright 2017-2019, Firaxis Games
 include("TabSupport");
 include("InstanceManager");
 include("ModalScreen_PlayerYieldsHelper");
 include("GameCapabilities");
+include( "SupportFunctions" ); -- Round
 
 -- ===========================================================================
 --	CONSTANTS
@@ -34,7 +37,7 @@ local DATA_FIELD_BELIEFS_IM:string = "BeliefsIM";
 local DATA_FIELD_SELECTION:string = "Selection";
 local DATA_FIELD_INDEX:string = "Index";
 local DATA_FIELD_ICONS:string = "Icons";
-local CITIES_FILTER:table = { FOLLOWING_RELIGION = 1, RELIGION_PRESENT = 2 };
+local CITIES_FILTER:table = { FOLLOWING_RELIGION = 1, RELIGION_PRESENT = 2, NOT_FOLLOWING_RELIGION = 3 };
 
 -- Table of localized strings used for when religion units can and cannot be produced
 local UNIT_ICON_TOOLTIPS:table = {};
@@ -1059,17 +1062,23 @@ function ViewReligion(religionType:number)
 		local playerPantheon:number = playerReligion:GetPantheon();
 
 		for _, city in playerCities:Members() do
+			print("checking city", city:GetName());
 			local bIncludeCity:boolean = false;
-			local religionFollowers:table = nil;
+			local religionFollowers:table = {};
+			local religionPressures:table = {};
+			local pantheonPressure:number = 0;
 			local cityReligion:table = city:GetReligion();
 			local religionsInCity:table = cityReligion:GetReligionsInCity();
 
 			if(cityReligion:GetMajorityReligion() == religionType) then
 				numDominantCities = numDominantCities + 1;
 				if(m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION) then bIncludeCity = true; end
+			else
+				if(m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then bIncludeCity = true; end
 			end
 
 			for _, cityReligionData in ipairs(religionsInCity) do
+				--[[
 				local bIncludeData:boolean = false;
 				for _, religionEntry in ipairs(m_ReligionIcons) do
 					if(cityReligionData.Religion == religionEntry.Religion) then
@@ -1077,18 +1086,47 @@ function ViewReligion(religionType:number)
 						break;
 					end
 				end
-				if(bIncludeData) then
-					if(religionFollowers == nil) then religionFollowers = {}; end
-					local followers = cityReligionData.Followers;
-					religionFollowers[cityReligionData.Religion] = followers;
-					if(m_CitiesFilter == CITIES_FILTER.RELIGION_PRESENT and cityReligionData.Religion == religionType) then
-						bIncludeCity = true;
-					end
+				-]]
+				--if(bIncludeData) then
+				local eReligion:number = cityReligionData.Religion;
+				if eReligion == -1 then  -- pantheon
+					eReligion = 0;
+					pantheonPressure = cityReligionData.Pressure;
 				end
+				--if(religionFollowers == nil) then religionFollowers = {}; end
+				--if(religionPressures == nil) then religionPressures = {}; end
+				local followers = cityReligionData.Followers;
+				religionFollowers[eReligion] = followers;
+				religionPressures[eReligion] = cityReligionData.Pressure;
+				if(m_CitiesFilter == CITIES_FILTER.RELIGION_PRESENT and cityReligionData.Religion == religionType) then
+					bIncludeCity = true;
+				end
+				--end
+			end
+			
+			-- calculate how much pressure is needed to convert a city
+			-- our pressure must be equal to all others
+			local pressureToConvert:number = 0;
+			if cityReligion:GetMajorityReligion() ~= religionType then
+				local iOurPressure:number, iOtherPressure:number = 0, 0;
+				for rel,pres in pairs(religionPressures) do
+					if rel == religionType then iOurPressure = pres; else iOtherPressure = iOtherPressure + pres; end
+				end
+				pressureToConvert = iOtherPressure - iOurPressure;
 			end
 			
 			if(bIncludeCity) then
-				table.insert(cities, {City = city, Pantheon = cityReligion:GetActivePantheon(), Followers = religionFollowers});
+				--print("inserting city", city:GetName());
+				table.insert(cities, {
+					-- data gathered about a single city
+					City = city,
+					Pantheon = cityReligion:GetActivePantheon(),
+					PantheonPressure = pantheonPressure,
+					Followers = religionFollowers,
+					Pressures = religionPressures,
+					PressureFromCity = cityReligion:GetPressureFromCity(),
+					PressureToConvert = pressureToConvert,
+				});
 			end
 
 			if(showUnitIcons and playerID == localPlayerID and (not canProduceApostle or not canProduceMissionary)) then
@@ -1174,29 +1212,61 @@ function ViewReligion(religionType:number)
 	end
 
 	-- Sort cities based on number of followers
-	table.sort(cities, function(a, b) return SortCitiesByFollowers(a.City:GetReligion(), b.City:GetReligion(), religionType) end);
+	--table.sort(cities, function(a, b) return SortCitiesByFollowers(a.City:GetReligion(), b.City:GetReligion(), religionType) end);
+	table.sort(cities, function(a, b) return SortCities(a, b, religionType) end);
 
+	-- holy city
+	local tHolyCities:table = {};
+	for _,player in ipairs(PlayerManager.GetAliveMajors()) do
+		local holyCity:table = player:GetReligion():GetHolyCityID();
+		if holyCity.id ~= -1 then tHolyCities[ holyCity.player ] = holyCity.id; end
+	end
+	
 	-- Spawn cities and populate follower for each founded religion
+	print("SHOW CITIES");
 	m_CitiesIM:ResetInstances();
-	for i = 1, table.count(cities) do
-		local cityData:table = cities[i].City;
-		local cityPantheon:number = cities[i].Pantheon;
-		local cityFollowers:table = cities[i].Followers;
+	for _,city in ipairs(cities) do
+		local cityData:table = city.City;
+		--print("show city", cityData:GetName());
+		--local cityPantheon:number = cities[i].Pantheon;
+		--local cityFollowers:table = cities[i].Followers;
+		--local cityPressures:table = cities[i].Pressures;
+		--local cityPressureFrom:number = cities[i].PressureFromCity;
 		local cityInst:table = m_CitiesIM:GetInstance();
 		local cityOwner:number = cityData:GetOwner();
 		local civID:number = PlayerConfigurations[cityOwner]:GetCivilizationTypeID();
 		local civName:string = Locale.Lookup(GameInfo.Civilizations[civID].Name);
 		
+		-- holy city
+		local sHolyCity:string = "";
+		if tHolyCities[cityOwner] == cityData:GetID() then sHolyCity = "[ICON_Religion]"; end
+		
 		if localPlayerID == cityOwner or localDiplomacy:HasMet(cityOwner) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
-			cityInst.CityName:LocalizeAndSetText("LOC_UI_RELIGION_CITY_NAME", cityData:GetName(), civName);
+			cityInst.CityName:SetText(sHolyCity..Locale.Lookup("LOC_UI_RELIGION_CITY_NAME", cityData:GetName(), civName));
 		else
 			cityInst.CityName:LocalizeAndSetText("LOC_UI_RELIGION_UNKNOWN_CITY");
 		end
-
-		if(cityPantheon < 0) then
-			cityInst.CityPantheon:LocalizeAndSetText("LOC_UI_RELIGION_NO_PANTHEON_BELIEF");
+		if city.PressureFromCity ~= 0 then
+			cityInst.PressureFromIcon:SetHide(false);
+			cityInst.PressureFromCity:SetText(string.format("%+d", city.PressureFromCity));
+			cityInst.PressureFromCity:SetHide(false);
 		else
-			cityInst.CityPantheon:LocalizeAndSetText(GameInfo.Beliefs[cityPantheon].Description);
+			cityInst.PressureFromIcon:SetHide(true);
+			cityInst.PressureFromCity:SetHide(true);
+		end
+		if city.PressureToConvert ~= 0 then
+			cityInst.PressureToConvert:SetText(Round(city.PressureToConvert, 0));
+		else
+			cityInst.PressureToConvert:SetText("[ICON_Checkmark]");
+		end
+
+		if(city.Pantheon < 0) then
+			cityInst.CityPantheon:LocalizeAndSetText("LOC_UI_RELIGION_NO_PANTHEON_BELIEF");
+			cityInst.PantheonPressure:SetHide(true);
+		else
+			cityInst.CityPantheon:LocalizeAndSetText(GameInfo.Beliefs[city.Pantheon].Name);
+			cityInst.CityPantheon:SetToolTipString(Locale.Lookup(GameInfo.Beliefs[city.Pantheon].Description));
+			cityInst.PantheonPressure:SetText(Round(city.PantheonPressure, 0));
 		end
 
 		local cityFollowersIM:table = cityInst[DATA_FIELD_FOLLOWERS_IM];
@@ -1210,6 +1280,7 @@ function ViewReligion(religionType:number)
 		local nextX:number = 0;
 		local nextSizeX:number = bucketSize - 2;
 		for i, religionEntry in ipairs(m_ReligionIcons) do
+			local eReligion:number = religionEntry.Religion;
 			local followersInst:table = cityFollowersIM:GetInstance();
 
 			if(i > 1) then
@@ -1221,12 +1292,17 @@ function ViewReligion(religionType:number)
 			local rowSize = math.max(cityInst.CityPantheon:GetSizeY() + 20, 38);
 			followersInst.BG:SetSizeY(rowSize);
 
-			if(cityFollowers ~= nil and cityFollowers[religionEntry.Religion] ~= nil and cityFollowers[religionEntry.Religion] ~= 0) then
-				followersInst.Followers:SetText(cityFollowers[religionEntry.Religion]);
+			if(city.Followers ~= nil and city.Followers[eReligion] ~= nil and city.Followers[eReligion] ~= 0) then
+				followersInst.Followers:SetText(city.Followers[eReligion]);
 			else
 				followersInst.Followers:SetText("-");
 			end
-			followersInst.Followers:SetOffsetX((nextSizeX / 2) - (followersInst.Followers:GetSizeX() / 2));
+			if(city.Pressures ~= nil and city.Pressures[eReligion] ~= nil and city.Pressures[eReligion] ~= 0) then
+				followersInst.Pressure:SetText(Round(city.Pressures[eReligion],0));
+			else
+				followersInst.Pressure:SetText("-");
+			end
+			--followersInst.Followers:SetOffsetX((nextSizeX / 2) - (followersInst.Followers:GetSizeX() / 2));
 			nextX = nextX + bucketSize;
 		end
 	end
@@ -1265,6 +1341,14 @@ function AddLockedBeliefs(religion)
 end
 
 -- ==============================================
+
+function SortCities(a:table, b:table, religionType)
+	if m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION then
+		return a.PressureToConvert > b.PressureToConvert;
+	end
+	return SortCitiesByFollowers(a.City:GetReligion(), b.City:GetReligion(), religionType); -- call orginal function
+end
+
 function SortCitiesByFollowers(cityReligionA:table, cityReligionB:table, selectedReligion:number)
 	local numFollowersA:number, numFollowersB:number = 0, 0;
 
@@ -1296,8 +1380,10 @@ function PopulateSortType()
 		control.DescriptionText:SetOffsetX(10);
 		if(sortType == CITIES_FILTER.RELIGION_PRESENT) then
 			control.DescriptionText:LocalizeAndSetText("LOC_UI_RELIGION_CITY_SORT_TYPE_PRESENT");
-		elseif(m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION) then
+		elseif(sortType == CITIES_FILTER.FOLLOWING_RELIGION) then
 			control.DescriptionText:LocalizeAndSetText("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING");
+		elseif(sortType == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then
+			control.DescriptionText:LocalizeAndSetText("cities NOT folowing");
 		end
 		
 		control.Button:RegisterCallback( Mouse.eLClick,  function() OnSortTypeChanged(sortType); end );
@@ -1313,6 +1399,8 @@ function RealizeSortTypePulldown()
 		pullDownButton:SetText("   " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_PRESENT"));
 	elseif(m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION) then
 		pullDownButton:SetText("   " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING"));
+	elseif(m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then
+		pullDownButton:SetText("   " .. Locale.Lookup("cities NOT folowing"));
 	end
 end
 
@@ -1607,3 +1695,4 @@ function Initialize()
 end
 Initialize();
 
+print("OK loaded ReligionScreen.lua from Better Religion Screen");

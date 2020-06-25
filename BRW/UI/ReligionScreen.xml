@@ -339,10 +339,14 @@
 
   <Instance Name="City">
     <Grid	ID="CityBG" Texture="Controls_SlotCap" Size="335,auto" SliceCorner="15,17" SliceTextureSize="29,34">
-      <Label ID="CityName" Offset="40,0" Size="300" Anchor="L,C" Style="ReligionDataCell" String="CityName" />
+      <Label ID="PressureToConvert" Offset="5,0" Anchor="L,C" Style="FontNormal14" Color="220,220,220,255" String="$222" />
+      <Label ID="CityName" Offset="45,0" Size="275" Anchor="L,C" Style="ReligionDataCell" String="CityName" />
+      <Label ID="PressureFromIcon" Offset="285,2" Anchor="L,C" Style="ReligionDataCell" String="[ICON_PressureRight]" />
+      <Label ID="PressureFromCity" Offset="305,0" Anchor="L,C" Style="ReligionDataCell" Color="168,168,168,255" String="$+4" />
       <Container ID="CityFollowers" Size="280,auto"	Offset="340,0" AutoSizePadding="0,0">
         <Grid ID="BG" Texture="Controls_Slot" Size="310,auto" SliceCorner="17,17" SliceTextureSize="34,34"  AnchorSide="O,I" Anchor="R,T" Offset="3,0">
           <Grid	Texture="Religion_BeliefSlotSmall" Size="310,auto" SliceCorner="76,19" SliceTextureSize="152,38" AutoSizePadding="5,10" MinSize="152,38">
+			<Label ID="PantheonPressure" Anchor="L,C" Offset="15,0" Style="FontNormal14" Color="118,133,144,255" String="$999$"/>
             <Label ID="CityPantheon" WrapWidth="290" Anchor="C,C" Style="ReligionDataSmall" String="CityPantheon" />
           </Grid>
         </Grid>
@@ -350,11 +354,13 @@
     </Grid>
   </Instance>
 
-  <Instance Name="CityFollowers">
-    <Grid ID="BG" Texture="Controls_Slot" Size="1,47" SliceCorner="17,17" SliceTextureSize="34,34">
-      <Label ID="Followers" Anchor="L,C" Style="ReligionDataCell" String="Followers" />
-    </Grid>
-  </Instance>
+	<Instance Name="CityFollowers">
+		<Grid ID="BG" Texture="Controls_Slot" Size="1,47" SliceCorner="17,17" SliceTextureSize="34,34">
+			<!--<ReligionDataCell			    Style="FontNormal16"	Color="118,133,144,255" />-->
+			<Label ID="Followers" Anchor="C,C" Offset="0,-8" Style="FontNormal16" Color="192,192,192,255" String="$11$"/>
+			<Label ID="Pressure"  Anchor="C,C" Offset="0,10" Style="FontNormal14" Color="118,133,144,255" String="$999$"/>
+		</Grid>
+	</Instance>
 
   <Instance Name="Religion">
     <Grid ID="ReligionBG" Size="490,340" Texture="Religion_Panel" SliceCorner="24,30" SliceTextureSize="53,97" MinSize="53,97" Color="255,255,255,204">
