@@ -11,6 +11,9 @@
 	<Row Tag="LOC_BRW_CITY_SORT_NOT_FOLLOWING"> <!-- LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING -->
         <Text>Cities [COLOR_Red]Not[ENDCOLOR] Following Religion</Text>
 	</Row>
+	<Row Tag="LOC_BRW_CITY_SORT_ALL">
+        <Text>All Cities</Text>
+	</Row>
 
 </BaseGameText>
 

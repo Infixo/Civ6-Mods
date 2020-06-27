@@ -235,11 +235,17 @@
               <Label ID="ViewReligionFounder"   WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionSubHeadingSmall" String="ViewReligionFounder" />
               <Label ID="ViewReligionHolyCity"  WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionSubHeadingSmall" String="ViewReligionHolyCity" />
               <Label ID="ViewReligionDominance" WrapWidth="400" Align="center" Anchor="C,T" Style="ReligionSubHeadingSmall" String="ViewReligionDominance" />
+              <Label                                            Align="center" Anchor="C,T" Offset="0,5" Style="ReligionSubHeadingSmall" String="{LOC_WORLD_RANKINGS_RELIGION_CIVS_CONVERTED:upper}"/>
             </Stack>
           </Stack>
           
-          <Stack ID="IconStack" StackGrowth="Right" Anchor="C,T" Offset="0,145" Padding="2" Size="400,80"/>
-
+          <Stack ID="IconStack" StackGrowth="Down" Anchor="L,T" Offset="10,130" Padding="5" Size="100,150"/>
+          
+          <ScrollPanel ID="CivStackScroll" Anchor="L,T" Offset="120,132" Size="200,200" AutoScrollBar="1" Vertical="1">
+              <Stack ID="CivStack" StackGrowth="Down" StackPadding="0" Size="parent-10,300"/>
+              <ScrollBar Style="Slider_Religion" Anchor="R,C" AnchorSide="O,I"/>
+          </ScrollPanel>
+          
           <!--
           <Grid Style="DivHeader" Size="auto,auto" AutoSizePadding="0,5" Anchor="C,B" Offset="0,10">
             <Stack Anchor="C,C" StackGrowth="Down" StackPadding="0">
@@ -271,7 +277,8 @@
           <Label ID="CitiesHeader" Anchor="C,T" Offset="-300,10" Style="ReligionSubHeadingSmall" String="CitiesHeader" />
           <Label ID="FollowersHeader" Anchor="C,T" Offset="0,10" Style="ReligionSubHeadingSmall" String="FollowersHeader" />
           <Label ID="PantheonBeliefHeader" Anchor="C,T" Offset="300,10" Style="ReligionSubHeadingSmall" String="PantheonBeliefHeader" />
-          <PullDown ID="FilterType" Size="327" Offset="32,-5" Style="SmallPullDown" />
+          <PullDown ID="FilterType" Size="240" Offset="32,-5" Style="SmallPullDown" />
+          <PullDown ID="FilterCiv" Size="95" Offset="270,-5" Style="SmallPullDown" />
           <Container ID="ReligionIcons" Anchor="C,T" Size="280,22"	Offset="10,28" />
           <Grid Size="parent-30,10" Offset="15,44" Texture="Controls_DecoHFlip" SliceCorner="19,0" SliceTextureSize="40,18" Color="255,255,255,70"/>
           <ScrollPanel ID="CitiesScrollbar" Offset="20,58" Size="parent-40,300" Style="ScrollPanelWithRightBar">
@@ -346,9 +353,10 @@
   <Instance Name="City">
     <Grid	ID="CityBG" Texture="Controls_SlotCap" Size="960,auto" SliceCorner="15,17" SliceTextureSize="29,34">
       <Label ID="PressureToConvert" Offset="5,0" Anchor="L,C" Style="FontNormal14" Color="220,220,220,255" String="$222" />
-      <Label ID="CityName" Offset="45,0" Size="275" Anchor="L,C" Style="ReligionDataCell" String="CityName" />
-      <Label ID="PressureFromIcon" Offset="285,2" Anchor="L,C" Style="ReligionDataCell" String="[ICON_PressureRight]" />
-      <Label ID="PressureFromCity" Offset="305,0" Anchor="L,C" Style="ReligionDataCell" Color="168,168,168,255" String="$+4" />
+      <Label ID="CityName" Offset="45,0" Size="200" Anchor="L,C" Style="ReligionDataCell" String="CityName" />
+      <Label ID="PressureFromIcon" Offset="215,2" Anchor="L,C" Style="ReligionDataCell" String="[ICON_PressureRight]" />
+      <Label ID="PressureFromCity" Offset="235,0" Anchor="L,C" Style="ReligionDataCell" Color="168,168,168,255" String="$+4" />
+      <Label ID="CivName" Offset="260,0" Size="75" Anchor="L,C" Style="ReligionDataCell" Style="FontNormal14" String="$Civ" />
       <Container ID="CityFollowers" Size="280,auto"	Offset="340,0" AutoSizePadding="0,0">
         <Grid ID="BG" Texture="Controls_Slot" Size="310,auto" SliceCorner="17,17" SliceTextureSize="34,34"  AnchorSide="O,I" Anchor="R,T" Offset="3,0">
           <Grid	Texture="Religion_BeliefSlotSmall" Size="310,auto" SliceCorner="76,19" SliceTextureSize="152,38" AutoSizePadding="5,10" MinSize="152,38">
@@ -393,10 +401,18 @@
   </Instance>
 
   <Instance Name="UnitIconInstance">
-    <Image ID="UnitIconBacking" Texture="Controls_SlotCircle">
-      <Image ID="UnitIcon" Anchor="C,C" Size="70,70" Icon="ICON_UNIT_APOSTLE_PORTRAIT"/>
-      <Label ID="UnitCount" Anchor="C,B" Offset="0,-16" String="0" Style="FontNormal16"/>
+    <Image ID="UnitIconBacking" Texture="Controls_Slot" Size="40,40">
+      <Image ID="UnitIcon" Anchor="C,C" Size="38,38" Icon="ICON_UNIT_APOSTLE_PORTRAIT"/>
+      <Label ID="UnitCount" Anchor="L,C" Offset="45,0" String="0" Style="FontNormal16"/>
     </Image>
   </Instance>
+  
+    <Instance Name="CivLineInstance">
+        <Container ID="CivContainer" Size="200,20">
+            <Label ID="Converted" Anchor="L,C" Offset="0,1" String="$x" Style="ReligionDataCell"/>
+            <Label ID="CivName" Anchor="L,C" Offset="25,0" String="$name" Style="ReligionDataCell"/>
+            <Label ID="Cities" Anchor="L,C" Offset="140,0" String="$4/6" Style="ReligionDataCell"/>
+        </Image>
+    </Instance>
   
 </Context>

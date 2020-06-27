@@ -39,7 +39,7 @@ local DATA_FIELD_BELIEFS_IM:string = "BeliefsIM";
 local DATA_FIELD_SELECTION:string = "Selection";
 local DATA_FIELD_INDEX:string = "Index";
 local DATA_FIELD_ICONS:string = "Icons";
-local CITIES_FILTER:table = { FOLLOWING_RELIGION = 1, RELIGION_PRESENT = 2, NOT_FOLLOWING_RELIGION = 3 };
+local CITIES_FILTER:table = { FOLLOWING_RELIGION = 1, RELIGION_PRESENT = 2, NOT_FOLLOWING_RELIGION = 3, ALL_CITIES = 4 };
 
 -- Table of localized strings used for when religion units can and cannot be produced
 local UNIT_ICON_TOOLTIPS:table = {};
@@ -76,6 +76,7 @@ local m_isConfirmedBeliefs:boolean = false;
 local m_isConfirmingBeliefs:boolean = false;
 local m_pGameReligion:table = Game.GetReligion();
 local m_CitiesFilter:number = CITIES_FILTER.NOT_FOLLOWING_RELIGION;
+local m_CivFilter:number = -1; -- -1 for all, -2 for City States
 local m_CitiesIM:table = InstanceManager:new("City", "CityBG", Controls.Cities);
 local m_ReligionsIM:table = InstanceManager:new("Religion", "ReligionBG", Controls.Religions);
 local m_ReligionTabsIM:table = InstanceManager:new("ReligionTab", "Button", Controls.TabContainer);
@@ -88,6 +89,7 @@ local m_SelectedBeliefsIM:table = InstanceManager:new("BeliefSlot", "BeliefButto
 local m_ReligionBeliefsIM:table = InstanceManager:new("ReligionBelief", "BeliefBG", Controls.ViewReligionBeliefs);
 local m_ReligionSelections:table = InstanceManager:new("ReligionOption", "ReligionButton", Controls.ChooseReligionItems);
 local m_UnitIconIM:table = InstanceManager:new("UnitIconInstance", "UnitIconBacking", Controls.IconStack);
+local m_CivLineIM:table = InstanceManager:new("CivLineInstance", "CivContainer", Controls.CivStack);
 
 -- ===========================================================================
 --	PLAYER VARIABLES
@@ -1060,14 +1062,24 @@ function ViewReligion(religionType:number)
 
 	-- Gather data necessary for cities panel
 	local cities:table = {};
-	local numDominantCities:number = 0;
+    local civs:table = {};
+	local numDominantCities:number = 0; -- this counts all converted cities
 	local majorPlayers:table = PlayerManager.GetAlive();
 	for _, player in ipairs(majorPlayers) do
 		local playerID:number = player:GetID();
 		local playerCities:table = player:GetCities();
 		local playerReligion:table = player:GetReligion();
 		local playerPantheon:number = playerReligion:GetPantheon();
+		local bIncludeCiv:boolean = false;
+        
+        if m_CivFilter == -1 then bIncludeCiv = true; -- all
+        elseif m_CivFilter == -2 and not PlayerManager.IsMajor(playerID) then bIncludeCiv = true; -- all
+        elseif m_CivFilter == playerID then bIncludeCiv = true;
+        end
 
+        -- count converted cities
+        local numConvertedCities:number = 0;
+        
 		for _, city in playerCities:Members() do
 			--print("checking city", city:GetName());
 			local bIncludeCity:boolean = false;
@@ -1077,8 +1089,9 @@ function ViewReligion(religionType:number)
 			local cityReligion:table = city:GetReligion();
 			local religionsInCity:table = cityReligion:GetReligionsInCity();
 
-			if(cityReligion:GetMajorityReligion() == religionType) then
+			if cityReligion:GetMajorityReligion() == religionType then
 				numDominantCities = numDominantCities + 1;
+				numConvertedCities = numConvertedCities + 1;
 				if(m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION) then bIncludeCity = true; end
 			else
 				if(m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then bIncludeCity = true; end
@@ -1108,6 +1121,7 @@ function ViewReligion(religionType:number)
 				if(m_CitiesFilter == CITIES_FILTER.RELIGION_PRESENT and cityReligionData.Religion == religionType) then
 					bIncludeCity = true;
 				end
+                if m_CitiesFilter == CITIES_FILTER.ALL_CITIES then bIncludeCity = true; end -- overwrites all previous ones
 				--end
 			end
 			
@@ -1122,7 +1136,7 @@ function ViewReligion(religionType:number)
 				pressureToConvert = iOtherPressure - iOurPressure;
 			end
 			
-			if(bIncludeCity) then
+			if bIncludeCity and bIncludeCiv then
 				--print("inserting city", city:GetName());
 				table.insert(cities, {
 					-- data gathered about a single city
@@ -1145,26 +1159,67 @@ function ViewReligion(religionType:number)
 					canProduceMissionary = buildQueue:CanProduce("UNIT_MISSIONARY", false, true);
 				end
 			end
-		end
-	end
+		end -- for cities
+        
+        -- gather civ data for alive majors
+        if player:IsMajor() then -- alive is from the loop
+            table.insert(civs, {
+                IsConverted = ( playerReligion:GetReligionInMajorityOfCities() == religionType ),
+                CivName = LL(PlayerConfigurations[playerID]:GetCivilizationShortDescription()),
+                NumCities = playerCities:GetCount(),
+                NumConvCities = numConvertedCities,
+                IsKnown = ( playerID == localPlayerID and true or localDiplomacy:HasMet(playerID) ),
+            });
+        end
+        
+	end -- for alive players
+    
+    -- show list of civs
+    print("ALL CIVS");
+    --for _,civ in ipairs(civs) do print(civ.IsConverted, civ.CivName, civ.NumCities, civ.NumConvCities); end -- debug
+	m_CivLineIM:ResetInstances();
+    for _,civ in ipairs(civs) do
+        print(civ.IsConverted, civ.CivName, civ.NumCities, civ.NumConvCities); -- debug
+		local inst:table = m_CivLineIM:GetInstance();
+        if civ.IsKnown then
+            inst.Converted:SetText(civ.IsConverted and "[ICON_Checkmark]" or "[ICON_CheckFail]");
+            inst.CivName:SetText(civ.CivName);
+            inst.Cities:SetText(string.format("%d / %d", civ.NumConvCities, civ.NumCities));
+        else
+            inst.Converted:SetHide(true);
+            inst.CivName:SetText(LL("LOC_PLAYERNAME_UNKNOWN"));
+            inst.Cities:SetHide(true);
+        end
+    end
+	RealizeStack(Controls.CivStack, Controls.CivStackScroll);
+		--Controls.CivStack:CalculateSize();
+		--Controls.CivStack:ReprocessAnchoring();
+    
 
 	-- Add scenario specific religious units
 	m_UnitIconIM:ResetInstances();
 
 	-- Table of unit types to ignore since they have already been added
-	local typesToIgnore:table = {};
-
+	--local typesToIgnore:table = {};
 	local localPlayer = Players[Game.GetLocalPlayer()];
+    
+    local function CanProduce(unitType:string)
+        for _,city in localPlayer:GetCities():Members() do
+            if city:GetBuildQueue():CanProduce(unitType, false, true) then return true; end
+        end
+        return false;
+    end
+    
 	local localPlayerCities = localPlayer:GetCities();
 
-	for _, city in localPlayerCities:Members() do
-		local buildQueue:table = city:GetBuildQueue();
+	--for _, city in localPlayerCities:Members() do
+		--local buildQueue:table = city:GetBuildQueue();
 
 		for row in GameInfo.Units() do
-			if row.ReligiousStrength > 0 and not typesToIgnore[row.UnitType] then
+			if row.ReligiousStrength > 0 then --and not typesToIgnore[row.UnitType] then
 				-- Create instance
 				local unitIconInst:table = m_UnitIconIM:GetInstance();
-				typesToIgnore[row.UnitType] = true;
+				--typesToIgnore[row.UnitType] = true;
 
 				-- Update unit icon
 				local iconString:string = "ICON_" .. row.UnitType .. "_PORTRAIT";
@@ -1189,7 +1244,7 @@ function ViewReligion(religionType:number)
 					unitIconInst.UnitIconBacking:SetAlpha(1.0);
 				end
 
-				if buildQueue:CanProduce(row.UnitType, false, true) then
+				if CanProduce(row.UnitType) then
 					-- If we can currently produce set tooltip to normal description
 					if UNIT_ICON_TOOLTIPS[row.UnitType] and UNIT_ICON_TOOLTIPS[row.UnitType].canProduce then
 						unitIconInst.UnitIconBacking:SetToolTipString(Locale.Lookup(UNIT_ICON_TOOLTIPS[row.UnitType].canProduce));
@@ -1206,7 +1261,7 @@ function ViewReligion(religionType:number)
 				end
 			end
 		end
-	end
+	--end
 
 	RealizeStack(Controls.IconStack);
 	RealizeStack(Controls.ViewReligionStack);
@@ -1249,9 +1304,14 @@ function ViewReligion(religionType:number)
 		if tHolyCities[cityOwner] == cityData:GetID() then sHolyCity = "[ICON_Religion]"; end
 		
 		if localPlayerID == cityOwner or localDiplomacy:HasMet(cityOwner) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
-			cityInst.CityName:SetText(sHolyCity..Locale.Lookup("LOC_UI_RELIGION_CITY_NAME", cityData:GetName(), civName));
+			--cityInst.CityName:SetText(sHolyCity..Locale.Lookup("LOC_UI_RELIGION_CITY_NAME", cityData:GetName(), civName));
+			cityInst.CityName:SetText(sHolyCity..LL(cityData:GetName()));
+            if sHolyCity ~= "" then cityInst.CityName:SetToolTipString(LL("LOC_HOF_REPORTS_RELIGIONS_HOLY_CITY")); end
+			cityInst.CivName:SetText(civName);
+            bIsKnown = true;
 		else
-			cityInst.CityName:LocalizeAndSetText("LOC_UI_RELIGION_UNKNOWN_CITY");
+			cityInst.CityName:SetText(LL("LOC_UI_RELIGION_UNKNOWN_CITY"));
+			cityInst.CivName:SetText("-");
 		end
 		if city.PressureFromCity ~= 0 then
 			cityInst.PressureFromIcon:SetHide(false);
@@ -1261,11 +1321,11 @@ function ViewReligion(religionType:number)
 			cityInst.PressureFromIcon:SetHide(true);
 			cityInst.PressureFromCity:SetHide(true);
 		end
-		if city.PressureToConvert ~= 0 then
-			cityInst.PressureToConvert:SetText(Round(city.PressureToConvert, 0));
-		else
-			cityInst.PressureToConvert:SetText("[ICON_Checkmark]");
-		end
+        if city.PressureToConvert ~= 0 then
+            cityInst.PressureToConvert:SetText(Round(city.PressureToConvert, 0));
+        else
+            cityInst.PressureToConvert:SetText("[ICON_Checkmark]");
+        end
 
 		if(city.Pantheon < 0) then
 			cityInst.CityPantheon:LocalizeAndSetText("LOC_UI_RELIGION_NO_PANTHEON_BELIEF");
@@ -1316,6 +1376,7 @@ function ViewReligion(religionType:number)
 
 	RealizeStack(Controls.Cities, Controls.CitiesScrollbar);
 	RealizeSortTypePulldown();
+    RealizeSortCivPulldown();
 end
 
 
@@ -1398,21 +1459,24 @@ function SortCitiesByFollowers(cityReligionA:table, cityReligionB:table, selecte
 end
 
 function PopulateSortType()
-
-	for _,sortType in pairs(CITIES_FILTER) do
+    local sortOrder:table = { CITIES_FILTER.ALL_CITIES, CITIES_FILTER.RELIGION_PRESENT, CITIES_FILTER.FOLLOWING_RELIGION, CITIES_FILTER.NOT_FOLLOWING_RELIGION };
+    
+	for _,sortType in ipairs(sortOrder) do
 		local control = {};
 		Controls.FilterType:BuildEntry("SmallItemInstance", control);
 		control.Button:SetSizeX(Controls.FilterType:GetSizeX());
 		control.DescriptionText:SetOffsetX(10);
-		if(sortType == CITIES_FILTER.RELIGION_PRESENT) then
+        if sortType == CITIES_FILTER.ALL_CITIES then
+			control.DescriptionText:LocalizeAndSetText("LOC_BRW_CITY_SORT_ALL");
+		elseif sortType == CITIES_FILTER.RELIGION_PRESENT then
 			control.DescriptionText:LocalizeAndSetText("LOC_UI_RELIGION_CITY_SORT_TYPE_PRESENT");
-		elseif(sortType == CITIES_FILTER.FOLLOWING_RELIGION) then
+		elseif sortType == CITIES_FILTER.FOLLOWING_RELIGION then
 			control.DescriptionText:LocalizeAndSetText("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING");
-		elseif(sortType == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then
+		elseif sortType == CITIES_FILTER.NOT_FOLLOWING_RELIGION then
 			control.DescriptionText:LocalizeAndSetText("LOC_BRW_CITY_SORT_NOT_FOLLOWING");
 		end
 		
-		control.Button:RegisterCallback( Mouse.eLClick,  function() OnSortTypeChanged(sortType); end );
+		control.Button:RegisterCallback(Mouse.eLClick,     function() OnSortTypeChanged(sortType); end);
         control.Button:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end); 
 
 	end
@@ -1421,12 +1485,14 @@ end
 
 function RealizeSortTypePulldown()
 	local pullDownButton = Controls.FilterType:GetButton();	
-	if(m_CitiesFilter == CITIES_FILTER.RELIGION_PRESENT) then
-		pullDownButton:SetText("   " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_PRESENT"));
-	elseif(m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION) then
-		pullDownButton:SetText("   " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING"));
-	elseif(m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then
-		pullDownButton:SetText("   " .. Locale.Lookup("LOC_BRW_CITY_SORT_NOT_FOLLOWING"));
+	if m_CitiesFilter == CITIES_FILTER.ALL_CITIES then
+		pullDownButton:SetText("  " .. Locale.Lookup("LOC_BRW_CITY_SORT_ALL"));
+	elseif m_CitiesFilter == CITIES_FILTER.RELIGION_PRESENT then
+		pullDownButton:SetText("  " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_PRESENT"));
+	elseif m_CitiesFilter == CITIES_FILTER.FOLLOWING_RELIGION then
+		pullDownButton:SetText("  " .. Locale.Lookup("LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING"));
+	elseif m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION then
+		pullDownButton:SetText("  " .. Locale.Lookup("LOC_BRW_CITY_SORT_NOT_FOLLOWING"));
 	end
 end
 
@@ -1436,6 +1502,54 @@ function OnSortTypeChanged(filterType:number)
 		ViewReligion(m_SelectedReligion.ID);
 	end
 end
+
+-- Civ pulldown
+function PopulateSortCiv()
+    local function AddSingleEntry(civID:number, civName:string)
+		local control = {};
+		Controls.FilterCiv:BuildEntry("SmallItemInstance", control);
+		control.Button:SetSizeX(Controls.FilterCiv:GetSizeX());
+		control.DescriptionText:SetOffsetX(10);
+		control.DescriptionText:SetText(civName);
+		control.Button:RegisterCallback(Mouse.eLClick,     function() OnSortCivChanged(civID); end );
+        control.Button:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end); 
+    end
+    local localPlayerID:number = GetDisplayPlayerID();
+    local localDiplomacy:table = Players[localPlayerID]:GetDiplomacy();
+    AddSingleEntry(-1, LL("LOC_GOVT_FILTER_NONE")); -- all
+    for _,playerID in ipairs(PlayerManager.GetAliveMajorIDs()) do
+        if playerID == localPlayerID or localDiplomacy:HasMet(playerID) then
+            AddSingleEntry(playerID, LL(PlayerConfigurations[playerID]:GetCivilizationShortDescription()));
+        end
+    end
+    AddSingleEntry(-2, LL("LOC_CITY_STATES_TITLE")); -- city-states
+	Controls.FilterCiv:CalculateInternals();
+end
+
+function RealizeSortCivPulldown()
+	local pullDownButton = Controls.FilterCiv:GetButton();	
+	if m_CivFilter == -1 then
+		pullDownButton:SetText("  " .. LL("LOC_GOVT_FILTER_NONE"));
+	elseif m_CivFilter == -2 then
+		pullDownButton:SetText("  " .. LL("LOC_CITY_STATES_TITLE"));
+	else
+        local player:table = Players[m_CivFilter];
+        if player ~= nil and player:IsAlive() and player:IsMajor() then
+            pullDownButton:SetText("  " .. LL(PlayerConfigurations[m_CivFilter]:GetCivilizationShortDescription()));
+        else
+            pullDownButton:SetText("  " .. "(error)");
+        end
+	end
+end
+
+function OnSortCivChanged(filterCiv:number)
+	if filterCiv ~= m_CivFilter then
+        print("filter changed to", filterCiv);
+		m_CivFilter = filterCiv;
+		ViewReligion(m_SelectedReligion.ID);
+	end
+end
+
 
 -- ===========================================================================
 --	Called if player selects "View All Religions" tab
@@ -1647,6 +1761,7 @@ function OnInit(isReload:boolean)
 		LuaEvents.GameDebug_GetValues( "ReligionScreen" );		
 	end
 	PopulateSortType();
+    PopulateSortCiv();
 end
 
 -- ===========================================================================
