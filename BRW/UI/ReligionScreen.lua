@@ -1175,11 +1175,11 @@ function ViewReligion(religionType:number)
 	end -- for alive players
     
     -- show list of civs
-    print("ALL CIVS");
+    --print("ALL CIVS");
     --for _,civ in ipairs(civs) do print(civ.IsConverted, civ.CivName, civ.NumCities, civ.NumConvCities); end -- debug
 	m_CivLineIM:ResetInstances();
     for _,civ in ipairs(civs) do
-        print(civ.IsConverted, civ.CivName, civ.NumCities, civ.NumConvCities); -- debug
+        --print(civ.IsConverted, civ.CivName, civ.NumCities, civ.NumConvCities); -- debug
 		local inst:table = m_CivLineIM:GetInstance();
         if civ.IsKnown then
             inst.Converted:SetText(civ.IsConverted and "[ICON_Checkmark]" or "[ICON_CheckFail]");
@@ -1285,7 +1285,7 @@ function ViewReligion(religionType:number)
 	end
 	
 	-- Spawn cities and populate follower for each founded religion
-	print("SHOW CITIES");
+	--print("SHOW CITIES");
 	m_CitiesIM:ResetInstances();
 	for _,city in ipairs(cities) do
 		local cityData:table = city.City;
@@ -1544,7 +1544,7 @@ end
 
 function OnSortCivChanged(filterCiv:number)
 	if filterCiv ~= m_CivFilter then
-        print("filter changed to", filterCiv);
+        --print("filter changed to", filterCiv);
 		m_CivFilter = filterCiv;
 		ViewReligion(m_SelectedReligion.ID);
 	end

@@ -241,8 +241,8 @@
           
           <Stack ID="IconStack" StackGrowth="Down" Anchor="L,T" Offset="10,130" Padding="5" Size="100,150"/>
           
-          <ScrollPanel ID="CivStackScroll" Anchor="L,T" Offset="120,132" Size="200,200" AutoScrollBar="1" Vertical="1">
-              <Stack ID="CivStack" StackGrowth="Down" StackPadding="0" Size="parent-10,300"/>
+          <ScrollPanel ID="CivStackScroll" Anchor="L,T" Offset="120,132" Size="200,180" AutoScrollBar="1" Vertical="1">
+              <Stack ID="CivStack" StackGrowth="Down" StackPadding="0" Size="parent-10,200"/>
               <ScrollBar Style="Slider_Religion" Anchor="R,C" AnchorSide="O,I"/>
           </ScrollPanel>
           
@@ -265,7 +265,7 @@
             <Label ID="ViewReligionBeliefsHeader" WrapWidth="450" Anchor="C,C" Style="ReligionSubHeadingSmall" String="ViewReligionBeliefsHeader" />
           </Grid>
           -->
-          <ScrollPanel  ID="ViewReligionScroll" Size="parent,300" Anchor="C,T" AutoScrollBar="1" Vertical="1" Offset="0,10">
+          <ScrollPanel  ID="ViewReligionScroll" Size="parent,310" Anchor="C,T" AutoScrollBar="1" Vertical="1" Offset="0,5">
             <Stack ID="ViewReligionBeliefs" Size="parent-4,360" StackPadding="-4" StackGrowth="Down"/>
             <ScrollBar Style="Slider_Religion" Anchor="R,C" AnchorSide="O,I"/>
           </ScrollPanel>
