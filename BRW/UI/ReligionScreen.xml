@@ -377,7 +377,7 @@
 	</Instance>
 
   <Instance Name="Religion">
-    <Grid ID="ReligionBG" Size="490,340" Texture="Religion_Panel" SliceCorner="24,30" SliceTextureSize="53,97" MinSize="53,97" Color="255,255,255,204">
+    <Grid ID="ReligionBG" Size="490,400" Texture="Religion_Panel" SliceCorner="24,30" SliceTextureSize="53,97" MinSize="53,97" Color="255,255,255,204">
       <Image Offset="-30,3" Anchor="L,B" Texture="Religion_IconGlow" Color="255,255,255,200"/>
 
       <Stack ID="Beliefs" Anchor="C,C" StackPadding="-2" StackGrowth="Down">

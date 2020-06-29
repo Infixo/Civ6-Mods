@@ -1,4 +1,4 @@
-print("Loading ReligionScreen.lua from Better Religion Screen v1.0");
+print("Loading ReligionScreen.lua from Better Religion Screen v1.1");
 
 -- Copyright 2017-2019, Firaxis Games
 include("TabSupport");
@@ -1026,10 +1026,26 @@ function ViewReligion(religionType:number)
 	--Controls.ViewReligionPantheonDescription:LocalizeAndSetText(belief.Description);
 
 	-- Spawn religion beliefs
+    local tReligionBeliefs:table = {
+        -1, -- 1. pantheon
+        -1, -- 2. follower
+        -1, -- 3. worship
+        -1, -- 4. founder
+        -1, -- 5. enhancer
+    };
+    tReligionBeliefs[1] = pantheonBelief;
+	for _, beliefIndex in ipairs(religion.Beliefs) do
+		belief = GameInfo.Beliefs[beliefIndex];
+        if     belief.BeliefClassType == "BELIEF_CLASS_FOLLOWER" then tReligionBeliefs[2] = beliefIndex;
+        elseif belief.BeliefClassType == "BELIEF_CLASS_WORSHIP"  then tReligionBeliefs[3] = beliefIndex;
+        elseif belief.BeliefClassType == "BELIEF_CLASS_FOUNDER"  then tReligionBeliefs[4] = beliefIndex;
+        elseif belief.BeliefClassType == "BELIEF_CLASS_ENHANCER" then tReligionBeliefs[5] = beliefIndex;
+        end
+	end
 	m_ReligionBeliefsIM:ResetInstances();
     AddPantheonBelief(pantheonBelief);
-	AddUnlockedBeliefs(religion);
-	AddLockedBeliefs(religion);
+    for i = 2, 5 do AddSingleBelief(tReligionBeliefs[i], religion.Founder == localPlayerID); end
+	--AddLockedBeliefs(religion);
 
 	RealizeStack(Controls.ViewReligionBeliefs, Controls.ViewReligionScroll);
 	
@@ -1382,6 +1398,7 @@ end
 
 -- ==============================================
 function AddPantheonBelief(pantheon)
+    --print("adding pantheon", pantheon);
 	local beliefInst:table = m_ReligionBeliefsIM:GetInstance();
     if pantheon == -1 then
         -- belief locked situation
@@ -1399,15 +1416,25 @@ function AddPantheonBelief(pantheon)
 end
 
 -- ==============================================
-function AddUnlockedBeliefs(religion)
-	for _, beliefIndex in ipairs(religion.Beliefs) do
-		belief = GameInfo.Beliefs[beliefIndex];
-		local beliefInst:table = m_ReligionBeliefsIM:GetInstance();
+function AddSingleBelief(beliefIndex:number, isLocal:boolean)
+    --print("adding belief", beliefIndex, isLocal);
+	--for _, beliefIndex in ipairs(religion.Beliefs) do
+	local belief = GameInfo.Beliefs[beliefIndex];
+    local beliefInst:table = m_ReligionBeliefsIM:GetInstance();
+    if beliefIndex ~= -1 then
+        -- unlocked belief
 		beliefInst.BeliefBG:SetColor(UI.GetColorValue("COLOR_WHITE"));
-		beliefInst.BeliefLabel:SetText(Locale.ToUpper(belief.Name));
+		beliefInst.BeliefLabel:SetText(Locale.ToUpper(string.format("%s: %s", LL("LOC_"..belief.BeliefClassType.."_NAME"), LL(belief.Name))));
 		beliefInst.BeliefDescription:LocalizeAndSetText(belief.Description);
 		SetBeliefIcon(beliefInst.BeliefIcon, belief.BeliefType, SIZE_BELIEF_ICON_MEDIUM);
 		beliefInst.BeliefIcon:SetHide(false);
+    else
+        -- locked belief
+		beliefInst.BeliefBG:SetColor(UI.GetColorValueFromHexLiteral(0xFF808080));
+		beliefInst.BeliefLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_LOCKED_BELIEF")));
+		beliefInst.BeliefDescription:SetText("");
+		if isLocal then beliefInst.BeliefDescription:LocalizeAndSetText("LOC_UI_RELIGION_LOCKED_BELIEF_DESCRIPTION"); end
+		beliefInst.BeliefIcon:SetHide(true);
 	end
 end
 
@@ -1588,7 +1615,7 @@ function ViewAllReligions()
 
 			if religionInfo.Founder == displayPlayerID or localPlayerDiplomacy:HasMet(religionInfo.Founder) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
 				local civName:string = Locale.Lookup(GameInfo.Civilizations[civID].Name);
-				religionInst.ReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", civName)));
+				religionInst.ReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", ColorWhite(civName))));
 			else
 				religionInst.ReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER"))));
 			end
@@ -1600,9 +1627,9 @@ function ViewAllReligions()
 			local numDominantCities:number = dominantCities[religionInfo.Religion];
 			if numDominantCities == nil then numDominantCities = 0; end
 			if(numDominantCities == 1) then
-				religionInst.ReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE", numDominantCities)));
+				religionInst.ReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE", ColorWhite("1"))));
 			else
-				religionInst.ReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE_PLURAL", numDominantCities)));
+				religionInst.ReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE_PLURAL", ColorWhite(tostring(numDominantCities)))));
 			end
 
 			local beliefsIM:table = religionInst[DATA_FIELD_BELIEFS_IM];
@@ -1613,11 +1640,17 @@ function ViewAllReligions()
 				religionInst[DATA_FIELD_BELIEFS_IM] = beliefsIM;
 			end
 
-			for _, belief in ipairs(religionInfo.Beliefs) do
-				local beliefInst:table = beliefsIM:GetInstance();
+            local function AddBeliefSmall(belief:number)
+       		    local beliefInst:table = beliefsIM:GetInstance();
 				local beliefData:table= GameInfo.Beliefs[belief];
-				beliefInst.BeliefLabel:SetText(Locale.Lookup("LOC_UI_RELIGION_BELIEF_COMPACT", beliefData.Name, beliefData.Description));
+				beliefInst.BeliefLabel:SetText( string.format("(%s) %s: %s", LL("LOC_"..beliefData.BeliefClassType.."_NAME"), LL(beliefData.Name), LL(beliefData.Description)));
 				SetBeliefIcon(beliefInst.BeliefIcon, beliefData.BeliefType, SIZE_BELIEF_ICON_SMALL);
+            end
+            
+            local pantheon:number = Players[religionInfo.Founder]:GetReligion():GetPantheon();
+            if pantheon ~= -1 then AddBeliefSmall(pantheon); end
+			for _, belief in ipairs(religionInfo.Beliefs) do
+                AddBeliefSmall(belief);
 			end
 
 			religionInst.Beliefs:CalculateSize();
