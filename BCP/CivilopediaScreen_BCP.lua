@@ -17,6 +17,7 @@ print("Loading CivilopediaScreen_BCP.lua from Better Civilopedia version "..Glob
 if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
 local bIsRMA:boolean = Modding.IsModActive("6f2888d4-79dc-415f-a8ff-f9d81d7afb53"); -- Real Modifier Analysis
+local bIsTCS:boolean = Modding.IsModActive("fd0d5e1a-0fbb-4d05-8f3e-f63fec8ff7c6"); -- TCS Pedialite
 
 -- Rise & Fall check
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
@@ -41,6 +42,7 @@ end
 function OnOpenCivilopedia(sectionId_or_search, pageId)
 	BCP_BASE_OnOpenCivilopedia(sectionId_or_search, pageId);
 	Controls.SearchEditBox:TakeFocus();
+    if bIsTCS then Controls.CivilopediaSectionTabStack:SetOffsetX(-5); end
 end
 
 -- Code from ReportScreen.lua

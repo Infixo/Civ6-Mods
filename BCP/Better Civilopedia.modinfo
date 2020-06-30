@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
 	<Properties>
-		<Name>Better Civilopedia</Name>
-		<Description>More information in Civilopedia![NEWLINE][NEWLINE]Version 2.0.1.</Description>
+		<Name>Better Civilopedia (UI)</Name>
+		<Description>More information in Civilopedia![NEWLINE][NEWLINE]Version 2.1.</Description>
 		<Teaser>More information in Civilopedia!</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -19,25 +19,25 @@
 	</ActionCriteria>
 	<InGameActions>
 		<UpdateDatabase id="BCP_Database">
-			<Properties><LoadOrder>10</LoadOrder></Properties>
+			<Properties><LoadOrder>200</LoadOrder></Properties>
 			<File>BetterCivilopedia_Database.sql</File>
 			<File>Base/Civilopedia_BCP_Base.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports">
-			<Properties><LoadOrder>10</LoadOrder></Properties>
+			<Properties><LoadOrder>200</LoadOrder></Properties>
 			<File>CivilopediaScreen.xml</File>
 			<File>Base/CivilopediaPage_BCP_Base.lua</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BCP_Replace_CivilopediaScreen">
 			<Properties>
-				<LoadOrder>10</LoadOrder>
+				<LoadOrder>200</LoadOrder>
 				<LuaContext>CivilopediaScreen</LuaContext>
 				<LuaReplace>CivilopediaScreen_BCP.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Rise & Fall -->
 		<UpdateDatabase id="BCP_Database_XP1" criteria="Expansion1">
-			<Properties><LoadOrder>10</LoadOrder></Properties>
+			<Properties><LoadOrder>210</LoadOrder></Properties>
 			<File>XP1/Civilopedia_BCP_XP1.xml</File>
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports_XP1" criteria="Expansion1">
@@ -45,7 +45,7 @@
 		</ImportFiles>
 		<!-- Gathering Storm -->
 		<UpdateDatabase id="BCP_Database_XP2" criteria="Expansion2">
-			<Properties><LoadOrder>10</LoadOrder></Properties>
+			<Properties><LoadOrder>220</LoadOrder></Properties>
 			<File>XP1/Civilopedia_BCP_XP1.xml</File>
 			<File>XP2/Civilopedia_BCP_XP2.xml</File>
 		</UpdateDatabase>

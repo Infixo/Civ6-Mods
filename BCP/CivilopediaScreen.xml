@@ -107,7 +107,7 @@
 		</Container>
     
 		<!-- Section Tab Area -->
-		<Stack ID="CivilopediaSectionTabStack" StackGrowth="Right" Offset="45,23" />
+		<Stack ID="CivilopediaSectionTabStack" StackGrowth="Right" Offset="20,23" />
 		
 	<!--
       <PullDown ID="AdditionalSectionsPullDown" Hidden="1" Style="SmallPullDown" Offset="0,-10" Size="100,29" AutoSizePopUp="1" SpaceForScroll="0" ScrollThreshold="450">
