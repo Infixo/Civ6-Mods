@@ -6,7 +6,7 @@
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('BWR_VERSION_MAJOR', '1');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BWR_VERSION_MINOR', '0');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BWR_VERSION_MINOR', '1');
 
 -- options
 --INSERT INTO GlobalParameters (Name, Value) VALUES ('BWR_OPTION', '0');

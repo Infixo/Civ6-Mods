@@ -168,6 +168,8 @@ function GatherCultureData()
 			playerData.TradeRoute = false; -- is there a TR between us
 			playerData.OpenBorders = Players[localPlayer]:GetDiplomacy():HasOpenBordersFrom(playerID); -- "you received open borders"
 			playerData.TurnsTillNext = 999; -- turns till we attract the next visting tourist from this player
+            playerData.ErrCurrent = false; -- issue with the TT analysis
+            playerData.ErrLifetime = false; -- issue with the TT analysis
 
 			--if playerData.CulturePerTurn >= 100 then playerData.CulturePerTurn = Round(playerData.CulturePerTurn, 0);
 			--else                                     playerData.CulturePerTurn = Round(playerData.CulturePerTurn, 1); end
@@ -186,12 +188,28 @@ function GatherCultureData()
 			
 			-- calculate tourism boost modifier
 			-- unfortunately it is not available via a simple call, needs to be retrieved from the tooltip
-			local sCurrentT:string, sLifetimeT:string = string.match(playerData.ToolTip, "([%d%.,]+)%D+([%d%.,]+)"); -- detects first 2 numbers, number may contain . or ,
+            --print("....TT:", playerData.ToolTip);
+            --print(string.byte(playerData.ToolTip, 72, 82));
+			--playerData.ToolTip = string.gsub(playerData.ToolTip, "[\128-\255]", "");
+            -- there are some non-ASCII whitespaces inside that break pattern matching, need to trim them first
+            local sTrimmedTT:string = "";
+            for i = 1, #playerData.ToolTip do
+                local ch:string = string.sub(playerData.ToolTip, i, i);
+                if string.byte(ch) < 128 then sTrimmedTT = sTrimmedTT..ch; end
+            end
+            --print("....TT:", sTrimmedTT);
+			local sCurrentT:string, sLifetimeT:string = string.match(sTrimmedTT, "([%d%.,]+)%D+([%d%.,]+)"); -- detects first 2 numbers, number may contain . or ,
 			--print("....tourism string to player", playerID, sCurrentT, sLifetimeT);
+            if sCurrentT  == nil then sCurrentT  = "0"; playerData.ErrCurrent  = true; end
+            if sLifetimeT == nil then sLifetimeT = "0"; playerData.ErrLifetime = true; end
 			sCurrentT  = string.gsub(sCurrentT, "%D",""); -- remove all non-digits, it returns 2 values, so cannot use directly with tonumber()
 			sLifetimeT = string.gsub(sLifetimeT,"%D","");
+			--print("....tourism string to player", playerID, sCurrentT, sLifetimeT);
 			local iCurrentT:number, iLifetimeT:number = tonumber(sCurrentT), tonumber(sLifetimeT);
+            if iCurrentT  == nil then iCurrentT  = 0; playerData.ErrCurrent  = true; end
+            if iLifetimeT == nil then iLifetimeT = 0; playerData.ErrLifetime = true; end
 			--print("....tourism number to player", playerID, iCurrentT, iLifetimeT);
+            if iLifetimeT < iCurrentT then playerData.ErrLifetime = true; end
 			local iTotalT:number = Players[localPlayer]:GetStats():GetTourism();
 			if iTotalT > 0 then
 				playerData.TourismBoost = Round((iCurrentT - iTotalT) * 100 / iTotalT, 0);
@@ -227,13 +245,16 @@ function PopulateCultureInstance(instance:table, playerData:table)
 	instance.TradeRoute:SetText( playerData.TradeRoute and "[ICON_PROPOSE_TRADE]" or "[ICON_CheckFail]" );
 	instance.OpenBorders:SetText( playerData.OpenBorders and "[ICON_OPEN_BORDERS]" or "[ICON_CheckFail]" );
 	-- tourism boost
-	if     playerData.TourismBoost == 0 then instance.TourismBoost:SetText("0%");
-	elseif playerData.TourismBoost > 0  then instance.TourismBoost:SetText(string.format("[COLOR_GREEN]+%d%%[ENDCOLOR]", playerData.TourismBoost));
-	else                                     instance.TourismBoost:SetText(string.format("[COLOR_RED]%d%%[ENDCOLOR]", playerData.TourismBoost));
-	end
+    if     playerData.ErrCurrent        then instance.TourismBoost:SetText("[COLOR_Red]![ENDCOLOR]");
+    elseif playerData.TourismBoost == 0 then instance.TourismBoost:SetText("0%");
+    elseif playerData.TourismBoost > 0  then instance.TourismBoost:SetText(string.format("[COLOR_GREEN]+%d%%[ENDCOLOR]", playerData.TourismBoost));
+    else                                     instance.TourismBoost:SetText(string.format("[COLOR_RED]%d%%[ENDCOLOR]", playerData.TourismBoost));
+    end
 	-- turns till the next visiting tourist
-	if playerData.TurnsTillNext ~= 999 then
-		instance.TurnsTillNext:SetHide(false);
+    if playerData.ErrLifetime then
+        instance.TurnsTillNext:SetText("[COLOR_Red]![ENDCOLOR]");
+	elseif playerData.TurnsTillNext ~= 999 then
+		--instance.TurnsTillNext:SetHide(false);
 		instance.TurnsTillNext:SetText("[ICON_Turn]"..tostring(playerData.TurnsTillNext));
 	else
 		instance.TurnsTillNext:SetHide(true);
