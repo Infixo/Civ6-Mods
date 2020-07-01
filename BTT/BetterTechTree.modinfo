@@ -37,6 +37,7 @@
 				<File>Base/CivicsTree_BTT_Base.lua</File>
                 <!-- updated nodes -->
                 <File>Base/TechTreeNode.xml</File>
+                <File>Base/CivicsTree.xml</File>
             </Items>
         </ImportFiles>
 		<UpdateIcons id="BTT_Icons">
@@ -121,6 +122,7 @@
 		<File>Base/CivicsTree_BTT_Base.lua</File>
 		<File>Base/BoostUnlockedPopup_BTT.lua</File>
 		<File>Base/TechTreeNode.xml</File>
+		<File>Base/CivicsTree.xml</File>
 		<!-- Rise & Fall files -->
 		<File>XP1/TechTree_BTT_XP1.lua</File>
 		<!-- Gahtering Storm files -->

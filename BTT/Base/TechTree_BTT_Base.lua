@@ -39,7 +39,6 @@ function PopulateNode(uiNode, playerTechData)
     -- marking as important
     if uiNode.Name == nil then
         --print(uiNode.Type, tTechsWithUniques[uiNode.Type]);
-        --if tTechsWithUniques == nil then Initialize_TechsWithUniques(); end
         uiNode.Name = uiNode.NodeName:GetText();
         -- try to retrieve the flag from the save file
         local localPlayerID:number = Game.GetLocalPlayer();
@@ -72,7 +71,7 @@ end
 -- Marking techs as important for easier planning
 
 function Initialize_TechsWithUniques()
-    print("FUN Initialize_TechsWithUniques");
+    --print("FUN Initialize_TechsWithUniques");
     local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == PlayerTypes.NONE or localPlayer == PlayerTypes.OBSERVER then return; end
     
@@ -102,13 +101,13 @@ function Initialize_TechsWithUniques()
 end
 
 function OnLeftClickNodeNameButton(node:table)
-    print("FUN OnLeftClickNodeNameButton", node.Type, node.Name, node.IsMarked);
+    --print("FUN OnLeftClickNodeNameButton", node.Type, node.Name, node.IsMarked);
     node.IsMarked = not node.IsMarked;
     node.MarkLabel:SetHide(not node.IsMarked);
     -- save the value
     local localPlayerID:number = Game.GetLocalPlayer();
     if localPlayerID ~= PlayerTypes.NONE and localPlayerID ~= PlayerTypes.OBSERVER then
-        print("saving to", DATA_PREFIX..node.Type);
+        --print("saving to", DATA_PREFIX..node.Type);
         PlayerConfigurations[localPlayerID]:SetValue(DATA_PREFIX..node.Type, node.IsMarked);
     end
 end
@@ -116,12 +115,11 @@ end
 -- this is called AFTER AllocateUI(), so all nodes SHOULD be available via g_uiNodes
 -- please note that PopulateNode is also called before, so some inits are moved there
 function Initialize_BTT_Extra()
-    print("FUN Initialize_BTT_Extra");
+    --print("FUN Initialize_BTT_Extra");
     --dshowtable(g_uiNodes);
     -- hook left-clicks
     for _,node in pairs(g_uiNodes) do
 		node.NodeNameButton:RegisterCallback( Mouse.eLClick, function() OnLeftClickNodeNameButton(node); end );
-		node.NodeNameButton:SetToolTipString("Click to toggle [ICON_New] mark.");
 		node.NodeNameButton:SetSizeX( node.NodeName:GetSizeX() + 20 );
     end
 end

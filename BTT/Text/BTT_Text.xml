@@ -21,6 +21,9 @@
 	<Row Tag="LOC_BTT_VALID_OCEAN"> <!-- LOC_TECH_CARTOGRAPHY_DESCRIPTION -->
 		<Text>All naval and embarked units can navigate Ocean tiles.</Text>
 	</Row>
+	<Row Tag="LOC_BTT_TOGGLE_MARK"> <!-- LOC_TECH_CARTOGRAPHY_DESCRIPTION -->
+		<Text>Click to toggle [ICON_New] mark.</Text>
+	</Row>
 
 </BaseGameText>
 
