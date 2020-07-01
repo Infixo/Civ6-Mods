@@ -6,8 +6,8 @@
 -- ===========================================================================
 
 -- just to make versioning easier
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MAJOR', 2);
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MINOR', 1);
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MAJOR', 3);
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_VERSION_MINOR', 0);
 
 -- options
 INSERT INTO GlobalParameters (Name, Value) VALUES ('BTT_OPTION_HARVESTS',   1); -- set this to '0' if you want to switch OFF the harvest and removal icons

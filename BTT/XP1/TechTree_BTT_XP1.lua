@@ -6,14 +6,15 @@ print("Loading TechTree_BTT_XP1.lua from Better Tech Tree version "..GlobalParam
 -- ===========================================================================
 
 include("TechTree_Expansion1");
-
 BTT_XP1_LateInitialize = LateInitialize;
 
 include("TechAndCivicSupport_BTT");
 
 function LateInitialize()
+    Initialize_TechsWithUniques();
 	Initialize_BTT_TechTree(); -- we must call it BEFORE main LateInitialize because of AllocateUI being called there; all data must be ready before that
 	BTT_XP1_LateInitialize();
+    Initialize_BTT_Marking();
 end
 
 
@@ -30,6 +31,10 @@ REU_XP1_PopulateNode = PopulateNode;
 function PopulateNode(uiNode, playerTechData)
 	REU_XP1_PopulateNode(uiNode, playerTechData);
 
+    -- show/hide important mark
+    PopulateNode_InitMark(uiNode);
+    uiNode.MarkLabel:SetHide(not uiNode.IsMarked);
+    
 	if not bIsREU then return; end
 
 	local item		:table = g_kItemDefaults[uiNode.Type];						-- static item data

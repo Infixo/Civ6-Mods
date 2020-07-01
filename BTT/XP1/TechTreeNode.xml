@@ -11,7 +11,9 @@
 				<Grid ID="BoostedBack" Offset="7,6" Anchor="L,B" Size="357,39" Texture="Controls_BoostSlotTech" SliceCorner="28,26" SliceSize="1,1" SliceTextureSize="39,39"/>
 				<Image ID="BoostIcon" Offset="10,7" Anchor="L,B" Texture="BoostTech"/>
 				<Label ID="BoostText" Offset="42,7" Anchor="L,B" Style="TreeBoostText" String="?BoostText"/>
+                <Button ID="NodeNameButton" Offset="60,0" Size="100,30" NoStateChange="1" ToolTip="LOC_BTT_TOGGLE_MARK"/>
 				<Stack Offset="68,8" StackGrowth="Right" StackPadding="4">
+                    <Label ID="MarkLabel" Style="TreeNodeText" String="[ICON_New]"/>
 					<Label ID="NodeName" Style="TreeNodeText" String="?NodeName"/>
 					<Image ID="RecommendedIcon" Offset="0,-8" Size="22,22" Texture="AdvisorRec22" ConsumeMouse="1" ToolTip="LOC_TECH_FILTER_RECOMMENDED">
 						<FlipAnim Texture="AdvisorRecAnim22" Size="26,26" Anchor="C,C" FrameCount="12" Columns="4" Speed="14" EndPause="3" Color="255,255,255,200"/>

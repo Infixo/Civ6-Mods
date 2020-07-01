@@ -589,4 +589,83 @@ function Initialize_BTT_CivicsTree()
 	print("Extra unlockables found:", #m_kExtraUnlockables);
 end
 
+
+-- ===========================================================================
+-- 2020-07-01 Marking techs as important for easier planning
+-- ===========================================================================
+
+local DATA_PREFIX:string = "BTT_MARKED_"; -- prefix used to save/load values from the savefile
+local tTechsWithUniques:table = {}; -- includes both techs and civics
+
+function Initialize_TechsWithUniques()
+    --print("FUN Initialize_TechsWithUniques");
+    local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == PlayerTypes.NONE or localPlayer == PlayerTypes.OBSERVER then return; end
+    
+    -- Obtain "uniques" from Civilization and for the chosen leader
+    local uniqueAbilities,    uniqueUnits,    uniqueBuildings    = GetLeaderUniqueTraits(       PlayerConfigurations[localPlayerID]:GetLeaderTypeName(),       true );
+    local civUniqueAbilities, civUniqueUnits, civUniqueBuildings = GetCivilizationUniqueTraits( PlayerConfigurations[localPlayerID]:GetCivilizationTypeName(), true );
+
+    -- Merge tables
+    for i,v in ipairs(civUniqueAbilities) do table.insert(uniqueAbilities, v); end
+    for i,v in ipairs(civUniqueUnits)     do table.insert(uniqueUnits, v);     end
+    for i,v in ipairs(civUniqueBuildings) do table.insert(uniqueBuildings, v); end
+    
+    -- find and mark techs
+    for _,item in ipairs(uniqueUnits) do
+        local itemInfo:table = GameInfo.Units[item.Type];
+        if itemInfo and itemInfo.PrereqTech  ~= nil then tTechsWithUniques[ itemInfo.PrereqTech ]  = true; end
+        if itemInfo and itemInfo.PrereqCivic ~= nil then tTechsWithUniques[ itemInfo.PrereqCivic ] = true; end
+    end
+    for _,item in ipairs(uniqueBuildings) do
+        local itemInfo:table = GameInfo.Buildings[item.Type];
+        if itemInfo == nil then itemInfo = GameInfo.Districts[item.Type]; end
+        if itemInfo == nil then itemInfo = GameInfo.Improvements[item.Type]; end
+        if itemInfo and itemInfo.PrereqTech  ~= nil then tTechsWithUniques[ itemInfo.PrereqTech ]  = true; end
+        if itemInfo and itemInfo.PrereqCivic ~= nil then tTechsWithUniques[ itemInfo.PrereqCivic ] = true; end
+    end
+    print("Marked techs and civics:");
+    dshowtable(tTechsWithUniques);
+end
+
+function OnLeftClickNodeNameButton(node:table)
+    --print("FUN OnLeftClickNodeNameButton", node.Type, node.Name, node.IsMarked);
+    node.IsMarked = not node.IsMarked;
+    node.MarkLabel:SetHide(not node.IsMarked);
+    -- save the value
+    local localPlayerID:number = Game.GetLocalPlayer();
+    if localPlayerID ~= PlayerTypes.NONE and localPlayerID ~= PlayerTypes.OBSERVER then
+        --print("saving to", DATA_PREFIX..node.Type);
+        PlayerConfigurations[localPlayerID]:SetValue(DATA_PREFIX..node.Type, node.IsMarked);
+    end
+end
+
+-- this is called AFTER AllocateUI(), so all nodes SHOULD be available via g_uiNodes
+-- please note that PopulateNode is also called before, so some inits are moved there
+function Initialize_BTT_Marking()
+    --print("FUN Initialize_BTT_Marking");
+    --dshowtable(g_uiNodes);
+    -- hook left-clicks
+    for _,node in pairs(g_uiNodes) do
+		node.NodeNameButton:RegisterCallback( Mouse.eLClick, function() OnLeftClickNodeNameButton(node); end );
+		node.NodeNameButton:SetSizeX( node.NodeName:GetSizeX() + 20 );
+    end
+end
+
+-- read the flag from the savefile or initialize based on uniques
+function PopulateNode_InitMark(uiNode:table)
+    --print("FUN PopulateNode_InitMark", uiNode.Type, uiNode.IsMarked);
+    if uiNode.IsMarked ~= nil then return; end -- already initialized
+    -- try to retrieve the flag from the save file
+    local localPlayerID:number = Game.GetLocalPlayer();
+    if localPlayerID ~= PlayerTypes.NONE and localPlayerID ~= PlayerTypes.OBSERVER then
+        uiNode.IsMarked = PlayerConfigurations[localPlayerID]:GetValue(DATA_PREFIX..uiNode.Type);
+    end
+    -- init with uniques if still nil
+    --print(uiNode.Type, tTechsWithUniques[uiNode.Type]);
+    if uiNode.IsMarked == nil then uiNode.IsMarked = ( tTechsWithUniques[uiNode.Type] == true ); end
+    --if uiNode.IsMarked then print(uiNode.Type, tTechsWithUniques[uiNode.Type], uiNode.IsMarked, uiNode.Name); end
+end
+
+
 print("OK loaded TechAndCivicSupport_BTT.lua from Better Tech Tree");
