@@ -22,10 +22,6 @@ end
 -- ===========================================================================
 -- Support for Real Eurekas mod
 
---local bIsREU:boolean = Modding.IsModActive("4a8aa030-69f0-4677-9a43-2772088ea041"); -- Real Eurekas
-
---include("RealEurekasCanShow"); -- file taken from Real Eurekas
-
 -- Cache base functions
 REU_BASE_PopulateNode = PopulateNode;
 

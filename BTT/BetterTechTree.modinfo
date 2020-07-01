@@ -93,6 +93,7 @@
             <Items>
 				<File>XP2/TechTree_BTT_XP2.lua</File>
 				<File>XP2/CivicsTree_BTT_XP2.lua</File>
+                <File>XP2/TechTreeNode.xml</File>
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BTT_ReplaceUI_TechTree_XP2" criteria="Expansion2">
@@ -130,5 +131,6 @@
 		<!-- Gahtering Storm files -->
 		<File>XP2/TechTree_BTT_XP2.lua</File>
 		<File>XP2/CivicsTree_BTT_XP2.lua</File>
+		<File>XP2/TechTreeNode.xml</File>
     </Files>
 </Mod>

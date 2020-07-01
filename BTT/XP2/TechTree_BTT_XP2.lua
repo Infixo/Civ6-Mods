@@ -6,30 +6,30 @@ print("Loading TechTree_BTT_XP2.lua from Better Tech Tree version "..GlobalParam
 -- ===========================================================================
 
 include("TechTree_Expansion2");
-
 BTT_XP2_LateInitialize = LateInitialize;
 
 include("TechAndCivicSupport_BTT");
 
 function LateInitialize()
+    Initialize_TechsWithUniques();
 	Initialize_BTT_TechTree(); -- we must call it BEFORE main LateInitialize because of AllocateUI being called there; all data must be ready before that
 	BTT_XP2_LateInitialize();
+    Initialize_BTT_Marking();
 end
 
 
 -- ===========================================================================
 -- Support for Real Eurekas mod
 
---local bIsREU:boolean = Modding.IsModActive("4a8aa030-69f0-4677-9a43-2772088ea041"); -- Real Eurekas
-
---include("RealEurekasCanShowBTT"); -- file taken from Real Eurekas
-
 -- Cache base functions
 REU_XP2_PopulateNode = PopulateNode;
 
 function PopulateNode(uiNode, playerTechData)
 	REU_XP2_PopulateNode(uiNode, playerTechData);
-
+    
+    -- show/hide important mark
+    PopulateNode_InitMark(uiNode);
+    uiNode.MarkLabel:SetHide(not uiNode.IsMarked);
 	if not bIsREU then return; end
 
 	local item		:table = g_kItemDefaults[uiNode.Type];						-- static item data
