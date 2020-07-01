@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+
+  <Include File="CivicUnlockIcon"/>
+
+  <Container ID="Vignette" Style="FullScreenVignetteConsumer"/>
+  <AlphaAnim ID="SearchResultsTimer" Begin="0" End="1" Speed="2" Cycle="Once" Stopped="1"/>
+
+  <Container Anchor="C,C" Size="full,768">
+    <Box Color="7,30,50,255" Anchor="L,B" Size="parent,5"/>		
+		<Image ID="ScrollbarBackgroundArt" Anchor="C,B" Offset="0,2" Size="parent-108,32" Texture="Controls_TimelineTile" StretchMode="Tile"/>
+		<Grid Anchor="C,B" Offset="0,-8" Size="parent,52" Texture="Controls_Timeline" SliceCorner="54,27" SliceSize="6,1" SliceTextureSize="114,52"/>
+		<Image			ID="Background" Size="parent,parent" Texture="Parchment_Pattern" StretchMode="Tile" ConsumeMouse="1" />
+		<ScrollPanel	ID="EraArtScroller" Offset="0,-2" Size="parent,parent" Vertical="0" ScrollBar="0">			
+			<Container	ID="ForceArtSizeX" Size="1,1"/>
+    </ScrollPanel>
+    <Image Anchor="L,B" Offset="0,33" Size="parent,22" Texture="Controls_GradientSmall" Color="0,0,0,150" FlipY="1"/>
+    <ScrollPanel ID="ArtScroller" Offset="0,-2" Size="parent,parent" Vertical="0" ScrollBar="0">
+      <Image ID="ArtParchmentLeft" Offset="0,0" Size="3,parent" Texture="Controls_GradientSmall" Rotate="90" Color="0,0,0,255"/>
+      <Image ID="ArtParchmentDecoTop" Offset="0,50" Size="123,103" Texture="Parchment_BorderDeco" FlipY="1" StretchMode="Tile" Alpha="0.2"/>
+      <Image ID="ArtParchmentDecoBottom" Anchor="L,B" Offset="0,50" Size="123,103" Texture="Parchment_BorderDeco" FlipY="0" StretchMode="Tile" Alpha="0.2"/>
+      <Image ID="ArtParchmentRippleTop" Offset="0,44" Size="609,217" Texture="Parchment_Ripple" FlipY="1" StretchMode="Tile" Alpha="1.0"/>
+      <Image ID="ArtParchmentRippleBottom" Anchor="L,B" Offset="0,33" Size="609,217" Texture="Parchment_Ripple" FlipY="0" StretchMode="Tile" Alpha="1.0"/>
+      <Image ID="ArtCornerGrungeTL" Offset="0,33" Size="52,44" Texture="Parchment_CornerGrunge" FlipX="1" FlipY="1" Alpha="1.0"/>
+      <Image ID="ArtCornerGrungeTR" Anchor="R,T" Offset="0,33" Size="52,44" Texture="Parchment_CornerGrunge" FlipX="0" FlipY="1" Alpha="1.0"/>
+      <Image ID="ArtCornerGrungeBL" Anchor="L,B" Offset="0,33" Size="52,44" Texture="Parchment_CornerGrunge" FlipX="1" FlipY="0" Alpha="1.0"/>
+      <Image ID="ArtCornerGrungeBR" Anchor="R,B" Offset="0,33" Size="52,44" Texture="Parchment_CornerGrunge" FlipX="0" FlipY="0" Alpha="1.0"/>
+      <Container ID="ForceSizeX" Size="1,1"/>
+    </ScrollPanel>
+
+		<ScrollPanel ID="LineScroller" Offset="0,0" Size="parent,parent" Vertical="0" ScrollBar="0">
+			<Container ID="LineForceSizeX" Size="1,1"/>
+		</ScrollPanel>
+
+		<ScrollPanel ID="NodeScroller" Offset="0,0" Size="parent,parent" Vertical="0">
+      <Image ID="TreeStart" Texture="Tree_Start"/>
+      <ScrollBar ID="TimelineScrollbar" Anchor="C,B" Offset="0,15" Size="12,8" Texture="Controls_TimeSlider" Vertical="0" StateOffsetIncrement="0,0" SliceCorner="6,0" SliceTextureSize="12,8">
+        <Thumb ID="TimelineThumb" Size="63,36" Texture="Controls_TimeSlider" StateOffsetIncrement="0,0" SliceCorner="22,18" SliceSize="19,1" SliceTextureSize="63,36"/>
+      </ScrollBar>
+      <UpButton Anchor="L,B" AnchorSide="O,I" Style="ScrollUpButton"/>
+      <DownButton Anchor="R,B" AnchorSide="O,I" Style="ScrollDownButton"/>
+
+      <Tutorial ID="NodePointer" Style="TutorialContainer" Anchor="L,C" Offset="0, -50" TriggerBy="TutorialChangeCivic">
+        <Grid Style="TutorialCalloutGrid"  Anchor="L,C" Offset="670,0">
+          <Label Style="TutorialHeaderText" String="LOC_META_100b_HEAD"/>
+          <Label Style="TutorialBodyText" String="LOC_META_100b_BODY"/>
+        </Grid>
+        <SlideAnim Start="0,-30" EndOffset="0,10" Cycle="Bounce" Function="OutQuad">
+          <Image Texture="Tutorial_ArrowV" Offset="810,-20" Size="44,58" FlipY="true"/>
+        </SlideAnim>
+      </Tutorial>
+
+    </ScrollPanel>
+
+    <!-- We must place the modal screen controls in a separate container because we use a custom BG inside the scroll panel -->
+    <Container ID="CivicsTreeModal" Style="ModalScreenWide">
+      <Tutorial ID="CloseCivicsPointer" Anchor="R,T" Offset="90,15" Size="200,100" Style="TutorialContainer" TriggerBy="TutorialCloseCivicsPointer">
+        <Grid Style="TutorialCalloutGrid" Anchor="R,T">
+          <Label Style="TutorialHeaderText" String="LOC_META_100c_HEAD"/>
+          <Label Style="TutorialBodyText" String="LOC_META_100c_BODY"/>
+          <SlideAnim Anchor="C,T" Start="110,-40" EndOffset="30,0" Cycle="Bounce" Function="OutQuad">
+            <Image Texture="Tutorial_ArrowH" Size="58,44"/>
+          </SlideAnim>
+        </Grid>
+      </Tutorial>
+    </Container>
+
+  </Container>
+
+  <Grid ID="GovernmentPanel" Anchor="L,C" ConsumeMouseOver="true" Offset="0,205" Size="200,250" Texture="CivicsTree_GovtPanel" SliceCorner="35,39" SliceSize="9,4" SliceTextureSize="79,80"> 
+    <Label ID="GovernmentTitle" Anchor="C,T" Align="center" Offset="0,17" Style="FontFlair14" SmallCaps="18" Color="13,40,64,255" String="?GovernmentTitle?"/>
+    <Image ID="DiplomaticIcon" Anchor="L,T" Offset="10,130" Size="58,58" Texture="Governments_Diplomacy">
+      <Label ID="DiplomaticIconCount" Anchor="C,C" Align="center" Style="FontNormal18" Color="255,255,255,255" String="1" FontStyle="Stroke" EffectColor="0,0,0,150"/>
+    </Image>
+    <Image ID="EconomicIcon" Anchor="L,T" Offset="10,84" Size="58,58" Texture="Governments_Economic">
+      <Label ID="EconomicIconCount" Anchor="C,C" Align="center" Style="FontNormal18" Color="255,255,255,255" String="2" FontStyle="Stroke" EffectColor="0,0,0,150"/>
+    </Image>
+    <Image ID="MilitaryIcon" Anchor="L,T" Offset="10,38" Size="58,58" Texture="Governments_Military">
+      <Label ID="MilitaryIconCount" Anchor="C,C" Align="center" Style="FontNormal18" Color="255,255,255,255" String="3" FontStyle="Stroke" EffectColor="0,0,0,150"/>
+    </Image>
+    <Image ID="WildcardIcon" Anchor="L,T" Offset="10,176" Size="58,58" Texture="Governments_Wildcard">
+      <Label ID="WildcardIconCount" Anchor="C,C" Align="center" Style="FontNormal18" Color="255,255,255,255" String="4" FontStyle="Stroke" EffectColor="0,0,0,150"/>
+    </Image>
+    <!-- Wrap is the space between the offset and the edge of the parent, with 10px padding for the chrome. -->
+    <Stack ID="DiplomaticStack" StackGrowth="Right" StackPadding="2" WrapWidth="125" Offset="65,135"/>
+    <Stack ID="EconomicStack" StackGrowth="Right" StackPadding="2" WrapWidth="125" Offset="65,89"/>
+    <Stack ID="MilitaryStack" StackGrowth="Right" StackPadding="2" WrapWidth="125" Offset="65,43"/>
+    <Stack ID="WildcardStack" StackGrowth="Right" StackPadding="2" WrapWidth="125" Offset="65,181"/>
+  </Grid>
+
+  <Grid ID="OptionsPanel" ConsumeAllMouse="1" Anchor="L,C" Offset="0,-278" Size="193,135" Texture="Controls_OptionPanel" SliceCorner="3,3" SliceSize="10,52" SliceTextureSize="16,64">
+    <Image Offset="-30,0" Size="240,59" Texture="Controls_HeaderBanner">
+      <Label Anchor="C,T" Offset="0,8" Style="FontFlair16" Color0="38,39,32,255" String="LOC_TREE_OPTIONS" SmallCaps="20" SmallCapsType="EveryWord"/>
+    </Image>
+
+    <PullDown ID="FilterPulldown" Size="194,26" ScrollThreshold="450" SpaceForScroll="0">		
+      <ButtonData>
+        <GridButton ID="FilterPulldownButton" Offset="0,30" Size="194,26" String="LOC_TREE_FILTER_W_DOTS" Style="TreeOptionText">
+          <GridData Texture="Controls_Dropdown2" StateOffsetIncrement="0,26" SliceCorner="30,14" SliceSize="1,1" SliceTextureSize="41,26"/>
+        </GridButton>
+      </ButtonData>				
+      <GridData Offset="0,50" Texture="Controls_OptionPanel" SliceCorner="3,3" SliceSize="10,52" SliceTextureSize="16,64"/>
+      <ScrollPanelData Anchor="C,C" Vertical="1" Size="18,18" AutoScrollBar="1">
+        <ScrollBar Style="Slider_Vert" Anchor="R,C" AnchorSide="O,I"/>
+        <UpButton Style="Scroll_Up" Anchor="R,T" AnchorSide="O,I"/>
+        <DownButton Style="Scroll_Down" Anchor="R,B" AnchorSide="O,I"/>
+      </ScrollPanelData>				
+      <StackData StackGrowth="Bottom" Anchor="C,T"/>
+      <InstanceData Name="FilterItemInstance">					
+        <Button ID="Button" Anchor="L,T" Size="194,30">
+          <Label ID="IconText" Offset="4,8" String="a" Style="FontNormal14" Color="255,255,255,255" Hidden="1"/>
+          <Label ID="DescriptionText" Offset="4,8" String="b" Style="FontNormal14" Color="255,255,255,255"/>	
+        </Button>
+      </InstanceData>						
+    </PullDown>		
+
+    <Grid Offset="0,52" Size="194,26" Texture="Controls_Search2" StateOffsetIncrement="0,26" SliceCorner="30,14" SliceSize="1,1" SliceTextureSize="41,26">
+      <EditBox ID="SearchEditBox" Offset="32,3" Size="parent-24,22" CallOnChar="1" EditMode="1" Style="TreeOptionText" MaxLength="24" String="LOC_TREE_SEARCH_W_DOTS"/>
+    </Grid>
+
+    <GridButton ID="ToggleKeyButton" Offset="0,74" Size="194,26" TextOffset="32,6" String="LOC_TREE_SHOW_KEY" Style="TreeOptionText">
+      <GridData Texture="Controls_CheckButton2" StateOffsetIncrement="0,26" SliceCorner="30,14" SliceSize="1,1" SliceTextureSize="41,26"/>
+    </GridButton>
+
+    <GridButton ID="ToggleGovernmentButton" Offset="0,100" Size="194,26" TextOffset="32,6" String="LOC_TREE_SHOW_GOVERNMENT" Style="TreeOptionText">
+      <GridData Texture="Controls_CheckButton2" StateOffsetIncrement="0,26" SliceCorner="30,14" SliceSize="1,1" SliceTextureSize="41,26"/>
+    </GridButton>
+
+    <Grid ID="KeyPanel" ConsumeAllMouse="1" Anchor="L,B" AnchorSide="I,O" Offset="0,2" Size="240,600" Texture="Controls_PanelBlue" SliceCorner="25,28" SliceSize="33,18" SliceTextureSize="83,75">
+      <ScrollPanel ID="KeyScroll" Offset="0,10" Size="parent-20,parent" Style="ScrollPanelWithRightBar" Vertical="1">
+        <Line Start="20,6" End="208,6" Color="55,95,126,255" Width="2"/>
+        <Label Anchor="C,T" Offset="10,11" Style="FontFlair16" SmallCaps="20" String="LOC_TREE_KEY" Color0="78,119,151,255" Color1="0,0,0,0" Color2="25,65,96,255"/>
+        <Line Start="20,30" End="208,30" Color="55,95,126,255" Width="2"/>
+        <Stack ID="KeyStack" Offset="10,40" StackGrowth="Bottom" StackPadding="3">
+          <Image ID="AvailableKey" Texture="CivicsTree_KeyNormal" Size="156,30" StretchMode="Fill">
+            <Label ID="AvailableLabelKey" Offset="40,10" Style="TreeNodeText" String="LOC_CIVICS_KEY_AVAILABLE"/>
+          </Image>
+          <Image ID="UnavailableKey" Texture="CivicsTree_KeyDisabled" Size="156,30" StretchMode="Fill">
+            <Label ID="UnavailableLabelKey" Offset="40,10" Style="TreeNodeText" String="LOC_CIVICS_KEY_UNAVAILABLE"/>
+          </Image>
+          <Image ID="ResearchingKey" Texture="CivicsTree_KeySelected" Size="156,30" StretchMode="Fill">
+            <Label ID="ResearchingLabelKey" Offset="40,10" Style="TreeNodeText" String="LOC_CIVICS_KEY_RESEARCHING"/>
+          </Image>
+          <Image ID="CompletedKey" Texture="CivicsTree_KeyCompleted" Size="156,30" StretchMode="Fill">
+            <Label ID="CompletedLabelKey" Offset="40,10" Style="TreeNodeText" String="LOC_CIVICS_KEY_COMPLETED"/>
+          </Image>
+          <Image ID="DistrictKey" Texture="UnlockFrames" Size="38,38" TextureOffset="76,0">
+            <Label ID="DistrictLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_CIVICS_KEY_DISTRICT"/>
+          </Image>
+          <Image ID="UnitKey" Texture="UnlockFrames" Size="38,38" TextureOffset="152,0">
+            <Label ID="UnitLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_CIVICS_KEY_UNIT"/>
+          </Image>
+          <Image ID="BuildingKey" Texture="UnlockFrames" Size="38,38" TextureOffset="38,0">
+            <Label ID="BuildingLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_CIVICS_KEY_BUILDING"/>
+          </Image>
+					<Image ID="ImprovementKey" Texture="UnlockFrames" Size="38,38" TextureOffset="114,0">
+						<Label ID="ImprovementLabelKey" Offset="40,14" Style="TreeNodeText"  String="LOC_IMPROVEMENT_NAME"/>
+					</Image>
+          <Image ID="WonderKey" Texture="UnlockFrames" Size="38,38">
+            <Label ID="WonderLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_CIVICS_KEY_WONDER"/>
+          </Image>
+          <Image ID="AgreementKey" Texture="UnlockFrames" Size="38,38" TextureOffset="304,0">
+            <Label ID="AgreementLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_CIVICS_KEY_AGREEMENT"/>
+          </Image>
+					<Image ID="UnlockKey" Texture="UnlockFrames" Size="38,38" TextureOffset="494,0">
+						<Label ID="UnlockKeyLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_CIVICS_KEY_UNLOCK"/>
+					</Image>
+          <Image ID="GovernmentIconKey" Texture="UnlockFrames" Size="38,38" TextureOffset="228,0">
+            <Label ID="GovernmentIconLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_GOVERNMENT_NAME"/>
+          </Image>
+          <Image ID="MilitaryKey" Texture="UnlockFrames" Size="38,38" TextureOffset="380,0">
+            <Label ID="MilitaryLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_SLOT_MILITARY_NAME"/>
+          </Image>
+          <Image ID="EconomicKey" Texture="UnlockFrames" Size="38,38" TextureOffset="456,0">
+            <Label ID="EconomicLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_SLOT_ECONOMIC_NAME"/>
+          </Image>
+          <Image ID="DiploKey" Texture="UnlockFrames" Size="38,38" TextureOffset="418,0">
+            <Label ID="DiploLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_SLOT_DIPLOMATIC_NAME"/>
+          </Image>
+          <Image ID="GreatPersonKey" Texture="UnlockFrames" Size="38,38" TextureOffset="342,0">
+            <Label ID="GreatPersonLabelKey" Offset="40,14" Style="TreeNodeText" String="LOC_SLOT_GREAT_PERSON_NAME"/>
+          </Image>
+        </Stack>
+      </ScrollPanel>
+    </Grid>
+
+    <Container ID="SearchResultsPanelContainer" Anchor="L,T" Offset="0,75" Size="193,auto" Hidden="1">
+      <ScrollPanel ID="SearchResultsPanel" Size="parent,600" Vertical="1" AutoScrollBar="1">
+        <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"/>
+        <Grid Texture="Controls_OptionPanel" SliceCorner="3,3" SliceSize="10,52" SliceTextureSize="16,64" Size="193,auto" AutoSizePadding="0,5">
+          <Stack ID="SearchResultsStack" StackGrowth="Bottom" Padding="2" Offset="0,5"/>
+        </Grid>
+      </ScrollPanel>
+    </Container>
+  </Grid>
+
+
+
+
+
+  <!-- ================================================================= -->
+  <!--	INSTANCES																												 -->
+  <!-- ================================================================= -->
+
+  <!-- Most important part of the tree, the actual nodes of content. -->
+  <Instance Name="NodeInstance">
+    <Container ID="Top" Size="420,1">
+      <GridButton ID="NodeButton" Offset="0,-72" Size="420,84" Texture="CivicsTree_GearButton" SliceCorner="79,1" SliceSize="1,1" SliceTextureSize="133,84" StateOffsetIncrement="0,84">
+				<GridButton ID="OtherStates" Offset="0,0" Size="parent,parent" Texture="CivicsTree_GearButton" SliceCorner="79,1" SliceSize="1,1" SliceTextureSize="133,84" NoStateChange="1" />
+        <Image ID="FillTexture" Offset="76,1" Size="311,78" Texture="CivicsTree_GearButtonTile_Disabled" StretchMode="Tile"/>
+        <Stack ID="UnlockStack" Offset="72,22" StackGrowth="Right" WrapWidth="320" WrapGrowth="Down"/>
+        <Grid ID="BoostedBack" Offset="7,6" Anchor="L,B" Size="406,39" Texture="Controls_BoostSlotCivic" SliceCorner="28,26" SliceSize="1,1" SliceTextureSize="39,39"/>
+        <Image ID="BoostIcon" Offset="9,7" Anchor="L,B" Texture="BoostTech"/> 
+        <Label ID="BoostText" Offset="47,7" Anchor="L,B" Style="TreeBoostText" String="?BoostText"/>
+        <Stack Offset="68,8" StackGrowth="Right" StackPadding="4">
+          <Label ID="NodeName" Style="TreeNodeText" String="?NodeName" TruncateWidth="260"/>
+          <Image ID="RecommendedIcon" Offset="0,-8" Size="22,22" Texture="AdvisorRec22" ConsumeMouse="1" ToolTip="LOC_TECH_FILTER_RECOMMENDED">
+            <FlipAnim Texture="AdvisorRecAnim22" Size="26,26" Anchor="C,C" FrameCount="12" Columns="4" Speed="14" EndPause="3" Color="255,255,255,200"/>
+          </Image>
+        </Stack>
+        <Label ID="Turns" Offset="20,5" Anchor="R,T" Style="TreeTurnText" String="?Turns"/>				
+        <FlipAnim ID="GearAnim" Offset="4,-1" Size="34,38" Texture="Controls_Meter69_GearAnim" Speed="20" FrameCount="3" Columns="3" Hidden="1"/>
+        <Image ID="IconBacking" Offset="2,-2" Texture="Tree_Meter_GearBack"/>
+        <Meter ID="BoostMeter" Offset="2,-2" Size="68,68" Texture="CivicsTree_Meter_Boost" Follow="1"/>
+        <Meter ID="ProgressMeter" Offset="2,-2" Size="68,68" Texture="CivicsTree_Meter_Fill"/>											 
+        <Grid ID="FilteredOut" Offset="0,0" Size="420,84" Texture="Tree_FilterMask" SliceCorner="35,41" SliceSize="1,1" SliceTextureSize="50,81" NoStateChange="1" ConsumeMouseButton="1" ConsumeMouseOver="1" Color="35,33,31,150" Hidden="1"/>
+        <Image ID="Icon" Offset="14,10" Size="42,42" Texture="Civics42"/>												
+        <Image ID="Bolt" Offset="0,27" Texture="Controls_BoltOn"/>				
+      </GridButton>			
+    </Container>
+  </Instance>
+
+
+  <Instance Name="LargeNodeInstance">
+    <Container ID="Top" Size="420,1">
+      <GridButton ID="NodeButton" Offset="0,-72" Size="420,140" Texture="CivicsTree_GearButton2" SliceCorner="79,79" SliceSize="1,1" SliceTextureSize="133,140" StateOffsetIncrement="0,140">
+        <GridButton ID="OtherStates" Offset="0,0" Size="parent,parent" Texture="CivicsTree_GearButton2" SliceCorner="79,79" SliceSize="1,1" SliceTextureSize="133,140" NoStateChange="1"/>
+        <Image ID="FillTexture" Offset="76,1" Size="311,135" Texture="CivicsTree_GearButton2Tile_Disabled" StretchMode="Tile"/>
+        <Stack ID="UnlockStack" Offset="72,25" StackGrowth="Right" WrapWidth="320" WrapGrowth="Down"/>
+        <Grid ID="BoostedBack" Offset="7,6" Anchor="L,B" Size="406,39" Texture="Controls_BoostSlotCivic" SliceCorner="28,26" SliceSize="1,1" SliceTextureSize="39,39"/>
+        <Image ID="BoostIcon" Offset="10,7" Anchor="L,B" Texture="BoostTech"/> 
+        <Label ID="BoostText" Offset="42,7" Anchor="L,B" Style="TreeBoostText" String="?BoostText"/>
+        <Stack Offset="68,8" StackGrowth="Right" StackPadding="4">
+          <Label ID="NodeName" Style="TreeNodeText" String="?NodeName"/>
+          <Image ID="RecommendedIcon" Offset="0,-8" Size="22,22" Texture="AdvisorRec22" ConsumeMouse="1" ToolTip="LOC_TECH_FILTER_RECOMMENDED">
+            <FlipAnim Texture="AdvisorRecAnim22" Size="26,26" Anchor="C,C" FrameCount="12" Columns="4" Speed="14" EndPause="3" Color="255,255,255,200"/>
+          </Image>
+        </Stack>
+        <Label ID="Turns" Offset="20,6" Anchor="R,T" Style="TreeTurnText" String="?Turns"/>				
+        <FlipAnim ID="GearAnim" Offset="4,-1" Size="34,38" Texture="Controls_Meter69_GearAnim" Speed="20" FrameCount="3" Columns="3" Hidden="1"/>
+        <Image ID="IconBacking" Offset="2,-1" Texture="Tree_Meter_GearBack"/>
+        <Meter ID="BoostMeter" Offset="2,-2" Size="68,68" Texture="CivicsTree_Meter_Boost" Follow="1"/>
+        <Meter ID="ProgressMeter" Offset="2,-2" Size="68,68" Texture="CivicsTree_Meter_Fill"/>											 
+        <Grid ID="FilteredOut" Offset="0,0" Size="420,140" Texture="Tree_FilterMask" SliceCorner="35,41" SliceSize="1,1" SliceTextureSize="50,81" NoStateChange="1" ConsumeMouseButton="1" ConsumeMouseOver="1" Color="35,33,31,150" Hidden="1"/>
+        <Image ID="Icon" Offset="14,10" Size="42,42" Texture="Civics42"/>											
+        <Image ID="Bolt" Offset="0,27" Texture="Controls_BoltOn"/>				
+      </GridButton>			
+    </Container>
+  </Instance>
+
+
+  <!-- Icons representing the different items unlocked -->
+  <Instance Name="UnlockInstance">
+    <Button ID="UnlockIcon" Style="UnlockFrames" NoStateChange="1">
+      <Image ID="Icon" Size="38,38" Texture="Controls_Blank" Anchor="C,C"/>
+    </Button>
+  </Instance>
+
+  <Instance Name="GovernmentIcon">
+    <GridButton ID="GovernmentInstanceGrid" Texture="CivicsTree_GovtUnlock" Size="160,43" Offset="0,-3" SliceCorner="17,6" SliceSize="6,4" SliceTextureSize="40,30">
+      <Label ID="GovernmentName" Offset="12,5" Style="FontNormalMedium14" SmallCaps="14" String="?" TruncateWidth="140"/>
+      <Image ID="MilitaryPolicyImage" Offset="12,18" Size="20,20" Texture="CivicsGovtCardMilitary" StretchMode="Fill"/>
+      <Label ID="MilitaryPolicyLabel" Offset="37,22" Style="FontNormalMedium12" SmallCaps="14" String="?"/>
+      <Image ID="EconomicPolicyImage" Offset="47,18" Size="20,20" Texture="CivicsGovtCardEconomic" StretchMode="Fill"/>
+      <Label ID="EconomicPolicyLabel" Offset="72,22" Style="FontNormalMedium12" SmallCaps="14" String="?"/>
+      <Image ID="DiplomaticPolicyImage" Offset="82,18" Size="20,20" Texture="CivicsGovtCardDiplomatic" StretchMode="Fill"/>
+      <Label ID="DiplomaticPolicyLabel" Offset="107,22" Style="FontNormalMedium12" SmallCaps="14" String="?"/>
+      <Image ID="WildcardPolicyImage" Offset="117,18" Size="20,20" Texture="CivicsGovtCardWildcard" StretchMode="Fill"/>
+      <Label ID="WildcardPolicyLabel" Offset="142,22" Style="FontNormalMedium12" SmallCaps="14" String="?"/>
+    </GridButton>
+  </Instance>
+
+  <Instance Name="DiplomaticPolicyInstance">
+    <Button ID="DiplomaticPolicy" Size="37,44" Texture="Governments_DiplomacyCard_Small" NoStateChange="1"/>
+  </Instance>
+
+  <Instance Name="EconomicPolicyInstance">
+    <Button ID="EconomicPolicy" Size="37,44" Texture="Governments_EconomicCard_Small" NoStateChange="1"/>
+  </Instance>
+
+  <Instance Name="MilitaryPolicyInstance">
+    <Button ID="MilitaryPolicy" Size="37,44" Texture="Governments_MilitaryCard_Small" NoStateChange="1"/>
+  </Instance>
+
+  <Instance Name="WildcardPolicyInstance">
+    <Button ID="WildcardPolicy" Size="37,44" Texture="Governments_WildcardCard_Small" NoStateChange="1"/>
+  </Instance>
+
+  <!-- Lines between "nodes" -->
+  <Instance Name="LineInstance">
+    <Line ID="Line" Start="0,0" End="100,100" Width="6" Color="84,77,66,255"/>
+  </Instance>
+
+  <Instance Name="LineImageInstance">
+    <Image ID="LineImage" Size="40,40" Texture="Controls_TreePathDashEW" Color="84,77,66,255" StretchMode="Tile"/>
+  </Instance>
+
+  <Instance Name="ResearchPathMarker">
+    <Container ID="Top" Offset="0,0">
+      <Image Texture="Tree_QueueBadge.dds" Offset="0,2" Size="54,58"/>
+      <Label ID="NodeNumber" Offset="0,18" Style="FontFlair12" String="99"/>
+    </Container>
+  </Instance>
+
+  <Instance Name="SearchResultInstance">
+    <Container ID="Root" Size="auto,auto">
+      <GridButton ID="Button" Offset="0,0" Size="193,auto" Style="ButtonLightWeightGrid" InnerPadding="10,10">
+        <Label ID="Name" Offset="40,0" Style="FontNormal14" String="TechName" Anchor="L,C" WrapWidth="parent-45" ColorSet="BodyTextCool"/>
+        <Image Texture="Controls_CircleRim40" Size="40,40" Anchor="L,C" Color="255,255,255,200">
+          <Image ID="SearchIcon" Size="38,38" Texture="Tech38"/>
+        </Image>
+      </GridButton>
+    </Container>
+  </Instance>
+
+  <!-- Era banners -->
+  <Instance Name="EraLabelInstance">
+    <Container ID="Top" Offset="0,-36" Size="90,768">
+      <Image Anchor="L,B" Offset="-20,-5" Size="128,128" Texture="Tree_EraPip">
+        <Label ID="EraTitle" Offset="72,0" Rotate="270" Style="TreeEraBigText"/>
+        <!-- <Label	ID="Date"										Offset="85,8"		Rotate="270" Style="TreeEraSmallText" String="1000 B.C. - 500 AD (placeholder)"/> -->
+      </Image>			
+      <Image ID="ArtLeft" Anchor="L,C" Offset="-4,0" Size="8,parent" Texture="Parchment_Separator"/>
+      <Image ID="ArtRight" Anchor="R,C" Offset="-4,0" Size="8,parent" Texture="Parchment_Separator"/>			
+    </Container>
+  </Instance>
+
+
+  <Instance Name="EraArtInstance">
+    <Container ID="Top" Anchor="L,B" Offset="0,0">
+      <Image ID="BG" Anchor="L,B" Texture="Parchment_Pattern" StretchMode="Auto" Color="0,0,0,50" />
+    </Container>
+  </Instance>
+
+
+  <!-- Decoration on scrollbar marker area as to where Era pips should be placed. -->
+  <Instance Name="EraDotInstance">
+    <Image ID="Dot" Offset="0,13" Size="6,6" Texture="Controls_TimeDiv"/>
+  </Instance>
+
+  <!-- Markers representing players that are placed on the timeline (player: 122,42) -->
+  <Instance Name="PlayerMarkerInstance">
+    <Container ID="Top" Size="2,2">
+      <Grid ID="TurnGrid" Anchor="C,T" Offset="0,-34" Texture="Tree_TimeTurnLabel" Size="70,22" SliceCorner="10,10" SliceSize="2,1" SliceTextureSize="21,22">
+        <Label ID="TurnLabel" Anchor="L,C" Offset="10,0" Style="FontFlair10" SmallCaps="14" String="?turn?"/>
+        <Label ID="TurnNumber" Anchor="R,C" Offset="10,-1" Style="FontFlair16" String="??"/>
+      </Grid>
+      <Image ID="Marker" Anchor="C,T" Offset="0,-15" Size="34,37" Texture="Controls_TimeDiv">
+        <Image ID="Portrait" Anchor="C,C" Size="32,32" Texture="TimelineLeaders"/>
+        <Label ID="Num" Anchor="C,C" Offset="-1,0" Style="FontNormal20" String="?" Color0="255,255,255,255" Color1="0,0,0,255" FontStyle="Shadow"/>
+      </Image>
+    </Container>
+  </Instance>
+
+</Context>
