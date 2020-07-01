@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod id="23acd19c-377a-4da8-b8cb-87d3c7fc71af" version="1">
 	<Properties>
-		<Name>Better Tech Tree</Name>
+		<Name>Better Tech Tree (UI)</Name>
 		<Teaser>Shows more info in Tech and Civics Trees.</Teaser>
-		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.0.1.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
+		<Description>Shows more info in Tech and Civics Trees.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.1.[NEWLINE][NEWLINE]Works with [COLOR_Green]Real Eurekas[ENDCOLOR] mod.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>1.2,2.0</CompatibleVersions>
@@ -35,6 +35,8 @@
 				<!-- wrappers -->
 				<File>Base/TechTree_BTT_Base.lua</File>
 				<File>Base/CivicsTree_BTT_Base.lua</File>
+                <!-- updated nodes -->
+                <File>Base/TechTreeNode.xml</File>
             </Items>
         </ImportFiles>
 		<UpdateIcons id="BTT_Icons">
@@ -118,6 +120,7 @@
 		<File>Base/TechTree_BTT_Base.lua</File>
 		<File>Base/CivicsTree_BTT_Base.lua</File>
 		<File>Base/BoostUnlockedPopup_BTT.lua</File>
+		<File>Base/TechTreeNode.xml</File>
 		<!-- Rise & Fall files -->
 		<File>XP1/TechTree_BTT_XP1.lua</File>
 		<!-- Gahtering Storm files -->
