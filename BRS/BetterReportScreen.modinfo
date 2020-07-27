@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod id="6f2888d4-79dc-415f-a8ff-f9d81d7afb53" version="1">
 	<Properties>
-		<Name>Better Report Screen</Name>
+		<Name>Better Report Screen (UI)</Name>
 		<Teaser>Adds Policies and City States impact, Units, Deals and many other improvements to the Report Screen.</Teaser>
 		<Description>Adds Policies and City States impact, Units, Deals and many other improvements to the Report Screen.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 5.9.[NEWLINE][NEWLINE]Original Units and Deals tabs created by Greg Miller.</Description>
 		<Authors>Infixo</Authors>
