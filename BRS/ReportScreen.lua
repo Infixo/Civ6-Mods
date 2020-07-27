@@ -1424,6 +1424,7 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 	
 	--print("--- PLOTS OF", pCity:GetName(), table.count(tPlots)); -- debug
 	--print("--- CITIZENS OF", pCity:GetName(), table.count(tUnits)); -- debug
+
 	for i,plotId in pairs(tPlots) do
 
 		local kPlot	:table = Map.GetPlotByIndex(plotId);
@@ -1457,13 +1458,24 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 		-- show how individual buildings contribute... yet.
 		--kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( index );
 	end
-	
+
 	-- TOURISM
 	-- Tourism from tiles like Wonders and Districts is not counted because they cannot be worked!
+    local cityX:number, cityY:number = pCity:GetX(), pCity:GetY();
+    --local iInside, iOutside = 0, 0;
 	for _, plotID in ipairs(Map.GetCityPlots():GetPurchasedPlots(pCity)) do
+        pPlot = Map.GetPlotByIndex(plotID);
 		--print("...tourism at", plotID, pCulture:GetTourismAt( plotID )); -- debug
-		kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( plotID );
+        if Map.GetPlotDistance(cityX, cityY, pPlot:GetX(), pPlot:GetY()) <= 3 then
+            kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( plotID );
+            --iInside = iInside + pCulture:GetTourismAt( plotID );
+            --if pCulture:GetTourismAt( plotID ) > 0 then print("...inside tourism at", plotID, pCulture:GetTourismAt( plotID )); end -- debug
+        else
+            --iOutside = iOutside + pCulture:GetTourismAt( plotID );
+        end
+		--kYields.TOURISM = kYields.TOURISM + pCulture:GetTourismAt( plotID );
 	end
+    --print("tourism inside", iInside, "outside", iOutside);
 	--print("--- SUMMARY OF", pCity:GetName(), iNumWorkedPlots, iNumSpecialists, "tourism:", kYields.TOURISM); -- debug
 	return kYields, iNumWorkedPlots, kSpecYields, iNumSpecialists;
 end
@@ -3736,7 +3748,13 @@ function group_military( unit, unitInstance, group, parent, type )
 		if sText ~= "" then
 			AddExtraPromoText( sText );
 		elseif tMod.EffectType == "EFFECT_ADJUST_PLAYER_STRENGTH_MODIFIER" or tMod.EffectType == "EFFECT_ADJUST_UNIT_DIPLO_VISIBILITY_COMBAT_MODIFIER" then
-			AddExtraPromoText( string.format("%+d [ICON_Strength]", tonumber(tMod.Arguments.Amount))); -- Strength
+            if tMod.Arguments.Amount ~= nil then
+                AddExtraPromoText( string.format("%+d [ICON_Strength]", tonumber(tMod.Arguments.Amount))); -- Strength
+            elseif tMod.Arguments.Max ~= nil then
+                AddExtraPromoText( string.format("%+d [ICON_Strength]", tonumber(tMod.Arguments.Max))); -- Vampires, stregth from Barbs
+            else
+                AddExtraPromoText( "[ICON_Strength]" ); -- Vampires, strength
+            end
 		elseif tMod.EffectType == "EFFECT_GRANT_ABILITY" then
 			local unitAbility:table = GameInfo.UnitAbilities[ tMod.Arguments.AbilityType ];
 			if unitAbility and unitAbility.Name and unitAbility.Description then -- 2019-08-30 some Abilities have neither Name nor Description
