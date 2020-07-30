@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Real Governor Inspector</Name>
 		<Teaser>Helps managing Governors.</Teaser>
-		<Description>Helps managing Governors. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.0.</Description>
+		<Description>Helps managing Governors. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.1.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>

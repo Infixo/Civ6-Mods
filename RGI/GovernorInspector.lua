@@ -87,7 +87,7 @@ end
 
 -- one-time call to init all necessary data
 function InitializeData()
-	print("FUN InitializeData");
+	--print("FUN InitializeData");
 	
 	-- list of governors created dynamically because of Ibrahim
 	local pPlayer:table = Players[Game.GetLocalPlayer()];
@@ -96,7 +96,9 @@ function InitializeData()
 
 	-- Add appointable governors
 	for governorDef in GameInfo.Governors() do
-		if playerGovernors:CanEverAppointGovernor(governorDef.Index) then
+		if playerGovernors:CanEverAppointGovernor(governorDef.Index) and
+            -- 2020-07-30 Secret Societies
+            not (GameInfo.GovernorsCannotAssign[governorDef.GovernorType] ~= nil and GameInfo.GovernorsCannotAssign[governorDef.GovernorType].CannotAssign) then
 			-- get the promotions
 			local tPromos:table = {};
 			for promo in GameInfo.GovernorPromotionSets() do
@@ -134,7 +136,7 @@ end
 
 -- refresh governor promotions and the tooltip
 function UpdateGovernorPromotions()
-	print("FUN UpdateGovernorPromotions()");
+	--print("FUN UpdateGovernorPromotions()");
 	
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == nil then return end;
@@ -224,7 +226,7 @@ local ePingalaGWTypes:table = {
 
 -- main function for calculating effects of governors in a specific city
 function ProcessCity( pCity:table )
-	print("FUN ProcessCity", pCity:GetName());
+	--print("FUN ProcessCity", pCity:GetName());
 	
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == nil then return end;
@@ -340,7 +342,7 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- iterate through city plots
-	print("..city plots");
+	--print("..city plots");
 	local cityPlots:table = Map.GetCityPlots():GetPurchasedPlots(pCity);
 	local pCitizens	: table = pCity:GetCitizens();	
 	for _,plotID in ipairs(cityPlots) do
@@ -420,7 +422,7 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Magnus and national routes
-	print("..national routes");
+	--print("..national routes");
 	for _,route in ipairs(pCity:GetTrade():GetIncomingRoutes()) do
 		if route.OriginCityPlayer == data.Owner then data.RoutesEnding = data.RoutesEnding + 1; end
 	end
@@ -432,7 +434,7 @@ function ProcessCity( pCity:table )
 	--print(data.MagnusPlant);
 	
 	-- Magnus extra production
-	print("..vertical integration");
+	--print("..vertical integration");
 	local tMagnusBuildings:table = {};
 	for _,district in Players[data.Owner]:GetDistricts():Members() do
 		--print("....ID", district:GetID());
@@ -464,7 +466,7 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Liang water works
-	print("..water works");
+	--print("..water works");
 	for _,district in pCity:GetDistricts():Members() do
 		local eDistrict:number = district:GetType();
 		-- housing
@@ -505,7 +507,7 @@ function ProcessCity( pCity:table )
 	data.PingalaScience = Round( baseCityScience * 0.15, 1 );
 	
 	-- Pingala GW
-	print("..great works");
+	--print("..great works");
 	for building in GameInfo.Buildings() do
 		local buildingIndex:number = building.Index;
 		if cityBuildings:HasBuilding(buildingIndex) then
@@ -546,7 +548,7 @@ function ProcessCity( pCity:table )
 	end
 
 	-- Pingala GPPs
-	print("..great people points");
+	--print("..great people points");
 	for building in GameInfo.Buildings() do
 		local buildingType:string  = building.BuildingType;
 		local buildingIndex:number = building.Index;
@@ -563,7 +565,7 @@ function ProcessCity( pCity:table )
 	--dshowtable(data.PingalaGPP);
 	
 	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
-	print("..foreign routes");
+	--print("..foreign routes");
 	for _,origPlayer in ipairs(PlayerManager.GetAliveMajors()) do
 		local origPlayerID:number = origPlayer:GetID();
 		if origPlayerID ~= localPlayerID then
@@ -580,7 +582,7 @@ function ProcessCity( pCity:table )
 	end -- players
 	
 	-- Reyna double adjacency bonuses
-	print("..double adjacency");
+	--print("..double adjacency");
 	for _,district in pCity:GetDistricts():Members() do
 		if IsInTable(eReynaDistricts, district:GetType()) then
 			data.ReynaAdjacency = data.ReynaAdjacency + district:GetYield(GameInfo.Yields.YIELD_GOLD.Index);
@@ -593,7 +595,7 @@ function ProcessCity( pCity:table )
 	
 	-- get generic data
 	-- loop through all promotions, filtering out which are valid will happen later
-	print("MAIN LOOP");
+	--print("MAIN LOOP");
 	for _,governor in ipairs(m_kGovernors) do
 	
 		-- gather all yield-type effects for a governor
@@ -803,7 +805,7 @@ end
 
 
 function UpdateData()
-	print("FUN UpdateData");
+	--print("FUN UpdateData");
 
 	local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == nil then return end;
@@ -904,7 +906,7 @@ end
 
 -- fills a single instance with the data of the moment
 function ShowSingleCity(pCity:table, pInstance:table)
-	print("FUN ShowSingleCity", pCity.CityName);
+	--print("FUN ShowSingleCity", pCity.CityName);
 	local function TruncateWithToolTip(control:table, length:number, text:string)
 		local isTruncated:boolean = TruncateString(control, length, text);
 		if isTruncated then control:SetToolTipString(text); end
@@ -969,7 +971,7 @@ end
 
 -- main function - called many times especially when sorting happens
 function ViewGovernorPage(eTabNum:number)
-	print("FUN ViewGovernorPage", eTabNum);
+	--print("FUN ViewGovernorPage", eTabNum);
 	if eTabNum == nil then eTabNum = m_kCurrentTab; end
 	-- Remember this tab when report is next opened
 	m_kCurrentTab = eTabNum;
@@ -1209,7 +1211,7 @@ function RefreshAdditionalInfo()
 end
 
 function Open( tabToOpen:number )
-	print("FUN Open()", tabToOpen, m_kCurrentTab);
+	--print("FUN Open()", tabToOpen, m_kCurrentTab);
 	
 	UIManager:QueuePopup( ContextPtr, PopupPriority.Medium );
 	Controls.ScreenAnimIn:SetToBeginning();
@@ -1288,7 +1290,7 @@ end
 
 -- ===========================================================================
 function LateInitialize()
-	print("FUN LateInitialize");
+	--print("FUN LateInitialize");
 	InitializeData();
 	--Resize();
 	-- tabs are created dynamically because of Ibrahim
