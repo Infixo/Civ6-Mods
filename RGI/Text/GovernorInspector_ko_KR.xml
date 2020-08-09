@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Real Governor Inspector
+	Author: Infixo       
+	2020-08-09: Added Korean translation by wizel
+-->
+
+<GameData>
+
+
+<LocalizedText>
+
+	<Replace Tag="LOC_RGI_WINDOW_TITLE" Language="ko_KR">
+		<Text>총독 관찰</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_BUTTON_LABEL" Language="ko_KR">
+		<Text>총독 관찰</Text>
+	</Replace>
+
+	<!--
+	<Replace Tag="LOC_GOVERNOR_ASSIGNMENT_CONFIRM_REPLACEMENT">
+			<Text>REPLACE GOVERNOR? Slotting this governor will replace the governor in this city.</Text>
+	</Replace>
+		<Replace Tag="LOC_GOVERNORS_SCREEN_GOVERNOR_ASSIGN_TO">
+			<Text>Assign {1_GovernorName} to:</Text>
+		</Replace>
+	-->
+	<!-- VICTOR -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_ARMS_RACE_PROPONENT" Language="ko_KR">
+		<Text>이 도시에서 진행 중인 군사용 핵 프로젝트입니다.[NEWLINE][COLOR_Gray]생산력 획득량은 도시의 총 생산력에 기반하며, 생산력에 영향을 주는 다른 요인도 포함되기 때문에 실제 획득량보다 클 수 있습니다.[ENDCOLOR]</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_DEFENSE_LOGISTICS" Language="ko_KR">
+		<Text>이 도시에서 개발된 전략 자원입니다.</Text>
+	</Replace>
+	<!-- MAGNUS -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER" Language="ko_KR">
+		<Text>이 도시에서, 지형 특성과 자원이 제공할 수 있는 생산량을 제외하고 이들을 제거하거나 수확하여 얻을 수 있는 수확량을 나타낸 것입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_SURPLUS_LOGISTICS" Language="ko_KR">
+		<Text>이 도시가 목적지인 [ICON_TradeRoute] 교역로의 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_INDUSTRIALIST" Language="ko_KR">
+		<Text>이 도시에 있는 발전소 유형입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_VERTICAL_INTEGRATION" Language="ko_KR">
+		<Text>이 도시에 보너스 생산력을 제공하는 산업 구역 건물의 수입니다.</Text>
+	</Replace>
+	<!-- LIANG -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_AQUACULTURE" Language="ko_KR">
+		<Text>이 도시의 양식장 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_PARKS_RECREATION" Language="ko_KR">
+		<Text>이 도시의 공원 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_WATER_WORKS" Language="ko_KR">
+		<Text>이 도시에 쾌적도를 제공하는 특수지구의 수 / 주거공간을 제공하는 특수지구의 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_ZONING_COMMISSIONER" Language="ko_KR">
+		<Text>이 도시에서 생산하는 특수지구입니다.[NEWLINE][COLOR_Gray]생산력 획득량은 도시의 총 생산력에 기반하며, 생산력에 영향을 주는 다른 요인도 포함되기 때문에 실제 획득량보다 클 수 있습니다.[ENDCOLOR]</Text>
+	</Replace>
+	<!-- PINGALA -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_LIBRARIAN" Language="ko_KR">
+		<Text>[COLOR_Gray]증가량은 도시의 총 생성량에 기반하며, 다른 요인도 포함되기 때문에 실제 증가량보다 클 수 있습니다.[ENDCOLOR]</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_CONNOISSEUR" Language="ko_KR">
+		<Text>이 도시의 [ICON_Citizen] 시민 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_RESEARCHER" Language="ko_KR">
+		<Text>이 도시의 [ICON_Citizen] 시민 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_GRANTS" Language="ko_KR">
+		<Text>이 도시에서 매턴 생성하는 [ICON_GreatPerson] 위인 점수입니다.[NEWLINE][COLOR_Gray]특수지구와 건물에서 비롯되는 기본 위인 점수만 포함합니다.[ENDCOLOR]</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_CURATOR" Language="ko_KR">
+		<Text>이 도시의 걸작 예술품, 음악, 문학 작품 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_SPACE_INITIATIVE" Language="ko_KR">
+		<Text>이 도시의 우주 프로그램입니다.[NEWLINE][COLOR_Gray]생산력 획득량은 도시의 총 생산력에 기반하며, 생산력에 영향을 주는 다른 요인도 포함되기 때문에 실제 획득량보다 클 수 있습니다.[ENDCOLOR]</Text>
+	</Replace>
+	<!-- REYNA -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" Language="ko_KR">
+		<Text>이 도시를 지나는 다른 문명의 [ICON_TradeRoute] 교역로 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" Language="ko_KR">
+		<Text>이 도시의 미개발 지형 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_RENEWABLE_ENERGY" Language="ko_KR">
+		<Text>이 도시에서 보너스의 대상이 될 수 있는 재생 가능 에너지 원천의 수입니다.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_TAX_COLLECTOR" Language="ko_KR">
+		<Text>이 도시의 [ICON_Citizen] 시민 수입니다.</Text>
+	</Replace>
+</LocalizedText>
+
+</GameData>

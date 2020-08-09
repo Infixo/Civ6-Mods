@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Real Governor Inspector</Name>
 		<Teaser>Helps managing Governors.</Teaser>
-		<Description>Helps managing Governors. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.1.</Description>
+		<Description>Helps managing Governors. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.2.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
@@ -27,7 +27,8 @@
 			<File>GovernorInspector.xml</File>
 		</AddUserInterfaces>
 		<UpdateText id="RGI_UpdateText">
-			<File>Text/GovernorInspector_Text.xml</File>
+            <File>Text/GovernorInspector_en_US.xml</File>
+            <File>Text/GovernorInspector_ko_KR.xml</File>
 		</UpdateText>
 		<!-- reports list loader -->
 		<UpdateDatabase id="RLL_Database">
@@ -50,7 +51,8 @@
         <File>GovernorInspector.xml</File>
 		<File>RealYields.lua</File>
 		<File>Serialize.lua</File>
-		<File>Text/GovernorInspector_Text.xml</File>
+		<File>Text/GovernorInspector_en_US.xml</File>
+		<File>Text/GovernorInspector_ko_KR.xml</File>
 		<!-- reports list loader -->
 		<File>RLL/ReportsListLoader.sql</File>
 		<File>RLL/ReportsListLoader.lua</File>
