@@ -3,6 +3,7 @@
 -- Author: Infixo
 -- 2019-03-09: Created
 -- 2019-04-04: Updated for VICTORY_STRATEGY_DIPLOMATIC_VICTORY from April 2019 Patch
+-- 2020-08-09: Added DISTRICT_DIPLOMATIC_QUARTER from July 2020 Patch
 -- ===========================================================================
 
 
@@ -47,6 +48,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('DiploVictoryAlliances'), -- AI can be set to favor or disfavor specific alliances by leader or civ trait - very rarely used
 ('DiploVictoryCivics'),
 ('DiploVictoryDiplomacy'),
+('DiploVictoryDistricts'), -- Diplo Quarter added with Ethiopia
 ('DiploVictoryCommemorations'),
 ('DiploVictoryProjects'),
 --('DiploVictoryPseudoYields'), -- DiplomaticPseudoYieldPreferences
@@ -59,6 +61,7 @@ INSERT INTO AiLists (ListType, System) VALUES
 ('DiploVictoryAlliances',    'Alliances'),
 ('DiploVictoryCivics',       'Civics'),
 ('DiploVictoryDiplomacy',    'DiplomaticActions'),
+('DiploVictoryDistricts',    'Districts'),
 ('DiploVictoryCommemorations', 'Commemorations'),
 ('DiploVictoryProjects',     'Projects'),
 --('DiploVictoryPseudoYields', 'PseudoYields'), -- DiplomaticPseudoYieldPreferences
@@ -71,6 +74,7 @@ INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES
 ('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryAlliances'),
 ('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryCivics'),
 ('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryDiplomacy'),
+('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryDistricts'),
 ('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryCommemorations'),
 ('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryProjects'),
 --('VICTORY_STRATEGY_DIPLOMATIC_VICTORY', 'DiploVictoryPseudoYields'), -- DiplomaticPseudoYieldPreferences
@@ -124,6 +128,11 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- Tier 3 BUILDING_GOV_MILITARY BUILDING_GOV_CULTURE BUILDING_GOV_SCIENCE
 ('DiploVictoryWonders', 'BUILDING_GOV_MILITARY', 0, 0);
 
+-- 2020-08-09 support for Diplo Quarter
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
+SELECT 'DiploVictoryDistricts', 'DISTRICT_DIPLOMATIC_QUARTER', 1, 0
+FROM Districts
+WHERE DistrictType = 'DISTRICT_DIPLOMATIC_QUARTER';
 
 
 -- ===========================================================================

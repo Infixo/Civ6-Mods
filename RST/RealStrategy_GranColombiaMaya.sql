@@ -44,7 +44,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('LadySixSkyPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 10), -- farms & plantations
 ('LadySixSkyUnitBuilds', 'PROMOTION_CLASS_RANGED', 1, 10),
 ('LadySixSkyUnitBuilds', 'PROMOTION_CLASS_SIEGE', 1, -25),
-('LadySixSkyAlliances', 'ALLIANCE_SCIENTIFIC', 1, 0),
+('LadySixSkyAlliances', 'ALLIANCE_RESEARCH', 1, 0),
 ('LadySixSkyDiplomacy', 'DIPLOACTION_ALLIANCE', 1, 0),
 ('LadySixSkyDiplomacy', 'DIPLOACTION_RENEW_ALLIANCE', 1, 0),
 ('LadySixSkyDiplomacy', 'DIPLOACTION_DECLARE_SURPRISE_WAR', 0, 0),
