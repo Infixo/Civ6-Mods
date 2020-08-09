@@ -19,6 +19,12 @@ UPDATE AiFavoredItems SET Item = 'TECH_GUNPOWDER' WHERE Item = 'TECH_GUNPOWER'; 
 --AGENDA_IRON_CONFEDERACY_MANY_ALLIANCES	StatementKey	ARGTYPE_IDENTITY	LOC_DIPLO_WARNING_LEADER_ROBERT_THE_BRUCE_REASON_ANY
 
 
+--------------------------------------------------------------
+-- 2020-07-05 War-Carts don't get Alpine Training from Matterhorn
+
+INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('ABILITY_ALPINE_TRAINING', 'CLASS_WAR_CART');
+
+
 -- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
 --DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
 --INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES

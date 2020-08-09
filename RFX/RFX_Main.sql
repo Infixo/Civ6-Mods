@@ -179,9 +179,11 @@ WHERE ModifierId = 'TRAIT_FLOOD_BARRIER_PRODUCTION' AND Value = 'BUILDING_FLOOD_
 
 
 --------------------------------------------------------------
--- 2020-07-05 War-Carts don't get Alpine Training from Matterhorn
+-- 2020-08-09 MatthiasAlliances uses wrong ID for Research Alliance
 
-INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('UNIT_SUMERIAN_WAR_CART', 'CLASS_HEAVY_CAVALRY');
+UPDATE AiFavoredItems
+SET Item = 'ALLIANCE_RESEARCH'
+WHERE ListType = 'MatthiasAlliances' AND Item = 'ALLIANCE_SCIENTIFIC';
 
 
 --------------------------------------------------------------
