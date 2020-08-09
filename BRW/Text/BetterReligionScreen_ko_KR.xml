@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Better Religion Window
+    Author: Infixo
+    2020-08-09: Added Korean translation by wizel
+-->
+<GameData>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_BRW_CITY_SORT_NOT_FOLLOWING" Language="ko_KR"> <!-- LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING -->
+        <Text>종교를 [COLOR_Red]믿지 않는[ENDCOLOR] 도시</Text>
+	</Replace>
+	<Replace Tag="LOC_BRW_CITY_SORT_ALL" Language="ko_KR">
+        <Text>모든 도시</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>

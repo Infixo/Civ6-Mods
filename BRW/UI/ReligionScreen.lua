@@ -1080,6 +1080,7 @@ function ViewReligion(religionType:number)
 	local cities:table = {};
     local civs:table = {};
 	local numDominantCities:number = 0; -- this counts all converted cities
+    local numTotalFollowers:number = 0; -- total number of followers
 	local majorPlayers:table = PlayerManager.GetAlive();
 	for _, player in ipairs(majorPlayers) do
 		local playerID:number = player:GetID();
@@ -1112,7 +1113,7 @@ function ViewReligion(religionType:number)
 			else
 				if(m_CitiesFilter == CITIES_FILTER.NOT_FOLLOWING_RELIGION) then bIncludeCity = true; end
 			end
-
+            
 			for _, cityReligionData in ipairs(religionsInCity) do
 				--[[
 				local bIncludeData:boolean = false;
@@ -1139,6 +1140,10 @@ function ViewReligion(religionType:number)
 				end
                 if m_CitiesFilter == CITIES_FILTER.ALL_CITIES then bIncludeCity = true; end -- overwrites all previous ones
 				--end
+                -- 2020-08-09 num followers
+                if eReligion == religionType then
+                    numTotalFollowers = numTotalFollowers + followers;
+                end
 			end
 			
 			-- calculate how much pressure is needed to convert a city
@@ -1281,12 +1286,15 @@ function ViewReligion(religionType:number)
 
 	RealizeStack(Controls.IconStack);
 	RealizeStack(Controls.ViewReligionStack);
+    
+    -- 2020-08-09 get total followers
+    local sNumFollowers:string = string.format(" [ICON_Citizen]%s", ColorWhite(tostring(numTotalFollowers)));
 
 	-- Update dominant city text
 	if(numDominantCities == 1) then
-		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE", ColorWhite("1"))));
+		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE", ColorWhite("1")))..sNumFollowers);
 	else
-		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE_PLURAL", ColorWhite(tostring(numDominantCities)))));
+		Controls.ViewReligionDominance:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_RELIGION_DOMINANCE_PLURAL", ColorWhite(tostring(numDominantCities))))..sNumFollowers);
 	end
 
 	-- Sort cities based on number of followers
