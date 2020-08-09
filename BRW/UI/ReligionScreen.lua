@@ -1,4 +1,4 @@
-print("Loading ReligionScreen.lua from Better Religion Screen v1.1");
+print("Loading ReligionScreen.lua from Better Religion Screen v1.2");
 
 -- Copyright 2017-2019, Firaxis Games
 include("TabSupport");
