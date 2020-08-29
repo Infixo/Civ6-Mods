@@ -599,6 +599,13 @@ local tTechsWithUniques:table = {}; -- includes both techs and civics
 
 function Initialize_TechsWithUniques()
     --print("FUN Initialize_TechsWithUniques");
+
+    -- 2020-08-29 no initial marking when shuffle mode is ON
+    if GameCapabilities.HasCapability("CAPABILITY_TREE_RANDOMIZER") then
+        print("Marked techs and civics: none, shuffle mode is ON");
+        return;
+    end
+
     local localPlayerID:number = Game.GetLocalPlayer();
 	if localPlayerID == PlayerTypes.NONE or localPlayer == PlayerTypes.OBSERVER then return; end
     
