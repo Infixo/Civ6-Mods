@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- RealEraStop_Config -->
-<!-- Author: Infixo -->
-<!-- Mar 26th, 2017: Created, custom Game Speeds -->
+<!-- RealEraStop_Config                            -->
+<!-- Author: Infixo                                -->
+<!-- 2017-03-26: Created, custom Game Speeds       -->
+<!-- 2020-08-30: Parameters in the Advaced Options -->
+
 <GameData>
+    <Parameters>
+		<Row ParameterId="GameLastEra" ConfigurationId="GameLastEra" Name="LOC_RES_LAST_ERA_NAME" Description="LOC_RES_LAST_ERA_DESC" Domain="LastEraDomain" DefaultValue="3" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="65" />
+    </Parameters>
+    <DomainValues>
+        <Row Domain="LastEraDomain" Value= "2" SortIndex="10" Name="LOC_ERA_CLASSICAL_NAME"   Description="LOC_ERA_CLASSICAL_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "3" SortIndex="20" Name="LOC_ERA_MEDIEVAL_NAME"    Description="LOC_ERA_MEDIEVAL_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "4" SortIndex="30" Name="LOC_ERA_RENAISSANCE_NAME" Description="LOC_ERA_RENAISSANCE_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "5" SortIndex="40" Name="LOC_ERA_INDUSTRIAL_NAME"  Description="LOC_ERA_INDUSTRIAL_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "6" SortIndex="50" Name="LOC_ERA_MODERN_NAME"      Description="LOC_ERA_MODERN_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "7" SortIndex="60" Name="LOC_ERA_ATOMIC_NAME"      Description="LOC_ERA_ATOMIC_DESCRIPTION" />
+    </DomainValues>
 	<GameSpeeds>
 		<Row GameSpeedType="GAMESPEED_LASTERACLA" Name="LOC_GAMESPEED_LASTERACLA_NAME" Description="LOC_GAMESPEED_LASTERACLA_HELP" SortIndex="120" />
 		<Row GameSpeedType="GAMESPEED_LASTERAMED" Name="LOC_GAMESPEED_LASTERAMED_NAME" Description="LOC_GAMESPEED_LASTERAMED_HELP" SortIndex="130" />

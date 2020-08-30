@@ -34,21 +34,10 @@
 --		Proper handling of some Great People bonuses that depend on Era (Eurekas for specifc or random boosts mostly, unit granting)
 -- February 21, 2019: Version 2.4 / 2.5
 --		Gathering Storm update. Fix for Railroads being built by a Trader.
+-- August 30, 2020: Version 3.0
+--      Mod config via Advanced Options
 --------------------------------------------------------------
 
---------------------------------------------------------------
--- PARAMETER
--- Put the code for the last Era in the line marked just below. Use ONLY one of the below numbers:
--- '2' - Classical
--- '3' - Medieval
--- '4' - Renaissance
--- '5' - Industrial
--- '6' - Modern
--- '7' - Atomic
---------------------------------------------------------------
-
-INSERT INTO GlobalParameters (Name, Value)
-VALUES ('RES_MAX_ERA', '3');  -- !!!CHANGE HERE FOR A DIFFERENT ERA - INSTEAD OF 3 PUT THE NUMBER FOR A DIFFERENT ERA!!!
 
 --------------------------------------------------------------
 -- PREPARATIONS

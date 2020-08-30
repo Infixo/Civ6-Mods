@@ -1,86 +1,148 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="2">
-  <Properties>
-    <Name>Real Era Stop</Name>
-    <Description>Allows to stop research at specific Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 2.9.</Description>
-    <Teaser>Allows to stop research at specific Era (from Classical to Atomic)</Teaser>
-    <Authors>Infixo</Authors>
-    <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
-    <AffectsSavedGames>1</AffectsSavedGames>
-	<CompatibleVersions>1.2,2.0</CompatibleVersions>
-	<SubscriptionID>880843004</SubscriptionID>
-  </Properties>
-  <ActionCriteria>
-    <Criteria id="Expansion1">
-      <GameCoreInUse>Expansion1</GameCoreInUse>
-    </Criteria>
-    <Criteria id="Expansion2">
-      <GameCoreInUse>Expansion2</GameCoreInUse>
-    </Criteria>
-  </ActionCriteria>
-  <FrontEndActions>
-    <UpdateDatabase id="RES_Config_Database">
-      <File>Config/RealEraStop_Config.xml</File>
-    </UpdateDatabase>
-    <UpdateText id="RES_Config_Text">
-      <File>Config/RealEraStop_Config_Text.sql</File>
-    </UpdateText>
-  </FrontEndActions>
-  <InGameActions>
-    <UpdateDatabase id="RES_Database">
-      <Properties>
-        <LoadOrder>999990</LoadOrder>
-      </Properties>
-      <File>RealEraStop.sql</File>
-      <File>RealEraStop_Dates.sql</File>
-    </UpdateDatabase>
-    <UpdateDatabase id="RES_Database_XP1" criteria="Expansion1">
-      <Properties>
-        <LoadOrder>999991</LoadOrder>
-      </Properties>
-      <File>RealEraStop_XP1.sql</File>
-    </UpdateDatabase>
-    <UpdateDatabase id="RES_Database_XP2" criteria="Expansion2">
-      <Properties>
-        <LoadOrder>999992</LoadOrder>
-      </Properties>
-      <File>RealEraStop_XP1.sql</File>
-      <File>RealEraStop_XP2.sql</File>
-    </UpdateDatabase>
-    <UpdateDatabase id="RES_Database_Delete">
-      <Properties>
-        <LoadOrder>999998</LoadOrder>
-      </Properties>
-      <File>RealEraStop_Delete.sql</File>
-    </UpdateDatabase>
-    <UpdateDatabase id="RES_Database_Delete_XP2" criteria="Expansion2">
-      <Properties>
-        <LoadOrder>999999</LoadOrder>
-      </Properties>
-      <File>RealEraStop_Delete_XP2.sql</File>
-    </UpdateDatabase>
-    <UpdateText id="RES_Text">
-      <File>RealEraStop_Text.sql</File>
-    </UpdateText>
-	<ImportFiles id="RES_ImportFiles">
-	  <Properties>
-	    <LoadOrder>999990</LoadOrder>
-	  </Properties>
-	  <Items>
-	    <File>UI/EspionageEscape.lua</File>
-	  </Items>
-	</ImportFiles>
-  </InGameActions>
-  <Files>
-    <File>Config/RealEraStop_Config.xml</File>
-    <File>Config/RealEraStop_Config_Text.sql</File>
-    <File>RealEraStop.sql</File>
-    <File>RealEraStop_XP1.sql</File>
-    <File>RealEraStop_XP2.sql</File>
-    <File>RealEraStop_Delete.sql</File>
-    <File>RealEraStop_Delete_XP2.sql</File>
-    <File>RealEraStop_Dates.sql</File>
-    <File>RealEraStop_Text.sql</File>
-    <File>UI/EspionageEscape.lua</File>
-  </Files>
+<Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="1">
+    <Properties>
+        <Name>Real Era Stop</Name>
+        <Description>Allows to stop the game at a specific Era. Use Advanced Options to select the Last Era. Supported Eras:[NEWLINE][ICON_BULLET]Classical[NEWLINE][ICON_BULLET]Medieval[NEWLINE][ICON_BULLET]Renaissance[NEWLINE][ICON_BULLET]Industrial[NEWLINE][ICON_BULLET]Modern[NEWLINE][ICON_BULLET]Atomic[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.0.</Description>
+        <Teaser>Allows to stop the game at a specific Era (from Classical to Atomic)</Teaser>
+        <Authors>Infixo</Authors>
+        <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
+        <AffectsSavedGames>1</AffectsSavedGames>
+        <CompatibleVersions>1.2,2.0</CompatibleVersions>
+        <SubscriptionID>880843004</SubscriptionID>
+    </Properties>
+    <ActionCriteria>
+        <Criteria id="Expansion1">
+            <GameCoreInUse>Expansion1</GameCoreInUse>
+        </Criteria>
+        <Criteria id="Expansion2">
+            <GameCoreInUse>Expansion2</GameCoreInUse>
+        </Criteria>
+        <Criteria id="RESLastEra2">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>2</Value>
+            </ConfigurationValueMatches>
+        </Criteria>
+        <Criteria id="RESLastEra3">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>3</Value>
+            </ConfigurationValueMatches>
+        </Criteria>
+        <Criteria id="RESLastEra4">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>4</Value>
+            </ConfigurationValueMatches>
+        </Criteria>
+        <Criteria id="RESLastEra5">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>5</Value>
+            </ConfigurationValueMatches>
+        </Criteria>
+        <Criteria id="RESLastEra6">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>6</Value>
+            </ConfigurationValueMatches>
+        </Criteria>
+        <Criteria id="RESLastEra7">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>7</Value>
+            </ConfigurationValueMatches>
+        </Criteria>
+    </ActionCriteria>
+    <FrontEndActions>
+        <UpdateDatabase id="RES_Config_Database">
+            <File>Config/RealEraStop_Config.xml</File>
+        </UpdateDatabase>
+        <UpdateText id="RES_Config_Text">
+            <File>Config/RealEraStop_Config_Text.sql</File>
+        </UpdateText>
+    </FrontEndActions>
+    <InGameActions>
+        <!-- CONFIGURATION SECTION -->
+        <UpdateDatabase id="RES_Database_Config_2" criteria="RESLastEra2">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_2.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Config_3" criteria="RESLastEra3">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_3.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Config_4" criteria="RESLastEra4">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_4.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Config_5" criteria="RESLastEra5">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_5.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Config_6" criteria="RESLastEra6">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_6.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Config_7" criteria="RESLastEra7">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_7.sql</File>
+        </UpdateDatabase>
+        <!-- GAMEPLAY SECTION -->
+        <UpdateDatabase id="RES_Database">
+            <Properties><LoadOrder>999991</LoadOrder></Properties>
+            <File>RealEraStop.sql</File>
+            <File>RealEraStop_Dates.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_XP1" criteria="Expansion1">
+            <Properties><LoadOrder>999992</LoadOrder></Properties>
+            <File>RealEraStop_XP1.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_XP2" criteria="Expansion2">
+            <Properties><LoadOrder>999993</LoadOrder></Properties>
+            <File>RealEraStop_XP1.sql</File>
+            <File>RealEraStop_XP2.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Delete">
+            <Properties><LoadOrder>999998</LoadOrder></Properties>
+            <File>RealEraStop_Delete.sql</File>
+        </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Delete_XP2" criteria="Expansion2">
+            <Properties><LoadOrder>999999</LoadOrder></Properties>
+            <File>RealEraStop_Delete_XP2.sql</File>
+        </UpdateDatabase>
+        <UpdateText id="RES_Text">
+            <File>RealEraStop_Text.sql</File>
+        </UpdateText>
+        <ImportFiles id="RES_ImportFiles">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <Items>
+                <File>UI/EspionageEscape.lua</File>
+            </Items>
+        </ImportFiles>
+    </InGameActions>
+    <Files>
+        <File>Config/RealEraStop_Config.xml</File>
+        <File>Config/RealEraStop_Config_Text.sql</File>
+        <File>Config/RES_Config_2.sql</File>
+        <File>Config/RES_Config_3.sql</File>
+        <File>Config/RES_Config_4.sql</File>
+        <File>Config/RES_Config_5.sql</File>
+        <File>Config/RES_Config_6.sql</File>
+        <File>Config/RES_Config_7.sql</File>
+        <File>RealEraStop.sql</File>
+        <File>RealEraStop_XP1.sql</File>
+        <File>RealEraStop_XP2.sql</File>
+        <File>RealEraStop_Delete.sql</File>
+        <File>RealEraStop_Delete_XP2.sql</File>
+        <File>RealEraStop_Dates.sql</File>
+        <File>RealEraStop_Text.sql</File>
+        <File>UI/EspionageEscape.lua</File>
+    </Files>
 </Mod>
