@@ -15,6 +15,7 @@
         <Row Domain="LastEraDomain" Value= "5" SortIndex="40" Name="LOC_ERA_INDUSTRIAL_NAME"  Description="LOC_ERA_INDUSTRIAL_DESCRIPTION" />
         <Row Domain="LastEraDomain" Value= "6" SortIndex="50" Name="LOC_ERA_MODERN_NAME"      Description="LOC_ERA_MODERN_DESCRIPTION" />
         <Row Domain="LastEraDomain" Value= "7" SortIndex="60" Name="LOC_ERA_ATOMIC_NAME"      Description="LOC_ERA_ATOMIC_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "8" SortIndex="70" Name="LOC_ERA_INFORMATION_NAME" Description="LOC_ERA_INFORMATION_DESCRIPTION" />
     </DomainValues>
 	<GameSpeeds>
 		<Row GameSpeedType="GAMESPEED_LASTERACLA" Name="LOC_GAMESPEED_LASTERACLA_NAME" Description="LOC_GAMESPEED_LASTERACLA_HELP" SortIndex="120" />
