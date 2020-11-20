@@ -1,4 +1,4 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 3.5");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 4.0");
 -- ===========================================================================
 --	Great People Popup
 -- ===========================================================================
@@ -17,14 +17,16 @@ local MAX_BIOGRAPHY_PARAGRAPHS	: number = 9;						-- maximum # of paragraphs for
 local RELOAD_CACHE_ID			: string = "GreatPeoplePopup";		-- hotloading
 local SIZE_ACTION_ICON			: number = 38;
 
-
+local TAB_SIZE					: number = 170;
+local TAB_PADDING				: number = 10;
 
 -- ===========================================================================
 --	MEMBERS
 -- ===========================================================================
 local m_TopPanelConsideredHeight:number = 0;
-local m_greatPersonPanelIM  :table  = InstanceManager:new("PanelInstance",        "Content",  Controls.PeopleStack);
-local m_greatPersonRowIM  :table  = InstanceManager:new("PastRecruitmentInstance",  "Content",  Controls.RecruitedStack);
+local m_greatPersonPanelIM:table = InstanceManager:new("PanelInstance",        "Content",  Controls.PeopleStack);
+local m_greatPersonRowIM  :table = InstanceManager:new("PastRecruitmentInstance",  "Content",  Controls.RecruitedStack);
+local m_tabButtonIM       :table = InstanceManager:new("TabButtonInstance",			"Button",	Controls.TabContainer);
 local m_kGreatPeople   :table;
 local m_kData       :table;
 local m_activeBiographyID :number = -1; -- Only allow one open at a time (or very quick exceed font allocation)
@@ -34,11 +36,13 @@ local m_defaultPastRowHeight    :number = -1; -- Default/mix height (from XML) f
 local m_displayPlayerID		:number = -1; -- What player are we displaying.  Used for looking at different players in autoplay
 local m_screenWidth			:number = -1;
 
--- CQUI (not used)
---local _, m_ActscreenHeight = UIManager:GetScreenSizeVal();
---local m_ModalFrameBaseSize = Controls.ModalFrame:GetSizeY();
---local m_WoodPanelingBaseSize = Controls.WoodPaneling:GetSizeY();
---local m_PopupContainerBaseSize = Controls.PopupContainer:GetSizeY();
+local m_numTabs				:number = 0;
+
+-- Dynamic refresh call member used to override the refresh functionality
+local m_RefreshFunc			:ifunction = nil;
+
+local m_pGreatPeopleTabInstance:table	= nil;
+local m_pPrevRecruitedTabInstance:table = nil;
 
 -- Infixo: moving the Great Prophet to the end
 local eClassProphet = GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].Index;
@@ -173,33 +177,6 @@ function AddRecruit( kData:table, kPerson:table )
 	--print("AFTER: i,eClassID", i, eClassID);
     instance.ClassName:SetText(Locale.Lookup(GameInfo.GreatPersonClasses[eClassID].Name));
 
-  --CQUI Changes to Keep Great Person Class Label even when all are claimed
-
-  --[[if (kPerson.ClassID ~= nil) then
-      classText = Locale.Lookup(classData.Name);
-      instance.ClassName:SetText(classText);
-    --end
-  if(i==1) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_GENERAL_NAME"));
-  elseif(i==2) then
-      instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_ADMIRAL_NAME"));
-  elseif(i==3) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_ENGINEER_NAME"));
-  elseif(i==4) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_MERCHANT_NAME"));
-  elseif(i==5) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_PROPHET_NAME"));
-  elseif(i==6) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_SCIENTIST_NAME"));
-  elseif(i==7) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_WRITER_NAME"));
-  elseif(i==8) then
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_ARTIST_NAME"));
-  else
-    instance.ClassName:SetText(Locale.Lookup("LOC_GREAT_PERSON_CLASS_MUSICIAN_NAME"));
-  end
-	--]]
-
     if kPerson.IndividualID ~= nil then
       local individualName:string = Locale.ToUpper(kPerson.Name);
       instance.IndividualName:SetText( individualName );
@@ -223,25 +200,6 @@ function AddRecruit( kData:table, kPerson:table )
 	  end
 	  instance.EraName:SetToolTipString(table.concat(tTT, "[NEWLINE]"));
     end
-
-    -- Grab icon representing type of class
-	--[[ Infixo: not used
-    if (kPerson.ClassID ~= nil) then
-      local icon:string = "ICON_" .. classData.GreatPersonClassType;
-	  --print("icon string", icon);
-      local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(icon, 50);
-	  --print("icon texture X, Y, Sheet", textureOffsetX, textureOffsetY, textureSheet);
-      if textureSheet == nil then   -- Use default if none found
-        print("WARNING: Could not find icon atlas entry for the class of Great Person '"..icon.."', using default instead.");
-        textureOffsetX = 0;
-        textureOffsetY = 0;
-        textureSheet = "GreatPeopleClass50";
-      end
-      instance.ClassImage:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
-	  -- Infixo
-      --instance.ClassImage:SetSizeVal(45,45);
-    end
-	--]]
 
     -- Grab icon of the great person themselves; first try a specific image, if it doesn't exist
     -- then grab a generic representation based on the class.
@@ -443,14 +401,6 @@ function AddRecruit( kData:table, kPerson:table )
 	  else
 	    instance.RecruitInfo:SetHide(true);
 	  end
-      --local sRecruitText:string = Locale.Lookup("LOC_GREAT_PEOPLE_OR_RECRUIT_WITH_PATRONAGE");
-      --local sRecruitTooltip:string = "";
-      --if (kPerson.EarnConditions ~= nil and kPerson.EarnConditions ~= "") then
-        --sRecruitText = "[COLOR_Civ6Red]" .. Locale.Lookup("LOC_GREAT_PEOPLE_CANNOT_EARN_PERSON") .. "[ENDCOLOR]"
-        --sRecruitTooltip = "[COLOR_Civ6Red]" .. kPerson.EarnConditions .. "[ENDCOLOR]";
-      --end
-      --instance.RecruitInfo:SetText(sRecruitText);
-      --instance.RecruitInfo:SetToolTipString(sRecruitTooltip);
 
       instance.RecruitScroll:CalculateSize();
     end
@@ -487,8 +437,14 @@ function AddRecruit( kData:table, kPerson:table )
     instance.EffectStack:CalculateSize();
     instance.EffectStackScroller:CalculateSize();
 
+
   end
 
+-- ===========================================================================
+function ResetGreatPeopleInstances()
+	m_greatPersonPanelIM:ResetInstances();
+	m_greatPersonRowIM:ResetInstances();
+end
 
 -- ===========================================================================
 --  View the great people currently available (to be purchased)
@@ -505,15 +461,15 @@ function GreatPersonHasBeenRecruited(eIndividual:number)
 end
 
 function ViewCurrent( data:table )
-  if (data == nil) then
-    UI.DataError("GreatPeople attempting to view current timeline data but received NIL instead.");
-    return;
-  end
+    if (data == nil) then
+        UI.DataError("GreatPeople attempting to view current timeline data but received NIL instead.");
+        return;
+    end
 
-  m_kGreatPeople = {};
-  m_greatPersonPanelIM:ResetInstances();
-  Controls.PeopleScroller:SetHide(false);
-  Controls.RecruitedArea:SetHide(true);
+    m_kGreatPeople = {};
+    ResetGreatPeopleInstances();
+    Controls.PeopleScroller:SetHide(false);
+    Controls.RecruitedArea:SetHide(true);
 
 	local kInstanceToShow:table = nil;
 	
@@ -532,32 +488,32 @@ function ViewCurrent( data:table )
 	Controls.PeopleStack:CalculateSize();
 	Controls.PeopleScroller:CalculateSize();
 
-  m_screenWidth = math.max(Controls.PeopleStack:GetSizeX(), 1024);
-  Controls.WoodPaneling:SetSizeX( m_screenWidth );
+    m_screenWidth = math.max(Controls.PeopleStack:GetSizeX(), 1024);
+    Controls.WoodPaneling:SetSizeX( m_screenWidth );
 
-  -- Clamp overall popup size to not be larger than contents (overspills in 4k and eyefinitiy rigs.)
-  local screenX,_     :number = UIManager:GetScreenSizeVal();
-  if m_screenWidth > screenX then
-    m_screenWidth = screenX;
-  end
+    -- Clamp overall popup size to not be larger than contents (overspills in 4k and eyefinitiy rigs.)
+    local screenX,_     :number = UIManager:GetScreenSizeVal();
+    if m_screenWidth > screenX then
+        m_screenWidth = screenX;
+    end
 
-  Controls.PopupContainer:SetSizeX( m_screenWidth );
-  Controls.ModalFrame:SetSizeX( m_screenWidth );
+    Controls.PopupContainer:SetSizeX( m_screenWidth );
+    Controls.ModalFrame:SetSizeX( m_screenWidth );
 
-  -- Has an instance been set to auto scroll to?
-  Controls.PeopleScroller:SetScrollValue( 0 );		-- Either way reset scroll first (mostly for hot seat)
-  if kInstanceToShow ~= nil then
-    local contentWidth		:number = kInstanceToShow.Content:GetSizeX();
-    local contentOffsetx	:number = kInstanceToShow.Content:GetScreenOffset();	-- Obtaining normal offset would yield 0, but since modal is as wide as the window, this works.
-    local offsetx			:number = contentOffsetx + (contentWidth * 0.5) + (m_screenWidth * 0.5);	-- Middle of screen
-    local totalWidth		:number = Controls.PeopleScroller:GetSizeX();
-    local scrollAmt			:number =  offsetx / totalWidth;
-    scrollAmt = math.clamp( scrollAmt, 0, 1);
-    Controls.PeopleScroller:SetScrollValue( scrollAmt );
-  end
-	if IsTutorialRunning() then
-		Controls.PeopleScroller:SetScrollValue( .3 );
-	end
+    -- Has an instance been set to auto scroll to?
+    Controls.PeopleScroller:SetScrollValue( 0 );		-- Either way reset scroll first (mostly for hot seat)
+    if kInstanceToShow ~= nil then
+        local contentWidth		:number = kInstanceToShow.Content:GetSizeX();
+        local contentOffsetx	:number = kInstanceToShow.Content:GetScreenOffset();	-- Obtaining normal offset would yield 0, but since modal is as wide as the window, this works.
+        local offsetx			:number = contentOffsetx + (contentWidth * 0.5) + (m_screenWidth * 0.5);	-- Middle of screen
+        local totalWidth		:number = Controls.PeopleScroller:GetSizeX();
+        local scrollAmt			:number =  offsetx / totalWidth;
+        scrollAmt = math.clamp( scrollAmt, 0, 1);
+        Controls.PeopleScroller:SetScrollValue( scrollAmt );
+    end
+    if IsTutorialRunning() then
+        Controls.PeopleScroller:SetScrollValue( .3 );
+    end
 end
 
 function FillRecruitInstance(instance:table, playerPoints:table, personData:table, classData:table)
@@ -698,7 +654,7 @@ function ViewPast( data:table )
     return;
   end
 
-  m_greatPersonRowIM:ResetInstances();
+  ResetGreatPeopleInstances();	
   Controls.PeopleScroller:SetHide(true);
   Controls.RecruitedArea:SetHide(false);
 
@@ -1081,62 +1037,63 @@ end
 
 -- =======================================================================================
 function Open()
-  if (Game.GetLocalPlayer() == -1) then
-    return
-  end
-  
-  -- Infixo:pulldowns
-  PopulateClassNamePull();
-  PopulateCivLeaderPull();
-  -- Infixo end
-  
-  -- Queue the screen as a popup, but we want it to render at a desired location in the hierarchy, not on top of everything.
-  if not UIManager:IsInPopupQueue(ContextPtr) then
-    local kParameters = {};
-    kParameters.RenderAtCurrentParent = true;
-    kParameters.InputAtCurrentParent = true;
-    kParameters.AlwaysVisibleInQueue = true;
-    UIManager:QueuePopup(ContextPtr, PopupPriority.Low, kParameters);
-    UI.PlaySound("UI_Screen_Open");
-  end
-  
-  Refresh();
+    if (Game.GetLocalPlayer() == -1) then
+        return
+    end
 
-  -- From ModalScreen_PlayerYieldsHelper
-  if not RefreshYields() then
-    Controls.Vignette:SetSizeY(m_TopPanelConsideredHeight);
-  end
+    -- Infixo:pulldowns
+    PopulateClassNamePull();
+    PopulateCivLeaderPull();
+    -- Infixo end
 
-  -- From Civ6_styles: FullScreenVignetteConsumer
-  Controls.ScreenAnimIn:SetToBeginning();
-  Controls.ScreenAnimIn:Play();
+    -- Queue the screen as a popup, but we want it to render at a desired location in the hierarchy, not on top of everything.
+    if not UIManager:IsInPopupQueue(ContextPtr) then
+        local kParameters = {};
+        kParameters.RenderAtCurrentParent = true;
+        kParameters.InputAtCurrentParent = true;
+        kParameters.AlwaysVisibleInQueue = true;
+        UIManager:QueuePopup(ContextPtr, PopupPriority.Low, kParameters);
+        UI.PlaySound("UI_Screen_Open");
+    end
 
-  LuaEvents.GreatPeople_OpenGreatPeople();
+    Refresh();
+
+    -- From ModalScreen_PlayerYieldsHelper
+    if not RefreshYields() then
+        Controls.Vignette:SetSizeY(m_TopPanelConsideredHeight);
+    end
+
+    -- From Civ6_styles: FullScreenVignetteConsumer
+    Controls.ScreenAnimIn:SetToBeginning();
+    Controls.ScreenAnimIn:Play();
+
+    LuaEvents.GreatPeople_OpenGreatPeople();
 end
 
 -- =======================================================================================
 function Close()
-  if not ContextPtr:IsHidden() then
-    UI.PlaySound("UI_Screen_Close");
-  end
+    if not ContextPtr:IsHidden() then
+        UI.PlaySound("UI_Screen_Close");
+    end
 
-  if UIManager:DequeuePopup(ContextPtr) then
-    LuaEvents.GreatPeople_CloseGreatPeople();
-  end
+    if UIManager:DequeuePopup(ContextPtr) then
+        LuaEvents.GreatPeople_CloseGreatPeople();
+    end
 end
 
 -- =======================================================================================
 --  UI Handler
 -- =======================================================================================
 function OnClose()
-  Close();
+    Close();
 end
 
 -- =======================================================================================
 --  LUA Event
 -- =======================================================================================
 function OnOpenViaNotification()
-  Open();
+    Open();
+	SelectTab( m_pGreatPeopleTabInstance.Button );
 end
 
 -- =======================================================================================
@@ -1199,26 +1156,26 @@ end
 --  Game Engine Event
 -- ===========================================================================
 function OnLocalPlayerChanged( playerID:number , prevLocalPlayerID:number )
-  if playerID == -1 then return; end
-  m_tabs.SelectTab( Controls.ButtonGreatPeople );
+    if playerID == -1 then return; end
+    m_tabs.SelectTab( Controls.ButtonGreatPeople );
 end
 
 -- ===========================================================================
 --  Game Engine Event
 -- ===========================================================================
 function OnLocalPlayerTurnBegin()
-  if (not ContextPtr:IsHidden()) then
-    Refresh();
-  end
+    if (not ContextPtr:IsHidden()) then
+        Refresh();
+    end
 end
 
 -- ===========================================================================
 --  Game Engine Event
 -- ===========================================================================
 function OnLocalPlayerTurnEnd()
-  if (not ContextPtr:IsHidden()) and GameConfiguration.IsHotseat() then
-    Close();
-  end
+    if (not ContextPtr:IsHidden()) and GameConfiguration.IsHotseat() then
+        Close();
+    end
 end
 
 -- ===========================================================================
@@ -1248,58 +1205,71 @@ function OnGreatPeoplePointsChanged( playerID:number )
   end
 end
 
-
 -- ===========================================================================
---
--- ===========================================================================
-function Refresh()
-  local kData :table  = {
-    Timeline    = {},
-    PointsByClass = {},
-  };
-  if m_tabs.selectedControl == Controls.ButtonPreviouslyRecruited then
-    PopulateData(kData, true);  -- use past data
-    ViewPast(kData);
-  else
-    PopulateData(kData, false); -- do not use past data
-    ViewCurrent(kData);
-  end
+function Refresh( newRefreshFunc:ifunction )
+	-- Update the refresh function if passed in a new one
+	if newRefreshFunc ~= nil then
+		m_RefreshFunc = newRefreshFunc;
+	end
 
-  m_kData = kData;
+	-- Call current refresh function
+	if m_RefreshFunc ~= nil then
+		m_RefreshFunc();
+	end
 end
 
+-- ===========================================================================
+function RefreshCurrentGreatPeople()
+	local kData :table	= {
+		Timeline		= {},
+		PointsByClass	= {},
+	};
 
+	PopulateData(kData, false);	-- do not use past data
+	ViewCurrent(kData);
+
+	m_kData = kData;
+end
+
+-- ===========================================================================
+function RefreshPreviousGreatPeople()
+	local kData :table	= {
+		Timeline		= {},
+		PointsByClass	= {},
+	};
+
+	PopulateData(kData, true);	-- use past data
+	ViewPast(kData);
+
+	m_kData = kData;
+end
 
 -- ===========================================================================
 --  Tab callback
 -- ===========================================================================
-function OnGreatPeopleClick()
-  Controls.SelectGreatPeople:SetHide( false );
-  Controls.ButtonGreatPeople:SetSelected( true );
-  Controls.SelectPreviouslyRecruited:SetHide( true );
-  Controls.ButtonPreviouslyRecruited:SetSelected( false );
-  -- Infixo
-  Controls.ClassNamePull:SetHide( true );
-  Controls.CivLeaderPull:SetHide( true );
-  Controls.Total:SetHide( true );
-  -- Infixo end
-  Refresh();
+function OnGreatPeopleClick( uiSelectedButton:table )
+	ResetTabButtons();
+	SetTabButtonsSelected(uiSelectedButton);
+    -- Infixo
+    Controls.ClassNamePull:SetHide( true );
+    Controls.CivLeaderPull:SetHide( true );
+    Controls.Total:SetHide( true );
+    -- Infixo end
+	Refresh(RefreshCurrentGreatPeople);
 end
 
 -- ===========================================================================
 --  Tab callback
 -- ===========================================================================
-function OnPreviousRecruitedClick()
-  Controls.SelectGreatPeople:SetHide( true );
-  Controls.ButtonGreatPeople:SetSelected( false );
-  Controls.SelectPreviouslyRecruited:SetHide( false );
-  Controls.ButtonPreviouslyRecruited:SetSelected( true );
-  -- Infixo
-  Controls.ClassNamePull:SetHide( false );
-  Controls.CivLeaderPull:SetHide( false );
-  Controls.Total:SetHide( false );
-  -- Infixo end
-  Refresh();
+function OnPreviousRecruitedClick( uiSelectedButton:table )
+	ResetTabButtons();
+	SetTabButtonsSelected(uiSelectedButton);
+    -- Infixo
+    Controls.ClassNamePull:SetHide( false );
+    Controls.CivLeaderPull:SetHide( false );
+    Controls.Total:SetHide( false );
+    -- Infixo end
+	Refresh(RefreshPreviousGreatPeople);
 end
 
 -- ===========================================================================
@@ -1313,9 +1283,10 @@ end
 --  UI Event
 -- =======================================================================================
 function OnInit( isHotload:boolean )
-  if isHotload then
-    LuaEvents.GameDebug_GetValues(RELOAD_CACHE_ID);
-  end
+	LateInitialize();
+    if isHotload then
+        LuaEvents.GameDebug_GetValues(RELOAD_CACHE_ID);
+    end
 end
 
 -- =======================================================================================
@@ -1340,8 +1311,10 @@ end
 --  UI Event
 -- =======================================================================================
 function OnShutdown()
-  LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isHidden",   ContextPtr:IsHidden() );
-  LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isPreviousTab",  (m_tabs.selectedControl == Controls.ButtonPreviouslyRecruited) );
+    LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isHidden",   ContextPtr:IsHidden() );
+    LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isPreviousTab",  (m_tabs.selectedControl == Controls.ButtonPreviouslyRecruited) );
+
+	m_tabButtonIM:ResetInstances();
 
 	-- Game engine Events	
 	Events.LocalPlayerChanged.Remove( OnLocalPlayerChanged );	
@@ -1375,54 +1348,119 @@ function OnGameDebugReturn( context:string, contextTable:table )
 end
 
 -- =======================================================================================
+function AddTabInstance( buttonText:string, callbackFunc:ifunction )
+	local kInstance:object = m_tabButtonIM:GetInstance();
+	kInstance.Button:SetText(Locale.Lookup(buttonText));
+	kInstance.Button:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	m_tabs.AddTab( kInstance.Button, callbackFunc );
+	m_numTabs = m_numTabs + 1;
+	return kInstance;
+end
+
+-- =======================================================================================
+function SelectTab( buttonControl:table )
+	m_tabs.SelectTab(buttonControl);
+end
+
+-- =======================================================================================
+function SetTabButtonsSelected( buttonControl:table )
+	for i=1, m_tabButtonIM.m_iCount, 1 do
+		local buttonInstance:table = m_tabButtonIM:GetAllocatedInstance(i);
+		if buttonInstance and buttonInstance.Button == buttonControl then
+			buttonInstance.Button:SetSelected(true);
+			buttonInstance.SelectButton:SetHide(false);
+		end
+	end
+end
+
+-- =======================================================================================
+function ResetTabButtons()
+	for i=1, m_tabButtonIM.m_iCount, 1 do
+		local buttonInstance:table = m_tabButtonIM:GetAllocatedInstance(i);
+		if buttonInstance then
+			buttonInstance.Button:SetSelected(false);
+			buttonInstance.SelectButton:SetHide(true);
+		end
+	end
+end
+
+-- =======================================================================================
+function ResizeTabContainer()
+	if m_numTabs > 0 then
+		local desiredSize = (TAB_SIZE * m_numTabs) + (TAB_PADDING * (m_numTabs - 1));
+		Controls.TabContainer:SetSizeX(desiredSize);
+	end
+end
+
+-- =======================================================================================
+-- This function should be overridden in mods/dlc to add new tabs to this screen
+-- =======================================================================================
+function AddCustomTabs()
+	-- No custom tabs in base games
+end
+
+-- =======================================================================================
+function LateInitialize()
+
+end
+
+-- =======================================================================================
 --
 -- =======================================================================================
 function Initialize()
 
-  if (not HasCapability("CAPABILITY_GREAT_PEOPLE_VIEW")) then
-    -- Great People Viewing is off, just exit
-    return;
-  end
+    if (not HasCapability("CAPABILITY_GREAT_PEOPLE_VIEW")) then
+        -- Great People Viewing is off, just exit
+        return;
+    end
 
-  -- Tab setup and setting of default tab.
-  m_tabs = CreateTabs( Controls.TabContainer, 42, 34, UI.GetColorValueFromHexLiteral(0xFF331D05) );
-  m_tabs.AddTab( Controls.ButtonGreatPeople,      OnGreatPeopleClick );
-  m_tabs.AddTab( Controls.ButtonPreviouslyRecruited,  OnPreviousRecruitedClick );
-  m_tabs.CenterAlignTabs(-10);
-  --if Game.GetLocalPlayer() ~= -1 then -- Infixo: should handle autoplay
-    m_tabs.SelectTab( Controls.ButtonGreatPeople );
-  --end
+	m_numTabs = 0;
+    
+    -- Tab setup and setting of default tab.
+    m_tabs = CreateTabs( Controls.TabContainer, 42, 34, UI.GetColorValueFromHexLiteral(0xFF331D05) );
+    
+	m_pGreatPeopleTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_GREAT_PEOPLE", OnGreatPeopleClick);
+	m_pPrevRecruitedTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_PREVIOUSLY_RECRUITED", OnPreviousRecruitedClick);
 
-  -- UI Events
-  ContextPtr:SetInitHandler( OnInit );
-  ContextPtr:SetInputHandler( OnInputHandler, true );
-  ContextPtr:SetShutdown( OnShutdown );
+	AddCustomTabs()
 
-  -- UI Controls
-  -- We use a separate BG within the PeopleScroller control since it needs to scroll with the contents
-  Controls.ModalBG:SetHide(true);
-  Controls.ModalScreenClose:RegisterCallback(Mouse.eLClick, OnClose);
-  Controls.ModalScreenTitle:SetText(Locale.ToUpper(Locale.Lookup("LOC_GREAT_PEOPLE_TITLE")));
+	ResizeTabContainer();
+    
+	m_tabs.CenterAlignTabs(-10);
+	m_tabs.SelectTab( m_pGreatPeopleTabInstance.Button );
+
+    -- UI Events
+    ContextPtr:SetInitHandler( OnInit );
+    ContextPtr:SetInputHandler( OnInputHandler, true );
+    ContextPtr:SetShutdown( OnShutdown );
+
+    -- UI Controls
+    -- We use a separate BG within the PeopleScroller control since it needs to scroll with the contents
+    Controls.ModalBG:SetHide(true);
+    Controls.ModalScreenClose:RegisterCallback(Mouse.eLClick, OnClose);
+    Controls.ModalScreenTitle:SetText(Locale.ToUpper(Locale.Lookup("LOC_GREAT_PEOPLE_TITLE")));
+
+    -- Game engine Events
+    Events.LocalPlayerChanged.Add( OnLocalPlayerChanged );
+    Events.LocalPlayerTurnBegin.Add( OnLocalPlayerTurnBegin );
+    Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+    Events.UnitGreatPersonActivated.Add( OnUnitGreatPersonActivated );
+    Events.GreatPeoplePointsChanged.Add( OnGreatPeoplePointsChanged );
+
+    -- LUA Events
+    LuaEvents.GameDebug_Return.Add(             OnGameDebugReturn );
+    LuaEvents.LaunchBar_OpenGreatPeoplePopup.Add(     OnOpenViaLaunchBar );
+    LuaEvents.NotificationPanel_OpenGreatPeoplePopup.Add( OnOpenViaNotification );
+    LuaEvents.LaunchBar_CloseGreatPeoplePopup.Add(			OnClose );
 	
-  -- Game engine Events
-  Events.LocalPlayerChanged.Add( OnLocalPlayerChanged );
-  Events.LocalPlayerTurnBegin.Add( OnLocalPlayerTurnBegin );
-  Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
-  Events.UnitGreatPersonActivated.Add( OnUnitGreatPersonActivated );
-  Events.GreatPeoplePointsChanged.Add( OnGreatPeoplePointsChanged );
-	
-  -- LUA Events
-  LuaEvents.GameDebug_Return.Add(             OnGameDebugReturn );
-  LuaEvents.LaunchBar_OpenGreatPeoplePopup.Add(     OnOpenViaLaunchBar );
-  LuaEvents.NotificationPanel_OpenGreatPeoplePopup.Add( OnOpenViaNotification );
-  LuaEvents.LaunchBar_CloseGreatPeoplePopup.Add(			OnClose );
-	
-    -- Audio Events
-  Controls.ButtonGreatPeople:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-  Controls.ButtonPreviouslyRecruited:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-
 	m_TopPanelConsideredHeight = Controls.Vignette:GetSizeY() - TOP_PANEL_OFFSET;
 end
+
+-- This wildcard include will include all loaded files beginning with "GreatPeoplePopup_"
+-- This method replaces the uses of include("GreatPeoplePopup") in files that want to override 
+-- functions from this file. If you're implementing a new "GreatPeoplePopup_" file DO NOT include this file.
+include("GreatPeoplePopup_", true);
+
 Initialize();
 
 print("OK loaded GreatPeoplePopup.lua from RGP Mod");
