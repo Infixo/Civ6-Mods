@@ -5,8 +5,15 @@ print("Loading TechTree_BTT.lua from Better Tech Tree version "..GlobalParameter
 -- 2018-03-19: Created
 -- ===========================================================================
 
+local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01"); -- CQUI
+print("CQUI:", (bIsCQUI and "YES" or "no"));
 
+if bIsCQUI then
+include("TechTree_CQUI");
+else
 include("TechTree");
+end
+
 BTT_BASE_LateInitialize = LateInitialize;
 
 include("TechAndCivicSupport_BTT");
