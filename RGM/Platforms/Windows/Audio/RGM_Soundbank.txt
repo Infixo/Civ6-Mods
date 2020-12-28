@@ -1,0 +1,44 @@
+Event	ID	Name			Wwise Object Path	Notes
+	767563011	Play_GMLedZeppelinWholeLottaLove			\Default Work Unit\Play_GMLedZeppelinWholeLottaLove	
+	1069991617	Play_GMMichaelJacksonSmoothCriminal			\Default Work Unit\Play_GMMichaelJacksonSmoothCriminal	
+	1459178049	Play_GMKraftwerkAutobahn			\Default Work Unit\Play_GMKraftwerkAutobahn	
+	1647902326	Play_GMElvisPresleyJailhouseRock			\Default Work Unit\Play_GMElvisPresleyJailhouseRock	
+	1842552223	Play_GMTheBeatlesHeyJude			\Default Work Unit\Play_GMTheBeatlesHeyJude	
+	1874207133	Play_GMNirvanaHeartShapedBox			\Default Work Unit\Play_GMNirvanaHeartShapedBox	
+	1992287835	Play_GMLedZeppelinKashmir			\Default Work Unit\Play_GMLedZeppelinKashmir	
+	2516217132	Play_GMLouisArmstrongWhenTheSaintsGoMarchingIn			\Default Work Unit\Play_GMLouisArmstrongWhenTheSaintsGoMarchingIn	
+	2698161167	Play_GMPinkFloydTime			\Default Work Unit\Play_GMPinkFloydTime	
+	2811561595	Play_GMNirvanaSmellsLikeTeenSpirit			\Default Work Unit\Play_GMNirvanaSmellsLikeTeenSpirit	
+	2836017566	Play_GMLouisArmstrongWhatAWonderfulWorld			\Default Work Unit\Play_GMLouisArmstrongWhatAWonderfulWorld	
+	2932020857	Play_GMJohnWilliamsTheRaidersMarch			\Default Work Unit\Play_GMJohnWilliamsTheRaidersMarch	
+	2953833103	Play_GMMichaelJacksonBillieJean			\Default Work Unit\Play_GMMichaelJacksonBillieJean	
+	3040932304	Play_GMTheBeatlesLetItBe			\Default Work Unit\Play_GMTheBeatlesLetItBe	
+	3295998288	Play_GMElvisPresleyCantHelpFallingInLove			\Default Work Unit\Play_GMElvisPresleyCantHelpFallingInLove	
+	3528306256	Play_GMDepecheModeEnjoyTheSilence			\Default Work Unit\Play_GMDepecheModeEnjoyTheSilence	
+	3542099719	Play_GMPinkFloydWishYouWereHere			\Default Work Unit\Play_GMPinkFloydWishYouWereHere	
+	3657722106	Play_GMJohnWilliamsStarWars			\Default Work Unit\Play_GMJohnWilliamsStarWars	
+	3911066025	Play_GMKraftwerkTransEuropeExpress			\Default Work Unit\Play_GMKraftwerkTransEuropeExpress	
+	4279953817	Play_GMDepecheModePersonalJesus			\Default Work Unit\Play_GMDepecheModePersonalJesus	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	19506667	Led Zeppelin Kashmir	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Led Zeppelin Kashmir_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Led Zeppelin Kashmir		354336
+	32202700	The Beatles Hey Jude	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\The Beatles Hey Jude 44khz_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\The Beatles Hey Jude		330430
+	58002862	John Williams Star Wars	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\John Williams Star Wars_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\John Williams Star Wars		376275
+	83759018	Led Zeppelin Whole Lotta Love	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Led Zeppelin Whole Lotta Love_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Led Zeppelin Whole Lotta Love		538217
+	103137147	Kraftwerk Autobahn	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Kraftwerk Autobahn_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Kraftwerk Autobahn		424635
+	137546578	Depeche Mode Personal Jesus	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Depeche Mode Personal Jesus_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Depeche Mode Personal Jesus		563140
+	236113300	Kraftwerk Trans-Europe Express	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Kraftwerk Trans-Europe Express_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Kraftwerk Trans-Europe Express		462598
+	416381696	Elvis Presley Cant Help Falling In Love	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Elvis Presley Cant Help Falling In Love_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Elvis Presley Cant Help Falling In Love		424721
+	493489276	Michael Jackson Smooth Criminal	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Michael Jackson Smooth Criminal_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Michael Jackson Smooth Criminal		509846
+	498371196	Nirvana Heart-Shaped Box	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Nirvana Heart-Shaped Box_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Nirvana Heart-Shaped Box		413888
+	561799932	Depeche Mode Enjoy the Silence	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Depeche Mode Enjoy the Silence_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Depeche Mode Enjoy the Silence		509089
+	619819418	The Beatles Let It Be	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\The Beatles Let It Be 44khz_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\The Beatles Let It Be		318288
+	653400065	Louis Armstrong What a Wonderful World	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Louis Armstrong What a Wonderful World 44khz_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Louis Armstrong What a Wonderful World		383263
+	671321073	Elvis Presley Jailhouse Rock	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Elvis Presley Jailhouse Rock_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Elvis Presley Jailhouse Rock		343453
+	751498798	Louis Armstrong When the Saints Go Marching In	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Louis Armstrong When the Saints Go Marching In 44khz_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Louis Armstrong When the Saints Go Marching In		208946
+	881856103	John Williams The Raiders March	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\John Williams The Raiders March_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\John Williams The Raiders March		511933
+	893605982	Michael Jackson Billie Jean	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Michael Jackson Billie Jean_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Michael Jackson Billie Jean		542686
+	967081222	Pink Floyd Time	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Pink Floyd Time_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Pink Floyd Time		434669
+	1034976249	Nirvana Smells Like Teen Spirit	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Nirvana Smells Like Teen Spirit_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Nirvana Smells Like Teen Spirit		488066
+	1045333586	Pink Floyd Wish You Were Here	C:\Users\Grzegorz\Documents\My Games\Sid Meier's Civilization VI\Modding\14_Musicians\Great Musicians\.cache\Windows\SFX\Pink Floyd Wish You Were Here_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Pink Floyd Wish You Were Here		503786
+

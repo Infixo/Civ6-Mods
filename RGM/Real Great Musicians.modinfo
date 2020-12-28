@@ -2,7 +2,7 @@
 <Mod id="5d8cfe2e-7635-434a-88d9-f709a55b7544" version="1">
   <Properties>
     <Name>Real Great Musicians</Name>
-    <Description>New Great Musicians with pictures and samples of their music. New building - Concert Hall (optional). Great Musicians are available from Renaissance era (optional).[NEWLINE][NEWLINE]Atomic Era:[NEWLINE][ICON_Bullet]Elvis Presley - Jailhouse Rock, Can't Help Falling In Love[NEWLINE][ICON_Bullet]Kraftwerk - Autobahn, Trans-Europe Express[NEWLINE][ICON_Bullet]Led Zeppelin - Whole Lotta Love, Kashmir[NEWLINE][ICON_Bullet]Louis Armstrong - What a Wonderful World, When the Saints Go Marching In[NEWLINE][ICON_Bullet]The Beatles - Hey Jude, Let It Be[NEWLINE][NEWLINE]Information Era:[NEWLINE][ICON_Bullet]Depeche Mode - Enjoy the Silence, Personal Jesus[NEWLINE][ICON_Bullet]John Williams - Star Wars Main Theme, The Raiders March[NEWLINE][ICON_Bullet]Michael Jackson - Billie Jean, Smooth Criminal[NEWLINE][ICON_Bullet]Nirvana - Smells Like Teen Spirit, Heart-Shaped Box[NEWLINE][ICON_Bullet]Pink Floyd - Time, Wish You Were Here[NEWLINE][NEWLINE]Version 2.1.1.</Description>
+    <Description>New Great Musicians with pictures and samples of their music. New building - Concert Hall (optional). Great Musicians are available from Renaissance era (optional).[NEWLINE][NEWLINE]Atomic Era:[NEWLINE][ICON_Bullet]Elvis Presley - Jailhouse Rock, Can't Help Falling In Love[NEWLINE][ICON_Bullet]Kraftwerk - Autobahn, Trans-Europe Express[NEWLINE][ICON_Bullet]Led Zeppelin - Whole Lotta Love, Kashmir[NEWLINE][ICON_Bullet]Louis Armstrong - What a Wonderful World, When the Saints Go Marching In[NEWLINE][ICON_Bullet]The Beatles - Hey Jude, Let It Be[NEWLINE][NEWLINE]Information Era:[NEWLINE][ICON_Bullet]Depeche Mode - Enjoy the Silence, Personal Jesus[NEWLINE][ICON_Bullet]John Williams - Star Wars Main Theme, The Raiders March[NEWLINE][ICON_Bullet]Michael Jackson - Billie Jean, Smooth Criminal[NEWLINE][ICON_Bullet]Nirvana - Smells Like Teen Spirit, Heart-Shaped Box[NEWLINE][ICON_Bullet]Pink Floyd - Time, Wish You Were Here[NEWLINE][NEWLINE]Version 2.2.</Description>
     <Teaser>New Great Musicians with pictures and samples of their music.</Teaser>
     <Authors>Infixo</Authors>
     <Homepage>http://forums.civfanatics.com/resources/real-great-musicians-vanilla-r-f.26706/</Homepage>
@@ -19,10 +19,10 @@
   </ActionCriteria>
   <InGameActions>
     <UpdateAudio id="RGM_Audio">
-      <File>Audio/RGM_Banks.ini</File>
-      <File>Audio/RGM_Soundbank.bnk</File>
-      <File>Audio/RGM_Soundbank.txt</File>
-      <File>Audio/SoundbanksInfo.xml</File>
+      <File>Platforms/Windows/Audio/RGM_Banks.ini</File>
+	  <File>Platforms/Windows/Audio/RGM_Soundbank.bnk</File>
+      <File>Platforms/Windows/Audio/RGM_Soundbank.txt</File>
+      <File>Platforms/Windows/Audio/SoundbanksInfo.xml</File>
     </UpdateAudio>
     <UpdateIcons id="RGM_Icons">
       <File>Icons/RealGreatMusicians_Icons.xml</File>
@@ -104,10 +104,10 @@
   <Files>
     <File>ArtDefs/Buildings.artdef</File>
     <File>ArtDefs/Landmarks.artdef</File>
-    <File>Audio/RGM_Banks.ini</File>
-    <File>Audio/RGM_Soundbank.bnk</File>
-    <File>Audio/RGM_Soundbank.txt</File>
-    <File>Audio/SoundbanksInfo.xml</File>
+    <File>Platforms/Windows/Audio/RGM_Banks.ini</File>
+	<File>Platforms/Windows/Audio/RGM_Soundbank.bnk</File>
+    <File>Platforms/Windows/Audio/RGM_Soundbank.txt</File>
+    <File>Platforms/Windows/Audio/SoundbanksInfo.xml</File>
     <File>ConcertHall/Icons/RGMConcertHall128.dds</File>
     <File>ConcertHall/Icons/RGMConcertHall256.dds</File>
     <File>ConcertHall/Icons/RGMConcertHall32.dds</File>
