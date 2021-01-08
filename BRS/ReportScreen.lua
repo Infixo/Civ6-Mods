@@ -21,6 +21,9 @@ print("Rise & Fall    :", (bIsRiseFall and "YES" or "no"));
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
 
+-- Mod compatibilities check
+local bIsLuegiFontIconsMod = Modding.IsModActive("2ede4527-c961-4344-9cd1-859ff570d401"); -- Appeal, Loyalty and Prestige (Diplo VP) Font Icons (Luegi)
+
 -- configuration options
 local bOptionModifiers:boolean = ( GlobalParameters.BRS_OPTION_MODIFIERS == 1 );
 
@@ -3249,7 +3252,7 @@ function city_fields( kCityData, pCityInstance )
 	local currentLoyalty = pCulturalIdentity:GetLoyalty();
 	local maxLoyalty = pCulturalIdentity:GetMaxLoyalty();
 	local loyaltyPerTurn:number = pCulturalIdentity:GetLoyaltyPerTurn();
-	local loyaltyFontIcon:string = loyaltyPerTurn >= 0 and "[ICON_PressureUp]" or "[ICON_PressureDown]";
+	local loyaltyFontIcon:string = bIsLuegiFontIconsMod and "[ICON_Loyalty]" or (loyaltyPerTurn >= 0 and "[ICON_PressureUp]" or "[ICON_PressureDown]");
 	local iNumTurnsLoyalty:number = 0;
 	if loyaltyPerTurn > 0 then
 		iNumTurnsLoyalty = math.ceil((maxLoyalty-currentLoyalty)/loyaltyPerTurn);
@@ -4268,6 +4271,7 @@ function ViewPolicyPage()
 		if policyGroup == "SLOT_PANTHEON" or policyGroup == "SLOT_FOLLOWER" then pHeaderInstance.PolicyHeaderLabelName:SetText( Locale.Lookup("LOC_BELIEF_NAME") ); end
 		local iNumRows:number = 0;
 		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not (bIsRiseFall or bIsGatheringStorm) );
+		pHeaderInstance.PolicyHeaderButtonLabelLOYALTY:SetText( bIsLuegiFontIconsMod and "[ICON_Loyalty]" or "[ICON_PressureUp]" )
 		
 		-- set sorting callbacks
 		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
@@ -4540,6 +4544,7 @@ function ViewMinorPage()
 		pHeaderInstance.PolicyHeaderLabelName:SetText( Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE") );
 		local iNumRows:number = 0;
 		pHeaderInstance.PolicyHeaderButtonLOYALTY:SetHide( not (bIsRiseFall or bIsGatheringStorm) );
+		pHeaderInstance.PolicyHeaderButtonLabelLOYALTY:SetText( bIsLuegiFontIconsMod and "[ICON_Loyalty]" or "[ICON_PressureUp]" )
 		
 		-- set sorting callbacks
 		--if pHeaderInstance.UnitTypeButton then     pHeaderInstance.UnitTypeButton:RegisterCallback(    Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_units( "type", iUnitGroup, instance ) end ) end
