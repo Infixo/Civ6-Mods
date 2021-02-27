@@ -3,6 +3,7 @@ print("Loading GovernorInspector.lua from Real Governor Inspector version "..(Gl
 --	Real Governor Inspector
 --	Author: Infixo
 --  2020-06-03: Created
+--  2021-02-27: Compatibility with Real Era Stop mod - additional checks if objects exist
 -- ===========================================================================
 include("InstanceManager");
 include("SupportFunctions"); -- TruncateString, Round
@@ -173,23 +174,33 @@ end
 
 -- Reyna adjacencies
 local eReynaDistricts:table = {};
-table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_COMMERCIAL_HUB.Index);
-table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_HARBOR.Index);
-table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_ROYAL_NAVY_DOCKYARD.Index);
-table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_COTHON.Index);
-table.insert(eReynaDistricts, GameInfo.Districts.DISTRICT_SUGUBA.Index);
+function RegisterReynaAdjacency( tDistrict:table )
+    if tDistrict == nil then return; end
+    table.insert(eReynaDistricts, tDistrict.Index);
+end
+RegisterReynaAdjacency(GameInfo.Districts.DISTRICT_COMMERCIAL_HUB);
+RegisterReynaAdjacency(GameInfo.Districts.DISTRICT_HARBOR);
+RegisterReynaAdjacency(GameInfo.Districts.DISTRICT_ROYAL_NAVY_DOCKYARD);
+RegisterReynaAdjacency(GameInfo.Districts.DISTRICT_COTHON);
+RegisterReynaAdjacency(GameInfo.Districts.DISTRICT_SUGUBA);
+--dshowrectable(eReynaDistricts);
 
 -- Reyna power & gold
 local eReynaImpr:table = {};
-table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_OFFSHORE_WIND_FARM.Index);
-table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_SOLAR_FARM.Index);
-table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_WIND_FARM.Index);
-table.insert(eReynaImpr, GameInfo.Improvements.IMPROVEMENT_GEOTHERMAL_PLANT.Index);
+function RegisterReynaImprovement( tImpr:table )
+    if tImpr == nil then return; end
+    table.insert(eReynaImpr, tImpr.Index);
+end
+RegisterReynaImprovement(GameInfo.Improvements.IMPROVEMENT_OFFSHORE_WIND_FARM);
+RegisterReynaImprovement(GameInfo.Improvements.IMPROVEMENT_SOLAR_FARM);
+RegisterReynaImprovement(GameInfo.Improvements.IMPROVEMENT_WIND_FARM);
+RegisterReynaImprovement(GameInfo.Improvements.IMPROVEMENT_GEOTHERMAL_PLANT);
+--dshowrectable(eReynaImpr)
 
 -- Magnus extra production from regional buildings
 local eMagnusDistricts:table = {};
-table.insert(eMagnusDistricts, GameInfo.Districts.DISTRICT_INDUSTRIAL_ZONE.Index);
-table.insert(eMagnusDistricts, GameInfo.Districts.DISTRICT_HANSA.Index);
+if GameInfo.Districts.DISTRICT_INDUSTRIAL_ZONE ~= nil then table.insert(eMagnusDistricts, GameInfo.Districts.DISTRICT_INDUSTRIAL_ZONE.Index); end
+if GameInfo.Districts.DISTRICT_HANSA           ~= nil then table.insert(eMagnusDistricts, GameInfo.Districts.DISTRICT_HANSA.Index);           end
 local eMagnusRegional:table = {};
 for building in GameInfo.Buildings() do
 	if building.PrereqDistrict == "DISTRICT_INDUSTRIAL_ZONE" and building.RegionalRange > 0 then
@@ -292,9 +303,10 @@ function ProcessCity( pCity:table )
 	-- more city data
 	local hashItemProduced:number = pCity:GetBuildQueue():GetCurrentProductionTypeHash();
 	
-	local function CheckBuilding(pCity:table, building:number)
+	local function CheckBuilding(pCity:table, tBuilding:table)
+        if tBuilding == nil then return 0; end
 		local cityBuildings:table = pCity:GetBuildings();
-		if cityBuildings:HasBuilding(building) and not cityBuildings:IsPillaged(building) then return 1; end
+		if cityBuildings:HasBuilding(tBuilding.Index) and not cityBuildings:IsPillaged(tBuilding.Index) then return 1; end
 		return 0;
 	end
 	
@@ -428,9 +440,9 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Magnus PP
-	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_COAL_POWER_PLANT.Index )        == 1 then data.MagnusPlant = "[ICON_RESOURCE_COAL]";    end
-	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_FOSSIL_FUEL_POWER_PLANT.Index ) == 1 then data.MagnusPlant = "[ICON_RESOURCE_OIL]";     end
-	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_POWER_PLANT.Index )             == 1 then data.MagnusPlant = "[ICON_RESOURCE_URANIUM]"; end
+	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_COAL_POWER_PLANT )        == 1 then data.MagnusPlant = "[ICON_RESOURCE_COAL]";    end
+	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_FOSSIL_FUEL_POWER_PLANT ) == 1 then data.MagnusPlant = "[ICON_RESOURCE_OIL]";     end
+	if CheckBuilding( pCity, GameInfo.Buildings.BUILDING_POWER_PLANT )             == 1 then data.MagnusPlant = "[ICON_RESOURCE_URANIUM]"; end
 	--print(data.MagnusPlant);
 	
 	-- Magnus extra production
@@ -446,7 +458,7 @@ function ProcessCity( pCity:table )
 			--print("city is", city);
 			for _,building in pairs(eMagnusRegional) do
 				if tMagnusBuildings[ building.BuildingType ] == nil then tMagnusBuildings[ building.BuildingType ] = 0; end
-				if CheckBuilding(city, building.Index) == 1 and iRange <= building.Range then
+				if CheckBuilding(city, building) == 1 and iRange <= building.Range then
 					tMagnusBuildings[ building.BuildingType ] = tMagnusBuildings[ building.BuildingType ] + 1;
 				end
 			end
@@ -470,13 +482,13 @@ function ProcessCity( pCity:table )
 	for _,district in pCity:GetDistricts():Members() do
 		local eDistrict:number = district:GetType();
 		-- housing
-		if eDistrict == GameInfo.Districts.DISTRICT_NEIGHBORHOOD.Index then data.LiangHousing = data.LiangHousing + 1; end
-		if eDistrict == GameInfo.Districts.DISTRICT_MBANZA.Index then data.LiangHousing = data.LiangHousing + 1; end
-		if eDistrict == GameInfo.Districts.DISTRICT_AQUEDUCT.Index then data.LiangHousing = data.LiangHousing + 1; end
-		if eDistrict == GameInfo.Districts.DISTRICT_BATH.Index then data.LiangHousing = data.LiangHousing + 1; end
+		if GameInfo.Districts.DISTRICT_NEIGHBORHOOD ~= nil and eDistrict == GameInfo.Districts.DISTRICT_NEIGHBORHOOD.Index then data.LiangHousing = data.LiangHousing + 1; end
+		if GameInfo.Districts.DISTRICT_MBANZA       ~= nil and eDistrict == GameInfo.Districts.DISTRICT_MBANZA.Index       then data.LiangHousing = data.LiangHousing + 1; end
+		if GameInfo.Districts.DISTRICT_AQUEDUCT     ~= nil and eDistrict == GameInfo.Districts.DISTRICT_AQUEDUCT.Index     then data.LiangHousing = data.LiangHousing + 1; end
+		if GameInfo.Districts.DISTRICT_BATH         ~= nil and eDistrict == GameInfo.Districts.DISTRICT_BATH.Index         then data.LiangHousing = data.LiangHousing + 1; end
 		-- amenities
-		if eDistrict == GameInfo.Districts.DISTRICT_CANAL.Index then data.LiangAmenities = data.LiangAmenities + 1; end
-		if eDistrict == GameInfo.Districts.DISTRICT_DAM.Index then data.LiangAmenities = data.LiangAmenities + 1; end
+		if GameInfo.Districts.DISTRICT_CANAL ~= nil and eDistrict == GameInfo.Districts.DISTRICT_CANAL.Index then data.LiangAmenities = data.LiangAmenities + 1; end
+		if GameInfo.Districts.DISTRICT_DAM   ~= nil and eDistrict == GameInfo.Districts.DISTRICT_DAM.Index   then data.LiangAmenities = data.LiangAmenities + 1; end
 	end
 	
 	-- Liang district production
@@ -590,7 +602,7 @@ function ProcessCity( pCity:table )
 	end
 	
 	-- Reyna power
-	data.ReynaPower = data.ReynaPower + CheckBuilding( pCity, GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM.Index );
+	data.ReynaPower = data.ReynaPower + CheckBuilding( pCity, GameInfo.Buildings.BUILDING_HYDROELECTRIC_DAM );
 
 	
 	-- get generic data
@@ -907,6 +919,7 @@ end
 -- fills a single instance with the data of the moment
 function ShowSingleCity(pCity:table, pInstance:table)
 	--print("FUN ShowSingleCity", pCity.CityName);
+    --dshowrectable(pCity);
 	local function TruncateWithToolTip(control:table, length:number, text:string)
 		local isTruncated:boolean = TruncateString(control, length, text);
 		if isTruncated then control:SetToolTipString(text); end
@@ -916,6 +929,7 @@ function ShowSingleCity(pCity:table, pInstance:table)
 	pInstance.Governor:SetToolTipString( pCity.GovernorTT );
 	pInstance.CityName:SetText( pCity.CapitalIcon..pCity.CityName.."  "..pCity.Status );
 	pInstance.Population:SetText( pCity.Population );
+    --print("TOTAL FOR: ", m_kGovernors[m_kCurrentTab].GovernorType);
 	TruncateWithToolTip(pInstance.Total, 198, pCity.GovernorEffects[ m_kGovernors[m_kCurrentTab].GovernorType ]);
 	
 	-- go to the city after clicking
