@@ -6,8 +6,8 @@
 -- ===========================================================================
 
 -- just to make versioning easier
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MAJOR', '5');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MINOR', '9');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MAJOR', '6');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_VERSION_MINOR', '0');
 
 -- options
 INSERT INTO GlobalParameters (Name, Value) VALUES ('BRS_OPTION_MODIFIERS', '0');

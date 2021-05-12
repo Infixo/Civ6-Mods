@@ -1815,7 +1815,15 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 			local adjacentPlot = Map.GetAdjacentPlot(iX, iY, direction);
 			if adjacentPlot ~= nil and adjacentPlot:GetDistrictType() == eDistrictType then bIsValidSubject = true; break; end
 		end
-		
+
+    -- 2021-02-28 Support for Maritime Industries from PolicyRework2
+	elseif tReq.ReqType == "REQUIREMENT_PLOT_IS_COASTAL_LAND" then -- new Requirement type from XP2 that can be used for Citied and Plots
+        if tSubject.SubjectType == SubjectTypes.Plot or tSubject.SubjectType == SubjectTypes.City then
+            bIsValidSubject = tSubject.Plot:IsCoastalLand(); -- City also has Plot in the table
+        else
+            print("ERROR: CheckOneRequirement mismatch for exp subject", "[City or Plot]", "got", tSubject.SubjectType, "req is", tReq.ReqId, tReq.ReqType); return true;
+        end
+    
 	else
 		-- do nothing here... probably will never implement all possible types
 		return false;

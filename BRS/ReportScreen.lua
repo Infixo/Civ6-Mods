@@ -20,6 +20,8 @@ local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C5
 print("Rise & Fall    :", (bIsRiseFall and "YES" or "no"));
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 print("Gathering Storm:", (bIsGatheringStorm and "YES" or "no"));
+local bIsMonopolies:boolean = GameCapabilities.HasCapability("CAPABILITY_MONOPOLIES"); -- Monopoly and Corporations Mode
+print("Monopolies     :", (bIsMonopolies and "YES" or "no"));
 
 -- configuration options
 local bOptionModifiers:boolean = ( GlobalParameters.BRS_OPTION_MODIFIERS == 1 );
@@ -1992,6 +1994,8 @@ function ViewYieldsPage()
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_CITY_INCOME") );
 	instance.RowHeaderLabel:SetHide( true ); --BRS
 	instance.AmenitiesContainer:SetHide(true);
+	instance.IndustryContainer:SetHide(true); -- 2021-05-21
+	instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 	
 	local pHeaderInstance:table = {}
 	ContextPtr:BuildInstanceForControl( "CityIncomeHeaderInstance", pHeaderInstance, instance.ContentStack ) ;	
@@ -2505,6 +2509,8 @@ function ViewYieldsPage()
 	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_BUILDING_EXPENSES") );
 	instance.RowHeaderLabel:SetHide( true ); --BRS
 	instance.AmenitiesContainer:SetHide(true);
+	instance.IndustryContainer:SetHide(true); -- 2021-05-21
+	instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 
 	-- Header
 	local pHeader:table = {};
@@ -2539,6 +2545,8 @@ function ViewYieldsPage()
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_UNIT_EXPENSES") );
 		instance.RowHeaderLabel:SetHide( true ); --BRS
 		instance.AmenitiesContainer:SetHide(true);
+        instance.IndustryContainer:SetHide(true); -- 2021-05-21
+        instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 
 		-- Header
 		local pHeader:table = {};
@@ -2580,6 +2588,8 @@ function ViewYieldsPage()
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") );
 		instance.RowHeaderLabel:SetHide( true ); --BRS
 		instance.AmenitiesContainer:SetHide(true);
+        instance.IndustryContainer:SetHide(true); -- 2021-05-21
+        instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 
 		local pHeader:table = {};
 		ContextPtr:BuildInstanceForControl( "DealHeaderInstance", pHeader, instance.ContentStack ) ;
@@ -2670,6 +2680,15 @@ function ViewResourcesPage()
 	local kBonuses			:table	= {};
 	local kLuxuries			:table	= {};
 	local kStrategics		:table	= {};
+    local localPlayerID = Game.GetLocalPlayer();
+	local localPlayer = Players[localPlayerID];
+    
+    -- 2021-05-12 Monopolies Mode
+	-- find out if Mercantilism is unlocked
+	local bMercantailismUnlocked:boolean = false;
+    if GameInfo.Civics.CIVIC_MERCANTILISM then
+        bMercantailismUnlocked = localPlayer:GetCulture():HasCivic(GameInfo.Civics.CIVIC_MERCANTILISM.Index);
+    end
 	
 	local function FormatStrategicTotal(iTot:number)
 		if iTot < 0 then return "[COLOR_Red]"..tostring(iTot).."[ENDCOLOR]";
@@ -2716,8 +2735,6 @@ function ViewResourcesPage()
 		--pFooterInstance.Amount:SetText( tostring(kSingleResourceData.Total) );
 
 		-- Show how many of this resource are being allocated to what cities
-		local localPlayerID = Game.GetLocalPlayer();
-		local localPlayer = Players[localPlayerID];
 		local citiesProvidedTo: table = localPlayer:GetResources():GetResourceAllocationCities(GameInfo.Resources[kResource.ResourceType].Index);
 		local numCitiesProvidingTo: number = table.count(citiesProvidedTo);
 		if (numCitiesProvidingTo > 0) then
@@ -2740,6 +2757,65 @@ function ViewResourcesPage()
 			--pFooterInstance.AmenitiesContainer:SetHide(true);
 			instance.AmenitiesContainer:SetHide(true);
 		end
+        
+        -- 2021-05-12 Monopolies Mode
+        if bIsMonopolies and kSingleResourceData.IsLuxury then
+            local pGameEconomic:table = Game.GetEconomicManager();
+            local iControlled:number = pGameEconomic:GetNumControlledResources(localPlayerID, eResourceType);
+            local sText:string, sTT:string = "", "";
+            local sTTHead = "[ICON_".. kResource.ResourceType.."]"..LL(kResource.Name);
+            -- find industry effect and type - match [ICON_xxx]
+            local sEffectI:string = LL(GameInfo.ResourceIndustries[kResource.ResourceType].ResourceEffectTExt);
+            local sIndustryType:string = string.match(sEffectI, "%[ICON_%a+%]");
+            -- find corporation effect and type - match [ICON_xxx]
+            local sEffectC:string = LL(GameInfo.ResourceCorporations[kResource.ResourceType].ResourceEffectTExt);
+            local sCorpoType:string = string.match(sEffectC, "%[ICON_%a+%]");
+            -- logic goes top-down, i.e. from corporation to industry
+            if pGameEconomic:HasCorporationOf(localPlayerID, eResourceType) then
+                -- corpo: YES
+                sText = string.format("%d %s  [ICON_GreatWork_Product][ICON_GreatWork_Product] %s", iControlled, sCorpoType, LL("LOC_IMPROVEMENT_CORPORATION_NAME"));
+                sTT = sTTHead..sEffectC;
+            else
+                -- corpo: NO, check Industry
+                if pGameEconomic:HasIndustryOf(localPlayerID, eResourceType) then
+                    sText = string.format("%d %s  [ICON_GreatWork_Product] %s", iControlled, sIndustryType, LL("LOC_IMPROVEMENT_INDUSTRY_NAME"));
+                else
+                    sText = string.format("%d %s  [ICON_Not]", iControlled, sIndustryType);
+                end
+                sTT = sTTHead..sEffectI;
+            end
+            -- if we can have an industry - add the mark
+            if pGameEconomic:CanHaveIndustry(localPlayerID, eResourceType) then
+                sText = sText.." [ICON_New] "..LL("LOC_IMPROVEMENT_INDUSTRY_NAME");
+                sTT = sTT.."[NEWLINE]"..LL("LOC_NOTIFICATION_INDUSTRY_OPPORTUNITY_SUMMARY", iControlled, "[ICON_".. kResource.ResourceType.."]", LL(kResource.Name)); -- {1_num} {2_ResourceIcon} {3_Resource}
+            end
+            -- if we can have a corpo - add the mark
+            if pGameEconomic:CanHaveCorporation(localPlayerID, eResourceType) then
+                sText = sText.." [ICON_New] "..LL("LOC_IMPROVEMENT_CORPORATION_NAME");
+                sTT = sTT.."[NEWLINE]"..LL("LOC_NOTIFICATION_CORPORATION_OPPORTUNITY_SUMMARY", iControlled, "[ICON_".. kResource.ResourceType.."]", LL(kResource.Name)); -- {1_num} {2_ResourceIcon} {3_Resource}
+            end
+            -- show info
+            instance.Industry:SetText(sText);
+            instance.Industry:SetToolTipString(sTT);
+            instance.IndustryContainer:SetHide(false);
+        else
+            instance.IndustryContainer:SetHide(true);
+        end
+
+        -- 2021-05-12 Monopolies Mode
+        if bIsMonopolies and kSingleResourceData.IsLuxury and bMercantailismUnlocked then
+            local pGameEconomic:table = Game.GetEconomicManager();
+            local iControlled:number = pGameEconomic:GetNumControlledResources(localPlayerID, eResourceType);
+            local kMapResources:table = pGameEconomic:GetMapResources();
+            local iTotal:number = kMapResources[eResourceType];
+			local iMonopolyID:number = pGameEconomic:GetResourceMonopolyPlayer(eResourceType);
+            local sText:string = string.format("%d/%d  %d%%  %s", iControlled, iTotal, 100*iControlled/iTotal, (iMonopolyID == localPlayerID and LL("LOC_RESREPORT_MONOPOLY_NAME") or LL("LOC_RESREPORT_CONTROL")));
+            if iMonopolyID == localPlayerID then sText = "[COLOR_Green]"..sText.."[ENDCOLOR]"; end
+            instance.Monopoly:SetText(sText);
+            instance.MonopolyContainer:SetHide(false);
+        else
+            instance.MonopolyContainer:SetHide(true);
+        end
 
 		--SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() ); --BRS moved into if
 		SetGroupCollapsePadding(instance, 0); --BRS no footer
@@ -3201,6 +3277,7 @@ function city_fields( kCityData, pCityInstance )
 	CheckForWalls("BUILDING_WALLS");
 	CheckForWalls("BUILDING_CASTLE");
 	CheckForWalls("BUILDING_STAR_FORT");
+	CheckForWalls("BUILDING_TSIKHE"); -- 2020-07-31 Added Tsikhe
 	-- Garrison
 	if kCityData.IsGarrisonUnit then 
 		sStrength = sStrength.."[ICON_Fortified]";
@@ -4004,6 +4081,8 @@ function ViewUnitsPage()
 		instance.RowHeaderLabel:SetHide( false ); --BRS
 		instance.RowHeaderLabel:SetText( Locale.Lookup("LOC_HUD_REPORTS_TOTALS").." "..tostring(#kUnitGroup.units) );
 		instance.AmenitiesContainer:SetHide(true);
+        instance.IndustryContainer:SetHide(true); -- 2021-05-21
+        instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( kUnitGroup.Header, pHeaderInstance, instance.ContentStack )
@@ -4088,6 +4167,8 @@ function ViewDealsPage()
 		instance.RowHeaderLabel:SetText( tostring(iNumTurns).." "..Locale.Lookup("LOC_HUD_REPORTS_TURNS_UNTIL_COMPLETED", iNumTurns).." ("..tostring(pDeal.EndTurn)..")" );
 		instance.RowHeaderLabel:SetHide( false );
 		instance.AmenitiesContainer:SetHide(true);
+        instance.IndustryContainer:SetHide(true); -- 2021-05-21
+        instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 
 		local dealHeaderInstance : table = {}
 		ContextPtr:BuildInstanceForControl( "DealsHeader", dealHeaderInstance, instance.ContentStack )
@@ -4262,6 +4343,8 @@ function ViewPolicyPage()
 		instance.RowHeaderButton:SetText( tPolicyGroupNames[policyGroup] );
 		instance.RowHeaderLabel:SetHide( false );
 		instance.AmenitiesContainer:SetHide(true);
+        instance.IndustryContainer:SetHide(true); -- 2021-05-21
+        instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
@@ -4534,6 +4617,8 @@ function ViewMinorPage()
 		instance.RowHeaderButton:SetText( Locale.Lookup("LOC_CITY_STATES_TYPE_"..minorGroup) );
 		instance.RowHeaderLabel:SetHide( false );
 		instance.AmenitiesContainer:SetHide(true);
+        instance.IndustryContainer:SetHide(true); -- 2021-05-21
+        instance.MonopolyContainer:SetHide(true); -- 2021-05-21
 		
 		local pHeaderInstance:table = {}
 		ContextPtr:BuildInstanceForControl( "PolicyHeaderInstance", pHeaderInstance, instance.ContentStack ) -- instance ID, pTable, stack
