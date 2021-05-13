@@ -1531,6 +1531,14 @@ end
 -- Required - these are buildings that require power - here PowerConsumed!
 -- Generated - seems to be empty
 
+--2021-05-13 Monopolies and Corporations
+local eImprovementIndustry:number    = -1;
+local eImprovementCorporation:number = -1;
+if bIsMonopolies then
+    eImprovementIndustry    = GameInfo.Improvements.IMPROVEMENT_INDUSTRY.Index;
+    eImprovementCorporation = GameInfo.Improvements.IMPROVEMENT_CORPORATION.Index;
+end
+
 function AppendXP2CityData(data:table) -- data is the main city data record filled with tons of info
 
 	local pCity:table = data.City;
@@ -1785,6 +1793,7 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 		-- railroads
 		local eRoute:number = plot:GetRouteType()
 		if eRoute ~= -1 and GameInfo.Routes[eRoute] ~= nil and GameInfo.Routes[eRoute].RouteType == "ROUTE_RAILROAD" then data.NumRailroads = data.NumRailroads + 1; end
+        
 	end
 	data.RiverFloodDamTT = table.concat(data.RiverFloodDamTT, "[NEWLINE]");
 	data.FloodTilesTT = table.concat(data.FloodTilesTT, "[NEWLINE]");
@@ -1799,6 +1808,77 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
 	for _,district in ipairs(data.BuildingsAndDistricts) do
 		if district.isBuilt and district.Type == "DISTRICT_CANAL" then data.NumCanals = data.NumCanals + 1; end
 	end
+    
+    -- 2021-05-21 Monopolies and Corporations Mode
+    if bIsMonopolies then
+        data.HasIndustry = false;
+        data.HasCorporation = false;
+        data.Industry = "";
+        data.IndustryTT = "";
+        local localPlayerID:number = Game.GetLocalPlayer();
+        local pGameEconomic:table = Game.GetEconomicManager();
+        local sResList:string, sResListTT:string = "", ""; -- resource list - just to see what is possible
+        local bHasRes:boolean = false;
+
+        -- iterate through city plots
+        for _, plotID in ipairs(cityPlots) do
+            local plot:table = Map.GetPlotByIndex(plotID);
+            local plotX			: number = plot:GetX()
+            local plotY			: number = plot:GetY()
+            local eResourceType:number = plot:GetResourceType();
+            -- is there a resource at all
+            if eResourceType > -1 then
+                local resourceInfo:table = GameInfo.Resources[eResourceType];
+                if resourceInfo.ResourceClassType == "RESOURCECLASS_LUXURY" then
+                    -- only luxuries are important
+                    local sResourceType:string = resourceInfo.ResourceType;
+                    local sResIcon:string = "[ICON_"..sResourceType.."]";
+                    -- find industry effect and type - match [ICON_xxx]
+                    local sEffectI:string = LL(GameInfo.ResourceIndustries[sResourceType].ResourceEffectTExt);
+                    local sIndustryType:string = string.match(sEffectI, "%[ICON_%a+%]");
+                    -- find corporation effect and type - match [ICON_xxx]
+                    local sEffectC:string = LL(GameInfo.ResourceCorporations[sResourceType].ResourceEffectTExt);
+                    local sCorpoType:string = string.match(sEffectC, "%[ICON_%a+%]");
+                    -- check for industry / corpo
+                    local eImprovementType:number = plot:GetImprovementType();
+                    -- there can be only 1 industry or corpo in a city, so check first for that
+                    if eImprovementType == eImprovementCorporation then
+                        -- there is a corporation
+                        data.HasCorporation = true;
+                        data.Industry = string.format("[ICON_%s] %s [ICON_GreatWork_Product]", sResourceType, sCorpoType);
+                        data.IndustryTT = string.format("%s[NEWLINE][ICON_%s] %s%s", LL("LOC_IMPROVEMENT_CORPORATION_NAME"), sResourceType, LL(resourceInfo.Name), sEffectC);
+                    elseif eImprovementType == eImprovementIndustry then
+                        -- there is an industry
+                        data.HasIndustry = true;
+                        data.Industry = sResIcon..sIndustryType;
+                        data.IndustryTT = string.format("%s[NEWLINE]%s %s%s", LL("LOC_IMPROVEMENT_INDUSTRY_NAME"), sResIcon, LL(resourceInfo.Name), sEffectI);
+                        -- check if we can upgrade it to corporation
+                        if pGameEconomic:CanHaveCorporation(localPlayerID, eResourceType) then
+                            data.Industry = data.Industry.."[COLOR_Green]![ENDCOLOR]";
+                            data.IndustryTT = data.IndustryTT.."[NEWLINE][ICON_GoingTo]"..LL("LOC_IMPROVEMENT_CORPORATION_NAME")..sEffectC;
+                        end
+                    else -- build resource list
+                        -- add resource only if there is no industry nor corpo yet around it
+                        if not pGameEconomic:HasIndustryOf(localPlayerID, eResourceType) and not pGameEconomic:HasCorporationOf(localPlayerID, eResourceType) then
+                            sResList = sResList..sResIcon;
+                            sResListTT = sResListTT..(bHasRes and "[NEWLINE]" or "")..sResIcon..LL(resourceInfo.Name)..sEffectI;
+                            bHasRes = true;
+                            -- if we can have an industry - add the mark
+                            if pGameEconomic:CanHaveIndustry(localPlayerID, eResourceType) then
+                                sResList = sResList.."[COLOR_Green]![ENDCOLOR]";
+                                sResListTT = sResListTT.."[NEWLINE][ICON_GoingTo]"..LL("LOC_IMPROVEMENT_INDUSTRY_NAME");
+                            end
+                        end -- no IC yet
+                    end
+                end -- luxury only
+            end -- resource check
+            -- if there is no industry nor corpo - put res list
+            if not data.HasIndustry and not data.HasCorporation then
+                data.Industry = sResList;
+                data.IndustryTT = sResListTT;
+            end
+        end -- city plots
+    end -- monopolies mode
 end
 
 -- ===========================================================================
@@ -4788,6 +4868,11 @@ function city2_fields( kCityData, pCityInstance )
 	
 	-- Number of Canal districts [icons]
 	pCityInstance.Canals:SetText(string.rep("[ICON_DISTRICT_CANAL]", kCityData.NumCanals));
+    
+    -- 2021-05-21 Monopolies and Corporations Mode
+    pCityInstance.Industry:SetText(kCityData.Industry);
+    pCityInstance.Industry:SetToolTipString(kCityData.IndustryTT);
+    -- what product is in the city?
 end
 
 function sort_cities2( type, instance )
