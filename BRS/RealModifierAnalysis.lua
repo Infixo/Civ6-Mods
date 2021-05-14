@@ -1556,8 +1556,8 @@ end
 function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 	--dprint("FUNCAL CheckOneRequirement(req,type,sub)(subject)",tReq.ReqId,tReq.ReqType,sSubjectType,tSubject.SubjectType,tSubject.Name);
 	
-	local function CheckForMismatchError(sExpectedType:string)
-		if sExpectedType == tSubject.SubjectType then return false; end
+	local function CheckForMismatchError(sExpectedType:string, sExpectedType2:string)
+		if sExpectedType == tSubject.SubjectType or (sExpectedType2 ~= nil and sExpectedType2 == tSubject.SubjectType) then return false; end
 		print("ERROR: CheckOneRequirement mismatch for exp subject", sExpectedType, "got", tSubject.SubjectType, "req is", tReq.ReqId, tReq.ReqType); return true;
 	end
 	
@@ -1713,7 +1713,7 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		end -- if
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_TERRAIN_TYPE_MATCHES" then -- 14
-		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		if CheckForMismatchError(SubjectTypes.Plot, SubjectTypes.City) then return false; end -- 2021-05-14 Can also be a City
 		local info:table = GameInfo.Terrains[ tReq.Arguments.TerrainType ];
 		if info == nil then return false; end -- error
 		bIsValidSubject = ( tSubject.Plot:GetTerrainType() == info.Index );

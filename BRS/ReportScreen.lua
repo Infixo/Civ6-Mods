@@ -1449,8 +1449,12 @@ function GetWorkedTileYieldData( pCity:table, pCulture:table )
 			else
 				-- normal tile or City Center
 				iNumWorkedPlots = iNumWorkedPlots + 1;
-				for row in GameInfo.Yields() do			
-					kYields[row.YieldType] = kYields[row.YieldType] + kPlot:GetYield(row.Index);				
+				--for row in GameInfo.Yields() do
+                    --kYields[row.YieldType] = kYields[row.YieldType] + kPlot:GetYield(row.Index);
+				--end
+                -- 2021-05-14 Support for mods that add new yield types e.g. DE:E
+                for yield,idx in pairs(YieldTypes) do -- WARNING! In this context there are no extra yields from RMT - but this is ok, because they don't exist in the game anyway
+                    kYields["YIELD_"..yield] = kYields["YIELD_"..yield] + kPlot:GetYield(inx);
 				end
 			end
 		end
@@ -1829,7 +1833,7 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
             -- is there a resource at all
             if eResourceType > -1 then
                 local resourceInfo:table = GameInfo.Resources[eResourceType];
-                if resourceInfo.ResourceClassType == "RESOURCECLASS_LUXURY" then
+                if resourceInfo.ResourceClassType == "RESOURCECLASS_LUXURY" and GameInfo.ResourceIndustries[sResourceType] ~= nil then -- also check if there is an industry around it!
                     -- only luxuries are important
                     local sResourceType:string = resourceInfo.ResourceType;
                     local sResIcon:string = "[ICON_"..sResourceType.."]";
@@ -2839,7 +2843,7 @@ function ViewResourcesPage()
 		end
         
         -- 2021-05-12 Monopolies Mode
-        if bIsMonopolies and kSingleResourceData.IsLuxury then
+        if bIsMonopolies and kSingleResourceData.IsLuxury and GameInfo.ResourceIndustries[kResource.ResourceType] ~= nil then -- also check if there is an industry around it!
             local pGameEconomic:table = Game.GetEconomicManager();
             local iControlled:number = pGameEconomic:GetNumControlledResources(localPlayerID, eResourceType);
             local sText:string, sTT:string = "", "";
