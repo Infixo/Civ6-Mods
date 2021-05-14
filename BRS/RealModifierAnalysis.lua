@@ -1682,7 +1682,19 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		if CheckForMismatchError("Player") then return false; end
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_TECHNOLOGY" then -- 9
-		if CheckForMismatchError("Player") then return false; end
+		--if CheckForMismatchError("Player") then return false; end
+        -- 2021-05-14 Johannesburg fix
+        local function CheckPlayerHasTechnology(pPlayer:table, sTech:string)
+            if GameInfo.Technologies[sTech] == nil then return false; end
+            return pPlayer:GetTechs():HasTech(GameInfo.Technologies[sTech].Index);
+        end
+        if tSubject.SubjectType == SubjectTypes.Player then
+            bIsValidSubject = CheckPlayerHasTechnology(tPlayer.Player, tReq.Arguments.TechnologyType);
+        elseif tSubject.SubjectType == SubjectTypes.City then
+            bIsValidSubject = CheckPlayerHasTechnology(Players[ tSubject.City:GetOwner() ], tReq.Arguments.TechnologyType);
+        else
+            print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return nil;
+        end
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLAYER_HAS_DISTRICT" then -- 1
 		if CheckForMismatchError("Player") then return false; end
@@ -1783,7 +1795,11 @@ function CheckOneRequirement(tReq:table, tSubject:table, sSubjectType:string)
 		bIsValidSubject = ( tSubject.Plot:GetImprovementType() == info.Index );
 		
 	elseif tReq.ReqType == "REQUIREMENT_PLOT_IS_APPEAL_BETWEEN" then
-		if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+		--if CheckForMismatchError(SubjectTypes.Plot) then return false; end
+        -- 2021-05-13 can be a District also DISTRICT_IS_CHARMING_NEIGHBORHOOD = Public Transport Policy
+		if not( tSubject.SubjectType == SubjectTypes.Plot or tSubject.SubjectType == SubjectTypes.District ) then
+			print("ERROR: CheckOneRequirement mismatch for subject", tSubject.SubjectType); dshowtable(tReq); return nil;
+		end
 		bIsValidSubject = ( tSubject.Plot:GetAppeal() >= tonumber(tReq.Arguments.MinimumAppeal) );
 		-- there is probably maximum appeal but it is not used at all
 		
@@ -2061,7 +2077,8 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 	
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_CHANGE" then
 		if CheckForMismatchError("District") then return nil; end
-		return nil;
+        -- 2021-05-14 Public Transport fix
+		YieldTableSetYield(tImpact, tMod.Arguments.YieldType, tonumber(tMod.Arguments.Amount));
 
 	-- 2019-04-17 Added
 	elseif tMod.EffectType == "EFFECT_ADJUST_DISTRICT_YIELD_BASED_ON_ADJACENCY_BONUS" then
@@ -2187,8 +2204,15 @@ function ApplyEffectAndCalculateImpact(tMod:table, tSubject:table, sSubjectType:
 		
 	-- special effects to boost production
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_DISTRICT" then
-		if CheckForMismatchError(SubjectTypes.City) then return nil; end
-		if tSubject.CurrentProductionType == "DISTRICT" then tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount); end
+		--if CheckForMismatchError(SubjectTypes.City) then return nil; end
+        -- 2021-05-14 Industrial minors fix
+        if tSubject.SubjectType == SubjectTypes.City then
+            if tSubject.CurrentProductionType == "DISTRICT" then tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount); end
+        elseif tSubject.SubjectType == SubjectTypes.District then
+            tImpact.PRODUCTION = tonumber(tMod.Arguments.Amount);
+        else
+            print("ERROR: ApplyEffectAndCalculateImpact mismatch for subject", sSubjectType); dshowtable(tMod); return true;
+        end
 		
 	-- special effects to boost production
 	elseif tMod.EffectType == "EFFECT_ADJUST_CITY_PRODUCTION_UNIT" then

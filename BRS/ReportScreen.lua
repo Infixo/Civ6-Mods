@@ -4870,9 +4870,13 @@ function city2_fields( kCityData, pCityInstance )
 	pCityInstance.Canals:SetText(string.rep("[ICON_DISTRICT_CANAL]", kCityData.NumCanals));
     
     -- 2021-05-21 Monopolies and Corporations Mode
-    pCityInstance.Industry:SetText(kCityData.Industry);
-    pCityInstance.Industry:SetToolTipString(kCityData.IndustryTT);
-    -- what product is in the city?
+    if bIsMonopolies then
+        pCityInstance.Industry:SetText(kCityData.Industry);
+        pCityInstance.Industry:SetToolTipString(kCityData.IndustryTT);
+        pCityInstance.Industry:SetHide(false);
+    else
+        pCityInstance.Industry:SetHide(true);
+    end
 end
 
 function sort_cities2( type, instance )
@@ -4971,6 +4975,7 @@ function ViewCities2Page()
 	pHeaderInstance.CityFloodBarrierButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "barrier", instance ) end )
 	pHeaderInstance.CityBarrierMaintenanceButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "fbcost", instance ) end );
 	pHeaderInstance.CityRailroadsButton:RegisterCallback( Mouse.eLClick, function() instance.Descend = not instance.Descend; sort_cities2( "numrr", instance ) end );
+    pHeaderInstance.CityIndustryButton:SetHide(not bIsMonopolies);
 
 	-- 
 	for _, kCityData in spairs( m_kCityData, function( t, a, b ) return city2_sortFunction( true, "name", t, a, b ); end ) do -- initial sort by name ascending
