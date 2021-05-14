@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="13E8BCDF-98EC-4C03-3641-72D519B0047C" version="1">
+	<Properties>
+		<Name>Better City States (UI)</Name>
+		<Teaser>Enhanced City States screen</Teaser>
+		<Description>Enhanced City States screen.[NEWLINE]Part of Concise UI with some improvements by Infixo and adopted to the final New Frontier Pass patch.[NEWLINE][NEWLINE]Supports all languages. Version 1.0.</Description>
+		<Authors>eudaimonia, Infixo</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+		<CompatibleVersions>1.2,2.0</CompatibleVersions>
+	</Properties>
+	<Dependencies>
+	</Dependencies>
+    <Blocks>
+        <Mod id="7d0b57ba-6a5c-4de0-ac10-e1e464ac82f6" title="CIVITAS City-States" />
+    </Blocks>
+	<ActionCriteria>
+		<Criteria id="Expansion1">
+			<GameCoreInUse>Expansion1</GameCoreInUse>
+		</Criteria>
+		<Criteria id="Expansion2">
+			<GameCoreInUse>Expansion2</GameCoreInUse>
+		</Criteria>
+	</ActionCriteria>
+	<InGameActions>
+		<!-- Vanilla actions - import lua and xml, set a new entry point -->
+        <ImportFiles id="BST_ImportFiles">
+			<Properties>
+				<LoadOrder>300</LoadOrder>
+			</Properties>
+            <Items>
+				<File>base/citystates.lua</File>
+				<File>base/citystates.xml</File>
+            </Items>
+        </ImportFiles>
+   		<ReplaceUIScript id="BST_Replace_CityStates">
+			<Properties>
+				<LoadOrder>301</LoadOrder>
+				<LuaContext>CityStates</LuaContext>
+				<LuaReplace>base/citystates.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+		<!-- Rise & Fall actions - import lua and xml, restore original entry point -->
+        <ImportFiles id="BST_ImportFiles_XP1" criteria="Expansion1">
+			<Properties><LoadOrder>310</LoadOrder></Properties>
+            <Items>
+				<File>xp1/citystates_bst_xp1.lua</File>
+				<File>base/citystates.xml</File> <!-- unified ui file -->
+            </Items>
+        </ImportFiles>
+   		<ReplaceUIScript id="BST_Replace_CityStates_XP1" criteria="Expansion1">
+			<Properties>
+				<LoadOrder>311</LoadOrder>
+				<LuaContext>CityStates</LuaContext>
+				<LuaReplace>xp1/citystates_bst_xp1.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+        <!-- Gathering Storm actins - restore original entry point -->
+        <ImportFiles id="BST_ImportFiles_XP2" criteria="Expansion2">
+			<Properties><LoadOrder>320</LoadOrder></Properties>
+            <Items>
+				<File>xp2/citystates_bst_xp2.lua</File>
+				<File>base/citystates.xml</File> <!-- unified ui file -->
+            </Items>
+        </ImportFiles>
+        <ReplaceUIScript id="BST_Replace_CityStates_XP2" criteria="Expansion2">
+			<Properties>
+				<LoadOrder>321</LoadOrder>
+				<LuaContext>CityStates</LuaContext>
+				<LuaReplace>xp2/citystates_bst_xp2.lua</LuaReplace>
+			</Properties>
+		</ReplaceUIScript>
+    </InGameActions>
+    <Files>
+		<!-- Base files -->
+		<File>base/citystates.lua</File>
+		<File>base/citystates.xml</File>
+		<!-- Rise & Fall files -->
+		<File>xp1/citystates_bst_xp1.lua</File>
+		<!-- Gathering Storm files -->
+		<File>xp2/citystates_bst_xp2.lua</File>
+    </Files>
+</Mod>
