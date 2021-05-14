@@ -1833,9 +1833,9 @@ function AppendXP2CityData(data:table) -- data is the main city data record fill
             -- is there a resource at all
             if eResourceType > -1 then
                 local resourceInfo:table = GameInfo.Resources[eResourceType];
+                local sResourceType:string = resourceInfo.ResourceType;
                 if resourceInfo.ResourceClassType == "RESOURCECLASS_LUXURY" and GameInfo.ResourceIndustries[sResourceType] ~= nil then -- also check if there is an industry around it!
                     -- only luxuries are important
-                    local sResourceType:string = resourceInfo.ResourceType;
                     local sResIcon:string = "[ICON_"..sResourceType.."]";
                     -- find industry effect and type - match [ICON_xxx]
                     local sEffectI:string = LL(GameInfo.ResourceIndustries[sResourceType].ResourceEffectTExt);
