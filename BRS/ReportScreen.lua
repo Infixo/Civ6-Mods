@@ -2877,6 +2877,8 @@ function ViewResourcesPage()
             if pGameEconomic:CanHaveCorporation(localPlayerID, eResourceType) then
                 sText = sText.." [ICON_New] "..LL("LOC_IMPROVEMENT_CORPORATION_NAME");
                 sTT = sTT.."[NEWLINE]"..LL("LOC_NOTIFICATION_CORPORATION_OPPORTUNITY_SUMMARY", iControlled, "[ICON_".. kResource.ResourceType.."]", LL(kResource.Name)); -- {1_num} {2_ResourceIcon} {3_Resource}
+                sTT = sTT.."[NEWLINE][ICON_GoingTo]"..LL("LOC_IMPROVEMENT_CORPORATION_NAME")..sEffectC;
+
             end
             -- show info
             instance.Industry:SetText(sText);
@@ -2887,13 +2889,14 @@ function ViewResourcesPage()
         end
 
         -- 2021-05-12 Monopolies Mode
-        if bIsMonopolies and kSingleResourceData.IsLuxury and bMercantailismUnlocked then
+        if bIsMonopolies and kSingleResourceData.IsLuxury and GameInfo.ResourceIndustries[kResource.ResourceType] ~= nil and bMercantailismUnlocked then
             local pGameEconomic:table = Game.GetEconomicManager();
             local iControlled:number = pGameEconomic:GetNumControlledResources(localPlayerID, eResourceType);
             local kMapResources:table = pGameEconomic:GetMapResources();
             local iTotal:number = kMapResources[eResourceType];
 			local iMonopolyID:number = pGameEconomic:GetResourceMonopolyPlayer(eResourceType);
             local sText:string = string.format("%d/%d  %d%%  %s", iControlled, iTotal, 100*iControlled/iTotal, (iMonopolyID == localPlayerID and LL("LOC_RESREPORT_MONOPOLY_NAME") or LL("LOC_RESREPORT_CONTROL")));
+            if 100*(iControlled+1)/iTotal > 60 then sText = sText.." [ICON_New]"; end
             if iMonopolyID == localPlayerID then sText = "[COLOR_Green]"..sText.."[ENDCOLOR]"; end
             instance.Monopoly:SetText(sText);
             instance.MonopolyContainer:SetHide(false);
