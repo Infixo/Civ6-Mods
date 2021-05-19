@@ -215,6 +215,13 @@
 			<Grid ID="AmenitiesContainer" Style="SubContainerSmall" Size="48,24" Anchor="L,T" Offset="200,4" AutoSizePadding="3,0" Hidden="1">
 				<Label ID="Amenities" Anchor="C,C" Style="ReportTotalText" String="$[ICON_Amenities] X Cities$"/>
 			</Grid>
+            <!-- Monopolies and corporations -->
+			<Grid ID="IndustryContainer" Style="SubContainerSmall" Size="150,24" Anchor="L,T" Offset="350,4" AutoSizePadding="3,0" Hidden="0">
+				<Label ID="Industry" Anchor="C,C" Style="ReportTotalText" String="$[ICON_GreatWork_Product] Industry$"/>
+			</Grid>
+			<Grid ID="MonopolyContainer" Style="SubContainerSmall" Size="100,24" Anchor="L,T" Offset="600,4" AutoSizePadding="3,0" Hidden="0">
+				<Label ID="Monopoly" Anchor="C,C" Style="ReportTotalText" String="$Monopoly$"/>
+			</Grid>
 		</Container>
 	</Instance>
 
@@ -2178,6 +2185,12 @@
 						<Label													Style="ReportHeaderSmallText"		String="LOC_DISTRICT_CANAL_NAME" />
 					</GridButton>
 				</Container>
+				<Box																													Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<GridButton		ID="CityIndustryButton"  Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
+						<Label													Style="ReportHeaderSmallText"		String="LOC_IMPROVEMENT_INDUSTRY_NAME" />
+					</GridButton>
+				</Container>
 				<Box																													Size="2,parent"	Color="46,70,95,255" />
 			</Stack>
 		</Container>
@@ -2240,6 +2253,10 @@
 				<Box											Size="2,parent"	Color="46,70,95,128" />
 				<Container		Size="60,parent">
 					<Label			ID="Canals"	Offset="0,3"	Style="ReportValueText"		String="$Canals$" />
+				</Container>
+				<Box											Size="2,parent"	Color="46,70,95,128" />
+				<Container		Size="80,parent">
+					<Label			ID="Industry"               Style="ReportValueText"		String="$Industry$" />
 				</Container>
 				<Box											Size="2,parent"	Color="46,70,95,255" />
 			</Stack>

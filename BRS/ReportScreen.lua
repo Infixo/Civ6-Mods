@@ -2576,8 +2576,25 @@ function ViewYieldsPage()
 				kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
 				kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kDistrict.Maintenance;
 			end
+            -- 2021-05-18 fix for missing Maintenance data
+            for _,kBuilding in ipairs(kDistrict.Buildings) do
+                kBuilding.Maintenance = 0;
+                if GameInfo.Buildings[kBuilding.Type] then
+                    kBuilding.Maintenance = GameInfo.Buildings[kBuilding.Type].Maintenance;
+                end
+                --dshowtable(kBuilding); -- debug
+                local key = kBuilding.Name;
+                -- GS change: don't count pillaged buildings
+                if kBuilding.isPillaged == false then
+                    if kBuildingExpenses[key] == nil then kBuildingExpenses[key] = { Count = 0, Maintenance = 0 }; end -- init entry
+                    kBuildingExpenses[key].Count       = kBuildingExpenses[key].Count + 1;
+                    kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kBuilding.Maintenance;
+                end
+            end
 		end
+        --[[
 		for _,kBuilding in ipairs(kCityData.Buildings) do
+            dshowtable(kBuilding); -- debug
 			local key = kBuilding.Name;
 			-- GS change: don't count pillaged buildings
 			if kBuilding.isPillaged == false then
@@ -2586,6 +2603,7 @@ function ViewYieldsPage()
 				kBuildingExpenses[key].Maintenance = kBuildingExpenses[key].Maintenance + kBuilding.Maintenance;
 			end
 		end
+        --]]
 	end
 	--BRS sort by name here somehow?
 	
