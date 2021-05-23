@@ -206,7 +206,7 @@
     <!-- << CUI -->
 
     <Instance Name="CityStateRowInstance">
-        <GridButton ID="CityStateBase" Size="parent,66" Style="SubContainer4" Color="99,102,103,255">
+        <GridButton ID="CityStateBase" Size="parent,70" Style="SubContainer4" Color="99,102,103,255">
             <BoxButton ID="Button" Anchor="L,T" Offset="8,0" Size="40,40" Color="0,0,0,0">
                 <Image ID="Icon" Anchor="L,C" Size="36,36" Offset="0,2" Texture="CivSymbols36" />
                 <Image ID="DiplomacyPip" Anchor="L,B" Offset="-8,-6" Size="23,23" Texture="Diplomacy_RelationshipPips" />
@@ -236,15 +236,23 @@
             <Container Anchor="L,T" Offset="346,2" Size="108,42">
                 <Grid ID="BonusImageSuzerainOff" Size="parent,parent" Texture="CityState_BonusSlotBigOff" SliceCorner="31,21" SliceTextureSize="34,42" />
                 <Grid ID="BonusImageSuzerainOn" Size="parent,parent" Texture="CityState_BonusSlotBigOn" SliceCorner="31,21" SliceTextureSize="34,42" />
-                <Label ID="BonusTextSuzerain" Anchor="R,T" Offset="4,2" Style="FontNormal12" String="4" />
+                <!-- ==== CQUI Modification: Moved SuzerainLabel and Suzerain above BonusTextSuzerain and BonusIconSuzerain, changed Anchors and Offsets ==== -->
+                <!--<Label ID="SuzerainLabel" Anchor="L,T" Offset="32,2" Style="FontNormal12" String="LOC_CITY_STATES_SUZERAIN" /> -- Infixo make space for a spy -->
+                <Label ID="Suzerain" Anchor="L,C" Offset="32,0" Style="FontNormal12" String="LOC_CITY_STATES_NONE" TruncateWidth="60" />
+                <!-- ==== CQUI Modification: Changed Anchor and Offset for BonusTextSuzerain ==== -->
+                <Label ID="BonusTextSuzerain" Anchor="R,C" Offset="4,0" Style="FontNormal12" String="4" />
                 <Image ID="BonusIconSuzerain" Anchor="L,B" Offset="2,0" Size="26,26" Texture="EnvoyBonuses26" TextureOffset="156,0" />
-                <Label ID="SuzerainLabel" Anchor="L,B" Offset="32,14" Style="FontNormal12" String="LOC_CITY_STATES_SUZERAIN" />
-                <Label ID="Suzerain" Anchor="L,B" Offset="32,1" Style="FontNormal12" String="LOC_CITY_STATES_NONE" />
-				<Label ID="SpyInfo" Offset="30,1" String="[ICON_Citizen]" /> <!-- Infixo -->
+                <!-- ==== CQUI Modification: Added SecondHighestName and SecondHighestEnvoys ==== -->
+                <Label ID="SecondHighestName" Anchor="L,B" Offset="32,2" Style="FontNormal12" TruncateWidth="60" />
+                <Label ID="SecondHighestEnvoys" Anchor="R,B" Offset="4,2" Style="FontNormal12" />
+                <!-- Infixo spy info -->
+                <Label ID="SpyLabel" Anchor="L,T" Offset="4,1" Style="FontNormal12" String="LOC_UNIT_SPY_NAME" />
+				<Label ID="SpyInfo" Offset="32,1" Style="FontNormal12" String="$SpyInfo$" />
             </Container>
 
             <Button ID="LookAtButton" Hidden="1" Anchor="R,T" Offset="10,-7" Size="23,31" Texture="Controls_ShowMe" StateOffsetIncrement="0,0" ToolTip="LOC_CITY_STATES_LOOK_AT" />
             <Button ID="AmbassadorButton" Anchor="R,T" Offset="4,8" Size="32,32" Texture="XP1_GovernorsCityBannerFill32" TextureOffset="96,0" StateOffsetIncrement="0,0" ToolTip="LOC_CITY_STATE_PANEL_HAS_AMBASSADOR_TOOLTIP"/>
+            <Label ID="OurAmbassador" Anchor="R,T" Offset="8,32" Style="FontNormal12" String="[ICON_Capital]" /> <!-- Infixo: our ambassador mark -->
             <Label ID="TypeLabel" Anchor="L,C" Offset="125,0" Style="FontNormal16" Hidden="1" String="[ICON_Faith]Religious" Note="DEPRECATED" />
             <Label ID="QuestsLabel" Anchor="L,C" Offset="250,0" Style="FontNormal16" Hidden="1" String="[COLOR_GREEN]![ENDCOLOR]"/>
             <GridButton ID="GiveTokenButton" Anchor="L,C" Offset="270,0" Size="140,32" Style="MainButton" Hidden="1" String="Send Envoy"/>
@@ -257,10 +265,10 @@
 			-->
 
             <!-- CUI >> -->
-            <Grid ID="CuiQuestGrid" Size="parent,20" Anchor="C,B" Offset="0,1">
+            <Grid ID="CuiQuestGrid" Size="parent,24" Anchor="C,B" Offset="0,0">
                 <Line Start="3,0" End="parent-3,0" Color="59,62,63,255"/>
-                <Label ID="CuiCityStateQuest" Size="parent-100,20" Anchor="L,C" Offset="15,0" String="$Quest$" Style="FontNormal12"/>
-                <Label ID="Resources" Size="150,20" Anchor="R,C" Offset="10,0" String="$Resources$" Style="FontNormal12"/> <!-- Infixo -->
+                <Label ID="CuiCityStateQuest" Size="parent-100,20" Anchor="L,C" Offset="15,-1" String="$Quest$" Style="FontNormal12"/>
+                <Label ID="Resources" Size="150,20" Anchor="R,C" Offset="10,0" String="$Resources$" Style="FontNormal14"/> <!-- Infixo -->
             </Grid>
             <!-- << CUI -->
         </GridButton>

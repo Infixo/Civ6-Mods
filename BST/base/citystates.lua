@@ -954,6 +954,7 @@ function AddCityStateRow( kCityState:table )
 
     -- Infixo: hide Ambassador when playing the base game
     kInst.AmbassadorButton:SetHide(not bIsRiseFall and not bIsGatheringStorm);
+    kInst.OurAmbassador:SetHide(not bIsRiseFall and not bIsGatheringStorm);
     
 	-- Set name, truncate if necessary
 	kInst.NameLabel:SetText( cityStateName );
@@ -1027,26 +1028,35 @@ function AddCityStateRow( kCityState:table )
 	kInst.BonusIconSuzerain:SetColor( kCityState.isBonusSuzerain and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF );
 	kInst.BonusTextSuzerain:SetColor( kCityState.isBonusSuzerain and kCityState.ColorSecondary or COLOR_TEXT_BONUS_OFF );
 	kInst.BonusTextSuzerain:SetText( kCityState.SuzerainTokensNeeded );
-	kInst.SuzerainLabel:SetColor( kCityState.isBonusSuzerain and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF );
+	--kInst.SuzerainLabel:SetColor( kCityState.isBonusSuzerain and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF ); -- Infixo make space for a spy
 	kInst.Suzerain:SetColor( kCityState.isBonusSuzerain and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF );
 	kInst.Suzerain:SetText( kCityState.SuzerainName );
 	
 	-- Infixo - SPY
-	kInst.SpyInfo:SetHide(not kCityState.IsSpyAssigned);
 	if kCityState.IsSpyAssigned then
 		if kCityState.IsSpyTraveling then
 			kInst.SpyInfo:SetText("[ICON_GoingTo][ICON_Turn]"..tostring(kCityState.SpyTurns));
 		elseif kCityState.IsSpyOnMission then
-			kInst.SpyInfo:SetText("[ICON_Citizen][ICON_Turn]"..tostring(kCityState.SpyTurns));
+			kInst.SpyInfo:SetText("[ICON_Turn]"..tostring(kCityState.SpyTurns));
 		else
-			kInst.SpyInfo:SetText("[ICON_Citizen] ...");
+			kInst.SpyInfo:SetText("...");
 		end
 		kInst.SpyInfo:SetToolTipString(kCityState.SpyTT);
+        kInst.SpyLabel:SetHide(false);
+        kInst.SpyInfo:SetHide(false);
+    else
+        kInst.SpyLabel:SetHide(true);
+        kInst.SpyInfo:SetHide(true);
 	end
 	
 	-- Infixo - RESOURCES
 	kInst.Resources:SetText(kCityState.ResourcesStrat.."[ICON_Bullet]"..kCityState.ResourcesNew.."[ICON_Bullet]"..kCityState.ResourcesDup);
 	kInst.Resources:SetToolTipString(kCityState.ResourcesTT);
+    
+    -- Infixo - OUR AMBASSADOR
+    if bIsRiseFall or bIsGatheringStorm then
+        kInst.OurAmbassador:SetHide(not kCityState.OurAmbassador);
+    end
     
 	kInst.LookAtButton:SetVoid1( kCityState.iPlayer );
 	kInst.LookAtButton:RegisterCallback( Mouse.eLClick, LookAtCityState );
@@ -1056,6 +1066,84 @@ function AddCityStateRow( kCityState:table )
 	kInst.Icon:SetColor( kCityState.ColorSecondary );
 	kInst.Button:RegisterCallback( Mouse.eLClick, function() OpenSingleViewCityState( kCityState.iPlayer ) end );
 
+    -- CQUI START
+    -- Determine the 2nd place (or first-place tie), produce text for Tooltip on the EnvoyCount label
+    local envoyTable:table = {};
+    -- Iterate through all players that have influenced this city state
+    local localPlayerID = Game.GetLocalPlayer();
+    for iOtherPlayer,influence in pairs(kCityState.Influence) do
+        local pLocalPlayer :table   = Players[localPlayerID];
+        local civName      :string  = "LOCAL_CITY_STATES_UNKNOWN";
+        local isLocalPlayer:boolean = false;
+        if (pLocalPlayer ~= nil) then
+            local pPlayerConfig :table = PlayerConfigurations[iOtherPlayer];
+            if (localPlayerID == iOtherPlayer) then
+                civName = Locale.Lookup("LOC_CITY_STATES_YOU") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. ")";
+                isLocalPlayer = true;
+            else
+                if (pLocalPlayer:GetDiplomacy():HasMet(iOtherPlayer)) then
+                    civName = Locale.Lookup(pPlayerConfig:GetPlayerName());
+                else
+                    civName = Locale.Lookup("LOCAL_CITY_STATES_UNKNOWN")
+                end
+            end
+
+            table.insert(envoyTable, {Name = civName, EnvoyCount = influence, IsLocalPlayer = isLocalPlayer});
+        end
+    end
+
+    if (#envoyTable > 0) then
+        -- Sort the table by value descending, alphabetically where tied, favoring local player
+        table.sort(envoyTable, 
+            function(a,b)
+                if (a.EnvoyCount == b.EnvoyCount) then
+                    if (a.IsLocalPlayer) then
+                        return true;
+                    elseif (b.IsLocalPlayer) then
+                        return false;
+                    else
+                        return a.Name < b.Name;
+                    end
+                else
+                    return a.EnvoyCount > b.EnvoyCount
+                end
+            end);
+
+        local envoysToolTip = Locale.Lookup("LOC_CITY_STATES_ENVOYS_SENT")..":";
+        for i=1, #envoyTable do
+            envoysToolTip = envoysToolTip .. "[NEWLINE] - " .. envoyTable[i].Name .. ": " .. envoyTable[i].EnvoyCount;
+        end
+
+        kInst.EnvoyCount:SetToolTipString(envoysToolTip);
+
+        if (#envoyTable > 1 and kInst.SecondHighestName ~= nil) then
+            -- Show 2nd place if there is one (recall Lua tables/arrays start at index 1)
+            -- The check on kInst.SecondHighestName is for cases where another mod replaces the XML, but not the citystates lua file
+            local secondPlaceIdx = 2;
+
+            -- is there a tie for first?
+            if (envoyTable[1].EnvoyCount == envoyTable[2].EnvoyCount) then
+                -- Already sorted above, so this is either local player or the leader appearing first alphabetically
+                secondPlaceIdx = 1;
+            end
+
+            local secondHighestIsPlayer = envoyTable[secondPlaceIdx].IsLocalPlayer;
+            local secondHighestName = envoyTable[secondPlaceIdx].Name;
+            local secondHighestEnvoys = envoyTable[secondPlaceIdx].EnvoyCount;
+
+            if (secondHighestIsPlayer) then
+                secondHighestName = Locale.Lookup("LOC_CITY_STATES_YOU");
+            end
+
+            -- Add changes to the actual UI object placeholders, which are created in the CityStates.xml file
+            kInst.SecondHighestName:SetColor(secondHighestIsPlayer and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF);
+            kInst.SecondHighestName:SetText(secondHighestName);
+            kInst.SecondHighestEnvoys:SetColor(secondHighestIsPlayer and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF);
+            kInst.SecondHighestEnvoys:SetText(secondHighestEnvoys);
+        end
+    end
+    -- CQUI END
+    
 	return kInst;
 end
 
@@ -1790,6 +1878,7 @@ function GetData()
 				ResourcesNew = "", -- luxuries we don't have
 				ResourcesDup = "", -- luxuries we have
 				ResourcesTT = "", -- tooltip
+                OurAmbassador = false, -- flag saying that there is our ambassador
 			};
 
 			-- Make and changes to tokens needed based on range and who (if anyone) is Suzerain
@@ -1852,24 +1941,58 @@ function GetData()
 			local playerResources:table = pPlayer:GetResources();
 			--print("..resources", kCityState.CivType);
 			for res in GameInfo.Resources() do
-				local iNum:number = playerResources:GetResourceAmount(res.Index);
-				if iNum > 0 then
+                local bIsStrategic:boolean = ( res.ResourceClassType == "RESOURCECLASS_STRATEGIC" );
+                local bIsLuxury:boolean    = ( res.ResourceClassType == "RESOURCECLASS_LUXURY" );
+				local iNum:number = playerResources:GetResourceAmount(res.Index); -- how many the minor has
+                -- for GS and startegics get how many accumulates per turn
+                if bIsGatheringStorm and bIsStrategic then
+                    iNum = playerResources:GetResourceAccumulationPerTurn(res.Index);
+                end
+				if iNum > 0 and (bIsStrategic or bIsLuxury) then
 					--print(res.ResourceType, iNum);
 					local sIcon:string = "[ICON_"..res.ResourceType.."]";
 					local sName:string = Locale.Lookup(res.Name);
-					if res.ResourceClassType == "RESOURCECLASS_STRATEGIC" then
-						kCityState.ResourcesStrat = kCityState.ResourcesStrat..sIcon;
-						if kCityState.ResourcesTT ~= "" then kCityState.ResourcesTT = kCityState.ResourcesTT.."[NEWLINE]"; end
-						kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("[ICON_CheckmarkBlue]%s%s %d", sIcon, sName, iNum);
-					elseif res.ResourceClassType == "RESOURCECLASS_LUXURY" then
-						local iLoc:number = localResources:GetResourceAmount(res.Index);
-						if kCityState.ResourcesTT ~= "" then kCityState.ResourcesTT = kCityState.ResourcesTT.."[NEWLINE]"; end
-						if iLoc == 0 then kCityState.ResourcesNew = kCityState.ResourcesNew..sIcon;
-						else              kCityState.ResourcesDup = kCityState.ResourcesDup..sIcon; end
-						kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("%s%s%s %d", (iLoc==0 and "[ICON_CheckmarkBlue]" or ""), sIcon, sName, iNum);
+                    local iLoc:number = localResources:GetResourceAmount(res.Index); -- how many the human player has
+					if kCityState.ResourcesTT ~= "" then kCityState.ResourcesTT = kCityState.ResourcesTT.."[NEWLINE]"; end
+					if bIsStrategic then
+                        if iLoc == 0 then
+                            kCityState.ResourcesStrat = kCityState.ResourcesStrat..sIcon.."[COLOR_Green]![ENDCOLOR]";
+                            if bIsGatheringStorm then
+                                kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("%s%s %+d  [COLOR_Green]%s[ENDCOLOR]", sIcon, sName, iNum, Locale.Lookup("LOC_SETTLEMENT_RECOMMENDATION_NEW_RESOURCES"));
+                            else
+                                kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("%s%s %d  [COLOR_Green]%s[ENDCOLOR]", sIcon, sName, iNum, Locale.Lookup("LOC_SETTLEMENT_RECOMMENDATION_NEW_RESOURCES"));
+                            end
+                        else
+                            kCityState.ResourcesStrat = kCityState.ResourcesStrat..sIcon;
+                            if bIsGatheringStorm then
+                                kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("%s%s %+d  [ICON_CheckmarkBlue]", sIcon, sName, iNum);
+                            else
+                                kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("%s%s %d  [ICON_CheckmarkBlue]", sIcon, sName, iNum);
+                            end
+                        end
+					else
+						if iLoc == 0 then
+                            kCityState.ResourcesNew = kCityState.ResourcesNew..sIcon.."[COLOR_Green]![ENDCOLOR]";
+                            kCityState.ResourcesTT = kCityState.ResourcesTT..string.format("%s%s %d  [COLOR_Green]%s[ENDCOLOR]", sIcon, sName, iNum, Locale.Lookup("LOC_SETTLEMENT_RECOMMENDATION_NEW_RESOURCES"));
+						else
+                            kCityState.ResourcesDup = kCityState.ResourcesDup..sIcon;
+                            kCityState.ResourcesTT  = kCityState.ResourcesTT..string.format("%s%s %d  [ICON_CheckmarkBlue]", sIcon, sName, iNum);
+                        end
 					end
-				end
+				end -- minor has a resource
 			end
+            
+            -- Infixo: OUR AMBASSADOR
+            if bIsRiseFall or bIsGatheringStorm then
+                -- Check if local player has assigned an ambassador to this city-state
+                local pPlayerGovernors:table = Players[localPlayerID]:GetGovernors();
+                for _,pCityStateCity in pPlayer:GetCities():Members() do
+                    local pAssignedGovernor:table = pPlayerGovernors ~= nil and pPlayerGovernors:GetAssignedGovernor(pCityStateCity) or nil;
+                    if pAssignedGovernor ~= nil then
+                        kCityState.OurAmbassador = true;
+                    end
+                end
+            end -- R&F or GS
 			
 			-- Save to master table
 			m_kCityStates[iPlayer] = kCityState;
