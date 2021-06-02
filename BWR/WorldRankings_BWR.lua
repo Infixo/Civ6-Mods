@@ -8,6 +8,7 @@ print("Loading WorldRankings_BWR.lua from Better World Rankings version "..Globa
 
 -- Cache base functions
 BASE_PopulateOverallInstance = PopulateOverallInstance;
+BASE_PopulateOverallTeamIconInstance = PopulateOverallTeamIconInstance;
 BASE_PopulateOverallPlayerIconInstance = PopulateOverallPlayerIconInstance;
 BASE_GatherCultureData = GatherCultureData;
 BASE_PopulateCultureInstance = PopulateCultureInstance;
@@ -81,6 +82,67 @@ function CheckOriginalCapitals(playerID:number)
 	end
 
 	return hasCapital, numCaptured;
+end
+
+function PopulateOverallTeamIconInstance(instance:table, teamData:table, iconSize:number, ribbonSize:number)
+	--print("FUN PopulateOverallTeamIconInstance() for team", teamData.TeamID, "player count is", teamData.PlayerCount);
+	BASE_PopulateOverallTeamIconInstance(instance, teamData, iconSize, ribbonSize);
+	--dshowrectable(teamData);
+    
+    local function DetectVictoryType() -- why isn't this sent as a parameter???
+        for _,playerData in pairs(teamData.PlayerData) do
+            if string.match(playerData.SecondTiebreakSummary, "ICON_Science") ~= nil then
+                return "VICTORY_TECHNOLOGY";
+            elseif string.match(playerData.SecondTiebreakSummary, "ICON_Culture") ~= nil then
+                return "VICTORY_CULTURE";
+            elseif string.match(playerData.SecondTiebreakSummary, "ICON_Faith") ~= nil then
+                return "VICTORY_RELIGIOUS";
+            elseif string.match(playerData.FirstTiebreakSummary, "/") ~= nil then
+                return "VICTORY_DIPLOMATIC";
+            else
+                local digits:string = string.match(playerData.FirstTiebreakSummary, '%d+');
+                if digits ~= nil and tonumber(digits) > 20 then
+                    return "VICTORY_CONQUEST";
+                end
+            end
+        end -- players
+        return "";
+    end
+    local victoryType:string = DetectVictoryType();
+    --print("victory type is", victoryType);
+    
+	-- new fields
+	local score1:number, score2:number = Round(teamData.FirstTeamTiebreakScore, 0), Round(teamData.SecondTeamTiebreakScore, 0);
+    -- formatting depends on the victory type
+    if     victoryType == "VICTORY_TECHNOLOGY" then
+        instance.Line1:SetText(tostring(score1));
+        instance.Line2:SetText("[COLOR_Science]"..tostring(score2).."[ENDCOLOR]");
+    elseif victoryType == "VICTORY_CULTURE" then
+        instance.Line1:SetText("[COLOR_Tourism]"..tostring(score1).."[ENDCOLOR]");
+        instance.Line2:SetText("[COLOR_Culture]"..tostring(score2).."[ENDCOLOR]");
+    elseif victoryType == "VICTORY_CONQUEST" then
+        -- check if we still have at least 1 original capital and calculate how many we have captured
+        local teamHasCapital:boolean, teamNumCaptured:number = false, 0;
+        for _,playerData in pairs(teamData.PlayerData) do
+            local hasCapital:boolean, numCaptured:number = CheckOriginalCapitals(playerData.Player:GetID());
+            teamHasCapital = teamHasCapital or hasCapital; -- true if at least one
+            teamNumCaptured = teamNumCaptured + numCaptured;
+        end
+        instance.HasCapital:SetHide(not teamHasCapital);
+        instance.Line1:SetText(tostring(teamNumCaptured));
+        instance.Line1:SetToolTipString(Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_SUMMARY", teamNumCaptured));
+        instance.Line2:SetText("[COLOR_Military]"..tostring(score2).."[ENDCOLOR]");
+    elseif victoryType == "VICTORY_RELIGIOUS" then 
+        instance.Line1:SetText(tostring(score1));
+        instance.Line2:SetText("[COLOR_FaithDark]"..tostring(score2).."[ENDCOLOR]");
+    elseif victoryType == "VICTORY_DIPLOMATIC" then
+        instance.Line1:SetText(tostring(score1));
+        instance.Line2:SetHide(true);
+    else
+        instance.Line1:SetText(tostring(score1));
+        instance.Line2:SetText(tostring(score2));
+    end
+    return instance;
 end
 
 function PopulateOverallPlayerIconInstance(instance:table, victoryType:string, teamData:table, iconSize:number)
