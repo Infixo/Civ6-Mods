@@ -216,6 +216,9 @@ function GatherCultureData()
 	-- add more data - iterate through all players and add more data
 	local localPlayer:number = Game.GetLocalPlayer();
 	local playerCulture:table = Players[localPlayer]:GetCulture();
+    -- 2021-06-08 Cultural Dominance
+    --local iLocalVisitingTourists:number = playerCulture:GetTouristsTo();
+    --local iLocalDomesticTourists:number = playerCulture:GetStaycationers();
 	
 	for _,teamData in ipairs(data) do
 		--print("..team", teamData.TeamID);
@@ -232,6 +235,11 @@ function GatherCultureData()
 			playerData.TurnsTillNext = 999; -- turns till we attract the next visting tourist from this player
             playerData.ErrCurrent = false; -- issue with the TT analysis
             playerData.ErrLifetime = false; -- issue with the TT analysis
+            -- 2021-06-08 Cultural Dominance
+            --playerData.CulturalDominance    = ( iLocalVisitingTourists > Players[playerID]:GetCulture():GetStaycationers() );
+            --playerData.CulturalSubservience = ( Players[playerID]:GetCulture():GetTouristsTo() > iLocalDomesticTourists );
+            playerData.CulturalDominance    = playerCulture:IsDominantOver(playerID);
+            playerData.CulturalSubservience = Players[playerID]:GetCulture():IsDominantOver(localPlayer);
 
 			--if playerData.CulturePerTurn >= 100 then playerData.CulturePerTurn = Round(playerData.CulturePerTurn, 0);
 			--else                                     playerData.CulturePerTurn = Round(playerData.CulturePerTurn, 1); end
@@ -321,6 +329,9 @@ function PopulateCultureInstance(instance:table, playerData:table)
 	else
 		instance.TurnsTillNext:SetHide(true);
 	end
+    -- 2021-06-08 Cultural Dominance
+    instance.CulturalDominance:SetHide(    not playerData.CulturalDominance    or playerData.PlayerID == Game.GetLocalPlayer() );
+    instance.CulturalSubservience:SetHide( not playerData.CulturalSubservience or playerData.PlayerID == Game.GetLocalPlayer() );
 end
 
 

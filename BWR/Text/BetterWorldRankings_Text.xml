@@ -10,6 +10,9 @@
 	<Row Tag="LOC_BWR_TOURISM_FOR_ONE">
 		<Text>You need [COLOR:ResCultureLabelCS]{1_Tourism}[ENDCOLOR] [ICON_Tourism]Tourism to attract a single [COLOR:ResCultureLabelCS]VISITING TOURIST[ENDCOLOR].</Text>
 	</Row>
+	<Row Tag="LOC_BWR_CULTURAL_DOMINATION">
+		<Text>[NEWLINE][NEWLINE][COLOR:ResCultureLabelCS]CULTURAL DOMINATION[ENDCOLOR] ongoing effects:[NEWLINE][ICON_Bullet]International [ICON_TradeRoute] Trade Routes to foreign cities you culturally dominate provide +4 [ICON_Gold] Gold.[NEWLINE][ICON_Bullet]Spy missions in foreign cities you culturally dominate are 50% faster to complete.[NEWLINE][ICON_Bullet]Your citizens exert 25% more Loyalty pressure on foreign cities you culturally dominate.</Text>
+	</Row>
 	
 </BaseGameText>
 

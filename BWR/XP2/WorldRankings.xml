@@ -529,6 +529,12 @@
 
 		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
 			<!-- left column -->
+            <Container ID="CulturalDominance" Offset="-2,1" Size="24,24" ToolTip="{LOC_WORLD_RANKINGS_OVERVIEW_CULTURE_WE_ARE_DOMINANT}{LOC_BWR_CULTURAL_DOMINATION}">
+                <Label Anchor="C,C" String="[ICON_CheckSuccess]"/>
+            </Container>
+            <Container ID="CulturalSubservience" Offset="-2,1" Size="24,24" ToolTip="LOC_WORLD_RANKINGS_OVERVIEW_CULTURE_THEY_ARE_DOMINANT">
+                <Label Anchor="C,C" String="[ICON_CheckFail]"/>
+            </Container>
 			<MakeInstance Name="CivilizationIconInstanceCulture" ID="CivilizationIcon"/>
 			<Image ID="DomesticTouristsIcon" Offset="55,27" Size="22,21" Texture="Tourism_DomesticSmall"/>
 			<Label ID="DomesticTourists" Offset="80,28" String="DomesticTourists" Style="FontNormal18" Color="206,218,225,255"/>
