@@ -1125,12 +1125,12 @@ function AddCityStateRow( kCityState:table )
         -- 2021-06-09 Infixo - 2nd place is EMPTY only when there is 1 and it is a Suzerain
         -- 1st place - none,      We,           Other
         -- 2nd place - we/other,  empty/other,  empty/we/other
-        if ( (#envoyTable > 1 or kInst.SuzerainID == -1) and kInst.SecondHighestName ~= nil) then
+        if ( (#envoyTable > 1 or kCityState.SuzerainID == -1) and kInst.SecondHighestName ~= nil) then
             -- Show 2nd place if there is one (recall Lua tables/arrays start at index 1)
             -- The check on kInst.SecondHighestName is for cases where another mod replaces the XML, but not the citystates lua file
             local secondPlaceIdx = 2;
             
-            if #envoyTable == 1 then
+            if #envoyTable == 1 or kCityState.SuzerainID == -1 then
                 secondPlaceIdx = 1;
             else
                 -- is there a tie for first?
