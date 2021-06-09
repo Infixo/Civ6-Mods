@@ -1,4 +1,4 @@
-﻿print("Loading citystates.lua from Better City States version 1.0");
+﻿print("Loading citystates.lua from Better City States version 1.1");
 -- ===========================================================================
 --	CityStates "Rundown" partial-screen
 --
@@ -973,6 +973,8 @@ function AddCityStateRow( kCityState:table )
 	if GameCapabilities.HasCapability("CAPABILITY_MILITARY") then
 		kInst.DiplomacyPip:SetToolTipString(tooltip);
 	end
+    
+    -- 2021-06-09 Infixo Trade info
 
     -- CUI >>
     for _, kQuest in pairs(kCityState.Quests) do
@@ -1065,6 +1067,10 @@ function AddCityStateRow( kCityState:table )
 	kInst.Icon:SetToolTipString( Locale.Lookup( GetTypeTooltip(kCityState) ));
 	kInst.Icon:SetColor( kCityState.ColorSecondary );
 	kInst.Button:RegisterCallback( Mouse.eLClick, function() OpenSingleViewCityState( kCityState.iPlayer ) end );
+    
+    -- 2021-06-09 Infixo: TRADE ROUTES
+    kInst.TradeRoute:SetHide( not kCityState.HasTradeRoute );
+    kInst.TradingPost:SetHide( not kCityState.HasTradingPost );
 
     -- CQUI START
     -- Determine the 2nd place (or first-place tie), produce text for Tooltip on the EnvoyCount label
@@ -1116,15 +1122,22 @@ function AddCityStateRow( kCityState:table )
 
         kInst.EnvoyCount:SetToolTipString(envoysToolTip);
 
-        if (#envoyTable > 1 and kInst.SecondHighestName ~= nil) then
+        -- 2021-06-09 Infixo - 2nd place is EMPTY only when there is 1 and it is a Suzerain
+        -- 1st place - none,      We,           Other
+        -- 2nd place - we/other,  empty/other,  empty/we/other
+        if ( (#envoyTable > 1 or kInst.SuzerainID == -1) and kInst.SecondHighestName ~= nil) then
             -- Show 2nd place if there is one (recall Lua tables/arrays start at index 1)
             -- The check on kInst.SecondHighestName is for cases where another mod replaces the XML, but not the citystates lua file
             local secondPlaceIdx = 2;
-
-            -- is there a tie for first?
-            if (envoyTable[1].EnvoyCount == envoyTable[2].EnvoyCount) then
-                -- Already sorted above, so this is either local player or the leader appearing first alphabetically
+            
+            if #envoyTable == 1 then
                 secondPlaceIdx = 1;
+            else
+                -- is there a tie for first?
+                if (envoyTable[1].EnvoyCount == envoyTable[2].EnvoyCount) then
+                    -- Already sorted above, so this is either local player or the leader appearing first alphabetically
+                    secondPlaceIdx = 1;
+                end
             end
 
             local secondHighestIsPlayer = envoyTable[secondPlaceIdx].IsLocalPlayer;
@@ -1879,6 +1892,8 @@ function GetData()
 				ResourcesDup = "", -- luxuries we have
 				ResourcesTT = "", -- tooltip
                 OurAmbassador = false, -- flag saying that there is our ambassador
+                HasTradingPost = false,
+                HasTradeRoute = false,
 			};
 
 			-- Make and changes to tokens needed based on range and who (if anyone) is Suzerain
@@ -1994,6 +2009,17 @@ function GetData()
                 end
             end -- R&F or GS
 			
+            -- 2021-06-09 Infix: TRADE ROUTES
+            -- Determine if this player has a trade route and/or trading post with the local player
+            for _,city in pPlayer:GetCities():Members() do
+                if city:GetTrade():HasTradeRouteFrom(localPlayerID) then
+                    kCityState.HasTradeRoute = true;
+                end
+                if city:GetTrade():HasActiveTradingPost(localPlayerID) then
+                    kCityState.HasTradingPost = true;
+                end
+            end            
+            
 			-- Save to master table
 			m_kCityStates[iPlayer] = kCityState;
 		end

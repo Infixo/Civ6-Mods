@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Better City States (UI)</Name>
 		<Teaser>Enhanced City States screen</Teaser>
-		<Description>Enhanced City States screen.[NEWLINE]Part of Concise UI with some improvements by Infixo and adopted to the final New Frontier Pass patch.[NEWLINE][NEWLINE]Supports all languages. Version 1.0.</Description>
+		<Description>Enhanced City States screen.[NEWLINE]Part of Concise UI with some improvements by Infixo and adopted to the final New Frontier Pass patch.[NEWLINE][NEWLINE]Supports all languages. Version 1.1.</Description>
 		<Authors>eudaimonia, Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>1.2,2.0</CompatibleVersions>
