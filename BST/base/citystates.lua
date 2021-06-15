@@ -1,4 +1,4 @@
-﻿print("Loading citystates.lua from Better City States version 1.1");
+﻿print("Loading citystates.lua from Better City States version 1.2");
 -- ===========================================================================
 --	CityStates "Rundown" partial-screen
 --
@@ -1125,21 +1125,25 @@ function AddCityStateRow( kCityState:table )
         -- 2021-06-09 Infixo - 2nd place is EMPTY only when there is 1 and it is a Suzerain
         -- 1st place - none,      We,           Other
         -- 2nd place - we/other,  empty/other,  empty/we/other
-        if ( (#envoyTable > 1 or kCityState.SuzerainID == -1) and kInst.SecondHighestName ~= nil) then
+        --if ( (#envoyTable > 1 or kCityState.SuzerainID == -1) and not (#envoyTable == 1 and kCityState.SuzerainID == localPlayerID) and kInst.SecondHighestName ~= nil) then
             -- Show 2nd place if there is one (recall Lua tables/arrays start at index 1)
             -- The check on kInst.SecondHighestName is for cases where another mod replaces the XML, but not the citystates lua file
-            local secondPlaceIdx = 2;
-            
-            if #envoyTable == 1 or kCityState.SuzerainID == -1 then
+        local secondPlaceIdx = 0;
+        
+        if #envoyTable > 1 then
+            -- we either show the 2nd or 1st if there is no Suzerain yet
+            if kCityState.SuzerainID == -1 then
                 secondPlaceIdx = 1;
             else
-                -- is there a tie for first?
-                if (envoyTable[1].EnvoyCount == envoyTable[2].EnvoyCount) then
-                    -- Already sorted above, so this is either local player or the leader appearing first alphabetically
-                    secondPlaceIdx = 1;
-                end
+                secondPlaceIdx = 2;
             end
-
+        else -- #envoyTable == 1
+            if kCityState.SuzerainID == -1 then -- we only show 2nd position if there is no Suzerain
+                secondPlaceIdx = 1;
+            end
+        end
+        
+        if secondPlaceIdx > 0 then
             local secondHighestIsPlayer = envoyTable[secondPlaceIdx].IsLocalPlayer;
             local secondHighestName = envoyTable[secondPlaceIdx].Name;
             local secondHighestEnvoys = envoyTable[secondPlaceIdx].EnvoyCount;
@@ -1153,6 +1157,9 @@ function AddCityStateRow( kCityState:table )
             kInst.SecondHighestName:SetText(secondHighestName);
             kInst.SecondHighestEnvoys:SetColor(secondHighestIsPlayer and kCityState.ColorSecondary or COLOR_ICON_BONUS_OFF);
             kInst.SecondHighestEnvoys:SetText(secondHighestEnvoys);
+        else
+            kInst.SecondHighestName:SetText("");
+            kInst.SecondHighestEnvoys:SetText("");
         end
     end
     -- CQUI END
@@ -1192,19 +1199,28 @@ function ViewList()
     local cui_Envoys = 0;
     local cui_Suzerain = 0;
     local cui_SuzerainList = {
-        SCIENTIFIC   = {idx = 1, icon = "ICON_ENVOY_BONUS_SCIENCE",    color = "", num = 0},
-        CULTURE      = {idx = 2, icon = "ICON_ENVOY_BONUS_CULTURE",    color = "", num = 0},
-        RELIGIOUS    = {idx = 3, icon = "ICON_ENVOY_BONUS_FAITH",      color = "", num = 0},
-        TRADE        = {idx = 4, icon = "ICON_ENVOY_BONUS_GOLD",       color = "", num = 0},
-        INDUSTRIAL   = {idx = 5, icon = "ICON_ENVOY_BONUS_PRODUCTION", color = "", num = 0},
-        MILITARISTIC = {idx = 6, icon = "ICON_ENVOY_BONUS_MILITARY",   color = "", num = 0}
+        SCIENTIFIC   = {idx = 5, icon = "ICON_ENVOY_BONUS_SCIENCE",    color = "", num = 0},
+        CULTURE      = {idx = 1, icon = "ICON_ENVOY_BONUS_CULTURE",    color = "", num = 0},
+        RELIGIOUS    = {idx = 4, icon = "ICON_ENVOY_BONUS_FAITH",      color = "", num = 0},
+        TRADE        = {idx = 6, icon = "ICON_ENVOY_BONUS_GOLD",       color = "", num = 0},
+        INDUSTRIAL   = {idx = 2, icon = "ICON_ENVOY_BONUS_PRODUCTION", color = "", num = 0},
+        MILITARISTIC = {idx = 3, icon = "ICON_ENVOY_BONUS_MILITARY",   color = "", num = 0}
     };
     -- << CUI
 
 	-- Top list
 	m_CityStateRowIM:ResetInstances();
 	m_uiCityStateRows = {};
-	for iPlayer, kCityState in pairs( m_kCityStates ) do
+    -- 2021-06-13 sorting by Type and Name
+    local function SortCityStates(t, a, b)
+        if t[a].Type == t[b].Type then
+            return t[a].Name < t[b].Name;
+        else
+            return t[a].Type < t[b].Type;
+        end
+    end
+	--for iPlayer, kCityState in pairs( m_kCityStates ) do
+    for iPlayer, kCityState in SortedTable( m_kCityStates, SortCityStates) do
         if kCityState.isHasMet then
             -- CUI >> count envoys and suzerain
             cui_Envoys = cui_Envoys + kCityState.Tokens;
