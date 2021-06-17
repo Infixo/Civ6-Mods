@@ -46,6 +46,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MontezumaPseudoYields', 'PSEUDOYIELD_GPP_PROPHET', 1, -50),
 ('MontezumaPseudoYields', 'PSEUDOYIELD_DISTRICT', 1, 15), -- more districts
 ('MontezumaPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, 10), -- vanilla 1, RFX 1.2
+('MontezumaPseudoYields', 'PSEUDOYIELD_RESOURCE_LUXURY', 1, 100), -- 210616 a new one - he is crazy about them
 ('MontezumaWonders',      'BUILDING_HUEY_TEOCALLI', 1, 0), -- who else?
 ('MontezumaUnits',        'UNIT_BUILDER', 1, 15),
 ('MontezumaUnits',        'UNIT_MILITARY_ENGINEER', 1, -50);

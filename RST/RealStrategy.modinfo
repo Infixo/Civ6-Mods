@@ -2,7 +2,7 @@
 <Mod id="99D9DDFE-85FB-2D92-1893-92A015B5899A" version="1">
 	<Properties>
 		<Name>Real Strategy</Name>
-		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration.[NEWLINE]Version 1.8.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
+		<Description>Making AI better. One bit at a time.[NEWLINE][NEWLINE]Works with vanilla, Rise and Fall, Gathering Storm and all DLCs, in any configuration.[NEWLINE]Version 1.9.[NEWLINE][NEWLINE]Please visit Steam Workshop or CivFanatics for a detailed description.</Description>
 		<Teaser>Making AI better. One bit at a time.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -35,13 +35,13 @@
 			<LeaderPlayable>Players:StandardPlayers::LEADER_JOHN_CURTIN,StandardPlayers::LEADER_JOHN_CURTIN,Players:Expansion1_Players::LEADER_JOHN_CURTIN,Players:Expansion2_Players::LEADER_JOHN_CURTIN</LeaderPlayable>
 		</Criteria>
 		<Criteria id="DLCMacedoniaPersia">	<!-- 2017-03-28 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS,Players:Expansion2_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS</LeaderPlayable>
+			<LeaderPlayable>Players:StandardPlayers::LEADER_ALEXANDER,Players:StandardPlayers::LEADER_CYRUS,StandardPlayers::LEADER_ALEXANDER,StandardPlayers::LEADER_CYRUS,Players:Expansion1_Players::LEADER_ALEXANDER,Players:Expansion1_Players::LEADER_CYRUS,Players:Expansion2_Players::LEADER_ALEXANDER,Players:Expansion2_Players::LEADER_CYRUS</LeaderPlayable>
 		</Criteria>
 		<Criteria id="DLCNubia">			<!-- 2017-07-27 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_AMANITORE,StandardPlayers::LEADER_AMANITORE,Players:Expansion1_Players::LEADER_AMANITORE,Players:Expansion2_Players::LEADER_AMANITORE</LeaderPlayable>
 		</Criteria>
 		<Criteria id="DLCIndonesiaKhmer">	<!-- 2017-10-19 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN,Players:Expansion2_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN</LeaderPlayable>
+			<LeaderPlayable>Players:StandardPlayers::LEADER_GITARJA,Players:StandardPlayers::LEADER_JAYAVARMAN,StandardPlayers::LEADER_GITARJA,StandardPlayers::LEADER_JAYAVARMAN,Players:Expansion1_Players::LEADER_GITARJA,Players:Expansion1_Players::LEADER_JAYAVARMAN,Players:Expansion2_Players::LEADER_GITARJA,Players:Expansion2_Players::LEADER_JAYAVARMAN</LeaderPlayable>
 		</Criteria>
 		<Criteria id="Expansion1Leaders">	<!-- 2018-02-08 -->
 			<LeaderPlayable>Players:Expansion1_Players::LEADER_CHANDRAGUPTA,Players:Expansion1_Players::LEADER_GENGHIS_KHAN,Players:Expansion1_Players::LEADER_LAUTARO,Players:Expansion1_Players::LEADER_POUNDMAKER,Players:Expansion1_Players::LEADER_ROBERT_THE_BRUCE,Players:Expansion1_Players::LEADER_SEONDEOK,Players:Expansion1_Players::LEADER_SHAKA,Players:Expansion1_Players::LEADER_TAMAR,Players:Expansion1_Players::LEADER_WILHELMINA,Players:Expansion2_Players::LEADER_CHANDRAGUPTA,Players:Expansion2_Players::LEADER_GENGHIS_KHAN,Players:Expansion2_Players::LEADER_LAUTARO,Players:Expansion2_Players::LEADER_POUNDMAKER,Players:Expansion2_Players::LEADER_ROBERT_THE_BRUCE,Players:Expansion2_Players::LEADER_SEONDEOK,Players:Expansion2_Players::LEADER_SHAKA,Players:Expansion2_Players::LEADER_TAMAR,Players:Expansion2_Players::LEADER_WILHELMINA</LeaderPlayable>
@@ -50,12 +50,32 @@
 			<LeaderPlayable>Players:Expansion2_Players::LEADER_DIDO,Players:Expansion2_Players::LEADER_ELEANOR_ENGLAND,Players:Expansion2_Players::LEADER_ELEANOR_FRANCE,Players:Expansion2_Players::LEADER_KRISTINA,Players:Expansion2_Players::LEADER_KUPE,Players:Expansion2_Players::LEADER_LAURIER,Players:Expansion2_Players::LEADER_MANSA_MUSA,Players:Expansion2_Players::LEADER_MATTHIAS_CORVINUS,Players:Expansion2_Players::LEADER_PACHACUTI,Players:Expansion2_Players::LEADER_SULEIMAN</LeaderPlayable>
 		</Criteria>
 		<Criteria id="DLCGranColombiaMaya"> <!-- 2020-05-21 -->
-			<LeaderPlayable>Players:StandardPlayers::LEADER_SIMON_BOLIVAR,Players:StandardPlayers::LEADER_LADY_SIX_SKY,StandardPlayers::LEADER_SIMON_BOLIVAR,StandardPlayers::LEADER_LADY_SIX_SKY,Players:Expansion1_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY,Players:Expansion2_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY</LeaderPlayable>
+			<LeaderPlayable>Players:StandardPlayers::LEADER_SIMON_BOLIVAR,Players:StandardPlayers::LEADER_LADY_SIX_SKY,StandardPlayers::LEADER_SIMON_BOLIVAR,StandardPlayers::LEADER_LADY_SIX_SKY,Players:Expansion1_Players::LEADER_SIMON_BOLIVAR,Players:Expansion1_Players::LEADER_LADY_SIX_SKY,Players:Expansion2_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY</LeaderPlayable>
 		</Criteria>
 		<Criteria id="DLCEthiopia">         <!-- 2020-07-23 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_MENELIK,StandardPlayers::LEADER_MENELIK,Players:Expansion1_Players::LEADER_MENELIK,Players:Expansion2_Players::LEADER_MENELIK</LeaderPlayable>
 		</Criteria>
-		
+		<Criteria id="DLCCatherineDeMedici"><!-- 2017-07-23 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_CATHERINE_DE_MEDICI_ALT,StandardPlayers::LEADER_CATHERINE_DE_MEDICI_ALT,Players:Expansion1_Players::LEADER_CATHERINE_DE_MEDICI_ALT,Players:Expansion2_Players::LEADER_CATHERINE_DE_MEDICI_ALT</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCTeddyRoosevelt">   <!-- 2017-07-23 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_T_ROOSEVELT_ROUGHRIDER,StandardPlayers::LEADER_T_ROOSEVELT_ROUGHRIDER,Players:Expansion1_Players::LEADER_T_ROOSEVELT_ROUGHRIDER,Players:Expansion2_Players::LEADER_T_ROOSEVELT_ROUGHRIDER</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCByzantiumGaul">    <!-- 2020-09-24 TODO -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_BASIL,StandardPlayers::LEADER_BASIL,Players:Expansion1_Players::LEADER_BASIL,Players:Expansion2_Players::LEADER_BASIL</LeaderPlayable>
+			<LeaderPlayable>Players:StandardPlayers::LEADER_AMBIORIX,StandardPlayers::LEADER_AMBIORIX,Players:Expansion1_Players::LEADER_AMBIORIX,Players:Expansion2_Players::LEADER_AMBIORIX</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCBabylon">          <!-- 2020-11-19 -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_HAMMURABI,StandardPlayers::LEADER_HAMMURABI,Players:Expansion1_Players::LEADER_HAMMURABI,Players:Expansion2_Players::LEADER_HAMMURABI</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCKublaiKhanVietnam"><!-- 2021-01-28 TODO -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_LADY_TRIEU,Players:Expansion1_Players::LEADER_LADY_TRIEU,Players:Expansion2_Players::LEADER_LADY_TRIEU</LeaderPlayable>
+			<LeaderPlayable>Players:StandardPlayers::LEADER_KUBLAI_KHAN_CHINA,Players:Expansion1_Players::LEADER_KUBLAI_KHAN_CHINA,Players:Expansion2_Players::LEADER_KUBLAI_KHAN_CHINA</LeaderPlayable>
+			<LeaderPlayable>Players:Expansion1_Players::LEADER_KUBLAI_KHAN_MONGOLIA,Players:Expansion2_Players::LEADER_KUBLAI_KHAN_MONGOLIA</LeaderPlayable>
+		</Criteria>
+		<Criteria id="DLCPortugal">         <!-- 2020-03-25 TODO -->
+			<LeaderPlayable>Players:StandardPlayers::LEADER_JOAO_III,StandardPlayers::LEADER_JOAO_III,Players:Expansion1_Players::LEADER_JOAO_III,Players:Expansion2_Players::LEADER_JOAO_III</LeaderPlayable>
+		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
 		<ImportFiles id="RST_Imports">
@@ -122,6 +142,30 @@
 			<Properties><LoadOrder>300</LoadOrder></Properties>
 			<File>RealStrategy_Ethiopia.sql</File>
 		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_CatherineDeMedici" criteria="DLCCatherineDeMedici">
+			<Properties><LoadOrder>301</LoadOrder></Properties>
+			<File>RealStrategy_CatherineDeMedici.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_TeddyRoosevelt" criteria="DLCTeddyRoosevelt">
+			<Properties><LoadOrder>302</LoadOrder></Properties>
+			<File>RealStrategy_TeddyRoosevelt.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_ByzantiumGaul" criteria="DLCByzantiumGaul">
+			<Properties><LoadOrder>310</LoadOrder></Properties>
+			<File>RealStrategy_ByzantiumGaul.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Babylon" criteria="DLCBabylon">
+			<Properties><LoadOrder>320</LoadOrder></Properties>
+			<File>RealStrategy_Babylon.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_KublaiKhanVietnam" criteria="DLCKublaiKhanVietnam">
+			<Properties><LoadOrder>330</LoadOrder></Properties>
+			<File>RealStrategy_KublaiKhanVietnam.sql</File>
+		</UpdateDatabase>
+		<UpdateDatabase id="RST_DB_Portugal" criteria="DLCPortugal">
+			<Properties><LoadOrder>340</LoadOrder></Properties>
+			<File>RealStrategy_Portugal.sql</File>
+		</UpdateDatabase>
 		<AddUserInterfaces id="RST_Interfaces">
 			<Properties><Context>InGame</Context></Properties>
 			<File>Lua/RealStrategy_InGameExp.xml</File>
@@ -153,6 +197,12 @@
 		<File>RealStrategy_Leaders_XP2.sql</File>
 		<File>RealStrategy_GranColombiaMaya.sql</File>
 		<File>RealStrategy_Ethiopia.sql</File>
+        <File>RealStrategy_CatherineDeMedici.sql</File>
+        <File>RealStrategy_TeddyRoosevelt.sql</File>
+        <File>RealStrategy_ByzantiumGaul.sql</File>
+        <File>RealStrategy_Babylon.sql</File>
+        <File>RealStrategy_KublaiKhanVietnam.sql</File>
+        <File>RealStrategy_Portugal.sql</File>
 		<File>Lua/RealStrategy.lua</File>
 		<!--<File>Lua/RealStrategy_GreatPeople.lua</File>-->
 		<!--<File>Lua/RealStrategy_GreatPeople.xml</File>-->
