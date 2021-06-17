@@ -2,11 +2,12 @@
 <Mod id="4a8aa030-69f0-4677-9a43-2772088ea041" version="1">
   <Properties>
     <Name>Real Eurekas</Name>
-    <Description>Make Eurekas a real surprise! There are 350+ new ones and they are randomly assigned to Techs and Civics. Each game will look different from now on.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 4.0.1.</Description>
+    <Description>Make Eurekas a real surprise! There are 350+ new ones and they are randomly assigned to Techs and Civics. Each game will look different from now on.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR], [COLOR_Green]Gathering Storm[ENDCOLOR] and [COLOR_Green]New Frontier Pass[ENDCOLOR]. Version 5.0.</Description>
     <Teaser>Make Eurekas a real surprise! 350+ new ones, randomly assigned to Techs and Civics.</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
-	<CompatibleVersions>2.0</CompatibleVersions>
+	<CompatibleVersions>1.2,2.0</CompatibleVersions>
+	<SubscriptionID>886630163</SubscriptionID>
   </Properties>
   <ActionCriteria>
     <Criteria id="Expansion1">
@@ -153,8 +154,6 @@
       <File>XP1/ResearchChooser_REU_XP1.lua</File>
       <File>XP2/CivicsTree_REU_XP2.lua</File>
       <File>XP2/TechTree_REU_XP2.lua</File>
-      <File>XP2/CivilopediaPage_Civic.lua</File>
-      <File>XP2/CivilopediaPage_Technology.lua</File>
     </ImportFiles>
 	<ReplaceUIScript id="REU_ReplaceUI_WorldTracker_XP2" criteria="Expansion2">
 	  <Properties>
@@ -216,7 +215,5 @@
 	<!-- Gathering Storm -->
     <File>XP2/CivicsTree_REU_XP2.lua</File>
     <File>XP2/TechTree_REU_XP2.lua</File>
-    <File>XP2/CivilopediaPage_Civic.lua</File>
-    <File>XP2/CivilopediaPage_Technology.lua</File>
   </Files>
 </Mod>

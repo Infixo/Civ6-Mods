@@ -6,7 +6,7 @@
 <GameData>
 	
 	<Parameters>
-		<Row ParameterId="TriggerVisibilityParam" ConfigurationId="TriggerVisibilityParam" Name="LOC_REUR_CONFIG_TRIGVIS_NAME" Description="LOC_REUR_CONFIG_TRIGVIS_DESC" Domain="TriggerVisibilityDomain" DefaultValue="1" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="310" />
+		<Row ParameterId="TriggerVisibilityParam" ConfigurationId="TriggerVisibilityParam" Name="LOC_REUR_CONFIG_TRIGVIS_NAME" Description="LOC_REUR_CONFIG_TRIGVIS_DESC" Domain="TriggerVisibilityDomain" DefaultValue="0" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="310" />
     </Parameters>
 	
     <DomainValues>
