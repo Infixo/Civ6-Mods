@@ -61,19 +61,19 @@
 		<Criteria id="DLCTeddyRoosevelt">   <!-- 2017-07-23 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_T_ROOSEVELT_ROUGHRIDER,StandardPlayers::LEADER_T_ROOSEVELT_ROUGHRIDER,Players:Expansion1_Players::LEADER_T_ROOSEVELT_ROUGHRIDER,Players:Expansion2_Players::LEADER_T_ROOSEVELT_ROUGHRIDER</LeaderPlayable>
 		</Criteria>
-		<Criteria id="DLCByzantiumGaul">    <!-- 2020-09-24 TODO -->
+		<Criteria id="DLCByzantiumGaul">    <!-- 2020-09-24 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_BASIL,StandardPlayers::LEADER_BASIL,Players:Expansion1_Players::LEADER_BASIL,Players:Expansion2_Players::LEADER_BASIL</LeaderPlayable>
 			<LeaderPlayable>Players:StandardPlayers::LEADER_AMBIORIX,StandardPlayers::LEADER_AMBIORIX,Players:Expansion1_Players::LEADER_AMBIORIX,Players:Expansion2_Players::LEADER_AMBIORIX</LeaderPlayable>
 		</Criteria>
 		<Criteria id="DLCBabylon">          <!-- 2020-11-19 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_HAMMURABI,StandardPlayers::LEADER_HAMMURABI,Players:Expansion1_Players::LEADER_HAMMURABI,Players:Expansion2_Players::LEADER_HAMMURABI</LeaderPlayable>
 		</Criteria>
-		<Criteria id="DLCKublaiKhanVietnam"><!-- 2021-01-28 TODO -->
+		<Criteria id="DLCKublaiKhanVietnam"><!-- 2021-01-28 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_LADY_TRIEU,Players:Expansion1_Players::LEADER_LADY_TRIEU,Players:Expansion2_Players::LEADER_LADY_TRIEU</LeaderPlayable>
 			<LeaderPlayable>Players:StandardPlayers::LEADER_KUBLAI_KHAN_CHINA,Players:Expansion1_Players::LEADER_KUBLAI_KHAN_CHINA,Players:Expansion2_Players::LEADER_KUBLAI_KHAN_CHINA</LeaderPlayable>
 			<LeaderPlayable>Players:Expansion1_Players::LEADER_KUBLAI_KHAN_MONGOLIA,Players:Expansion2_Players::LEADER_KUBLAI_KHAN_MONGOLIA</LeaderPlayable>
 		</Criteria>
-		<Criteria id="DLCPortugal">         <!-- 2020-03-25 TODO -->
+		<Criteria id="DLCPortugal">         <!-- 2020-03-25 -->
 			<LeaderPlayable>Players:StandardPlayers::LEADER_JOAO_III,StandardPlayers::LEADER_JOAO_III,Players:Expansion1_Players::LEADER_JOAO_III,Players:Expansion2_Players::LEADER_JOAO_III</LeaderPlayable>
 		</Criteria>
 	</ActionCriteria>

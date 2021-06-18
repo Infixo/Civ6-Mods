@@ -17,40 +17,38 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 
 
 -- LEADER_JOAO_III / PORTUGAL
+-- TRAIT_LEADER_JOAO_III
 
 INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES
-('LEADER_JOAO_III', 'LEADER', '', 'CONQUEST', 1),
-('LEADER_JOAO_III', 'LEADER', '', 'SCIENCE',  3),
-('LEADER_JOAO_III', 'LEADER', '', 'CULTURE',  6),
-('LEADER_JOAO_III', 'LEADER', '', 'RELIGION', 8),
-('LEADER_JOAO_III', 'LEADER', '', 'DIPLO',    3);
-/*
+('LEADER_JOAO_III', 'LEADER', '', 'CONQUEST', 3),
+('LEADER_JOAO_III', 'LEADER', '', 'SCIENCE',  6),
+('LEADER_JOAO_III', 'LEADER', '', 'CULTURE',  3),
+('LEADER_JOAO_III', 'LEADER', '', 'RELIGION', 1),
+('LEADER_JOAO_III', 'LEADER', '', 'DIPLO',    5);
+
 INSERT INTO AiListTypes (ListType) VALUES
-('MenelikWonders'),
-('MenelikTechs'), 
-('MenelikCivics'),
-('MenelikPseudoYields'),
-('MenelikUnitBuilds'),
-('MenelikAlliances');
--- no specific diplomacy list
+('JoaoWonders'),
+('JoaoTechs'), 
+('JoaoYields'),
+('JoaoUnitBuilds');
 
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
-('MenelikWonders',      'TRAIT_LEADER_MENELIK', 'Buildings'),
-('MenelikTechs',        'TRAIT_LEADER_MENELIK', 'Technologies'),
-('MenelikCivics',       'TRAIT_LEADER_MENELIK', 'Civics'),
-('MenelikPseudoYields', 'TRAIT_LEADER_MENELIK', 'PseudoYields'),
-('MenelikUnitBuilds',   'TRAIT_LEADER_MENELIK', 'UnitPromotionClasses'),
-('MenelikAlliances',    'TRAIT_LEADER_MENELIK', 'Alliances');
+('JoaoWonders',      'TRAIT_LEADER_JOAO_III', 'Buildings'),
+('JoaoTechs',        'TRAIT_LEADER_JOAO_III', 'Technologies'),
+('JoaoYields',       'TRAIT_LEADER_JOAO_III', 'Yields'),
+('JoaoUnitBuilds',   'TRAIT_LEADER_JOAO_III', 'UnitPromotionClasses');
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('MenelikWonders', 'BUILDING_HAGIA_SOPHIA', 1, 0), -- cheaper religious units
-('MenelikWonders', 'BUILDING_COLOSSUS',     1, 0), -- TRs
-('MenelikTechs', 'TECH_CASTLES', 1, 0), -- unique unit
-('MenelikCivics', 'CIVIC_DRAMA_POETRY',  1, 0), -- unique improvement
-('MenelikCivics', 'CIVIC_FOREIGN_TRADE', 1, 0), -- traders
-('MenelikPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15), -- church & improved resources
-('MenelikPseudoYields', 'PSEUDOYIELD_UNIT_TRADE',  1, 25), -- traders
-('MenelikUnitBuilds', 'PROMOTION_CLASS_LIGHT_CAVALRY', 1, 10),
-('MenelikAlliances', 'ALLIANCE_RELIGIOUS', 1, 0),
-('MenelikAlliances', 'ALLIANCE_CULTURAL',  1, 0);
-*/
+('JoaoWonders', 'BUILDING_COLOSSUS', 1, 0),
+('JoaoWonders', 'BUILDING_TORRE_DE_BELEM', 1, 0),
+('JoaoWonders', 'BUILDING_VENETIAN_ARSENAL', 1, 0),
+('JoaoTechs', 'TECH_WRITING', 1, 0),
+('JoaoTechs', 'TECH_EDUCATION', 1, 0),
+('JoaoTechs', 'TECH_CARTOGRAPHY', 1, 0),
+('JoaoYields', 'YIELD_GOLD', 1, 10), -- traders
+('JoaoExplorationObsessed', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10), -- harbors & nav school
+('JoaoExplorationObsessed', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 10), -- caravels, etc.
+('JoaoExplorationObsessed', 'PSEUDOYIELD_UNIT_TRADE',  1, 20), -- traders
+('JoaoUnitBuilds', 'PROMOTION_CLASS_NAVAL_MELEE', 1, 10); -- nau
+
+UPDATE AiFavoredItems SET Value = 20 WHERE ListType = 'JoaoExplorationObsessed' AND Item = 'PSEUDOYIELD_UNIT_EXPLORER';

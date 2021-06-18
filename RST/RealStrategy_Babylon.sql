@@ -1,7 +1,7 @@
 -- ===========================================================================
 -- Real Strategy - main file for Babylon DLC
 -- Author: Infixo
--- 2021-06-15: Created
+-- 2021-06-16: Created
 -- ===========================================================================
 
 
@@ -23,7 +23,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 ('HammurabiPseudoYields'),
 --('HammurabiUnitBuilds'),
 ('HammurabiAlliances'),
-('HammurabiDiploActions');
+('HammurabiDiplomacy');
 
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('HammurabiWonders',      'TRAIT_LEADER_HAMMURABI', 'Buildings'),
@@ -32,7 +32,7 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('HammurabiPseudoYields', 'TRAIT_LEADER_HAMMURABI', 'PseudoYields'),
 --('HammurabiUnitBuilds',   'TRAIT_LEADER_HAMMURABI', 'UnitPromotionClasses'),
 ('HammurabiAlliances',    'TRAIT_LEADER_HAMMURABI', 'Alliances'),
-('HammurabiDiploActions', 'TRAIT_LEADER_HAMMURABI', 'DiplomaticActions');
+('HammurabiDiplomacy', 'TRAIT_LEADER_HAMMURABI', 'DiplomaticActions');
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HammurabiWonders', 'BUILDING_GREAT_LIBRARY',     1, 0), -- gives boosts!
@@ -43,4 +43,4 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('HammurabiPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15), -- compete for boosts here
 --('HammurabiUnitBuilds', 'PROMOTION_CLASS_LIGHT_CAVALRY', 1, 10),
 ('HammurabiAlliances', 'ALLIANCE_RESEARCH', 1, 0), -- need more boosts
-('HammurabiDiploActions', 'DIPLOACTION_ALLIANCE_RESEARCH', 1, 0); -- need more boosts
+('HammurabiDiplomacy', 'DIPLOACTION_ALLIANCE_RESEARCH', 1, 0); -- need more boosts
