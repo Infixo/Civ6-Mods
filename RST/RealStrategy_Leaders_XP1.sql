@@ -103,6 +103,10 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 -- CHANDRAGUPTA: does not like his neighbors :(
 -- TODO: similar expansionist trait to Trajan, to forward settle a bit more maybe?
 
+-- 210623 This list is empty
+DELETE FROM AiLists WHERE ListType = 'TerritorialWarriorList' AND LeaderType = 'TRAIT_LEADER_ARTHASHASTRA';
+DELETE FROM AiListTypes WHERE ListType = 'TerritorialWarriorList';
+
 -- 2019-04-04 AggressivePseudoYields
 INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_CHANDRAGUPTA', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
 
@@ -138,15 +142,15 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('MongoliaDisfavorBarracks', 'BUILDING_BARRACKS', 0, 0), -- let him not build Barracks, so he will build Ordu
 ('GenghisCivics', 'CIVIC_DIPLOMATIC_SERVICE', 1, 0),
 ('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_TRADE', 1, 50),
--- to balance AggressivePseudoYields, similar to Shaka
-('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15),
-('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1,-10),
-('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15),
+-- some tweaks to balance AggressivePseudoYields, similar to Shaka
+--('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15),
+('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -10),
+--('GenghisPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15),
 ('GenghisPseudoYields', 'PSEUDOYIELD_CITY_BASE',            1, 100), -- DO conquer neighbors
 ('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
 ('GenghisPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -15), -- DO conquer neighbors
-('GenghisPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
-('GenghisPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
+('GenghisPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10);
+--('GenghisPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
 
 -- 2019-04-04 start bias
 UPDATE StartBiasResources SET Tier = 3 WHERE CivilizationType = 'CIVILIZATION_MONGOLIA' AND ResourceType = 'RESOURCE_HORSES'
@@ -192,6 +196,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- one of few leaders that have Favored PSEUDOYIELD_DISTRICT (Campus, Industrial Zone)
 -- Golf Course
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_ROBERT_THE_BRUCE' AND TraitType = 'TRAIT_LEADER_SCIENCE_MAJOR_CIV'; -- 210623 not needed
+
 -- 2019-04-04 start bias
 INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)
 SELECT 'CIVILIZATION_SCOTLAND', TerrainType, 4
@@ -209,6 +215,8 @@ WHERE CivilizationType = 'CIVILIZATION_SCOTLAND'
 -- LEADER_SEONDEOK / KOREA
 -- OK! science boosted, mines, etc.
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_SEONDEOK' AND TraitType = 'TRAIT_LEADER_SCIENCE_MAJOR_CIV'; -- 210623 not needed
+
 
 -- LEADER_SHAKA / ZULU
 -- UPDATE AiFavoredItems SET Value = 15 WHERE ListType = 'AggressivePseudoYields' AND Item = 'PSEUDOYIELD_UNIT_NAVAL_COMBAT'; -- used by Shaka & Genghis
@@ -222,14 +230,14 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('ShakaPseudoYields', 'TRAIT_LEADER_AMABUTHO', 'PseudoYields');
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15),
+--('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 15),
 ('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1,-10),
-('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15),
+--('ShakaPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 15),
 ('ShakaPseudoYields', 'PSEUDOYIELD_CITY_BASE',            1, 100),
 ('ShakaPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10),
 ('ShakaPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -15),
-('ShakaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10),
-('ShakaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
+('ShakaPseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, -10);
+--('ShakaPseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1,  15);
 
 
 -- LEADER_TAMAR / GEORGIA

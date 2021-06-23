@@ -187,36 +187,47 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 --<Row LeaderType="LEADER_ALEXANDER" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
 --<Row LeaderType="LEADER_CYRUS" TraitType="TRAIT_LEADER_AGGRESSIVE_MILITARY"/>
 
-INSERT OR REPLACE INTO Types (Type, Kind) VALUES
-('TRAIT_LEADER_AGGRESSIVE_MILITARY', 'KIND_TRAIT');
+--INSERT OR REPLACE INTO Types (Type, Kind) VALUES
+--('TRAIT_LEADER_AGGRESSIVE_MILITARY', 'KIND_TRAIT');
 
-INSERT OR REPLACE INTO Traits (TraitType, InternalOnly) VALUES
-('TRAIT_LEADER_AGGRESSIVE_MILITARY', 1);
+--INSERT OR REPLACE INTO Traits (TraitType, InternalOnly) VALUES
+--('TRAIT_LEADER_AGGRESSIVE_MILITARY', 1);
 
-INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
-('AgressiveDiplomacy'),
-('AggressivePseudoYields');
+--INSERT OR REPLACE INTO AiListTypes (ListType) VALUES
+--('AgressiveDiplomacy'),
+--('AggressivePseudoYields');
 
-INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
-('AgressiveDiplomacy',     'TRAIT_LEADER_AGGRESSIVE_MILITARY', 'DiplomaticActions'),
-('AggressivePseudoYields', 'TRAIT_LEADER_AGGRESSIVE_MILITARY', 'PseudoYields');
+--INSERT OR REPLACE INTO AiLists (ListType, LeaderType, System) VALUES
+--('AgressiveDiplomacy',     'TRAIT_LEADER_AGGRESSIVE_MILITARY', 'DiplomaticActions'),
+--('AggressivePseudoYields', 'TRAIT_LEADER_AGGRESSIVE_MILITARY', 'PseudoYields');
 
-INSERT OR REPLACE INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
-('AgressiveDiplomacy', 'DIPLOACTION_DENOUNCE', 1, 0),
-('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_FRIENDSHIP', 0, 0),
-('AgressiveDiplomacy', 'DIPLOACTION_ALLIANCE', 0, 0),
-('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_SURPRISE_WAR', 1, 0),
-('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_FORMAL_WAR', 1, 0),
+DELETE FROM AiFavoredItems WHERE ListType = 'AgressiveDiplomacy';
+DELETE FROM AiFavoredItems WHERE ListType = 'AggressivePseudoYields';
+
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+-- TRAIT_LEADER_AGGRESSIVE_MILITARY
+('AgressiveDiplomacy', 'DIPLOACTION_DENOUNCE', 1, 0), -- 210623 yes, there is a spelling error
+--('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_FRIENDSHIP', 0, 0),
+--('AgressiveDiplomacy', 'DIPLOACTION_ALLIANCE', 0, 0),
+--('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_SURPRISE_WAR', 1, 0),
+--('AgressiveDiplomacy', 'DIPLOACTION_DECLARE_FORMAL_WAR', 1, 0),
 ('AggressivePseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 15),
 ('AggressivePseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE',  1, 15),
-('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 25), -- 25
-('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 15), -- 25
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_COMBAT',       1, 20), -- 25
+('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, 10), -- 25
 ('AggressivePseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT',   1, 20), -- 25
 ('AggressivePseudoYields', 'PSEUDOYIELD_CITY_BASE',            1,  50), -- 40
 ('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -10), -- -10
 ('AggressivePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES',        1, -25), -- -25
 ('AggressivePseudoYields', 'PSEUDOYIELD_GPP_ADMIRAL', 1, 10), -- 50 naval warfare is still not good, no point to have more of them
-('AggressivePseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 15); -- 50
+('AggressivePseudoYields', 'PSEUDOYIELD_GPP_GENERAL', 1, 20); -- 50
+
+-- TRAIT_LEADER_LOW_RELIGIOUS_PREFERENCE
+--		<Row ListType="LowReligiousPreferencePseudoYields" Item="PSEUDOYIELD_GPP_PROPHET" Value="-75"/>
+--		<Row ListType="LowReligiousPreferenceYields" Item="YIELD_FAITH" Value="-50"/>
+-- TRAIT_LEADER_SCIENCE_MAJOR_CIV - not needed because replaced by flavors
+-- TRAIT_LEADER_CULTURAL_MAJOR_CIV - not needed because replaced by flavors
+
 
 
 
@@ -290,6 +301,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_CATHERINE_DE_MEDICI / FRANCE
 -- TRAIT_RST_MORE_IMPROVEMENTS
 -- TRAIT_RST_MORE_WONDERS
+
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_CATHERINE_DE_MEDICI' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
 
 DELETE FROM AiFavoredItems WHERE ListType = 'CatherineCivics' AND Item = 'CIVIC_DIVINE_RIGHT';
 
@@ -411,6 +424,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- LEADER_GILGAMESH / SUMERIA
 -- Ziggurat has no tech req... so broken! - it is the ONLY unique improvement like this
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_GILGAMESH' AND TraitType = 'TRAIT_LEADER_SCIENCE_MAJOR_CIV'; -- 210623 not needed
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('GilgameshTechs'),
 ('GilgameshCivics'),
@@ -425,7 +440,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('GilgameshDiplomacy', 'DIPLOACTION_ALLIANCE' , 1, 0),
 ('GilgameshDiplomacy', 'DIPLOACTION_JOINT_WAR' , 1, 0),
 ('GilgameshDiplomacy', 'DIPLOACTION_RENEW_ALLIANCE' , 1, 0),
-('GilgameshDiplomacy', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV' , 0, 0), -- friend of CS
+--('GilgameshDiplomacy', 'DIPLOACTION_DECLARE_WAR_MINOR_CIV' , 0, 0), -- friend of CS -- 210623 already in a Trait
 ('GilgameshTechs', 'TECH_STIRRUPS' , 1, 0), -- !BUGGED!
 ('GilgameshTechs', 'TECH_WRITING' , 1, 0), -- !BUGGED!
 ('GilgameshTechs', 'TECH_EDUCATION' , 1, 0), -- !BUGGED!
@@ -454,12 +469,19 @@ WHERE ImprovementType = 'IMPROVEMENT_ZIGGURAT' AND TerrainType <> 'TERRAIN_SNOW'
 -- GORGO seems OK
 -- PERICLES seems OK, CS ally, low faith
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_GORGO' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_PERICLES' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
+
 -- 2019-04-04 AggressivePseudoYields for non-XP leaders
 INSERT OR REPLACE INTO LeaderTraits(LeaderType, TraitType) VALUES ('LEADER_GORGO', 'TRAIT_LEADER_AGGRESSIVE_MILITARY');
 
 -- There is a mixup with Pericles's lists
 UPDATE AiFavoredItems SET Item = 'BUILDING_POTALA_PALACE' WHERE ListType = 'PericlesWonders' AND Item = 'PSEUDOYIELD_INFLUENCE';
 UPDATE AiFavoredItems SET Item = 'PSEUDOYIELD_INFLUENCE'  WHERE ListType = 'PericlesEnvoys'  AND Item = 'BUILDING_POTALA_PALACE';
+
+-- 210623 Gorgo gets CS from Military Policies
+INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
+('GorgoWonders', 'BUILDING_ALHAMBRA', 1, 0);
 
 -- Rise & Fall
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value)
@@ -548,6 +570,8 @@ WHERE Name = 'RST_OPTION_BIASES' AND Value = 1;
 
 -- LEADER_MVEMBA / KONGO
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_MVEMBA' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('KongoYields'),
 ('KongoPseudoYields');
@@ -576,6 +600,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 -- LEADER_PEDRO / BRAZIL
 -- lower a bit GP obsession, balance defense
+
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_PEDRO' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
 
 DELETE FROM AiFavoredItems WHERE ListType = 'PedroCivics' AND Item = 'CIVIC_CAPITALISM';
 DELETE FROM AiFavoredItems WHERE ListType = 'PedroCivics' AND Item = 'CIVIC_GUILDS';
@@ -656,6 +682,8 @@ UPDATE StartBiasTerrains SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_SPA
 
 -- LEADER_QIN / CHINA
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_QIN' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('QinPseudoYields');
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
@@ -734,6 +762,8 @@ FROM Types WHERE Type = 'BUILDING_TEMPLE_ARTEMIS';
 
 -- LEADER_T_ROOSEVELT / AMERICA
 -- culture, Film Studio
+
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_T_ROOSEVELT' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
 
 -- LowReligiousPreferenceYields - but we need faith for National Parks!
 DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_T_ROOSEVELT' AND TraitType = 'TRAIT_LEADER_LOW_RELIGIOUS_PREFERENCE';

@@ -707,10 +707,11 @@ DELETE FROM AiFavoredItems WHERE ListType IN (
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- CLASSICAL
 --('ClassicalSensitivity', 'YIELD_SCIENCE', 1, 10),
-('ClassicalYields', 'YIELD_CULTURE',  1, 15),
-('ClassicalYields', 'YIELD_FAITH', 1, 10),
-('ClassicalYields', 'YIELD_FOOD',  1, 10),
-('ClassicalYields', 'YIELD_GOLD',  1, 20),
+('ClassicalYields', 'YIELD_CULTURE', 1, 15),
+('ClassicalYields', 'YIELD_FAITH',   1,  0), -- def. 20
+('ClassicalYields', 'YIELD_FOOD',    1, 15), -- def. 15
+('ClassicalYields', 'YIELD_GOLD',    1, 15), -- def. 20
+('ClassicalYields', 'YIELD_SCIENCE', 1, 25), -- 210619 Sept. 2020 patch - increase by 150 (sic!)
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 25),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 15),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
@@ -719,12 +720,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ClassicalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -10),
 -- MEDIEVAL
 --('MedievalSensitivity',	'YIELD_CULTURE', 1, 10),
-('MedievalYields', 'YIELD_CULTURE',    1,-15),
-('MedievalYields', 'YIELD_FAITH',      1, 15),
-('MedievalYields', 'YIELD_FOOD',       1, 20),
-('MedievalYields', 'YIELD_GOLD',       1,-10),
-('MedievalYields', 'YIELD_PRODUCTION', 1, 10),
-('MedievalYields', 'YIELD_SCIENCE',    1,-10),
+('MedievalYields', 'YIELD_CULTURE',    1,-10),
+('MedievalYields', 'YIELD_FAITH',      1, 15), -- def. -25
+('MedievalYields', 'YIELD_FOOD',       1, 20), -- def. 25
+('MedievalYields', 'YIELD_GOLD',       1,-10), -- def. 15
+('MedievalYields', 'YIELD_PRODUCTION', 1, 15), -- def. 20
+('MedievalYields', 'YIELD_SCIENCE',    1,-15), -- def. 15
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, 50),
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, 25),
 ('MedievalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
@@ -737,10 +738,10 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- RENAISSANCE
 ('RenaissanceYields', 'YIELD_CULTURE',    1, 15),
 ('RenaissanceYields', 'YIELD_FAITH',      1,-25),
-('RenaissanceYields', 'YIELD_FOOD',       1,-15),
-('RenaissanceYields', 'YIELD_GOLD',       1, 20),
+('RenaissanceYields', 'YIELD_FOOD',       1,-15), -- def. 10
+('RenaissanceYields', 'YIELD_GOLD',       1, 20), -- def. 15
 ('RenaissanceYields', 'YIELD_PRODUCTION', 1,-10),
-('RenaissanceYields', 'YIELD_SCIENCE',    1, 10),
+('RenaissanceYields', 'YIELD_SCIENCE',    1, 15),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_BASE', 1, -50),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_POPULATION', 1, -25),
 ('RenaissancePseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, 25),
@@ -809,6 +810,12 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('InformationPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT', 1, -15),
 ('InformationPseudoYields', 'PSEUDOYIELD_UNIT_AIR_COMBAT', 1, 25),
 ('InformationPseudoYields', 'PSEUDOYIELD_UNIT_SETTLER', 1, -15);
+
+-- 2021-06-19 Firaxis made Campus and Theater Square obligatory for every Civ
+DELETE FROM AiFavoredItems WHERE ListType = 'ClassicalDistricts' AND Item = 'DISTRICT_CAMPUS';
+DELETE FROM AiFavoredItems WHERE ListType = 'ClassicalDistricts' AND Item = 'DISTRICT_THEATER';
+DELETE FROM AiListTypes WHERE ListType = 'ClassicalDistricts';
+DELETE FROM AiLists WHERE ListType = 'ClassicalDistricts';
 
 
 -- ===========================================================================

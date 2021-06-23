@@ -127,6 +127,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- TODO: note that England and France fatures are not supported by Eleanor's AI in GS
 -- TODO: England is just for Victoria and France for Catherine - must separate Civ from Leader!
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_ELEANOR_FRANCE' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('EleanorYields'),
 ('EleanorPseudoYields');
@@ -140,6 +142,8 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 
 
 -- LEADER_KRISTINA
+
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_KRISTINA' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
 
 -- go for monarchy for more influence points, but no theocracy!
 DELETE FROM AiFavoredItems WHERE ListType = 'KristinaCivics' AND Item IN ('CIVIC_DIVINE_RIGHT', 'CIVIC_REFORMED_CHURCH');
@@ -174,6 +178,8 @@ WHERE PseudoYieldType LIKE 'PSEUDOYIELD_GREATWORK_%';
 
 
 -- LEADER_KUPE
+
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_KUPE' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
 
 INSERT INTO AiListTypes (ListType) VALUES
 ('KupeSettlement'),
@@ -279,6 +285,8 @@ UPDATE StartBiasFeatures SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_HUN
 
 -- LEADER_PACHACUTI
 -- hmmm... nothing special here...
+
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_PACHACUTI' AND TraitType = 'TRAIT_LEADER_SCIENCE_MAJOR_CIV'; -- 210623 not needed
 
 -- 2019-04-04 start bias
 INSERT OR REPLACE INTO StartBiasTerrains (CivilizationType, TerrainType, Tier)

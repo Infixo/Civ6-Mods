@@ -38,6 +38,8 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES
 ('LEADER_T_ROOSEVELT_ROUGHRIDER', 'LEADER', '', 'RELIGION', 1),
 ('LEADER_T_ROOSEVELT_ROUGHRIDER', 'LEADER', '', 'DIPLO',    8);
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_T_ROOSEVELT_ROUGHRIDER' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
+
 DELETE FROM AiLists WHERE ListType = 'RooseveltUnits' AND LeaderType = 'TRAIT_LEADER_ROOSEVELT_COROLLARY';
 DELETE FROM AiLists WHERE ListType = 'RooseveltPseudoYields' AND LeaderType = 'TRAIT_LEADER_ROOSEVELT_COROLLARY';
 
@@ -49,7 +51,7 @@ INSERT INTO AiListTypes (ListType) VALUES
 INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 ('RooseveltAltPseudoYields', 'TRAIT_LEADER_ROOSEVELT_COROLLARY', 'PseudoYields'),
 ('RooseveltAltUnitBuilds',   'TRAIT_LEADER_ROOSEVELT_COROLLARY', 'UnitPromotionClasses'),
-('RooseveltAltDiploActions',   'TRAIT_LEADER_ROOSEVELT_COROLLARY', 'DiplomaticActions');
+('RooseveltAltDiploActions', 'TRAIT_LEADER_ROOSEVELT_COROLLARY', 'DiplomaticActions');
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('RooseveltAltPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, 15), -- favor

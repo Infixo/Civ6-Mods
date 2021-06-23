@@ -42,13 +42,17 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('AmbiorixTechs', 'TECH_ARCHERY', 1, 0),
 ('AmbiorixCivics', 'CIVIC_MILITARY_TRADITION',  1, 0), -- flanking bonus
 ('AmbiorixCivics', 'CIVIC_MERCENARIES', 1, 0),
-('AmbiorixPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
-('AmbiorixPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT',  1, -20),
-('AmbiorixPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 15),
-('AmbiorixPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, 15),
+-- TRAIT_LEADER_AGGRESSIVE_MILITARY
+--('AmbiorixPseudoYields', 'PSEUDOYIELD_UNIT_COMBAT', 1, 15),
+--('AmbiorixPseudoYields', 'PSEUDOYIELD_UNIT_NAVAL_COMBAT',  1, -20),
+--('AmbiorixPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_NUMBER', 1, 15),
+--('AmbiorixPseudoYields', 'PSEUDOYIELD_STANDING_ARMY_VALUE', 1, 15),
 ('AmbiorixUnitBuilds', 'PROMOTION_CLASS_MELEE', 1, 15),
 ('AmbiorixUnitBuilds', 'PROMOTION_CLASS_RANGED', 1, 15),
 ('AmbiorixUnitBuilds', 'PROMOTION_CLASS_ANTI_CAVALRY', 1, 15);
+
+-- 2021-06-23 Firaxis added this Trait twice, despite its own warnings... :)
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_AMBIORIX' AND TraitType = 'TRAIT_LEADER_AGGRESSIVE_MILITARY';
 
 
 

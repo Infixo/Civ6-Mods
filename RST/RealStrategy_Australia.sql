@@ -14,6 +14,8 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 
 -- LEADER_JOHN_CURTIN / AUSTRALIA
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_JOHN_CURTIN' AND TraitType = 'TRAIT_LEADER_SCIENCE_MAJOR_CIV'; -- 210623 not needed
+
 INSERT INTO AiListTypes (ListType) VALUES
 ('CurtinSettlement'),
 --('CurtinDiplomacy'), -- 2019-06-25 Added in June 2019 Patch

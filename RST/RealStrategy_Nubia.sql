@@ -29,6 +29,8 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES -- ge
 -- LEADER_AMANITORE / NUBIA
 -- she likes to build, improvements and districts
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_AMANITORE' AND TraitType = 'TRAIT_LEADER_SCIENCE_MAJOR_CIV'; -- 210623 not needed
+
 UPDATE AiFavoredItems SET Value = -10 WHERE ListType = 'AmanitoreUnitBuilds' AND Item = 'PROMOTION_CLASS_RANGED'; -- was 1 -- they build too many
 
 INSERT INTO AiListTypes (ListType) VALUES

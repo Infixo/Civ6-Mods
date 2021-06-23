@@ -19,6 +19,7 @@ INSERT INTO RSTFlavors (ObjectType, Type, Subtype, Strategy, Value) VALUES
 ('LEADER_CATHERINE_DE_MEDICI_ALT', 'LEADER', '', 'RELIGION', 2),
 ('LEADER_CATHERINE_DE_MEDICI_ALT', 'LEADER', '', 'DIPLO',    2);
 
+DELETE FROM LeaderTraits WHERE LeaderType = 'LEADER_CATHERINE_DE_MEDICI_ALT' AND TraitType = 'TRAIT_LEADER_CULTURAL_MAJOR_CIV'; -- 210623 not needed
 
 -- reuse as much of existing Catherin as possible
 
@@ -34,8 +35,8 @@ INSERT INTO AiLists (ListType, LeaderType, System) VALUES
 --('CatherineCivics',       'TRAIT_LEADER_MAGNIFICENCES', 'Civics'), -- black queen's civics are weird
 ('CatherineAltCivics',    'TRAIT_LEADER_MAGNIFICENCES', 'Civics'),
 ('CatherineAltProjects',  'TRAIT_LEADER_MAGNIFICENCES', 'Projects'),
-('CatherineYields',       'TRAIT_LEADER_MAGNIFICENCES', 'Technologies'),
-('CatherinePseudoYields', 'TRAIT_LEADER_MAGNIFICENCES', 'Civics');
+('CatherineYields',       'TRAIT_LEADER_MAGNIFICENCES', 'Yields'),
+('CatherinePseudoYields', 'TRAIT_LEADER_MAGNIFICENCES', 'PseudoYields');
 
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('CatherineAltCivics', 'CIVIC_DRAMA_POETRY', 1, 0),
