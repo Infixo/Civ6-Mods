@@ -11,10 +11,10 @@ INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MAJOR', '2');
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_VERSION_MINOR', '0');
 
 -- logging
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '1'); -- log detailed debug info
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_DEBUG', '0'); -- log detailed debug info
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_STRAT', '1'); -- log strategy priorities
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_GUESS', '1'); -- log guess priorities
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '1'); -- log supporting (other) strategies
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_LOG_OTHER', '0'); -- log supporting (other) strategies
 
 -- random numbers - support for Multi Player
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RST_OPTION_RANDOM', '2'); -- 0 - turned OFF / 1 - turned ON, using math.rand / 2 - turned ON, using Game.GetRandNum
@@ -64,7 +64,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 -- science
 --('RST_SCIENCE_YIELD_WEIGHT', 20), -- [x100] how much each beaker weights
 ('RST_SCIENCE_YIELD_RATIO_MULTIPLIER', 70), -- how does our situation compare to others, -100..100 and more
-('RST_SCIENCE_TECH_WEIGHT', 10), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
+('RST_SCIENCE_TECH_WEIGHT', 15), -- each tech we are ahead of average -- with techs it is difficult to be very ahead, and techs are limited, so each one is important
 --('RST_SCIENCE_TECH_RATIO_MULTIPLIER', 100), -- how does our situation compare to others, -100..100 and more - techs are more important than yield only (they show actual progress)
 ('RST_SCIENCE_PROJECT_WEIGHT', 60), -- each completed space race project
 ('RST_SCIENCE_HAS_SPACEPORT', 30), -- adds if player has a spaceport
@@ -89,7 +89,7 @@ INSERT INTO GlobalParameters (Name, Value) VALUES
 ('RST_RELIGION_INQUISITION_WEIGHT', -20), -- each inquisition launched by others decreases the priority
 ('RST_RELIGION_NOBODY_MET_NUM_TURNS', 20), -- will check if anybody met after this many turns, def. 20
 ('RST_RELIGION_NOBODY_MET_PRIORITY', 0), -- if nobody met, then decrease the priority, def. -100 -> ???? But we still need a religion! Conquest is different, it is not limited; we shouldn't stop here I think
-('RST_DIPLO_PROGRESS_WEIGHT', 4), -- points for 1%; now DVP = 10%, so 1 DVP = 40 points
+('RST_DIPLO_PROGRESS_WEIGHT', 4), -- points for 1%; now DVP = 5%, so 1 DVP = 20 points
 ('RST_DIPLO_FAVOR_PER_TURN_WEIGHT', 8),
 -- guess others scalers
 ('RST_GUESS_SCALER_CONQUEST', 100),
