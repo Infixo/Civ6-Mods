@@ -722,19 +722,16 @@ DELETE FROM AiFavoredItems WHERE ListType IN (
     
 INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 -- ANCIENT
---('AncientYields', 'YIELD_CULTURE',    1,  0),
---('AncientYields', 'YIELD_FAITH',      1, 10),
---('AncientYields', 'YIELD_FOOD',       1, 10),
---('AncientYields', 'YIELD_GOLD',       1,-10),
---('AncientYields', 'YIELD_PRODUCTION', 1, 10),
+('AncientYields', 'YIELD_FAITH',   1, 20), -- just to get a religion
 ('AncientYields', 'YIELD_SCIENCE',    1, 15),
 ('AncientPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, 15),
 ('AncientPseudoYields', 'PSEUDOYIELD_DIPLOMATIC_FAVOR', 1, -100), -- vanilla game
+('AncientPseudoYields', 'PSEUDOYIELD_GPP_PROPHET',   1, 20),
 ('AncientPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15),
 -- CLASSICAL
 --('ClassicalSensitivity', 'YIELD_SCIENCE', 1, 10),
 ('ClassicalYields', 'YIELD_CULTURE', 1, 15),
-('ClassicalYields', 'YIELD_FAITH',   1,  0), -- def. 20
+('ClassicalYields', 'YIELD_FAITH',   1,-10), -- def. 20
 --('ClassicalYields', 'YIELD_FOOD',    1, 15), -- def. 15
 ('ClassicalYields', 'YIELD_GOLD',    1, 15), -- def. 20
 ('ClassicalYields', 'YIELD_SCIENCE', 1, 15), -- 210619 Sept. 2020 patch - increase by 150 (sic!)
@@ -743,6 +740,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value) VALUES
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_DEFENSES', 1, -10),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_CITY_DEFENDING_UNITS', 1, -5),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_MERCHANT',  1, 15),
+('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_PROPHET',   1,-20),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_SCIENTIST', 1, 15),
 ('ClassicalPseudoYields', 'PSEUDOYIELD_GPP_WRITER',    1, 15),
 --('ClassicalPseudoYields', 'PSEUDOYIELD_IMPROVEMENT', 1, -15),
