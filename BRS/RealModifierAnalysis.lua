@@ -15,6 +15,9 @@ local bIsRiseAndFallMod:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 local bIsRiseAndFall:boolean = (bIsRiseAndFallMod or bIsGatheringStorm); -- GS includes gameplay features from RF
 
+-- Mod compatibilities check
+local bIsLuegiFontIconsMod = Modding.IsModActive("2ede4527-c961-4344-9cd1-859ff570d401"); -- Appeal, Loyalty and Prestige (Diplo VP) Font Icons (Luegi)
+
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -259,6 +262,7 @@ end
 --	returns		The [ICON_yield] string
 -- ===========================================================================
 function GetYieldTextIcon( yieldType:string )
+
 	local  iconString:string = "";
 	if		yieldType == nil or yieldType == ""	then
 		iconString = "Error:NIL";
@@ -269,7 +273,7 @@ function GetYieldTextIcon( yieldType:string )
 	elseif  yieldType == "YIELD_HOUSING" then
 		iconString = "[ICON_Housing]" -- [ICON_LocationPip] a blue pin pointing down
 	elseif  yieldType == "YIELD_LOYALTY" then
-		iconString = "[ICON_PressureUp]" -- [ICON_PressureDown] is a red arrow pointing down
+		iconString = bIsLuegiFontIconsMod and "[ICON_Loyalty]" or "[ICON_PressureUp]" -- [ICON_PressureDown] is a red arrow pointing down
 	elseif	GameInfo.Yields[yieldType] ~= nil and GameInfo.Yields[yieldType].IconString ~= nil and GameInfo.Yields[yieldType].IconString ~= "" then
 		iconString = GameInfo.Yields[yieldType].IconString;
 	else
