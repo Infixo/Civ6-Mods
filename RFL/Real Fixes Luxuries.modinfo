@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="99C6BEAC-84EA-1B03-7914-09F874D4657C" version="1">
+  <Properties>
+    <Name>Real Fixes Luxuries (AI)</Name>
+    <Description>Fix for AI not improving luxuries in Monopolies and Corporations Mode. Version 1.0</Description>
+    <Teaser>Fixes MC Mode</Teaser>
+    <Authors>Infixo</Authors>
+    <AffectsSavedGames>0</AffectsSavedGames>
+	<CompatibleVersions>1.2,2.0</CompatibleVersions>
+  </Properties>
+  <ActionCriteria>
+  </ActionCriteria>
+  <InGameActions>
+    <UpdateDatabase id="RFL_Database">
+      <Properties>
+        <LoadOrder>10000</LoadOrder>
+      </Properties>
+      <File>RFL_Trees.xml</File>
+    </UpdateDatabase>
+  </InGameActions>
+  <Files>
+    <File>RFL_Trees.xml</File>
+  </Files>
+</Mod>

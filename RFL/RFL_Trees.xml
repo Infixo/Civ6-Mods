@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+
+  <BehaviorTreeNodes>
+  
+	<Delete TreeName="Build City Improvement" />
+  
+	<!-- 2 nodes removed, total nodes = 27 -->
+	<Row NodeType="Sequence" NodeId="0" TreeName="Build City Improvement" JumpTo="27" />
+		<Row NodeType="Decode Trigger" NodeId="1" TreeName="Build City Improvement" />
+		<Row NodeType="Sequence" NodeId="2" TreeName="Build City Improvement" JumpTo="27" />
+			<Row NodeType="Concurrent" NodeId="3" TreeName="Build City Improvement" JumpTo="17" />
+				<Row NodeType="Reserve Plot" NodeId="4" TreeName="Build City Improvement" />
+				<!-- remove nodes responsible for Currency waiting
+				<Row NodeType="Contract Manager Decorator" NodeId="5" TreeName="Build City Improvement" JumpTo="7" />
+					<Row NodeType="Add Goal Tech" NodeId="6" TreeName="Build City Improvement" />
+				-->
+				<!-- IDs of nodes below are changed by 2 -->
+				<Row NodeType="Priority" NodeId="5" TreeName="Build City Improvement" JumpTo="17" />
+					<Row NodeType="Check Plot" NodeId="6" TreeName="Build City Improvement" />
+					<Row NodeType="Sequence" NodeId="7" TreeName="Build City Improvement" JumpTo="17" />
+						<Row NodeType="Priority" NodeId="8" TreeName="Build City Improvement" JumpTo="12" />
+							<Row NodeType="Find Available Unit" NodeId="9" TreeName="Build City Improvement" />
+							<Row NodeType="Contract Manager Decorator" NodeId="10" TreeName="Build City Improvement" JumpTo="12" />
+								<Row NodeType="Build Unit" NodeId="11" TreeName="Build City Improvement" />
+						<Row NodeType="Cancel Contract" NodeId="12" TreeName="Build City Improvement" />
+						<Row NodeType="Concurrent" NodeId="13" TreeName="Build City Improvement" JumpTo="16" />
+							<Row NodeType="Protect Unit" NodeId="14" TreeName="Build City Improvement" />
+							<Row NodeType="Move Unit" NodeId="15" TreeName="Build City Improvement" />
+						<Row NodeType="Clear Plot" NodeId="16" TreeName="Build City Improvement" />
+			<Row NodeType="Sequence" NodeId="17" TreeName="Build City Improvement" JumpTo="27" />
+				<Row NodeType="Priority" NodeId="18" TreeName="Build City Improvement" JumpTo="22" />
+					<Row NodeType="Find Available Unit" NodeId="19" TreeName="Build City Improvement" />
+					<Row NodeType="Contract Manager Decorator" NodeId="20" TreeName="Build City Improvement" JumpTo="22" />
+						<Row NodeType="Build Unit" NodeId="21" TreeName="Build City Improvement" />
+				<Row NodeType="Cancel Contract" NodeId="22" TreeName="Build City Improvement" />
+				<Row NodeType="Concurrent" NodeId="23" TreeName="Build City Improvement" JumpTo="26" />
+					<Row NodeType="Protect Unit" NodeId="24" TreeName="Build City Improvement" />
+					<Row NodeType="Move Unit" NodeId="25" TreeName="Build City Improvement" />
+				<Row NodeType="Build Improvement" NodeId="26" TreeName="Build City Improvement" />
+	
+  </BehaviorTreeNodes>
+  <TreeData>
+  
+	<Delete TreeName="Build City Improvement" />
+
+    <Row DefnId="0" NodeId="1" TreeName="Build City Improvement" />
+    <Row DefnId="1" NodeId="1" TreeName="Build City Improvement" />
+    <Row DefnId="2" NodeId="1" TreeName="Build City Improvement" Tag="Needed Improvement" />
+    <Row DefnId="3" NodeId="1" TreeName="Build City Improvement" />
+    <Row DefnId="4" NodeId="1" TreeName="Build City Improvement" Tag="City" />
+    <Row DefnId="5" NodeId="1" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="6" NodeId="1" TreeName="Build City Improvement" />
+    <Row DefnId="7" NodeId="1" TreeName="Build City Improvement" />
+    <Row DefnId="8" NodeId="1" TreeName="Build City Improvement" Tag="Present Value" />
+	
+    <Row DefnId="0" NodeId="4" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="1" NodeId="4" TreeName="Build City Improvement" Tag="City" />
+    <Row DefnId="2" NodeId="4" TreeName="Build City Improvement" Tag="Present Value" />
+	
+	<!-- 2 nodes are removed
+    <Row DefnId="0" NodeId="5" TreeName="Build City Improvement" />
+    <Row DefnId="1" NodeId="5" TreeName="Build City Improvement" Tag="Improvement Tech Contract" />
+    <Row DefnId="2" NodeId="5" TreeName="Build City Improvement" DefaultData="10" />
+    <Row DefnId="0" NodeId="6" TreeName="Build City Improvement" />
+    <Row DefnId="1" NodeId="6" TreeName="Build City Improvement" />
+    <Row DefnId="2" NodeId="6" TreeName="Build City Improvement" Tag="Needed Improvement" />
+    <Row DefnId="3" NodeId="6" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="4" NodeId="6" TreeName="Build City Improvement" />
+    <Row DefnId="5" NodeId="6" TreeName="Build City Improvement" DefaultData="true" />
+    <Row DefnId="6" NodeId="6" TreeName="Build City Improvement" />
+    <Row DefnId="7" NodeId="6" TreeName="Build City Improvement" Tag="Improvement Tech Contract" />
+    <Row DefnId="8" NodeId="6" TreeName="Build City Improvement" Tag="Present Value" />
+	-->
+	
+	<!-- IDs of nodes below are changed by 2 -->
+	
+    <Row DefnId="0" NodeId="6" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="1" NodeId="6" TreeName="Build City Improvement" />
+    <Row DefnId="2" NodeId="6" TreeName="Build City Improvement" />
+    <Row DefnId="3" NodeId="6" TreeName="Build City Improvement" Tag="Needed Improvement" />
+    <Row DefnId="4" NodeId="6" TreeName="Build City Improvement" Tag="Harvest" />
+    <Row DefnId="5" NodeId="6" TreeName="Build City Improvement" Tag="Builder Type" />
+    <Row DefnId="6" NodeId="6" TreeName="Build City Improvement" Tag="Builder Location" />
+
+    <Row DefnId="0" NodeId="9" TreeName="Build City Improvement" Tag="Builder Type" />
+    <Row DefnId="1" NodeId="9" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="2" NodeId="9" TreeName="Build City Improvement" Tag="Plot Clear Builder" />
+    <Row DefnId="3" NodeId="9" TreeName="Build City Improvement" />
+    <Row DefnId="4" NodeId="9" TreeName="Build City Improvement" />
+
+    <Row DefnId="0" NodeId="10" TreeName="Build City Improvement" Tag="Clear Plot Builder Contract" />
+    <Row DefnId="1" NodeId="10" TreeName="Build City Improvement" />
+    <Row DefnId="2" NodeId="10" TreeName="Build City Improvement" DefaultData="8" />
+
+    <Row DefnId="0" NodeId="11" TreeName="Build City Improvement" Tag="Builder Type" />
+    <Row DefnId="1" NodeId="11" TreeName="Build City Improvement" />
+    <Row DefnId="3" NodeId="11" TreeName="Build City Improvement" DefaultData="0" />
+    <Row DefnId="4" NodeId="11" TreeName="Build City Improvement" Tag="Clear Plot Builder Contract" />
+    <Row DefnId="6" NodeId="11" TreeName="Build City Improvement" />
+    <Row DefnId="8" NodeId="11" TreeName="Build City Improvement" Tag="Present Value" />
+
+    <Row DefnId="0" NodeId="12" TreeName="Build City Improvement" Tag="Clear Plot Builder Contract" />
+
+    <Row DefnId="1" NodeId="14" TreeName="Build City Improvement" DefaultData="0" />
+
+    <Row DefnId="1" NodeId="15" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="2" NodeId="15" TreeName="Build City Improvement" DefaultData="0" />
+    <Row DefnId="3" NodeId="15" TreeName="Build City Improvement" DefaultData="0" />
+
+    <Row DefnId="1" NodeId="16" TreeName="Build City Improvement" DefaultData="1" />
+    <Row DefnId="2" NodeId="16" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="3" NodeId="16" TreeName="Build City Improvement" Tag="Harvest" />
+
+    <Row DefnId="0" NodeId="19" TreeName="Build City Improvement" Tag="Builder Type" />
+    <Row DefnId="1" NodeId="19" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="2" NodeId="19" TreeName="Build City Improvement" Tag="Improvement Builder" />
+    <Row DefnId="3" NodeId="19" TreeName="Build City Improvement" />
+    <Row DefnId="4" NodeId="19" TreeName="Build City Improvement" DefaultData="UNIT_BUILDER" />
+
+    <Row DefnId="0" NodeId="20" TreeName="Build City Improvement" Tag="Improvement Builder Contract" />
+    <Row DefnId="1" NodeId="20" TreeName="Build City Improvement" />
+    <Row DefnId="2" NodeId="20" TreeName="Build City Improvement" DefaultData="8" />
+
+    <Row DefnId="0" NodeId="21" TreeName="Build City Improvement" Tag="Builder Type" />
+    <Row DefnId="1" NodeId="21" TreeName="Build City Improvement" />
+    <Row DefnId="3" NodeId="21" TreeName="Build City Improvement" DefaultData="0" />
+    <Row DefnId="4" NodeId="21" TreeName="Build City Improvement" Tag="Improvement Builder Contract" />
+    <Row DefnId="6" NodeId="21" TreeName="Build City Improvement" />
+    <Row DefnId="8" NodeId="21" TreeName="Build City Improvement" Tag="Present Value" />
+
+    <Row DefnId="0" NodeId="22" TreeName="Build City Improvement" Tag="Improvement Builder Contract" />
+
+    <Row DefnId="1" NodeId="24" TreeName="Build City Improvement" DefaultData="0" />
+
+    <Row DefnId="1" NodeId="25" TreeName="Build City Improvement" Tag="Builder Location" />
+    <Row DefnId="2" NodeId="25" TreeName="Build City Improvement" DefaultData="0" />
+    <Row DefnId="3" NodeId="25" TreeName="Build City Improvement" DefaultData="0" />
+
+    <Row DefnId="1" NodeId="26" TreeName="Build City Improvement" Tag="Location" />
+    <Row DefnId="2" NodeId="26" TreeName="Build City Improvement" Tag="Needed Improvement" />
+    <Row DefnId="3" NodeId="26" TreeName="Build City Improvement" DefaultData="1" />
+    <Row DefnId="4" NodeId="26" TreeName="Build City Improvement" Tag="Builder Location" />
+	
+  </TreeData>
+  
+</GameInfo>
