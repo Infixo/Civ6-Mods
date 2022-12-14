@@ -48,6 +48,31 @@
       </ScrollPanel>
     </Box>
 
+
+	<!-- Infixo 2022-12-14 -->
+	<!-- Great People planner window -->
+	<Box ID="PlannerArea" Size="parent,parent" Color="11,27,40,255">
+		<Image ID="PlannerClassIcon"  Anchor="L,T" Offset="40,60" Size="38,38" Texture="UnitActions38" />
+		<Label ID="PlannerClassName"  Anchor="L,T" Offset="85,67" Color="GreatPeopleRow"  Style="FontNormal24" SmallCaps="24" SmallCapsType="EveryWord" String="$ Class Name $" />
+		<!-- buttons to select the great person class -->
+		<Stack Anchor="C,T" Offset="0,80" StackGrowth="Right" StackPadding="20">
+			<GridButton ID="PlannerGeneralButton"   Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_GENERAL_NAME"   />
+			<GridButton ID="PlannerAdmiralButton"   Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_ADMIRAL_NAME"   />
+			<GridButton ID="PlannerEngineerButton"  Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_ENGINEER_NAME"  />
+			<GridButton ID="PlannerMerchantButton"  Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_MERCHANT_NAME"  />
+			<GridButton ID="PlannerScientistButton" Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_SCIENTIST_NAME" />
+		</Stack>
+		
+		<Line Start="0,125" End="parent,125" Width="2" Color="48,60,68,255" />
+	
+		<ScrollPanel ID="PlannerScroller" Offset="0,125" Size="parent,parent-125"  Vertical="0" AutoScrollBar="1">
+			  <Stack ID="PlannerStack" Offset="0,0"   StackGrowth="Right" StackPadding="0" />
+			  <ScrollBar  Anchor="L,B"  Offset="0,10"   Size="parent-10,8"    Style="ScrollHorizontalBackingAlt">
+				<Thumb  Style="ScrollThumbHAlt" />
+			  </ScrollBar>
+		</ScrollPanel>
+	</Box>
+
     <!-- Tabs -->
     <Container                                          Anchor="C,T"  Offset="0,30"   Size="400,61" >
       <Image                                            Anchor="C,C"                  Size="439,27"         Texture="Controls_TabLedge2_Fill" StretchMode="Tile" />
@@ -197,4 +222,43 @@
       <GridButton	ID="SelectButton"		Size="parent,parent"	Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" Hidden="1"/>
     </GridButton>
   </Instance>
+  
+  <!-- Infixo 2022-12-14 -->
+  
+  <!-- Great People Planner - Era Instance -->
+  <!-- Vertical list of GPs from one Era; era name at the top, scroller to the right -->
+	<Instance Name="EraInstance">
+		<Container ID="Content"                                          Size="250,670">
+			<Label ID="EraName" Anchor="C,T" Offset="0,10" Style="GreatPeopleLargeText" String="$EraName$"/>
+			<!-- vertical lines -->
+			<Line Start="0,0"        End="0,parent"        Width="1" Color="48,60,68,255" /> 
+			<Line Start="parent-1,0" End="parent-1,parent" Width="1" Color="48,60,68,255" /> 
+  
+	  <!-- All GPs scrolled list -->
+      <ScrollPanel        ID="EraScroller"                      Offset="10,10" Size="parent-5,parent-10"  Vertical="1" AutoScrollBar="1">
+        <Stack            ID="EraStack"    StackGrowth="Down"    StackPadding="4" />
+        <ScrollBar        Anchor="R,T"  Offset="10,0"   Size="8,parent-300"   Style="ScrollVerticalBackingAlt">
+          <Thumb          Style="ScrollThumbHAlt" />
+        </ScrollBar>
+      </ScrollPanel>
+  
+  </Instance>
+  
+  <!-- Great People Planner - Great Person Instance -->
+  <!-- Single GP instance; contains GP picture, name, effects -->
+  <!-- TODO: selection checkbox -->
+  <!-- TODO: add icon of a civ that earned it, turn when earned -->
+  <Instance Name="PlannerInstance">
+  
+    <Container        ID="Content"                                          Size="250,670">
+  
+      <Box Anchor="L,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the left -->
+      <Box Anchor="R,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the right -->
+	  
+      <Image    ID="Portrait"	 Anchor="C,T" Offset="0,84"  Size="160,160"  Texture="GreatPeople160" /> <!-- portrait -->
+      <Label	ID="IndividualName"     Anchor="C,T"  Offset="0,40" Align="C,C" WrapWidth="210" Style="GreatPeopleLargeText"  String="$IndividualName$"/>
+      <Label    ID="Effect"               Anchor="L,T"  Offset="54,2"   WrapWidth="140" Style="GreatPeopleText" String="$Text$" />
+  
+  </Instance>
+  
 </Context>

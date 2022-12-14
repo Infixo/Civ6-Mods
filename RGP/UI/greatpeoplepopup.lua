@@ -1,4 +1,4 @@
-﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 4.0");
+﻿print("Loading GreatPeoplePopup.lua from RGP Mod, version 5.0");
 -- ===========================================================================
 --	Great People Popup
 -- ===========================================================================
@@ -26,6 +26,7 @@ local TAB_PADDING				: number = 10;
 local m_TopPanelConsideredHeight:number = 0;
 local m_greatPersonPanelIM:table = InstanceManager:new("PanelInstance",        "Content",  Controls.PeopleStack);
 local m_greatPersonRowIM  :table = InstanceManager:new("PastRecruitmentInstance",  "Content",  Controls.RecruitedStack);
+local m_plannerIM:table = InstanceManager:new("EraInstance",        "Content",  Controls.PlannerStack); -- Infixo planner tab
 local m_tabButtonIM       :table = InstanceManager:new("TabButtonInstance",			"Button",	Controls.TabContainer);
 local m_kGreatPeople   :table;
 local m_kData       :table;
@@ -50,6 +51,9 @@ local eClassProphet = GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].
 -- Infixo Filters (pulldowns)
 local m_filterClassID:number = -1; -- -1 for All, >-1 for Great Person Class ID
 local m_filterPlayerID:number = -1; -- -1 for All, >-1 for Player ID (as in GetLocalPlayer() or Players[])
+
+-- Infixo 2022-12-14
+local m_Eras :table;
 
 -- ===========================================================================
 function ChangeDisplayPlayerID(bBackward)
@@ -444,6 +448,7 @@ function AddRecruit( kData:table, kPerson:table )
 function ResetGreatPeopleInstances()
 	m_greatPersonPanelIM:ResetInstances();
 	m_greatPersonRowIM:ResetInstances();
+	m_plannerIM:ResetInstances();
 end
 
 -- ===========================================================================
@@ -470,6 +475,7 @@ function ViewCurrent( data:table )
     ResetGreatPeopleInstances();
     Controls.PeopleScroller:SetHide(false);
     Controls.RecruitedArea:SetHide(true);
+    Controls.PlannerArea:SetHide(true);
 
 	local kInstanceToShow:table = nil;
 	
@@ -657,6 +663,7 @@ function ViewPast( data:table )
   ResetGreatPeopleInstances();	
   Controls.PeopleScroller:SetHide(true);
   Controls.RecruitedArea:SetHide(false);
+  Controls.PlannerArea:SetHide(true);
 
   local localPlayerID         :number = Game.GetLocalPlayer();
   local iTotal:number = 0; -- Infixo
@@ -807,6 +814,93 @@ function ViewPast( data:table )
   Controls.RecruitedStack:CalculateSize();
   Controls.RecruitedScroller:CalculateSize();
 end
+
+
+-- =======================================================================================
+--  Layout the data for planner
+--  TODO: Planner uses past data passed in the "data" table
+-- =======================================================================================
+function ViewPlanner( data:table )
+  if (data == nil) then
+    UI.DataError("GreatPeople attempting to view past timeline data but received NIL instead.");
+    return;
+  end
+
+  ResetGreatPeopleInstances();	
+  Controls.PeopleScroller:SetHide(true);
+  Controls.RecruitedArea:SetHide(true);
+  Controls.PlannerArea:SetHide(false);
+
+  --local localPlayerID         :number = Game.GetLocalPlayer();
+
+  --local PADDING_FOR_SPACE_AROUND_TEXT :number = 20;
+
+--[[
+		local instance  :table  = m_greatPersonRowIM:GetInstance();
+		local classData :table = GameInfo.GreatPersonClasses[kPerson.ClassID];
+
+		if m_defaultPastRowHeight < 0 then
+		  m_defaultPastRowHeight = instance.Content:GetSizeY();
+		end
+		local rowHeight :number = math.max(m_defaultPastRowHeight, 72); -- 68 is for Civ icon
+
+		local date    :string = Calendar.MakeYearStr( kPerson.TurnGranted);
+		instance.EarnDate:SetText( date );
+
+--]]
+	--[[
+	-- adding dynamically an instance
+    if instance["m_EffectsIM"] ~= nil then
+      instance["m_EffectsIM"]:ResetInstances();
+    else
+      instance["m_EffectsIM"] = InstanceManager:new("PastEffectInstance", "Top", instance.EffectStack);
+    end
+	
+    if (kPerson.ActionNameText ~= nil and kPerson.ActionNameText ~= "") then
+      local effectInst:table  = instance["m_EffectsIM"]:GetInstance();
+	end
+	--]]
+
+	-- iterate through all eras (ex. Ancient and Future) and build instances for each one
+	local kEraInstances = {}; -- temp storage so can iterate through GPs only once
+	for era in GameInfo.Eras() do
+		if era.ChronologyIndex >= 2 and era.ChronologyIndex <= 8 then
+			local eraInstance :table  = m_plannerIM:GetInstance(); -- get a new instance of Era
+			local eraName:string = Locale.ToUpper(Locale.Lookup(era.Name));
+			eraInstance.EraName:SetText( eraName );
+			kEraInstances[ era.Name ] = eraInstance;
+		end
+	end
+
+			  -- Infixo: show all GPs from this era in the tooltip
+			  --local sEraType:string = GameInfo.Eras[kPerson.EraID].EraType;
+			  --local sGPClass:string = GameInfo.GreatPersonClasses[eClassID].GreatPersonClassType;
+			  --local tTT:table = {};
+			  
+	-- iterate through GPs and place them in specific era instances
+	for gp in GameInfo.GreatPersonIndividuals() do
+	
+		-- TODO: xxxxxxxxxxxx
+		
+	end
+	
+	Controls.PlannerStack:CalculateSize();
+	Controls.PlannerScroller:CalculateSize();
+
+    m_screenWidth = math.max(Controls.PlannerStack:GetSizeX(), 1024);
+    Controls.WoodPaneling2:SetSizeX( m_screenWidth );
+
+    -- Clamp overall popup size to not be larger than contents (overspills in 4k and eyefinitiy rigs.)
+    local screenX,_     :number = UIManager:GetScreenSizeVal();
+    if m_screenWidth > screenX then
+        m_screenWidth = screenX;
+    end
+
+    Controls.PopupContainer:SetSizeX( m_screenWidth );
+    Controls.ModalFrame:SetSizeX( m_screenWidth );
+	
+end -- ViewPlanner
+
 
 -- =======================================================================================
 -- Toggle Extended Recruit Info whether open or closed
@@ -1245,8 +1339,23 @@ function RefreshPreviousGreatPeople()
 end
 
 -- ===========================================================================
---  Tab callback
+function RefreshPlannerTab()
+	-- planner will also use previously recruited data
+	local kData :table	= {
+		Timeline		= {},
+		PointsByClass	= {},
+	};
+
+	PopulateData(kData, true);	-- use past data
+	ViewPlanner(kData);
+
+	m_kData = kData;
+end
+
 -- ===========================================================================
+--  Tab callbacks
+-- ===========================================================================
+
 function OnGreatPeopleClick( uiSelectedButton:table )
 	ResetTabButtons();
 	SetTabButtonsSelected(uiSelectedButton);
@@ -1258,9 +1367,6 @@ function OnGreatPeopleClick( uiSelectedButton:table )
 	Refresh(RefreshCurrentGreatPeople);
 end
 
--- ===========================================================================
---  Tab callback
--- ===========================================================================
 function OnPreviousRecruitedClick( uiSelectedButton:table )
 	ResetTabButtons();
 	SetTabButtonsSelected(uiSelectedButton);
@@ -1270,6 +1376,17 @@ function OnPreviousRecruitedClick( uiSelectedButton:table )
     Controls.Total:SetHide( false );
     -- Infixo end
 	Refresh(RefreshPreviousGreatPeople);
+end
+
+function OnPlannerClick( uiSelectedButton:table )
+	ResetTabButtons();
+	SetTabButtonsSelected(uiSelectedButton);
+    -- hide controls from previously recruited
+    Controls.ClassNamePull:SetHide( true );
+    Controls.CivLeaderPull:SetHide( true );
+    Controls.Total:SetHide( true );
+    -- Infixo end
+	Refresh(RefreshPlannerTab);
 end
 
 -- ===========================================================================
@@ -1401,7 +1518,17 @@ end
 
 -- =======================================================================================
 function LateInitialize()
-
+	--[[
+	TODO: populate reusable data here
+	--]]
+	-- supported great person classess
+	-- TODO: probably could be moved to DB
+	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_GENERAL.Planner = true;
+	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_ADMIRAL.Planner = true;
+	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_ENGINEER.Planner = true;
+	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_MERCHANT.Planner = true;
+	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_SCIENTIST.Planner = true;
+	-- detect which eras are there
 end
 
 -- =======================================================================================
@@ -1421,6 +1548,7 @@ function Initialize()
     
 	m_pGreatPeopleTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_GREAT_PEOPLE", OnGreatPeopleClick);
 	m_pPrevRecruitedTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_PREVIOUSLY_RECRUITED", OnPreviousRecruitedClick);
+	m_pPlannerTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_PLANNER", OnPlannerClick);
 
 	AddCustomTabs()
 
