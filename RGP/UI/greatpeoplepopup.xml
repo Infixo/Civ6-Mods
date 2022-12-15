@@ -257,13 +257,17 @@
 	<!-- TODO: selection checkbox -->
 	<!-- TODO: add icon of a civ that earned it, turn when earned -->
 	<Instance Name="PlannerInstance">
-		<Container ID="Content" Size="parent,auto" MinSize="parent,140" >
+		<Container ID="Content" Size="parent,auto" MinSize="parent,140">
 			<Line Start="0,0"      End="parent,0"      Width="1" Color="48,60,68,255" /> <!-- top line -->
 			<Line Start="0,parent" End="parent,parent" Width="1" Color="48,60,68,255" /> <!-- bottom line -->
 			<Image ID="Portrait"	   Anchor="L,T" Offset="4,4" Size="40,40"  Texture="GreatPeople160" /> <!-- portrait -->
 			<Label ID="IndividualName" Anchor="L,T" Offset="48,8" WrapWidth="parent-52" Style="GreatPeopleLargeText" String="$IndividualName$"/>
 			<Label ID="Charges" Anchor="L,T" Offset="48,28" Style="GreatPeopleLargeText" String="$Charges$"/>
 			<Label ID="Effect" Anchor="L,T" Offset="4,48" WrapWidth="parent-8" Style="GreatPeopleText" String="$Text$" />
+			<Label ID="Priority" Anchor="L,T" Offset="1,2" String="[ICON_New]" Hidden="1" />
+			<Label ID="Current" Anchor="R,T" Offset="4,7" String="[ICON_Exclamation]" ToolTip="LOC_HUD_CITY_CURRENT_FOCUS" Hidden="1" /> <!-- currently available -->
+			<Label ID="Claimed" Anchor="R,T" Offset="4,7" String="[ICON_CheckSuccess]" ToolTip="LOC_GREAT_PEOPLE_CLAIMED" Hidden="1" /> <!-- claimed by me -->
+			<Label ID="NoAvail" Anchor="R,T" Offset="4,7" String="[ICON_CheckFail]" ToolTip="LOC_TECH_KEY_UNAVAILABLE" Hidden="1" /> <!-- not available -->
 		</Container>
 	</Instance>
   

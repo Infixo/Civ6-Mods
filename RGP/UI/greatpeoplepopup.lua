@@ -481,9 +481,12 @@ end
 -- Infixo: find out if a GP has already been recruited
 --Game	GetGreatPeople GetPastTimeline
 ---> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
-function GreatPersonHasBeenRecruited(eIndividual:number)
+function GreatPersonHasBeenRecruited(eIndividual:number, eClaimant:number)
 	for _,pastGP in ipairs(Game.GetGreatPeople():GetPastTimeline()) do
-		if pastGP.Individual == eIndividual then return true; end
+		if pastGP.Individual == eIndividual then
+			if eClaimant == nil then return true; end -- default version, just checks if was claimed
+			if pastGP.Claimant == eClaimant then return true; end -- checks if was claimed by a specific civ
+		end
 	end
 	return false;
 end
@@ -844,6 +847,16 @@ end
 --  TODO: Planner uses past data passed in the "data" table
 -- =======================================================================================
 
+-- Infixo: find out if a GP is currently being recruited
+--Game	GetGreatPeople GetPastTimeline
+---> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
+function GreatPersonIsBeingRecruited(eIndividual:number)
+	for _,curGP in ipairs(Game.GetGreatPeople():GetTimeline()) do
+		if curGP.Individual == eIndividual then return true; end
+	end
+	return false;
+end
+
 function SetPortrait( individual:table, iconControl:table, size:number )
 	local portrait :string = "ICON_" .. individual.GreatPersonIndividualType;
 	textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(portrait, 160);
@@ -922,7 +935,7 @@ function ViewPlanner( data:table )
   Controls.RecruitedArea:SetHide(true);
   Controls.PlannerArea:SetHide(false);
 
-  --local localPlayerID         :number = Game.GetLocalPlayer();
+  local localPlayerID :number = Game.GetLocalPlayer();
 
   --local PADDING_FOR_SPACE_AROUND_TEXT :number = 20;
 
@@ -960,6 +973,16 @@ function ViewPlanner( data:table )
 			instance.IndividualName:SetText(Locale.Lookup(gp.Name));
 			instance.Charges:SetText( string.rep("[ICON_Charges_Large]", gp.ActionCharges) );
 			instance.Effect:SetText( GetEffectText(gp) );
+			instance.Current:SetHide( not GreatPersonIsBeingRecruited(gp.Index) );
+			instance.NoAvail:SetHide( not GreatPersonHasBeenRecruited(gp.Index) );
+			instance.Claimed:SetHide( not GreatPersonHasBeenRecruited(gp.Index, localPlayerID) );
+			if GreatPersonHasBeenRecruited(gp.Index, localPlayerID) then
+				instance.Claimed:SetHide(false);
+				instance.NoAvail:SetHide(true);
+			else
+				instance.Claimed:SetHide(true);
+				instance.NoAvail:SetHide( not GreatPersonHasBeenRecruited(gp.Index) );
+			end
 		end
 	
 		-- TODO: xxxxxxxxxxxx
