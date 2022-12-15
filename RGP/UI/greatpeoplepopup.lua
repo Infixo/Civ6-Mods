@@ -54,7 +54,7 @@ local m_filterClassID:number = -1; -- -1 for All, >-1 for Great Person Class ID
 local m_filterPlayerID:number = -1; -- -1 for All, >-1 for Player ID (as in GetLocalPlayer() or Players[])
 
 -- Infixo 2022-12-14
---local m_Eras :table;
+local m_plannerSelection = "GREAT_PERSON_CLASS_GENERAL";
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -896,7 +896,7 @@ function GetEffectText(greatPerson :table)
 		local name = Locale.Lookup("LOC_UI_PEDIA_GREATPERSON_ACTION", active_name, greatPerson.ActionCharges); -- {1_ActionName} ({2_ChargeAmount} {2_ChargeAmount : plural 1?charge; other?charges;})
 		local active_body = greatPerson.ActionEffectTextOverride or table.concat(active_ability, "[NEWLINE]");
 		--AddHeaderBody(name, active_body);
-		table.insert(effTxt, name);
+		--table.insert(effTxt, name);
 		table.insert(effTxt, Locale.Lookup(active_body));
 	end
 
@@ -904,7 +904,7 @@ function GetEffectText(greatPerson :table)
 		local passive_name = greatPerson.BirthNameTextOverride or "LOC_GREATPERSON_PASSIVE_NAME_DEFAULT";
 		local passive_body = greatPerson.BirthEffectTextOverride or table.concat(passive_ability, "[NEWLINE]");
 		--AddHeaderBody(passive_name, passive_body);
-		table.insert(effTxt, Locale.Lookup(passive_name));
+		--table.insert(effTxt, Locale.Lookup(passive_name));
 		table.insert(effTxt, Locale.Lookup(passive_body));
 	end
 
@@ -944,7 +944,7 @@ function ViewPlanner( data:table )
 	-- iterate through GPs and place them in specific era instances
 	for gp in GameInfo.GreatPersonIndividuals() do
 		-- TODO: filter
-		if gp.GreatPersonClassType == "GREAT_PERSON_CLASS_SCIENTIST" then
+		if gp.GreatPersonClassType == m_plannerSelection then
 			--dshowtable(gp);
 			--print("===================");
 			-- add a new GP instance
@@ -958,6 +958,7 @@ function ViewPlanner( data:table )
 			--dshowtable(instance);
 			SetPortrait( gp, instance.Portrait, 40 );
 			instance.IndividualName:SetText(Locale.Lookup(gp.Name));
+			instance.Charges:SetText( string.rep("[ICON_Charges_Large]", gp.ActionCharges) );
 			instance.Effect:SetText( GetEffectText(gp) );
 		end
 	
@@ -981,6 +982,20 @@ function ViewPlanner( data:table )
     Controls.ModalFrame:SetSizeX( m_screenWidth );
 	
 end -- ViewPlanner
+
+-- =======================================================================================
+-- Change the type of great people displayed
+function PlannerSelectionChanged(sClass:string)
+	m_plannerSelection = sClass;
+	Controls.PlannerClassName:SetText( Locale.Lookup(GameInfo.GreatPersonClasses[sClass].Name) );
+	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(GameInfo.GreatPersonClasses[sClass].ActionIcon, SIZE_ACTION_ICON);
+	if(textureSheet == nil or textureSheet == "") then
+		UI.DataError("Could not find icon in ViewCurrent: icon=\""..actionIcon.."\", iconSize="..tostring(SIZE_ACTION_ICON) );
+	else
+		Controls.PlannerClassIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+	end
+	Refresh();
+end
 
 
 -- =======================================================================================
@@ -1648,6 +1663,14 @@ function Initialize()
     Controls.ModalBG:SetHide(true);
     Controls.ModalScreenClose:RegisterCallback(Mouse.eLClick, OnClose);
     Controls.ModalScreenTitle:SetText(Locale.ToUpper(Locale.Lookup("LOC_GREAT_PEOPLE_TITLE")));
+	
+	-- Infixo 2022-12-15
+	Controls.PlannerGeneralButton:RegisterCallback(  Mouse.eLClick, function() PlannerSelectionChanged("GREAT_PERSON_CLASS_GENERAL");   Refresh(); end);
+	Controls.PlannerAdmiralButton:RegisterCallback(  Mouse.eLClick, function() PlannerSelectionChanged("GREAT_PERSON_CLASS_ADMIRAL");   Refresh(); end);
+	Controls.PlannerEngineerButton:RegisterCallback( Mouse.eLClick, function() PlannerSelectionChanged("GREAT_PERSON_CLASS_ENGINEER");  Refresh(); end);
+	Controls.PlannerMerchantButton:RegisterCallback( Mouse.eLClick, function() PlannerSelectionChanged("GREAT_PERSON_CLASS_MERCHANT");  Refresh(); end);
+	Controls.PlannerScientistButton:RegisterCallback(Mouse.eLClick, function() PlannerSelectionChanged("GREAT_PERSON_CLASS_SCIENTIST"); Refresh(); end);
+	PlannerSelectionChanged("GREAT_PERSON_CLASS_GENERAL");
 
     -- Game engine Events
     Events.LocalPlayerChanged.Add( OnLocalPlayerChanged );

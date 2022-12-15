@@ -52,22 +52,31 @@
 	<!-- Infixo 2022-12-14 -->
 	<!-- Great People planner window -->
 	<Box ID="PlannerArea" Size="parent,parent" Color="11,27,40,255">
-		<Image ID="PlannerClassIcon"  Anchor="L,T" Offset="40,60" Size="38,38" Texture="UnitActions38" />
-		<Label ID="PlannerClassName"  Anchor="L,T" Offset="85,67" Color="GreatPeopleRow"  Style="FontNormal24" SmallCaps="24" SmallCapsType="EveryWord" String="$ Class Name $" />
-		<!-- buttons to select the great person class -->
-		<Stack Anchor="C,T" Offset="0,80" StackGrowth="Right" StackPadding="20">
-			<GridButton ID="PlannerGeneralButton"   Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_GENERAL_NAME"   />
-			<GridButton ID="PlannerAdmiralButton"   Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_ADMIRAL_NAME"   />
-			<GridButton ID="PlannerEngineerButton"  Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_ENGINEER_NAME"  />
-			<GridButton ID="PlannerMerchantButton"  Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_MERCHANT_NAME"  />
-			<GridButton ID="PlannerScientistButton" Size="150,38" Style="TabButton" FontSize="14" String="LOC_GREAT_PERSON_CLASS_SCIENTIST_NAME" />
+		<!-- icon buttons to select the great person class -->
+		<Stack Anchor="L,T" Offset="10,38" StackGrowth="Right" StackPadding="4">
+			<Image Size="38,38" Icon="ICON_UNITOPERATION_GENERAL_ACTION" IconSize="38">
+				<Button ID="PlannerGeneralButton" Anchor="C,C" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_GREAT_PERSON_CLASS_GENERAL_NAME}" />
+			</Image>
+			<Image Size="38,38" Icon="ICON_UNITOPERATION_ADMIRAL_ACTION"   IconSize="38">
+				<Button ID="PlannerAdmiralButton" Anchor="C,C" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_GREAT_PERSON_CLASS_ADMIRAL_NAME}" />
+			</Image>
+			<Image Size="38,38" Icon="ICON_UNITOPERATION_ENGINEER_ACTION"  IconSize="38">
+				<Button ID="PlannerEngineerButton" Anchor="C,C" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_GREAT_PERSON_CLASS_ENGINEER_NAME}" />
+			</Image>
+			<Image Size="38,38" Icon="ICON_UNITOPERATION_MERCHANT_ACTION"  IconSize="38">
+				<Button ID="PlannerMerchantButton" Anchor="C,C" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_GREAT_PERSON_CLASS_MERCHANT_NAME}" />
+			</Image>
+			<Image Size="38,38" Icon="ICON_UNITOPERATION_SCIENTIST_ACTION" IconSize="38">
+				<Button ID="PlannerScientistButton" Anchor="C,C" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_GREAT_PERSON_CLASS_SCIENTIST_NAME}" />
+			</Image>
+			<Image ID="PlannerClassIcon" Offset="24,0" Size="38,38" Texture="UnitActions38" />
+			<Label ID="PlannerClassName" Offset="4,7" Color="GreatPeopleRow"  Style="FontNormal24" SmallCaps="24" SmallCapsType="EveryWord" String="$ Class Name $" />
 		</Stack>
-		
-		<Line Start="0,125" End="parent,125" Width="2" Color="48,60,68,255" />
-	
-		<ScrollPanel ID="PlannerScroller" Offset="0,125" Size="parent,parent-125"  Vertical="0" AutoScrollBar="1">
-			  <Stack ID="PlannerStack" Offset="0,0"   StackGrowth="Right" StackPadding="0" />
-			  <ScrollBar  Anchor="L,B"  Offset="0,10"   Size="parent-10,8"    Style="ScrollHorizontalBackingAlt">
+		<!-- table-like area with eras as columns -->
+		<Line Start="0,82" End="parent,82" Width="2" Color="48,60,68,255" />
+		<ScrollPanel ID="PlannerScroller" Offset="0,82" Size="parent,parent-82"  Vertical="0" AutoScrollBar="1">
+			  <Stack ID="PlannerStack" StackGrowth="Right" StackPadding="0" />
+			  <ScrollBar  Anchor="L,B"  Offset="0,4"   Size="parent,8"    Style="ScrollHorizontalBackingAlt">
 				<Thumb  Style="ScrollThumbHAlt" />
 			  </ScrollBar>
 		</ScrollPanel>
@@ -228,15 +237,14 @@
   <!-- Great People Planner - Era Instance -->
   <!-- Vertical list of GPs from one Era; era name at the top, scroller to the right -->
 	<Instance Name="EraInstance">
-		<Container ID="Content"                                          Size="250,parent">
+		<Container ID="Content" Size="272,parent">
 			<Label ID="EraName" Anchor="C,T" Offset="0,10" Style="GreatPeopleLargeText" String="$EraName$"/>
 			<!-- vertical lines -->
 			<Line Start="0,0"      End="0,parent"      Width="1" Color="48,60,68,255" /> 
 			<Line Start="parent,0" End="parent,parent" Width="1" Color="48,60,68,255" /> 
-  
 			<!-- All GPs scrolled list -->
-			<ScrollPanel ID="EraScroller" Offset="10,30" Size="parent-5,parent-30"  Vertical="1" AutoScrollBar="1">
-				<Stack  ID="EraStack" StackGrowth="Down"/>
+			<ScrollPanel ID="EraScroller" Offset="0,30" Size="parent,parent-30"  Vertical="1" AutoScrollBar="1">
+				<Stack ID="EraStack" StackGrowth="Down"/>
 				<!--<ScrollBar        Anchor="R,T"  Offset="10,0"   Size="8,parent-300"   Style="ScrollVerticalBackingAlt">
 					<Thumb          Style="ScrollThumbHAlt" />
 				</ScrollBar>-->
@@ -249,12 +257,13 @@
 	<!-- TODO: selection checkbox -->
 	<!-- TODO: add icon of a civ that earned it, turn when earned -->
 	<Instance Name="PlannerInstance">
-		<Container ID="Content" Size="parent,150">
+		<Container ID="Content" Size="parent,auto" MinSize="parent,140" >
 			<Line Start="0,0"      End="parent,0"      Width="1" Color="48,60,68,255" /> <!-- top line -->
 			<Line Start="0,parent" End="parent,parent" Width="1" Color="48,60,68,255" /> <!-- bottom line -->
-			<Image ID="Portrait"	   Anchor="L,T" Offset="0,0" Size="40,40"  Texture="GreatPeople160" /> <!-- portrait -->
-			<Label ID="IndividualName" Anchor="L,T" Offset="50,10" Align="C,C" WrapWidth="190" Style="GreatPeopleLargeText" String="$IndividualName$"/>
-			<Label ID="Effect"         Anchor="L,T" Offset="0,45" WrapWidth="230" Style="GreatPeopleText" String="$Text$" />
+			<Image ID="Portrait"	   Anchor="L,T" Offset="4,4" Size="40,40"  Texture="GreatPeople160" /> <!-- portrait -->
+			<Label ID="IndividualName" Anchor="L,T" Offset="48,8" WrapWidth="parent-52" Style="GreatPeopleLargeText" String="$IndividualName$"/>
+			<Label ID="Charges" Anchor="L,T" Offset="48,28" Style="GreatPeopleLargeText" String="$Charges$"/>
+			<Label ID="Effect" Anchor="L,T" Offset="4,48" WrapWidth="parent-8" Style="GreatPeopleText" String="$Text$" />
 		</Container>
 	</Instance>
   
