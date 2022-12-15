@@ -228,37 +228,34 @@
   <!-- Great People Planner - Era Instance -->
   <!-- Vertical list of GPs from one Era; era name at the top, scroller to the right -->
 	<Instance Name="EraInstance">
-		<Container ID="Content"                                          Size="250,670">
+		<Container ID="Content"                                          Size="250,parent">
 			<Label ID="EraName" Anchor="C,T" Offset="0,10" Style="GreatPeopleLargeText" String="$EraName$"/>
 			<!-- vertical lines -->
-			<Line Start="0,0"        End="0,parent"        Width="1" Color="48,60,68,255" /> 
-			<Line Start="parent-1,0" End="parent-1,parent" Width="1" Color="48,60,68,255" /> 
+			<Line Start="0,0"      End="0,parent"      Width="1" Color="48,60,68,255" /> 
+			<Line Start="parent,0" End="parent,parent" Width="1" Color="48,60,68,255" /> 
   
-	  <!-- All GPs scrolled list -->
-      <ScrollPanel        ID="EraScroller"                      Offset="10,10" Size="parent-5,parent-10"  Vertical="1" AutoScrollBar="1">
-        <Stack            ID="EraStack"    StackGrowth="Down"    StackPadding="4" />
-        <ScrollBar        Anchor="R,T"  Offset="10,0"   Size="8,parent-300"   Style="ScrollVerticalBackingAlt">
-          <Thumb          Style="ScrollThumbHAlt" />
-        </ScrollBar>
-      </ScrollPanel>
+			<!-- All GPs scrolled list -->
+			<ScrollPanel ID="EraScroller" Offset="10,30" Size="parent-5,parent-30"  Vertical="1" AutoScrollBar="1">
+				<Stack  ID="EraStack" StackGrowth="Down"/>
+				<!--<ScrollBar        Anchor="R,T"  Offset="10,0"   Size="8,parent-300"   Style="ScrollVerticalBackingAlt">
+					<Thumb          Style="ScrollThumbHAlt" />
+				</ScrollBar>-->
+			</ScrollPanel>
+		</Container>
+	</Instance>
   
-  </Instance>
-  
-  <!-- Great People Planner - Great Person Instance -->
-  <!-- Single GP instance; contains GP picture, name, effects -->
-  <!-- TODO: selection checkbox -->
-  <!-- TODO: add icon of a civ that earned it, turn when earned -->
-  <Instance Name="PlannerInstance">
-  
-    <Container        ID="Content"                                          Size="250,670">
-  
-      <Box Anchor="L,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the left -->
-      <Box Anchor="R,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the right -->
-	  
-      <Image    ID="Portrait"	 Anchor="C,T" Offset="0,84"  Size="160,160"  Texture="GreatPeople160" /> <!-- portrait -->
-      <Label	ID="IndividualName"     Anchor="C,T"  Offset="0,40" Align="C,C" WrapWidth="210" Style="GreatPeopleLargeText"  String="$IndividualName$"/>
-      <Label    ID="Effect"               Anchor="L,T"  Offset="54,2"   WrapWidth="140" Style="GreatPeopleText" String="$Text$" />
-  
-  </Instance>
+	<!-- Great People Planner - Great Person Instance -->
+	<!-- Single GP instance; contains GP picture, name, effects -->
+	<!-- TODO: selection checkbox -->
+	<!-- TODO: add icon of a civ that earned it, turn when earned -->
+	<Instance Name="PlannerInstance">
+		<Container ID="Content" Size="parent,150">
+			<Line Start="0,0"      End="parent,0"      Width="1" Color="48,60,68,255" /> <!-- top line -->
+			<Line Start="0,parent" End="parent,parent" Width="1" Color="48,60,68,255" /> <!-- bottom line -->
+			<Image ID="Portrait"	   Anchor="L,T" Offset="0,0" Size="40,40"  Texture="GreatPeople160" /> <!-- portrait -->
+			<Label ID="IndividualName" Anchor="L,T" Offset="50,10" Align="C,C" WrapWidth="190" Style="GreatPeopleLargeText" String="$IndividualName$"/>
+			<Label ID="Effect"         Anchor="L,T" Offset="0,45" WrapWidth="230" Style="GreatPeopleText" String="$Text$" />
+		</Container>
+	</Instance>
   
 </Context>

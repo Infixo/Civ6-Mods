@@ -9,6 +9,7 @@ include("SupportFunctions");
 include("Civ6Common"); --DifferentiateCiv
 include("ModalScreen_PlayerYieldsHelper");
 include("GameCapabilities");
+include("GameEffectsText"); -- GetModifierText
 
 -- ===========================================================================
 --	CONSTANTS
@@ -53,7 +54,29 @@ local m_filterClassID:number = -1; -- -1 for All, >-1 for Great Person Class ID
 local m_filterPlayerID:number = -1; -- -1 for All, >-1 for Player ID (as in GetLocalPlayer() or Players[])
 
 -- Infixo 2022-12-14
-local m_Eras :table;
+--local m_Eras :table;
+
+-- ===========================================================================
+-- DEBUG ROUTINES
+-- ===========================================================================
+
+-- debug routine - prints a table (no recursion)
+function dshowtable(tTable:table)
+	if tTable == nil then print("dshowtable: table is nil"); return; end
+	for k,v in pairs(tTable) do
+		print(k, type(v), tostring(v));
+	end
+end
+
+-- debug routine - prints a table, and tables inside recursively (up to 5 levels)
+function dshowrectable(tTable:table, iLevel:number)
+	local level:number = 0;
+	if iLevel ~= nil then level = iLevel; end
+	for k,v in pairs(tTable) do
+		print(string.rep("---:",level), k, type(v), tostring(v));
+		if type(v) == "table" and level < 5 then dshowrectable(v, level+1); end
+	end
+end
 
 -- ===========================================================================
 function ChangeDisplayPlayerID(bBackward)
@@ -820,6 +843,74 @@ end
 --  Layout the data for planner
 --  TODO: Planner uses past data passed in the "data" table
 -- =======================================================================================
+
+function SetPortrait( individual:table, iconControl:table, size:number )
+	local portrait :string = "ICON_" .. individual.GreatPersonIndividualType;
+	textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(portrait, 160);
+	--print("icon: portrait, OffX, OffY, Sheet", portrait, textureOffsetX, textureOffsetY, textureSheet);
+	if textureSheet == nil then   -- Use a default if none found
+		print("WARNING: Could not find icon atlas entry for the individual Great Person '"..portrait.."', using default instead.");
+		portrait = "ICON_GENERIC_" .. individual.GreatPersonClassType .. "_" .. individual.Gender;
+		portrait = portrait:gsub("_CLASS","_INDIVIDUAL");
+	end
+	local isValid = iconControl:SetIcon(portrait, size == nil and 160 or size);
+	if (not isValid) then
+		UI.DataError("Could not find icon for "..portrait);
+	end
+end
+
+-- the game only provides past timeline and current info
+-- there is no easy way to decode effects for future people
+-- the below code is taken from civilopedia page
+function GetEffectText(greatPerson :table)
+
+	local greatPersonType = greatPerson.GreatPersonIndividualType;
+
+	local active_ability = {};
+	for row in GameInfo.GreatPersonIndividualActionModifiers() do
+		if(row.GreatPersonIndividualType == greatPersonType) then
+			local text = GetModifierText(row.ModifierId, "Summary");
+			if(text) then
+				table.insert(active_ability, text);
+			end
+		end
+	end
+
+	local passive_ability = {};
+	for row in GameInfo.GreatPersonIndividualBirthModifiers() do
+		if(row.GreatPersonIndividualType == greatPersonType) then
+			local text = GetModifierText(row.ModifierId, "Summary");
+			if(text) then
+				table.insert(passive_ability, text);
+			end
+		end
+	end
+
+	local has_active = (greatPerson.ActionCharges > 0) and (#active_ability > 0 or greatPerson.ActionEffectTextOverride);
+	local has_passive = #passive_ability > 0 or greatPerson.BirthEffectTextOverride;
+
+	local effTxt :table = {};
+	
+	if(has_active) then
+		local active_name = greatPerson.ActionNameTextOverride or "LOC_GREATPERSON_ACTION_NAME_DEFAULT";
+		local name = Locale.Lookup("LOC_UI_PEDIA_GREATPERSON_ACTION", active_name, greatPerson.ActionCharges); -- {1_ActionName} ({2_ChargeAmount} {2_ChargeAmount : plural 1?charge; other?charges;})
+		local active_body = greatPerson.ActionEffectTextOverride or table.concat(active_ability, "[NEWLINE]");
+		--AddHeaderBody(name, active_body);
+		table.insert(effTxt, name);
+		table.insert(effTxt, Locale.Lookup(active_body));
+	end
+
+	if(has_passive) then
+		local passive_name = greatPerson.BirthNameTextOverride or "LOC_GREATPERSON_PASSIVE_NAME_DEFAULT";
+		local passive_body = greatPerson.BirthEffectTextOverride or table.concat(passive_ability, "[NEWLINE]");
+		--AddHeaderBody(passive_name, passive_body);
+		table.insert(effTxt, Locale.Lookup(passive_name));
+		table.insert(effTxt, Locale.Lookup(passive_body));
+	end
+
+	return table.concat(effTxt, "[NEWLINE]");
+end
+
 function ViewPlanner( data:table )
   if (data == nil) then
     UI.DataError("GreatPeople attempting to view past timeline data but received NIL instead.");
@@ -835,50 +926,40 @@ function ViewPlanner( data:table )
 
   --local PADDING_FOR_SPACE_AROUND_TEXT :number = 20;
 
---[[
-		local instance  :table  = m_greatPersonRowIM:GetInstance();
-		local classData :table = GameInfo.GreatPersonClasses[kPerson.ClassID];
-
-		if m_defaultPastRowHeight < 0 then
-		  m_defaultPastRowHeight = instance.Content:GetSizeY();
-		end
-		local rowHeight :number = math.max(m_defaultPastRowHeight, 72); -- 68 is for Civ icon
-
-		local date    :string = Calendar.MakeYearStr( kPerson.TurnGranted);
-		instance.EarnDate:SetText( date );
-
---]]
-	--[[
-	-- adding dynamically an instance
-    if instance["m_EffectsIM"] ~= nil then
-      instance["m_EffectsIM"]:ResetInstances();
-    else
-      instance["m_EffectsIM"] = InstanceManager:new("PastEffectInstance", "Top", instance.EffectStack);
-    end
-	
-    if (kPerson.ActionNameText ~= nil and kPerson.ActionNameText ~= "") then
-      local effectInst:table  = instance["m_EffectsIM"]:GetInstance();
-	end
-	--]]
 
 	-- iterate through all eras (ex. Ancient and Future) and build instances for each one
 	local kEraInstances = {}; -- temp storage so can iterate through GPs only once
 	for era in GameInfo.Eras() do
 		if era.ChronologyIndex >= 2 and era.ChronologyIndex <= 8 then
 			local eraInstance :table  = m_plannerIM:GetInstance(); -- get a new instance of Era
-			local eraName:string = Locale.ToUpper(Locale.Lookup(era.Name));
-			eraInstance.EraName:SetText( eraName );
-			kEraInstances[ era.Name ] = eraInstance;
+			eraInstance.EraStack:DestroyAllChildren();
+			--eraInstance.kPlannerIM = InstanceManager:new("PlannerInstance", "Content", eraInstance.EraStack);
+			eraInstance.EraName:SetText( Locale.ToUpper(Locale.Lookup(era.Name)) );
+			kEraInstances[ era.EraType ] = eraInstance;
 		end
 	end
+	--dshowtable(kEraInstances);
 
-			  -- Infixo: show all GPs from this era in the tooltip
-			  --local sEraType:string = GameInfo.Eras[kPerson.EraID].EraType;
-			  --local sGPClass:string = GameInfo.GreatPersonClasses[eClassID].GreatPersonClassType;
-			  --local tTT:table = {};
 			  
 	-- iterate through GPs and place them in specific era instances
 	for gp in GameInfo.GreatPersonIndividuals() do
+		-- TODO: filter
+		if gp.GreatPersonClassType == "GREAT_PERSON_CLASS_SCIENTIST" then
+			--dshowtable(gp);
+			--print("===================");
+			-- add a new GP instance
+			local instance :table = {};
+			--print("era instance is", kEraInstances[gp.EraType]);
+			--dshowtable(kEraInstances[gp.EraType]);
+			--print("===================");
+			--local instance :table = kEraInstances[gp.EraType].kPlannerIM:GetInstance(); -- get a new instance of Planner 
+			ContextPtr:BuildInstanceForControl("PlannerInstance", instance, kEraInstances[gp.EraType].EraStack);
+			--print("instance is", instance);
+			--dshowtable(instance);
+			SetPortrait( gp, instance.Portrait, 40 );
+			instance.IndividualName:SetText(Locale.Lookup(gp.Name));
+			instance.Effect:SetText( GetEffectText(gp) );
+		end
 	
 		-- TODO: xxxxxxxxxxxx
 		
@@ -888,7 +969,7 @@ function ViewPlanner( data:table )
 	Controls.PlannerScroller:CalculateSize();
 
     m_screenWidth = math.max(Controls.PlannerStack:GetSizeX(), 1024);
-    Controls.WoodPaneling2:SetSizeX( m_screenWidth );
+    --Controls.WoodPaneling2:SetSizeX( m_screenWidth );
 
     -- Clamp overall popup size to not be larger than contents (overspills in 4k and eyefinitiy rigs.)
     local screenX,_     :number = UIManager:GetScreenSizeVal();
@@ -1548,7 +1629,7 @@ function Initialize()
     
 	m_pGreatPeopleTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_GREAT_PEOPLE", OnGreatPeopleClick);
 	m_pPrevRecruitedTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_PREVIOUSLY_RECRUITED", OnPreviousRecruitedClick);
-	m_pPlannerTabInstance = AddTabInstance("LOC_GREAT_PEOPLE_TAB_PLANNER", OnPlannerClick);
+	m_pPlannerTabInstance = AddTabInstance("LOC_GAMESUMMARY_OVERVIEW", OnPlannerClick);
 
 	AddCustomTabs()
 
