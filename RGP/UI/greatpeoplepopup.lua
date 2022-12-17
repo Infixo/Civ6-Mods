@@ -207,6 +207,7 @@ function AddRecruit( kData:table, kPerson:table )
     if kPerson.IndividualID ~= nil then
       local individualName:string = Locale.ToUpper(kPerson.Name);
       instance.IndividualName:SetText( individualName );
+	  instance.Priority:SetHide( not GreatPersonIsSelected(individualData.GreatPersonIndividualType) );
     end
 
     if kPerson.EraID ~= nil then
@@ -453,6 +454,7 @@ function AddRecruit( kData:table, kPerson:table )
     instance.ClassName:SetHide( noneAvailable );
     --instance.TitleLine:SetHide( noneAvailable ); -- Infixo: not used
     instance.IndividualName:SetHide( noneAvailable );
+	--instance.Priority:SetHide(true);
     instance.EraName:SetHide( noneAvailable );
     instance.MainInfo:SetHide( noneAvailable );
     instance.BiographyBackButton:SetHide( noneAvailable );
@@ -848,8 +850,6 @@ end
 -- =======================================================================================
 
 -- Infixo: find out if a GP is currently being recruited
---Game	GetGreatPeople GetPastTimeline
----> table of { Class, Individual, Era, Claimant, Cost, TurnGranted }
 function GreatPersonIsBeingRecruited(eIndividual:number)
 	for _,curGP in ipairs(Game.GetGreatPeople():GetTimeline()) do
 		if curGP.Individual == eIndividual then return true; end
@@ -905,18 +905,16 @@ function GetEffectText(greatPerson :table)
 	local effTxt :table = {};
 	
 	if(has_active) then
-		local active_name = greatPerson.ActionNameTextOverride or "LOC_GREATPERSON_ACTION_NAME_DEFAULT";
-		local name = Locale.Lookup("LOC_UI_PEDIA_GREATPERSON_ACTION", active_name, greatPerson.ActionCharges); -- {1_ActionName} ({2_ChargeAmount} {2_ChargeAmount : plural 1?charge; other?charges;})
+		--local active_name = greatPerson.ActionNameTextOverride or "LOC_GREATPERSON_ACTION_NAME_DEFAULT";
+		--local name = Locale.Lookup("LOC_UI_PEDIA_GREATPERSON_ACTION", active_name, greatPerson.ActionCharges); -- {1_ActionName} ({2_ChargeAmount} {2_ChargeAmount : plural 1?charge; other?charges;})
 		local active_body = greatPerson.ActionEffectTextOverride or table.concat(active_ability, "[NEWLINE]");
-		--AddHeaderBody(name, active_body);
 		--table.insert(effTxt, name);
 		table.insert(effTxt, Locale.Lookup(active_body));
 	end
 
 	if(has_passive) then
-		local passive_name = greatPerson.BirthNameTextOverride or "LOC_GREATPERSON_PASSIVE_NAME_DEFAULT";
+		--local passive_name = greatPerson.BirthNameTextOverride or "LOC_GREATPERSON_PASSIVE_NAME_DEFAULT";
 		local passive_body = greatPerson.BirthEffectTextOverride or table.concat(passive_ability, "[NEWLINE]");
-		--AddHeaderBody(passive_name, passive_body);
 		--table.insert(effTxt, Locale.Lookup(passive_name));
 		table.insert(effTxt, Locale.Lookup(passive_body));
 	end
@@ -924,21 +922,25 @@ function GetEffectText(greatPerson :table)
 	return table.concat(effTxt, "[NEWLINE]");
 end
 
+function GreatPersonSelectionChanged(instance:table, sGP:string)
+	local isSelected:boolean = GreatPersonIsSelected(sGP);
+	isSelected = not isSelected;
+	instance.Priority:SetHide( not isSelected );
+	GreatPersonSetSelected(sGP, isSelected);
+end
+
 function ViewPlanner( data:table )
-  if (data == nil) then
-    UI.DataError("GreatPeople attempting to view past timeline data but received NIL instead.");
-    return;
-  end
+	if (data == nil) then
+		UI.DataError("GreatPeople attempting to view past timeline data but received NIL instead.");
+		return;
+	end
 
-  ResetGreatPeopleInstances();	
-  Controls.PeopleScroller:SetHide(true);
-  Controls.RecruitedArea:SetHide(true);
-  Controls.PlannerArea:SetHide(false);
+	ResetGreatPeopleInstances();	
+	Controls.PeopleScroller:SetHide(true);
+	Controls.RecruitedArea:SetHide(true);
+	Controls.PlannerArea:SetHide(false);
 
-  local localPlayerID :number = Game.GetLocalPlayer();
-
-  --local PADDING_FOR_SPACE_AROUND_TEXT :number = 20;
-
+	local localPlayerID :number = Game.GetLocalPlayer();
 
 	-- iterate through all eras (ex. Ancient and Future) and build instances for each one
 	local kEraInstances = {}; -- temp storage so can iterate through GPs only once
@@ -953,25 +955,18 @@ function ViewPlanner( data:table )
 	end
 	--dshowtable(kEraInstances);
 
-			  
 	-- iterate through GPs and place them in specific era instances
 	for gp in GameInfo.GreatPersonIndividuals() do
 		-- TODO: filter
 		if gp.GreatPersonClassType == m_plannerSelection then
-			--dshowtable(gp);
-			--print("===================");
 			-- add a new GP instance
 			local instance :table = {};
-			--print("era instance is", kEraInstances[gp.EraType]);
-			--dshowtable(kEraInstances[gp.EraType]);
-			--print("===================");
-			--local instance :table = kEraInstances[gp.EraType].kPlannerIM:GetInstance(); -- get a new instance of Planner 
 			ContextPtr:BuildInstanceForControl("PlannerInstance", instance, kEraInstances[gp.EraType].EraStack);
-			--print("instance is", instance);
 			--dshowtable(instance);
-			SetPortrait( gp, instance.Portrait, 40 );
+			SetPortrait( gp, instance.PortraitImage, 40 );
 			instance.IndividualName:SetText(Locale.Lookup(gp.Name));
 			instance.Charges:SetText( string.rep("[ICON_Charges_Large]", gp.ActionCharges) );
+			instance.Charges:SetToolTipString( Locale.Lookup("LOC_UNIT_ACTION_CHARGES", gp.ActionCharges) );
 			instance.Effect:SetText( GetEffectText(gp) );
 			instance.Current:SetHide( not GreatPersonIsBeingRecruited(gp.Index) );
 			instance.NoAvail:SetHide( not GreatPersonHasBeenRecruited(gp.Index) );
@@ -983,17 +978,16 @@ function ViewPlanner( data:table )
 				instance.Claimed:SetHide(true);
 				instance.NoAvail:SetHide( not GreatPersonHasBeenRecruited(gp.Index) );
 			end
+			-- selection button and marker
+			instance.Priority:SetHide( not GreatPersonIsSelected(gp.GreatPersonIndividualType) );
+			instance.PortraitButton:RegisterCallback( Mouse.eLClick, function() GreatPersonSelectionChanged(instance, gp.GreatPersonIndividualType); end);
 		end
-	
-		-- TODO: xxxxxxxxxxxx
-		
 	end
 	
 	Controls.PlannerStack:CalculateSize();
 	Controls.PlannerScroller:CalculateSize();
 
     m_screenWidth = math.max(Controls.PlannerStack:GetSizeX(), 1024);
-    --Controls.WoodPaneling2:SetSizeX( m_screenWidth );
 
     -- Clamp overall popup size to not be larger than contents (overspills in 4k and eyefinitiy rigs.)
     local screenX,_     :number = UIManager:GetScreenSizeVal();
@@ -1635,19 +1629,27 @@ function AddCustomTabs()
 	-- No custom tabs in base games
 end
 
+
+-- ===========================================================================
+-- SAVING/LOADING PERSISTENT DATA
+-- each GP in a separate player slot
+-- slot name is "RGP_xxx" where xxx is GP type
+-- value is "1" if selected, "0" if not selected
+-- ===========================================================================
+
+function GreatPersonIsSelected(sGP:string)
+	local sData:string = PlayerConfigurations[Game.GetLocalPlayer()]:GetValue("RGP_"..sGP);
+	return sData == "1";
+end
+
+function GreatPersonSetSelected(sGP:string, isSelected:boolean)
+	local sData:string = ( isSelected and "1" or "0");
+	PlayerConfigurations[Game.GetLocalPlayer()]:SetValue("RGP_"..sGP, sData); -- store
+end
+
+
 -- =======================================================================================
 function LateInitialize()
-	--[[
-	TODO: populate reusable data here
-	--]]
-	-- supported great person classess
-	-- TODO: probably could be moved to DB
-	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_GENERAL.Planner = true;
-	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_ADMIRAL.Planner = true;
-	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_ENGINEER.Planner = true;
-	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_MERCHANT.Planner = true;
-	GameInfo.GreatPersonClasses.GREAT_PERSON_CLASS_SCIENTIST.Planner = true;
-	-- detect which eras are there
 end
 
 -- =======================================================================================

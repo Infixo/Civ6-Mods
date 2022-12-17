@@ -75,10 +75,10 @@
 		<!-- table-like area with eras as columns -->
 		<Line Start="0,82" End="parent,82" Width="2" Color="48,60,68,255" />
 		<ScrollPanel ID="PlannerScroller" Offset="0,82" Size="parent,parent-82"  Vertical="0" AutoScrollBar="1">
-			  <Stack ID="PlannerStack" StackGrowth="Right" StackPadding="0" />
-			  <ScrollBar  Anchor="L,B"  Offset="0,4"   Size="parent,8"    Style="ScrollHorizontalBackingAlt">
+			<Stack ID="PlannerStack" StackGrowth="Right" StackPadding="0" />
+			<ScrollBar  Anchor="L,B"  Offset="0,4"   Size="parent,8"    Style="ScrollHorizontalBackingAlt">
 				<Thumb  Style="ScrollThumbHAlt" />
-			  </ScrollBar>
+			</ScrollBar>
 		</ScrollPanel>
 	</Box>
 
@@ -102,7 +102,8 @@
     <Container        ID="Content"                                          Size="212,670">
       <Box Anchor="L,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the left -->
       <Box Anchor="R,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the right -->
-      <Grid		ID="FadedBackground"	Anchor="C,T"	Offset="-1,0"	Size="parent-10,parent-46" Texture="GreatPeople_Overlay" SliceCorner="13,13" SliceSize="1,1" SliceTextureSize="25,25" Hidden="1" />
+      <Grid		ID="FadedBackground"	Anchor="C,T"  Offset="-1,0"	Size="parent-10,parent-46" Texture="GreatPeople_Overlay" SliceCorner="13,13" SliceSize="1,1" SliceTextureSize="25,25" Hidden="1" />
+	  <Label    ID="Priority"           Anchor="L,T"  Offset="14,11" String="[ICON_New]" Hidden="1" />
       <Label	ID="ClassName"          Anchor="C,T"  Offset="0,12"    Color="60,60,30,255" GradientColor="230,230,150,255"  Style="FontFlair18" SmallCaps="24" SmallCapsType="EveryWord" String="$ClassName$"/>
       <Label	ID="IndividualName"     Anchor="C,T"  Offset="0,40" Align="C,C" WrapWidth="210" Style="GreatPeopleLargeText"  String="$IndividualName$"/>
       <Label	ID="EraName"            Anchor="C,T"  Offset="0,68"   Style="GreatPeopleLargeText"  String="$EraName$"/>
@@ -255,12 +256,13 @@
 	<!-- Great People Planner - Great Person Instance -->
 	<!-- Single GP instance; contains GP picture, name, effects -->
 	<!-- TODO: selection checkbox -->
-	<!-- TODO: add icon of a civ that earned it, turn when earned -->
 	<Instance Name="PlannerInstance">
 		<Container ID="Content" Size="parent,auto" MinSize="parent,140">
 			<Line Start="0,0"      End="parent,0"      Width="1" Color="48,60,68,255" /> <!-- top line -->
 			<Line Start="0,parent" End="parent,parent" Width="1" Color="48,60,68,255" /> <!-- bottom line -->
-			<Image ID="Portrait"	   Anchor="L,T" Offset="4,4" Size="40,40"  Texture="GreatPeople160" /> <!-- portrait -->
+			<Image ID="PortraitImage" Anchor="L,T" Offset="4,4" Size="40,40" Texture="GreatPeople160"> <!-- portrait -->
+				<Button ID="PortraitButton" Anchor="C,C" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_OPTIONS_SELECT}" />
+			</Image>
 			<Label ID="IndividualName" Anchor="L,T" Offset="48,8" WrapWidth="parent-52" Style="GreatPeopleLargeText" String="$IndividualName$"/>
 			<Label ID="Charges" Anchor="L,T" Offset="48,28" Style="GreatPeopleLargeText" String="$Charges$"/>
 			<Label ID="Effect" Anchor="L,T" Offset="4,48" WrapWidth="parent-8" Style="GreatPeopleText" String="$Text$" />
