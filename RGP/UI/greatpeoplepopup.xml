@@ -103,8 +103,10 @@
       <Box Anchor="L,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the left -->
       <Box Anchor="R,T" Offset="0,40" Size="1,parent-80" Color="199,187,157,90" /> <!-- line on the right -->
       <Grid		ID="FadedBackground"	Anchor="C,T"  Offset="-1,0"	Size="parent-10,parent-46" Texture="GreatPeople_Overlay" SliceCorner="13,13" SliceSize="1,1" SliceTextureSize="25,25" Hidden="1" />
-	  <Label    ID="Priority"           Anchor="L,T"  Offset="14,11" String="[ICON_New]" Hidden="1" />
-      <Label	ID="ClassName"          Anchor="C,T"  Offset="0,12"    Color="60,60,30,255" GradientColor="230,230,150,255"  Style="FontFlair18" SmallCaps="24" SmallCapsType="EveryWord" String="$ClassName$"/>
+	  <Label ID="Priority"           Anchor="L,T"  Offset="14,11" String="[ICON_New]" Hidden="1" />
+      <Label ID="ClassName" Anchor="C,T" Offset="0,12" Color="60,60,30,255" GradientColor="230,230,150,255" Style="FontFlair18" SmallCaps="24" SmallCapsType="EveryWord" String="$ClassName$">
+        <Button ID="OverviewOpenButton" Size="parent,parent" ToolTip="{LOC_UI_CLICK} [ICON_GoingTo] {LOC_GAMESUMMARY_OVERVIEW}" />
+	  </Label>
       <Label	ID="IndividualName"     Anchor="C,T"  Offset="0,40" Align="C,C" WrapWidth="210" Style="GreatPeopleLargeText"  String="$IndividualName$"/>
       <Label	ID="EraName"            Anchor="C,T"  Offset="0,68"   Style="GreatPeopleLargeText"  String="$EraName$"/>
 	  <!-- Main Info -->
@@ -240,6 +242,7 @@
 	<Instance Name="EraInstance">
 		<Container ID="Content" Size="272,parent">
 			<Label ID="EraName" Anchor="C,T" Offset="0,10" Style="GreatPeopleLargeText" String="$EraName$"/>
+			<Label ID="CurrentEra" Anchor="R,T" Offset="4,7" String="[ICON_Exclamation]" ToolTip="LOC_HUD_CITY_CURRENT_FOCUS" Hidden="1" /> <!-- current era -->
 			<!-- vertical lines -->
 			<Line Start="0,0"      End="0,parent"      Width="1" Color="48,60,68,255" /> 
 			<Line Start="parent,0" End="parent,parent" Width="1" Color="48,60,68,255" /> 

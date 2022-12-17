@@ -11,6 +11,10 @@ include("ModalScreen_PlayerYieldsHelper");
 include("GameCapabilities");
 include("GameEffectsText"); -- GetModifierText
 
+-- Infixo 2022-12-17 Expansions check
+local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
+local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
+
 -- ===========================================================================
 --	CONSTANTS
 -- ===========================================================================
@@ -45,6 +49,7 @@ local m_RefreshFunc			:ifunction = nil;
 
 local m_pGreatPeopleTabInstance:table	= nil;
 local m_pPrevRecruitedTabInstance:table = nil;
+local m_pPlannerTabInstance:table = nil;
 
 -- Infixo: moving the Great Prophet to the end
 local eClassProphet = GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].Index;
@@ -54,7 +59,15 @@ local m_filterClassID:number = -1; -- -1 for All, >-1 for Great Person Class ID
 local m_filterPlayerID:number = -1; -- -1 for All, >-1 for Player ID (as in GetLocalPlayer() or Players[])
 
 -- Infixo 2022-12-14
-local m_plannerSelection = "GREAT_PERSON_CLASS_GENERAL";
+local m_plannerSelection:string = "GREAT_PERSON_CLASS_GENERAL";
+
+local m_kOverviewClasses:table = {
+	GREAT_PERSON_CLASS_GENERAL = true,
+	GREAT_PERSON_CLASS_ADMIRAL = true,
+	GREAT_PERSON_CLASS_ENGINEER = true,
+	GREAT_PERSON_CLASS_MERCHANT = true,
+	GREAT_PERSON_CLASS_SCIENTIST = true,
+};
 
 -- ===========================================================================
 -- DEBUG ROUTINES
@@ -203,6 +216,20 @@ function AddRecruit( kData:table, kPerson:table )
 	end
 	--print("AFTER: i,eClassID", i, eClassID);
     instance.ClassName:SetText(Locale.Lookup(GameInfo.GreatPersonClasses[eClassID].Name));
+	
+	-- Infixo 2022-12-17 go to overview tab
+	if kPerson.IndividualID ~= nil and m_kOverviewClasses[ classData.GreatPersonClassType ] then
+		-- enable click
+		instance.OverviewOpenButton:SetHide(false);
+		instance.OverviewOpenButton:RegisterCallback( Mouse.eLClick,
+			function()
+				SelectTab(m_pPlannerTabInstance.Button);
+				PlannerSelectionChanged(classData.GreatPersonClassType);
+			end );
+	else
+		-- disable click
+		instance.OverviewOpenButton:SetHide(true);
+	end
 
     if kPerson.IndividualID ~= nil then
       local individualName:string = Locale.ToUpper(kPerson.Name);
@@ -942,6 +969,12 @@ function ViewPlanner( data:table )
 
 	local localPlayerID :number = Game.GetLocalPlayer();
 
+	-- get current era
+	local eCurrentEra:number = Players[localPlayerID]:GetEra();
+	if bIsRiseFall or bIsGatheringStorm then
+		eCurrentEra = Game.GetEras():GetCurrentEra();
+	end
+	
 	-- iterate through all eras (ex. Ancient and Future) and build instances for each one
 	local kEraInstances = {}; -- temp storage so can iterate through GPs only once
 	for era in GameInfo.Eras() do
@@ -950,6 +983,7 @@ function ViewPlanner( data:table )
 			eraInstance.EraStack:DestroyAllChildren();
 			--eraInstance.kPlannerIM = InstanceManager:new("PlannerInstance", "Content", eraInstance.EraStack);
 			eraInstance.EraName:SetText( Locale.ToUpper(Locale.Lookup(era.Name)) );
+			eraInstance.CurrentEra:SetHide( era.Index ~= eCurrentEra );
 			kEraInstances[ era.EraType ] = eraInstance;
 		end
 	end
