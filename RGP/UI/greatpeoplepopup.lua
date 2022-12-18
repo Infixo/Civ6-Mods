@@ -69,6 +69,9 @@ local m_kOverviewClasses:table = {
 	GREAT_PERSON_CLASS_SCIENTIST = true,
 };
 
+local m_kOverviewEras:table = {}; -- see LateInitialize
+
+
 -- ===========================================================================
 -- DEBUG ROUTINES
 -- ===========================================================================
@@ -978,7 +981,7 @@ function ViewPlanner( data:table )
 	-- iterate through all eras (ex. Ancient and Future) and build instances for each one
 	local kEraInstances = {}; -- temp storage so can iterate through GPs only once
 	for era in GameInfo.Eras() do
-		if era.ChronologyIndex >= 2 and era.ChronologyIndex <= 8 then
+		if m_kOverviewEras[era.EraType] then
 			local eraInstance :table  = m_plannerIM:GetInstance(); -- get a new instance of Era
 			eraInstance.EraStack:DestroyAllChildren();
 			--eraInstance.kPlannerIM = InstanceManager:new("PlannerInstance", "Content", eraInstance.EraStack);
@@ -1684,6 +1687,13 @@ end
 
 -- =======================================================================================
 function LateInitialize()
+	-- iterate through GPs and detect which Eras are used
+	for gp in GameInfo.GreatPersonIndividuals() do
+		if m_kOverviewClasses[gp.GreatPersonClassType] then
+			m_kOverviewEras[ gp.EraType ] = true;
+		end
+	end
+	--dshowtable(m_kOverviewEras);
 end
 
 -- =======================================================================================
@@ -1751,6 +1761,17 @@ end
 -- This method replaces the uses of include("GreatPeoplePopup") in files that want to override 
 -- functions from this file. If you're implementing a new "GreatPeoplePopup_" file DO NOT include this file.
 include("GreatPeoplePopup_", true);
+
+-- Infixo 2022-12-18 fix for Hero Mode
+
+local BASE_OnHeroesClick = OnHeroesClick;
+
+function OnHeroesClick( uiSelectedButton:table )
+	if BASE_OnHeroesClick == nil then return; end -- Hero Mode not active
+	BASE_OnHeroesClick(uiSelectedButton);
+    Controls.PlannerArea:SetHide(true);
+end
+
 
 Initialize();
 
