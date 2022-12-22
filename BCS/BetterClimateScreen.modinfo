@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod id="26B4DBEE-93EE-4B27-5682-70C454D0253C" version="1">
 	<Properties>
-		<Name>Better Climate Screen</Name>
+		<Name>Better Climate Screen (UI)</Name>
 		<Teaser>More information about CO2 footprint.</Teaser>
-		<Description>More information about CO2 footprint.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.1.</Description>
+		<Description>More information about CO2 footprint.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.2.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
@@ -19,38 +19,38 @@
 	<InGameActions>
 		<!-- Gathering Storm actions - import lua and xml, replace lua -->
         <ImportFiles id="BCS_ImportFiles_XP2">
-			<Properties><LoadOrder>100</LoadOrder></Properties>
+			<Properties><LoadOrder>15100</LoadOrder></Properties> <!-- Infixo 2022-12-21 Natural Gas mod uses 15000 -->
             <Items>
-                <File>ClimateScreen.lua</File>
-				<File>XP2/ClimateScreen.xml</File>
+                <File>climatescreen.lua</File>
+				<File>XP2/climatescreen.xml</File>
             </Items>
         </ImportFiles>
 		<ReplaceUIScript id="BCS_ReplaceUI_ClimateScreen_XP2">
 			<Properties>
-                <LoadOrder>101</LoadOrder>
-				<LuaContext>ClimateScreen</LuaContext>
-				<LuaReplace>ClimateScreen.lua</LuaReplace>
+                <LoadOrder>15101</LoadOrder>
+				<LuaContext>climatescreen</LuaContext>
+				<LuaReplace>climatescreen.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
 		<!-- Gran Colombia & Maya actions - replace lua and import xml (there's no 'replace' for xml) -->
 		<ImportFiles id="BCS_ImportFiles_XP2" criteria="DLCGranColombiaMaya">
-			<Properties><LoadOrder>110</LoadOrder></Properties>
-			<File>GCM/ClimateScreen.xml</File>
+			<Properties><LoadOrder>15110</LoadOrder></Properties>
+			<File>GCM/climatescreen.xml</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BCS_ReplaceUI_ClimateScreen_GCM" criteria="DLCGranColombiaMaya">
 			<Properties>
-                <LoadOrder>111</LoadOrder>
-				<LuaContext>ClimateScreen</LuaContext>
-				<LuaReplace>ClimateScreen.lua</LuaReplace>
+                <LoadOrder>15111</LoadOrder>
+				<LuaContext>climatescreen</LuaContext>
+				<LuaReplace>climatescreen.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
     </InGameActions>
     <Files>
 		<!-- Shared files -->
-        <File>ClimateScreen.lua</File>
+        <File>climatescreen.lua</File>
 		<!-- Gathering Storm files -->
-		<File>XP2/ClimateScreen.xml</File>
+		<File>XP2/climatescreen.xml</File>
 		<!-- Gran Colombia & Maya files -->
-		<File>GCM/ClimateScreen.xml</File>
+		<File>GCM/climatescreen.xml</File>
     </Files>
 </Mod>

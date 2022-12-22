@@ -1,4 +1,4 @@
-print("Loading ClimateScreen.lua from Better Climate Screen version 1.1");
+print("Loading ClimateScreen.lua from Better Climate Screen version 1.2");
 --	Copyright 2018, Firaxis Games
  
 -- ===========================================================================
@@ -55,6 +55,9 @@ local m_TopPanelHeight		:number = 0;		-- Used to push vignette below top panel
 local m_firstSeaLevelEvent  :number = -1;
 local m_currentSeaLevelEvent :number = -1;
 local m_currentSeaLevelPhase :number = 0;
+local m_CO2For1Phase        :number = 0; -- Infixo 2022-12-21
+local m_prevTurnNum			:number = 0;
+local m_prevTurnCO2			:number = 0;
 
 
 -- ===========================================================================
@@ -152,7 +155,6 @@ end
 --		Each tab has: "ButtonFoo" and in it a "SelectFoo"
 -- ===========================================================================
 function RealizeTabs( selectedTabName:string )
-	--print("RealizeTabs", selectedTabName);
 	
 	m_currentTabName = selectedTabName;
 
@@ -286,7 +288,7 @@ function RefreshCurrentEvent()
 			if kCurrentEventDef.Global then
 				Controls.WeatherLocation:SetText(Locale.Lookup("LOC_CLIMATE_SCREEN_LOCATION", Locale.Lookup("LOC_CLIMATE_SCREEN_GLOBAL")));
 			elseif not bIsEventVisible then
-				Controls.WeatherLocation:SetText(Locale.Lookup("LOC_CLIMATE_SCREEN_LOCATION", Locale.Lookup("LOC_CIVICS_TREE_UNREVEALED_CIVIC")));
+				Controls.WeatherLocation:SetText(Locale.Lookup("LOC_CLIMATE_SCREEN_LOCATION", Locale.Lookup("LOC_CIVICS_TREE_NOT_REVEALED_CIVIC")));
 			elseif location ~= "" and direction ~= "" then
 				Controls.WeatherLocation:SetText(Locale.Lookup("LOC_CLIMATE_SCREEN_LOCATION_DIRECTION", location, direction));
 			elseif location ~= "" then
@@ -384,8 +386,6 @@ end
 
 -- ===========================================================================
 function TabSelectOverview()
-	--print("TabSelectOverview");
-	
 	RealizeTabs("Overview");
 	
 	-- Alert indicators are shown by RefreshCurrentEvent if required
@@ -458,7 +458,11 @@ function TabSelectOverview()
 	UpdatePhaseBar(ClimateLevel,-1,-1);
 
 	-- Left
-	Controls.ContributeTotal:SetText(Locale.Lookup("LOC_CLIMATE_TOTAL_NUM", CO2Total));
+	if m_prevTurnNum > 0 then
+		Controls.ContributeTotal:SetText( string.format("%s (+%d)", Locale.Lookup("LOC_CLIMATE_TOTAL_NUM", CO2Total), CO2Total-m_prevTurnCO2) );
+	else
+		Controls.ContributeTotal:SetText(Locale.Lookup("LOC_CLIMATE_TOTAL_NUM", CO2Total));
+	end
 	Controls.ContributeTop:SetText(Locale.Lookup("LOC_CLIMATE_TOP_CONTRIBUTOR_NUM", TopContributorName));
 	Controls.ContributeMe:SetText(Locale.Lookup("LOC_CLIMATE_MY_CONTRIBUTION_NUM", CO2Player));
 	Controls.OverviewCO2Grid:SetToolTipString(Locale.Lookup("LOC_CLIMATE_CO2_TOTAL_TOOLTIP", CO2Modifier));
@@ -627,7 +631,12 @@ function TabSelectCO2Levels()
 	else
 		sGlobalTotal = Locale.Lookup("LOC_CLIMATE_TOTAL_NUM", CO2Total);
 	end
-	Controls.GlobalContributionsTotalNum:SetText( sGlobalTotal ) ;
+	-- Infixo 2022-12-21
+	if m_prevTurnNum > 0 then
+		Controls.GlobalContributionsTotalNum:SetText( string.format("%s  +%d", sGlobalTotal, CO2Total-m_prevTurnCO2) );
+	else
+		Controls.GlobalContributionsTotalNum:SetText( sGlobalTotal ) ;
+	end
 	Controls.YourContributionsNum:SetText( Locale.Lookup("LOC_CLIMATE_TOTAL_NUM", CO2Player) );
 	Controls.GlobalContributionsTotalNum:SetToolTipString(Locale.Lookup("LOC_CLIMATE_CO2_TOTAL_TOOLTIP", CO2Modifier));
 end
@@ -1178,6 +1187,7 @@ function UpdatePhaseTooltips( segmentNum:number )
 
 	local tooltip:string = 
 		Locale.ToUpper(szPhaseName)
+		.."[NEWLINE]"..Locale.Lookup("LOC_CLIMATE_CO2_LEVELS").." "..tostring(m_CO2For1Phase*0.5*(segmentNum+1)) -- Infixo 2022-12-21 1 phase = 0.5 temp degrees
 		.."[NEWLINE]"
 		.."[NEWLINE]"..Locale.Lookup("LOC_CLIMATE_CLIMATE_CHANGE_POINTS_TOOLTIP", GameClimate.GetClimateChangeLevel(), iPoints)
 		.."[NEWLINE]"..Locale.Lookup("LOC_CLIMATE_FROM_WORLD_REALISM_NUM_TOOLTIP",  GameClimate.GetClimateChangeFromRealism())
@@ -1282,6 +1292,13 @@ function OnLocalPlayerTurnEnd()
 end
 
 -- ===========================================================================
+-- Remember the current CO2 footprint for use in the next turn
+function OnTurnEnd()
+	m_prevTurnNum = Game.GetCurrentGameTurn();
+	m_prevTurnCO2 = GameClimate.GetTotalCO2Footprint();
+end
+
+-- ===========================================================================
 function Initialize()
 
 	-- Re-used local variables:
@@ -1309,6 +1326,8 @@ function Initialize()
 			m_RealismName = Locale.Lookup( kResult.Name );
 		end
 	end
+	
+	m_CO2For1Phase = math.floor(GameInfo.Maps_XP2[Map.GetMapSize()].CO2For1DegreeTempRise/1000); -- Infixo 2022-12-21
 
 	UpdateClimateChangeEventsData();	-- Required for phase segment initialization.
 	
@@ -1328,6 +1347,7 @@ function Initialize()
 	-- Game Events
 	Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+	Events.TurnEnd.Add( OnTurnEnd ); -- Infixo 2022-12-21
 
 	m_TopPanelHeight = Controls.Vignette:GetSizeY() - TOP_PANEL_OFFSET;
 
