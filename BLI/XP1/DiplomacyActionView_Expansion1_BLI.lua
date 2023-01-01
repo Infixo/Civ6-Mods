@@ -5,7 +5,14 @@ print("Loading DiplomacyActionView_Expansion1_BLI.lua from Better Leader Icon ve
 -- 2019-03-23: Created
 -- ===========================================================================
 
-include("DiplomacyActionView_Expansion1");
+-- CQUI compatibility: Use CQUI as base if active
+local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01");
+
+if (bIsCQUI) then
+    include("diplomacyactionview_CQUI_expansion1");
+else
+    include("DiplomacyActionView_Expansion1");
+end
 
 
 -- ===========================================================================

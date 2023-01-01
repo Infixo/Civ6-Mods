@@ -379,14 +379,19 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 	-- Agendas
 	table.insert(tTT, "----------------------------------------"); -- 40 chars
 	table.insert(tTT, LL("LOC_DIPLOMACY_INTEL_ADGENDAS"));
-	local tAgendaTypes:table = pPlayer:GetAgendaTypes();
+	local tAgendaTypes:table = {};
+	if bIsGatheringStorm then tAgendaTypes = pPlayer:GetAgendasAndVisibilities();
+	else tAgendaTypes = pPlayer:GetAgendaTypes(); end
+	local numHidden:number = 0;
 	for i, agendaType in ipairs(tAgendaTypes) do
 		local bHidden:boolean = true;
-		if iAccessLevel >= iAccessAgendas then bHidden = false; end
-		if i == 1 then bHidden = false; end
-		if bHidden then table.insert(tTT, "- "..LL("LOC_DIPLOMACY_HIDDEN_AGENDAS", 1, false)..ENDCOLOR);
-		else            table.insert(tTT, "- "..LL( GameInfo.Agendas[agendaType].Name )); end
+		if bIsGatheringStorm then
+			if iAccessLevel >= agendaType.Visibility then bHidden = false; agendaType = agendaType.Agenda; end
+		elseif i == 1 or iAccessLevel >= iAccessAgendas then bHidden = false; end
+		if bHidden then numHidden = numHidden + 1;
+		else table.insert(tTT, "- "..LL( GameInfo.Agendas[agendaType].Name )); end
 	end
+	if numHidden > 0 then table.insert(tTT, "- "..LL("LOC_DIPLOMACY_HIDDEN_AGENDAS", numHidden, numHidden > 1)..ENDCOLOR); end;
 	
 	-- Diplo modifiers, from DiplomacyActionView.lua
 	if bOptionRelationship and toolTips then
