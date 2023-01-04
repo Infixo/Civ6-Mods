@@ -22,6 +22,10 @@ local LL = Locale.Lookup;
 -- configuration options
 local bOptionRelationship:boolean = ( GlobalParameters.BLI_OPTION_RELATIONSHIP == 1 );
 
+-- 2021-05-31 Secret Societies
+local bIsSecretSocieties:boolean = GameCapabilities.HasCapability("CAPABILITY_SECRETSOCIETIES");
+
+
 -- colors with better visibility in the tooltip
 local ENDCOLOR:string = "[ENDCOLOR]";
 local COLOR_GREEN:string = "[COLOR:0,127,0,255]";
@@ -467,6 +471,23 @@ function LeaderIcon:GetToolTipString(playerID:number)
 	-- Government
 	local eGovernment:number = Players[playerID]:GetCulture():GetCurrentGovernment();
 	table.insert(tTT, string.format("%s %s", LL("LOC_DIPLOMACY_INTEL_GOVERNMENT"), LL(eGovernment == -1 and "LOC_GOVERNMENT_ANARCHY_NAME" or GameInfo.Governments[eGovernment].Name)));
+	
+    -- 2021-05-31 Secret Society
+    if bIsSecretSocieties then
+        local eSecretSociety:number = pPlayer:GetGovernors():GetSecretSociety();
+        local sSecretSociety:string = LL("LOC_SECRETSOCIETY_DIPLO_NONE_NAME"); -- none selected
+        if eSecretSociety ~= -1 then
+            local pLocalPlayerGovs:table = Players[localPlayerID]:GetGovernors(); -- There is a bug here in diplo view which uses pSelectedPlayer
+            if pLocalPlayerGovs:IsAwareOfSecretSociety(eSecretSociety) then
+                -- Known Secret Society
+                local kSocietyDef:table = GameInfo.SecretSocieties[eSecretSociety];
+                sSecretSociety = kSocietyDef.IconString..LL(kSocietyDef.Name);
+            else -- Unknown Secret Society
+                sSecretSociety = LL("LOC_SECRETSOCIETY_DIPLO_UNKNOWN_NAME");
+            end
+        end
+        table.insert(tTT, LL("LOC_SECRETSOCIETY")..": "..sSecretSociety);
+    end -- bIsSecretSocieties
 	
 	-- Cities & Population
 	local iPopulation:number = 0;
