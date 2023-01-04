@@ -36,7 +36,7 @@ function ColorRED(s)   return "[COLOR_Red]"  ..tostring(s)..ENDCOLOR; end
 -- ===========================================================================
 --	VARIABLES
 -- ===========================================================================
-local m_kCurrentTab:number = 1; -- last active tab which will be also used as a moment category
+local m_kCurrentTab:number = 1; -- last active tab which will be also used as a moment category, 1=world, 2=civ, 3=repeat, 4=fav
 local m_iMaxEraIndex:number = #GameInfo.Eras-1;
 local m_iTajMahalIndex:number = (GameInfo.Buildings.BUILDING_TAJ_MAHAL and GameInfo.Buildings.BUILDING_TAJ_MAHAL.Index or -1);
 local m_bIsTajMahal:boolean = false;
@@ -593,7 +593,7 @@ function ViewMomentsPage(eGroup:number)
 		if moment.ValidFor ~= nil and moment.ValidFor ~= "" then
 			if not( moment.ValidFor == sCivilization or moment.ValidFor == sLeader ) then bShow = false; end
 		end
-		if eGroup == 0 then
+		if eGroup == 4 then
 			if not moment.Favored then bShow = false; end
 		else
 			if moment.Category ~= eGroup then bShow = false; end
@@ -775,10 +775,10 @@ function LateInitialize()
 	InitializeMomentsData();
 	--Resize();
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
-	AddTabSection( "LOC_RET_FAVORED",	                  function() ViewMomentsPage(0); end );
 	AddTabSection( "LOC_RET_WORLD",	                      function() ViewMomentsPage(1); end );
 	AddTabSection( "LOC_HUD_REPORTS_HEADER_CIVILIZATION", function() ViewMomentsPage(2); end );
 	AddTabSection( "LOC_RET_REPEATABLE",                  function() ViewMomentsPage(3); end );
+	AddTabSection( "LOC_RET_FAVORED",	                  function() ViewMomentsPage(4); end );
 	m_tabs.SameSizedTabs(20);
 	m_tabs.CenterAlignTabs(-10);
 end

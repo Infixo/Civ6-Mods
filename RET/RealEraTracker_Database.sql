@@ -3,11 +3,12 @@
 -- Author: Infixo
 -- 2019-03-28: Created
 -- 2019-03-30: Added ReportsList Loader
+-- 2023-01-04: 1.3 Some minor fixes in Moments categories
 -- ===========================================================================
 
 -- just to make versioning easier
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MAJOR', '1');
-INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '2');
+INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_VERSION_MINOR', '3');
 
 -- options
 INSERT INTO GlobalParameters (Name, Value) VALUES ('RET_OPTION_INCLUDE_OTHERS', '0'); -- set to 1 to detect historic moments that other players earned 
@@ -36,7 +37,11 @@ UPDATE Moments SET Category = 1 WHERE MomentType LIKE '%FIRST_IN_WORLD';
 UPDATE Moments SET Category = 1 WHERE MomentType IN (
 'MOMENT_UNIT_CREATED_FIRST_DOMAIN_AIR_IN_WORLD',
 'MOMENT_UNIT_CREATED_FIRST_DOMAIN_SEA_IN_WORLD',
-'MOMENT_UNIT_CREATED_FIRST_REQUIRING_STRATEGIC_IN_WORLD'
+'MOMENT_UNIT_CREATED_FIRST_REQUIRING_STRATEGIC_IN_WORLD',
+-- 2023-01-04 monopolies & corporations
+'MOMENT_FIRST_INDUSTRY_IN_WORLD',
+'MOMENT_FIRST_CORPORATION_IN_WORLD',
+'MOMENT_FIRST_LUXURY_RESOURCE_MONOPOLY_IN_WORLD'
 );
 
 -- category Repeat - must be set manually
@@ -81,7 +86,11 @@ UPDATE Moments SET Category = 3 WHERE MomentType IN (
 'MOMENT_CITY_BUILT_NEAR_VOLCANO',
 'MOMENT_MITIGATED_COASTAL_FLOOD',
 'MOMENT_MITIGATED_RIVER_FLOOD',
-'MOMENT_PLAYER_EARNED_DIPLOMATIC_VICTORY_POINT'
+'MOMENT_PLAYER_EARNED_DIPLOMATIC_VICTORY_POINT',
+-- 2023-01-04 heroes mode
+'MOMENT_HERO_CREATED',
+'MOMENT_HERO_EXPIRED',
+'MOMENT_HERO_RECALLED'
 );
 
 --- specials - eras

@@ -3,7 +3,7 @@
 	<Properties>
 		<Name>Real Era Tracker</Name>
 		<Teaser>Shows a list of historic moments not yet earned.</Teaser>
-		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Rise &amp; Fall[ENDCOLOR] or [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.2.</Description>
+		<Description>Shows a list of historic moments not yet earned. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Rise &amp; Fall[ENDCOLOR] or [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.3.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>1.2,2.0</CompatibleVersions>
@@ -37,6 +37,7 @@
 		</AddUserInterfaces>
 		<UpdateText id="RET_UpdateText">
 			<File>Text/RealEraTracker_Text.xml</File>
+		    <File>Text/RealEraTracker_Text_zh.xml</File>
 		</UpdateText>
 		<!-- reports list loader -->
 		<UpdateDatabase id="RLL_Database">
@@ -59,6 +60,7 @@
         <File>RealEraTracker.xml</File>
 		<File>Serialize.lua</File>
 		<File>Text/RealEraTracker_Text.xml</File>
+		<File>Text/RealEraTracker_Text_zh.xml</File>
 		<!-- reports list loader -->
 		<File>RLL/ReportsListLoader.sql</File>
 		<File>RLL/ReportsListLoader.lua</File>

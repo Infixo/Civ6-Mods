@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+	<LocalizedText>
+		<Replace Tag="LOC_RET_WINDOW_TITLE" Language="zh_Hans_CN">
+			<Text>时代得分跟踪</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_BUTTON_LABEL" Language="zh_Hans_CN">
+			<Text>时代跟踪</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_WORLD" Language="zh_Hans_CN">
+			<Text>世界</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_REPEATABLE" Language="zh_Hans_CN">
+			<Text>可重复</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_FAVORED" Language="zh_Hans_CN">
+			<Text>收藏</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_COUNT" Language="zh_Hans_CN">
+			<Text>数量</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE" Language="zh_Hans_CN">
+			<Text>隐藏未激活</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_CHECKBOX_SHOW_ONLY_EARNED" Language="zh_Hans_CN">
+			<Text>仅显示已获得</Text>
+		</Replace>
+		<Replace Tag="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE" Language="zh_Hans_CN">
+			<Text>隐藏其他时代和当前不可用</Text>
+		</Replace>
+	</LocalizedText>
+</GameData>
