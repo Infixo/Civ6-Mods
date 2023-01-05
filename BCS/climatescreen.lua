@@ -1,4 +1,4 @@
-print("Loading ClimateScreen.lua from Better Climate Screen version 1.2");
+print("Loading ClimateScreen.lua from Better Climate Screen version 1.3");
 --	Copyright 2018, Firaxis Games
  
 -- ===========================================================================
@@ -57,7 +57,28 @@ local m_currentSeaLevelEvent :number = -1;
 local m_currentSeaLevelPhase :number = 0;
 local m_CO2For1Phase        :number = 0; -- Infixo 2022-12-21
 local m_prevTurnNum			:number = 0;
-local m_prevTurnCO2			:number = 0;
+local m_prevTurnCO2			:number = 0; -- total CO2 footprint
+local m_prevTurnRecapture	:number = 0; -- player's carbon recaptured in the last turn
+
+-- ===========================================================================
+-- 2023-01-05 Fix for incorrect handling of a negative contribution
+-- ClimateScreen is the only place where it is used in the vanilla game
+
+GameClimate.GetPlayerCO2FootprintFromEngine = GameClimate.GetPlayerCO2Footprint;
+GameClimate.GetPlayerCO2Footprint = function(ePlayer:number)
+	return math.max(0, GameClimate.GetPlayerCO2FootprintFromEngine(ePlayer));
+end
+
+GameClimate.GetTotalCO2FootprintFromEngine = GameClimate.GetTotalCO2Footprint;
+GameClimate.GetTotalCO2Footprint = function()
+	-- calculate by summation
+	local totalCO2:number = 0;
+	for _,playerID in ipairs(PlayerManager.GetWasEverAliveMajorIDs()) do
+		totalCO2 = totalCO2 + GameClimate.GetPlayerCO2Footprint(playerID);
+	end
+	if GameClimate.GetCO2FootprintModifier() > 0 then totalCO2 = math.floor(totalCO2 * (100.0 + GameClimate.GetCO2FootprintModifier()) / 100.0); end
+	return totalCO2;
+end
 
 
 -- ===========================================================================
@@ -622,7 +643,7 @@ function TabSelectCO2Levels()
 	RealizePlayerCO2();
 
 	local CO2Total		:number = GameClimate.GetTotalCO2Footprint();
-	local CO2Player		:number = GameClimate.GetPlayerCO2Footprint(m_playerID, false );
+	local CO2Player		:number = GameClimate.GetPlayerCO2Footprint(m_playerID,false);
 	local CO2Modifier	:number = GameClimate.GetCO2FootprintModifier();
 
 	local sGlobalTotal:string = "";
@@ -775,6 +796,15 @@ end
 --	overlayed meters.
 -- ===========================================================================
 
+-- calculate the total CO2 contribution from resources
+function GetPlayerCO2FootprintFromResources(ePlayer:number)
+	local total:number = 0;
+	for kResourceInfo in GameInfo.Resources() do
+		total = total + GameClimate.GetPlayerResourceCO2Footprint( ePlayer, kResourceInfo.Index, false ); -- total
+	end
+	return total;
+end
+
 -- helpers
 function FormatLastTurn(lastTurn:number)
 	return lastTurn == 0 and "0" or string.format("%+d", lastTurn);
@@ -786,6 +816,7 @@ function FormatPercent(amount:number, total:number)
 	return total == 0 and "-" or string.format("%.0f%%", amount*100/total);
 end
 
+-- show player's CO2 contribution by resource
 function RealizePlayerCO2()
 
 	local pLocalPlayer			:table = Players[m_playerID];
@@ -800,9 +831,10 @@ function RealizePlayerCO2()
 	m_kYourCO2IM:ResetInstances();
 
 	-- calculate the total first
-	for kResourceInfo in GameInfo.Resources() do
-		total = total + GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index, false );
-	end
+	total = GetPlayerCO2FootprintFromResources(m_playerID);
+	--for kResourceInfo in GameInfo.Resources() do
+		--total = total + GameClimate.GetPlayerResourceCO2Footprint( m_playerID, kResourceInfo.Index, false );
+	--end
 	
 	for kResourceInfo in GameInfo.Resources() do
 
@@ -838,6 +870,19 @@ function RealizePlayerCO2()
 				--colorIndex = (colorIndex + 1) % maxColors;
 			end
 		end
+	end
+	
+	-- 2023-01-05 If Carbon Recapture projects have been running then the numbers would not add up
+	-- the number of recaptured CO2 needs to be calculated manually
+	if total ~= GameClimate.GetPlayerCO2FootprintFromEngine(m_playerID) then
+		local recapturedAmount:number = math.min(m_prevTurnRecapture, GameClimate.GetPlayerCO2FootprintFromEngine(m_playerID) - total); -- it can only get higher
+		Controls.RecaptureAmount:SetText( recapturedAmount );
+		Controls.RecaptureLastTurn:SetText( FormatLastTurn(recapturedAmount-m_prevTurnRecapture) );
+		Controls.RecaptureAmount:SetHide(false);
+		Controls.RecaptureLastTurn:SetHide(m_prevTurnNum == 0);
+	else
+		Controls.RecaptureAmount:SetHide(true);
+		Controls.RecaptureLastTurn:SetHide(true);
 	end
 
 	-- Now total is known, create an array based on percentages (0.0 - 1.0) each resources makes and chart it.
@@ -927,7 +972,7 @@ function TabCO2ByCivilization()
 	
 	for _, pPlayer in ipairs(pPlayers) do
 		local playerID			:number = pPlayer:GetID();
-		local iCO2FootprintNum	:number = GameClimate.GetPlayerCO2Footprint( playerID, false  );
+		local iCO2FootprintNum  :number = GameClimate.GetPlayerCO2Footprint(playerID,false);
 
 		-- last turn emmission is only available via GetPlayerResourceCO2Footprint(ePlayer,eResource,bLastTurn)
 		-- resources not related to CO2 just return 0, so we can just loop through
@@ -1296,6 +1341,7 @@ end
 function OnTurnEnd()
 	m_prevTurnNum = Game.GetCurrentGameTurn();
 	m_prevTurnCO2 = GameClimate.GetTotalCO2Footprint();
+	m_prevTurnRecapture = math.min(m_prevTurnRecapture, GameClimate.GetPlayerCO2FootprintFromEngine(m_playerID) - GetPlayerCO2FootprintFromResources(m_playerID)); -- it can only get higher
 end
 
 -- ===========================================================================

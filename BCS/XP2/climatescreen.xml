@@ -463,7 +463,18 @@
 			<Container Anchor="L,T" Offset="10,251" Size="480,40" >
 				<Label Anchor="C,C" Align="Center" Style="FontNormal16" String="LOC_CLIMATE_YOUR_CO2_CONTRIBUTION" />
 			</Container>
-            <Stack ID="YourCO2Stack" Anchor="L,T" Offset="10,291" StackGrowth="Bottom" StackPadding="2" />
+			<!-- 2023-01-05 carbon recapture info -->
+			<Grid Anchor="L,T" Offset="10,291" Size="480,38" Style="SubContainer2" Color="0,0,0,150">
+				<Image Anchor="L,C" Offset="0,0" Icon="ICON_PROJECT_CARBON_RECAPTURE" Size="32,32" />
+				<Label Anchor="L,C" Offset="40,0" Style="FontNormal16" String="LOC_PROJECT_CARBON_RECAPTURE_SHORT_NAME" />
+				<Container Anchor="L,C" Size="60,38" Offset="200,0" >
+					<Label ID="RecaptureAmount" Anchor="C,C" Style="FontNormal18" String="0000" Align="Center" />
+				</Container>
+				<Container Anchor="L,C" Size="60,38" Offset="260,0" >
+					<Label ID="RecaptureLastTurn" Anchor="C,C" Style="FontNormal18" String="+00" Align="Center" />
+				</Container>
+			</Grid>
+            <Stack ID="YourCO2Stack" Anchor="L,T" Offset="10,331" StackGrowth="Bottom" StackPadding="2" />
           </Grid>
         </Stack>
 			</Container>
