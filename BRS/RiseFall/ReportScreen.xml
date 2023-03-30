@@ -2010,7 +2010,7 @@
 				
 				<Container Offset="0,0" Size="45,parent">
 					<GridButton ID="PolicyHeaderButtonLOYALTY"  ToolTip="LOC_REPORTS_LOYALTY" Size="parent,parent" Style="ButtonLightWeightSquareGrid" Anchor="C,C">
-						<Label Style="ReportHeaderSmallText" String="[ICON_PressureUp]"/>
+						<Label ID="PolicyHeaderButtonLabelLOYALTY" Style="ReportHeaderSmallText" String="$PolicyHeaderButtonLabelLOYALTYString$" />
 					</GridButton>
 				</Container>
 				
