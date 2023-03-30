@@ -13,6 +13,7 @@ DELETE FROM AiFavoredItems WHERE ListType = 'IronConfederacyDiplomacy' AND Item 
 -- 2019-04-09 Gathering Storm
 UPDATE AiFavoredItems SET Item = 'TECH_REPLACEABLE_PARTS' WHERE Item = 'TECH_REPLACABLE_PARTS'; -- PachacutiTechs
 UPDATE AiFavoredItems SET Item = 'TECH_GUNPOWDER' WHERE Item = 'TECH_GUNPOWER'; -- SuliemanTechs
+-- 2023-03-29 Lol... they repeated the same error for Alt Suleiman :) copy & paste...
 
 -- below are used by Poundmaker Iron Confederacy; why robert bruce (taken from AGENDA_FLOWER_OF_SCOTLAND_WAR_NEIGHBORS)
 --AGENDA_IRON_CONFEDERACY_FEW_ALLIANCES	StatementKey	ARGTYPE_IDENTITY	LOC_DIPLO_WARNING_LEADER_ROBERT_THE_BRUCE_REASON_ANY
@@ -21,8 +22,9 @@ UPDATE AiFavoredItems SET Item = 'TECH_GUNPOWDER' WHERE Item = 'TECH_GUNPOWER'; 
 
 --------------------------------------------------------------
 -- 2020-07-05 War-Carts don't get Alpine Training from Matterhorn
-
-INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('ABILITY_ALPINE_TRAINING', 'CLASS_WAR_CART');
+INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('ABILITY_ALPINE_TRAINING', 'CLASS_HEAVY_CHARIOT'); -- 2023-03-29 use of more generic Class Tag
+-- 2020-07-05 Warrior Monks also don't get Alpine Training from Matterhorn despite the fact that they are a land combat unit
+INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('ABILITY_ALPINE_TRAINING', 'CLASS_WARRIOR_MONK'); -- 2023-03-29 use of more generic Class Tag
 
 
 -- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
@@ -60,7 +62,7 @@ INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
 
 -- Fixed with Gathering Storm Patch
 -- 2020-05-29 Seems like the bug is back
-DELETE FROM GovernmentModifiers WHERE GovernmentType = 'GOVERNMENT_FASCISM' AND ModifierId = 'FASCISM_UNIT_PRODUCTION';
+--DELETE FROM GovernmentModifiers WHERE GovernmentType = 'GOVERNMENT_FASCISM' AND ModifierId = 'FASCISM_UNIT_PRODUCTION';
 
 
 -- test
