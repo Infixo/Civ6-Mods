@@ -50,7 +50,7 @@
 						<Box								Offset="3,4"								Size="2,parent-2"			Color="128,128,0,200"  />
 						<Box								Offset="-1,4" Anchor="R,T"	Size="2,parent-2"			Color="128,128,0,200"  />
 					</AlphaAnim>
-					<Grid ID="StatStackBLI" Anchor="C,T" Offset="0,27" Size="45,65" Texture="Controls_TitleBarDark" SliceStart="0,20" SliceCorner="12,0" SliceSize="18,1" SliceTextureSize="42,14">
+					<Grid ID="StatStackBLI" Anchor="C,T" Offset="0,32" Size="45,65" Texture="Controls_TitleBarDark" SliceStart="0,20" SliceCorner="12,0" SliceSize="18,1" SliceTextureSize="42,14">
 						<Stack Anchor="C,T" Offset="0,30" StackGrowth="Bottom" StackPadding="3">
 							<Label  ID="TotScore"  Anchor="C,T" Color="White" Style="FontNormal12" String="score" />
 							<!--<Label  ID="NumTechs"  Anchor="L,B" Color="Science" Style="FontNormal12" String="techs" />-->
@@ -61,7 +61,7 @@
 					<AlphaAnim ID="ChatIndicatorFade" Cycle="Once" AlphaBegin="0.0" AlphaEnd="1.0" Speed="3" Stopped="1">
 						<Image ID="ChatIndicator" Offset="35,0" Size="22,22" Texture="DiploRibbon_TypingIndicator"/>
 					</AlphaAnim>
-					<Stack			ID="StatStack" StackGrowth="Bottom" Offset="1,55" StackPadding="3" EndPadding="6" >
+					<Stack			ID="StatStack" StackGrowth="Bottom" Offset="1,60" StackPadding="3" EndPadding="6" >
 						<Label		ID="Score"			Style="FontNormal14" FontStyle="shadow" Color0="255,200,0,255" Color2="180,130,200,255"		EffectColor="0,0,0,255" String="[ICON_Capital]-"	ToolTip="LOC_HUD_RIBBON_SCORE"		  />
 						<Label		ID="Military"		Style="FontNormal14" FontStyle="shadow" ColorSet="ResMilitaryLabelCS"	EffectColor="0,0,0,255" String="[ICON_Strength]-"	ToolTip="LOC_HUD_RIBBON_STRENGTH" />
 						<Label		ID="Science"		Style="FontNormal14" FontStyle="shadow" ColorSet="ResScienceLabelCS"	EffectColor="0,0,0,255" String="[ICON_Science]-"	ToolTip="LOC_HUD_RIBBON_SCIENCE"  />
