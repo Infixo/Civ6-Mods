@@ -2,7 +2,7 @@
 <Mod id="835c3ece-1a9c-4efb-996d-367815774ff0" version="1">
   <Properties>
     <Name>Real Fixes</Name>
-    <Description>Various game fixes and tweaks. Version 230330.</Description>
+    <Description>Various game fixes and tweaks. Version 230403.</Description>
     <Teaser>Various game fixes and tweaks</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
@@ -18,16 +18,16 @@
   </ActionCriteria>
   <InGameActions>
     <UpdateDatabase id="RFX_Database">
-      <Properties><LoadOrder>10000</LoadOrder></Properties>
+      <Properties><LoadOrder>1</LoadOrder></Properties>
       <File>real_fixes_base.sql</File>
       <File>real_fixes_start_biases.sql</File>
     </UpdateDatabase>
     <UpdateDatabase id="RFX_Database_XP1" criteria="Expansion1">
-      <Properties><LoadOrder>10001</LoadOrder></Properties>
+      <Properties><LoadOrder>2</LoadOrder></Properties>
       <File>real_fixes_xp1.sql</File>
     </UpdateDatabase>
     <UpdateDatabase id="RFX_Database_XP2" criteria="Expansion2">
-      <Properties><LoadOrder>10002</LoadOrder></Properties>
+      <Properties><LoadOrder>3</LoadOrder></Properties>
       <File Priority="1">real_fixes_xp1.sql</File>
       <File>real_fixes_xp2.sql</File>
     </UpdateDatabase>

@@ -11,11 +11,12 @@ SELECT 'CIVILIZATION_AUSTRALIA', TerrainType, 5
 FROM Improvement_ValidTerrains
 WHERE ImprovementType = 'IMPROVEMENT_OUTBACK_STATION';
 
+-- 2023-04-02 Removed, I don't know why I added that :)
 -- CANADA late-game strategic resources
-INSERT OR REPLACE INTO StartBiasResources (CivilizationType, ResourceType, Tier)
-SELECT 'CIVILIZATION_CANADA', ResourceType, 5
-FROM Resources
-WHERE ResourceType IN ('RESOURCE_URANIUM', 'RESOURCE_OIL', 'RESOURCE_NITER') AND EXISTS (SELECT * FROM Civilizations WHERE CivilizationType = 'CIVILIZATION_CANADA');
+--INSERT OR REPLACE INTO StartBiasResources (CivilizationType, ResourceType, Tier)
+--SELECT 'CIVILIZATION_CANADA', ResourceType, 5
+--FROM Resources
+--WHERE ResourceType IN ('RESOURCE_URANIUM', 'RESOURCE_OIL', 'RESOURCE_NITER') AND EXISTS (SELECT * FROM Civilizations WHERE CivilizationType = 'CIVILIZATION_CANADA');
 
 -- ENGLAND
 UPDATE StartBiasResources SET Tier = 4 WHERE CivilizationType = 'CIVILIZATION_ENGLAND'; -- RESOURCE_COAL, RESOURCE_IRON

@@ -26,7 +26,7 @@ DELETE FROM AiListTypes WHERE ListType = 'BaseListTest';
 -- AI Strategy Medieval Fixes; fixed partially in Spring 2018 Patch
 --UPDATE StrategyConditions SET ConditionFunction = 'Is Medieval' WHERE StrategyType = 'STRATEGY_MEDIEVAL_CHANGES' AND Disqualifier = 0;
 -- 2023-03-29 Note that settlement changes are still bugged (not activated)
-INSERT INTO Strategy_Priorities (StrategyType, ListType) VALUES ('STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements');
+INSERT OR IGNORE INTO Strategy_Priorities (StrategyType, ListType) VALUES ('STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements');
 -- The following will allow for AI+ to remove this strategy
 --INSERT OR REPLACE INTO Strategy_Priorities (StrategyType, ListType)
 --SELECT 'STRATEGY_MEDIEVAL_CHANGES', 'MedievalSettlements'
@@ -244,10 +244,30 @@ INSERT INTO AiLists (ListType, LeaderType, System) SELECT 'TheodoraWonders', 'TR
 -- 2023-03-29 Gorgo's AI is bugged, should be CULTURE_KILLS_TRAIT instead of TRAIT_AGENDA_WITH_SHIELD
 UPDATE AiLists SET LeaderType = 'CULTURE_KILLS_TRAIT' WHERE LeaderType = 'TRAIT_AGENDA_WITH_SHIELD';
 
+
 --------------------------------------------------------------
 -- 2023-03-29 Misspelled names
 UPDATE AiFavoredItems SET Item = 'BUILDING_VENETIAN_ARSENAL' WHERE Item = 'BUILDING_VENTIAN_ARSENAL';
 UPDATE AiFavoredItems SET Item = 'CIVIC_DRAMA_POETRY'        WHERE Item = 'CIVIC_DRAMA_AND_POETRY';
+
+
+--------------------------------------------------------------
+-- 2023-03-31 Negative value, still works ok however...
+UPDATE ModifierArguments SET Value = 15 WHERE ModifierId = 'RAMSES_CULTURE_NEGATIVE_BUILDINGS' AND Name = 'BuildingProductionPercent';
+
+
+--------------------------------------------------------------
+-- 2023-04-02 Nzinga buggy Civics definitions
+--<Row ListType="NzingaWonders" Item="CIVIC_DRAMA_POETRY" Favored="true"/>
+--<Row ListType="NzingaWonders" Item="CIVIC_GUILDS" Favored="true"/>
+UPDATE AiFavoredItems SET ListType = 'NzingaCivics' WHERE ListType = 'NzingaWonders' AND Item = 'CIVIC_DRAMA_POETRY';
+UPDATE AiFavoredItems SET ListType = 'NzingaCivics' WHERE ListType = 'NzingaWonders' AND Item = 'CIVIC_GUILDS';
+UPDATE AiFavoredItems SET Value = -20 WHERE ListType = 'SettleOneContinent' AND Item = 'Foreign Continent'; -- wrong usage of Foreign Continent
+
+--------------------------------------------------------------
+-- 2023-04-02 Rulers of the Sahara buggy AI Lists definitions
+UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_RAMSES'        WHERE ListType = 'RamsesTechs'; 
+UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_CLEOPATRA_ALT' WHERE ListType = 'CleopatraAltTechs'; 
 
 
 
@@ -331,3 +351,11 @@ UPDATE RequirementArguments SET Value = 'RESOURCE_HONEY'   WHERE RequirementId =
 UPDATE RequirementArguments SET Value = 'RESOURCE_OLIVES'   WHERE RequirementId = 'REQUIREMENT_CIVILIAN_DISCOUNT_RESOURCE' AND Name = 'ResourceType';
 UPDATE RequirementArguments SET Value = 'RESOURCE_WINE' WHERE RequirementId = 'REQUIREMENT_CULTURE_BONUS_RESOURCE'        AND Name = 'ResourceType';
 */
+
+delete from CivilizationAudioTags;
+insert into CivilizationAudioTags
+select CivilizationType, 1
+from Civilizations
+where StartingCivilizationLevelType = 'CIVILIZATION_LEVEL_FULL_CIV';
+
+--update AiFavoredItems set Value = 3 where ListType = 'DefaultCitySpecialization'  and Item = 'BUILD_CITY_DEFENSES';
