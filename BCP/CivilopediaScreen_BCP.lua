@@ -33,6 +33,7 @@ include("CivilopediaScreen");
 -- Cache base functions
 BCP_BASE_PageLayouts = {};
 BCP_BASE_OnOpenCivilopedia = OnOpenCivilopedia;
+local LL = Locale.Lookup;
 
 --print("Storing contents of PageLayouts:");
 for k,v in pairs(PageLayouts) do
@@ -444,20 +445,20 @@ function ShowAiLists(tTraits:table)
 	end
 	-- show all lists
 	for _,ailist in ipairs(tAiLists) do
-		table.insert(chapter_body, string.format("%s (%s, %s)",
-			"[COLOR_Blue]"..ailist.ListType.."[ENDCOLOR]",
-			ailist.System,
-			ailist.LeaderType ~= nil and ailist.LeaderType or (ailist.AgendaType ~= nil and ailist.AgendaType or "[COLOR_Red]unknown[ENDCOLOR]"))); -- AiLists, header
+		local tList:table = {};
+		table.insert(tList, string.format("[COLOR_Blue]%s[ENDCOLOR] (%s)", ailist.ListType, ailist.System)); -- AiLists, header
+		table.insert(tList, ailist.LeaderType ~= nil and ailist.LeaderType or (ailist.AgendaType ~= nil and ailist.AgendaType or "[COLOR_Red]unknown[ENDCOLOR]"));
 		-- find and display AiFavoredItems
 		for row in GameInfo.AiFavoredItems() do
 			if row.ListType == ailist.ListType then
-				table.insert(chapter_body, string.format("%s %s %d %s",
+				table.insert(tList, string.format("[ICON_BULLET]%s %s %d %s",
 					row.Item,
 					row.Favored and "YES" or "no",
 					row.Value,
 					row.StringVal ~= nil and row.StringVal or "")); -- AiFavoredItems, single record
 			end
 		end
+		table.insert(chapter_body, table.concat(tList, "[NEWLINE]"));
 	end
 	if table.count(chapter_body) == 0 then table.insert(chapter_body, "No AI lists defined."); end
 	AddChapter("AI", chapter_body);
@@ -493,6 +494,38 @@ PageLayouts["Civilization"] = function(page)
 			table.insert(tTraits, row.TraitType);
 		end
 	end
+	
+	-- 2023-04-02 Right Column: StartBias info
+	local sep:boolean = false;
+	AddRightColumnStatBox("LOC_UI_PEDIA_START_BIAS", function(s)
+		-- river
+		for row in GameInfo.StartBiasRivers() do
+			if row.CivilizationType == page.PageId then
+				s:AddLabel(string.format("%s: %d", LL("LOC_TOOLTIP_RIVER"), row.Tier));
+			end
+		end
+		-- terrain
+		s:AddSeparator();
+		for row in GameInfo.StartBiasTerrains() do
+			if row.CivilizationType == page.PageId then
+				s:AddLabel(string.format("%s: %d", LL(GameInfo.Terrains[row.TerrainType].Name), row.Tier));
+			end
+		end
+		-- feature
+		s:AddSeparator();
+		for row in GameInfo.StartBiasFeatures() do
+			if row.CivilizationType == page.PageId then
+				s:AddLabel(string.format("%s: %d", LL(GameInfo.Features[row.FeatureType].Name), row.Tier));
+			end
+		end
+		-- resource
+		s:AddSeparator();
+		for row in GameInfo.StartBiasResources() do
+			if row.CivilizationType == page.PageId then
+				s:AddLabel(string.format("[ICON_%s] %s: %d", row.ResourceType, LL(GameInfo.Resources[row.ResourceType].Name), row.Tier));
+			end
+		end
+	end);
 	
 	ShowAiLists(tTraits);
 	ShowInternalPageInfo(page);
@@ -799,6 +832,5 @@ PageLayouts["Government"] = function(page)
 	ShowModifiers(page);
 	ShowInternalPageInfo(page);
 end
-
 
 print("OK loaded CivilopediaScreen_BCP.lua from Better Civilopedia");
