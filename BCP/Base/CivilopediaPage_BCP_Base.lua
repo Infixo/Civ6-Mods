@@ -210,7 +210,6 @@ PageLayouts["TableUnits"] = function(page)
 		-- click action
 		unitLine.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(page.SectionId, unit.UnitType); end);
 	end
-	
 end
 
 

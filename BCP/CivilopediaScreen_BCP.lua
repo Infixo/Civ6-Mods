@@ -18,6 +18,7 @@ if not ExposedMembers.RMA then ExposedMembers.RMA = {} end;
 local RMA = ExposedMembers.RMA;
 local bIsRMA:boolean = Modding.IsModActive("6f2888d4-79dc-415f-a8ff-f9d81d7afb53"); -- Real Modifier Analysis
 local bIsTCS:boolean = Modding.IsModActive("fd0d5e1a-0fbb-4d05-8f3e-f63fec8ff7c6"); -- TCS Pedialite
+local bIsRST:boolean = Modding.IsModActive("99D9DDFE-85FB-2D92-1893-92A015B5899A"); -- Real Strategy
 
 -- Rise & Fall check
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
@@ -496,7 +497,6 @@ PageLayouts["Civilization"] = function(page)
 	end
 	
 	-- 2023-04-02 Right Column: StartBias info
-	local sep:boolean = false;
 	AddRightColumnStatBox("LOC_UI_PEDIA_START_BIAS", function(s)
 		-- river
 		for row in GameInfo.StartBiasRivers() do
@@ -557,6 +557,19 @@ PageLayouts["Leader"] = function(page)
 				end
 			end
 		end
+	end
+
+	-- 2023-04-02 Right Column: Real Strategy priorities
+	if bIsRST then
+		AddRightColumnStatBox("LOC_HUD_REPORTS_PRIORITY", function(s)
+			s:AddSeparator();
+			for row in GameInfo.RSTFlavors() do
+				if row.ObjectType == page.PageId then
+					s:AddLabel(string.format("%s: %d", row.Strategy, row.Value));
+				end
+			end
+			s:AddSeparator();
+		end);
 	end
 	
 	ShowAiLists(tTraits);
