@@ -253,7 +253,17 @@ UPDATE AiFavoredItems SET Item = 'CIVIC_DRAMA_POETRY'        WHERE Item = 'CIVIC
 
 --------------------------------------------------------------
 -- 2023-03-31 Negative value, still works ok however...
-UPDATE ModifierArguments SET Value = 15 WHERE ModifierId = 'RAMSES_CULTURE_NEGATIVE_BUILDINGS' AND Name = 'BuildingProductionPercent';
+-- 2023-04-03 Not a bug, thx JNR for explanation
+--UPDATE ModifierArguments SET Value = 15 WHERE ModifierId = 'RAMSES_CULTURE_NEGATIVE_BUILDINGS' AND Name = 'BuildingProductionPercent';
+
+
+--------------------------------------------------------------
+-- 2023-03-31 Missing audio tags; not sure if this is a bug but they started adding those only recently and old civs don't have it
+DELETE FROM CivilizationAudioTags;
+INSERT INTO CivilizationAudioTags
+SELECT CivilizationType, 1
+FROM Civilizations
+WHERE StartingCivilizationLevelType = 'CIVILIZATION_LEVEL_FULL_CIV';
 
 
 --------------------------------------------------------------
@@ -264,10 +274,19 @@ UPDATE AiFavoredItems SET ListType = 'NzingaCivics' WHERE ListType = 'NzingaWond
 UPDATE AiFavoredItems SET ListType = 'NzingaCivics' WHERE ListType = 'NzingaWonders' AND Item = 'CIVIC_GUILDS';
 UPDATE AiFavoredItems SET Value = -20 WHERE ListType = 'SettleOneContinent' AND Item = 'Foreign Continent'; -- wrong usage of Foreign Continent
 
+
 --------------------------------------------------------------
 -- 2023-04-02 Rulers of the Sahara buggy AI Lists definitions
 UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_RAMSES'        WHERE ListType = 'RamsesTechs'; 
 UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_CLEOPATRA_ALT' WHERE ListType = 'CleopatraAltTechs'; 
+
+
+--------------------------------------------------------------
+-- 2023-04-03 Barbarian's attack force uses a discarded class tag
+-- Courtesy of Brixter (https://forums.civfanatics.com/threads/even-a-single-wrong-ai-parameter-may-break-the-ai.683011/post-16438003)
+UPDATE BarbarianAttackForces
+SET SiegeTag = 'CLASS_HEAVY_CAVALRY'
+WHERE AttackForceType = 'HighDifficultyCavalryAttack' AND SiegeTag = 'CLASS_HORSE_ARCHER';
 
 
 
@@ -307,8 +326,8 @@ UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_CLEOPATRA_ALT' WHERE ListType = 'C
 
 --------------------------------------------------------------
 -- 2018-12-22 From More Natural Beauty mod, increase number of Natural Wonders on maps	
-UPDATE Maps SET NumNaturalWonders = DefaultPlayers; -- default is 2,3,4,5,6,7 => will be 2,4,6,8,10,12
-UPDATE Features SET MinDistanceNW = 6 WHERE NaturalWonder = 1; -- default is 8
+--UPDATE Maps SET NumNaturalWonders = DefaultPlayers; -- default is 2,3,4,5,6,7 => will be 2,4,6,8,10,12
+--UPDATE Features SET MinDistanceNW = 6 WHERE NaturalWonder = 1; -- default is 8
 
 
 --------------------------------------------------------------
@@ -322,6 +341,7 @@ UPDATE Features SET MinDistanceNW = 6 WHERE NaturalWonder = 1; -- default is 8
 -- AICleanup_Units - in the game
 -- AICleanup_Victories - in RST
 
+
 -- This was an odd one. Gold for units was set to 4, gold for plots and GPs was set to 1, and gold for splurge was set to 3.
 -- Splurge should always be last in the priority list, so I assumed priority went lowest->highest and set gold for units to 2. -->
 -- 2023-03-29 Comment from devs in Civ Battle Royale is "The following puts all gold into slush funds [...]" and slush fund has priority 1
@@ -330,32 +350,3 @@ UPDATE AiFavoredItems SET Value = 1 WHERE ListType = 'DefaultSavings' AND Item =
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_PLOTS';
 UPDATE AiFavoredItems SET Value = 3 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_UNITS';
 UPDATE AiFavoredItems SET Value = 4 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_SLUSH_FUND';
-
-
--- TEST SECTION
-
---UPDATE Notifications SET VisibleInUI = 0 WHERE NotificationType = 'NOTIFICATION_HOUSING_PREVENTING_GROWTH';
---UPDATE Notifications SET ShowIconSinglePlayer = 0 WHERE NotificationType = 'NOTIFICATION_CITY_LOW_AMENITIES';
-
---UPDATE PseudoYields SET DefaultValue = 4.0 WHERE PseudoYieldType = 'PSEUDOYIELD_IMPROVEMENT'; -- 3.0
---UPDATE PseudoYields SET DefaultValue = 2.0 WHERE PseudoYieldType = 'PSEUDOYIELD_RESOURCE_LUXURY'; -- 1.5
---UPDATE PseudoYields SET DefaultValue = 1.0 WHERE PseudoYieldType = 'PSEUDOYIELD_WONDER'; -- 2.0
-/*
-UPDATE RequirementArguments SET Value = 'RESOURCE_COTTON'   WHERE RequirementId = 'REQUIREMENT_MILITARY_DISCOUNT_RESOURCE' AND Name = 'ResourceType';
-UPDATE RequirementArguments SET Value = 'RESOURCE_MARBLE'   WHERE RequirementId = 'REQUIREMENT_BUILDING_DISCOUNT_RESOURCE' AND Name = 'ResourceType';
-UPDATE RequirementArguments SET Value = 'RESOURCE_SILVER' WHERE RequirementId = 'REQUIREMENT_GOLD_BONUS_RESOURCE'        AND Name = 'ResourceType';
-UPDATE RequirementArguments SET Value = 'RESOURCE_PEARLS'     WHERE RequirementId = 'REQUIREMENT_FAITH_BONUS_RESOURCE'       AND Name = 'ResourceType';
-UPDATE RequirementArguments SET Value = 'RESOURCE_TEA'  WHERE RequirementId = 'REQUIREMENT_SCIENCE_BONUS_RESOURCE'     AND Name = 'ResourceType';
-
-UPDATE RequirementArguments SET Value = 'RESOURCE_HONEY'   WHERE RequirementId = 'REQUIREMENT_CITY_GROWTH_RESOURCE' AND Name = 'ResourceType';
-UPDATE RequirementArguments SET Value = 'RESOURCE_OLIVES'   WHERE RequirementId = 'REQUIREMENT_CIVILIAN_DISCOUNT_RESOURCE' AND Name = 'ResourceType';
-UPDATE RequirementArguments SET Value = 'RESOURCE_WINE' WHERE RequirementId = 'REQUIREMENT_CULTURE_BONUS_RESOURCE'        AND Name = 'ResourceType';
-*/
-
-delete from CivilizationAudioTags;
-insert into CivilizationAudioTags
-select CivilizationType, 1
-from Civilizations
-where StartingCivilizationLevelType = 'CIVILIZATION_LEVEL_FULL_CIV';
-
---update AiFavoredItems set Value = 3 where ListType = 'DefaultCitySpecialization'  and Item = 'BUILD_CITY_DEFENSES';

@@ -2,7 +2,7 @@
 <Mod id="835c3ece-1a9c-4efb-996d-367815774ff0" version="1">
   <Properties>
     <Name>Real Fixes</Name>
-    <Description>Various game fixes and tweaks. Version 230403.</Description>
+    <Description>Various game fixes and tweaks. Version 230404.</Description>
     <Teaser>Various game fixes and tweaks</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
@@ -15,11 +15,17 @@
 	<Criteria id="Expansion2">
 	  <GameCoreInUse>Expansion2</GameCoreInUse>
 	</Criteria>
+	<Criteria id="BBSNotEnabled">
+	  <ModInUse inverse="1">c88cba8b-8311-4d35-90c3-51a4a5d66550</ModInUse> <!-- Better Balanced Starts 2.2.0 -->
+	</Criteria>	
   </ActionCriteria>
   <InGameActions>
     <UpdateDatabase id="RFX_Database">
       <Properties><LoadOrder>1</LoadOrder></Properties>
       <File>real_fixes_base.sql</File>
+    </UpdateDatabase>
+    <UpdateDatabase id="RFX_StartBiases" criteria="BBSNotEnabled">
+      <Properties><LoadOrder>1</LoadOrder></Properties>
       <File>real_fixes_start_biases.sql</File>
     </UpdateDatabase>
     <UpdateDatabase id="RFX_Database_XP1" criteria="Expansion1">
