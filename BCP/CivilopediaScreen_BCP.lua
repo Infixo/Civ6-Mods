@@ -96,6 +96,7 @@ local tPagesToSkip:table = {
 	OverviewMoments = true,
 	RandAgenda = true,
 	Discussion = true,
+	Adjacencies = true,
 };
 
 -- we assume Player as the default modifier owner, the below with pass a Capital City to avoid warnings in the log file

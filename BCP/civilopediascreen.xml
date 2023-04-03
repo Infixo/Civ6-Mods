@@ -291,17 +291,17 @@
 				</Container>
 				<Box Size="2,parent+10" Offset="0,0" Color="0,20,20,70"/>
 				<!-- Major -->
-				<Container Size="180,parent">
+				<Container Size="180,parent" Offset="0,5">
 					<Label ID="Major" Style="Civilopedia_RightColumnStatText" Anchor="L,C" String="$T$"/>
 				</Container>
 				<Box Size="2,parent+10" Offset="0,0" Color="0,20,20,70"/>
 				<!-- Standard -->
-				<Container Size="180,parent">
+				<Container Size="180,parent" Offset="0,5">
 					<Label ID="Standard" Style="Civilopedia_RightColumnStatText" Anchor="L,C" String="$0$"/>
 				</Container>
 				<Box Size="2,parent+10" Offset="0,0" Color="0,20,20,70"/>
 				<!-- Minor -->
-				<Container Size="180,parent">
+				<Container Size="180,parent" Offset="0,5">
 					<Label ID="Minor" Style="Civilopedia_RightColumnStatText" Anchor="L,C" String="$0$"/>
 				</Container>
 			</Stack>

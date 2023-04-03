@@ -352,12 +352,16 @@ end
 -- adjacency decoding based on Civilopedia code by Firaxis
 function DecodeAdjacency(row:table)
 	local object;
+	local color = "[COLOR:27,27,27,255]"; -- default color in Civilopedia
+	
 	if(row.OtherDistrictAdjacent) then
-		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_DISTRICT";
+		object = "LOC_DISTRICT_NAME"; --"LOC_TYPE_TRAIT_ADJACENT_OBJECT_DISTRICT";
 	elseif(row.AdjacentResource) then
-		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
+		object = "LOC_RESOURCE_NAME"; --"LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
+		--color = "[COLOR:StatGoodCS]";
 	elseif(row.AdjacentSeaResource) then
 		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_SEA_RESOURCE";
+		--color = "[COLOR:StatGoodCS]";
 	elseif(row.AdjacentResourceClass ~= "NO_RESOURCECLASS") then
 		if(row.AdjacentResourceClass == "RESOURCECLASS_BONUS") then
 			object = "LOC_TOOLTIP_BONUS_RESOURCE";
@@ -371,36 +375,45 @@ function DecodeAdjacency(row:table)
 			object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE_CLASS";
 		end
 	elseif(row.AdjacentRiver) then
-		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
+		object = "LOC_TOOLTIP_RIVER"; --LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
+		color = "[COLOR_LIGHTBLUE]";
 	elseif(row.AdjacentWonder) then
-		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_WONDER";
+		object = "LOC_WONDER_NAME"; --"LOC_TYPE_TRAIT_ADJACENT_OBJECT_WONDER";
+		color = "[COLOR_LIGHTBLUE]";
 	elseif(row.AdjacentNaturalWonder) then
-		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_NATURAL_WONDER";
+		object = "LOC_NATURAL_WONDER_NAME"; --"LOC_TYPE_TRAIT_ADJACENT_OBJECT_NATURAL_WONDER";
+		color = "[COLOR_LIGHTBLUE]";
 	elseif(row.AdjacentTerrain) then
 		local terrain = GameInfo.Terrains[row.AdjacentTerrain];
 		if(terrain) then
 			object = terrain.Name;
+			color = "[COLOR:100,40,0,255]"; --"[COLOR:0,0,0,255]";
 		end
 	elseif(row.AdjacentFeature) then
 		local feature = GameInfo.Features[row.AdjacentFeature];
 		if(feature) then
 			object = feature.Name;
+			color = "[COLOR_GREEN]";  -- COLOR_DARK_GREY, COLOR_LIGHTBLUE, , COLOR_BLACK, COLOR_GREEN, [COLOR:StatGoodCS], [COLOR:StatBadCS]
 		end
 	elseif(row.AdjacentImprovement) then
 		local improvement = GameInfo.Improvements[row.AdjacentImprovement];
 		if(improvement) then
 			object = improvement.Name;
 		end
-	elseif(row.AdjacentDistrict) then		
+	elseif(row.AdjacentDistrict) then
 		local district = GameInfo.Districts[row.AdjacentDistrict];
 		if(district) then
 			object = district.Name;
+			color = "[COLOR_Blue]";
 		end
+	elseif(row.Self) then
+		object = "LOC_DIPLO_TO_SELF";
+		color = "[COLOR_LIGHTBLUE]";
 	end
 
 	local yield = GameInfo.Yields[row.YieldType];
 
-	if object == nil or yield == nil then return "error"; end
+	if object == nil or yield == nil then return "error", "[COLOR_Red]"; end
 
 	--local key = (row.TilesRequired > 1) and "LOC_TYPE_TRAIT_ADJACENT_BONUS_PER" or "LOC_TYPE_TRAIT_ADJACENT_BONUS";
 			--<Text>{1_Amount: number +#,###.#;-#,###.#} {2_YieldIcon} {3_YieldName} from every {4_Count} adjacent {5_AdjacentObject} tiles.</Text>
@@ -411,11 +424,17 @@ function DecodeAdjacency(row:table)
 	local key = (row.TilesRequired > 1) 
 		and "{2_YieldIcon} {4_Count} {5_AdjacentObject}" 
 		or  "{2_YieldIcon} {5_AdjacentObject}";
+	if row.YieldChange > 2 then
+		key = "[COLOR:StatGoodCS]+{1_Amount}[ENDCOLOR]" .. key;
+	end
+	if row.YieldChange < 0 then
+		key = "[COLOR:StatBadCS]{1_Amount}[ENDCOLOR]" .. key;
+	end
 	
 	-- Exception - Adjacent river gold bonuses can only be gained once
-	if row.AdjacentRiver then
-		key = "LOC_TYPE_TRAIT_ADJACENT_BONUS_ONCE";
-	end
+	--if row.AdjacentRiver then
+		--key = "LOC_TYPE_TRAIT_ADJACENT_BONUS_ONCE";
+	--end
 
 	local value = Locale.Lookup(key, row.YieldChange, yield.IconString, yield.Name, row.TilesRequired, object);
 
@@ -439,7 +458,7 @@ function DecodeAdjacency(row:table)
 		end
 	end
 	
-	return value;
+	return value, color;
 end
 
 PageLayouts["Adjacencies"] = function(page)
@@ -454,45 +473,58 @@ PageLayouts["Adjacencies"] = function(page)
 	head.Root:SetSizeY(20);
 	head.Icon:SetHide(true);
 	head.Name:SetText(LL("LOC_DISTRICT_NAME"));
-	head.Name:SetToolTipString("");
+	head.Icon:SetToolTipString("");
 	head.Major:SetText("+2 "..LL("LOC_UI_PEDIA_ADJACENCY"));
 	head.Standard:SetText("+1 "..LL("LOC_UI_PEDIA_ADJACENCY"));
 	head.Minor:SetText("+0.5 "..LL("LOC_UI_PEDIA_ADJACENCY"));
 	
-	-- show the districts
+	-- get districts to show and sort them alphabetically
+	local sorted:table = {};
 	for district in GameInfo.Districts() do
 		if district.DistrictType ~= "DISTRICT_CITY_CENTER" and district.DistrictType ~= "DISTRICT_WONDER" then
-			local line = _LeftColumnAdjacencyManager:GetInstance();
-			line.Root:SetSizeY(30);
-			line.Major:SetText("");
-			line.Standard:SetText("");
-			line.Minor:SetText("");
-			line.Icon:SetIcon("ICON_"..district.DistrictType);
-			line.Icon:SetHide(false);
-			line.Name:SetText(LL(district.Name));
-			line.Name:SetToolTipString(LL(district.Description));
-			-- adjacencies
-			for row in GameInfo.District_Adjacencies() do
-				if row.DistrictType == district.DistrictType then
-					local adj:table = GameInfo.Adjacency_YieldChanges[row.YieldChangeId];
-					local desc:string = DecodeAdjacency(adj);
-					local info = line.Minor;
-					if adj.TilesRequired == 1 then
-						info = line.Standard;
-						if adj.YieldChange > 1 then
-							info = line.Major;
-						end
+			table.insert(sorted, district.DistrictType);
+		end
+	end
+	table.sort(sorted,
+		function (a,b)
+			return LL(GameInfo.Districts[a].Name) < LL(GameInfo.Districts[b].Name);
+		end);
+	
+	-- show the districts
+	for _,district in ipairs(sorted) do -- now district is actually DistrictType
+		--if district.DistrictType ~= "DISTRICT_CITY_CENTER" and district.DistrictType ~= "DISTRICT_WONDER" then
+		local line = _LeftColumnAdjacencyManager:GetInstance();
+		line.Root:SetSizeY(30);
+		line.Major:SetText("");
+		line.Standard:SetText("");
+		line.Minor:SetText("");
+		line.Icon:SetIcon("ICON_"..district);
+		line.Icon:SetHide(false);
+		line.Name:SetText(LL(GameInfo.Districts[district].Name));
+		line.Icon:SetToolTipString(LL(GameInfo.Districts[district].Description));
+		-- adjacencies
+		for row in GameInfo.District_Adjacencies() do
+			if row.DistrictType == district then
+				local adj:table = GameInfo.Adjacency_YieldChanges[row.YieldChangeId];
+				local desc:string, color:string = DecodeAdjacency(adj);
+				desc = color..LL(desc).."[ENDCOLOR]";
+				local info = line.Minor;
+				if adj.TilesRequired == 1 then
+					info = line.Standard;
+					if adj.YieldChange > 1 then
+						info = line.Major;
 					end
-					local old:string = info:GetText();
-					if old then desc = old.."[NEWLINE]"..desc; end
-					info:SetText(desc);
-					local sizeY:number = info:GetSizeY();
-					if sizeY > line.Root:GetSizeY() then line.Root:SetSizeY(sizeY); end
 				end
+				local old:string = info:GetText();
+				if old then desc = old.."[NEWLINE]"..desc; end
+				info:SetText(desc);
+				local sizeY:number = info:GetSizeY();
+				if sizeY > line.Root:GetSizeY() then line.Root:SetSizeY(sizeY); end
 			end
-			-- click action
-			line.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(page.SectionId, district.DistrictType); end);
-		end -- if
+		end
+		-- click action
+		line.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(page.SectionId, district); end);
+		--end -- if
 	end -- for
 end
 

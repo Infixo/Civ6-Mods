@@ -6,6 +6,7 @@
 -- 2018-03-23: Created, Tables of Units
 -- 2018-03-25: Added Random Agendas
 -- 2018-03-30: Added Unit Abilities
+-- 2023-04-03: Added District Adjacencies
 --------------------------------------------------------------
 -->
 <GameInfo>
@@ -31,7 +32,7 @@
 		<Row SectionID="UNITS" PageId="NAVAL"   PageLayoutId="TableUnits" SortIndex="4" Name="LOC_FORMATION_CLASS_NAVAL_NAME"/>
 		<Row SectionID="UNITS" PageId="AIR"     PageLayoutId="TableUnits" SortIndex="5" Name="LOC_FORMATION_CLASS_AIR_NAME"/>
 		<Row SectionID="UNITS" PageId="SUPPORT" PageLayoutId="TableUnits" SortIndex="6" Name="LOC_FORMATION_CLASS_SUPPORT_NAME"/>
-		<Row SectionID="DISTRICTS" PageId="ADJACENCIES" PageLayoutId="Adjacencies" SortIndex="1" Name="District Adjacencies"/>
+		<Row SectionID="DISTRICTS" PageId="ADJACENCIES" PageLayoutId="Adjacencies" SortIndex="1" Name="LOC_HUD_REPORTS_ADJACENCY_BONUS"/>
 	</CivilopediaPages>
 	<!-- new layout -->
 	<CivilopediaPageLayouts>
