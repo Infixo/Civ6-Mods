@@ -31,11 +31,13 @@
 		<Row SectionID="UNITS" PageId="NAVAL"   PageLayoutId="TableUnits" SortIndex="4" Name="LOC_FORMATION_CLASS_NAVAL_NAME"/>
 		<Row SectionID="UNITS" PageId="AIR"     PageLayoutId="TableUnits" SortIndex="5" Name="LOC_FORMATION_CLASS_AIR_NAME"/>
 		<Row SectionID="UNITS" PageId="SUPPORT" PageLayoutId="TableUnits" SortIndex="6" Name="LOC_FORMATION_CLASS_SUPPORT_NAME"/>
+		<Row SectionID="DISTRICTS" PageId="ADJACENCIES" PageLayoutId="Adjacencies" SortIndex="1" Name="District Adjacencies"/>
 	</CivilopediaPages>
 	<!-- new layout -->
 	<CivilopediaPageLayouts>
 		<Row PageLayoutId="TableUnits"  ScriptTemplate="TableUnits"/>
 		<Row PageLayoutId="RandAgenda"  ScriptTemplate="RandAgenda"/>
 		<Row PageLayoutId="UnitAbility" ScriptTemplate="UnitAbility"/>
+		<Row PageLayoutId="Adjacencies" ScriptTemplate="Adjacencies"/>
 	</CivilopediaPageLayouts>
 </GameInfo>

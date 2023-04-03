@@ -9,6 +9,8 @@ print("Loading CivilopediaPage_BCP_Base.lua from Better Civilopedia version "..G
 local bIsRiseFall:boolean = Modding.IsModActive("1B28771A-C749-434B-9053-D1380C553DE9"); -- Rise & Fall
 local bIsGatheringStorm:boolean = Modding.IsModActive("4873eb62-8ccc-4574-b784-dda455e74e68"); -- Gathering Storm
 
+local LL = Locale.Lookup;
+
 
 -- ===========================================================================
 --	Civilopedia - Table of Units Page Layout
@@ -19,9 +21,11 @@ BCP_BASE_ResetPageContent = ResetPageContent;
 
 
 local _LeftColumnUnitStatsManager = InstanceManager:new("CivilopediaLeftColumnUnitStats", "Root", Controls.LeftColumnStack);
+local _LeftColumnAdjacencyManager = InstanceManager:new("CivilopediaLeftColumnAdjacency", "Root", Controls.LeftColumnStack);
 
 function ResetPageContent()
 	_LeftColumnUnitStatsManager:ResetInstances();
+	_LeftColumnAdjacencyManager:ResetInstances();
 	BCP_BASE_ResetPageContent();
 end
 
@@ -340,5 +344,156 @@ PageLayouts["UnitAbility"] = function(page)
 	
 end
 
+
+-- ===========================================================================
+--	Civilopedia - Adjacencies Page Layout
+-- ===========================================================================
+
+-- adjacency decoding based on Civilopedia code by Firaxis
+function DecodeAdjacency(row:table)
+	local object;
+	if(row.OtherDistrictAdjacent) then
+		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_DISTRICT";
+	elseif(row.AdjacentResource) then
+		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
+	elseif(row.AdjacentSeaResource) then
+		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_SEA_RESOURCE";
+	elseif(row.AdjacentResourceClass ~= "NO_RESOURCECLASS") then
+		if(row.AdjacentResourceClass == "RESOURCECLASS_BONUS") then
+			object = "LOC_TOOLTIP_BONUS_RESOURCE";
+		elseif(row.AdjacentResourceClass == "RESOURCECLASS_LUXURY") then
+			object = "LOC_TOOLTIP_LUXURY_RESOURCE";
+		elseif(row.AdjacentResourceClass == "RESOURCECLASS_STRATEGIC") then
+			object = "LOC_TOOLTIP_BONUS_STRATEGIC";
+		elseif(row.AdjacentResourceClass == "RESOURCECLASS_LEY_LINE") then
+			object = "LOC_TOOLTIP_LEY_LINE_RESOURCE";
+		else
+			object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE_CLASS";
+		end
+	elseif(row.AdjacentRiver) then
+		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
+	elseif(row.AdjacentWonder) then
+		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_WONDER";
+	elseif(row.AdjacentNaturalWonder) then
+		object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_NATURAL_WONDER";
+	elseif(row.AdjacentTerrain) then
+		local terrain = GameInfo.Terrains[row.AdjacentTerrain];
+		if(terrain) then
+			object = terrain.Name;
+		end
+	elseif(row.AdjacentFeature) then
+		local feature = GameInfo.Features[row.AdjacentFeature];
+		if(feature) then
+			object = feature.Name;
+		end
+	elseif(row.AdjacentImprovement) then
+		local improvement = GameInfo.Improvements[row.AdjacentImprovement];
+		if(improvement) then
+			object = improvement.Name;
+		end
+	elseif(row.AdjacentDistrict) then		
+		local district = GameInfo.Districts[row.AdjacentDistrict];
+		if(district) then
+			object = district.Name;
+		end
+	end
+
+	local yield = GameInfo.Yields[row.YieldType];
+
+	if object == nil or yield == nil then return "error"; end
+
+	--local key = (row.TilesRequired > 1) and "LOC_TYPE_TRAIT_ADJACENT_BONUS_PER" or "LOC_TYPE_TRAIT_ADJACENT_BONUS";
+			--<Text>{1_Amount: number +#,###.#;-#,###.#} {2_YieldIcon} {3_YieldName} from every {4_Count} adjacent {5_AdjacentObject} tiles.</Text>
+			--<Text>{1_Amount: number +#,###.#;-#,###.#} {2_YieldIcon} {3_YieldName} from each adjacent {5_AdjacentObject} tile.</Text>
+	--local key = (row.TilesRequired > 1) 
+		--and "{4_Count} {5_AdjacentObject} [ICON_GoingTo] {1_Amount: number +#,###.#;-#,###.#} {2_YieldIcon}" 
+		--or  "{5_AdjacentObject} [ICON_GoingTo] {1_Amount: number +#,###.#;-#,###.#} {2_YieldIcon}";
+	local key = (row.TilesRequired > 1) 
+		and "{2_YieldIcon} {4_Count} {5_AdjacentObject}" 
+		or  "{2_YieldIcon} {5_AdjacentObject}";
+	
+	-- Exception - Adjacent river gold bonuses can only be gained once
+	if row.AdjacentRiver then
+		key = "LOC_TYPE_TRAIT_ADJACENT_BONUS_ONCE";
+	end
+
+	local value = Locale.Lookup(key, row.YieldChange, yield.IconString, yield.Name, row.TilesRequired, object);
+
+	if row.PrereqCivic or row.PrereqTech then
+		local item;
+		if row.PrereqCivic then item = GameInfo.Civics[row.PrereqCivic];
+		else                    item = GameInfo.Technologies[row.PrereqTech]; end
+		if item then
+			local text = Locale.Lookup("LOC_TYPE_TRAIT_ADJACENT_BONUS_REQUIRES_TECH_OR_CIVIC", item.Name);
+			value = value .. text;
+		end
+	end
+
+	if row.ObsoleteCivic or row.ObsoleteTech then
+		local item;
+		if row.ObsoleteCivic then item = GameInfo.Civics[row.ObsoleteCivic];
+		else                      item = GameInfo.Technologies[row.ObsoleteTech]; end
+		if item then
+			local text = Locale.Lookup("LOC_TYPE_TRAIT_ADJACENT_BONUS_OBSOLETE_WITH_TECH_OR_CIVIC", item.Name);
+			value = value .. text;
+		end
+	end
+	
+	return value;
+end
+
+PageLayouts["Adjacencies"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	local pageId = page.PageId;
+
+	SetPageHeader(page.Title);
+	SetPageSubHeader(page.Subtitle);
+	
+	-- header
+	local head = _LeftColumnAdjacencyManager:GetInstance();
+	head.Root:SetSizeY(20);
+	head.Icon:SetHide(true);
+	head.Name:SetText(LL("LOC_DISTRICT_NAME"));
+	head.Name:SetToolTipString("");
+	head.Major:SetText("+2 "..LL("LOC_UI_PEDIA_ADJACENCY"));
+	head.Standard:SetText("+1 "..LL("LOC_UI_PEDIA_ADJACENCY"));
+	head.Minor:SetText("+0.5 "..LL("LOC_UI_PEDIA_ADJACENCY"));
+	
+	-- show the districts
+	for district in GameInfo.Districts() do
+		if district.DistrictType ~= "DISTRICT_CITY_CENTER" and district.DistrictType ~= "DISTRICT_WONDER" then
+			local line = _LeftColumnAdjacencyManager:GetInstance();
+			line.Root:SetSizeY(30);
+			line.Major:SetText("");
+			line.Standard:SetText("");
+			line.Minor:SetText("");
+			line.Icon:SetIcon("ICON_"..district.DistrictType);
+			line.Icon:SetHide(false);
+			line.Name:SetText(LL(district.Name));
+			line.Name:SetToolTipString(LL(district.Description));
+			-- adjacencies
+			for row in GameInfo.District_Adjacencies() do
+				if row.DistrictType == district.DistrictType then
+					local adj:table = GameInfo.Adjacency_YieldChanges[row.YieldChangeId];
+					local desc:string = DecodeAdjacency(adj);
+					local info = line.Minor;
+					if adj.TilesRequired == 1 then
+						info = line.Standard;
+						if adj.YieldChange > 1 then
+							info = line.Major;
+						end
+					end
+					local old:string = info:GetText();
+					if old then desc = old.."[NEWLINE]"..desc; end
+					info:SetText(desc);
+					local sizeY:number = info:GetSizeY();
+					if sizeY > line.Root:GetSizeY() then line.Root:SetSizeY(sizeY); end
+				end
+			end
+			-- click action
+			line.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(page.SectionId, district.DistrictType); end);
+		end -- if
+	end -- for
+end
 
 print("OK loaded CivilopediaPage_BCP_Base.lua from Better Civilopedia");

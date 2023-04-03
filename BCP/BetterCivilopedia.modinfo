@@ -25,7 +25,7 @@
 		</UpdateDatabase>
 		<ImportFiles id="BCP_Imports">
 			<Properties><LoadOrder>200</LoadOrder></Properties>
-			<File>CivilopediaScreen.xml</File>
+			<File>civilopediascreen.xml</File>
 			<File>Base/CivilopediaPage_BCP_Base.lua</File>
 		</ImportFiles>
 		<ReplaceUIScript id="BCP_Replace_CivilopediaScreen">
@@ -60,7 +60,7 @@
 	<Files>
 		<!-- shared -->
 		<File>BetterCivilopedia_Database.sql</File>
-		<File>CivilopediaScreen.xml</File>
+		<File>civilopediascreen.xml</File>
 		<File>CivilopediaScreen_BCP.lua</File>
 		<!-- base game -->
 		<File>Base/Civilopedia_BCP_Base.xml</File>
