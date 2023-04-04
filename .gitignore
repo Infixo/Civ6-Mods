@@ -1,2 +1,30 @@
+# Ignore everything
+*
 
-*.civ6suo
+# Except for these directories...
+!BCP/  
+!BCS/  
+!BLI/  
+!BLS/  
+# BRS/ DEPRECATED
+!BRW/  
+!BST/  
+!BTT/  
+!BWR/  
+!RAD/  
+!RBP/  
+!RBU/  
+!RES/       
+!RET/  
+!REU/  
+!RFL/  
+!RFX/  
+!RGB/  
+!RGI/  
+!RGM/  
+!RGP/  
+# RST/ DEPRECATED
+!RTT/
+
+# ...and these files
+!*.md
