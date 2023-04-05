@@ -97,6 +97,13 @@ local tPagesToSkip:table = {
 	RandAgenda = true,
 	Discussion = true,
 	Adjacencies = true,
+	TimeStrategy = true,
+	-- TCS Pedialite
+	Mods = true,
+	ModsIntro = true,
+	Surveyor = true,
+	ModsInstall = true,
+	Patches = true,
 };
 
 -- we assume Player as the default modifier owner, the below with pass a Capital City to avoid warnings in the log file

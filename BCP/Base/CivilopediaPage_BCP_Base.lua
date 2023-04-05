@@ -22,10 +22,12 @@ BCP_BASE_ResetPageContent = ResetPageContent;
 
 local _LeftColumnUnitStatsManager = InstanceManager:new("CivilopediaLeftColumnUnitStats", "Root", Controls.LeftColumnStack);
 local _LeftColumnAdjacencyManager = InstanceManager:new("CivilopediaLeftColumnAdjacency", "Root", Controls.LeftColumnStack);
+local _LeftColumnTimeStratManager = InstanceManager:new("CivilopediaLeftColumnTimeStrat", "Root", Controls.LeftColumnStack);
 
 function ResetPageContent()
 	_LeftColumnUnitStatsManager:ResetInstances();
 	_LeftColumnAdjacencyManager:ResetInstances();
+	_LeftColumnTimeStratManager:ResetInstances();
 	BCP_BASE_ResetPageContent();
 end
 
@@ -526,6 +528,98 @@ PageLayouts["Adjacencies"] = function(page)
 		line.Button:RegisterCallback(Mouse.eLClick, function() NavigateTo(page.SectionId, district); end);
 		--end -- if
 	end -- for
+end
+
+
+-- ===========================================================================
+--	Civilopedia - Time Strategy Page Layout
+-- ===========================================================================
+
+local tTimeStrats:table = {
+STRATEGY_ANCIENT_CHANGES     = 1,
+STRATEGY_CLASSICAL_CHANGES   = 2,
+STRATEGY_MEDIEVAL_CHANGES    = 3,
+STRATEGY_RENAISSANCE_CHANGES = 4,
+STRATEGY_INDUSTRIAL_CHANGES  = 5,
+STRATEGY_MODERN_CHANGES      = 6,
+STRATEGY_ATOMIC_CHANGES      = 7,
+STRATEGY_INFORMATION_CHANGES = 8,
+STRATEGY_FUTURE_CHANGES      = 9,
+};
+
+local tItems:table = {};
+function GetT() return tItems; end -- debug
+
+function Initialize_ListType(aiList:string, eraNum:number)
+	--print("Initialize_ListType()",aiList,eraNum);
+	for row in GameInfo.AiFavoredItems() do
+		if row.ListType == aiList then
+			-- found an entry, add it to the table
+			if tItems[row.Item] == nil then
+				tItems[row.Item] = {};
+			end
+			local item:table = tItems[row.Item];
+			item[eraNum] = row.Value;
+			--item[0] = row.Item; -- item name for easier sorting later
+		end
+	end
+end
+
+function Initialize_TimeStrategies()
+	-- iterate strategies
+	for row in GameInfo.Strategy_Priorities() do
+		--print(row.StrategyType, row.ListType);
+		if tTimeStrats[row.StrategyType] ~= nil then
+			Initialize_ListType(row.ListType, tTimeStrats[row.StrategyType]);
+		end
+	end
+	-- sort them by item name
+	--table.sort(tItems, function (a,b) return a[0] < b[0]; end);
+end
+Initialize_TimeStrategies();
+
+--[[
+Name     TOT || ANC | CLA | MED | REN | IND | MOD | ATO | INF | FUT |  => total 10 columns with numbers
+Item     +20 || -10 | -10 |  0  | +40 | 
+--]]
+
+PageLayouts["TimeStrategy"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	local pageId = page.PageId;
+
+	SetPageHeader(page.Title);
+	SetPageSubHeader(page.Subtitle);
+	
+	-- sort items by name
+	local sorted:table = {};
+	for item,_ in pairs(tItems) do table.insert(sorted, item); end
+	table.sort(sorted);
+	
+	-- display header
+	local head = _LeftColumnTimeStratManager:GetInstance();
+	head.Name:SetText(LL("LOC_REPORTS_SORT_NAME"));
+	head.Total:SetText(LL("LOC_HUD_CITY_TOTAL"));
+	for i = 1, 9 do head["Era"..tonumber(i)]:SetText(i); end
+	
+	-- display items
+	local maxEra:number = tTimeStrats[pageId];
+	for _,item in ipairs(sorted) do
+		local line = _LeftColumnTimeStratManager:GetInstance();
+		line.Name:SetText(item);
+		local vals:table = tItems[item];
+		local tot:number = 0;
+		for i = 1, 9 do
+			local color:string = "[COLOR:27,27,27,255]";
+			if i == maxEra then color = "[COLOR_Blue]"; end
+			local val:string = "-";
+			if vals[i] then
+				val = tostring(vals[i]);
+				if i <= maxEra then tot = tot + vals[i]; end
+			end
+			line["Era"..tonumber(i)]:SetText(color..val.."[ENDCOLOR]");
+		end
+		line.Total:SetText(tot);
+	end
 end
 
 print("OK loaded CivilopediaPage_BCP_Base.lua from Better Civilopedia");

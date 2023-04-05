@@ -7,13 +7,15 @@
 -- 2018-03-25: Added Random Agendas
 -- 2018-03-30: Added Unit Abilities
 -- 2023-04-03: Added District Adjacencies
+-- 2023-04-05: Added Time Strategies
 --------------------------------------------------------------
 -->
 <GameInfo>
 	<!-- Random Agendas will be addedd as another PageGroup in CIVILIZATIONS section, Unit Abilities into UNITPROMOTIONS -->
 	<CivilopediaPageGroups>
-		<Row SectionID="CIVILIZATIONS"  PageGroupId="RANDAGENDAS"   Name="LOC_DIPLOMACY_INTEL_RANDOM_AGENDA"                      Tooltip="" VisibleIfEmpty="false" SortIndex="30"/>
-		<Row SectionID="UNITPROMOTIONS" PageGroupId="UNITABILITIES" Name="LOC_PEDIA_UNITPROMOTIONS_PAGEGROUP_UNIT_ABILITIES_NAME" Tooltip="" VisibleIfEmpty="false" SortIndex="100"/>
+		<Row SectionID="CIVILIZATIONS"  PageGroupId="RANDAGENDAS"    Name="LOC_DIPLOMACY_INTEL_RANDOM_AGENDA"                      Tooltip="" VisibleIfEmpty="false" SortIndex="30"/>
+		<Row SectionID="CIVILIZATIONS"  PageGroupId="TIMESTRATEGIES" Name="AI: Time Strategies"                                    Tooltip="" VisibleIfEmpty="false" SortIndex="40"/>
+		<Row SectionID="UNITPROMOTIONS" PageGroupId="UNITABILITIES"  Name="LOC_PEDIA_UNITPROMOTIONS_PAGEGROUP_UNIT_ABILITIES_NAME" Tooltip="" VisibleIfEmpty="false" SortIndex="100"/>
 	</CivilopediaPageGroups>
 	<!-- Queries to select pages into a PageGroup -->
 	<CivilopediaPageQueries>
@@ -33,12 +35,22 @@
 		<Row SectionID="UNITS" PageId="AIR"     PageLayoutId="TableUnits" SortIndex="5" Name="LOC_FORMATION_CLASS_AIR_NAME"/>
 		<Row SectionID="UNITS" PageId="SUPPORT" PageLayoutId="TableUnits" SortIndex="6" Name="LOC_FORMATION_CLASS_SUPPORT_NAME"/>
 		<Row SectionID="DISTRICTS" PageId="ADJACENCIES" PageLayoutId="Adjacencies" SortIndex="1" Name="LOC_HUD_REPORTS_ADJACENCY_BONUS"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_ANCIENT_CHANGES"      PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="1" Name="LOC_ERA_ANCIENT_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_CLASSICAL_CHANGES"    PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="2" Name="LOC_ERA_CLASSICAL_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_MEDIEVAL_CHANGES"     PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="3" Name="LOC_ERA_MEDIEVAL_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_RENAISSANCE_CHANGES"  PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="4" Name="LOC_ERA_RENAISSANCE_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_INDUSTRIAL_CHANGES"   PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="5" Name="LOC_ERA_INDUSTRIAL_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_MODERN_CHANGES"       PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="6" Name="LOC_ERA_MODERN_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_ATOMIC_CHANGES"       PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="7" Name="LOC_ERA_ATOMIC_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_INFORMATION_CHANGES"  PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="8" Name="LOC_ERA_INFORMATION_NAME"/>
+		<Row SectionID="CIVILIZATIONS" PageId="STRATEGY_FUTURE_CHANGES"       PageGroupId="TIMESTRATEGIES" PageLayoutId="TimeStrategy" SortIndex="9" Name="LOC_ERA_FUTURE_NAME"/>
 	</CivilopediaPages>
 	<!-- new layout -->
 	<CivilopediaPageLayouts>
-		<Row PageLayoutId="TableUnits"  ScriptTemplate="TableUnits"/>
-		<Row PageLayoutId="RandAgenda"  ScriptTemplate="RandAgenda"/>
-		<Row PageLayoutId="UnitAbility" ScriptTemplate="UnitAbility"/>
-		<Row PageLayoutId="Adjacencies" ScriptTemplate="Adjacencies"/>
+		<Row PageLayoutId="TableUnits"   ScriptTemplate="TableUnits"/>
+		<Row PageLayoutId="RandAgenda"   ScriptTemplate="RandAgenda"/>
+		<Row PageLayoutId="UnitAbility"  ScriptTemplate="UnitAbility"/>
+		<Row PageLayoutId="Adjacencies"  ScriptTemplate="Adjacencies"/>
+		<Row PageLayoutId="TimeStrategy" ScriptTemplate="TimeStrategy"/>
 	</CivilopediaPageLayouts>
 </GameInfo>

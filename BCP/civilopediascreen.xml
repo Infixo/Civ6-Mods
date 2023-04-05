@@ -307,6 +307,53 @@
 			</Stack>
 		</Container>
 	</Instance>
+	
+	<!-- 2023-04-05 Time Strategies -->
+	<Instance Name="CivilopediaLeftColumnTimeStrat">
+		<Container ID="Root" Size="724,15" Offset="0,0">
+			<Box Size="parent,1" Anchor="L,T" Color="0,20,20,70"/>
+			<Stack StackGrowth="Right">
+				<!-- Item Name -->
+				<Container Size="300,30" Anchor="L,C" Offset="2,0">
+					<Label ID="Name" Style="Civilopedia_RightColumnStatText" Anchor="L,C" String="$Name$"/>
+				</Container>
+				<Box Size="2,parent+10" Offset="0,0" Color="0,20,20,70"/>
+				<!-- Total -->
+				<Container Size="60,parent" Offset="0,5">
+					<Label ID="Total" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Box Size="2,parent+10" Offset="0,0" Color="0,20,20,70"/>
+				<!-- Era Values -->
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era1" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era2" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era3" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era4" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era5" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era6" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era7" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era8" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+				<Container Size="40,parent" Offset="0,5">
+					<Label ID="Era9" Style="Civilopedia_RightColumnStatText" Anchor="C,C" String="$0$"/>
+				</Container>
+			</Stack>
+		</Container>
+	</Instance>
 
 	<Instance Name="RightColumnPortrait">
 		<Image ID="Root" Texture="Civilopedia_PortraitSquare" Size="298,295">
