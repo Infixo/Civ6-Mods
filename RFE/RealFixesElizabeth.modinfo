@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mod id="58D7BAAA-54DD-0A61-3870-86E112F5255B" version="1">
+  <Properties>
+    <Name>Real Fixes Elizabeth</Name>
+    <Description>Fix for Elizabeth's ability giving trade routes only for specific Great Admirals. Now it gives trade routes for any first Great Admiral.[NEWLINE]Version 1.0</Description>
+    <Teaser>Fixes Elizabeth's ability</Teaser>
+    <Authors>Infixo</Authors>
+    <AffectsSavedGames>0</AffectsSavedGames>
+	<CompatibleVersions>1.2,2.0</CompatibleVersions>
+  </Properties>
+  <ActionCriteria>
+  </ActionCriteria>
+  <InGameActions>
+    <UpdateDatabase id="RFE_Database">
+      <Properties><LoadOrder>10000</LoadOrder></Properties>
+      <File>RFE_Data.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="RFE_Text">
+      <Properties><LoadOrder>10000</LoadOrder></Properties>
+      <File>RFE_Text.xml</File>
+    </UpdateText>
+	<AddGameplayScripts id="RFE_Scripts">
+      <Properties><LoadOrder>10000</LoadOrder></Properties>
+	  <File>RFE_Main.lua</File>
+	</AddGameplayScripts>
+  </InGameActions>
+  <Files>
+    <File>RFE_Data.sql</File>
+    <File>RFE_Text.xml</File>
+	<File>RFE_Main.lua</File>
+  </Files>
+</Mod>

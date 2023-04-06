@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ ===========================================================================
+ Real Fixes: Elizabeth
+ Author: Infixo
+ 2023-03-31: Created
+ ===========================================================================
+-->
+<GameData>
+  <LocalizedText>
+	<Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="en_US">
+	  <Text>England's [ICON_TradeRoute] Trade Route capacity is increased by 2 after acquiring your first [ICON_GreatAdmiral] Great Admiral. [ICON_TradeRoute] Trade Routes to any city-state provide +3 [ICON_GOLD] Gold for every specialty district in the origin city. +100% yields from plundering [ICON_TradeRoute] Trade Routes with naval units.</Text>
+	</Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="pt_BR">
+      <Text>A capacidade de [ICON_TradeRoute] rotas comerciais da Inglaterra aumenta em 2 após adquirir seu primeiro [ICON_GreatAdmiral] Grande Almirante. [ICON_TradeRoute] Rotas comerciais para qualquer cidade-estado concedem +3 de [ICON_GOLD] ouro para cada distrito especializado na cidade de origem. +100% de ganhos ao saquear [ICON_TradeRoute] rotas comerciais com unidades navais.</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="fr_FR">
+      <Text>Le nombre de [ICON_TradeRoute] routes commerciales possibles pour l'Angleterre augmente de 2 une fois votre premier [ICON_GreatAdmiral] amiral illustre obtenu. Les [ICON_TradeRoute] routes commerciales reliées à une cité-état génèrent +3 unités d'[ICON_GOLD] or pour chaque quartier spécialisé présent dans la ville d'origine. Rendements +100 % lors du pillage de [ICON_TradeRoute] route commerciale.</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="de_DE">
+      <Text>Englands [ICON_TradeRoute] Handelswegkapazität wird um 2 erhöht, nachdem Ihr Euren ersten [ICON_GreatAdmiral] Großen Admiral erhaltet. [ICON_TradeRoute] Handelswege zu Stadtstaaten gewähren +3 [ICON_GOLD] Gold pro Spezialbezirk in der Ursprungsstadt. +100 % Erträge beim Plündern von [ICON_TradeRoute] Handelswegen mit Marineeinheiten.</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="it_IT">
+      <Text>La [ICON_TradeRoute] Capacità Rotte commerciali dell'Inghilterra aumenta di 2 dopo l'acquisizione del tuo primo [ICON_GreatAdmiral] Grande Ammiraglio. Le [ICON_TradeRoute] Rotte commerciali verso una città-stato forniscono +3 [ICON_GOLD] Oro per ogni distretto specializzato nella città d'origine. +100% alle rese del saccheggio delle [ICON_TradeRoute] Rotte commerciali effettuato con unità navali.</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="pl_PL">
+      <Text>Maksymalna liczba [ICON_TradeRoute] szlaków handlowych Anglii zwiększa się o 2 po zdobyciu pierwszego [ICON_GreatAdmiral] wielkiego admirała. [ICON_TradeRoute] Szlaki handlowe do dowolnego miasta-państwa dają +3 [ICON_GOLD] złota za każdą wyspecjalizowaną dzielnicę w ich początkowym mieście. +100% do zysków z plądrowania [ICON_TradeRoute] szlaków handlowych za pomocą jednostek morskich.</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="ru_RU">
+      <Text>После приобретения [ICON_GreatAdmiral] великого флотоводца максимум [ICON_TradeRoute] торговых путей Англии увеличивается на 2. Ваши [ICON_TradeRoute] торговые пути к любому городу-государству дают +3 ед. [ICON_GOLD] золота за каждый специализированный район в исходном пункте. +100% доходов от разорения [ICON_TradeRoute] торговых путей морскими юнитами.</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_ELIZABETH_DESCRIPTION" Language="es_ES">
+      <Text>La capacidad de la Ruta comercial [ICON_TradeRoute] de Inglaterra aumenta en 2 tras adquirir tu primer Gran almirante [ICON_GreatAdmiral]. Las Rutas comerciales [ICON_TradeRoute] a cualquier ciudad-estado proporcionan +3 de Oro [ICON_GOLD] por cada distrito especializado en la ciudad de origen. +100 % de rendimientos al saquear Rutas comerciales [ICON_TradeRoute] con unidades navales.</Text>
+    </Replace>
+  </LocalizedText>
+</GameData>
