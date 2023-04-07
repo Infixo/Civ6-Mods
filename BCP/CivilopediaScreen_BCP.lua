@@ -98,6 +98,7 @@ local tPagesToSkip:table = {
 	Discussion = true,
 	Adjacencies = true,
 	TimeStrategy = true,
+	Strategy = true,
 	-- TCS Pedialite
 	Mods = true,
 	ModsIntro = true,
@@ -439,10 +440,9 @@ AddUniques("Improvements");
 -- LaderTrait & AgendaTrait
 --   same as above
 
-function ShowAiLists(tTraits:table)
+function ShowAiListsFromTraits(tTraits:table)
 	if not bOptionAiLists then return; end
-
-	local chapter_body = {};
+	
 	local tAiLists:table = {};
 	-- build a list of AiLists to display
 	for _,trait in ipairs(tTraits) do
@@ -452,11 +452,18 @@ function ShowAiLists(tTraits:table)
 			end
 		end
 	end
+	ShowAiLists(tAiLists);
+end
+	
+function ShowAiLists(tAiLists:table)
+	if not bOptionAiLists then return; end
+	local chapter_body = {};
 	-- show all lists
 	for _,ailist in ipairs(tAiLists) do
 		local tList:table = {};
 		table.insert(tList, string.format("[COLOR_Blue]%s[ENDCOLOR] (%s)", ailist.ListType, ailist.System)); -- AiLists, header
-		table.insert(tList, ailist.LeaderType ~= nil and ailist.LeaderType or (ailist.AgendaType ~= nil and ailist.AgendaType or "[COLOR_Red]unknown[ENDCOLOR]"));
+		if ailist.LeaderType ~= nil then table.insert(tList, ailist.LeaderType); end
+		if ailist.AgendaType ~= nil then table.insert(tList, ailist.AgendaType); end
 		-- find and display AiFavoredItems
 		for row in GameInfo.AiFavoredItems() do
 			if row.ListType == ailist.ListType then
@@ -470,7 +477,7 @@ function ShowAiLists(tTraits:table)
 		table.insert(chapter_body, table.concat(tList, "[NEWLINE]"));
 	end
 	if table.count(chapter_body) == 0 then table.insert(chapter_body, "No AI lists defined."); end
-	AddChapter("AI", chapter_body);
+	AddChapter(LL("LOC_BCP_AI"), chapter_body);
 end
 
 
@@ -535,7 +542,7 @@ PageLayouts["Civilization"] = function(page)
 		end
 	end);
 	
-	ShowAiLists(tTraits);
+	ShowAiListsFromTraits(tTraits);
 	ShowInternalPageInfo(page);
 	
 end
@@ -580,7 +587,7 @@ PageLayouts["Leader"] = function(page)
 		end);
 	end
 	
-	ShowAiLists(tTraits);
+	ShowAiListsFromTraits(tTraits);
 	ShowInternalPageInfo(page);
 	
 end

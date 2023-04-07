@@ -2,7 +2,7 @@
 <Mod id="d1f39cf8-d044-468d-b468-b03dd491b9b3" version="1">
 	<Properties>
 		<Name>Better Civilopedia (UI)</Name>
-		<Description>More information in Civilopedia![NEWLINE][NEWLINE]Version 2.1.</Description>
+		<Description>More information in Civilopedia![NEWLINE][NEWLINE]Version 2.2.</Description>
 		<Teaser>More information in Civilopedia!</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -35,6 +35,9 @@
 				<LuaReplace>CivilopediaScreen_BCP.lua</LuaReplace>
 			</Properties>
 		</ReplaceUIScript>
+		<UpdateText id="BCP_Text">
+			<File>Base/Civilopedia_BCP_Base_Text.xml</File>
+		</UpdateText>
 		<!-- Rise & Fall -->
 		<UpdateDatabase id="BCP_Database_XP1" criteria="Expansion1">
 			<Properties><LoadOrder>210</LoadOrder></Properties>
@@ -65,6 +68,7 @@
 		<!-- base game -->
 		<File>Base/Civilopedia_BCP_Base.xml</File>
 		<File>Base/CivilopediaPage_BCP_Base.lua</File>
+		<File>Base/Civilopedia_BCP_Base_Text.xml</File>
 		<!-- Rise & Fall -->
 		<File>XP1/Civilopedia_BCP_XP1.xml</File>
 		<File>XP1/CivilopediaPage_BCP_XP1.lua</File>

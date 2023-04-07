@@ -489,11 +489,16 @@ PageLayouts["Adjacencies"] = function(page)
 	end
 	table.sort(sorted,
 		function (a,b)
-			return LL(GameInfo.Districts[a].Name) < LL(GameInfo.Districts[b].Name);
+			local da, db = GameInfo.Districts[a], GameInfo.Districts[b];
+			if (da.TraitType == nil and db.TraitType == nil) or (da.TraitType ~= nil and db.TraitType ~= nil) then
+				return LL(GameInfo.Districts[a].Name) < LL(GameInfo.Districts[b].Name);
+			end
+			return da.TraitType == nil;
 		end);
 	
 	-- show the districts
 	for _,district in ipairs(sorted) do -- now district is actually DistrictType
+		local disInfo:table = GameInfo.Districts[district];
 		--if district.DistrictType ~= "DISTRICT_CITY_CENTER" and district.DistrictType ~= "DISTRICT_WONDER" then
 		local line = _LeftColumnAdjacencyManager:GetInstance();
 		line.Root:SetSizeY(30);
@@ -502,8 +507,12 @@ PageLayouts["Adjacencies"] = function(page)
 		line.Minor:SetText("");
 		line.Icon:SetIcon("ICON_"..district);
 		line.Icon:SetHide(false);
-		line.Name:SetText(LL(GameInfo.Districts[district].Name));
+		line.Name:SetText(LL(disInfo.Name));
 		line.Icon:SetToolTipString(LL(GameInfo.Districts[district].Description));
+		-- font icons
+		if disInfo.TraitType then line.Name:SetText( "[ICON_You]"..line.Name:GetText() ); end
+		if disInfo.Appeal > 0 then line.Name:SetText( line.Name:GetText().." [ICON_PressureUp]" ); end
+		if disInfo.Appeal < 0 then line.Name:SetText( line.Name:GetText().." [ICON_PressureDown]" ); end
 		-- adjacencies
 		for row in GameInfo.District_Adjacencies() do
 			if row.DistrictType == district then
@@ -589,6 +598,7 @@ PageLayouts["TimeStrategy"] = function(page)
 
 	SetPageHeader(page.Title);
 	SetPageSubHeader(page.Subtitle);
+	pageId = string.gsub(pageId, "TIME", "STRATEGY");
 	
 	-- sort items by name
 	local sorted:table = {};
@@ -620,6 +630,65 @@ PageLayouts["TimeStrategy"] = function(page)
 		end
 		line.Total:SetText(tot);
 	end
+end
+
+
+-- ===========================================================================
+--	Civilopedia - Strategy Page Layout
+-- ===========================================================================
+
+PageLayouts["Strategy"] = function(page)
+	print("...showing page", page.PageLayoutId, page.PageId);
+	local pageId = page.PageId;
+
+	SetPageHeader(page.Title);
+	SetPageSubHeader(page.Subtitle);
+
+	local strat = GameInfo.Strategies[pageId];
+	if strat == nil then return; end
+
+	-- Right Column! empty
+	
+	-- Left Column!
+	-- chapter 1 - conditions and other info
+	local chapter_body:table = {};
+	if strat.VictoryType ~= nil then table.insert(chapter_body, string.format("%s [COLOR_Blue]%s[ENDCOLOR]", LL("LOC_VICTORY_DEFAULT_NAME"), strat.VictoryType)); end
+	table.insert(chapter_body, LL("LOC_BCP_NUM_CONDITIONS", strat.NumConditionsNeeded));
+	-- conditions
+	for row in GameInfo.StrategyConditions() do
+		if row.StrategyType == pageId then
+			local cond:string = "[ICON_Bullet]"..row.ConditionFunction;
+			if row.ThresholdValue ~= 0 or row.StringValue ~= nil then
+				local par = tostring(row.ThresholdValue);
+				if row.StringValue then par = row.StringValue; end
+				cond = cond..string.format(" (%s)", par);
+			end
+			if row.Forbidden or row.Disqualifier or row.Exclusive then cond = cond.." [ICON_GoingTo]"; end
+			if row.Forbidden    then cond = cond..LL("LOC_BCP_FORBIDDEN");    end
+			if row.Disqualifier then cond = cond..LL("LOC_BCP_DISQUALIFIER"); end
+			if row.Exclusive    then cond = cond..LL("LOC_BCP_EXCLUSIVE");    end
+			table.insert(chapter_body, cond);
+		end
+	end
+	AddChapter(LL("LOC_UI_PEDIA_DESCRIPTION"), chapter_body);
+
+	-- chapter 2 - ai lists
+	local tAiLists:table = {};
+	local function AddList(aiList:string)
+		for row in GameInfo.AiLists() do
+			if row.ListType == aiList then
+				table.insert(tAiLists, row);
+				return;
+			end
+		end
+	end
+	-- build a list of AiLists to display
+	for row in GameInfo.Strategy_Priorities() do
+		if row.StrategyType == pageId then
+			AddList(row.ListType);
+		end
+	end
+	ShowAiLists(tAiLists);
 end
 
 print("OK loaded CivilopediaPage_BCP_Base.lua from Better Civilopedia");
