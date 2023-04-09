@@ -27,38 +27,12 @@ INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('ABILITY_ALPINE_TRAINING', 'C
 INSERT OR IGNORE INTO TypeTags (Type, Tag) VALUES ('ABILITY_ALPINE_TRAINING', 'CLASS_WARRIOR_MONK'); -- 2023-03-29 use of more generic Class Tag
 
 
--- 2019-01-01: based on mod "Hill Start Bias for Georgia" (lower number, stronger bias)
---DELETE FROM StartBiasTerrains WHERE CivilizationType = 'CIVILIZATION_GEORGIA';
---INSERT INTO StartBiasTerrains (CivilizationType, TerrainType, Tier) VALUES
---('CIVILIZATION_GEORGIA', 'TERRAIN_DESERT_HILLS', 3),
---('CIVILIZATION_GEORGIA', 'TERRAIN_GRASS_HILLS',  3),
---('CIVILIZATION_GEORGIA', 'TERRAIN_PLAINS_HILLS', 3);
-
-
 --------------------------------------------------------------
 -- BALANCE SECTION
-
--- Game pace (Eras)
-/*
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 70, GameEraMaximumTurns = 85 WHERE EraType = 'ERA_ANCIENT';     -- 75
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_CLASSICAL';   -- 60
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_MEDIEVAL';    -- 60
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_RENAISSANCE'; -- 60
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 55, GameEraMaximumTurns = 70 WHERE EraType = 'ERA_INDUSTRIAL';  -- 60
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 45, GameEraMaximumTurns = 60 WHERE EraType = 'ERA_MODERN';      -- 50
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 45, GameEraMaximumTurns = 60 WHERE EraType = 'ERA_ATOMIC';      -- 50
-UPDATE Eras_XP1 SET GameEraMinimumTurns = 40, GameEraMaximumTurns = 55 WHERE EraType = 'ERA_INFORMATION'; -- 45
-*/
-
-
 
 
 --------------------------------------------------------------
 -- AI
-/*
-INSERT INTO AiFavoredItems (ListType, Item, Favored, Value, StringVal) VALUES
-('StandardSettlePlot', 'Cultural Pressure', 0, 2, NULL); -- +1, other record removed as NOT WORKING
-*/
 
 -- Fixed with Gathering Storm Patch
 -- 2020-05-29 Seems like the bug is back

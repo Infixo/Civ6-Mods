@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Real Fixes -->
+<!-- Author: Infixo -->
+<!-- 2023-04-09: Fix for Jadwiga's text -->
+<GameData>
+  <LocalizedText>
+    <!--  ENGLISH -->
+	<Replace Tag="LOC_TRAIT_LEADER_LITHUANIAN_UNION_DESCRIPTION" Language="en_US">
+		<Text>The Religion founded by Poland becomes the majority in an adjacent city that loses a tile to a Polish Culture Bomb. Holy Sites gain standard [ICON_FAITH] Faith adjacency bonus from adjacent districts. [ICON_GreatWork_Relic] Relics provide +2 [ICON_Faith] Faith, +2 [ICON_Culture] Culture, +4 [ICON_Gold] Gold.</Text>
+	</Replace>
+	<Replace Tag="LOC_TRAIT_LEADER_LITHUANIAN_UNION_ALT_DESCRIPTION" Language="en_US">
+		<Text>The Religion founded by Poland becomes the majority in an adjacent city that loses a tile to a Polish Culture Bomb. Holy Sites gain standard [ICON_FAITH] Faith adjacency bonus from adjacent districts. [ICON_GreatWork_Relic] Relics provide +2 [ICON_Faith] Faith, +2 [ICON_Culture] Culture, +4 [ICON_Gold] Gold.</Text>
+	</Replace>
+	<Replace Tag="LOC_TRAIT_LEADER_LITHUANIAN_UNION_HEROES_DESCRIPTION" Language="en_US">
+		<Text>The Religion founded by Poland becomes the majority in an adjacent city that loses a tile to a Polish Culture Bomb. Holy Sites gain standard [ICON_FAITH] Faith adjacency bonus from adjacent districts. [ICON_GreatWork_Relic] Relics and [ICON_GreatWork_HeroRelic] Heroic Relics provide +2 [ICON_Faith] Faith, +2 [ICON_Culture] Culture, +4 [ICON_Gold] Gold.</Text>
+	</Replace>		
+  </LocalizedText>
+<GameData>

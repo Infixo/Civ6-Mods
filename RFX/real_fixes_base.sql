@@ -289,27 +289,29 @@ SET SiegeTag = 'CLASS_HEAVY_CAVALRY'
 WHERE AttackForceType = 'HighDifficultyCavalryAttack' AND SiegeTag = 'CLASS_HORSE_ARCHER';
 
 
+--------------------------------------------------------------
+-- 2023-04-09 Hagia Sophia gives charges to virtually all units
+-- Mahabodi Temple is using the same modifier in the scenario also
+-- must add SubjectReq e.g. UNIT_IS_INQUISITOR
+
+-- Requirements 'unit is missionary' and 'unit is apostle' are defined in XP1
+INSERT OR IGNORE INTO Requirements (RequirementId, RequirementType)	  VALUES ('REQUIRES_UNIT_IS_MISSIONARY', 'REQUIREMENT_UNIT_TYPE_MATCHES');
+INSERT OR IGNORE INTO Requirements (RequirementId, RequirementType)	  VALUES ('REQUIRES_UNIT_IS_APOSTLE',    'REQUIREMENT_UNIT_TYPE_MATCHES');
+INSERT OR IGNORE INTO RequirementArguments (RequirementId, Name, Value) VALUES ('REQUIRES_UNIT_IS_MISSIONARY', 'UnitType', 'UNIT_MISSIONARY');
+INSERT OR IGNORE INTO RequirementArguments (RequirementId, Name, Value) VALUES ('REQUIRES_UNIT_IS_APOSTLE',    'UnitType', 'UNIT_APOSTLE');
+
+-- RequirementSet: unit is either a missionary or an apostle
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)		 VALUES ('HAGIA_SOPHIA_UNITS', 'REQUIREMENTSET_TEST_ANY');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('HAGIA_SOPHIA_UNITS', 'REQUIRES_UNIT_IS_MISSIONARY');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('HAGIA_SOPHIA_UNITS', 'REQUIRES_UNIT_IS_APOSTLE');
+
+--  attach requirement to Hagia
+UPDATE Modifiers SET SubjectRequirementSetId = 'HAGIA_SOPHIA_UNITS' WHERE ModifierId = 'HAGIA_SOPHIA_ADJUST_RELIGIOUS_CHARGES';
+
+
 
 --------------------------------------------------------------
 -- BALANCE SECTION
-
--- 2019-04-07 Yields per pop
---UPDATE GlobalParameters SET Value = '40' WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- base game 70, rise & fall 50
---UPDATE GlobalParameters SET Value = '25' WHERE Name = 'CULTURE_PERCENTAGE_YIELD_PER_POP'; -- default is 30
-
--- 2019-04-07 Boosts, base game 50, rise & fall 40, real tech tree 35
---UPDATE Boosts SET Boost = 30;
-
-
--- Rise & Fall changes
---UPDATE GlobalParameters SET Value = '10'  WHERE Name = 'COMBAT_HEAL_CITY_OUTER_DEFENSES'; -- def. 1
---UPDATE GlobalParameters SET Value = '50'  WHERE Name = 'SCIENCE_PERCENTAGE_YIELD_PER_POP'; -- def. 70
---UPDATE GlobalParameters SET Value = '200' WHERE Name = 'TOURISM_TOURISM_TO_MOVE_CITIZEN'; -- def. 150
---UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_AFTER_GAME_ERA'; -- R&F only
---UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'CIVIC_COST_PERCENT_CHANGE_BEFORE_GAME_ERA'; -- R&F only
---UPDATE GlobalParameters SET Value = '20'  WHERE Name = 'TECH_COST_PERCENT_CHANGE_AFTER_GAME_ERA'; -- R&F only
---UPDATE GlobalParameters SET Value = '-20' WHERE Name = 'TECH_COST_PERCENT_CHANGE_BEFORE_GAME_ERA'; -- R&F only
-
 
 -- 2018-01-05: Policy God King. AI values it very low (40-60), vs. e.g. Urban Planning 250+. Changed to: gives yields to all cities.
 --UPDATE Modifiers SET ModifierType = 'MODIFIER_PLAYER_CITIES_ADJUST_CITY_YIELD_CHANGE' WHERE ModifierId = 'GOD_KING_GOLD' OR ModifierId = 'GOD_KING_FAITH';

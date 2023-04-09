@@ -2,7 +2,7 @@
 <Mod id="835c3ece-1a9c-4efb-996d-367815774ff0" version="1">
   <Properties>
     <Name>Real Fixes</Name>
-    <Description>Various game fixes and tweaks. Version 230404.</Description>
+    <Description>Various game fixes and tweaks. Version 230409.</Description>
     <Teaser>Various game fixes and tweaks</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
@@ -22,7 +22,14 @@
       <LeaderPlayable>Players:StandardPlayers::LEADER_TOKUGAWA,Players:Expansion1_Players::LEADER_TOKUGAWA,Players:Expansion2_Players::LEADER_TOKUGAWA</LeaderPlayable>
     </Criteria>
   </ActionCriteria>
+  <FrontEndActions>
+    <UpdateText id="RFX_FrontEnd_Text">
+      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <File>real_fixes_text.xml</File>
+    </UpdateText>
+  </FrontEndActions>
   <InGameActions>
+    <!-- base game -->
     <UpdateDatabase id="RFX_Database">
       <Properties><LoadOrder>1</LoadOrder></Properties>
       <File>real_fixes_base.sql</File>
@@ -31,16 +38,23 @@
       <Properties><LoadOrder>1</LoadOrder></Properties>
       <File>real_fixes_start_biases.sql</File>
     </UpdateDatabase>
+    <UpdateText id="RFX_Text">
+      <Properties><LoadOrder>1</LoadOrder></Properties>
+      <File>real_fixes_text.xml</File>
+    </UpdateText>
+    <!-- expansion 1 -->
     <UpdateDatabase id="RFX_Database_XP1" criteria="Expansion1">
       <Properties><LoadOrder>2</LoadOrder></Properties>
       <File>real_fixes_xp1.sql</File>
     </UpdateDatabase>
+    <!-- expansion 2 -->
     <UpdateDatabase id="RFX_Database_XP2" criteria="Expansion2">
       <Properties><LoadOrder>3</LoadOrder></Properties>
       <File Priority="1">real_fixes_xp1.sql</File>
       <File>real_fixes_xp2.sql</File>
     </UpdateDatabase>
-      <UpdateDatabase id="RFX_Database_Tok" criteria="Tokugawa">
+    <!-- after expansions -->
+    <UpdateDatabase id="RFX_Database_Tok" criteria="Tokugawa">
       <Properties><LoadOrder>4</LoadOrder></Properties>
       <File>real_fixes_tokugawa.sql</File>
     </UpdateDatabase>
@@ -51,5 +65,6 @@
     <File>real_fixes_xp2.sql</File>
     <File>real_fixes_start_biases.sql</File>
     <File>real_fixes_tokugawa.sql</File>
+    <File>real_fixes_text.xml</File>
   </Files>
 </Mod>

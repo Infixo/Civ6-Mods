@@ -32,3 +32,18 @@ UPDATE AiLists SET LeaderType = 'TRAIT_LEADER_SUNDIATA_KEITA' WHERE ListType IN 
 -- 2023-04-03 Buggy Suleiman's AI Lists
 UPDATE AiFavoredItems SET ListType = 'SuliemanCivics' WHERE ListType = 'SuliemanTechs' AND Item = 'CIVIC_GAMES_RECREATION';
 UPDATE AiLists SET System = 'PseudoYields' WHERE ListType = 'SuliemanGovernor' AND System = 'Buildings';
+
+
+--------------------------------------------------------------
+-- 2023-04-09 Strategic Air Force
+-- will use only Information era
+DELETE FROM ModifierArguments WHERE ModifierId = 'STRATEGICAIRFORCE_ATOMIC_NAVALCARRIER_PRODUCTION';
+DELETE FROM Modifiers WHERE ModifierId = 'STRATEGICAIRFORCE_ATOMIC_NAVALCARRIER_PRODUCTION';
+DELETE FROM PolicyModifiers WHERE PolicyType = 'POLICY_STRATEGIC_AIR_FORCE' AND ModifierId = 'STRATEGICAIRFORCE_ATOMIC_NAVALCARRIER_PRODUCTION';
+-- make them non-era specific
+UPDATE ModifierArguments
+SET Value = 'NO_ERA'
+WHERE Name = 'EraType' AND ModifierId IN
+(
+    SELECT ModifierId FROM PolicyModifiers WHERE PolicyType = 'POLICY_STRATEGIC_AIR_FORCE'
+);
