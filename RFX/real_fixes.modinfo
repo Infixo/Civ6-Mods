@@ -9,15 +9,18 @@
 	<CompatibleVersions>1.2,2.0</CompatibleVersions>
   </Properties>
   <ActionCriteria>
-	<Criteria id="Expansion1">
-	  <GameCoreInUse>Expansion1</GameCoreInUse>
-	</Criteria>
-	<Criteria id="Expansion2">
-	  <GameCoreInUse>Expansion2</GameCoreInUse>
-	</Criteria>
-	<Criteria id="BBSNotEnabled">
-	  <ModInUse inverse="1">c88cba8b-8311-4d35-90c3-51a4a5d66550</ModInUse> <!-- Better Balanced Starts 2.2.0 -->
-	</Criteria>	
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+    <Criteria id="Expansion2">
+      <GameCoreInUse>Expansion2</GameCoreInUse>
+    </Criteria>
+    <Criteria id="BBSNotEnabled">
+      <ModInUse inverse="1">c88cba8b-8311-4d35-90c3-51a4a5d66550</ModInUse> <!-- Better Balanced Starts 2.2.0 -->
+    </Criteria>
+    <Criteria id="Tokugawa">
+      <LeaderPlayable>Players:StandardPlayers::LEADER_TOKUGAWA,Players:Expansion1_Players::LEADER_TOKUGAWA,Players:Expansion2_Players::LEADER_TOKUGAWA</LeaderPlayable>
+    </Criteria>
   </ActionCriteria>
   <InGameActions>
     <UpdateDatabase id="RFX_Database">
@@ -37,11 +40,16 @@
       <File Priority="1">real_fixes_xp1.sql</File>
       <File>real_fixes_xp2.sql</File>
     </UpdateDatabase>
+      <UpdateDatabase id="RFX_Database_Tok" criteria="Tokugawa">
+      <Properties><LoadOrder>4</LoadOrder></Properties>
+      <File>real_fixes_tokugawa.sql</File>
+    </UpdateDatabase>
   </InGameActions>
   <Files>
     <File>real_fixes_base.sql</File>
     <File>real_fixes_xp1.sql</File>
     <File>real_fixes_xp2.sql</File>
     <File>real_fixes_start_biases.sql</File>
+    <File>real_fixes_tokugawa.sql</File>
   </Files>
 </Mod>
