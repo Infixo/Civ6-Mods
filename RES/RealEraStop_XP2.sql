@@ -63,3 +63,12 @@ WHERE BuildingType = 'BUILDING_FLOOD_BARRIER' AND EXISTS (SELECT * FROM GlobalPa
 UPDATE Buildings
 SET PrereqTech = 'TECH_ELECTRICITY', Cost = 0.85 * Cost
 WHERE BuildingType = 'BUILDING_FLOOD_BARRIER' AND EXISTS (SELECT * FROM GlobalParameters WHERE Name = 'RES_MAX_ERA' AND Value = '6');
+
+
+--------------------------------------------------------------
+-- 2023-04-09 World congress fixed
+
+DELETE FROM Resolutions
+WHERE EarliestEra IN (SELECT EraType FROM RESEras);
+-- CongressAiChanges auto-deleted
+-- ResolutionEffects auto-deleted

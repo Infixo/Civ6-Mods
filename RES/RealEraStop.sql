@@ -36,6 +36,7 @@
 --		Gathering Storm update. Fix for Railroads being built by a Trader.
 -- August 30, 2020: Version 3.0
 --      Mod config via Advanced Options
+-- 2023-04-09: Builders can plant woods at any time and World Congress resolutions blocking a game
 --------------------------------------------------------------
 
 
@@ -327,3 +328,20 @@ WITH r2u (rowident, newvalue) AS (
 UPDATE ModifierArguments
 SET Value = (SELECT newvalue FROM r2u WHERE ModifierArguments.ModifierId||ModifierArguments.Name = rowident)
 WHERE ModifierId||Name IN (SELECT rowident FROM r2u);
+
+
+--------------------------------------------------------------
+-- 2023-04-09 Builders planting woods
+-- Remove unit operation if there is no "new woods" in the game
+
+DELETE FROM UnitOperations
+WHERE OperationType = 'UNITOPERATION_PLANT_FOREST' AND EXISTS
+(
+	SELECT * FROM Features WHERE FeatureType = 'FEATURE_FOREST' AND AddCivic IN (SELECT CivicType FROM RESCivics)
+);
+
+DELETE FROM Types 
+WHERE Type = 'UNITOPERATION_PLANT_FOREST' AND EXISTS
+(
+	SELECT * FROM Features WHERE FeatureType = 'FEATURE_FOREST' AND AddCivic IN (SELECT CivicType FROM RESCivics)
+);

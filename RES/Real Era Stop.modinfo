@@ -2,7 +2,7 @@
 <Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="1">
     <Properties>
         <Name>Real Era Stop</Name>
-        <Description>Allows to stop the game at a specific Era (from Classical to Information). Use the Advanced Options to select the Last Era.[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras and Standard game speed. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.1.</Description>
+        <Description>Allows to stop the game at a specific Era (from Classical to Information). Use the Advanced Options to select the Last Era.[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras and Standard game speed. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.2.</Description>
         <Teaser>Allows to stop the game at a specific Era (from Classical to Atomic)</Teaser>
         <Authors>Infixo</Authors>
         <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>
@@ -66,6 +66,13 @@
                 <Value>8</Value>
             </ConfigurationValueMatches>
         </Criteria>
+        <Criteria id="RESLastEra9">
+            <ConfigurationValueMatches>
+                <ConfigurationId>GameLastEra</ConfigurationId>
+                <Group>Game</Group>
+                <Value>9</Value>
+            </ConfigurationValueMatches>
+        </Criteria>        
     </ActionCriteria>
     <FrontEndActions>
         <UpdateDatabase id="RES_Config_Database">
@@ -105,6 +112,10 @@
             <Properties><LoadOrder>999990</LoadOrder></Properties>
             <File>Config/RES_Config_8.sql</File>
         </UpdateDatabase>
+        <UpdateDatabase id="RES_Database_Config_9" criteria="RESLastEra9">
+            <Properties><LoadOrder>999990</LoadOrder></Properties>
+            <File>Config/RES_Config_9.sql</File>
+        </UpdateDatabase>        
         <!-- GAMEPLAY SECTION -->
         <UpdateDatabase id="RES_Database">
             <Properties><LoadOrder>999991</LoadOrder></Properties>
@@ -148,6 +159,7 @@
         <File>Config/RES_Config_6.sql</File>
         <File>Config/RES_Config_7.sql</File>
         <File>Config/RES_Config_8.sql</File>
+        <File>Config/RES_Config_9.sql</File>
         <File>RealEraStop.sql</File>
         <File>RealEraStop_XP1.sql</File>
         <File>RealEraStop_XP2.sql</File>

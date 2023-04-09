@@ -6,7 +6,7 @@
 
 <GameData>
     <Parameters>
-		<Row ParameterId="GameLastEra" ConfigurationId="GameLastEra" Name="LOC_RES_LAST_ERA_NAME" Description="LOC_RES_LAST_ERA_DESC" Domain="LastEraDomain" DefaultValue="3" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="65" />
+		<Row ParameterId="GameLastEra" ConfigurationId="GameLastEra" Name="LOC_RES_LAST_ERA_NAME" Description="LOC_RES_LAST_ERA_DESC" Domain="LastEraDomain" DefaultValue="9" ConfigurationGroup="Game" GroupId="GameOptions" SortIndex="65" />
     </Parameters>
     <DomainValues>
         <Row Domain="LastEraDomain" Value= "2" SortIndex="10" Name="LOC_ERA_CLASSICAL_NAME"   Description="LOC_ERA_CLASSICAL_DESCRIPTION" />
@@ -16,6 +16,7 @@
         <Row Domain="LastEraDomain" Value= "6" SortIndex="50" Name="LOC_ERA_MODERN_NAME"      Description="LOC_ERA_MODERN_DESCRIPTION" />
         <Row Domain="LastEraDomain" Value= "7" SortIndex="60" Name="LOC_ERA_ATOMIC_NAME"      Description="LOC_ERA_ATOMIC_DESCRIPTION" />
         <Row Domain="LastEraDomain" Value= "8" SortIndex="70" Name="LOC_ERA_INFORMATION_NAME" Description="LOC_ERA_INFORMATION_DESCRIPTION" />
+        <Row Domain="LastEraDomain" Value= "9" SortIndex="80" Name="LOC_ERA_FUTURE_NAME"      Description="LOC_ERA_FUTURE_DESCRIPTION" />
     </DomainValues>
 	<GameSpeeds>
 		<Row GameSpeedType="GAMESPEED_LASTERACLA" Name="LOC_GAMESPEED_LASTERACLA_NAME" Description="LOC_GAMESPEED_LASTERACLA_HELP" SortIndex="120" />
