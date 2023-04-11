@@ -414,6 +414,20 @@ PageLayouts["Unit"] = function(page)
 		end);
 	end
 	
+	local tUnitClasses:table = {};
+	for row in GameInfo.TypeTags() do
+		if row.Type == unitType then table.insert(tUnitClasses, row.Tag); end
+	end
+	if #tUnitClasses > 0 then
+		table.sort(tUnitClasses);
+		AddRightColumnStatBox("[ICON_Bullet][ICON_Bullet][ICON_Bullet]", function(s)
+			s:AddSeparator();
+			s:AddHeader("UnitClasses");
+			for _,unitclass in ipairs(tUnitClasses) do s:AddLabel(unitclass); end
+			s:AddSeparator();
+		end);
+	end
+	
 	ShowInternalPageInfo(page);
 end
 
