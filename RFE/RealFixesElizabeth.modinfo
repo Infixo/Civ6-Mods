@@ -2,7 +2,7 @@
 <Mod id="58D7BAAA-54DD-0A61-3870-86E112F5255B" version="1">
   <Properties>
     <Name>Real Fixes Elizabeth</Name>
-    <Description>Fix for Elizabeth's ability giving trade routes only for specific Great Admirals. Now it gives trade routes for any first Great Admiral.[NEWLINE]Version 1.0</Description>
+    <Description>Fix for Elizabeth's ability giving trade routes only for specific Great Admirals. Now it gives trade routes for any first Great Admiral.[NEWLINE]Version 1.1</Description>
     <Teaser>Fixes Elizabeth's ability</Teaser>
     <Authors>Infixo</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
@@ -10,6 +10,12 @@
   </Properties>
   <ActionCriteria>
   </ActionCriteria>
+  <FrontEndActions>
+    <UpdateText id="RulersOfEnglandSettingsText">			
+      <Properties><LoadOrder>10000</LoadOrder></Properties>
+	  <File>RFE_Text.xml</File>
+	</UpdateText>
+  </FrontEndActions>
   <InGameActions>
     <UpdateDatabase id="RFE_Database">
       <Properties><LoadOrder>10000</LoadOrder></Properties>
