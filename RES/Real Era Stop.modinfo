@@ -2,7 +2,7 @@
 <Mod id="bbaf474e-e476-4ea8-8a98-b6fa6d12b515" version="1">
     <Properties>
         <Name>Real Era Stop</Name>
-        <Description>Allows to stop the game at a specific Era (from Classical to Information). Use the Advanced Options to select the Last Era.[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras and Standard game speed. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.2.</Description>
+        <Description>Allows to stop the game at a specific Era (from Classical to Information). Use the Advanced Options to select the Last Era.[NEWLINE][NEWLINE]Optional. Custom calendars for all supported Eras and Standard game speed. Can be chosen in Advanced Options / Game Speed.[NEWLINE][NEWLINE]Works with [COLOR_Green]vanilla[ENDCOLOR], [COLOR_Green]Rise &amp; Fall[ENDCOLOR] and [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 3.3.</Description>
         <Teaser>Allows to stop the game at a specific Era (from Classical to Atomic)</Teaser>
         <Authors>Infixo</Authors>
         <Homepage>http://forums.civfanatics.com/resources/real-era-stop.25998</Homepage>

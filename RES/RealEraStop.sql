@@ -37,6 +37,7 @@
 -- August 30, 2020: Version 3.0
 --      Mod config via Advanced Options
 -- 2023-04-09: Builders can plant woods at any time and World Congress resolutions blocking a game
+-- 2023-04-13: Elizabeth's ability adjusted for missing GAs
 --------------------------------------------------------------
 
 
@@ -137,7 +138,7 @@ VALUES
 	('TECH_FUTURE_TECH', 'TECH_NUCLEAR_FISSION'),
 	('TECH_FUTURE_TECH', 'TECH_SYNTHETIC_MATERIALS');
 
--- Move Future Tech to correct Era and set it Cost to be 50% higher than the most expensive tech in Era
+-- Move Future Tech to correct Era and set its Cost to be 50% higher than the most expensive tech in Era
 UPDATE Technologies
 SET EraType = (SELECT EraType FROM Eras WHERE ChronologyIndex = (SELECT Value FROM GlobalParameters WHERE Name = 'RES_MAX_ERA')),
 	Cost = 1.5 * (SELECT MAX(Cost) FROM Technologies WHERE EraType = (SELECT EraType FROM Eras WHERE ChronologyIndex = (SELECT Value FROM GlobalParameters WHERE Name = 'RES_MAX_ERA')))
@@ -215,7 +216,7 @@ VALUES
 	('CIVIC_FUTURE_CIVIC', 'CIVIC_SPACE_RACE'),
 	('CIVIC_FUTURE_CIVIC', 'CIVIC_PROFESSIONAL_SPORTS');
 
--- Move Future Civic to correct Era and set it Cost to be 50% higher than the most expensive civic in Era
+-- Move Future Civic to correct Era and set its Cost to be 50% higher than the most expensive civic in Era
 UPDATE Civics
 SET EraType = (SELECT EraType FROM Eras WHERE ChronologyIndex = (SELECT Value FROM GlobalParameters WHERE Name = 'RES_MAX_ERA')),
 	Cost = 1.5 * (SELECT MAX(Cost) FROM Civics WHERE EraType = (SELECT EraType FROM Eras WHERE ChronologyIndex = (SELECT Value FROM GlobalParameters WHERE Name = 'RES_MAX_ERA')))
@@ -344,4 +345,21 @@ DELETE FROM Types
 WHERE Type = 'UNITOPERATION_PLANT_FOREST' AND EXISTS
 (
 	SELECT * FROM Features WHERE FeatureType = 'FEATURE_FOREST' AND AddCivic IN (SELECT CivicType FROM RESCivics)
+);
+
+
+--------------------------------------------------------------
+-- 2023-04-13 Remove non-existent Great Admirals from Elizabeth's ability
+
+DELETE FROM Requirements -- will cascade to ReqSets and ReqArgs
+WHERE RequirementId IN
+(
+	SELECT RequirementId
+	FROM RequirementArguments
+	WHERE Name = 'GreatPersonIndividual' AND Value IN
+	(
+		SELECT GreatPersonIndividualType
+		FROM GreatPersonIndividuals
+		WHERE EraType IN (SELECT EraType FROM RESEras)
+	)
 );
