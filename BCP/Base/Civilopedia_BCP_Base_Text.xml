@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GameData>
+  <BaseGameText>
+    <Row Tag="LOC_BCP_AI">
+      <Text>AI</Text>
+    </Row>
+    <Row Tag="LOC_BCP_AI_STRATEGIES">
+      <Text>AI: Strategies</Text>
+    </Row>
+    <Row Tag="LOC_BCP_AI_TIME_STRATS">
+      <Text>AI: Time Strategies</Text>
+    </Row>
+    <Row Tag="LOC_BCP_NUM_CONDITIONS">
+      <Text>Conditions: [COLOR_Blue]{1_Num}[ENDCOLOR]</Text>
+    </Row>
+    <Row Tag="LOC_BCP_FORBIDDEN">
+      <Text> [ICON_Not] Forbidden</Text>
+    </Row>
+    <Row Tag="LOC_BCP_DISQUALIFIER">
+      <Text> [ICON_CheckFail] Disqualifier</Text>
+    </Row>
+    <Row Tag="LOC_BCP_EXCLUSIVE">
+      <Text> [ICON_New] Exclusive</Text>
+    </Row>
+  </BaseGameText>
+</GameData>
