@@ -2,7 +2,7 @@
 <Mod id="38C7FAFB-58EB-0C14-7377-92A810E9860B" version="1">
 	<Properties>
 		<Name>Better Loading Screen (UI)</Name>
-		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.8.</Description>
+		<Description>Displays detailed information about uniques.[NEWLINE][NEWLINE]Version 1.9.</Description>
 		<Teaser>Displays detailed information about uniques.</Teaser>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
@@ -34,6 +34,12 @@
 			<File>UI/loadscreen.lua</File>
 			<File>UI/loadscreen.xml</File>
 		</ImportFiles>
+		<UpdateDatabase>
+			<Properties>
+				<LoadOrder>1</LoadOrder>
+			</Properties>
+			<File>BetterLoadingScreen_Database.sql</File>
+		</UpdateDatabase>
 		<!-- new font icons -->
 		<ImportFiles id="RMI_Imports">
 			<File>Icons/FontIconsRMI.dds</File>
@@ -46,6 +52,7 @@
 	<Files>
 		<File>UI/loadscreen.lua</File>
 		<File>UI/loadscreen.xml</File>
+		<File>BetterLoadingScreen_Database.sql</File>
 		<!-- new font icons -->
 		<File>Icons/FontIconsRMI.dds</File>
 		<File>Icons/FontIconsRMI.xml</File>

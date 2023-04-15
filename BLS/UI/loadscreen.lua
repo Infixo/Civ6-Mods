@@ -1,4 +1,5 @@
-print("Loading LoadScreen.lua from Better Loading Screen v1.8");
+print("BLS: Loading loadscreen.lua from Better Loading Screen v1.9");
+
 -- ===========================================================================
 --
 --	Loading screen as player goes from shell to game state.
@@ -530,4 +531,4 @@ function Initialize()
 end
 Initialize();
 
-print("OK loaded LoadScreen.lua from Better Loading Screen");
+print("BLS: Loaded loadscreen.lua OK");
