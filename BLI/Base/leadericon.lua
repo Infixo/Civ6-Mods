@@ -1,4 +1,5 @@
-print("Loading LeaderIcon.lua from Better Leader Icon version "..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+print("BLI: Loading leadericon.lua from Better Leader Icon v"..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+
 -- ===========================================================================
 -- Better Leader Icon
 -- Author: Infixo
@@ -609,4 +610,4 @@ function LeaderIcon:AppendTooltip( extraText:string )
 	self.Controls.Portrait:SetToolTipString(tooltip);
 end
 
-print("OK loaded LeaderIcon.lua from Better Leader Icon");
+print("BLI: Loaded leadericon.lua OK");

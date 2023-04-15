@@ -1,4 +1,5 @@
-print("Loading DiplomacyRibbon_BLI.lua from Better Leader Icon version "..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+print("BLI: Loading DiplomacyRibbon_BLI.lua from Better Leader Icon v"..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+
 -- ===========================================================================
 -- Better Leader Icon
 -- Author: Infixo
@@ -82,4 +83,4 @@ Events.CityLiberated.Add( RefreshScoreAndStrengthForAll );
 Events.UnitAddedToMap.Add( RefreshScoreAndStrength );
 Events.UnitRemovedFromMap.Add( RefreshScoreAndStrength );
 
-print("OK loaded DiplomacyRibbon_BLI.lua from Better Leader Icon");
+print("BLI: Loaded DiplomacyRibbon_BLI.lua OK");

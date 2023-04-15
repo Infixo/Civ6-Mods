@@ -1,4 +1,5 @@
-print("Loading DiplomacyRibbon_Expansion1.lua from Better Leader Icon version "..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+print("BLI: Loading diplomacyribbon_expansion1.lua from Better Leader Icon v"..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+
 -- ===========================================================================
 -- Better Leader Icon
 -- Author: Infixo
@@ -28,4 +29,4 @@ function AddLeader(iconName : string, playerID : number, kProps : table)
 	return leaderIcon, instance;
 end
 
-print("OK loaded DiplomacyRibbon_Expansion1.lua from Better Leader Icon");
+print("BLI: Loaded diplomacyribbon_expansion1.lua OK");

@@ -1,4 +1,4 @@
-print("Loading DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon version "..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
+print("BLI: Loading DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon v"..GlobalParameters.BLI_VERSION_MAJOR.."."..GlobalParameters.BLI_VERSION_MINOR);
 -- ===========================================================================
 -- Better Leader Icon
 -- Author: Infixo
@@ -9,4 +9,4 @@ print("Loading DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon versio
 include("DiplomacyRibbon_Expansion2");
 
 
-print("OK loaded DiplomacyRibbon_Expansion2_BLI.lua from Better Leader Icon");
+print("BLI: Loaded DiplomacyRibbon_Expansion2_BLI.lua OK");
