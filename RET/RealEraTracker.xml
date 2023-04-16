@@ -48,6 +48,10 @@
 				<GridButton ID="EraScore2Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="200,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 2"/>
 				<GridButton ID="EraScore3Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="360,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 3"/>
 				<GridButton ID="EraScore4Checkbox" Style="CheckBoxControl" Anchor="L,T" Offset="520,10" Size="140,26" String="{LOC_ERA_PROGRESS_ERA_SCORE} 4+"/>
+				<!-- 230416 Search feature -->
+				<Grid Style="Civilopedia_SearchPanel" Anchor="L,T" Offset="680,10" Size="240,27"> <!-- Texture="Controls_Search2" SliceCorner="30,13" SliceTextureSize="41,26" Size="250,26" -->
+					<EditBox ID="SearchEditBox" Anchor="L,C" Offset="24,0" Size="parent-20,14" Style="FontNormal14" CallOnChar="1" MaxLength="20" String="LOC_TREE_SEARCH_W_DOTS"/>
+				</Grid>
 				<GridButton ID="HideNotActiveCheckbox"    Style="CheckBoxControl" Anchor="L,B" Offset="40,10"  Size="220,26" String="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE"/>
 				<GridButton ID="ShowOnlyEarnedCheckbox"   Style="CheckBoxControl" Anchor="L,B" Offset="280,10" Size="220,26" String="LOC_RET_CHECKBOX_SHOW_ONLY_EARNED"/>
 				<GridButton ID="HideNotAvailableCheckbox" Style="CheckBoxControl" Anchor="L,B" Offset="520,10" Size="400,26" String="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE"/>

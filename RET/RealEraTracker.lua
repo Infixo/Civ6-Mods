@@ -3,6 +3,7 @@ print("Loading RealEraTracker.lua from Real Era Tracker version "..(GlobalParame
 --	Real Era Tracker
 --	Author: Infixo
 --  2019-03-28: Created
+--  2023-04-16: Search feature (v1.4)
 -- ===========================================================================
 include("InstanceManager");
 include("SupportFunctions"); -- TruncateString
@@ -28,6 +29,7 @@ local ENDCOLOR:string = "[ENDCOLOR]";
 local NEWLINE:string  = "[NEWLINE]";
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
+local LOC_TREE_SEARCH_W_DOTS = LL("LOC_TREE_SEARCH_W_DOTS"); -- 230416 search feature
 
 function ColorGREEN(s) return "[COLOR_Green]"..tostring(s)..ENDCOLOR; end
 function ColorRED(s)   return "[COLOR_Red]"  ..tostring(s)..ENDCOLOR; end
@@ -44,6 +46,7 @@ m_kMoments = {};
 m_simpleIM = InstanceManager:new("SimpleInstance", "Top",    Controls.Stack); -- Non-Collapsable, simple
 m_tabIM    = InstanceManager:new("TabInstance",    "Button", Controls.TabContainer);
 m_tabs     = nil;
+local _SearchQuery:string = nil; -- 230416 search feature
 
 
 -- debug routine - prints a table, and tables inside recursively (up to 5 levels)
@@ -616,6 +619,11 @@ function ViewMomentsPage(eGroup:number)
 		
 		end -- not favored
 		
+		-- 230416 search feature
+		if _SearchQuery ~= nil and string.find(moment.Description, _SearchQuery) == nil then
+			bShow = false;
+		end
+		
 		if bShow then table.insert(tShow, moment); end
 		if moment.Favored then table.insert(tSaveData, key); end
 	end
@@ -846,6 +854,46 @@ function OnToggleHideNotAvailableCheckbox()
 	ViewMomentsPage();
 end
 
+-- ===========================================================================
+-- 230416 Search feature
+-- ===========================================================================
+
+-- https://www.lua.org/pil/20.4.html
+function nocase(s)
+	return string.gsub(s, "%a",
+		function (c)
+			return string.format("[%s%s]", string.lower(c), string.upper(c))
+		end)
+end
+
+function OnSearchBarGainFocus()
+	Controls.SearchEditBox:ClearString();
+	if _SearchQuery then
+		_SearchQuery = nil;
+		ViewMomentsPage();
+	end
+end
+
+function OnSearchBarLostFocus()
+	if Controls.SearchEditBox:GetText() == nil then
+		Controls.SearchEditBox:SetText(LOC_TREE_SEARCH_W_DOTS);
+		if _SearchQuery then
+			_SearchQuery = nil;
+			ViewMomentsPage();
+		end
+	end
+end
+
+function OnSearchCharCallback()
+	local str:string = Controls.SearchEditBox:GetText();
+	if str ~= nil and #str > 0 and str ~= LOC_TREE_SEARCH_W_DOTS then
+		local newSearch:string = nocase(str);
+		if newSearch ~= _SearchQuery then
+			_SearchQuery = newSearch;
+			ViewMomentsPage();
+		end
+	end
+end
 
 -- ===========================================================================
 function Initialize()
@@ -876,6 +924,10 @@ function Initialize()
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eLClick, OnToggleHideNotAvailableCheckbox );
 	Controls.HideNotAvailableCheckbox:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end );
 	Controls.HideNotAvailableCheckbox:SetSelected( true );
+	-- 230416 Search feature
+	Controls.SearchEditBox:RegisterStringChangedCallback(OnSearchCharCallback);
+	Controls.SearchEditBox:RegisterHasFocusCallback(OnSearchBarGainFocus);
+	Controls.SearchEditBox:RegisterLostFocusCallback(OnSearchBarLostFocus);
 	-- Events
 	LuaEvents.ReportsList_OpenEraTracker.Add( function() Open(); end );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
