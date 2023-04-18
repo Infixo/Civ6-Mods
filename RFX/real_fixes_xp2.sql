@@ -47,3 +47,10 @@ WHERE Name = 'EraType' AND ModifierId IN
 (
     SELECT ModifierId FROM PolicyModifiers WHERE PolicyType = 'POLICY_STRATEGIC_AIR_FORCE'
 );
+
+
+--------------------------------------------------------------
+-- 2023-04-14 This should (I hope) help Toa and Mountie build their things
+INSERT OR IGNORE INTO UnitAiInfos (UnitType, AiType) VALUES
+('UNIT_MAORI_TOA',      'UNITAI_BUILD'),
+('UNIT_CANADA_MOUNTIE', 'UNITAI_BUILD');

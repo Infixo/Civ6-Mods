@@ -8,6 +8,8 @@
 --------------------------------------------------------------
 
 
+/* not part of the public release
+
 --------------------------------------------------------------
 -- 2023-04-13 Special KIND to handle all placeholders and not used objects, like in Agendas:
 -- <!-- Note: Value not actually used, just has to have something so we know this is a kudo/warning -->
@@ -75,6 +77,8 @@ INSERT OR IGNORE INTO Types (Type, Kind) VALUES
 ('DeclaredFriendshipWithFriend', 'KIND_CORRECT_VALUE'),
 ('DeclaredSurpriseWarOnEnemy',   'KIND_CORRECT_VALUE'),
 ('DeclaredSurpriseWarOnFriend',  'KIND_CORRECT_VALUE'),
+('DenoucedFriend',               'KIND_CORRECT_VALUE'), -- !TYPO! but it is actually a correct value - I've tested it
+('DenouncedEnemy',               'KIND_CORRECT_VALUE'),
 ('FREE_POWER_SOURCE_GEOTHERMAL', 'KIND_CORRECT_VALUE'), -- SourceType
 ('FREE_POWER_SOURCE_MISC',  'KIND_CORRECT_VALUE'), -- SourceType
 ('FREE_POWER_SOURCE_SOLAR', 'KIND_CORRECT_VALUE'), -- SourceType
@@ -99,10 +103,8 @@ INSERT OR IGNORE INTO Types (Type, Kind) VALUES
 ('COMBAT_DISTRICT_VS_UNIT', 'KIND_CORRECT_VALUE'),
 ('COMBAT_UNIT_VS_UNIT',     'KIND_CORRECT_VALUE'),
 ('BY_SETTLER', 'KIND_CORRECT_VALUE'); -- TransferType
- -- 
--- CHECK
---('DenoucedFriend',   'KIND_CORRECT_VALUE'), -- THIS HERE SEEMS WRONG STANDARD_DIPLOMATIC_3RD_PARTY_DENOUNCED_FRIEND
---('DenouncedEnemy',   'KIND_CORRECT_VALUE'), -- STANDARD_DIPLOMATIC_3RD_PARTY_DENOUNCED_ENEMY
+
+*/ -- not public release
 
 
 -- 2018-03-25 Traits
@@ -355,15 +357,6 @@ UPDATE AiFavoredItems SET Item = 'CIVIC_DRAMA_POETRY'        WHERE Item = 'CIVIC
 
 
 --------------------------------------------------------------
--- 2023-03-31 Missing audio tags; not sure if this is a bug but they started adding those only recently and old civs don't have it
-DELETE FROM CivilizationAudioTags;
-INSERT INTO CivilizationAudioTags
-SELECT CivilizationType, 1
-FROM Civilizations
-WHERE StartingCivilizationLevelType = 'CIVILIZATION_LEVEL_FULL_CIV';
-
-
---------------------------------------------------------------
 -- 2023-04-02 Nzinga buggy Civics definitions
 --<Row ListType="NzingaWonders" Item="CIVIC_DRAMA_POETRY" Favored="true"/>
 --<Row ListType="NzingaWonders" Item="CIVIC_GUILDS" Favored="true"/>
@@ -449,3 +442,12 @@ UPDATE AiFavoredItems SET Value = 1 WHERE ListType = 'DefaultSavings' AND Item =
 UPDATE AiFavoredItems SET Value = 2 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_PLOTS';
 UPDATE AiFavoredItems SET Value = 3 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_UNITS';
 UPDATE AiFavoredItems SET Value = 4 WHERE ListType = 'DefaultSavings' AND Item = 'SAVING_SLUSH_FUND';
+
+
+--------------------------------------------------------------
+-- 2023-04-14 Probably (?) this should help Naturalists build Parks and Nau - Feitoria
+INSERT OR IGNORE INTO UnitAiInfos (UnitType, AiType) VALUES ('UNIT_NATURALIST', 'UNITAI_BUILD');
+INSERT OR IGNORE INTO UnitAiInfos (UnitType, AiType)
+SELECT 'UNIT_PORTUGUESE_NAU', 'UNITAI_BUILD'
+FROM Units
+WHERE UnitType = 'UNIT_PORTUGUESE_NAU';
