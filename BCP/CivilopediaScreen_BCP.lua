@@ -496,7 +496,7 @@ end
 
 
 -- helper
-function AddTrait(sTraitType:string, sUniqueName:string)
+function AddTrait(sTraitType:string, sUniqueName:string, isAgenda:boolean)
 	--print("FUN AddTrait", sTraitType, sUniqueName);
 	if not (bOptionModifiers and bIsRMA) then return; end
 	local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("Trait", sTraitType, Game.GetLocalPlayer(), nil);
@@ -504,8 +504,12 @@ function AddTrait(sTraitType:string, sUniqueName:string)
 	table.insert(chapter_body, sImpact);
 	table.insert(chapter_body, sToolTip);
 	local sName:string = ( GameInfo.Traits[sTraitType].Name == nil and sTraitType or Locale.Lookup(GameInfo.Traits[sTraitType].Name));
-	if GameInfo.Traits[sTraitType].InternalOnly then sName = "[COLOR_Red]"..sTraitType.."[ENDCOLOR]"; end
 	if sUniqueName then sName = sUniqueName; end
+	if GameInfo.Traits[sTraitType].InternalOnly then sName = "[COLOR_Red]"..sTraitType.."[ENDCOLOR]";
+	else
+		if isAgenda then sName = Locale.Lookup("LOC_DIPLOMACY_INTEL_ADGENDAS").." "..sName;
+		else             sName = Locale.Lookup("LOC_CIVICS_KEY_ABILITY")..": "..sName; end
+	end
 	AddChapter(sName, chapter_body);
 end
 
@@ -581,7 +585,7 @@ PageLayouts["Leader"] = function(page)
 		if agenda.LeaderType == page.PageId then
 			for row in GameInfo.AgendaTraits() do
 				if row.AgendaType == agenda.AgendaType then
-					AddTrait(row.TraitType, Locale.Lookup(GameInfo.Agendas[agenda.AgendaType].Name));
+					AddTrait(row.TraitType, Locale.Lookup(GameInfo.Agendas[agenda.AgendaType].Name), true);
 					table.insert(tTraits, row.TraitType);
 				end
 			end

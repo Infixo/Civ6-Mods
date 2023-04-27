@@ -338,7 +338,7 @@ PageLayouts["UnitAbility"] = function(page)
 					table.insert(tUnitNames, Locale.Lookup(GameInfo.Units[unit.Type].Name));
 				end
 			end
-			if #tUnitNames == 0 then table.insert(tUnitNames, unit.Type); end
+			if #tUnitNames == 0 then table.insert(tUnitNames, "[COLOR_Red]"..LL("LOC_TECH_FILTER_NONE").."[ENDCOLOR]"); end
 			table.insert(chapter_body, table.concat(tUnitNames, ", "));
 		end
 	end
@@ -556,18 +556,20 @@ STRATEGY_INFORMATION_CHANGES = 8,
 STRATEGY_FUTURE_CHANGES      = 9,
 };
 
-local tItems:table = {};
-function GetT() return tItems; end -- debug
+local tItems:table = {}; -- 230425 there are 2 systems that use core yields, i.e. Yields and Sensitivity
+--function GetT() return tItems; end -- debug
 
 function Initialize_ListType(aiList:string, eraNum:number)
 	--print("Initialize_ListType()",aiList,eraNum);
+	local isSensitivity: boolean = ( string.find(aiList, "Sensitivity") ~= nil );
 	for row in GameInfo.AiFavoredItems() do
 		if row.ListType == aiList then
+			local itemName: string = isSensitivity and "[ICON_You]"..row.Item or row.Item;
 			-- found an entry, add it to the table
-			if tItems[row.Item] == nil then
-				tItems[row.Item] = {};
+			if tItems[itemName] == nil then
+				tItems[itemName] = {};
 			end
-			local item:table = tItems[row.Item];
+			local item:table = tItems[itemName];
 			item[eraNum] = row.Value;
 			--item[0] = row.Item; -- item name for easier sorting later
 		end
