@@ -246,6 +246,33 @@ end
 PageLayouts["GreatPerson"] = function(page)
 	print("...showing page layout", page.PageLayoutId);
 	BCP_BASE_PageLayouts[page.PageLayoutId](page); -- call original function
+	
+	-- 230428 information about great works in the right column
+	-- page.PageId is the GreatPersonIndividualType
+	local tResults: table = DB.Query("SELECT * FROM GreatWorks WHERE GreatPersonIndividualType = ?", page.PageId);
+	if tResults and #tResults > 0 then
+	
+		AddRightColumnStatBox(LL("LOC_GREAT_WORKS"), function(s)
+			s:AddSeparator();
+			for _,row in ipairs(tResults) do
+				local gwot: table = GameInfo.GreatWorkObjectTypes[row.GreatWorkObjectType];
+				--print(Locale.Lookup(row.Name));
+				s:AddLabel(gwot.IconString.." "..LL(row.Name));
+				-- format bullet, icon, type, tourism, other yields
+				local info: string = LL(gwot.Name).." +"..tostring(row.Tourism).."[ICON_Tourism]";
+				-- other yields
+				for yield in GameInfo.GreatWork_YieldChanges() do
+					if yield.GreatWorkType == row.GreatWorkType then
+						info = info.." +"..tostring(yield.YieldChange)..GameInfo.Yields[yield.YieldType].IconString;
+					end
+				end
+				s:AddLabel(info);
+				s:AddSeparator();
+			end -- for
+		end); -- function
+		
+	end -- if great works	
+	
 	-- we need to show (a) GreatPersonIndividualActionModifiers (b) GreatPersonIndividualBirthModifiers
 	if bOptionModifiers and bIsRMA then
 		local sImpact, tYields, sToolTip = RMA.CalculateModifierEffect("GreatPersonIndividual", page.PageId, Game.GetLocalPlayer(), nil);
