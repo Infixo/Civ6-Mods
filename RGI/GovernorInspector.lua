@@ -578,7 +578,7 @@ function ProcessCity( pCity:table )
 	
 	-- Reyna and FOREIGN routes passing through (which also includes the destination!)
 	--print("..foreign routes");
-	for _,origPlayer in ipairs(PlayerManager.GetAliveMajors()) do
+	for _,origPlayer in ipairs(PlayerManager.GetAlive()) do -- 2021-06-11 Minors also are counted!
 		local origPlayerID:number = origPlayer:GetID();
 		if origPlayerID ~= localPlayerID then
 			for _,origCity in origPlayer:GetCities():Members() do
