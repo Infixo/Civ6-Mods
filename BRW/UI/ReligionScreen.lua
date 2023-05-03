@@ -451,7 +451,8 @@ function SetBeliefSlotDisabled(beliefInst:table, bDisable:boolean)
 end
 
 function PopulateAvailableBeliefs(beliefType:string)
-
+	local Beliefs : table = {};
+    
 	m_Beliefs.IM:ResetInstances();
 
 	for row in GameInfo.Beliefs() do
@@ -470,6 +471,15 @@ function PopulateAvailableBeliefs(beliefType:string)
 			not m_pGameReligion:IsTooManyForReligion(row.Index, m_PlayerReligionType) and
 			((beliefType ~= nil and row.BeliefClassType == beliefType) or
 			 (beliefType == nil and row.BeliefClassType ~= "BELIEF_CLASS_PANTHEON"))) then
+			table.insert(Beliefs, row);
+		end
+	end
+
+	table.sort(Beliefs, function(a, b)
+		return a.BeliefClassType > b.BeliefClassType;
+		end );
+
+	for _, row in ipairs(Beliefs) do
 			local beliefInst:table = m_Beliefs.IM:GetInstance();
 			beliefInst.BeliefLabel:LocalizeAndSetText(Locale.ToUpper(row.Name));
 			beliefInst.BeliefDescription:LocalizeAndSetText(row.Description);
@@ -478,7 +488,6 @@ function PopulateAvailableBeliefs(beliefType:string)
 			SetBeliefIcon(beliefInst.BeliefIcon, row.BeliefType, SIZE_BELIEF_ICON_LARGE);
 			SetBeliefSlotDisabled(beliefInst, false);
 		end
-	end
 
 	RealizeStack(m_Beliefs.Stack, m_Beliefs.Scrollbar);
 end
