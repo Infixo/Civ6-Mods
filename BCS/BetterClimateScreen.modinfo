@@ -3,29 +3,30 @@
 	<Properties>
 		<Name>Better Climate Screen (UI)</Name>
 		<Teaser>More information about CO2 footprint.</Teaser>
-		<Description>More information about CO2 footprint.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.3.</Description>
+		<Description>More information about CO2 footprint.[NEWLINE][NEWLINE]Works only with [COLOR_Green]Gathering Storm[ENDCOLOR]. Supports all languages. Version 1.3.1.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
 	</Properties>
-	<Dependencies>
-		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" />
-	</Dependencies>
 	<ActionCriteria>
+		<Criteria id="Expansion2">
+			<GameCoreInUse>Expansion2</GameCoreInUse>
+		</Criteria>
 		<Criteria id="DLCGranColombiaMaya"> <!-- 2020-05-21 -->
+			<GameCoreInUse>Expansion2</GameCoreInUse>
 			<LeaderPlayable>Players:Expansion2_Players::LEADER_SIMON_BOLIVAR,Players:Expansion2_Players::LEADER_LADY_SIX_SKY</LeaderPlayable>
 		</Criteria>
 	</ActionCriteria>
 	<InGameActions>
 		<!-- Gathering Storm actions - import lua and xml, replace lua -->
-        <ImportFiles id="BCS_ImportFiles_XP2">
+        <ImportFiles id="BCS_ImportFiles_XP2" criteria="Expansion2">
 			<Properties><LoadOrder>15100</LoadOrder></Properties> <!-- Infixo 2022-12-21 Natural Gas mod uses 15000 -->
             <Items>
                 <File>climatescreen.lua</File>
 				<File>XP2/climatescreen.xml</File>
             </Items>
         </ImportFiles>
-		<ReplaceUIScript id="BCS_ReplaceUI_ClimateScreen_XP2">
+		<ReplaceUIScript id="BCS_ReplaceUI_ClimateScreen_XP2" criteria="Expansion2">
 			<Properties>
                 <LoadOrder>15101</LoadOrder>
 				<LuaContext>climatescreen</LuaContext>
