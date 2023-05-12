@@ -331,10 +331,11 @@ function LeaderIcon:GetRelationToolTipString(playerID:number)
 		local allianceType = localPlayerDiplomacy:GetAllianceType(playerID);
 		if allianceType ~= -1 then
 			local info:table = GameInfo.Alliances[allianceType];
-			--table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..LL("LOC_DIPLOACTION_ALLIANCE_LEVEL", localPlayerDiplomacy:GetAllianceLevel(playerID)));
-			table.insert(tTT, tAllianceIcons[info.AllianceType]..LL(info.Name).." "..string.rep("[ICON_AllianceBlue]", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			local allianceIcon = tAllianceIcons[info.AllianceType] or "";
+			--table.insert(tTT, allianceIcon..LL(info.Name).." "..LL("LOC_DIPLOACTION_ALLIANCE_LEVEL", localPlayerDiplomacy:GetAllianceLevel(playerID)));
+			table.insert(tTT, allianceIcon..LL(info.Name).." "..string.rep("[ICON_AllianceBlue]", localPlayerDiplomacy:GetAllianceLevel(playerID)));
 			local iTurns:number = localPlayerDiplomacy:GetAllianceTurnsUntilExpiration(playerID);
-			local sExpires:string = tAllianceIcons[info.AllianceType]..LL("LOC_DIPLOACTION_EXPIRES_IN_X_TURNS", iTurns);
+			local sExpires:string = allianceIcon..LL("LOC_DIPLOACTION_EXPIRES_IN_X_TURNS", iTurns);
 			sExpires = string.gsub(sExpires, "%(", "");
 			sExpires = string.gsub(sExpires, "%)", "");
 			if iTurns < 4 then sExpires = ColorRED(sExpires); end
