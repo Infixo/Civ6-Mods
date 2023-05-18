@@ -29,5 +29,4 @@
 
 # ...and these files
 !.gitignore
-!.gitattributes
 !*.md
