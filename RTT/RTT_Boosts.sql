@@ -3,9 +3,9 @@
 -- Eurekas boost for Technologies
 UPDATE Boosts
 	SET Boost = 35
-	WHERE TechnologyType IS NOT NULL;
+	WHERE TechnologyType IS NOT NULL AND Boost <= 50;
 
 -- Eurekas boost for Civics
 UPDATE Boosts
 	SET Boost = 35
-	WHERE CivicType IS NOT NULL;
+	WHERE CivicType IS NOT NULL AND Boost <= 50;
