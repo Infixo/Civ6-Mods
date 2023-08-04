@@ -7,7 +7,7 @@
 <LocalizedText>
 
 	<Replace Tag="LOC_BTT_URBAN_DEFENSES" Language="fr_FR"> <!-- LOC_TECH_STEEL_DESCRIPTION -->
-		<Text>Déverrouille les Défenses Urbaines, donnant à toutes vos villes une force de fortification automatique de {1_Num} Puissance de Fortification automatique et la capacité d'effectuer une attaque à distance. Toutes les améliorations précédentes des murs deviennent obsolètes et les unités de soutien au siège ne sont plus efficaces.</Text>
+		<Text>Déverrouille les Défenses Urbaines, donnant à toutes vos villes une puissance de fortification automatique de {1_Num} Puissance de Fortification automatique et la capacité d'effectuer une attaque à distance. Toutes les améliorations précédentes des murs deviennent obsolètes et les unités de soutien au siège ne sont plus efficaces.</Text>
 	</Replace>
 	<Replace Tag="LOC_BTT_DIPLO_VISIBILITY" Language="fr_FR"> <!-- LOC_TECH_PRINTING_DESCRIPTION -->
 		<Text>+1 niveau de visibilité diplomatique</Text>
