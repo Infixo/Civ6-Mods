@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Real Era Tracker     -->
+<!-- Author: Infixo       -->
+<!-- 2023-08-04: Added French translation by Nitr4w -->
+
+<GameData>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_RET_WINDOW_TITLE" Language="fr_FR">
+		<Text>Real Era Tracker</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_BUTTON_LABEL" Language="fr_FR">
+		<Text>Era Tracker</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_WORLD" Language="fr_FR">
+		<Text>Monde</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_REPEATABLE" Language="fr_FR">
+		<Text>Répétable</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_FAVORED" Language="fr_FR">
+		<Text>Privilégié</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_COUNT" Language="fr_FR">
+		<Text>Compte</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_CHECKBOX_HIDE_NOT_ACTIVE" Language="fr_FR">
+		<Text>Masquer non actif</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_CHECKBOX_SHOW_ONLY_EARNED" Language="fr_FR">
+		<Text>Afficher uniquement acquit</Text>
+	</Replace>
+	<Replace Tag="LOC_RET_CHECKBOX_HIDE_NOT_AVAILABLE" Language="fr_FR">
+		<Text>Masquer d'époques différentes et actuellement non disponibles</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>
