@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Real Governor Inspector
+	Author: Infixo       
+	2023-08-04: Added Korean translation by Nitr4w
+-->
+
+<GameData>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_RGI_WINDOW_TITLE" Language="fr_FR">
+		<Text>Real Governor Inspector</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_BUTTON_LABEL" Language="fr_FR">
+		<Text>Governor Inspector</Text>
+	</Replace>
+	<!--
+	<Replace Tag="LOC_GOVERNOR_ASSIGNMENT_CONFIRM_REPLACEMENT">
+			<Text>REPLACE GOVERNOR? Slotting this governor will replace the governor in this city.</Text>
+	</Replace>
+		<Replace Tag="LOC_GOVERNORS_SCREEN_GOVERNOR_ASSIGN_TO">
+			<Text>Assign {1_GovernorName} to:</Text>
+		</Replace>
+	-->
+	<!-- VICTOR -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_ARMS_RACE_PROPONENT" Language="fr_FR">
+		<Text>Projet d'armement nucléaire dans la ville.[NEWLINE][COLOR_Gray]Le gain de production est basé sur la production totale de la ville et comme d'autres modificateurs sont déjà inclus, il peut être plus important que le gain réel.[ENDCOLOR]</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_DEFENSE_LOGISTICS" Language="fr_FR">
+		<Text>Ressources stratégiques exploitées dans la ville.</Text>
+	</Replace>
+	<!-- MAGNUS -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_GROUNDBREAKER" Language="fr_FR">
+		<Text>Nombre de particularités géographiques (forêt, jungle...) et de ressources pouvant être retirées ou récoltées, séparés par rendement qu'elles peuvent fournir à la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_SURPLUS_LOGISTICS" Language="fr_FR">
+		<Text>Nombre de vos [ICON_TradeRoute] Routes Commerciales se terminant dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_INDUSTRIALIST" Language="fr_FR">
+		<Text>Type de centrale électrique dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_RESOURCE_MANAGER_VERTICAL_INTEGRATION" Language="fr_FR">
+		<Text>Nombre de bâtiments supplémentaires de la Zone Industrielle pouvant apporter un bonus de production à la ville.</Text>
+	</Replace>
+	<!-- LIANG -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_AQUACULTURE" Language="fr_FR">
+		<Text>Nombre de Pêcheries dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_PARKS_RECREATION" Language="fr_FR">
+		<Text>Nombre de Parcs Urbains dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_WATER_WORKS" Language="fr_FR">
+		<Text>Nombre de Quartiers offrant les bonus dans la ville (séparés entre commodités / logements).</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_ZONING_COMMISSIONER" Language="fr_FR">
+		<Text>Quartier produit dans la ville.[NEWLINE][COLOR_Gray]Le gain de production est basé sur la production totale de la ville et comme d'autres modificateurs sont déjà inclus, il peut être plus important que le gain réel.[ENDCOLOR]</Text>
+	</Replace>
+	<!-- PINGALA -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_LIBRARIAN" Language="fr_FR">
+		<Text>[COLOR_Gray]Le gain de production est basé sur la production totale de la ville et comme d'autres modificateurs sont déjà inclus, il peut être plus important que le gain réel.[ENDCOLOR]</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_CONNOISSEUR" Language="fr_FR">
+		<Text>Nombre de [ICON_Citizen] Citoyens dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_RESEARCHER" Language="fr_FR">
+		<Text>Nombre de [ICON_Citizen] Citoyens dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_GRANTS" Language="fr_FR">
+		<Text>Les points supplémentaires de [ICON_GreatPerson] Personnage Illustre générés par tour dans la ville.[NEWLINE][COLOR_Gray]Il ne comprend que les points de Personnage Illustre de base des quartiers et des bâtiments.[ENDCOLOR]</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_CURATOR" Language="fr_FR">
+		<Text>Nombre de Grandes Œuvre d'Art, de Musique, et de Littérature dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_EDUCATOR_SPACE_INITIATIVE" Language="fr_FR">
+		<Text>Projet de Programme Spatial dans la ville.[NEWLINE][COLOR_Gray]Le gain de production est basé sur la production totale de la ville et comme d'autres modificateurs sont déjà inclus, il peut être plus important que le gain réel.[ENDCOLOR]</Text>
+	</Replace>
+	<!-- REYNA -->
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_LAND_ACQUISITION" Language="fr_FR">
+		<Text>Nombre de [ICON_TradeRoute] Routes Commerciales étrangères passant à travers la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_FORESTRY_MANAGEMENT" Language="fr_FR">
+		<Text>Nombre de cases avec des caractéristiques géographiques (forêt, jungle...) non exploitées dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_RENEWABLE_ENERGY" Language="fr_FR">
+		<Text>Nombre de sources d'énergie renouvelables éligibles dans la ville.</Text>
+	</Replace>
+	<Replace Tag="LOC_RGI_GOVERNOR_PROMOTION_MERCHANT_TAX_COLLECTOR" Language="fr_FR">
+		<Text>Nombre de [ICON_Citizen] Citoyens dans la ville.</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>
