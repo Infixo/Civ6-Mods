@@ -171,7 +171,7 @@ local m_shiftDown			:boolean = false;
 local m_lastPercent         :number = 0.1;
 
 -- CQUI variables
-local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01"); -- CQUI
+local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01") or Modding.IsModActive("20c0bddb-67bf-6e15-8328-60c977b3031e"); -- CQUI or CQUI-Lite
 print("CQUI", (bIsCQUI and "YES" or "no"));
 local CQUI_halfwayNotified  :table = {};
 local CQUI_ShowTechCivicRecommendations = true; -- if CQUI is not present then the default is to show recommendations! the update function should never be called
