@@ -5,7 +5,7 @@ print("Loading CivicsTree_BTT_XP2.lua from Better Tech Tree version "..GlobalPar
 -- 2019-02-16: Created
 -- ===========================================================================
 
-local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01"); -- CQUI
+local bIsCQUI:boolean = Modding.IsModActive("1d44b5e7-753e-405b-af24-5ee634ec8a01") or Modding.IsModActive("20c0bddb-67bf-6e15-8328-60c977b3031e"); -- CQUI or CQUI-Lite
 print("CQUI:", (bIsCQUI and "YES" or "no"));
 
 if bIsCQUI then
