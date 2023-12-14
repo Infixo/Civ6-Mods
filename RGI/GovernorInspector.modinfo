@@ -3,41 +3,44 @@
 	<Properties>
 		<Name>Real Governor Inspector</Name>
 		<Teaser>Helps managing Governors.</Teaser>
-		<Description>Helps managing Governors. Available in the Global Reports.[NEWLINE][NEWLINE]Requires [COLOR_Green]Gathering Storm[ENDCOLOR]. Version 1.3.</Description>
+		<Description>Helps managing Governors.[NEWLINE]Available only in [COLOR_Green]Gathering Storm[ENDCOLOR].[NEWLINE]Version 1.3.1.</Description>
 		<Authors>Infixo</Authors>
 		<AffectsSavedGames>0</AffectsSavedGames>
 		<CompatibleVersions>2.0</CompatibleVersions>
 	</Properties>
-	<Dependencies>
-		<Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" /> <!-- It requires GS because the promotions and effects are a bit different from R&F -->
-	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="Expansion2">
+			<!-- It requires GS because the promotions and effects are a bit different from R&F -->
+			<RuleSetInUse>RULESET_EXPANSION_2</RuleSetInUse>
+		</Criteria>
+	</ActionCriteria>
 	<InGameActions>
-		<ImportFiles id="RGI_Imports">
+		<ImportFiles id="RGI_Imports" criteria="Expansion2">
 			<File>RealYields.lua</File>
 			<File>Serialize.lua</File>
 		</ImportFiles>
-		<UpdateDatabase id="RGI_UpdateDatabase">
+		<UpdateDatabase id="RGI_UpdateDatabase" criteria="Expansion2">
 			<Properties><LoadOrder>1</LoadOrder></Properties>
 			<File>GovernorInspector_Database.sql</File>
 		</UpdateDatabase>
-		<AddUserInterfaces id="RGI_Main">
+		<AddUserInterfaces id="RGI_Main" criteria="Expansion2">
 			<Properties>
 				<Context>InGame</Context>
 			</Properties>
 			<File>GovernorInspector.xml</File>
 		</AddUserInterfaces>
-		<UpdateText id="RGI_UpdateText">
+		<UpdateText id="RGI_UpdateText" criteria="Expansion2">
             <File>Text/GovernorInspector_en_US.xml</File>
             <File>Text/GovernorInspector_ko_KR.xml</File>
 		</UpdateText>
 		<!-- reports list loader -->
-		<UpdateDatabase id="RLL_Database">
+		<UpdateDatabase id="RLL_Database" criteria="Expansion2">
 			<File>RLL/ReportsListLoader.sql</File>
 		</UpdateDatabase>
-		<ImportFiles id="RLL_Imports">
+		<ImportFiles id="RLL_Imports" criteria="Expansion2">
 			<File>RLL/ReportsListLoader.lua</File>
 		</ImportFiles>
-		<ReplaceUIScript id="RLL_ReplaceUI_ReportsList">
+		<ReplaceUIScript id="RLL_ReplaceUI_ReportsList" criteria="Expansion2">
 			<Properties>
                 <LoadOrder>99999</LoadOrder>
 				<LuaContext>ReportsList</LuaContext>
