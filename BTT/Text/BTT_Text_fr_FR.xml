@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Better Tech Tree -->
+<!-- Author: Infixo -->
+<!-- 2023-08-04: Added French translation by Nitr4w -->
+<GameData>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_BTT_URBAN_DEFENSES" Language="fr_FR"> <!-- LOC_TECH_STEEL_DESCRIPTION -->
+		<Text>Déverrouille les Défenses Urbaines, donnant à toutes vos villes une puissance de fortification automatique de {1_Num} Puissance de Fortification automatique et la capacité d'effectuer une attaque à distance. Toutes les améliorations précédentes des murs deviennent obsolètes et les unités de soutien au siège ne sont plus efficaces.</Text>
+	</Replace>
+	<Replace Tag="LOC_BTT_DIPLO_VISIBILITY" Language="fr_FR"> <!-- LOC_TECH_PRINTING_DESCRIPTION -->
+		<Text>+1 niveau de visibilité diplomatique</Text>
+	</Replace>
+	<Replace Tag="LOC_BTT_EMBARKED_MOVEMENT" Language="fr_FR"> <!-- LOC_TECH_COMBUSTION_DESCRIPTION LOC_TECH_STEAM_POWER_DESCRIPTION LOC_TECH_SQUARE_RIGGING_DESCRIPTION -->
+		<Text>+{1_Num} [ICON_Movement] Mouvement pour les unités embarquées.</Text>
+	</Replace>
+	<Replace Tag="LOC_BTT_ALL_NAVAL_UNITS_MOVEMENT" Language="fr_FR"> <!-- LOC_TECH_MATHEMATICS_DESCRIPTION -->
+		<Text>+{1_Num} [ICON_Movement] Mouvement pour toutes les unités navales.</Text>
+	</Replace>
+	<Replace Tag="LOC_BTT_VALID_OCEAN" Language="fr_FR"> <!-- LOC_TECH_CARTOGRAPHY_DESCRIPTION -->
+		<Text>Toutes les unités navales et embarquées pouvent naviguer sur les cases Océan.</Text>
+	</Replace>
+	<Replace Tag="LOC_BTT_TOGGLE_MARK" Language="fr_FR"> <!-- LOC_TECH_CARTOGRAPHY_DESCRIPTION -->
+		<Text>Cliquez pour faire basculer le marquage [ICON_New].</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>
