@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Better Religion Window
+    Author: Infixo
+    2020-06-25: Created
+-->
+<GameData>
+
+<LocalizedText>
+
+	<Replace Tag="LOC_BRW_CITY_SORT_NOT_FOLLOWING" Language="zh_Hant_HK"> <!-- LOC_UI_RELIGION_CITY_SORT_TYPE_FOLLOWING -->
+        <Text>[COLOR_Red]不是[ENDCOLOR]信仰此宗教的城市</Text>
+	</Replace>
+	<Replace Tag="LOC_BRW_CITY_SORT_ALL" Language="zh_Hant_HK">
+        <Text>所有城市</Text>
+	</Replace>
+
+</LocalizedText>
+
+</GameData>
